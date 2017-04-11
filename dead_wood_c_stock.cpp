@@ -17,7 +17,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 //passing arguments
-if (argc != 4){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
+if (argc != 6){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
 string agb_name=argv[1];
 string biome_name=argv[2];
 string elevation_name=argv[3];
@@ -35,6 +35,7 @@ GDALAllRegister();
 GDALDataset  *INGDAL; GDALRasterBand  *INBAND;
 GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
 GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
+GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
@@ -52,7 +53,7 @@ INBAND2 = INGDAL2->GetRasterBand(1);
 INGDAL3 = (GDALDataset *) GDALOpen(elevation_name.c_str(), GA_ReadOnly ); 
 INBAND3 = INGDAL3->GetRasterBand(1);
 INGDAL4 = (GDALDataset *) GDALOpen(precip_name.c_str(), GA_ReadOnly ); 
-INBAND4 = INGDAL3->GetRasterBand(1);
+INBAND4 = INGDAL4->GetRasterBand(1);
 
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -73,10 +74,10 @@ OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(255);
 
 //read/write data
-uint8_t in1_data[xsize];
-uint8_t in2_data[xsize];
-uint8_t in3_data[xsize];
-uint8_t in4_data[xsize];
+uint8_t agb_data[xsize];
+uint8_t biome_data[xsize];
+uint8_t elevation_data[xsize];
+uint8_t precip_data[xsize];
 uint8_t out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
@@ -86,16 +87,16 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_Byte, 0
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_Byte, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_datda < 1000) {
-    out_data1[x] = in1_data[x] * .02;}
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data < 1600 && precip_data > 1000) {
-    out_data1[x] = in1_data[x] * .01;}
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_datda > 1600) {
-    out_data1[x] = in1_data[x] * .06;}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
+    out_data1[x] = agb_data[x] * .02;}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
+    out_data1[x] = agb_data[x] * .01;}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
+    out_data1[x] = agb_data[x] * .06;}
   if (biome_data[x] = 1 && elevation_data[x] > 2000) {
-    out_data1[x] = in1_data[x] * .07;}
+    out_data1[x] = agb_data[x] * .07;}
   if (biome_data[x] = 2) {
-    out_data1[x] = in1_data[x] * .08;}
+    out_data1[x] = agb_data[x] * .08;}
   else {
     out_data1[x] = 255;}
 
