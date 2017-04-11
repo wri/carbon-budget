@@ -17,11 +17,13 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 //passing arguments
-if (argc != 4){cout << "Use <program name> <extent raster> <loss raster> <output name>" << endl; return 1;}
-string extent_name=argv[1];
-string loss_name=argv[2];
+if (argc != 4){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
+string agb_name=argv[1];
+string biome_name=argv[2];
+string elevation_name=argv[3];
+string precip_name=argv[4];
 //either parse this var from inputs or send it in
-string out_name=argv[3];
+string out_name=argv[5];
 
 //setting variables
 int x, y;
@@ -32,14 +34,25 @@ double GeoTransform[6]; double ulx, uly; double pixelsize;
 GDALAllRegister();
 GDALDataset  *INGDAL; GDALRasterBand  *INBAND;
 GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
+GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 
 //open file and get extent and projection
-INGDAL = (GDALDataset *) GDALOpen(extent_name.c_str(), GA_ReadOnly ); INBAND = INGDAL->GetRasterBand(1);
-xsize=INBAND->GetXSize(); ysize=INBAND->GetYSize();
+INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
+INBAND = INGDAL->GetRasterBand(1);
+xsize=INBAND->GetXSize(); 
+ysize=INBAND->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
-ulx=GeoTransform[0]; uly=GeoTransform[3]; pixelsize=GeoTransform[1];
+ulx=GeoTransform[0]; 
+uly=GeoTransform[3]; 
+pixelsize=GeoTransform[1];
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
-INGDAL2 = (GDALDataset *) GDALOpen(loss_name.c_str(), GA_ReadOnly ); INBAND2 = INGDAL2->GetRasterBand(1);
+
+INGDAL2 = (GDALDataset *) GDALOpen(biome_name.c_str(), GA_ReadOnly ); 
+INBAND2 = INGDAL2->GetRasterBand(1);
+INGDAL3 = (GDALDataset *) GDALOpen(elevation_name.c_str(), GA_ReadOnly ); 
+INBAND3 = INGDAL3->GetRasterBand(1);
+INGDAL4 = (GDALDataset *) GDALOpen(precip_name.c_str(), GA_ReadOnly ); 
+INBAND4 = INGDAL3->GetRasterBand(1);
 
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -49,7 +62,8 @@ OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
 char **papszOptions = NULL;
 papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "LZW" );
-OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF"); if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
+OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF"); 
+if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
@@ -61,31 +75,29 @@ OUTBAND1->SetNoDataValue(255);
 //read/write data
 uint8_t in1_data[xsize];
 uint8_t in2_data[xsize];
+uint8_t in3_data[xsize];
+uint8_t in4_data[xsize];
 uint8_t out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, in1_data, xsize, 1, GDT_Byte, 0, 0); 
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, in2_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_Byte, 0, 0); 
+
 for(x=0; x<xsize; x++) {
-  if (in1_data[x] > 1 && in1_data[x] < 11) {
-    out_data1[x] = 20 + in2_data[x];}
-  else if (in1_data[x] > 10 && in1_data[x] < 16) {
-    out_data1[x] = 40 + in2_data[x];}
-  else if (in1_data[x] > 15 && in1_data[x] < 21) {
-    out_data1[x] = 60 + in2_data[x];}
-  else if (in1_data[x] > 20 && in1_data[x] < 26) {
-    out_data1[x] = 80 + in2_data[x];}
-  else if (in1_data[x] > 25 && in1_data[x] < 31) {
-    out_data1[x] = 100 + in2_data[x];}
-  else if (in1_data[x] > 30 && in1_data[x] < 51) {
-    out_data1[x] = 120 + in2_data[x];}
-  else if (in1_data[x] > 50 && in1_data[x] < 76) {
-    out_data1[x] = 140 + in2_data[x];}
-  else if (in1_data[x] > 75) {
-    out_data1[x] = 160 + in2_data[x];}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_datda < 1000) {
+    out_data1[x] = in1_data[x] * .02;}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data < 1600 && precip_data > 1000) {
+    out_data1[x] = in1_data[x] * .01;}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_datda > 1600) {
+    out_data1[x] = in1_data[x] * .06;}
+  if (biome_data[x] = 1 && elevation_data[x] > 2000) {
+    out_data1[x] = in1_data[x] * .07;}
+  if (biome_data[x] = 2) {
+    out_data1[x] = in1_data[x] * .08;}
   else {
     out_data1[x] = 255;}
-  //cout << in1_data[x] << "," << in2_data[x] << "," << out_data1[x] << "\n";
 
 //closes for x loop
 }
