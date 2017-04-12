@@ -1,18 +1,18 @@
 import subprocess
 import datetime
+import os
 
 import get_extent
 
 
 def calc_deadwood(tile_id):
     start = datetime.datetime.now()
-
+    print "/n-------TILE ID: {}".format(tile_id)
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
     copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
     subprocess.check_call(copy_bio)
 
-    # get extent
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
@@ -29,13 +29,13 @@ def calc_deadwood(tile_id):
     resample_ecozone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', rasterized_eco_zone_tile, resampled_ecozone]
     subprocess.check_call(resample_ecozone)
 
-    # tile srtm
+    print "clipping srtm"
     tile_srtm = '{}_srtm.tif'.format(tile_id)
     srtm = 'srtm.vrt'
     clip_srtm = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW', srtm, tile_srtm]
     subprocess.check_call(clip_srtm)
 
-    # resample srtm
+    print "resampling srtm"
     tile_res_srtm = '{}_res_srtm.tif'.format(tile_id)
     resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', tile_srtm, tile_res_srtm]
     subprocess.check_call(resample)
@@ -43,13 +43,25 @@ def calc_deadwood(tile_id):
     # grab precip tiles...not sure which format yet
 
     # send 1) biomass 2) rasterized climate zone 3) elevation 4) precip to "create_deadwood_tile.cpp"
-    print 'writing deadwood tile for {}'.format(tile_id)
+    # output is a tile matching res/extent of biomass, each pixel is mg deadwood biomass /ha
+
+    print 'writing deadwood tile'
     deadwood_tile = '{}_deadwood.tif'.format(tile_id)
     deadwood_tiles_cmd = ['./dead_wood_c_stock.exe', biomass_tile, resampled_ecozone, tile_res_srtm, tile_res_srtm,
                           deadwood_tile]
     subprocess.check_call(deadwood_tiles_cmd)
 
-    # delete intermediate tiles# output is a tile matching res/extent of biomass, each pixel is mg deadwood biomass /ha
+    print 'uploading deadwood tile to s3'
+    copy_deadwoodtile = ['aws', 's3', 'cp', deadwood_tile, 's3://gfw-files/sam/carbon_budget/deadwood/']
+    subprocess.check_call(copy_deadwoodtile)
 
+    print "deleting intermediate data"
+    tiles_to_remove = [deadwood_tile, biomass_tile, resampled_ecozone, tile_res_srtm, tile_srtm, rasterized_eco_zone_tile]
+
+    for tile in tiles_to_remove:
+        try:
+            os.remove(tile)
+        except:
+            pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
