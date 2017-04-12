@@ -14,10 +14,12 @@
 #include <ogr_spatialref.h>
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
+// ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
+
 int main(int argc, char* argv[])
 {
 //passing arguments
-if (argc != 4){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
+if (argc != 6){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
 string agb_name=argv[1];
 string biome_name=argv[2];
 string elevation_name=argv[3];
@@ -35,6 +37,7 @@ GDALAllRegister();
 GDALDataset  *INGDAL; GDALRasterBand  *INBAND;
 GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
 GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
+GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
@@ -52,7 +55,7 @@ INBAND2 = INGDAL2->GetRasterBand(1);
 INGDAL3 = (GDALDataset *) GDALOpen(elevation_name.c_str(), GA_ReadOnly ); 
 INBAND3 = INGDAL3->GetRasterBand(1);
 INGDAL4 = (GDALDataset *) GDALOpen(precip_name.c_str(), GA_ReadOnly ); 
-INBAND4 = INGDAL3->GetRasterBand(1);
+INBAND4 = INGDAL4->GetRasterBand(1);
 
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -67,41 +70,41 @@ if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
-OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Byte, papszOptions );
+OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(255);
 
 //read/write data
-uint8_t in1_data[xsize];
-uint8_t in2_data[xsize];
-uint8_t in3_data[xsize];
-uint8_t in4_data[xsize];
-uint8_t out_data1[xsize];
+uint16_t agb_data[xsize];
+uint16_t biome_data[xsize];
+uint16_t elevation_data[xsize];
+uint16_t precip_data[xsize];
+float out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Byte, 0, 0); 
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_Byte, 0, 0); 
-INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_Byte, 0, 0); 
-INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_datda < 1000) {
-    out_data1[x] = in1_data[x] * .02;}
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data < 1600 && precip_data > 1000) {
-    out_data1[x] = in1_data[x] * .01;}
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_datda > 1600) {
-    out_data1[x] = in1_data[x] * .06;}
-  if (biome_data[x] = 1 && elevation_data[x] > 2000) {
-    out_data1[x] = in1_data[x] * .07;}
-  if (biome_data[x] = 2) {
-    out_data1[x] = in1_data[x] * .08;}
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
+    out_data1[x] = agb_data[x] * .02;}
+  else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
+    out_data1[x] = agb_data[x] * .01;}
+  else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
+    out_data1[x] = agb_data[x] * .06;}
+  else if (biome_data[x] = 1 && elevation_data[x] > 2000) {
+    out_data1[x] = agb_data[x] * .07;}
+  else if (biome_data[x] = 2) {
+    out_data1[x] = agb_data[x] * .08;}
   else {
     out_data1[x] = 255;}
 
 //closes for x loop
 }
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Byte, 0, 0 ); 
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 //closes for y loop
 }
 
