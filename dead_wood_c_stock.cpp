@@ -14,6 +14,8 @@
 #include <ogr_spatialref.h>
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
+// ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
+
 int main(int argc, char* argv[])
 {
 //passing arguments
@@ -68,41 +70,41 @@ if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
-OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Byte, papszOptions );
+OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(255);
 
 //read/write data
 uint16_t agb_data[xsize];
-uint8_t biome_data[xsize];
+uint16_t biome_data[xsize];
 uint16_t elevation_data[xsize];
 uint16_t precip_data[xsize];
-uint16_t out_data1[xsize];
+float out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_UInt16, 0, 0); 
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_UInt16, 0, 0); 
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-  if (biome_data[x] > 14 && biome_data[x] < 21 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
+  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
     out_data1[x] = agb_data[x] * .02;}
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
+  else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
     out_data1[x] = agb_data[x] * .01;}
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
+  else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
     out_data1[x] = agb_data[x] * .06;}
-  if (biome_data[x] = 1 && elevation_data[x] > 2000) {
+  else if (biome_data[x] = 1 && elevation_data[x] > 2000) {
     out_data1[x] = agb_data[x] * .07;}
-  if (biome_data[x] = 2) {
+  else if (biome_data[x] = 2) {
     out_data1[x] = agb_data[x] * .08;}
   else {
     out_data1[x] = 255;}
 
 //closes for x loop
 }
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_UInt16, 0, 0 ); 
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 //closes for y loop
 }
 
