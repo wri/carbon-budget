@@ -74,20 +74,20 @@ OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(255);
 
 //read/write data
-uint8_t agb_data[xsize];
+uint16_t agb_data[xsize];
 uint8_t biome_data[xsize];
-uint8_t elevation_data[xsize];
-uint8_t precip_data[xsize];
-uint8_t out_data1[xsize];
+uint16_t elevation_data[xsize];
+uint16_t precip_data[xsize];
+uint16_t out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_Byte, 0, 0); 
-INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_Byte, 0, 0); 
-INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_Byte, 0, 0); 
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
+  if (biome_data[x] > 14 && biome_data[x] < 21 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
     out_data1[x] = agb_data[x] * .02;}
   if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
     out_data1[x] = agb_data[x] * .01;}
@@ -102,7 +102,7 @@ for(x=0; x<xsize; x++) {
 
 //closes for x loop
 }
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Byte, 0, 0 ); 
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_UInt16, 0, 0 ); 
 //closes for y loop
 }
 
