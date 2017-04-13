@@ -6,7 +6,12 @@ import os
 def calc_bgb(tile_id):
     start = datetime.datetime.now()
 
+    print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
+    copy_bio = ['wget', 'http://s3.amazonaws.com/WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id),
+                '-O', biomass_tile]
+    
+    subprocess.check_call(copy_bio)
 
     # send biomass to "create_bgb_tile.cpp"
     print 'writing below ground biomass tile for {}'.format(tile_id)
