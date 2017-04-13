@@ -73,7 +73,7 @@ for(y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-  out_data1[x] = agb_data[x] * .13;}
+  out_data1[x] = agb_data[x] * .13;
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
