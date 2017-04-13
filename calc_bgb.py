@@ -3,7 +3,7 @@ import datetime
 import os
 
 
-def calc_deadwood(tile_id):
+def calc_bgb(tile_id):
     start = datetime.datetime.now()
 
     print "copy down biomass tile"
