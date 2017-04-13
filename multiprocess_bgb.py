@@ -1,4 +1,5 @@
 import multiprocessing
+import subprocess
 
 import calc_bgb
 
@@ -10,3 +11,8 @@ if __name__ == '__main__':
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=60)
     pool.map(calc_bgb.calc_bgb, biomass_tile_list)
+
+# upload bgb tiles
+# print 'uploading belowground biomass tile to s3'
+# copy_bgbtile = ['aws', 's3', 'sync', 'bgb/', 's3://gfw-files/sam/carbon_budget/belowgroundbiomass/']
+# subprocess.check_call(copy_bgbtile)
