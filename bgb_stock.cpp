@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
@@ -63,17 +63,21 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
-OUTBAND1->SetNoDataValue(255);
+OUTBAND1->SetNoDataValue(-9999);
 
 //read/write data
-uint16_t agb_data[xsize];
+int16_t agb_data[xsize];
 float out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Int16, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-  out_data1[x] = agb_data[x] * .13;
+// no data value for biomass is set to -32768
+   if (agb_data[x] == -32768) {
+    out_data1[x] = -9999;}
+   else {
+    out_data1[x] = agb_data[x] * .13;}
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
