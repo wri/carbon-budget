@@ -19,12 +19,13 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 //passing arguments
-if (argc != 4){cout << "Use <program name> <biomass tile> <climate zone> <landcover> <output name>" << endl; return 1;}
-string climate=argv[1];
-string landcover=argv[2];
+if (argc != 5){cout << "Use <program name> <biomass tile> <climate zone> <landcover> <output name>" << endl; return 1;}
+string agb_name=argv[1];
+string climate_name=argv[2];
+string landcover_name=argv[3];
 
 //either parse this var from inputs or send it in
-string out_name=argv[3];
+string out_name=argv[4];
 
 //setting variables
 int x, y;
@@ -38,7 +39,7 @@ GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
 GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 
 //open file and get extent and projection
-INGDAL = (GDALDataset *) GDALOpen(agb_data.c_str(), GA_ReadOnly );
+INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly );
 INBAND = INGDAL->GetRasterBand(1);
 xsize=INBAND->GetXSize(); 
 ysize=INBAND->GetYSize();
@@ -48,9 +49,9 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
-INGDAL2 = (GDALDataset *) GDALOpen(climate.c_str(), GA_ReadOnly );
+INGDAL2 = (GDALDataset *) GDALOpen(climate_name.c_str(), GA_ReadOnly );
 INBAND2 = INGDAL2->GetRasterBand(1);
-INGDAL3 = (GDALDataset *) GDALOpen(landcover.c_str(), GA_ReadOnly );
+INGDAL3 = (GDALDataset *) GDALOpen(landcover_name.c_str(), GA_ReadOnly );
 INBAND3 = INGDAL3->GetRasterBand(1);
 
 //initialize GDAL for writing

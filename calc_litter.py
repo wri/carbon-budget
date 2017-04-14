@@ -1,3 +1,4 @@
+
 import subprocess
 import datetime
 import os
@@ -37,7 +38,7 @@ import get_extent
 
 def calc_litter(tile_id):
     start = datetime.datetime.now()
-    print "/n-------TILE ID: {}".format(tile_id)
+    print "-------TILE ID: {}".format(tile_id)
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
     copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
@@ -47,9 +48,11 @@ def calc_litter(tile_id):
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
     print "clip climate zone"
-    climate_zone = 'CLIMATE_ZONE.rst'
+    climate_zone = 'climate_zone.tif'
     climate_zone_tile = "{}_climatezone.tif".format(tile_id)
-    clip_climatezone = ['gdal_translate', '-co', 'COMPRESS=LZW', xmin, ymin, xmax, ymax, climate_zone, climate_zone_tile]
+    print climate_zone_tile
+    
+    clip_climatezone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), climate_zone, climate_zone_tile]
     subprocess.check_call(clip_climatezone)
 
     print "resampling climate zone"
@@ -60,7 +63,7 @@ def calc_litter(tile_id):
     print "clip landcover"
     landcover_vrt = 'landcover.vrt'
     landcover_tile = "{}_landcover.tif".format(tile_id)
-    clip_landcover = ['gdal_translate', '-co', 'COMPRESS=LZW', landcover_vrt, landcover_tile]
+    clip_landcover = ['gdal_translate', '-co', 'COMPRESS=LZW', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), landcover_vrt, landcover_tile]
     subprocess.check_call(clip_landcover)
 
     print "resampling landcover"
@@ -71,11 +74,11 @@ def calc_litter(tile_id):
     # send 1) resampled climate zone 2) resampled landcover to "create_litter_tile.cpp"
 
     print 'writing litter tile'
-    litter_tile = '{}_deadwood.tif'.format(tile_id)
+    litter_tile = '{}_litter.tif'.format(tile_id)
     litter_tiles_cmd = ['./litter_stock.exe', biomass_tile, resampled_climatezone, resampled_landcover, litter_tile]
     subprocess.check_call(litter_tiles_cmd)
 
-    print 'uploading deadwood tile to s3'
+    print 'uploading litter tile to s3'
     copy_littertile = ['aws', 's3', 'cp', litter_tile, 's3://gfw-files/sam/carbon_budget/litter/']
     subprocess.check_call(copy_littertile)
 
