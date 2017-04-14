@@ -13,6 +13,7 @@
 #include <cpl_conv.h>
 #include <ogr_spatialref.h>
 using namespace std;
+
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
 
@@ -107,7 +108,7 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, landcover, xsize, 1, GDT_Byte, 0, 0);
 
 for(x=0; x<xsize; x++) {
 	
-	out_data1[x] = mapping[make_pair(landcover[x],climate[x])];
+	out_data1[x] = mapping[make_pair(climate[x],landcover[x])];
 
     if (out_data1[x] == 0) {
         out_data1[x] = 255;}
