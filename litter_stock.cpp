@@ -16,6 +16,46 @@ using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
 
+int calc(int argc, char* argv[])
+{
+
+    int val1=atoi(argv[1]);
+    int val2=atoi(argv[2]);
+
+    cout << "input: " << val1 <<", "<< val2 << endl;
+
+    typedef pair<unsigned int, unsigned int> pair_k;
+    map<pair_k, float> mapping;
+
+    mapping[make_pair(8,4)] = 25;
+    mapping[make_pair(8,1)] = 31;
+    mapping[make_pair(7,4)] = 39;
+    mapping[make_pair(7,1)] = 55;
+    mapping[make_pair(4,4)] = 28;
+    mapping[make_pair(4,1)] = 27;
+    mapping[make_pair(3,4)] = 16;
+    mapping[make_pair(3,1)] = 26;
+    mapping[make_pair(2,4)] = 28.2;
+    mapping[make_pair(2,1)] = 20.3;
+    mapping[make_pair(1,4)] = 13;
+    mapping[make_pair(1,1)] = 22;
+    mapping[make_pair(12,4)] = 2.8;
+    mapping[make_pair(12,1)] = 4.1;
+    mapping[make_pair(10,4)] = 2.1;
+    mapping[make_pair(10,1)] = 5.2;
+
+    float result;
+    result = mapping[make_pair(val1,val2)];
+
+    if (result == 0) {
+        result = 255;}
+
+    cout << result << endl;
+
+    return 0;
+}
+
+
 int main(int argc, char* argv[])
 {
 //passing arguments
@@ -86,40 +126,7 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, landcover, xsize, 1, GDT_Byte, 0, 0);
 
 
 for(x=0; x<xsize; x++) {
-  if (climate[x] == 8 && landcover[x] ==4) {
-    out_data1[x] = 25;}
-  else if (climate[x] == 8 && landcover[x] ==1) {
-    out_data1[x] = 31;}
-  else if (climate[x] == 7 && landcover[x] ==4) {
-    out_data1[x] = 39;}
-  else if (climate[x] == 7 && landcover[x] ==1) {
-    out_data1[x] = 55;}
-  else if (climate[x] == 4 && landcover[x] ==4) {
-    out_data1[x] = 28;}
-  else if (climate[x] == 4 && landcover[x] ==1) {
-    out_data1[x] = 27;}
-  else if (climate[x] == 3 && landcover[x] ==4) {
-    out_data1[x] = 16;}
-  else if (climate[x] == 3 && landcover[x] ==1) {
-    out_data1[x] = 26;}
-  else if (climate[x] == 2 && landcover[x] ==4) {
-    out_data1[x] = 28.2;}
-  else if (climate[x] == 2 && landcover[x] ==1) {
-    out_data1[x] = 20.3;}
-  else if (climate[x] == 1 && landcover[x] ==4) {
-    out_data1[x] = 13;}
-  else if (climate[x] == 1 && landcover[x] ==1) {
-    out_data1[x] = 22;}
-  else if (climate[x] == 12 && landcover[x] ==4) {
-    out_data1[x] = 2.8;}
-  else if (climate[x] == 12 && landcover[x] ==1) {
-    out_data1[x] = 4.1;}
-  else if (climate[x] == 10 && landcover[x] ==4) {
-    out_data1[x] = 2.1;}
-  else if (climate[x] == 10 && landcover[x] ==1) {
-    out_data1[x] = 5.2;}
-  else {
-    out_data1[x] = 255;}
+  out_data1[x] = calc(climate[x], landcover[x])
 
 //closes for x loop
 }
