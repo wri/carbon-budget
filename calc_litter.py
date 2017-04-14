@@ -72,7 +72,7 @@ def calc_litter(tile_id):
 
     print 'writing litter tile'
     litter_tile = '{}_deadwood.tif'.format(tile_id)
-    litter_tiles_cmd = ['./litter_stock.exe', resampled_climatezone, resampled_landcover, litter_tile]
+    litter_tiles_cmd = ['./litter_stock.exe', biomass_tile, resampled_climatezone, resampled_landcover, litter_tile]
     subprocess.check_call(litter_tiles_cmd)
 
     print 'uploading deadwood tile to s3'
@@ -80,7 +80,7 @@ def calc_litter(tile_id):
     subprocess.check_call(copy_littertile)
 
     print "deleting intermediate data"
-    tiles_to_remove = [biomass_tile, landcover_tile, resampled_landcover, climate_zone_tile, resampled_climatezone]
+    tiles_to_remove = [biomass_tile, landcover_tile, resampled_landcover, climate_zone_tile, resampled_climatezone, litter_tile]
 
     for tile in tiles_to_remove:
         try:
