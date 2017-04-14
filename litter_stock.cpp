@@ -107,11 +107,41 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, landcover, xsize, 1, GDT_Byte, 0, 0);
 
 
 for(x=0; x<xsize; x++) {
-	
-	out_data1[x] = mapping[make_pair(climate[x],landcover[x])];
-
-    if (out_data1[x] == 0) {
-        out_data1[x] = 255;}
+	for(x=0; x<xsize; x++) {
+	  if (climate[x] == 8 && landcover[x] ==4) {
+		out_data1[x] = 25;}
+	  else if (climate[x] == 8 && landcover[x] ==1) {
+		out_data1[x] = 31;}
+	  else if (climate[x] == 7 && landcover[x] ==4) {
+		out_data1[x] = 39;}
+	  else if (climate[x] == 7 && landcover[x] ==1) {
+		out_data1[x] = 55;}
+	  else if (climate[x] == 4 && landcover[x] ==4) {
+		out_data1[x] = 28;}
+	  else if (climate[x] == 4 && landcover[x] ==1) {
+		out_data1[x] = 27;}
+	  else if (climate[x] == 3 && landcover[x] ==4) {
+		out_data1[x] = 16;}
+	  else if (climate[x] == 3 && landcover[x] ==1) {
+		out_data1[x] = 26;}
+	  else if (climate[x] == 2 && landcover[x] ==4) {
+		out_data1[x] = 28.2;}
+	  else if (climate[x] == 2 && landcover[x] ==1) {
+		out_data1[x] = 20.3;}
+	  else if (climate[x] == 1 && landcover[x] ==4) {
+		out_data1[x] = 13;}
+	  else if (climate[x] == 1 && landcover[x] ==1) {
+		out_data1[x] = 22;}
+	  else if (climate[x] == 12 && landcover[x] ==4) {
+		out_data1[x] = 2.8;}
+	  else if (climate[x] == 12 && landcover[x] ==1) {
+		out_data1[x] = 4.1;}
+	  else if (climate[x] == 10 && landcover[x] ==4) {
+		out_data1[x] = 2.1;}
+	  else if (climate[x] == 10 && landcover[x] ==1) {
+		out_data1[x] = 5.2;}
+	  else {
+		out_data1[x] = 255;}
 
 //closes for x loop
 }
