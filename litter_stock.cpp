@@ -80,26 +80,6 @@ uint8_t landcover[xsize];
 
 float out_data1[xsize];
 
-typedef pair<unsigned int, unsigned int> pair_k;
-    map<pair_k, float> mapping;
-
-    mapping[make_pair(8,4)] = 25;
-    mapping[make_pair(8,1)] = 31;
-    mapping[make_pair(7,4)] = 39;
-    mapping[make_pair(7,1)] = 55;
-    mapping[make_pair(4,4)] = 28;
-    mapping[make_pair(4,1)] = 27;
-    mapping[make_pair(3,4)] = 16;
-    mapping[make_pair(3,1)] = 26;
-    mapping[make_pair(2,4)] = 28.2;
-    mapping[make_pair(2,1)] = 20.3;
-    mapping[make_pair(1,4)] = 13;
-    mapping[make_pair(1,1)] = 22;
-    mapping[make_pair(12,4)] = 2.8;
-    mapping[make_pair(12,1)] = 4.1;
-    mapping[make_pair(10,4)] = 2.1;
-    mapping[make_pair(10,1)] = 5.2;
-
 for(y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, climate, xsize, 1, GDT_Byte, 0, 0);
@@ -107,41 +87,42 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, landcover, xsize, 1, GDT_Byte, 0, 0);
 
 
 for(x=0; x<xsize; x++) {
+	
 	for(x=0; x<xsize; x++) {
-	  if (climate[x] == 8 && landcover[x] ==4) {
-		out_data1[x] = 25;}
-	  else if (climate[x] == 8 && landcover[x] ==1) {
-		out_data1[x] = 31;}
-	  else if (climate[x] == 7 && landcover[x] ==4) {
-		out_data1[x] = 39;}
-	  else if (climate[x] == 7 && landcover[x] ==1) {
-		out_data1[x] = 55;}
-	  else if (climate[x] == 4 && landcover[x] ==4) {
-		out_data1[x] = 28;}
-	  else if (climate[x] == 4 && landcover[x] ==1) {
-		out_data1[x] = 27;}
-	  else if (climate[x] == 3 && landcover[x] ==4) {
-		out_data1[x] = 16;}
-	  else if (climate[x] == 3 && landcover[x] ==1) {
-		out_data1[x] = 26;}
-	  else if (climate[x] == 2 && landcover[x] ==4) {
-		out_data1[x] = 28.2;}
-	  else if (climate[x] == 2 && landcover[x] ==1) {
-		out_data1[x] = 20.3;}
-	  else if (climate[x] == 1 && landcover[x] ==4) {
-		out_data1[x] = 13;}
-	  else if (climate[x] == 1 && landcover[x] ==1) {
-		out_data1[x] = 22;}
-	  else if (climate[x] == 12 && landcover[x] ==4) {
-		out_data1[x] = 2.8;}
-	  else if (climate[x] == 12 && landcover[x] ==1) {
-		out_data1[x] = 4.1;}
-	  else if (climate[x] == 10 && landcover[x] ==4) {
-		out_data1[x] = 2.1;}
-	  else if (climate[x] == 10 && landcover[x] ==1) {
-		out_data1[x] = 5.2;}
-	  else {
-		out_data1[x] = 255;}
+  if (climate[x] == 8 && landcover[x] ==4) {
+    out_data1[x] = 25;}
+  else if (climate[x] == 8 && landcover[x] ==1) {
+    out_data1[x] = 31;}
+  else if (climate[x] == 7 && landcover[x] ==4) {
+    out_data1[x] = 39;}
+  else if (climate[x] == 7 && landcover[x] ==1) {
+    out_data1[x] = 55;}
+  else if (climate[x] == 4 && landcover[x] ==4) {
+    out_data1[x] = 28;}
+  else if (climate[x] == 4 && landcover[x] ==1) {
+    out_data1[x] = 27;}
+  else if (climate[x] == 3 && landcover[x] ==4) {
+    out_data1[x] = 16;}
+  else if (climate[x] == 3 && landcover[x] ==1) {
+    out_data1[x] = 26;}
+  else if (climate[x] == 2 && landcover[x] ==4) {
+    out_data1[x] = 28.2;}
+  else if (climate[x] == 2 && landcover[x] ==1) {
+    out_data1[x] = 20.3;}
+  else if (climate[x] == 1 && landcover[x] ==4) {
+    out_data1[x] = 13;}
+  else if (climate[x] == 1 && landcover[x] ==1) {
+    out_data1[x] = 22;}
+  else if (climate[x] == 12 && landcover[x] ==4) {
+    out_data1[x] = 2.8;}
+  else if (climate[x] == 12 && landcover[x] ==1) {
+    out_data1[x] = 4.1;}
+  else if (climate[x] == 10 && landcover[x] ==4) {
+    out_data1[x] = 2.1;}
+  else if (climate[x] == 10 && landcover[x] ==1) {
+    out_data1[x] = 5.2;}
+  else {
+    out_data1[x] = 255;}
 
 //closes for x loop
 }
