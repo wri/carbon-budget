@@ -41,13 +41,22 @@ def calc_deadwood(tile_id):
     subprocess.check_call(resample)
 
     # grab precip tiles...not sure which format yet
-
+    print "clip precip"
+    precip_raster = 'add_30s_precip.tif'
+    clip_precip_tile = '{}_clip_precip.tif'.format(tile_id)
+    clip_srtm = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW', precip_raster, precip_tile]
+    subprocess.check_call(clip_precip_tile)
+    
+    print "resaple precip"
+    resample_precip_tile = '{}_res_precip.tif'.format(tile_id)
+    resample_precip = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', clip_precip_tile, resample_precip_tile]
+    subprocess.check_call(resample_precip)
     # send 1) biomass 2) rasterized climate zone 3) elevation 4) precip to "create_deadwood_tile.cpp"
     # output is a tile matching res/extent of biomass, each pixel is mg deadwood biomass /ha
 
     print 'writing deadwood tile'
     deadwood_tile = '{}_deadwood.tif'.format(tile_id)
-    deadwood_tiles_cmd = ['./dead_wood_c_stock.exe', biomass_tile, resampled_ecozone, tile_res_srtm, tile_res_srtm,
+    deadwood_tiles_cmd = ['./dead_wood_c_stock.exe', biomass_tile, resampled_ecozone, tile_res_srtm, resample_precip_tile,
                           deadwood_tile]
     subprocess.check_call(deadwood_tiles_cmd)
 
