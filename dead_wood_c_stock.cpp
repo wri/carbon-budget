@@ -89,16 +89,17 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_UInt16,
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0, 0); 
 
 for(x=0; x<xsize; x++) {
+    // biomass * .5 = carbon. so take carbon * the factor
   if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
-    out_data1[x] = agb_data[x] * .02;}
+    out_data1[x] = agb_data[x] * .025;}
   else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
-    out_data1[x] = agb_data[x] * .01;}
+    out_data1[x] = agb_data[x] * .005;}
   else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
-    out_data1[x] = agb_data[x] * .06;}
+    out_data1[x] = agb_data[x] * .03;}
   else if (biome_data[x] = 1 && elevation_data[x] > 2000) {
-    out_data1[x] = agb_data[x] * .07;}
+    out_data1[x] = agb_data[x] * .035;}
   else if (biome_data[x] = 2) {
-    out_data1[x] = agb_data[x] * .08;}
+    out_data1[x] = agb_data[x] * .04;}
   else {
     out_data1[x] = 255;}
 

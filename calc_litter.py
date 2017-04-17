@@ -28,8 +28,8 @@ import get_extent
 # cold temperate moist = 3
 # warm temp dry = 2
 # warm temp moist = 1
-# sub = tropical dry? 12
-# tropical = tropical wet? 10
+
+# tropical = 9, 10, 11, 12
 
 ####### landcover
 # needleleaf evergreen = 1
