@@ -87,8 +87,6 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, landcover, xsize, 1, GDT_Byte, 0, 0);
 
 
 for(x=0; x<xsize; x++) {
-	
-	for(x=0; x<xsize; x++) {
   if (climate[x] == 8 && landcover[x] ==4) {
     out_data1[x] = 25;}
   else if (climate[x] == 8 && landcover[x] ==1) {
