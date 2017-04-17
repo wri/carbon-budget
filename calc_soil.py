@@ -18,16 +18,16 @@ def calc_soil(tile_id):
 
     print "clip soil"
     soil_raster = 'hwsd_oc_final.tif'
-    clip_soil_tile = '{}_clip_soil.tif'.format(tile_id)
+    clip_soil_tile = '{}_soil.tif'.format(tile_id)
     clip_soil = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', soil_raster, clip_soil_tile]
     subprocess.check_call(clip_soil)
-    
-    print 'uploading deadwood tile to s3'
-    copy_deadwoodtile = ['aws', 's3', 'cp', clip_soil_tile, 's3://gfw-files/sam/carbon_budget/soil/']
-    subprocess.check_call(copy_deadwoodtile)
+
+    print 'uploading soil tile to s3'
+    copy_soil_tile = ['aws', 's3', 'cp', clip_soil_tile, 's3://gfw-files/sam/carbon_budget/soil/']
+    subprocess.check_call(copy_soil_tile)
 
     print "deleting intermediate data"
-    tiles_to_remove = [clip_soil_tile, biomass_tile]
+    tiles_to_remove = [clip_soil_tile,  biomass_tile]
 
     for tile in tiles_to_remove:
         try:
