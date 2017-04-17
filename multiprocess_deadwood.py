@@ -18,7 +18,7 @@ subprocess.check_call(unzip_zones)
 
 #print "copy down srtm files"
 copy_srtm = ['aws', 's3', 'sync', 's3://gfw2-data/analyses/srtm/', './srtm']
-subprocess.check_call(copy_srtm)
+#subprocess.check_call(copy_srtm)
 
 print "copy down precip file"
 download_precip = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/add_30s_precip.tif', '.']
@@ -26,11 +26,11 @@ subprocess.check_call(download_precip)
 
 
 #print "make srtm vrt"
-subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
+#subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()
-     pool = multiprocessing.Pool(processes=30)
+     pool = multiprocessing.Pool(processes=40)
      pool.map(calc_deadwood.calc_deadwood, biomass_tile_list)
 
 print "time elapsed: {}".format(datetime.datetime.now() - start_time)

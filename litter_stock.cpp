@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 using namespace std;
 
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
@@ -111,9 +111,9 @@ for(x=0; x<xsize; x++) {
     out_data1[x] = 13;}
   else if (climate[x] == 1 && landcover[x] ==1) {
     out_data1[x] = 22;}
-  else if (climate[x] > 8  && landcover[x] ==4) {
+  else if (climate[x] > 8 && climate[x] < 13 && landcover[x] ==4) {
     out_data1[x] = 2.1;}
-  else if (climate[x] > 8 && landcover[x] ==1) {
+  else if (climate[x] > 8 && climate[x] < 13 && landcover[x] ==1) {
     out_data1[x] = 5.2;}
   else {
     out_data1[x] = 255;}
