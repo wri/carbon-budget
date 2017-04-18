@@ -73,7 +73,7 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
-OUTBAND1->SetNoDataValue(255);
+OUTBAND1->SetNoDataValue(-9999);
 
 //read/write data
 uint16_t agb_data[xsize];
@@ -101,7 +101,7 @@ for(x=0; x<xsize; x++) {
   else if (biome_data[x] = 2) {
     out_data1[x] = agb_data[x] * .04;}
   else {
-    out_data1[x] = 255;}
+    out_data1[x] = -9999;}
 
 //closes for x loop
 }
