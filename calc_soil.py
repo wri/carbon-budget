@@ -19,7 +19,7 @@ def calc_soil(tile_id):
     print "clip soil"
     soil_raster = 'hwsd_oc_final.tif'
     clip_soil_tile = '{}_soil.tif'.format(tile_id)
-    clip_soil = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', soil_raster, clip_soil_tile]
+    clip_soil = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999', soil_raster, clip_soil_tile]
     subprocess.check_call(clip_soil)
 
     print 'uploading soil tile to s3'
