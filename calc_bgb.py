@@ -15,15 +15,13 @@ def calc_bgb(tile_id):
 
     # send biomass to "create_bgb_tile.cpp"
     print 'writing below ground biomass tile for {}'.format(tile_id)
-    if not os.path.exists('bgb'):
-        os.mkdir('bgb')
-    bgb_tile = 'bgb/{}_bgb.tif'.format(tile_id)
+    bgb_tile = '{}_bgc.tif'.format(tile_id)
     bgb_tiles_cmd = ['./bgb_stock.exe', biomass_tile, bgb_tile]
     subprocess.check_call(bgb_tiles_cmd)
 
-    # print 'uploading belowground biomass tile to s3'
-    # copy_bgbtile = ['aws', 's3', 'cp', bgb_tile, 's3://gfw-files/sam/carbon_budget/belowgroundbiomass/']
-    # subprocess.check_call(copy_bgbtile)
+    print 'uploading belowground biomass tile to s3'
+    copy_bgbtile = ['aws', 's3', 'cp', bgb_tile, 's3://gfw-files/sam/carbon_budget/bgc/']
+    subprocess.check_call(copy_bgbtile)
 
     print "deleting intermediate data"
     tiles_to_remove = [biomass_tile]

@@ -42,7 +42,7 @@ GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 
 //open file and get extent and projection
-INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
+INGDAL = (GDALDataset *) GDALOpen(carbon.c_str(), GA_ReadOnly ); 
 INBAND = INGDAL->GetRasterBand(1);
 xsize=INBAND->GetXSize(); 
 ysize=INBAND->GetYSize();
@@ -96,7 +96,7 @@ INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_UInt16, 0, 0
 
 for(x=0; x<xsize; x++) {
     // biomass * .5 = carbon. so take carbon * the factor
-	{out_data1[x] = agb_data[x] + bgb_data[x] + dead_data[x] + litter_data[x] + soil_data[x];}
+	{out_data1[x] = carbon_data[x] + bgc_data[x] + dead_data[x] + litter_data[x] + soil_data[x];}
 
 //closes for x loop
 }
