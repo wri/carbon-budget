@@ -80,19 +80,19 @@ OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
 //read/write data
-uint16_t carbon_data[xsize];
-uint16_t bgc_data[xsize];
-uint16_t dead_data[xsize];
-uint16_t litter_data[xsize];
-uint16_t soil_data[xsize];
+float carbon_data[xsize];
+float bgc_data[xsize];
+float dead_data[xsize];
+float litter_data[xsize];
+float soil_data[xsize];
 float out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, carbon_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, carbon_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0); 
 
 for(x=0; x<xsize; x++) {
     // biomass * .5 = carbon. so take carbon * the factor
