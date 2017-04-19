@@ -95,10 +95,20 @@ INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-	if (carbon_data[x] != -9999 || bgc_data[x] != -9999 || dead_data[x] != -9999 || litter_data[x] != -9999 || soil_data[x] != -9999) {
-    out_data1[x] = carbon_data[x] + bgc_data[x] + dead_data[x] + litter_data[x] + soil_data[x];}
-	else {
+	if (carbon_data[x] == -9999 && bgc_data[x] == -9999 && dead_data[x] == -9999 && litter_data[x] == -9999 && soil_data[x] == -9999) {
     out_data1[x] = -9999;}
+	else if (carbon_data[x] == -9999){
+    carbon_data[x] = 0;}
+	else if (bgc_data[x] == -9999){
+    bgc_data[x] = 0;}
+	else if (dead_data[x] == -9999){
+    dead_data[x] = 0;}
+	else if (litter_data[x] == -9999){
+    litter_data[x] = 0;}
+	else if (soil_data[x] == -9999){
+    soil_data[x] = 0;}
+	out_data1[x] = carbon_data[x] +bgc_data[x] + dead_data[x] + litter_data[x] + soil_data[x]
+	
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
