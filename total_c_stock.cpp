@@ -95,9 +95,10 @@ INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-    // biomass * .5 = carbon. so take carbon * the factor
-	{out_data1[x] = carbon_data[x] + bgc_data[x] + dead_data[x] + litter_data[x] + soil_data[x];}
-
+	if (carbon_data[x] != -9999 || bgc_data[x] != -9999) {
+    out_data1[x] = carbon_data[x] + bgc_data[x];}
+	else {
+    out_data1[x] = -9999;}
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
