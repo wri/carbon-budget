@@ -11,13 +11,13 @@ def calc_deadwood(tile_id):
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
     copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
-    subprocess.check_call(copy_bio)
+    #subprocess.check_call(copy_bio)
 
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
     print "rasterizing eco zone"
-    fao_eco_zones = 'fao_ecozones_recode.shp'
+    fao_eco_zones = 'fao_ecozones.shp'
     rasterized_eco_zone_tile = "{}_ecozone.tif".format(tile_id)
     rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
     '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
@@ -69,7 +69,8 @@ def calc_deadwood(tile_id):
 
     for tile in tiles_to_remove:
         try:
-            os.remove(tile)
+            print "test"
+            #os.remove(tile)
         except:
             pass
 
