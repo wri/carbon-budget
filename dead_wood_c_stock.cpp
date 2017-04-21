@@ -90,16 +90,17 @@ INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0,
 
 for(x=0; x<xsize; x++) {
     // biomass * .5 = carbon. so take carbon * the factor
+	// biome =1 are all tropics (subtropical, tropical), biome = 2 are temperate and boreal
   if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
-    out_data1[x] = agb_data[x] * .01;}
+    out_data1[x] = agb_data[x] * .02 * .5;}
   else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
-    out_data1[x] = agb_data[x] * .005;}
+    out_data1[x] = agb_data[x] * .01 * .5;}
   else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
-    out_data1[x] = agb_data[x] * .03;}
+    out_data1[x] = agb_data[x] * .06 * .5;}
   else if (biome_data[x] = 1 && elevation_data[x] > 2000) {
-    out_data1[x] = agb_data[x] * .035;}
+    out_data1[x] = agb_data[x] * .07 * .5;}
   else if (biome_data[x] = 2) {
-    out_data1[x] = agb_data[x] * .04;}
+    out_data1[x] = agb_data[x] * .08 * .5;}
   else {
     out_data1[x] = -9999;}
 
