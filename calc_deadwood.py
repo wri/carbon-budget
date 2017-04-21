@@ -11,7 +11,7 @@ def calc_deadwood(tile_id):
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
     copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
-    #subprocess.check_call(copy_bio)
+    subprocess.check_call(copy_bio)
 
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
