@@ -9,5 +9,5 @@ biomass_tile_list = ["00N_000E", "00N_010E", "00N_020E", "00N_020W", "00N_030E",
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()
      pool = multiprocessing.Pool(processes=30)
-     pool.map(calc_total_stock.calc_total, tile_list)
+     pool.map(calc_total_stock.calc_total, biomass_tile_list)
 

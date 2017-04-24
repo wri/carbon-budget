@@ -42,23 +42,23 @@ GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 
 //open file and get extent and projection
-INGDAL = (GDALDataset *) GDALOpen(carbon.c_str(), GA_ReadOnly ); 
+INGDAL = (GDALDataset *) GDALOpen(carbon.c_str(), GA_ReadOnly );
 INBAND = INGDAL->GetRasterBand(1);
-xsize=INBAND->GetXSize(); 
+xsize=INBAND->GetXSize();
 ysize=INBAND->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
-ulx=GeoTransform[0]; 
-uly=GeoTransform[3]; 
+ulx=GeoTransform[0];
+uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
-INGDAL2 = (GDALDataset *) GDALOpen(bgb.c_str(), GA_ReadOnly ); 
+INGDAL2 = (GDALDataset *) GDALOpen(bgb.c_str(), GA_ReadOnly );
 INBAND2 = INGDAL2->GetRasterBand(1);
-INGDAL3 = (GDALDataset *) GDALOpen(dead.c_str(), GA_ReadOnly ); 
+INGDAL3 = (GDALDataset *) GDALOpen(dead.c_str(), GA_ReadOnly );
 INBAND3 = INGDAL3->GetRasterBand(1);
-INGDAL4 = (GDALDataset *) GDALOpen(litter.c_str(), GA_ReadOnly ); 
+INGDAL4 = (GDALDataset *) GDALOpen(litter.c_str(), GA_ReadOnly );
 INBAND4 = INGDAL4->GetRasterBand(1);
-INGDAL5 = (GDALDataset *) GDALOpen(soil.c_str(), GA_ReadOnly ); 
+INGDAL5 = (GDALDataset *) GDALOpen(soil.c_str(), GA_ReadOnly );
 INBAND5 = INGDAL5->GetRasterBand(1);
 
 //initialize GDAL for writing
@@ -69,13 +69,13 @@ OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
 char **papszOptions = NULL;
 papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "LZW" );
-OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF"); 
+OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF");
 if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
+OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ);
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
@@ -88,11 +88,11 @@ float soil_data[xsize];
 float out_data1[xsize];
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, carbon_data, xsize, 1, GDT_Float32, 0, 0); 
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0); 
-INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0); 
-INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0); 
-INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, carbon_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
 
 for(x=0; x<xsize; x++) {
 	if (carbon_data[x] == -9999 && bgc_data[x] == -9999 && dead_data[x] == -9999 && litter_data[x] == -9999 && soil_data[x] == -9999) {
@@ -110,12 +110,14 @@ for(x=0; x<xsize; x++) {
     soil_data[x] = 0;}
 	}
 	out_data1[x] = carbon_data[x] + bgc_data[x] + dead_data[x] + litter_data[x] + soil_data[x];
-	
+   //cout << carbon_data[x] <<","<<bgc_data[x]<<","<<dead_data[x]<<","<<litter_data[x]<<","<<soil_data[x]<<": "<<out_data1[x] << endl;
+
 //closes for x loop
 }
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 );
 //closes for y loop
 }
+
 
 //close GDAL
 GDALClose(INGDAL);
