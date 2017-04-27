@@ -3,7 +3,7 @@ import datetime
 import os
 
 import get_extent
-
+import utilities
 
 def calc_emissions(tile_id):
     start = datetime.datetime.now()
@@ -12,48 +12,19 @@ def calc_emissions(tile_id):
     
     carbon_pool_files = ['bgc', 'carbon', 'deadwood', 'soil', 'litter']
     
-    for carbon_file in carbon_pool_files:
-    
-        print "downloading {}".format(carbon_file)
-        tile = '{0}_{1}.tif'.format(tile_id, carbon_file)
-        download_tile = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/{0}/{1}_{0}.tif'.format(carbon_file, tile_id), biomass_tile]
-        subprocess.check_call(download_tile)
+    # download 5 carbon pool files
+    utilities.download(carbon_pool_files)
 
-    print "get extent of biomass tile"
-    xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
+    # get extent of a tile
+    xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id)
 
-    print "rasterize eco zone and ifl"
+    # rasterize shapefiles from one time download
     shapefiles_to_raterize = ['fao_ecozones_bor_temp_tro', 'ifl_2000']
-    for shapefile in shapefiles_to_raterize:
-        rasterized_tile = "{0}_{1}.tif".format(tile_id, shapefile)
-        rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-        '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
-        '0', shapefile + ".shp", rasterized_tile]
-        subprocess.check_call(rasterize)
+    utilities.rasterize_shapefile(shapefiles_to_raterize)
 
-        print "resampling eco zone and ifl"
-        resampled_tile =  "{0}_res_{1}.tif".format(tile_id, shapefile)
-        resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', rasterized_tile, resampled_tile]
-        subprocess.check_call(resample)
-
+    # resample rasters from one time download
     rasters_to_resample = ['peatdrainage', 'hwsd_histosoles', 'forest_model', 'climate_zone']
-    
-    for raster in rasters_to_resample:
-    
-        print "clipping {}".format(raster)
-        
-        clipped_raster = '{0}_{1}.tif'.format(tile_id, raster)
-
-        clip = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW', raster, clipped_raster]
-        subprocess.check_call(clip)
-
-        print "resampling {}".format(raster)
-        
-        resampled_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
-        
-        resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', clipped_raster, resampled_raster]
-        
-        subprocess.check_call(resample)
+    utilities.resample_raster(rasters_to_resample)
 
     print 'writing deadwood tile'
     deadwood_tile = '{}_deadwood.tif'.format(tile_id)
