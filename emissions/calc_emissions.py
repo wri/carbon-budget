@@ -1,9 +1,15 @@
 import subprocess
 import datetime
 import os
+import sys
+
+import utilities
+
+currentdir = os.path.dirname(os.path.abspath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 
 import get_extent
-import utilities
 
 def calc_emissions(tile_id):
     start = datetime.datetime.now()
@@ -16,7 +22,7 @@ def calc_emissions(tile_id):
     utilities.download(carbon_pool_files)
 
     # get extent of a tile
-    xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id)
+    xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id))
 
     # rasterize shapefiles from one time download
     shapefiles_to_raterize = ['fao_ecozones_bor_temp_tro', 'ifl_2000']

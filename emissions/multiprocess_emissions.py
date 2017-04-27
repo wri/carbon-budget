@@ -1,6 +1,6 @@
 import multiprocessing
 import subprocess
-import calc_litter
+import calc_emissions
 
 tile_list = ['00N_010E', '00N_020E', '00N_030E', '00N_040E']
 
