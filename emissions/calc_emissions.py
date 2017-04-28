@@ -27,10 +27,11 @@ def calc_emissions(tile_id):
     # get extent of a tile
     xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id))
     coord_list = [str(xmin), str(ymin), str(xmax), str(ymax)]
+
     # rasterize shapefiles from one time download
     shapefiles_to_raterize = [{'fao_ecozones_bor_tem_tro': 'recode'}, {'ifl_2000': 'temp_id'}]
     coords = ['-te'] + coord_list
-    rasterized_file = utilities.rasterize_shapefile(shapefiles_to_raterize, tile_id, coords)
+    #rasterized_file = utilities.rasterize_shapefile(shapefiles_to_raterize, tile_id, coords)
 
     # resample rasters from one time download
     coords = ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)] 
@@ -48,8 +49,8 @@ def calc_emissions(tile_id):
     #subprocess.check_call(copy_deadwoodtile)
 
     print "deleting intermediate data"
-    print rasterized_file
-    print resampled_tiles
+    #print rasterized_file
+    #print resampled_tiles
     tiles_to_remove = ['']
 
     for tile in tiles_to_remove:

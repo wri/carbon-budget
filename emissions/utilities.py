@@ -1,6 +1,5 @@
 import subprocess
 import gdal
-gdal.UseExceptions() 
 
 def download(carbon_pool_files, tile_id):
     for carbon_file in carbon_pool_files:
@@ -12,6 +11,7 @@ def download(carbon_pool_files, tile_id):
 
         
 def wgetloss(tile_id):
+    print "download hansen loss tile"
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id), '-O' '{}_loss.tif'.format(tile_id)]
     subprocess.check_call(cmd)
 
@@ -21,7 +21,7 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
     for shapefile_dict in shapefiles_to_raterize:
         
         for shapefile in shapefile_dict:
-     
+            print "rasterizing {}".format(shapefile)
             rvalue = shapefile_dict[shapefile]
             rasterized_tile = "{0}_{1}.tif".format(tile_id, shapefile)
             rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', rvalue, '-a_nodata',
@@ -30,9 +30,10 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
             
             subprocess.check_call(rasterize)
 
-            print "resampling eco zone and ifl"
+            print "resampling {}".format(rasterized_tile)
+
             resampled_tile =  "{0}_res_{1}.tif".format(tile_id, shapefile)
-            resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', rasterized_tile, resampled_tile]
+            resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-tr', '.00025', '.00025', rasterized_tile, resampled_tile]
             subprocess.check_call(resample)
             rasterized_files.append(resampled_tile)
 
@@ -43,21 +44,24 @@ def resample_raster(rasters_to_resample, tile_id, coords):
     resampled_tiles = []
 
     for raster in rasters_to_resample:
-        
         try:
         
+            print "clipping {}".format(raster)
             clipped_raster = '{0}_{1}.tif'.format(tile_id, raster)
-            clip = ['gdal_translate', '-co', 'COMPRESS=LZW', '-epo', raster + ".tif", clipped_raster]
-            subprocess.check_call(clip)
+            base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0', raster + ".tif", clipped_raster]
+            clip_cmd = base_cmd + coords
+            print clip_cmd
+            subprocess.check_call(clip_cmd)
 
+            print "resampling {}".format(raster)  
             resampled_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
-            resample = clip + ['-tr', '.00025', '.00025']
-            subprocess.check_call(resample)
+            resample_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-a_nodata', '0', clipped_raster, resampled_raster]
+            print resample_cmd
+            subprocess.check_call(resample_cmd)
 
             resampled_tiles.append(resampled_raster)
-            
-        except:
         
-            print "{} doesn't cover this extent".format(raster)
+        except:
+            print "failed"
 
     return resampled_tiles
