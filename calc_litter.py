@@ -1,44 +1,13 @@
-
 import subprocess
 import datetime
 import os
 
 import get_extent
 
-# 1 time, download all landcover tiles
-# 1 time, download climate zone, 1 file.
-# make vrt
-
-# copy biomass tile
-
-# get extent
-
-# clip climate zone
-
-# resample climate zone to .00025
-
-# clip landcover
-
-# resample landcover
-
-####### climate zones
-# boreal dry = 8
-# boreal moist = 7
-# cold temperate, dry = 4
-# cold temperate moist = 3
-# warm temp dry = 2
-# warm temp moist = 1
-
-# tropical = 9, 10, 11, 12
-
-####### landcover
-# needleleaf evergreen = 1
-# broadleaf diciduous = 4
-
 
 def calc_litter(tile_id):
     start = datetime.datetime.now()
-    print "-------TILE ID: {}".format(tile_id)
+    print "/n-------TILE ID: {}".format(tile_id)
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
     copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
@@ -47,35 +16,48 @@ def calc_litter(tile_id):
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
-    print "clip climate zone"
-    climate_zone = 'climate_zone.tif'
-    climate_zone_tile = "{}_climatezone.tif".format(tile_id)
-    print climate_zone_tile
-    
-    clip_climatezone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), climate_zone, climate_zone_tile]
-    subprocess.check_call(clip_climatezone)
+    print "rasterizing eco zone"
+    fao_eco_zones = 'fao_ecozones.shp'
+    rasterized_eco_zone_tile = "{}_ecozone.tif".format(tile_id)
+    rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+    '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
+    '0', fao_eco_zones, rasterized_eco_zone_tile]
+    subprocess.check_call(rasterize)
 
-    print "resampling climate zone"
-    resampled_climatezone = "{}_res_climatezone.tif".format(tile_id)
-    resample_climatezone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', climate_zone_tile, resampled_climatezone]
-    subprocess.check_call(resample_climatezone)
+    print "resampling eco zone"
+    resampled_ecozone =  "{}_res_ecozone.tif".format(tile_id)
+    resample_ecozone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', rasterized_eco_zone_tile, resampled_ecozone]
+    subprocess.check_call(resample_ecozone)
 
-    print "clip landcover"
-    landcover_vrt = 'landcover.vrt'
-    landcover_tile = "{}_landcover.tif".format(tile_id)
-    clip_landcover = ['gdal_translate', '-co', 'COMPRESS=LZW', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), landcover_vrt, landcover_tile]
-    subprocess.check_call(clip_landcover)
+    print "clipping srtm"
+    tile_srtm = '{}_srtm.tif'.format(tile_id)
+    srtm = 'srtm.vrt'
+    clip_srtm = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW', srtm, tile_srtm]
+    subprocess.check_call(clip_srtm)
 
-    print "resampling landcover"
-    resampled_landcover = "{}_res_landcover.tif".format(tile_id)
-    resample_landcover = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', landcover_tile, resampled_landcover]
-    subprocess.check_call(resample_landcover)
+    print "resampling srtm"
+    tile_res_srtm = '{}_res_srtm.tif'.format(tile_id)
+    resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', tile_srtm, tile_res_srtm]
+    subprocess.check_call(resample)
 
-    # send 1) resampled climate zone 2) resampled landcover to "create_litter_tile.cpp"
+    # grab precip tiles
+    print "clip precip"
+    precip_raster = 'add_30s_precip.tif'
+    clipped_precip_tile = '{}_clip_precip.tif'.format(tile_id)
+    clip_precip_tile = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW', precip_raster, clipped_precip_tile]
+    subprocess.check_call(clip_precip_tile)
+
+    print "resample precip"
+    resample_precip_tile = '{}_res_precip.tif'.format(tile_id)
+    resample_precip = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', clipped_precip_tile, resample_precip_tile]
+    subprocess.check_call(resample_precip)
+    # send 1) biomass 2) rasterized climate zone 3) elevation 4) precip to "create_deadwood_tile.cpp"
+    # output is a tile matching res/extent of biomass, each pixel is mg deadwood biomass /ha
 
     print 'writing litter tile'
     litter_tile = '{}_litter.tif'.format(tile_id)
-    litter_tiles_cmd = ['./litter_stock.exe', biomass_tile, resampled_climatezone, resampled_landcover, litter_tile]
+    litter_tiles_cmd = ['./litter_stock.exe', biomass_tile, resampled_ecozone, tile_res_srtm, resample_precip_tile,
+                          litter_tile]
     subprocess.check_call(litter_tiles_cmd)
 
     print 'uploading litter tile to s3'
@@ -83,11 +65,12 @@ def calc_litter(tile_id):
     subprocess.check_call(copy_littertile)
 
     print "deleting intermediate data"
-    tiles_to_remove = [biomass_tile, landcover_tile, resampled_landcover, climate_zone_tile, resampled_climatezone, litter_tile]
+    tiles_to_remove = [litter_tile, resample_precip_tile, clipped_precip_tile, biomass_tile, resampled_ecozone, tile_res_srtm, tile_srtm, rasterized_eco_zone_tile]
 
     for tile in tiles_to_remove:
         try:
-            os.remove(tile)
+            print "test"
+            #os.remove(tile)
         except:
             pass
 

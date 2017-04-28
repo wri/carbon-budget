@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal/gdal_priv.h>
-#include <gdal/cpl_conv.h>
-#include <gdal/ogr_spatialref.h>
+#include <gdal_priv.h>
+#include <cpl_conv.h>
+#include <ogr_spatialref.h>
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
@@ -90,16 +90,17 @@ INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0,
 
 for(x=0; x<xsize; x++) {
     // biomass * .5 = carbon. so take carbon * the factor
+	// biome =1 are all tropics (subtropical, tropical), biome = 2 are temperate and boreal
   if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
-    out_data1[x] = agb_data[x] * .01;}
+    out_data1[x] = agb_data[x] * .02 * .5;}
   else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
-    out_data1[x] = agb_data[x] * .005;}
+    out_data1[x] = agb_data[x] * .01 * .5;}
   else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
-    out_data1[x] = agb_data[x] * .03;}
+    out_data1[x] = agb_data[x] * .06 * .5;}
   else if (biome_data[x] = 1 && elevation_data[x] > 2000) {
-    out_data1[x] = agb_data[x] * .035;}
+    out_data1[x] = agb_data[x] * .07 * .5;}
   else if (biome_data[x] = 2) {
-    out_data1[x] = agb_data[x] * .04;}
+    out_data1[x] = agb_data[x] * .08 * .5;}
   else {
     out_data1[x] = -9999;}
 

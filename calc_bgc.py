@@ -14,13 +14,13 @@ def calc_bgb(tile_id):
     subprocess.check_call(copy_bio)
 
     # send biomass to "create_bgb_tile.cpp"
-    print 'writing below ground biomass tile for {}'.format(tile_id)
-    bgb_tile = '{}_bgc.tif'.format(tile_id)
-    bgb_tiles_cmd = ['./bgb_stock.exe', biomass_tile, bgb_tile]
+    print 'writing below ground carbon tile for {}'.format(tile_id)
+    bgc_tile = '{}_bgc.tif'.format(tile_id)
+    bgb_tiles_cmd = ['./bgc_stock.exe', biomass_tile, bgc_tile]
     subprocess.check_call(bgb_tiles_cmd)
 
     print 'uploading belowground biomass tile to s3'
-    copy_bgbtile = ['aws', 's3', 'cp', bgb_tile, 's3://gfw-files/sam/carbon_budget/bgc/']
+    copy_bgbtile = ['aws', 's3', 'cp', bgc_tile, 's3://gfw-files/sam/carbon_budget/bgc/']
     subprocess.check_call(copy_bgbtile)
 
     print "deleting intermediate data"
@@ -28,7 +28,8 @@ def calc_bgb(tile_id):
 
     for tile in tiles_to_remove:
         try:
-            os.remove(tile)
+            print "test"
+            #os.remove(tile)
         except:
             pass
 

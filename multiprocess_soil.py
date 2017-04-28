@@ -8,12 +8,11 @@ biomass_tile_list = biomass_tile_list = ["00N_000E", "00N_010E", "00N_020E", "00
 
 start_time = datetime.datetime.now()
 print "copy down soil file"
-copy_soil = ['aws', 's3', 'cp', 's3://gfw2-data/climate/hwsd_carbon/hwsd_oc_final.tif', '.']
+copy_soil = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/hwsd_oc_final.tif', '.']
 subprocess.check_call(copy_soil)
  
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()
-     pool = multiprocessing.Pool(processes=40)
+     pool = multiprocessing.Pool(processes=30)
      pool.map(calc_soil.calc_soil, biomass_tile_list)
 
-print "time elapsed: {}".format(datetime.datetime.now())

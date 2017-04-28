@@ -19,6 +19,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 //passing arguments
+<<<<<<< HEAD
 if (argc != 6){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
 string agb_name=argv[1];
 string biome_name=argv[2];
@@ -26,6 +27,16 @@ string elevation_name=argv[3];
 string precip_name=argv[4];
 //either parse this var from inputs or send it in
 string out_name=argv[5];
+=======
+if (argc != 7){cout << "Use <program name> <carbon> <below ground carbon> <deadwood> <litter> <soil> <output name>" << endl; return 1;}
+string carbon=argv[1];
+string bgb=argv[2];
+string dead=argv[3];
+string litter=argv[4];
+string soil=argv[5];
+//either parse this var from inputs or send it in
+string out_name=argv[6];
+>>>>>>> be7ed183de2ef7c516825403fd8607de223cc8ec
 
 //setting variables
 int x, y;
@@ -38,6 +49,7 @@ GDALDataset  *INGDAL; GDALRasterBand  *INBAND;
 GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
 GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
+<<<<<<< HEAD
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
@@ -56,6 +68,29 @@ INGDAL3 = (GDALDataset *) GDALOpen(elevation_name.c_str(), GA_ReadOnly );
 INBAND3 = INGDAL3->GetRasterBand(1);
 INGDAL4 = (GDALDataset *) GDALOpen(precip_name.c_str(), GA_ReadOnly ); 
 INBAND4 = INGDAL4->GetRasterBand(1);
+=======
+GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
+
+//open file and get extent and projection
+INGDAL = (GDALDataset *) GDALOpen(carbon.c_str(), GA_ReadOnly );
+INBAND = INGDAL->GetRasterBand(1);
+xsize=INBAND->GetXSize();
+ysize=INBAND->GetYSize();
+INGDAL->GetGeoTransform(GeoTransform);
+ulx=GeoTransform[0];
+uly=GeoTransform[3];
+pixelsize=GeoTransform[1];
+cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
+
+INGDAL2 = (GDALDataset *) GDALOpen(bgb.c_str(), GA_ReadOnly );
+INBAND2 = INGDAL2->GetRasterBand(1);
+INGDAL3 = (GDALDataset *) GDALOpen(dead.c_str(), GA_ReadOnly );
+INBAND3 = INGDAL3->GetRasterBand(1);
+INGDAL4 = (GDALDataset *) GDALOpen(litter.c_str(), GA_ReadOnly );
+INBAND4 = INGDAL4->GetRasterBand(1);
+INGDAL5 = (GDALDataset *) GDALOpen(soil.c_str(), GA_ReadOnly );
+INBAND5 = INGDAL5->GetRasterBand(1);
+>>>>>>> be7ed183de2ef7c516825403fd8607de223cc8ec
 
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -65,17 +100,26 @@ OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
 char **papszOptions = NULL;
 papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "LZW" );
+<<<<<<< HEAD
 OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF"); 
+=======
+OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF");
+>>>>>>> be7ed183de2ef7c516825403fd8607de223cc8ec
 if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL = OUTDRIVER->Create( out_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+<<<<<<< HEAD
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
+=======
+OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ);
+>>>>>>> be7ed183de2ef7c516825403fd8607de223cc8ec
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
 //read/write data
+<<<<<<< HEAD
 uint16_t agb_data[xsize];
 uint16_t biome_data[xsize];
 uint16_t elevation_data[xsize];
@@ -109,6 +153,47 @@ OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 
 //closes for y loop
 }
 
+=======
+float carbon_data[xsize];
+float bgc_data[xsize];
+float dead_data[xsize];
+float litter_data[xsize];
+float soil_data[xsize];
+float out_data1[xsize];
+
+for(y=0; y<ysize; y++) {
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, carbon_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
+
+for(x=0; x<xsize; x++) {
+	if (carbon_data[x] == -9999 && bgc_data[x] == -9999 && dead_data[x] == -9999 && litter_data[x] == -9999 && soil_data[x] == -9999) {
+    out_data1[x] = -9999;}
+	else {
+        if (carbon_data[x] == -9999){
+    carbon_data[x] = 0;}
+	if (bgc_data[x] == -9999){
+    bgc_data[x] = 0;}
+	if (dead_data[x] == -9999){
+    dead_data[x] = 0;}
+	if (litter_data[x] == -9999){
+    litter_data[x] = 0;}
+	if (soil_data[x] == -9999){
+    soil_data[x] = 0;}
+	}
+	out_data1[x] = carbon_data[x] + bgc_data[x] + dead_data[x] + litter_data[x] + soil_data[x];
+   //cout << carbon_data[x] <<","<<bgc_data[x]<<","<<dead_data[x]<<","<<litter_data[x]<<","<<soil_data[x]<<": "<<out_data1[x] << endl;
+
+//closes for x loop
+}
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 );
+//closes for y loop
+}
+
+
+>>>>>>> be7ed183de2ef7c516825403fd8607de223cc8ec
 //close GDAL
 GDALClose(INGDAL);
 GDALClose((GDALDatasetH)OUTGDAL);

@@ -17,10 +17,10 @@ def calc_deadwood(tile_id):
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
     print "rasterizing eco zone"
-    fao_eco_zones = 'fao_ecozones_reclass.shp'
+    fao_eco_zones = 'fao_ecozones.shp'
     rasterized_eco_zone_tile = "{}_ecozone.tif".format(tile_id)
     rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-    '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'ATTRIBUTE', '-a_nodata',
+    '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
     '0', fao_eco_zones, rasterized_eco_zone_tile]
     subprocess.check_call(rasterize)
 
@@ -40,7 +40,7 @@ def calc_deadwood(tile_id):
     resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', tile_srtm, tile_res_srtm]
     subprocess.check_call(resample)
 
-    # grab precip tiles...not sure which format yet
+    # grab precip tiles
     print "clip precip"
     precip_raster = 'add_30s_precip.tif'
     clipped_precip_tile = '{}_clip_precip.tif'.format(tile_id)
@@ -69,7 +69,8 @@ def calc_deadwood(tile_id):
 
     for tile in tiles_to_remove:
         try:
-            os.remove(tile)
+            print "test"
+            #os.remove(tile)
         except:
             pass
 
