@@ -32,7 +32,7 @@ string litterc_name = tile_id + "_litter.tif";
 
 // aux data
 string lossyear_name = tile_id + "_loss.tif";
-string lossclass_name = tile_id + "_lossclass.tif"
+string lossclass_name = tile_id + "_forestmodel.tif"
 string peatdran_name = tile_id + "_peatdrain.tif"
 
 
