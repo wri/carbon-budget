@@ -34,10 +34,12 @@ string litterc_name = tile_id + "_litter.tif";
 string lossyear_name = tile_id + "_loss.tif";
 string lossclass_name = tile_id + "_res_forest_model.tif";
 string peatdran_name = tile_id + "_res_peatdrainage.tif";
+string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 
 
 // set output file name
 string out_wildfire_name = tile_id + "_wildfire.tif";
+string out_forestry_name = tile_id + "_forestry.tif";
 
 
 // check which files were created. Some wont be there
@@ -62,6 +64,7 @@ GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6; //loss
 GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7; //  lossclass
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8; // peatdran
+GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9; // histosoles
 
 
 
@@ -97,7 +100,8 @@ INBAND7 = INGDAL7->GetRasterBand(1);
 INGDAL8 = (GDALDataset *) GDALOpen(peatdran_name.c_str(), GA_ReadOnly );
 INBAND8 = INGDAL8->GetRasterBand(1);
 
-
+INGDAL9 = (GDALDataset *) GDALOpen(hist_name.c_str(), GA_ReadOnly );
+INBAND9 = INGDAL8->GetRasterBand(1);
 
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -119,6 +123,11 @@ OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ);
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
+OUTGDAL2 = OUTDRIVER->Create( out_forestry_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
+OUTBAND2 = OUTGDAL->GetRasterBand(1);
+OUTBAND2->SetNoDataValue(-9999);
+
 //read/write data
 float bgc_data[xsize];
 float agc_data[xsize];
@@ -128,6 +137,7 @@ float soilc_data[xsize];
 float loss_data[xsize];
 float lossclass_data[xsize];
 float peatdran_data[xsize];
+float hist_data[xsize];
 
 float out_wildfire_data[xsize];
 
@@ -140,19 +150,58 @@ INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soilc_data, xsize, 1, GDT_Float32, 0,
 INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, lossclass_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, peatdran_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++) {
-   if (lossclass_data[x] == 1) {
-    //cout << "loss class data is 1: " << lossclass_data[x] <<"\n"; 
-    out_wildfire_data[x] = loss_data[x];}
-   else {
-    //cout << "loss class data is not 1: " << lossclass_data[x] << " \n";
-    out_wildfire_data[x] = -9999;} 
-
+	if (loss_data[x] > 0) 
+	{ 
+		if (peatdran_data[x] != -9999) 
+		{
+			if (burned_data[x] != -9999) 
+			{
+				out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917
+			}
+			else 
+			{
+				out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x])
+			}
+			
+		}
+		else 
+		{
+			if (hist_data[x] != -9999) 
+			{
+				if (climate_data[x] = 1) // tropics
+				{
+					((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55)
+				}
+				if (climate_data[x] = 2) // boreal
+				{
+					((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16)
+				}				
+				if (climate_data[x] = 3) // temperate
+				{
+					((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27)
+				}				
+				
+			}
+			
+			else 
+			{
+				out_wildfire_data[x] = -9999
+			}
+		}
+				
+	}
+	
+	else {
+		out_wildfire_data[x] = -9999
+	}
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_wildfire_data, xsize, 1, GDT_Float32, 0, 0 ); 
+OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_forestry_data, xsize, 1, GDT_Float32, 0, 0 ); 
 //closes for y loop
 }
 
