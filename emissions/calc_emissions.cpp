@@ -36,6 +36,7 @@ string lossclass_name = tile_id + "_res_forest_model.tif";
 string peatdran_name = tile_id + "_res_peatdrainage.tif";
 string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 string climate_name = tile_id + "_res_climate_zone.tif";
+string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 
 // set output file name
 string out_wildfire_name = tile_id + "_wildfire.tif";
@@ -58,6 +59,7 @@ GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7; //  lossclass
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8; // peatdran
 GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9; // histosoles
 GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10; // climate
+GDALDataset  *INGDAL11; GDALRasterBand  *INBAND11; // eco zone
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(bgc_name.c_str(), GA_ReadOnly );
@@ -97,6 +99,9 @@ INBAND9 = INGDAL9->GetRasterBand(1);
 INGDAL10 = (GDALDataset *) GDALOpen(climate_name.c_str(), GA_ReadOnly );
 INBAND10 = INGDAL10->GetRasterBand(1);
 
+INGDAL11 = (GDALDataset *) GDALOpen(ecozone_name.c_str(), GA_ReadOnly );
+INBAND11 = INGDAL11->GetRasterBand(1);
+
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
@@ -135,6 +140,7 @@ float lossclass_data[xsize];
 float peatdran_data[xsize];
 float hist_data[xsize];
 float climate_data[xsize];
+float ecozone_data[xsize];
 
 float out_wildfire_data[xsize];
 float out_forestry_data[xsize];
@@ -151,6 +157,7 @@ INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, lossclass_data, xsize, 1, GDT_Float32
 INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, peatdran_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++) 
@@ -159,9 +166,9 @@ for(x=0; x<xsize; x++)
 	{
 		if (lossclass_data[x] = 1) // forestry
 		{
-			if (peatdran_data[x] != 0)
+			if (peatdran_data[x] != 0) // on peat
 			{
-				if (peatdran_data[x] != 0)// change to burned areas once I get the data
+				if (peatdran_data[x] != 0) // change to burned areas once I get the data
 				{
 						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917; // qc'd this with 10N_100E - passed
 				}
@@ -173,34 +180,81 @@ for(x=0; x<xsize; x++)
 			}
 			else
 			{
-				if (hist_data[x] != 0)
+				if (hist_data[x] != 0) // on histosoles
 				{
-					if (climate_data[x] = 1) // tropics
+					if (ecozone_data[x] = 1) // tropics
 					{
 						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55);
 					}
-					if (climate_data[x] = 2) // boreal
+					if (ecozone_data[x] = 2) // boreal
 					{
 						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16);
 					}
-					if (climate_data[x] = 3) // temperate
+					if (ecozone_data[x] = 3) // temperate
 					{
 						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27);
 					}
 
 				}
 
-				else
+				else // not on peat, not on histosoles
 				{
 					out_forestry_data[x] = -9999;
 
 				}
 			}
 		}
-		else
-	    {	
-		out_forestry_data[x] = -9999;
-	    }
+		if (lossclass_data[x] = 2) // conversion
+		{
+			if (peatdran_data[x] != 0) // on peat
+			{
+				if (peatdran_data[x] != 0) // change to burned areas once I get the data 
+				{
+					out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (15 - loss_data[x] * peatdran_data[x]) + 917;
+				}
+				else // not on burned areas
+				{
+					out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (15 - loss_data[x] * peatdran_data[x]);
+				}
+			}
+			else // not on peat
+			{
+				if (hist_data[x] != 0) // on histosoles
+				{
+					if (ecozone_data[x] = 2 || ecozone_data = 3) // boreal or temperate
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + 29;
+					}
+					if (ecozone_data[x] = 1) // tropics
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + 55;
+					}					
+				}
+				else // not on histosoles
+				{
+					if (climate_data[x] = 2 || climate_data[x] = 4 || climate_data[x] = 8) // warm/cool temperate/boreal dry
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.8)) * 3.67;
+					}
+					if (climate_data[x] = 1 || climate_data[x] = 3 || climate_data[x] = 7) // warm/cool temperate/boreal moist
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.69)) * 3.67;
+					}
+					if (climate_data[x] = 12) // tropical dry
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.58)) * 3.67;
+					}
+					if (climate_data[x] = 10 || climate_data[x] = 11) // tropical moist/wet
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.48)) * 3.67;
+					}
+					if (climate_data[x] = 9) // tropical montane
+					{
+						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.64)) * 3.67;
+					}
+				}
+			}
+		}
 	}
 	else
 	{	
