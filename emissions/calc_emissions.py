@@ -19,10 +19,10 @@ def calc_emissions(tile_id):
     carbon_pool_files = ['bgc', 'carbon', 'deadwood', 'soil', 'litter']
     
     # download 5 carbon pool files
-    utilities.download(carbon_pool_files, tile_id)
+    #utilities.download(carbon_pool_files, tile_id)
 
     # download hansen tile
-    utilities.wgetloss(tile_id)
+    #utilities.wgetloss(tile_id)
 
     # get extent of a tile
     xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id))
@@ -31,12 +31,12 @@ def calc_emissions(tile_id):
     # rasterize shapefiles from one time download
     shapefiles_to_raterize = [{'fao_ecozones_bor_tem_tro': 'recode'}, {'ifl_2000': 'temp_id'}]
     coords = ['-te'] + coord_list
-    rasterized_file = utilities.rasterize_shapefile(shapefiles_to_raterize, tile_id, coords)
+    #rasterized_file = utilities.rasterize_shapefile(shapefiles_to_raterize, tile_id, coords)
 
     # resample rasters from one time download
     coords = ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)] 
     rasters_to_resample = ['peatdrainage', 'hwsd_histosoles', 'forest_model', 'climate_zone']
-    resampled_tiles = utilities.resample_raster(rasters_to_resample, tile_id, coords)
+    #resampled_tiles = utilities.resample_raster(rasters_to_resample, tile_id, coords)
 
     print 'writing emissions tiles'
     emissions_tiles_cmd = ['./calc_emissions.exe', tile_id]

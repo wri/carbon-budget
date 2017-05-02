@@ -159,9 +159,9 @@ for(x=0; x<xsize; x++)
 	{
 		if (lossclass_data[x] = 1) // forestry
 		{
-			if (peatdran_data[x] != -9999)
+			if (peatdran_data[x] != 0)
 			{
-				if (peatdran_data[x] != -9999)// change to burned areas once I get the data
+				if (peatdran_data[x] != 0)// change to burned areas once I get the data
 				{
 						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917; // qc'd this with 10N_100E - passed
 				}
@@ -173,7 +173,7 @@ for(x=0; x<xsize; x++)
 			}
 			else
 			{
-				if (hist_data[x] != -9999)
+				if (hist_data[x] != 0)
 				{
 					if (climate_data[x] = 1) // tropics
 					{
@@ -193,6 +193,7 @@ for(x=0; x<xsize; x++)
 				else
 				{
 					out_forestry_data[x] = -9999;
+
 				}
 			}
 		}
