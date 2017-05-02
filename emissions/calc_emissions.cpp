@@ -139,7 +139,8 @@ float climate_data[xsize];
 float out_wildfire_data[xsize];
 float out_forestry_data[xsize];
 
-for(y=0; y<ysize; y++) {
+for(y=0; y<ysize; y++) 
+{
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, deadc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -152,7 +153,8 @@ INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 
 INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
 
 
-for(x=0; x<xsize; x++) {
+for(x=0; x<xsize; x++) 
+{
 	if (loss_data[x] > 0)
 	{
 		if (lossclass_data[x] = 1) // forestry
@@ -198,7 +200,11 @@ for(x=0; x<xsize; x++) {
 	    {	
 		out_forestry_data[x] = -9999;
 	    }
-		
+	}
+	else
+	{	
+	out_forestry_data[x] = -9999;
+	}		
 
 //closes for x loop
 }
