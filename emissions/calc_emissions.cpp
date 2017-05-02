@@ -41,7 +41,7 @@ string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 // set output file name
 string out_wildfire_name = tile_id + "_wildfire.tif";
 string out_forestry_name = tile_id + "_forestry.tif";
-
+string out_conversion_name = tile_id + "_conversion.tif";
 //setting variables
 int x, y;
 int xsize, ysize;
@@ -105,9 +105,12 @@ INBAND11 = INGDAL11->GetRasterBand(1);
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
+GDALDataset *OUTGDAL2;
+GDALDataset *OUTGDAL3;
 
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
+GDALRasterBand *OUTBAND3;
 
 OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
@@ -124,10 +127,16 @@ OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ);
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
-OUTGDAL = OUTDRIVER->Create( out_forestry_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
-OUTBAND2 = OUTGDAL->GetRasterBand(1);
+OUTGDAL2 = OUTDRIVER->Create( out_forestry_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ); 
+OUTBAND2 = OUTGDAL2->GetRasterBand(1);
 OUTBAND2->SetNoDataValue(-9999);
+
+OUTGDAL3 = OUTDRIVER->Create( out_conversion_name.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
+OUTBAND3 = OUTGDAL3->GetRasterBand(1);
+OUTBAND3->SetNoDataValue(-9999);
+
 
 //read/write data
 float bgc_data[xsize];
@@ -144,8 +153,9 @@ float ecozone_data[xsize];
 
 float out_wildfire_data[xsize];
 float out_forestry_data[xsize];
+float out_conversion_data[xsize];
 
-for(y=0; y<ysize; y++) 
+for(y=0; y<4; y++) 
 {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -170,7 +180,9 @@ for(x=0; x<xsize; x++)
 			{
 				if (peatdran_data[x] != 0) // change to burned areas once I get the data
 				{
-						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917; // qc'd this with 10N_100E - passed
+					cout << "on peat drainage: ";	
+					out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917; // qc'd this with 10N_100E - passed
+					cout << out_forestry_data[x] << "\n";
 				}
 				else
 				{
@@ -221,7 +233,7 @@ for(x=0; x<xsize; x++)
 			{
 				if (hist_data[x] != 0) // on histosoles
 				{
-					if (ecozone_data[x] = 2 || ecozone_data = 3) // boreal or temperate
+					if ((ecozone_data[x] = 2) || (ecozone_data[x] = 3)) // boreal or temperate
 					{
 						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + 29;
 					}
@@ -232,11 +244,11 @@ for(x=0; x<xsize; x++)
 				}
 				else // not on histosoles
 				{
-					if (climate_data[x] = 2 || climate_data[x] = 4 || climate_data[x] = 8) // warm/cool temperate/boreal dry
+					if ((climate_data[x] = 2) || (climate_data[x] = 4) || (climate_data[x] = 8)) // warm/cool temperate/boreal dry
 					{
 						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.8)) * 3.67;
 					}
-					if (climate_data[x] = 1 || climate_data[x] = 3 || climate_data[x] = 7) // warm/cool temperate/boreal moist
+					if ((climate_data[x] = 1) || (climate_data[x] = 3) || (climate_data[x] = 7)) // warm/cool temperate/boreal moist
 					{
 						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.69)) * 3.67;
 					}
@@ -244,7 +256,7 @@ for(x=0; x<xsize; x++)
 					{
 						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.58)) * 3.67;
 					}
-					if (climate_data[x] = 10 || climate_data[x] = 11) // tropical moist/wet
+					if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
 					{
 						out_conversion_data[x] = ((agc_data[x] + bgc_data[x] + deadc_data[x] + litterc_data[xsize]) -5) * 3.67 + (soilc_data[xsize] - (soilc_data[xsize] * 0.48)) * 3.67;
 					}
@@ -264,7 +276,9 @@ for(x=0; x<xsize; x++)
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_forestry_data, xsize, 1, GDT_Float32, 0, 0 ); 
-OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_forestry_data, xsize, 1, GDT_Float32, 0, 0 ); 
+OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_wildfire_data, xsize, 1, GDT_Float32, 0, 0 ); 
+OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_conversion_data, xsize, 1, GDT_Float32, 0, 0 );
+
 //closes for y loop
 }
 
