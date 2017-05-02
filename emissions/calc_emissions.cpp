@@ -155,51 +155,54 @@ INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32,
 for(x=0; x<xsize; x++) {
 	if (loss_data[x] > 0)
 	{
-		if (peatdran_data[x] != -9999)
+		if (lossclass_data[x] = 1) // forestry
 		{
-			if (peatdran_data[x] != -9999)// change to burned areas once I get the data
+			if (peatdran_data[x] != -9999)
 			{
-			        out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917;
+				if (peatdran_data[x] != -9999)// change to burned areas once I get the data
+				{
+						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]) + 917; // qc'd this with 10N_100E - passed
+				}
+				else
+				{
+					out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]);
+				}
+
 			}
 			else
 			{
-				out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]);
-			}
+				if (hist_data[x] != -9999)
+				{
+					if (climate_data[x] = 1) // tropics
+					{
+						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55);
+					}
+					if (climate_data[x] = 2) // boreal
+					{
+						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16);
+					}
+					if (climate_data[x] = 3) // temperate
+					{
+						out_forestry_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27);
+					}
 
+				}
+
+				else
+				{
+					out_forestry_data[x] = -9999;
+				}
+			}
 		}
 		else
-		{
-			if (hist_data[x] != -9999)
-			{
-				if (climate_data[x] = 1) // tropics
-				{
-					out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55);
-				}
-				if (climate_data[x] = 2) // boreal
-				{
-					out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16);
-				}
-				if (climate_data[x] = 3) // temperate
-				{
-					out_wildfire_data[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27);
-				}
+	    {	
+		out_forestry_data[x] = -9999;
+	    }
+		
 
-			}
-
-			else
-			{
-				out_wildfire_data[x] = -9999;
-			}
-		}
-
-	}
-
-	else {
-		out_wildfire_data[x] = -9999;
-	}
 //closes for x loop
 }
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_wildfire_data, xsize, 1, GDT_Float32, 0, 0 ); 
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_forestry_data, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_forestry_data, xsize, 1, GDT_Float32, 0, 0 ); 
 //closes for y loop
 }
