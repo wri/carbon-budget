@@ -76,19 +76,30 @@ OUTBAND2->SetNoDataValue(-9999);
 
 //read/write data
 float agb_data[xsize];
+float agc_data[xsize];
+float bgc_data[xsize];
+float loss_data[xsize];
+float peatdran_data[xsize];
+
+
 float out_data1[xsize];
 float out_data2[xsize];
 
 for(y=0; y<2; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, peatdran_data, xsize, 1, GDT_Float32, 0, 0); 
 
-for(x=0; x<xsize; x++) {
-// no data value for biomass is set to -32768
-   if (agb_data[x] == 1) {
-    cout << "agb data: " << agb_data[x] << "\n";
-    out_data1[x] = 1;}
+for(x=0; x<xsize; x++) 
+{
+   if (agb_data[x] == 1)   // forestry
+   {
+		out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peatdran_data[x]);
+	
+   }
    else {
-    cout << "agb data: " << agb_data[x] << "\n";
     out_data1[x] = -9999;}
 
    if (agb_data[x] == 2) {
