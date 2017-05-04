@@ -2,6 +2,7 @@ import subprocess
 import datetime
 import os
 import sys
+import pandas as pd
 
 import utilities
 
@@ -9,7 +10,7 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import get_extent
+#import get_extent
 
 def calc_emissions(tile_id):
     start = datetime.datetime.now()
@@ -24,6 +25,12 @@ def calc_emissions(tile_id):
     # download hansen tile
     #utilities.wgetloss(tile_id)
 
+    # download burned area and process
+    windows_to_dl = utilities.get_windows_in_tile(tile_id)
+    
+    # download windows
+    utilities.multiprocess_download(windows_to_dl)
+    
     # get extent of a tile
     xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id))
     coord_list = [str(xmin), str(ymin), str(xmax), str(ymax)]

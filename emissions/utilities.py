@@ -1,5 +1,7 @@
 import subprocess
-import gdal
+#import gdal
+import multiprocessing
+import pandas as pd
 
 def download(carbon_pool_files, tile_id):
     for carbon_file in carbon_pool_files:
@@ -66,10 +68,47 @@ def resample_raster(rasters_to_resample, tile_id, coords):
 
     return resampled_tiles
 
-def download_burned_area(year_window_dict):
-    winpath = year_window_dict['winpath']
-    year = year_window_dict['year']
-    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/{0}/{1}/'.format(winpath, year)
-    download_cmd = ['wget', '-r', '-l1', '--ftp-user=user', '--ftp-password=burnt_data', '--no-parent', '-A', '*burndate.tif', ftp_path]
-
+def download_burned_areas(window):
+    
+    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/{0}/'.format(window)
+    download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-parent', '-A', '*burndate.tif', ftp_path]
+    print download_cmd
     #subprocess.check_call(download_cmd)
+def download_allburned_areas():
+    
+    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/'
+    download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-parent', '-A', '*burndate.tif', ftp_path]
+    print download_cmd
+    #subprocess.check_call(download_cmd)  
+    
+def multiprocess_download(windows):
+    window_list = []
+    for w in windows:
+        if w < 10:
+            w = "0{}".format(w)
+        w = str(w)
+        window_list.append(w)
+    print window_list
+    if __name__ == '__main__':
+     count = multiprocessing.cpu_count()
+     pool = multiprocessing.Pool(processes=2)
+     pool.map(download_burned_areas, window_list)
+
+def get_windows_in_tile(tile_id):
+
+    csv = 'burned_area_tile_index.csv'
+
+    burned_index_df = pd.read_csv(csv)
+    
+    # find the windows for the given tile id
+    window = burned_index_df.loc[burned_index_df['tile'] == tile_id, 'window']
+    
+    # convert results to list
+    list_of_windows = window.values.tolist()
+    
+    # remove any duplicates
+    list_of_windows = list(set(list_of_windows))
+    
+    return list_of_windows
+
+    
