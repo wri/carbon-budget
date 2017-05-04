@@ -25,15 +25,15 @@ def calc_emissions(tile_id):
     # download hansen tile
     #utilities.wgetloss(tile_id)
 
-    # download burned area and process
+    # get extent of a tile
+    xmin, ymin, xmax, ymax = get_extent.get_extent('{}_loss.tif'.format(tile_id))
+    coord_list = [str(xmin), str(ymin), str(xmax), str(ymax)]
+
+    # get list of windows intersecting tile
     windows_to_dl = utilities.get_windows_in_tile(tile_id)
     
-    # download windows
-    utilities.multiprocess_download(windows_to_dl)
+    # for all files matching Win*, clip, resample, and stack them (all years, months). output 1 file <tileid>_burn.tif
     
-    # get extent of a tile
-    xmin, ymin, xmax, ymax = get_extent.get_extent('{}_bgc.tif'.format(tile_id))
-    coord_list = [str(xmin), str(ymin), str(xmax), str(ymax)]
 
     # rasterize shapefiles from one time download
     shapefiles_to_raterize = [{'fao_ecozones_bor_tem_tro': 'recode'}, {'ifl_2000': 'temp_id'}]

@@ -69,9 +69,9 @@ def resample_raster(rasters_to_resample, tile_id, coords):
     return resampled_tiles
 
 def download_burned_areas(window):
-    
+    window = "Win{}".format(window)
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/{0}/'.format(window)
-    download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-parent', '-A', '*burndate.tif', ftp_path]
+    download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', '-A', '*burndate.tif', ftp_path]
     print download_cmd
     #subprocess.check_call(download_cmd)
 def download_allburned_areas():
