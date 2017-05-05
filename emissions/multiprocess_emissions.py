@@ -14,11 +14,13 @@ for w in range(1, 25):
         w = "0{}".format(w)
     w = str(w)
     window_list.append(w)
-    
-if __name__ == '__main__':
-     count = multiprocessing.cpu_count()
-     pool = multiprocessing.Pool(processes=2)
-     pool.map(utilities.download_burned_areas, window_list)
+
+# remove this after debug
+#window_list = ["19"]
+#if __name__ == '__main__':
+     #count = multiprocessing.cpu_count()
+     #pool = multiprocessing.Pool(processes=2)
+     #pool.map(utilities.download_burned_areas, window_list)
 
 
 onetime_download_files = ['hwsd_histosoles.tif', 'climate_zone.tif', 'forest_model.tif', 'peatdrainage.tif', 'fao_ecozones_bor_tem_tro.zip', 'ifl_2000.zip']
@@ -26,18 +28,18 @@ onetime_download_files = ['hwsd_histosoles.tif', 'climate_zone.tif', 'forest_mod
 for file in onetime_download_files:
 
     print "copy down {}".format(file)
-    #download_file = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/{}'.format(file), '.']
+    download_file = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/{}'.format(file), '.']
     #subprocess.check_call(download_file)
     
-    #file_extension = file.split(".")[-1:][0]
-    #if file_extension == "zip":
+    file_extension = file.split(".")[-1:][0]
+    if file_extension == "zip":
     
-     #   print "unzip files"
-     #   unzip = ['unzip', file, '-d', '.']
-     #   subprocess.check_call(unzip)
+         print "unzip files"
+         unzip = ['unzip', file, '-d', '.']
+         #subprocess.check_call(unzip)
 
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()
      pool = multiprocessing.Pool(processes=1)
-     #pool.map(calc_emissions.calc_emissions, biomass_tile_list)
+     pool.map(calc_emissions.calc_emissions, biomass_tile_list)
 
