@@ -3,6 +3,7 @@ import subprocess
 import multiprocessing
 import pandas as pd
 
+
 def download(carbon_pool_files, tile_id):
     for carbon_file in carbon_pool_files:
         print "downloading {}".format(carbon_file)
@@ -14,8 +15,11 @@ def download(carbon_pool_files, tile_id):
         
 def wgetloss(tile_id):
     print "download hansen loss tile"
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id), '-O' '{}_loss.tif'.format(tile_id)]
+    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
+           '-O' '{}_loss.tif'.format(tile_id)]
+
     subprocess.check_call(cmd)
+
 
 def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
     rasterized_files = []
@@ -26,61 +30,79 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
             print "rasterizing {}".format(shapefile)
             rvalue = shapefile_dict[shapefile]
             rasterized_tile = "{0}_{1}.tif".format(tile_id, shapefile)
-            rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', rvalue, '-a_nodata',
-            '0', shapefile + ".shp", rasterized_tile]
+            rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-tr', '0.008', '0.008', '-ot',
+                         'Byte', '-a', rvalue, '-a_nodata', '0', shapefile + ".shp", rasterized_tile]
+
             rasterize += coords
             
             subprocess.check_call(rasterize)
 
             print "resampling {}".format(rasterized_tile)
 
-            resampled_tile =  "{0}_res_{1}.tif".format(tile_id, shapefile)
-            resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-tr', '.00025', '.00025', rasterized_tile, resampled_tile]
+            resampled_tile = "{0}_res_{1}.tif".format(tile_id, shapefile)
+            resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
+                        '-tr', '.00025', '.00025', rasterized_tile, resampled_tile]
+
             subprocess.check_call(resample)
+
             rasterized_files.append(resampled_tile)
 
     return rasterized_files
 
-def resample_raster(rasters_to_resample, tile_id, coords):
 
-    resampled_tiles = []
+def clip_raster(raster, tile_id, coords):
+    print "clipping {}".format(raster)
+    clipped_raster = '{0}_{1}.tif'.format(tile_id, raster)
+    base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
+                raster + ".tif", clipped_raster]
+
+    clip_cmd = base_cmd + coords
+
+    print clip_cmd
+    subprocess.check_call(clip_cmd)
+    return clipped_raster
+
+
+def resample_raster(raster, clipped_raster, tile_id):
+
+    print "resampling {}".format(raster)
+    resampled_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
+    resample_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-a_nodata',
+                    '0', clipped_raster, resampled_raster]
+    print resample_cmd
+    subprocess.check_call(resample_cmd)
+    return resampled_raster
+
+
+def resample_clip_raster(rasters_to_resample, tile_id, coords):
 
     for raster in rasters_to_resample:
         try:
-        
-            print "clipping {}".format(raster)
-            clipped_raster = '{0}_{1}.tif'.format(tile_id, raster)
-            base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0', raster + ".tif", clipped_raster]
-            clip_cmd = base_cmd + coords
-            print clip_cmd
-            subprocess.check_call(clip_cmd)
 
-            print "resampling {}".format(raster)  
-            resampled_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
-            resample_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-a_nodata', '0', clipped_raster, resampled_raster]
-            print resample_cmd
-            subprocess.check_call(resample_cmd)
+            clipped_raster = clip_raster(raster, tile_id, coords)
 
-            resampled_tiles.append(resampled_raster)
-        
+            resampled_raster = resample_raster(raster, clipped_raster, tile_id)
+
         except:
-            print "failed"
 
-    return resampled_tiles
+            print "failed"
 
 def download_burned_areas(window):
     window = "Win{}".format(window)
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/{0}/'.format(window)
     download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', '-A', '*burndate.tif', ftp_path]
     print download_cmd
-    #subprocess.check_call(download_cmd)
+    # subprocess.check_call(download_cmd)
+
+
 def download_allburned_areas():
     
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/'
     download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-parent', '-A', '*burndate.tif', ftp_path]
     print download_cmd
     #subprocess.check_call(download_cmd)  
-    
+
+
 def multiprocess_download(windows):
     window_list = []
     for w in windows:
@@ -93,6 +115,7 @@ def multiprocess_download(windows):
      count = multiprocessing.cpu_count()
      pool = multiprocessing.Pool(processes=2)
      pool.map(download_burned_areas, window_list)
+
 
 def get_windows_in_tile(tile_id):
 
@@ -110,5 +133,3 @@ def get_windows_in_tile(tile_id):
     list_of_windows = list(set(list_of_windows))
     
     return list_of_windows
-
-    
