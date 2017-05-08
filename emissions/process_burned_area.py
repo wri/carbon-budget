@@ -1,5 +1,6 @@
 import glob
 import os
+import subprocess
 
 import utilities
 
@@ -13,20 +14,22 @@ def process_burned_area(windows, coords, tile_id):
     print tile_id	
     for w in windows:
         print w
-# ['MCD64monthly.A2001032.Win04.006.burndate.tif', 'MCD64monthly.A2001121.Win04.006.burndate.tif', 'MCD64monthly.A2000336.Win04.006.burndate.tif', 'MCD64monthly.A2001001.Win04.006.burndate.tif', 'MCD64monthly.A2000306.Win04.006.burndate.tif', 'MCD64monthly.A2001091.Win04.006.burndate.tif', 'MCD64monthly.A2001060.Win04.006.burndate.tif']
-
         # get all windows
         # burned_list = glob.glob("*Win{}*").format(w)
-        win_glob = "*Win{}*burndate.tif".format(w)
+        win_glob = "MCD64monthly*Win{}*burndate.tif".format(w)
         burned_list = glob.glob(win_glob)
         print burned_list
+
         for burned_tif in burned_list:
             # recode > 0 to 1, all else to no data
-            recoded_burned_area = utilities.recode_burned_area(burned_tif)
-            # clip image
-            raster = os.path.basename(recoded_burned_area).strip(".tif")
-            print raster
-            print tile_id
+            recode_cmd = ['gdal_calc.py']
+            subprocess.check_call(recode_cmd)
+            #recoded_burned_area = utilities.recode_burned_area(burned_tif)
+
+            # # clip image
+            # raster = os.path.basename(recoded_burned_area).strip(".tif")
+            # print raster
+            # print tile_id
             
             clipped_window = utilities.clip_raster(raster, tile_id, coords)
             # resample

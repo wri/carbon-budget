@@ -87,6 +87,7 @@ def resample_clip_raster(rasters_to_resample, tile_id, coords):
 
             print "failed"
 
+
 def download_burned_areas(window):
     window = "Win{}".format(window)
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/{0}/'.format(window)
@@ -133,3 +134,12 @@ def get_windows_in_tile(tile_id):
     list_of_windows = list(set(list_of_windows))
     
     return list_of_windows
+
+
+def recode_burned_area(raster):
+
+    outfile_name = raster.strip(".tif") + "_recode.tif"
+    print outfile_name
+    outfile_cmd = '--outfile={}'.format(outfile_name)
+    recode_cmd = ['gdal_calc.py', '-A', raster, '--calc=A>0', 'NoDataValue=0', '--co', 'COMPRESS=LZW', outfile_cmd]
+    subprocess.check_call(recode_cmd)
