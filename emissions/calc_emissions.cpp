@@ -66,8 +66,8 @@ INBAND4 = INGDAL4->GetRasterBand(1);
 INGDAL5 = (GDALDataset *) GDALOpen(peat_name.c_str(), GA_ReadOnly );
 INBAND5 = INGDAL5->GetRasterBand(1);
 
-xsize=INBAND->GetXSize(); 
-ysize=INBAND->GetYSize();
+xsize=INBAND3->GetXSize(); 
+ysize=INBAND3->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
 
 ulx=GeoTransform[0]; 
@@ -112,7 +112,8 @@ float forestmodel_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 
-for(y=37943; y<37946; y++) {
+//for(y=37943; y<37946; y++) {
+for (y=0; y<2; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);

@@ -29,14 +29,14 @@ for file in onetime_download_files:
 
     print "copy down {}".format(file)
     download_file = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/{}'.format(file), '.']
-    #subprocess.check_call(download_file)
+    subprocess.check_call(download_file)
     
     file_extension = file.split(".")[-1:][0]
     if file_extension == "zip":
     
          print "unzip files"
          unzip = ['unzip', file, '-d', '.']
-         #subprocess.check_call(unzip)
+         subprocess.check_call(unzip)
 
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()

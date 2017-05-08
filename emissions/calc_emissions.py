@@ -20,10 +20,10 @@ def calc_emissions(tile_id):
     carbon_pool_files = ['bgc', 'carbon', 'deadwood', 'soil', 'litter']
     
     # download 5 carbon pool files
-    #utilities.download(carbon_pool_files, tile_id)
+    utilities.download(carbon_pool_files, tile_id)
 
     # download hansen tile
-    #utilities.wgetloss(tile_id)
+    utilities.wgetloss(tile_id)
 
     # get extent of a tile
     xmin, ymin, xmax, ymax = get_extent.get_extent('{}_loss.tif'.format(tile_id))
@@ -34,7 +34,7 @@ def calc_emissions(tile_id):
     windows_to_dl = utilities.get_windows_in_tile(tile_id)
     print windows_to_dl
     # for all files matching Win*, clip, resample, and stack them (all years, months). output 1 file <tileid>_burn.tif
-    process_burned_area.process_burned_area(windows_to_dl, coords, tile_id)
+    #process_burned_area.process_burned_area(windows_to_dl, coords, tile_id)
 
     # rasterize shapefiles from one time download
     shapefiles_to_raterize = [{'fao_ecozones_bor_tem_tro': 'recode'}, {'ifl_2000': 'temp_id'}]
@@ -48,7 +48,7 @@ def calc_emissions(tile_id):
 
     print 'writing emissions tiles'
     emissions_tiles_cmd = ['./calc_emissions.exe', tile_id]
-    subprocess.check_call(emissions_tiles_cmd)
+    #subprocess.check_call(emissions_tiles_cmd)
 
     print 'uploading emissions tile to s3'
     upload_emissions = ['aws', 's3', 'cp', emission_tile, 's3://gfw-files/sam/carbon_budget/emissions/']
