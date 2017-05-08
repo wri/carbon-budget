@@ -139,7 +139,6 @@ def get_windows_in_tile(tile_id):
 def recode_burned_area(raster):
 
     outfile_name = raster.strip(".tif") + "_recode.tif"
-    print outfile_name
     outfile_cmd = '--outfile={}'.format(outfile_name)
     recode_cmd = ['gdal_calc.py', '-A', raster, '--calc=A>0', 'NoDataValue=0', '--co', 'COMPRESS=LZW', outfile_cmd]
     subprocess.check_call(recode_cmd)
