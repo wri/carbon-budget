@@ -29,6 +29,8 @@ string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
 string peat_name = tile_id + "_res_peatdrainage.tif";
+string burn_name = tile_id + "_burned.tif";
+string hist_name = tile_id + "_res_histosole.tif";
 
 
 
@@ -49,6 +51,7 @@ GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
 GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
+GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -65,6 +68,13 @@ INBAND4 = INGDAL4->GetRasterBand(1);
 
 INGDAL5 = (GDALDataset *) GDALOpen(peat_name.c_str(), GA_ReadOnly );
 INBAND5 = INGDAL5->GetRasterBand(1);
+
+INGDAL6 = (GDALDataset *) GDALOpen(burn_name.c_str(), GA_ReadOnly );
+INBAND6 = INGDAL6->GetRasterBand(1);
+
+INGDAL7 = (GDALDataset *) GDALOpen(hist_name.c_str(), GA_ReadOnly );
+INBAND7 = INGDAL7->GetRasterBand(1);
+
 
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
@@ -108,6 +118,8 @@ float bgc_data[xsize];
 float loss_data[xsize];
 float peat_data[xsize];
 float forestmodel_data[xsize];
+float burn_data[xsize];
+float hist_data[xsize];
 
 float out_data1[xsize];
 float out_data2[xsize];
@@ -120,48 +132,75 @@ INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, peat_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++)
-{
-   if (forestmodel_data[x] == 1)   // forestry
 	{
-		cout << "forest model data is 1: " << forestmodel_data[x] << "\n";
-		if (agc_data[x] == -9999)
+		
+	// zero out anything that is no data so it can be added to other rasters without issues
+	   if (agc_data[x] == -9999)
+	   {
+			agc_data[x] = 0;
+	   }
+	   if (bgc_data[x] == -9999)
+		{
+			bgc_data[x] = 0;
+		}
+	   if (peat_data[x] == -9999)
+		{
+			peat_data[x] = 0;
+		}
+			
+			
+	   if (forestmodel_data[x] == 1)   // forestry
+		{
+			//cout << "forest model data is 1: " << forestmodel_data[x] << "\n";
+
+			if (peat_data[x] != -9999) // if its on peat data
 			{
-				agc_data[x] = 0;
+				
+				if (burn_data[x] != -9999) // if its on burn data
+				{
+					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
+				}
+				
+				else
+				{
+					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
+				}
 			}
-               if (bgc_data[x] == -9999)
-                        {
-                                bgc_data[x] = 0;
-                        }
-               if (peat_data[x] == -9999)
-                        {
-                                peat_data[x] = 0;
-                        }
+			
+			else
+			{
+				if (hist_data[x] != -9999) // if its on histosoles
+				{
+					out_data1[x] = -6666 // just testing this. later fill in boreal, temperate, tropics, etc.
+				}
+			}
+					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
+					cout << "agc: " << agc_data[x] << "\n";
+					cout << "bgc: " << bgc_data[x] << "\n";
+					cout << "loss: " << loss_data[x] << "\n";
+					cout << "peat: " << peat_data[x] << "\n";
+					cout << "out data: " << out_data1[x] << "\n";
+		}
 
-				out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
-				cout << "agc: " << agc_data[x] << "\n";
-				cout << "bgc: " << bgc_data[x] << "\n";
-				cout << "loss: " << loss_data[x] << "\n";
-				cout << "peat: " << peat_data[x] << "\n";
-				cout << "out data: " << out_data1[x] << "\n";
-	}
 
+	   else if (forestmodel_data[x] == 2)
+	   {
+			cout << "forest model data is 2: " << forestmodel_data[x] << "\n";
 
-   else if (forestmodel_data[x] == 2)
-   {
-		cout << "forest model data is 2: " << forestmodel_data[x] << "\n";
+			out_data2[x] = 2;
+	   }
 
-		out_data2[x] = 2;
-   }
+	   else
+	   {
+		cout << "forest model data is not 1 or 2: " << forestmodel_data[x] << "\n";
 
-   else
-   {
-    cout << "forest model data is not 1 or 2: " << forestmodel_data[x] << "\n";
-
-    out_data2[x] = -9999;
-   }
+		out_data2[x] = -9999;
+	   }
 
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
