@@ -28,9 +28,9 @@ string forestmodel_name = tile_id + "_res_forest_model.tif";
 string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
-string peat_name = tile_id + "_res_peatdrainage.tif";
-string burn_name = tile_id + "_burned.tif";
-string hist_name = tile_id + "_res_histosole.tif";
+string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
+string burn_name = tile_id + "_res_peatland_drainage_proj.tif";
+string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 
 
 
@@ -52,6 +52,7 @@ GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
+GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -158,7 +159,7 @@ for(x=0; x<xsize; x++)
 		{
 			//cout << "forest model data is 1: " << forestmodel_data[x] << "\n";
 
-			if (peat_data[x] != -9999) // if its on peat data
+			if (peat_data[x] != 0) // if its on peat data
 			{
 				
 				if (burn_data[x] != -9999) // if its on burn data
@@ -176,7 +177,7 @@ for(x=0; x<xsize; x++)
 			{
 				if (hist_data[x] != -9999) // if its on histosoles
 				{
-					out_data1[x] = -6666 // just testing this. later fill in boreal, temperate, tropics, etc.
+					out_data1[x] = -6666; // just testing this. later fill in boreal, temperate, tropics, etc.
 				}
 			}
 					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];

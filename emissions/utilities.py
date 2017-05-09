@@ -32,9 +32,7 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
             rasterized_tile = "{0}_{1}.tif".format(tile_id, shapefile)
             rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-tr', '0.008', '0.008', '-ot',
                          'Byte', '-a', rvalue, '-a_nodata', '0', shapefile + ".shp", rasterized_tile]
-
             rasterize += coords
-            
             subprocess.check_call(rasterize)
 
             print "resampling {}".format(rasterized_tile)
@@ -49,27 +47,26 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
 
     return rasterized_files
 
-
 def clip_raster(raster, tile_id, coords):
     print "clipping {}".format(raster)
     clipped_raster = '{0}_{1}.tif'.format(tile_id, raster)
+    input_raster = raster + ".tif"
     base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
-                raster + ".tif", clipped_raster]
+                input_raster, clipped_raster]
 
     clip_cmd = base_cmd + coords
-
     print clip_cmd
     subprocess.check_call(clip_cmd)
     return clipped_raster
 
 
-def resample_raster(raster, clipped_raster, tile_id):
+def resample_raster(raster, tile_id):
 
     print "resampling {}".format(raster)
+    input_raster = raster + ".tif"
     resampled_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
     resample_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-a_nodata',
-                    '0', clipped_raster, resampled_raster]
-    print resample_cmd
+                    '0', input_raster, resampled_raster]
     subprocess.check_call(resample_cmd)
     return resampled_raster
 
@@ -77,15 +74,19 @@ def resample_raster(raster, clipped_raster, tile_id):
 def resample_clip_raster(rasters_to_resample, tile_id, coords):
 
     for raster in rasters_to_resample:
-        try:
+        print "resampling/clipping {}".format(raster)
+        input_raster = raster + ".tif"
+        clipped_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
+        base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
+        input_raster, clipped_raster, '-tr', '.00025', '.00025']
 
-            clipped_raster = clip_raster(raster, tile_id, coords)
+        clip_cmd = base_cmd + coords
+        print clip_cmd
+        subprocess.check_call(clip_cmd)
+        
+    return clipped_raster
 
-            resampled_raster = resample_raster(raster, clipped_raster, tile_id)
 
-        except:
-
-            print "failed"
 
 
 def download_burned_areas(window):
