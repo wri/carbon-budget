@@ -112,8 +112,9 @@ float forestmodel_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 
-//for(y=37943; y<37946; y++) {
-for (y=0; y<2; y++) {
+for(y=26975; y<26977; y++) {
+//for (y=0; y<2; y++) {
+//for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -128,26 +129,25 @@ for(x=0; x<xsize; x++)
 		cout << "forest model data is 1: " << forestmodel_data[x] << "\n";
 		if (agc_data[x] == -9999)
 			{
-				cout << "abc data is -9999: " << agc_data[x] << "\n";
-				out_data1[x] = -9999;
+				agc_data[x] = 0;
 			}
+               if (bgc_data[x] == -9999)
+                        {
+                                bgc_data[x] = 0;
+                        }
+               if (peat_data[x] == -9999)
+                        {
+                                peat_data[x] = 0;
+                        }
 
-		else
-			{
-				if (peat_data[x] = -9999)
-					{
-					cout << "peat data is -9999: " << peat_data[x] << "\n";
-					peat_data[x] = 0;
-					}
-
-				out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * peat_data[x]);
+				out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
 				cout << "agc: " << agc_data[x] << "\n";
 				cout << "bgc: " << bgc_data[x] << "\n";
 				cout << "loss: " << loss_data[x] << "\n";
 				cout << "peat: " << peat_data[x] << "\n";
 				cout << "out data: " << out_data1[x] << "\n";
-			}
-    }
+	}
+
 
    else if (forestmodel_data[x] == 2)
    {
