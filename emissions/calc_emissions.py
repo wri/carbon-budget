@@ -14,16 +14,16 @@ sys.path.insert(0, parentdir)
 import get_extent
 def calc_emissions(tile_id):
     start = datetime.datetime.now()
-    
+
     print "/n-------TILE ID: {}".format(tile_id)
-    
+
     carbon_pool_files = ['bgc', 'carbon', 'deadwood', 'soil', 'litter']
-    
+
     # download 5 carbon pool files
-    #utilities.download(carbon_pool_files, tile_id)
+    utilities.download(carbon_pool_files, tile_id)
 
     # download hansen tile
-    #utilities.wgetloss(tile_id)
+    utilities.wgetloss(tile_id)
 
     # get extent of a tile
     xmin, ymin, xmax, ymax = get_extent.get_extent('{}_loss.tif'.format(tile_id))

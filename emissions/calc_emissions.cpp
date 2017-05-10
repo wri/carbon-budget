@@ -139,7 +139,7 @@ INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 
 
 for(x=0; x<xsize; x++)
 	{
-		
+
 	// zero out anything that is no data so it can be added to other rasters without issues
 	   if (agc_data[x] == -9999)
 	   {
@@ -149,30 +149,27 @@ for(x=0; x<xsize; x++)
 		{
 			bgc_data[x] = 0;
 		}
-	   if (peat_data[x] == -9999)
-		{
-			peat_data[x] = 0;
-		}
-			
-			
+
 	   if (forestmodel_data[x] == 1)   // forestry
 		{
-			//cout << "forest model data is 1: " << forestmodel_data[x] << "\n";
 
 			if (peat_data[x] != 0) // if its on peat data
 			{
-				
-				if (burn_data[x] != -9999) // if its on burn data
+
+				if (burn_data[x] != 0) // if its on burn data
 				{
 					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
-				}
-				
+			                cout << "peatland data is " << peat_data[x] << "\n";
+                                        cout << "x value is  " << x << "\n";
+                                        cout << "y value is  " << y << "\n";
+                        	}
+
 				else
 				{
 					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
 				}
 			}
-			
+
 			else
 			{
 				if (hist_data[x] != -9999) // if its on histosoles
@@ -180,7 +177,6 @@ for(x=0; x<xsize; x++)
 					out_data1[x] = -6666; // just testing this. later fill in boreal, temperate, tropics, etc.
 				}
 			}
-					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
 					cout << "agc: " << agc_data[x] << "\n";
 					cout << "bgc: " << bgc_data[x] << "\n";
 					cout << "loss: " << loss_data[x] << "\n";
