@@ -134,7 +134,8 @@ float climate_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 
-for(y=26975; y<26977; y++) {
+for(y=26975; y<26977; y++) 
+{
 //for (y=0; y<2; y++) {
 //for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -152,83 +153,91 @@ for(x=0; x<xsize; x++)
 	{
 
 	// zero out anything that is no data so it can be added to other rasters without issues
-	   if (agc_data[x] == -9999)
-	   {
-			agc_data[x] = 0;
-	   }
-	   if (bgc_data[x] == -9999)
-		{
-			bgc_data[x] = 0;
-		}
 
-	   if (forestmodel_data[x] == 1 && loss_data[x] > 0)   // forestry
+		
+		if (loss_data[x] > 0)
 		{
-
-			if (peat_data[x] != 0) // if its on peat data
+			
+		   if (agc_data[x] == -9999)
+			{
+				agc_data[x] = 0;
+			}
+		   if (bgc_data[x] == -9999)
+			{
+				bgc_data[x] = 0;
+			}
+			
+		   if (forestmodel_data[x] == 1)   // forestry
 			{
 
-				if (burn_data[x] != 0) // if its on peat and on burn data
+				if (peat_data[x] != 0) // if its on peat data
 				{
-					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
-                                }
 
-				else // on peat but not on burn data
-				{
-					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
+					if (burn_data[x] != 0) // if its on peat and on burn data
+					{
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
+					}
+
+					else // on peat but not on burn data
+					{
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
+					}
 				}
+
+				else // not on peat
+				{
+					if (hist_data[x] != 0) // not on peat but is on histosoles
+					{
+						if (ecozone_data[x] = 1) 
+						{
+							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55);
+						}
+						if (ecozone_data[x] = 2)
+						{
+							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16);
+						}
+						if (ecozone_data[x] = 3)
+						{
+							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27);
+						}
+					}
+					
+					else  //not on peat and not on histosole
+					{
+						out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
+					}
+
+				}
+
 			}
 
-			else // not on peat
-			{
-				if (hist_data[x] != 0) // not on peat but is on histosoles
-				{
-					if (ecozone_data[x] = 1) 
-					{
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55);
-					}
-					if (ecozone_data[x] = 2)
-					{
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16);
-					}
-					if (ecozone_data[x] = 3)
-					{
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27);
-					}
+		   else if (forestmodel_data[x] == 2)
+		   {
+				out_data2[x] = 2;
+		   }
 
-				}
-				else  //not on peat and not on histosole
-				{
-					out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
-				}
-
-
-			}
-					cout << "\n" << "agc: " << agc_data[x] << "\n";
-					cout << "bgc: " << bgc_data[x] << "\n";
-					cout << "loss: " << loss_data[x] << "\n";
-					cout << "peat: " << peat_data[x] << "\n";
-					cout << "burn: " << burn_data[x] << "\n";
-					cout << "hist: " << hist_data[x] << "\n";
-					cout << "ecozone: " << ecozone_data[x] << "\n";
-					cout << "out data: " << out_data1[x] << "\n";
+		   else
+		   {
+			out_data2[x] = -9999;
+		   }
+		   
 		}
-
-
-	   else if (forestmodel_data[x] == 2 && loss_data[x] > 0)
-	   {
-			cout << "forest model data is 2: " << forestmodel_data[x] << "\n";
-
-			out_data2[x] = 2;
-	   }
-
-	   else
-	   {
-		cout << "forest model data is not 1 or 2: " << forestmodel_data[x] << "\n";
-
-		out_data2[x] = -9999;
-	   }
-
-}
+		else // not on loss
+		{
+			out_data1[x] = -9999
+		}
+		
+		// print out all the variables and results
+		cout << "\n" << "agc: " << agc_data[x] << "\n";
+		cout << "bgc: " << bgc_data[x] << "\n";
+		cout << "loss: " << loss_data[x] << "\n";
+		cout << "peat: " << peat_data[x] << "\n";
+		cout << "burn: " << burn_data[x] << "\n";
+		cout << "hist: " << hist_data[x] << "\n";
+		cout << "ecozone: " << ecozone_data[x] << "\n";
+		cout << "out data: " << out_data1[x] << "\n";
+    }
+	
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
 
