@@ -1,4 +1,4 @@
-
+//
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -161,7 +161,7 @@ for(x=0; x<xsize; x++)
 			bgc_data[x] = 0;
 		}
 
-	   if (forestmodel_data[x] == 1)   // forestry
+	   if (forestmodel_data[x] == 1 && loss_data[x] > 0)   // forestry
 		{
 
 			if (peat_data[x] != 0) // if its on peat data
@@ -170,7 +170,7 @@ for(x=0; x<xsize; x++)
 				if (burn_data[x] != 0) // if its on peat and on burn data
 				{
 					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
-                }
+                                }
 
 				else // on peat but not on burn data
 				{
@@ -184,24 +184,24 @@ for(x=0; x<xsize; x++)
 				{
 					if (ecozone_data[x] = 1) 
 					{
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55)
-					}	
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55);
+					}
 					if (ecozone_data[x] = 2)
 					{
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16)
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16);
 					}
 					if (ecozone_data[x] = 3)
 					{
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27)
-					}										
-					
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27);
+					}
+
 				}
-				else: //not on peat and not on histosole
+				else  //not on peat and not on histosole
 				{
-					out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67
+					out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
 				}
-				
-				
+
+
 			}
 					cout << "\n" << "agc: " << agc_data[x] << "\n";
 					cout << "bgc: " << bgc_data[x] << "\n";
@@ -214,7 +214,7 @@ for(x=0; x<xsize; x++)
 		}
 
 
-	   else if (forestmodel_data[x] == 2)
+	   else if (forestmodel_data[x] == 2 && loss_data[x] > 0)
 	   {
 			cout << "forest model data is 2: " << forestmodel_data[x] << "\n";
 
