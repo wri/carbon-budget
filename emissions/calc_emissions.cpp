@@ -31,8 +31,8 @@ string loss_name = tile_id + "_loss.tif";
 string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
 string burn_name = tile_id + "_res_peatland_drainage_proj.tif";
 string hist_name = tile_id + "_res_hwsd_histosoles.tif";
-
-
+string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
+string climate_name = tile_id + "_res_climate_zone.tif";
 
 //either parse this var from inputs or send it in
 string out_name1="test1.tif";
@@ -53,6 +53,8 @@ GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
 GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
+GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
+GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -76,6 +78,11 @@ INBAND6 = INGDAL6->GetRasterBand(1);
 INGDAL7 = (GDALDataset *) GDALOpen(hist_name.c_str(), GA_ReadOnly );
 INBAND7 = INGDAL7->GetRasterBand(1);
 
+INGDAL8 = (GDALDataset *) GDALOpen(ecozone_name.c_str(), GA_ReadOnly );
+INBAND8 = INGDAL8->GetRasterBand(1);
+
+INGDAL9 = (GDALDataset *) GDALOpen(climate_name.c_str(), GA_ReadOnly );
+INBAND9 = INGDAL9->GetRasterBand(1);
 
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
@@ -121,6 +128,8 @@ float peat_data[xsize];
 float forestmodel_data[xsize];
 float burn_data[xsize];
 float hist_data[xsize];
+float ecozone_data[xsize];
+float climate_data[xsize];
 
 float out_data1[xsize];
 float out_data2[xsize];
@@ -135,6 +144,8 @@ INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, peat_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++)
@@ -156,31 +167,49 @@ for(x=0; x<xsize; x++)
 			if (peat_data[x] != 0) // if its on peat data
 			{
 
-				if (burn_data[x] != 0) // if its on burn data
+				if (burn_data[x] != 0) // if its on peat and on burn data
 				{
 					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
-			                cout << "peatland data is " << peat_data[x] << "\n";
-                                        cout << "x value is  " << x << "\n";
-                                        cout << "y value is  " << y << "\n";
-                        	}
+                }
 
-				else
+				else // on peat but not on burn data
 				{
 					out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
 				}
 			}
 
-			else
+			else // not on peat
 			{
-				if (hist_data[x] != -9999) // if its on histosoles
+				if (hist_data[x] != 0) // not on peat but is on histosoles
 				{
-					out_data1[x] = -6666; // just testing this. later fill in boreal, temperate, tropics, etc.
+					if (ecozone_data[x] = 1) 
+					{
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 55)
+					}	
+					if (ecozone_data[x] = 2)
+					{
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 2.16)
+					}
+					if (ecozone_data[x] = 3)
+					{
+						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x] * 6.27)
+					}										
+					
 				}
+				else: //not on peat and not on histosole
+				{
+					out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67
+				}
+				
+				
 			}
-					cout << "agc: " << agc_data[x] << "\n";
+					cout << "\n" << "agc: " << agc_data[x] << "\n";
 					cout << "bgc: " << bgc_data[x] << "\n";
 					cout << "loss: " << loss_data[x] << "\n";
 					cout << "peat: " << peat_data[x] << "\n";
+					cout << "burn: " << burn_data[x] << "\n";
+					cout << "hist: " << hist_data[x] << "\n";
+					cout << "ecozone: " << ecozone_data[x] << "\n";
 					cout << "out data: " << out_data1[x] << "\n";
 		}
 
