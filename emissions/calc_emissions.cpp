@@ -134,8 +134,8 @@ float climate_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 
-for(y=28696; y<28698; y++) {
-//for (y=0; y<ysize; y++) {
+//for(y=27360; y<27463; y++) {
+for (y=0; y<ysize; y++) {
 
 //for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -211,14 +211,14 @@ for(x=0; x<xsize; x++)
 
 			}
 
-		   else if (forestmodel_data[x] == 2)
+		   if (forestmodel_data[x] == 2)
 		   {
 				out_data2[x] = 2;
 		   }
 
-		   else
+		   if (forestmodel_data[x] == 0)
 		   {
-			out_data2[x] = -9999;
+			out_data1[x] = -9999;
 		   }
 
 		}
@@ -226,17 +226,20 @@ for(x=0; x<xsize; x++)
 		{
 			out_data1[x] = -9999;
 		}
-
+               if (out_data1[x] == 0)
+		{
+			out_data1[x] = -9999;
+		}
 		// print out all the variables and results
-		cout << "\n" << "agc: " << agc_data[x] << "\n";
-		cout << "bgc: " << bgc_data[x] << "\n";
-		cout << "loss: " << loss_data[x] << "\n";
-		cout << "peat: " << peat_data[x] << "\n";
-		cout << "burn: " << burn_data[x] << "\n";
-		cout << "hist: " << hist_data[x] << "\n";
-		cout << "ecozone: " << ecozone_data[x] << "\n";
-                cout << "forest model: " << forestmodel_data[x] << "\n";
-		cout << "out data: " << out_data1[x] << "\n";
+//		cout << "\n" << "agc: " << agc_data[x] << "\n";
+//		cout << "bgc: " << bgc_data[x] << "\n";
+//		cout << "loss: " << loss_data[x] << "\n";
+//		cout << "peat: " << peat_data[x] << "\n";
+//		cout << "burn: " << burn_data[x] << "\n";
+//		cout << "hist: " << hist_data[x] << "\n";
+//		cout << "ecozone: " << ecozone_data[x] << "\n";
+//                cout << "forest model: " << forestmodel_data[x] << "\n";
+//		cout << "out data: " << out_data1[x] << "\n";
     }
 
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
