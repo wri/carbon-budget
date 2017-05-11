@@ -152,8 +152,8 @@ float soil_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 
-//for(y=33668; y<33672; y++) {
-for (y=0; y<ysize; y++) {
+for(y=8; y<13; y++) {
+//for (y=0; y<ysize; y++) {
 
 //for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -252,7 +252,7 @@ for(x=0; x<xsize; x++)
 				{
 					if (hist_data[x] != 0) // not on peat but is on histosoles
 					{
-						if (ecozone_data[x] = 2 || ecozone_data[x] = 3) // boreal or temperate
+						if ((ecozone_data[x] = 2) || (ecozone_data[x] = 3)) // boreal or temperate
 						{
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
 						}
@@ -267,26 +267,26 @@ for(x=0; x<xsize; x++)
 					}
 					else // not on peat and NOT on histosole
 					{
-						if (climate_data[x] = 2 || climate_data[x] = 4 || climate_data[x] = 8) // warm/cool temperate/boreal dry
+						if ((climate_data[x] = 2) || (climate_data[x] = 4) || (climate_data[x] = 8)) // warm/cool temperate/boreal dry
 						{
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
 						}
-						if (climate_data[x] = 1 || climate_data[x] = 3 || climate_data[x] = 7) // warm/cool temperate/boreal moist
+						if ((climate_data[x] = 1) || (climate_data[x] = 3) || (climate_data[x] = 7)) // warm/cool temperate/boreal moist
 						{
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
 						}
 						if (climate_data[x] = 12) // tropical dry
 						{
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
-						}		
-						if (climate_data[x] = 10 || climate_data[x] = 11) // tropical moist/wet
+						}
+						if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
 						{
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
-						}	
+						}
 						if (climate_data[x] = 9) // tropical tropical montane
 						{
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
-						}							
+						}
 					}
 				}
 
@@ -311,13 +311,15 @@ for(x=0; x<xsize; x++)
 		cout << "bgc: " << bgc_data[x] << "\n";
 		cout << "loss: " << loss_data[x] << "\n";
 		cout << "peat: " << peat_data[x] << "\n";
-		cout << "dead: " << dead_data[x][x] << "\n";
+		cout << "dead: " << dead_data[x] << "\n";
 		cout << "litter_data: " << litter_data[x] << "\n";
 		cout << "burn: " << burn_data[x] << "\n";
 		cout << "hist: " << hist_data[x] << "\n";
 		cout << "ecozone: " << ecozone_data[x] << "\n";
-        cout << "forest model: " << forestmodel_data[x] << "\n";
-        cout << "soil_data: " << soil_data[x] << "\n";
+                cout << "forest model: " << forestmodel_data[x] << "\n";
+                cout << "soil_data: " << soil_data[x] << "\n";
+                cout << "x value: " << x << "\n";
+                cout << "y value: " << y << "\n";
 		cout << "out data: " << out_data1[x] << "\n";
     }
 

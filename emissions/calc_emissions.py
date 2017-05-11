@@ -32,7 +32,7 @@ def calc_emissions(tile_id):
     coords = ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
 
     # get list of windows intersecting tile
-    windows_to_dl = utilities.get_windows_in_tile(tile_id)
+    #windows_to_dl = utilities.get_windows_in_tile(tile_id)
     # for all files matching Win*, clip, resample, and stack them (all years, months). output 1 file <tileid>_burn.tif
     #process_burned_area.process_burned_area(windows_to_dl, coords, tile_id)
 

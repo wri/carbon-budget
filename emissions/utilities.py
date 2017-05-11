@@ -12,7 +12,7 @@ def download(carbon_pool_files, tile_id):
         download_tile = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/{0}/{1}'.format(carbon_file, tile), tile]
         subprocess.check_call(download_tile)
 
-        
+
 def wgetloss(tile_id):
     print "download hansen loss tile"
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
@@ -25,7 +25,7 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
     rasterized_files = []
 
     for shapefile_dict in shapefiles_to_raterize:
-        
+
         for shapefile in shapefile_dict:
             print "rasterizing {}".format(shapefile)
             rvalue = shapefile_dict[shapefile]
