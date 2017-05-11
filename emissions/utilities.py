@@ -30,7 +30,7 @@ def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
             print "rasterizing {}".format(shapefile)
             rvalue = shapefile_dict[shapefile]
             rasterized_tile = "{0}_{1}.tif".format(tile_id, shapefile)
-            rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-tr', '0.008', '0.008', '-ot',
+            rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-ot',
                          'Byte', '-a', rvalue, '-a_nodata', '0', shapefile + ".shp", rasterized_tile]
             rasterize += coords
             subprocess.check_call(rasterize)

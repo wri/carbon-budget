@@ -33,10 +33,13 @@ string burn_name = tile_id + "_res_peatland_drainage_proj.tif";
 string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string climate_name = tile_id + "_res_climate_zone.tif";
+string dead_name = tile_id + "_deadwood.tif";
+string litter_name = tile_id + "_litter.tif";
+string soil_name = tile_id + "_soil.tif";
 
 //either parse this var from inputs or send it in
-string out_name1="test1.tif";
-string out_name2 = "test2.tif";
+string out_name1= tile_id + "_forest_model.tif";
+string out_name2 = tile_id + "_conversion_model.tif";
 
 
 //setting variables
@@ -55,6 +58,9 @@ GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
 GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
 GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
+GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
+GDALDataset  *INGDAL11; GDALRasterBand  *INBAND11;
+GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -83,6 +89,15 @@ INBAND8 = INGDAL8->GetRasterBand(1);
 
 INGDAL9 = (GDALDataset *) GDALOpen(climate_name.c_str(), GA_ReadOnly );
 INBAND9 = INGDAL9->GetRasterBand(1);
+
+INGDAL10 = (GDALDataset *) GDALOpen(dead_name.c_str(), GA_ReadOnly );
+INBAND10 = INGDAL10->GetRasterBand(1);
+
+INGDAL11 = (GDALDataset *) GDALOpen(litter_name.c_str(), GA_ReadOnly );
+INBAND11 = INGDAL11->GetRasterBand(1);
+
+INGDAL12 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
+INBAND12 = INGDAL12->GetRasterBand(1);
 
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
@@ -130,6 +145,9 @@ float burn_data[xsize];
 float hist_data[xsize];
 float ecozone_data[xsize];
 float climate_data[xsize];
+float dead_data[xsize];
+float litter_data[xsize];
+float soil_data[xsize];
 
 float out_data1[xsize];
 float out_data2[xsize];
@@ -147,6 +165,9 @@ INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 
 INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++)
@@ -211,9 +232,64 @@ for(x=0; x<xsize; x++)
 
 			}
 
-		   if (forestmodel_data[x] == 2)
+		   if (forestmodel_data[x] == 2) // conversion
 		   {
-				out_data2[x] = 2;
+				if (peat_data[x] != 0) // if its on peat data
+				{
+					//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
+					if (burn_data[x] != 0)
+					{
+						out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
+					}
+					
+					else //if its on peat and NOT on burn data within 1 year of loss year
+					{
+						out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
+					}
+				}
+				
+				else // its NOT on peat data
+				{
+					if (hist_data[x] != 0) // not on peat but is on histosoles
+					{
+						if (ecozone_data[x] = 2 || ecozone_data[x] = 3) // boreal or temperate
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
+						}
+						else if (ecozone_data[x] = 1) // tropics
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 55;
+						}
+						else // no data for ecozone
+						{
+							out_data2[x] = -9999;
+						}
+					}
+					else // not on peat and NOT on histosole
+					{
+						if (climate_data[x] = 2 || climate_data[x] = 4 || climate_data[x] = 8) // warm/cool temperate/boreal dry
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
+						}
+						if (climate_data[x] = 1 || climate_data[x] = 3 || climate_data[x] = 7) // warm/cool temperate/boreal moist
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
+						}
+						if (climate_data[x] = 12) // tropical dry
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
+						}		
+						if (climate_data[x] = 10 || climate_data[x] = 11) // tropical moist/wet
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
+						}	
+						if (climate_data[x] = 9) // tropical tropical montane
+						{
+							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
+						}							
+					}
+				}
+
 		   }
 
 		   if (forestmodel_data[x] == 3)
@@ -231,15 +307,18 @@ for(x=0; x<xsize; x++)
 		}
 
 		// print out all the variables and results
-//		cout << "\n" << "agc: " << agc_data[x] << "\n";
-//		cout << "bgc: " << bgc_data[x] << "\n";
-//		cout << "loss: " << loss_data[x] << "\n";
-//		cout << "peat: " << peat_data[x] << "\n";
-//		cout << "burn: " << burn_data[x] << "\n";
-//		cout << "hist: " << hist_data[x] << "\n";
-//		cout << "ecozone: " << ecozone_data[x] << "\n";
-//                cout << "forest model: " << forestmodel_data[x] << "\n";
-//		cout << "out data: " << out_data1[x] << "\n";
+		cout << "\n" << "agc: " << agc_data[x] << "\n";
+		cout << "bgc: " << bgc_data[x] << "\n";
+		cout << "loss: " << loss_data[x] << "\n";
+		cout << "peat: " << peat_data[x] << "\n";
+		cout << "dead: " << dead_data[x][x] << "\n";
+		cout << "litter_data: " << litter_data[x] << "\n";
+		cout << "burn: " << burn_data[x] << "\n";
+		cout << "hist: " << hist_data[x] << "\n";
+		cout << "ecozone: " << ecozone_data[x] << "\n";
+        cout << "forest model: " << forestmodel_data[x] << "\n";
+        cout << "soil_data: " << soil_data[x] << "\n";
+		cout << "out data: " << out_data1[x] << "\n";
     }
 
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
