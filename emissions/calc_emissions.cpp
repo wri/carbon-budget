@@ -226,10 +226,12 @@ for(x=0; x<xsize; x++)
 		{
 			out_data1[x] = -9999;
 		}
-               if (out_data1[x] == 0)
-		{
-			out_data1[x] = -9999;
-		}
+//        if (out_data1[x] == 0)
+//		{
+//			out_data1[x] = -9999;
+//		}
+
+
 		// print out all the variables and results
 //		cout << "\n" << "agc: " << agc_data[x] << "\n";
 //		cout << "bgc: " << bgc_data[x] << "\n";
