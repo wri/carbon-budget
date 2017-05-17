@@ -282,7 +282,9 @@ for(x=0; x<xsize; x++)
 						cout << climate_data[x] << "\n";
 						if (climate_data[x] = 0)
 						{
+						
 						out_data2[x] = -9999;
+						cout << out_data2[x];
 						}
 /*
 						else
@@ -315,7 +317,7 @@ for(x=0; x<xsize; x++)
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
 						}
 */ 
-					}
+					
 
 
 					}
@@ -331,14 +333,14 @@ for(x=0; x<xsize; x++)
 		out_data1[x] = -9999;
 		out_data2[x] = -9999;
 	   }
+		
+		
+		
 		}
-		
-		
-		
 		else // not on loss
 		{
 			out_data1[x] = -9999;
-            out_data2[x] = -9999;
+		            out_data2[x] = -9999;
 		}
 
 /*		if (out_data2[x] < 0 && out_data2[x] > -9999)
