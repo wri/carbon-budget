@@ -239,28 +239,29 @@ for(x=0; x<xsize; x++)
 			   
 				out_data1[x] = -9999;
 				cout << "\n forest model is 2: ";
+				cout << x << ":" << y;
 				if (peat_data[x] != 0) // if its on peat data
 				{
-					cout << "peat data yes:" ;
+					cout << "peat data yes, " ;
 					//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
 					if (burn_data[x] != 0)
 					{
-						cout << "burn data yes: ";
+						cout << "burn data yes, ";
 						out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
 					}
 					else //if its on peat and NOT on burn data within 1 year of loss year
 					{
-						cout << "burn data no";
+						cout << "burn data no, ";
 						out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
 					}
 				}
 
 				else // its NOT on peat data
 				{
-					cout << "peat data no:";
+					cout << "peat data no, ";
 					if (hist_data[x] != 0) // not on peat but is on histosoles
 					{
-						cout << "hist data yes:";
+						cout << "hist data yes: ecozone is: ";
 						if ((ecozone_data[x] = 2) || (ecozone_data[x] = 3)) // boreal or temperate
 						{
 							cout << "boreal, ";
@@ -279,12 +280,13 @@ for(x=0; x<xsize; x++)
 					}
 					else // not on peat and NOT on histosole
 					{
-						cout << climate_data[x] << "\n";
+						cout << "hist data no: climate is :";
+						cout << climate_data[x];
 						if (climate_data[x] = 0)
 						{
 						
 						out_data2[x] = -9999;
-						cout << out_data2[x];
+						
 						}
 /*
 						else
@@ -324,7 +326,7 @@ for(x=0; x<xsize; x++)
 				}
 
 		   
-
+			cout << out_data2[x];
 
 		   }
 		   
