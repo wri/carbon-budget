@@ -315,29 +315,13 @@ for(x=0; x<xsize; x++)
                         out_data2[x] = -9999;
 		}
 
-		// print out all the variables and results
-//		cout << "\n" << "agc: " << agc_data[x] << "\n";
-//		cout << "bgc: " << bgc_data[x] << "\n";
-//		cout << "loss: " << loss_data[x] << "\n";
-//		cout << "peat: " << peat_data[x] << "\n";
-//		cout << "dead: " << dead_data[x] << "\n";
-//		cout << "litter_data: " << litter_data[x] << "\n";
-//		cout << "burn: " << burn_data[x] << "\n";
-//		cout << "hist: " << hist_data[x] << "\n";
-//		cout << "ecozone: " << ecozone_data[x] << "\n";
-//                cout << "forest model: " << forestmodel_data[x] << "\n";
-//                cout << "soil_data: " << soil_data[x] << "\n";
-//                cout << "x value: " << x << "\n";
-//                cout << "y value: " << y << "\n";
-//                cout << "climate_data: " << climate_data[x] << "\n";
-//		cout << ":" << out_data2[x]  << ":" << x << ":" << y << ":" << forestmodel_data[x] << ":" << loss_data[x] << ":" << agc_data[x] << ":" << climate_data[x] << ":" << dead_data[x] << ":" << burn_data[x] << ":" << hist_data[x] << ":" <<  peat_data[x] <<" \n";
-if (out_data2[x] < 0 && out_data2[x] > -9999)
-{
-cout << ":" << out_data2[x]  << ":" << x << ":" << y << ":" << forestmodel_data[x] << ":" << loss_data[x] << ":";
-cout <<  agc_data[x] << ":" << bgc_data[x] << ":" << climate_data[x] << ":" << dead_data[x] << ":" << burn_data[x] << ":" << peat_data[x];
-cout << ":" << hist_data[x] << ":" << soil_data[x] << ":" << litter_data[x] << "\n";
-
-}
+		if (out_data2[x] < 0 && out_data2[x] > -9999)
+		{
+		//cout << ":" << out_data2[x]  << ":" << x << ":" << y << ":" << forestmodel_data[x] << ":" << loss_data[x] << ":";
+		//cout <<  agc_data[x] << ":" << bgc_data[x] << ":" << climate_data[x] << ":" << dead_data[x] << ":" << burn_data[x] << ":" << peat_data[x];
+		//cout << ":" << hist_data[x] << ":" << soil_data[x] << ":" << litter_data[x] << "\n";
+		out_data2[x] = -9999;
+		}
 
     }
 
