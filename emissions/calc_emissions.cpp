@@ -153,8 +153,8 @@ float soil_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 
-for(y=2280; y<2292; y++) {
-//for (y=0; y<ysize; y++) {
+//for(y=2280; y<2292; y++) {
+for (y=0; y<ysize; y++) {
 
 //for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -282,9 +282,8 @@ for(x=0; x<xsize; x++)
 						}
 						if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
 						{
-                                                         
+
 							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
-                                                        cout << ":" << out_data2[x]  << ":" << x << ":" << y << ":" << forestmodel_data[x] << ":" << loss_data[x] << ":" << agc_data[x] << ":" << bgc_data[x] << ":" << climate_data[x] << ":" << dead_data[x] << ":" << burn_data[x] << ":" << hist_data[x] << ":" << soil_data[x] << ":" << litter_data[x] << "\n";
 
                                                 }
 
@@ -332,6 +331,14 @@ for(x=0; x<xsize; x++)
 //                cout << "y value: " << y << "\n";
 //                cout << "climate_data: " << climate_data[x] << "\n";
 //		cout << ":" << out_data2[x]  << ":" << x << ":" << y << ":" << forestmodel_data[x] << ":" << loss_data[x] << ":" << agc_data[x] << ":" << climate_data[x] << ":" << dead_data[x] << ":" << burn_data[x] << ":" << hist_data[x] << ":" <<  peat_data[x] <<" \n";
+if (out_data2[x] < 0 && out_data2[x] > -9999)
+{
+cout << ":" << out_data2[x]  << ":" << x << ":" << y << ":" << forestmodel_data[x] << ":" << loss_data[x] << ":";
+cout <<  agc_data[x] << ":" << bgc_data[x] << ":" << climate_data[x] << ":" << dead_data[x] << ":" << burn_data[x] << ":" << peat_data[x];
+cout << ":" << hist_data[x] << ":" << soil_data[x] << ":" << litter_data[x] << "\n";
+
+}
+
     }
 
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
