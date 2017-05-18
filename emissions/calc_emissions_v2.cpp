@@ -175,15 +175,15 @@ for(x=0; x<xsize; x++)
 		if (loss_data[x] > 0)
 		{
 
-            if (agb_data[x] = -9999)
+            if (agc_data[x] = -9999)
 			{
-				agb_data[x] = 0;
+				agc_data[x] = 0;
+				bgc_data[x] = 0;
 			}
-		   
 		   if (forestmodel_data[x] == 1)   // forestry
 			{
                 out_data2[x] = -9999;
-//				cout << "\n forest model is 1: ";				
+//				cout << "\n forest model is 1: ";
 				if (peat_data[x] != 0) // if its on peat data
 				{
 //					cout << "on peat: ";
@@ -206,7 +206,7 @@ for(x=0; x<xsize; x++)
 					if (hist_data[x] != 0) // not on peat but is on histosoles
 					{
 //						cout << "on hist, ";
-						if (ecozone_data[x] = 1) 
+						if (ecozone_data[x] = 1)
 						{
 //							cout << "ecozone 1, ";
 							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 55);
@@ -238,7 +238,6 @@ for(x=0; x<xsize; x++)
 
 		   else if (forestmodel_data[x] == 2) // conversion
 		    {
-			   
 				out_data1[x] = -9999;
 //				cout << "\n forest model is 2: ";
 //				cout << x << ":" << y << " ";
@@ -283,7 +282,7 @@ for(x=0; x<xsize; x++)
 					else // not on peat and NOT on histosole
 					{
 //						cout << "hist data no, ";
-                     
+
 		                if (climate_data[x]!= 0)
 						{
 	//						cout << "climate data not 0, ";
@@ -292,17 +291,17 @@ for(x=0; x<xsize; x++)
 							{
 								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
 							}
-							
+
 							else if ((climate_data[x] = 1) || (climate_data[x] = 3) || (climate_data[x] = 7)) // warm/cool temperate/boreal moist
 							{
 								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
 							}
-							
+
 							else if (climate_data[x] = 12) // tropical dry
 							{
 								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
 							}
-							
+
 							else if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
 							{
 								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
@@ -319,10 +318,10 @@ for(x=0; x<xsize; x++)
 						{
 //						cout << "climate data 0, ";
 						out_data2[x] = -9999;
-//						cout << "out data is: " << out_data2[x]; 
+//						cout << "out data is: " << out_data2[x];
 						}
-	
-				
+
+
 					}
 				}
 
@@ -334,12 +333,12 @@ for(x=0; x<xsize; x++)
 							cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
 							cout << climate_data[x] << ", " << dead_data[x] << ", " << litter_data[x] << ", ";
 							cout << soil_data[x] << ", " << out_data2[x] << "\n";
-					}				
+					}
 					*/
 
 
 			}
-		   
+		
 		   else // forest model not 1 or 2
 		    {
 				out_data1[x] = -9999;
