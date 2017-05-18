@@ -196,13 +196,10 @@ for(x=0; x<xsize; x++)
 
             if (agc_data[x] = -9999)
 			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
+				agc_data[x] = 0;
+				bgc_data[x] = 0;
 			}
 			
-			else
-			{
 				
 			   if (forestmodel_data[x] == 1)   // forestry
 				{
@@ -401,13 +398,13 @@ for(x=0; x<xsize; x++)
 					out_data3[x] = -9999;
 				}
 		
-			}
 		}
 		
 		else // not on loss
 		{
 			out_data1[x] = -9999;
 		    out_data2[x] = -9999;
+			out_data3[x] = -9999;
 		}
 
     }
