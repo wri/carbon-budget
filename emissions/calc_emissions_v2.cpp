@@ -37,10 +37,12 @@ string climate_name = tile_id + "_res_climate_zone.tif";
 string dead_name = tile_id + "_deadwood.tif";
 string litter_name = tile_id + "_litter.tif";
 string soil_name = tile_id + "_soil.tif";
+string ifl_name = tile_id + "_ifl_2000.tif";
 
 //either parse this var from inputs or send it in
 string out_name1= tile_id + "_forest_model.tif";
 string out_name2 = tile_id + "_conversion_model.tif";
+string out_name3 = tile_id + "_wildfire_model.tif";
 
 
 //setting variables
@@ -62,6 +64,7 @@ GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
 GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
 GDALDataset  *INGDAL11; GDALRasterBand  *INBAND11;
 GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
+GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -100,6 +103,10 @@ INBAND11 = INGDAL11->GetRasterBand(1);
 INGDAL12 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
 INBAND12 = INGDAL12->GetRasterBand(1);
 
+INGDAL13 = (GDALDataset *) GDALOpen(ifl_name.c_str(), GA_ReadOnly );
+INBAND13 = INGDAL13->GetRasterBand(1);
+
+
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
@@ -113,8 +120,12 @@ cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << en
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
 GDALDataset *OUTGDAL2;
+GDALDataset *OUTGDAL3;
+
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
+GDALRasterBand *OUTBAND3;
+
 OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
 char **papszOptions = NULL;
@@ -135,6 +146,11 @@ OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
 OUTBAND2 = OUTGDAL2->GetRasterBand(1);
 OUTBAND2->SetNoDataValue(-9999);
 
+OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
+OUTBAND3 = OUTGDAL3->GetRasterBand(1);
+OUTBAND3->SetNoDataValue(-9999);
+
 //read/write data
 float agb_data[xsize];
 float agc_data[xsize];
@@ -149,9 +165,11 @@ float climate_data[xsize];
 float dead_data[xsize];
 float litter_data[xsize];
 float soil_data[xsize];
+float ifl_data[xsize];
 
 float out_data1[xsize];
 float out_data2[xsize];
+float out_data3[xsize];
 
 //for(y=17328; y<17339; y++) {
 for (y=0; y<ysize; y++) {
@@ -168,6 +186,7 @@ INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 
 INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++)
@@ -183,6 +202,7 @@ for(x=0; x<xsize; x++)
 		   if (forestmodel_data[x] == 1)   // forestry
 			{
                 out_data2[x] = -9999;
+				out_data3[x] = -9999;
 //				cout << "\n forest model is 1: ";
 				if (peat_data[x] != 0) // if its on peat data
 				{
@@ -239,6 +259,7 @@ for(x=0; x<xsize; x++)
 		   else if (forestmodel_data[x] == 2) // conversion
 		    {
 				out_data1[x] = -9999;
+				out_data3[x] = -9999;
 //				cout << "\n forest model is 2: ";
 //				cout << x << ":" << y << " ";
 				if (peat_data[x] != 0) // if its on peat data
@@ -339,10 +360,37 @@ for(x=0; x<xsize; x++)
 
 			}
 		
+		   else if (forestmodel_datda[x] == 3) // wildfire
+		   {
+			    if (peat_data[x] != 0) // if its on peat data
+				{
+//					cout << "peat data yes, " ;
+					//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
+					if (burn_data[x] != 0)
+					{
+//						cout << "burn data yes, ";
+						out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
+					}
+					else //if its on peat and NOT on burn data within 1 year of loss year
+					{
+//						cout << "burn data no, ";
+						out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
+					}
+				}
+				else
+				{
+					out_data3[x] = 8888;
+				}
+			   
+			   
+		   }
+
+		   
 		   else // forest model not 1 or 2
 		    {
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 		    }
 		
 		
@@ -358,6 +406,7 @@ for(x=0; x<xsize; x++)
 
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
 
 //closes for y loop
 }
@@ -366,6 +415,7 @@ OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 
 GDALClose(INGDAL);
 GDALClose((GDALDatasetH)OUTGDAL);
 GDALClose((GDALDatasetH)OUTGDAL2);
+GDALClose((GDALDatasetH)OUTGDAL3);
 
 return 0;
 }
