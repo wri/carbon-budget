@@ -303,7 +303,11 @@ for(x=0; x<xsize; x++)
 }
 if (out_data2[x] = -73382)
 {
-	cout << x << ", " << y << ", " << out_data2[x] << "\n";
+	cout << x << ", " << y << ", " << agb_data[x] << ", " << agc_data[x] << ", " << bgc_data[x] << ", ";
+        cout << loss_data[x] << ", " << soil_data[x] << ", " << peat_data[x] << ", ";
+        cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
+        cout << climate_data[x] << ", " << dead_data[x] << ", " << litter_data[x] << ", ";
+        cout << soil_data[x] << ", " << out_data2[x] << "\n";
 }				
 
 
