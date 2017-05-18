@@ -188,7 +188,7 @@ for(x=0; x<xsize; x++)
 		   if (forestmodel_data[x] == 1)   // forestry
 			{
                 out_data2[x] = -9999;
-				
+			cout << "forest model is 1: ";				
 				if (peat_data[x] != 0) // if its on peat data
 				{
 
@@ -239,7 +239,7 @@ for(x=0; x<xsize; x++)
 			   
 				out_data1[x] = -9999;
 				cout << "\n forest model is 2: ";
-				cout << x << ":" << y;
+				cout << x << ":" << y << " ";
 				if (peat_data[x] != 0) // if its on peat data
 				{
 					cout << "peat data yes, " ;
@@ -286,8 +286,14 @@ for(x=0; x<xsize; x++)
 						{
 						
 						out_data2[x] = -9999;
-						
+
 						}
+						else
+						{
+						out_data2[x] = climate_data[x];
+						}
+	
+
 /*
 						else
 						{
@@ -325,9 +331,8 @@ for(x=0; x<xsize; x++)
 					}
 				}
 
-		   
-			cout << out_data2[x];
 
+		cout << "out data is " << out_data2[x];
 		   }
 		   
 	   else
