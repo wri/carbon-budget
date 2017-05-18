@@ -360,7 +360,7 @@ for(x=0; x<xsize; x++)
 
 			}
 		
-		   else if (forestmodel_datda[x] == 3) // wildfire
+		   else if (forestmodel_data[x] == 3) // wildfire
 		   {
 			    if (peat_data[x] != 0) // if its on peat data
 				{
