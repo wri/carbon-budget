@@ -196,204 +196,212 @@ for(x=0; x<xsize; x++)
 
             if (agc_data[x] = -9999)
 			{
-				agc_data[x] = 0;
-				bgc_data[x] = 0;
-			}
-		   if (forestmodel_data[x] == 1)   // forestry
-			{
-                out_data2[x] = -9999;
-				out_data3[x] = -9999;
-//				cout << "\n forest model is 1: ";
-				if (peat_data[x] != 0) // if its on peat data
-				{
-//					cout << "on peat: ";
-					if (burn_data[x] != 0) // if its on peat and on burn data
-					{
-//						cout << "on burn: ";
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
-					}
-
-					else // on peat but not on burn data
-					{
-//						cout << "not on burn: ";
-						out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
-					}
-				}
-
-				else // not on peat
-				{
-//					cout << "not on peat, ";
-					if (hist_data[x] != 0) // not on peat but is on histosoles
-					{
-//						cout << "on hist, ";
-						if (ecozone_data[x] = 1)
-						{
-//							cout << "ecozone 1, ";
-							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 55);
-						}
-						else if (ecozone_data[x] = 2)
-						{
-							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 2.16);
-						}
-						else if (ecozone_data[x] = 3)
-						{
-							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 6.27);
-						}
-						else
-						{
-//							cout << "no ecozone, ";
-							out_data1[x] = -9999;
-						}
-					}
-
-					else  //not on peat and not on histosole
-					{
-//						cout << "not on hist, ";
-						out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
-					}
-
-				}
-
-			}
-
-		   else if (forestmodel_data[x] == 2) // conversion
-		    {
-				out_data1[x] = -9999;
-				out_data3[x] = -9999;
-//				cout << "\n forest model is 2: ";
-//				cout << x << ":" << y << " ";
-				if (peat_data[x] != 0) // if its on peat data
-				{
-//					cout << "peat data yes, " ;
-					//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
-					if (burn_data[x] != 0)
-					{
-//						cout << "burn data yes, ";
-						out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
-					}
-					else //if its on peat and NOT on burn data within 1 year of loss year
-					{
-//						cout << "burn data no, ";
-						out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
-					}
-				}
-
-				else // its NOT on peat data
-				{
-//					cout << "peat data no, ";
-					if (hist_data[x] != 0) // not on peat but is on histosoles
-					{
-//						cout << "hist data yes, ";
-						if ((ecozone_data[x] = 2) || (ecozone_data[x] = 3)) // boreal or temperate
-						{
-//							cout << "boreal, ";
-							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
-						}
-						else if (ecozone_data[x] = 1) // tropics
-						{
-//                 					cout << "tropics, ";
-							out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 55;
-						}
-						else // no data for ecozone
-						{
-//							cout << "no data for ecozone, ";
-							out_data2[x] = -9999;
-						}
-					}
-					else // not on peat and NOT on histosole
-					{
-//						cout << "hist data no, ";
-
-		                if (climate_data[x]!= 0)
-						{
-	//						cout << "climate data not 0, ";
-							if ((climate_data[x] = 2) || (climate_data[x] = 4) || (climate_data[x] = 8)) // warm/cool temperate/boreal dry
-
-							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
-							}
-
-							else if ((climate_data[x] = 1) || (climate_data[x] = 3) || (climate_data[x] = 7)) // warm/cool temperate/boreal moist
-							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
-							}
-
-							else if (climate_data[x] = 12) // tropical dry
-							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
-							}
-
-							else if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
-							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
-								cout << climate_data[x] << " " << out_data2[x] << " " << x << " " << y;
-							}
-
-							else if (climate_data[x] = 9) // tropical tropical montane
-							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
-							}
-
-						}
-						else
-						{
-//						cout << "climate data 0, ";
-						out_data2[x] = -9999;
-//						cout << "out data is: " << out_data2[x];
-						}
-
-
-					}
-				}
-
-					/*
-					if (out_data2[x] = -73382)
-					{
-						cout << x << ", " << y << ", " << agb_data[x] << ", " << agc_data[x] << ", " << bgc_data[x] << ", ";
-							cout << loss_data[x] << ", " << soil_data[x] << ", " << peat_data[x] << ", ";
-							cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
-							cout << climate_data[x] << ", " << dead_data[x] << ", " << litter_data[x] << ", ";
-							cout << soil_data[x] << ", " << out_data2[x] << "\n";
-					}
-					*/
-
-
-			}
-		
-		   else if (forestmodel_data[x] == 3) // wildfire
-		   {
-			    if (peat_data[x] != 0) // if its on peat data
-				{
-//					cout << "peat data yes, " ;
-					//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
-					if (burn_data[x] != 0)
-					{
-//						cout << "burn data yes, ";
-						out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
-					}
-					else //if its on peat and NOT on burn data within 1 year of loss year
-					{
-//						cout << "burn data no, ";
-						out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
-					}
-				}
-				else
-				{
-					out_data3[x] = 8888;
-				}
-			   
-			   
-		   }
-
-		   
-		   else // forest model not 1 or 2
-		    {
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
-		    }
+			}
+			
+			else
+			{
+				
+			   if (forestmodel_data[x] == 1)   // forestry
+				{
+					out_data2[x] = -9999;
+					out_data3[x] = -9999;
+	//				cout << "\n forest model is 1: ";
+					if (peat_data[x] != 0) // if its on peat data
+					{
+	//					cout << "on peat: ";
+						if (burn_data[x] != 0) // if its on peat and on burn data
+						{
+	//						cout << "on burn: ";
+							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
+						}
+
+						else // on peat but not on burn data
+						{
+	//						cout << "not on burn: ";
+							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x];
+						}
+					}
+
+					else // not on peat
+					{
+	//					cout << "not on peat, ";
+						if (hist_data[x] != 0) // not on peat but is on histosoles
+						{
+	//						cout << "on hist, ";
+							if (ecozone_data[x] = 1)
+							{
+	//							cout << "ecozone 1, ";
+								out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 55);
+							}
+							else if (ecozone_data[x] = 2)
+							{
+								out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 2.16);
+							}
+							else if (ecozone_data[x] = 3)
+							{
+								out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 6.27);
+							}
+							else
+							{
+	//							cout << "no ecozone, ";
+								out_data1[x] = -9999;
+							}
+						}
+
+						else  //not on peat and not on histosole
+						{
+	//						cout << "not on hist, ";
+							out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
+						}
+
+					}
+
+				}
+
+			   else if (forestmodel_data[x] == 2) // conversion
+				{
+					out_data1[x] = -9999;
+					out_data3[x] = -9999;
+	//				cout << "\n forest model is 2: ";
+	//				cout << x << ":" << y << " ";
+					if (peat_data[x] != 0) // if its on peat data
+					{
+	//					cout << "peat data yes, " ;
+						//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
+						if (burn_data[x] != 0)
+						{
+	//						cout << "burn data yes, ";
+							out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
+						}
+						else //if its on peat and NOT on burn data within 1 year of loss year
+						{
+	//						cout << "burn data no, ";
+							out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
+						}
+					}
+
+					else // its NOT on peat data
+					{
+	//					cout << "peat data no, ";
+						if (hist_data[x] != 0) // not on peat but is on histosoles
+						{
+	//						cout << "hist data yes, ";
+							if ((ecozone_data[x] = 2) || (ecozone_data[x] = 3)) // boreal or temperate
+							{
+	//							cout << "boreal, ";
+								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
+							}
+							else if (ecozone_data[x] = 1) // tropics
+							{
+	//                 					cout << "tropics, ";
+								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 55;
+							}
+							else // no data for ecozone
+							{
+	//							cout << "no data for ecozone, ";
+								out_data2[x] = -9999;
+							}
+						}
+						else // not on peat and NOT on histosole
+						{
+	//						cout << "hist data no, ";
+
+							if (climate_data[x]!= 0)
+							{
+		//						cout << "climate data not 0, ";
+								if ((climate_data[x] = 2) || (climate_data[x] = 4) || (climate_data[x] = 8)) // warm/cool temperate/boreal dry
+
+								{
+									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
+								}
+
+								else if ((climate_data[x] = 1) || (climate_data[x] = 3) || (climate_data[x] = 7)) // warm/cool temperate/boreal moist
+								{
+									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
+								}
+
+								else if (climate_data[x] = 12) // tropical dry
+								{
+									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
+								}
+
+								else if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
+								{
+									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
+									cout << climate_data[x] << " " << out_data2[x] << " " << x << " " << y;
+								}
+
+								else if (climate_data[x] = 9) // tropical tropical montane
+								{
+									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
+								}
+
+							}
+							else
+							{
+	//						cout << "climate data 0, ";
+							out_data2[x] = -9999;
+	//						cout << "out data is: " << out_data2[x];
+							}
+
+
+						}
+					}
+
+						/*
+						if (out_data2[x] = -73382)
+						{
+							cout << x << ", " << y << ", " << agb_data[x] << ", " << agc_data[x] << ", " << bgc_data[x] << ", ";
+								cout << loss_data[x] << ", " << soil_data[x] << ", " << peat_data[x] << ", ";
+								cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
+								cout << climate_data[x] << ", " << dead_data[x] << ", " << litter_data[x] << ", ";
+								cout << soil_data[x] << ", " << out_data2[x] << "\n";
+						}
+						*/
+
+
+				}
+			
+			   else if (forestmodel_data[x] == 3) // wildfire
+			   {
+					out_data1[x] = -9999;
+					out_data2[x] = -9999;
+					
+					if (peat_data[x] != 0) // if its on peat data
+					{
+	//					cout << "peat data yes, " ;
+						//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
+						if (burn_data[x] != 0)
+						{
+	//						cout << "burn data yes, ";
+							out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
+						}
+						else //if its on peat and NOT on burn data within 1 year of loss year
+						{
+	//						cout << "burn data no, ";
+							out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
+						}
+					}
+					else
+					{
+						out_data3[x] = 8888;
+					}
+				   
+				   
+			   }
+
+			   
+			   else // forest model not 1 or 2 or 3
+				{
+					out_data1[x] = -9999;
+					out_data2[x] = -9999;
+					out_data3[x] = -9999;
+				}
 		
-		
+			}
 		}
 		
 		else // not on loss
