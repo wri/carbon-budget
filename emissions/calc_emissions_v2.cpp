@@ -37,6 +37,7 @@ string climate_name = tile_id + "_res_climate_zone.tif";
 string dead_name = tile_id + "_deadwood.tif";
 string litter_name = tile_id + "_litter.tif";
 string soil_name = tile_id + "_soil.tif";
+string ifl_name = tile_id + "_ifl_2000.tif";
 
 //either parse this var from inputs or send it in
 string out_name1= tile_id + "_forest_model.tif";
@@ -62,6 +63,7 @@ GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
 GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
 GDALDataset  *INGDAL11; GDALRasterBand  *INBAND11;
 GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
+GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -99,6 +101,9 @@ INBAND11 = INGDAL11->GetRasterBand(1);
 
 INGDAL12 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
 INBAND12 = INGDAL12->GetRasterBand(1);
+
+INGDAL13 = (GDALDataset *) GDALOpen(ifl_name.c_str(), GA_ReadOnly );
+INBAND13 = INGDAL13->GetRasterBand(1);
 
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
@@ -149,9 +154,11 @@ float climate_data[xsize];
 float dead_data[xsize];
 float litter_data[xsize];
 float soil_data[xsize];
+float ifl_data[xsize];
 
 float out_data1[xsize];
 float out_data2[xsize];
+float out_wildfire[xsize];
 
 //for(y=17328; y<17339; y++) {
 for (y=0; y<ysize; y++) {
@@ -168,6 +175,7 @@ INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 
 INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
 
 
 for(x=0; x<xsize; x++)
@@ -177,12 +185,13 @@ for(x=0; x<xsize; x++)
 
             if (agc_data[x] = -9999)
 			{
-				agc_data[x] = 0;
-				bgc_data[x] = 0;
+				out_data2[x] = -9999;
+
 			}
 		   if (forestmodel_data[x] == 1)   // forestry
 			{
                 out_data2[x] = -9999;
+				out_wildfire[x] = -9999;
 //				cout << "\n forest model is 1: ";
 				if (peat_data[x] != 0) // if its on peat data
 				{
@@ -239,6 +248,7 @@ for(x=0; x<xsize; x++)
 		   else if (forestmodel_data[x] == 2) // conversion
 		    {
 				out_data1[x] = -9999;
+				out_wildfire[x] = -9999;
 //				cout << "\n forest model is 2: ";
 //				cout << x << ":" << y << " ";
 				if (peat_data[x] != 0) // if its on peat data
@@ -339,6 +349,56 @@ for(x=0; x<xsize; x++)
 
 			}
 		
+		   else if (forestmodel_data[x] == 3) // wildfire
+		   {
+  			   
+			   if (peat_data[x] != 0) // if its on peat data
+			   {
+				   if (burn_data[x] != 0) // its on burn data
+				   {
+					   if (ecozone_data[x] != 1) // tropics
+					   {
+						   if (ifl_data[x] != 1) // ifl
+						   {
+							   float x = (agc_data[x] + bgc_data[x]) * 2 * .36
+								out_wildfire[x] = (x * 1580/1000) + ((x * 6.8/1000) * 28) + ((x * .2/1000)*265) + 917
+						   
+						   }
+						   
+						   else // not ifl
+						   {
+							   float x = (agc_data[x] + bgc_data[x]) * 2 * .55
+							   out_wildfire[x] = (x * 1580/1000) + (x * 6.8/1000) + (x * .2/1000)
+						   }
+						   
+					   }
+					   
+					   else if (ecozone_data[x] != 2) // boreal
+					   {
+						   float x = (agc_data[x] + bgc_data[x]) * 2 * .59
+						   out_wildfire[x] = (x * 1569/1000) + (x * 4.7/1000) + (x * .26/1000)
+					   }
+					   
+					   else if (ecozone_data[x] != 3) // temperate
+					   {
+						   float x = (agc_data[x] + bgc_data[x]) * 2 * .51
+						   z = (x * 1569/1000) + (x * 4.7/1000) + (x * .26/1000)
+					   }
+				   }
+				   
+				   else // not on burn data
+				   {
+					   
+				   }
+				   
+			   }
+			   
+			   else // not on peat
+			   {
+				   float x = (agc_data[x] + bgc_data[x]) * 2 * .36 // just using as a place holder
+					out_wildfire[x] = (x * 1580/1000) + ((x * 6.8/1000) * 28) + ((x * .2/1000)*265) + 917
+			   }
+		   }
 		   else // forest model not 1 or 2
 		    {
 				out_data1[x] = -9999;
