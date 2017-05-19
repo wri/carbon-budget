@@ -348,7 +348,7 @@ for(x=0; x<xsize; x++)
 				   {
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
-						
+	                                        cout << "forest model is 3, ";
 						float a_var = (agc_data[x] + bgc_data[x]) * 2;
 						float tropics_ifl_biomass = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + ((a_var * .36 * .2 / 1000) * 265));
 						float tropics_notifl_biomass = (a_var * .55 * (1580/1000)) + (a_var * .55 * (6.8/1000)) + (a_var * .55 * .2/1000);
@@ -363,12 +363,15 @@ for(x=0; x<xsize; x++)
 						
 						if ((ecozone_data[x] = 1) && (ifl_data[x] = 1)) // tropics and IFL
 						{
+							cout << " ecozone is 1, and ifl";
 							if (peat_data[x] != 0) // on peat
 							{
+								cout << "on peat, ";
 								out_data3[x] = tropics_ifl_biomass + tropics_drainage + 917;
 							}
 							else // not on peat
 							{
+								cout << "not on peat, ";
 								out_data3[x] = tropics_ifl_biomass + tropics_drainage;
 							}
 						}
@@ -392,6 +395,9 @@ for(x=0; x<xsize; x++)
 							}
 							else // not on peat
 							{
+								cout << " boreal not on peat ";
+								cout << boreal_biomass << " ";
+								cout << boreal_drainage << " ";
 								out_data3[x] = boreal_biomass + boreal_drainage;
 							}	
 						}
@@ -432,7 +438,7 @@ for(x=0; x<xsize; x++)
 			cout << loss_data[x] << ", " << soil_data[x] << ", " << peat_data[x] << ", ";
 			cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
 			cout << climate_data[x] << ", " << dead_data[x] << ", " << litter_data[x] << ", ";
-			cout << out_data1[x] << out_data2[x] << out_data3[x] << ifl_data[x] << "\n";
+			cout << ifl_data[x] << ", " << out_data1[x] << ", " << out_data2[x] << ", " << out_data3[x] << "\n";
 		}
 		
 		else // not on loss
