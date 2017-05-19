@@ -339,18 +339,8 @@ for(x=0; x<xsize; x++)
 							out_data2[x] = -9999;
 //						cout << "out data is: " << out_data2[x];
 							}
-
-
 						}
 					}
-
-						
-//							cout << x << ", " << y << ", " << agb_data[x] << ", " << agc_data[x] << ", " << bgc_data[x] << ", ";
-//								cout << loss_data[x] << ", " << soil_data[x] << ", " << peat_data[x] << ", ";
-//								cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
-//								cout << climate_data[x] << ", " << dead_data[x] << ", " << litter_data[x] << ", ";
-//								cout << soil_data[x] << ", " << out_data2[x] << "\n";
-
 				}
 			
 			   else if (forestmodel_data[x] == 3) // wildfire
@@ -359,44 +349,66 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					
 					float a_var = (agc_data[x] + bgc_data[x]) * 2;
-					float tropics_ifl = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + (a_var * .36 * .2 / 1000)) * 265;
-					float tropics_notifl = (a_var * .55 * 1580/1000) + (a_var * .55 * 6.8/1000) + (a_var * .55 * .2/1000);
+					float tropics_ifl_biomass = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + ((a_var * .36 * .2 / 1000) * 265);
+					float tropics_notifl_biomass = (a_var * .55 * (1580/1000)) + (a_var * .55 * (6.8/1000)) + (a_var * .55 * .2/1000);
+					float boreal_biomass = (a_var * .59 * (1569/1000)) + (a_var * .59 * (4.7/1000)) + (a_var * .59 * .26/1000);
+					float temperate_biomass =(a_var * .51 * (1569/1000)) + (a_var * .51 * (4.7/1000)) + (a_var * .51 * .26/1000);
+					
 					float peat_emiss = (15 - loss_data[x] * peat_data[x]) + 917;
 					
-					if (peat_data[x] != 0) // on peat
+					float tropics_drainage = (15 - loss_data[x]) * 55;
+					float boreal_drainage = (15 - loss_data[x]) * 2.16;
+					float temperate_drainage = (15 - loss_data[x]) * 6.27;
+					
+					if ((ecozone_data[x] = 1) && (ifl_data[x] = 1)) // tropics and IFL
 					{
-						if (burn_data[x] != 0) // on burn
+						if (peat_data[x] != 0) // on peat
 						{
-							if (ecozone_data[x] = 1) // tropics
-							{
-								if (ifl_data[x] != 0)
-								{
-							               out_data3[x] = tropics_ifl + peat_emiss;
-								}
-								else 
-								{
-									out_data3[x] = tropics_notifl + peat_emiss;
-								}	
-							}
-							else if (ecozone_data[x] = 2) // boreal
-							{
-								out_data3[x] = tropics_ifl + peat_emiss;
-							}
-							
+							out_data3[x] = tropics_ifl_biomass + tropics_drainage + 917
+						}
+						else // not on peat
+						{
+							out_data3[x] = tropics_ifl_biomass + tropics_drainage
+						}
+					}
+					else if ((ecozone_data[x] = 1) && (ifl_data[x] != 1)) // tropics and not IFL
+					{
+						if (peat_data[x] != 0) // on peat
+						{
+							out_data3[x] = tropics_notifl_biomass + tropics_drainage + 917
 						}
 						
-						else
+						else // not on peat
 						{
-							out_data3[x] = tropics_ifl;
-						}
+							out_data3[x] = tropics_notifl_biomass + tropics_drainage
+						}	
 					}
-
+					else if (ecozone_data[x] = 2) // boreal
+					{
+						if (peat_data[x] != 0) // on peat
+						{
+							out_data3[x] = boreal_biomass + boreal_drainage + 917
+						}
+						else // not on peat
+						{
+							out_data3[x] = boreal_biomass + boreal_drainage
+						}	
+					}
+					else if (ecozone_data[x] = 3) // temperate
+					{
+						if (peat_data[x] != 0) // on peat
+						{
+							out_data3[x] = temperate_biomass + temperate_drainage + 917
+						}
+						else // not on peat
+						{
+							out_data3[x] = temperate_biomass + temperate_drainage
+						}	
+					}
 					else
 					{
-						out_data3[x] = 8888;
+						out_data3[x] = -9999;
 					}
-				   
-				   
 			   }
 
 			   
