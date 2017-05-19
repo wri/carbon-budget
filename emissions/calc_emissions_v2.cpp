@@ -360,21 +360,38 @@ for(x=0; x<xsize; x++)
 					out_data1[x] = -9999;
 					out_data2[x] = -9999;
 					
-					if (peat_data[x] != 0) // if its on peat data
+					float a_var = (agc_data[x] + bgc_data[x]) * 2;
+					float tropics_ifl = (a_var * .36 * 1580/1000) + (a_var * .36 * 6.8/1000) * 28) + (a_var * .36 * .2/1000)*265);
+					float peat_emiss = (15 - loss_data[x] * peat_data[x]) + 917;
+					
+					if (peat_data[x] != 0)
 					{
-	//					cout << "peat data yes, " ;
-						//if ((loss_data[x] -1) <= burn_data[x] <= loss_data[x]) // if its on peat and on burn data within 1 year of loss year
 						if (burn_data[x] != 0)
 						{
-	//						cout << "burn data yes, ";
-							out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
+							if (ecozone_data[x] = 1) // tropics
+							{
+								if (ifl_data[x] != 0)
+								{
+									out_data3[x] = tropics_ifl + peat_emiss
+								}
+								else 
+								{
+									out_data3[x] = (a_var * .55 * 1580/1000) + (a_var * .55 * 6.8/1000) + (a_var * .55 * .2/1000);
+								}	
+							}
+							else
+							{
+								out_data3[x] = tropics_ifl + peat_emiss
+							}
+							
 						}
-						else //if its on peat and NOT on burn data within 1 year of loss year
+						
+						else
 						{
-	//						cout << "burn data no, ";
-							out_data3[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x];
+							out_data3[x] = tropics_ifl
 						}
 					}
+
 					else
 					{
 						out_data3[x] = 8888;
