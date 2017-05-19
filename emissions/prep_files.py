@@ -4,6 +4,8 @@ import argparse
 
 def main():
 
+    parser = argparse.ArgumentParser()
+
     parser.add_argument('--tile_id', '-t')
 
     args = parser.parse_args()
@@ -14,7 +16,7 @@ def main():
 
     for file in file_to_copy:
         filename = '{0}{1}.tif'.format(tile_id, file)
-        s3_file = 's3://gfw-files/sam/carbon_budget/'.format(filename)
+        s3_file = 's3://gfw-files/sam/carbon_budget/{}'.format(filename)
         cmd = ['aws', 's3', 'cp', s3_file, '.']
         subprocess.check_call(cmd)
         
