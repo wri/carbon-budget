@@ -37,7 +37,7 @@ string climate_name = tile_id + "_res_climate_zone.tif";
 string dead_name = tile_id + "_deadwood.tif";
 string litter_name = tile_id + "_litter.tif";
 string soil_name = tile_id + "_soil.tif";
-string ifl_name = tile_id + "_ifl_2000.tif";
+string ifl_name = tile_id + "_res_ifl_2000.tif";
 
 //either parse this var from inputs or send it in
 string out_name1= tile_id + "_forest_model.tif";
@@ -170,10 +170,8 @@ float ifl_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
-
-//for(y=17328; y<17339; y++) {
-//for (y=246; y<248; y++) {
-for (y=0; y<ysize; y++) {
+for (y=36800; y<36900; y++) {
+//for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -361,34 +359,35 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					
 					float a_var = (agc_data[x] + bgc_data[x]) * 2;
-					float tropics_ifl = (a_var * .36 * 1580/1000) + (a_var * .36 * 6.8/1000) * 28) + (a_var * .36 * .2/1000)*265);
+					float tropics_ifl = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + (a_var * .36 * .2 / 1000)) * 265;
+					float tropics_notifl = (a_var * .55 * 1580/1000) + (a_var * .55 * 6.8/1000) + (a_var * .55 * .2/1000);
 					float peat_emiss = (15 - loss_data[x] * peat_data[x]) + 917;
 					
-					if (peat_data[x] != 0)
+					if (peat_data[x] != 0) // on peat
 					{
-						if (burn_data[x] != 0)
+						if (burn_data[x] != 0) // on burn
 						{
 							if (ecozone_data[x] = 1) // tropics
 							{
 								if (ifl_data[x] != 0)
 								{
-									out_data3[x] = tropics_ifl + peat_emiss
+							               out_data3[x] = tropics_ifl + peat_emiss;
 								}
 								else 
 								{
-									out_data3[x] = (a_var * .55 * 1580/1000) + (a_var * .55 * 6.8/1000) + (a_var * .55 * .2/1000);
+									out_data3[x] = tropics_notifl + peat_emiss;
 								}	
 							}
-							else
+							else if (ecozone_data[x] = 2) // boreal
 							{
-								out_data3[x] = tropics_ifl + peat_emiss
+								out_data3[x] = tropics_ifl + peat_emiss;
 							}
 							
 						}
 						
 						else
 						{
-							out_data3[x] = tropics_ifl
+							out_data3[x] = tropics_ifl;
 						}
 					}
 
