@@ -66,7 +66,7 @@ def resample_raster(raster, tile_id):
     input_raster = raster + ".tif"
     resampled_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
     resample_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-a_nodata',
-                    '0', input_raster, resampled_raster]
+                    '-9999', input_raster, resampled_raster]
     subprocess.check_call(resample_cmd)
     return resampled_raster
 
@@ -77,7 +77,7 @@ def resample_clip_raster(rasters_to_resample, tile_id, coords):
         print "resampling/clipping {}".format(raster)
         input_raster = raster + ".tif"
         clipped_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
-        base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
+        base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999',
         input_raster, clipped_raster, '-tr', '.00025', '.00025']
 
         clip_cmd = base_cmd + coords

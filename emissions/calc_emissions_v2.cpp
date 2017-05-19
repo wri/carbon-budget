@@ -170,8 +170,8 @@ float ifl_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
-for (y=36800; y<36900; y++) {
-//for (y=0; y<ysize; y++) {
+//for (y=36800; y<36900; y++) {
+for (y=0; y<ysize; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -349,7 +349,7 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					
 					float a_var = (agc_data[x] + bgc_data[x]) * 2;
-					float tropics_ifl_biomass = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + ((a_var * .36 * .2 / 1000) * 265);
+					float tropics_ifl_biomass = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + ((a_var * .36 * .2 / 1000) * 265));
 					float tropics_notifl_biomass = (a_var * .55 * (1580/1000)) + (a_var * .55 * (6.8/1000)) + (a_var * .55 * .2/1000);
 					float boreal_biomass = (a_var * .59 * (1569/1000)) + (a_var * .59 * (4.7/1000)) + (a_var * .59 * .26/1000);
 					float temperate_biomass =(a_var * .51 * (1569/1000)) + (a_var * .51 * (4.7/1000)) + (a_var * .51 * .26/1000);
@@ -364,45 +364,45 @@ for(x=0; x<xsize; x++)
 					{
 						if (peat_data[x] != 0) // on peat
 						{
-							out_data3[x] = tropics_ifl_biomass + tropics_drainage + 917
+							out_data3[x] = tropics_ifl_biomass + tropics_drainage + 917;
 						}
 						else // not on peat
 						{
-							out_data3[x] = tropics_ifl_biomass + tropics_drainage
+							out_data3[x] = tropics_ifl_biomass + tropics_drainage;
 						}
 					}
 					else if ((ecozone_data[x] = 1) && (ifl_data[x] != 1)) // tropics and not IFL
 					{
 						if (peat_data[x] != 0) // on peat
 						{
-							out_data3[x] = tropics_notifl_biomass + tropics_drainage + 917
+							out_data3[x] = tropics_notifl_biomass + tropics_drainage + 917;
 						}
 						
 						else // not on peat
 						{
-							out_data3[x] = tropics_notifl_biomass + tropics_drainage
+							out_data3[x] = tropics_notifl_biomass + tropics_drainage;
 						}	
 					}
 					else if (ecozone_data[x] = 2) // boreal
 					{
 						if (peat_data[x] != 0) // on peat
 						{
-							out_data3[x] = boreal_biomass + boreal_drainage + 917
+							out_data3[x] = boreal_biomass + boreal_drainage + 917;
 						}
 						else // not on peat
 						{
-							out_data3[x] = boreal_biomass + boreal_drainage
+							out_data3[x] = boreal_biomass + boreal_drainage;
 						}	
 					}
 					else if (ecozone_data[x] = 3) // temperate
 					{
 						if (peat_data[x] != 0) // on peat
 						{
-							out_data3[x] = temperate_biomass + temperate_drainage + 917
+							out_data3[x] = temperate_biomass + temperate_drainage + 917;
 						}
 						else // not on peat
 						{
-							out_data3[x] = temperate_biomass + temperate_drainage
+							out_data3[x] = temperate_biomass + temperate_drainage;
 						}	
 					}
 					else
