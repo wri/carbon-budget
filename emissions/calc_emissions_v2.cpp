@@ -171,7 +171,7 @@ float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
 //for (y=36800; y<36900; y++) {
-//for (y=0; y<ysize; y++) {
+for (y=0; y<ysize; y++) {
 for (y=23919; y<23925; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -187,8 +187,8 @@ INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 
 INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
 
-
 for(x=0; x<xsize; x++)
+//for(x=30460; x<30470; x++)
 	{
 		if (loss_data[x] > 0)
 		{
@@ -226,16 +226,18 @@ for(x=0; x<xsize; x++)
 							if (hist_data[x] != 0) // not on peat but is on histosoles
 							{
 							cout << "on hist, ";
-								if (ecozone_data[x] = 1)
+								if (ecozone_data[x] == 1)
 								{
 								cout << "ecozone 1, ";
 									out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 55);
 								}
-								else if (ecozone_data[x] = 2)
+								else if (ecozone_data[x] == 2)
 								{
+								cout << "ecozone 2, ";
 									out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 2.16);
+	
 								}
-								else if (ecozone_data[x] = 3)
+								else if (ecozone_data[x] == 3)
 								{
 									out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 6.27);
 								}
