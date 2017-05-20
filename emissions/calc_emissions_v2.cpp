@@ -285,12 +285,12 @@ for(x=0; x<xsize; x++)
 							if (hist_data[x] != 0) // not on peat but is on histosoles
 							{
 	//						cout << "hist data yes, ";
-								if ((ecozone_data[x] = 2) || (ecozone_data[x] = 3)) // boreal or temperate
+								if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3)) // boreal or temperate
 								{
 	//							cout << "boreal, ";
 									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
 								}
-								else if (ecozone_data[x] = 1) // tropics
+								else if (ecozone_data[x] == 1) // tropics
 								{
 	  //               					cout << "tropics, ";
 									out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 55;
@@ -308,29 +308,29 @@ for(x=0; x<xsize; x++)
 								if ((climate_data[x]!= 0) && (soil_data[x] > 0))
 								{
 	//						cout << "climate data not 0, ";
-									if ((climate_data[x] = 2) || (climate_data[x] = 4) || (climate_data[x] = 8)) // warm/cool temperate/boreal dry
+									if ((climate_data[x] == 2) || (climate_data[x] == 4) || (climate_data[x] == 8)) // warm/cool temperate/boreal dry
 
 									{
 										out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
 									}
 
-									else if ((climate_data[x] = 1) || (climate_data[x] = 3) || (climate_data[x] = 7)) // warm/cool temperate/boreal moist
+									else if ((climate_data[x] == 1) || (climate_data[x] == 3) || (climate_data[x] == 7)) // warm/cool temperate/boreal moist
 									{
 										out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
 									}
 
-									else if (climate_data[x] = 12) // tropical dry
+									else if (climate_data[x] == 12) // tropical dry
 									{
 										out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
 									}
 
-									else if ((climate_data[x] = 10) || (climate_data[x] = 11)) // tropical moist/wet
+									else if ((climate_data[x] == 10) || (climate_data[x] == 11)) // tropical moist/wet
 									{
 										out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
 										cout << climate_data[x] << " " << out_data2[x] << " " << x << " " << y;
 									}
 
-									else if (climate_data[x] = 9) // tropical tropical montane
+									else if (climate_data[x] == 9) // tropical tropical montane
 									{
 										out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
 									}
@@ -363,7 +363,7 @@ for(x=0; x<xsize; x++)
 						float boreal_drainage = (15 - loss_data[x]) * 2.16;
 						float temperate_drainage = (15 - loss_data[x]) * 6.27;
 						
-						if ((ecozone_data[x] = 1) && (ifl_data[x] = 1)) // tropics and IFL
+						if ((ecozone_data[x] == 1) && (ifl_data[x] == 1)) // tropics and IFL
 						{
 							cout << " ecozone is 1, and ifl";
 							if (peat_data[x] != 0) // on peat
@@ -377,7 +377,7 @@ for(x=0; x<xsize; x++)
 								out_data3[x] = tropics_ifl_biomass + tropics_drainage;
 							}
 						}
-						else if ((ecozone_data[x] = 1) && (ifl_data[x] != 1)) // tropics and not IFL
+						else if ((ecozone_data[x] == 1) && (ifl_data[x] != 1)) // tropics and not IFL
 						{
 							if (peat_data[x] != 0) // on peat
 							{
@@ -389,7 +389,7 @@ for(x=0; x<xsize; x++)
 								out_data3[x] = tropics_notifl_biomass + tropics_drainage;
 							}	
 						}
-						else if (ecozone_data[x] = 2) // boreal
+						else if (ecozone_data[x] == 2) // boreal
 						{
 							if (peat_data[x] != 0) // on peat
 							{
@@ -403,7 +403,7 @@ for(x=0; x<xsize; x++)
 								out_data3[x] = boreal_biomass + boreal_drainage;
 							}	
 						}
-						else if (ecozone_data[x] = 3) // temperate
+						else if (ecozone_data[x] == 3) // temperate
 						{
 							if (peat_data[x] != 0) // on peat
 							{
@@ -435,7 +435,7 @@ for(x=0; x<xsize; x++)
 					out_data3[x] = -9999;
 
 				}
-	//		cout << "out data is: " << out_data2[x] << ", ";
+
 			cout << x << ", " << y << ", " << agc_data[x] << ", " << bgc_data[x] << ", ";
 			cout << loss_data[x] << ", " << soil_data[x] << ", " << peat_data[x] << ", ";
 			cout << forestmodel_data[x] << ", " << hist_data[x] << ", " << ecozone_data[x] << ", ";
