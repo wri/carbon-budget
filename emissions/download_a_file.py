@@ -15,8 +15,7 @@ def main():
     args = parser.parse_args()
     
     file_name = args.file_name
-    upload = args.upload
-    download = args.download
+
     if upload:
         cmd = ['aws', 's3', 'cp', file_name, 's3://gfw-files/sam/carbon_budget/']
         subprocess.check_call(cmd)
