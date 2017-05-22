@@ -279,10 +279,14 @@ for(x=0; x<xsize; x++)
 						out_data2[x] = -9999;
 						}
 					}
-				   else if (forestmodel_data[x] == 3) // wildfire
+				   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0)// wildfire or mixed
 				    {
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
+						
+						float out_data3
+						float out_data0
+						
 						float a_var = (agc_data[x] + bgc_data[x]) * 2;
 						float tropics_ifl_biomass = ((a_var * .36 * 1.58) + (a_var * .36 * .0068 * 28) + ((a_var * .36 * .0002) * 265));
 						float tropics_notifl_biomass = (a_var * .55 * 1.58) + (a_var * .55 * .0068) + (a_var * .55 * .0002);
@@ -308,39 +312,55 @@ for(x=0; x<xsize; x++)
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3[x] = tropics_notifl_biomass + tropics_drainage + 917;
+								out_data3 = tropics_notifl_biomass + tropics_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3[x] = tropics_notifl_biomass + tropics_drainage;
+								out_data3 = tropics_notifl_biomass + tropics_drainage;
 							}	
 						}
 						else if (ecozone_data[x] == 2) // boreal
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3[x] = boreal_biomass + boreal_drainage + 917;
+								out_data3 = boreal_biomass + boreal_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3[x] = boreal_biomass + boreal_drainage;
+								out_data3 = boreal_biomass + boreal_drainage;
 							}	
 						}
 						else if (ecozone_data[x] == 3) // temperate
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3[x] = temperate_biomass + temperate_drainage + 917;
+								out_data3 = temperate_biomass + temperate_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3[x] = temperate_biomass + temperate_drainage;
+								out_data3 = temperate_biomass + temperate_drainage;
 							}	
 						}
 						else
 						{
-							out_data3[x] = -9999;
+							out_data3 = -9999;
 						}
+						
+						// set either forest model or mixed raster to the value
+						if (forestmodel_data[x] == 3)
+						{
+							out_data3[x] = out_data3;
+						}
+						else if (forestmodel_data[x] == 0)
+						{
+							out_data0[x] = out_data3;
+						}
+						else
+						{
+							out_data3[x] = -9999;
+							out_data0[x] = -9999;
+						}
+					
 					}
 
 				   else // forest model not 1 or 2 or 3
