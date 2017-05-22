@@ -43,7 +43,7 @@ string ifl_name = tile_id + "_res_ifl_2000.tif";
 string out_name1= tile_id + "_forest_model.tif";
 string out_name2 = tile_id + "_conversion_model.tif";
 string out_name3 = tile_id + "_wildfire_model.tif";
-
+string out_name0 = tile_id + "_mixed_model.tif";
 
 //setting variables
 int x, y;
@@ -121,10 +121,12 @@ GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
 GDALDataset *OUTGDAL2;
 GDALDataset *OUTGDAL3;
+GDALDataset *OUTGDAL0;
 
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
 GDALRasterBand *OUTBAND3;
+GDALRasterBand *OUTBAND0;
 
 OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
@@ -151,6 +153,13 @@ OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
 OUTBAND3 = OUTGDAL3->GetRasterBand(1);
 OUTBAND3->SetNoDataValue(-9999);
 
+OUTGDAL0 = OUTDRIVER->Create( out_name0.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL0->SetGeoTransform(adfGeoTransform); OUTGDAL0->SetProjection(OUTPRJ);
+OUTBAND0 = OUTGDAL0->GetRasterBand(1);
+OUTBAND0->SetNoDataValue(-9999);
+
+
+
 //read/write data
 float agb_data[xsize];
 float agc_data[xsize];
@@ -170,8 +179,11 @@ float ifl_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
+float out_data0[xsize];
 
 for (y=0; y<ysize; y++) {
+//for (y=23369; y<23371; y++) {
+
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -187,6 +199,7 @@ INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0,
 INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
 
 for(x=0; x<xsize; x++)
+//for(x=31422; x<31428; x++)
 	{
 		if (loss_data[x] > 0)
 		{
@@ -279,13 +292,13 @@ for(x=0; x<xsize; x++)
 						out_data2[x] = -9999;
 						}
 					}
-				   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0)// wildfire or mixed
+				   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 				    {
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
 						
-						float out_data3
-						float out_data0
+						float outdata3;
+						float outdata0;
 						
 						float a_var = (agc_data[x] + bgc_data[x]) * 2;
 						float tropics_ifl_biomass = ((a_var * .36 * 1.58) + (a_var * .36 * .0068 * 28) + ((a_var * .36 * .0002) * 265));
@@ -301,59 +314,59 @@ for(x=0; x<xsize; x++)
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3[x] = tropics_ifl_biomass + tropics_drainage + 917;
+								outdata3 = tropics_ifl_biomass + tropics_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3[x] = tropics_ifl_biomass + tropics_drainage;
+								outdata3 = tropics_ifl_biomass + tropics_drainage;
 							}
 						}
 						else if ((ecozone_data[x] == 1) && (ifl_data[x] != 1)) // tropics and not IFL
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3 = tropics_notifl_biomass + tropics_drainage + 917;
+								outdata3 = tropics_notifl_biomass + tropics_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3 = tropics_notifl_biomass + tropics_drainage;
+								outdata3 = tropics_notifl_biomass + tropics_drainage;
 							}	
 						}
 						else if (ecozone_data[x] == 2) // boreal
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3 = boreal_biomass + boreal_drainage + 917;
+								outdata3 = boreal_biomass + boreal_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3 = boreal_biomass + boreal_drainage;
+								outdata3 = boreal_biomass + boreal_drainage;
 							}	
 						}
 						else if (ecozone_data[x] == 3) // temperate
 						{
 							if (peat_data[x] != 0) // on peat
 							{
-								out_data3 = temperate_biomass + temperate_drainage + 917;
+								outdata3 = temperate_biomass + temperate_drainage + 917;
 							}
 							else // not on peat
 							{
-								out_data3 = temperate_biomass + temperate_drainage;
+								outdata3 = temperate_biomass + temperate_drainage;
 							}	
 						}
 						else
 						{
-							out_data3 = -9999;
+							outdata3 = -9999;
 						}
 						
 						// set either forest model or mixed raster to the value
 						if (forestmodel_data[x] == 3)
 						{
-							out_data3[x] = out_data3;
+							out_data3[x] = outdata3;
 						}
 						else if (forestmodel_data[x] == 0)
 						{
-							out_data0[x] = out_data3;
+							out_data0[x] = outdata3;
 						}
 						else
 						{
@@ -388,7 +401,7 @@ for(x=0; x<xsize; x++)
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
-
+OUTBAND0->RasterIO( GF_Write, 0, y, xsize, 1, out_data0, xsize, 1, GDT_Float32, 0, 0 );
 //closes for y loop
 }
 
@@ -397,6 +410,6 @@ GDALClose(INGDAL);
 GDALClose((GDALDatasetH)OUTGDAL);
 GDALClose((GDALDatasetH)OUTGDAL2);
 GDALClose((GDALDatasetH)OUTGDAL3);
-
+GDALClose((GDALDatasetH)OUTGDAL0);
 return 0;
 }
