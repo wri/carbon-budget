@@ -182,7 +182,7 @@ float out_data3[xsize];
 float out_data0[xsize];
 
 for (y=0; y<ysize; y++) {
-//for (y=23369; y<23371; y++) {
+//for (y=23369; y<23370; y++) {
 
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -201,14 +201,17 @@ INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 
 for(x=0; x<xsize; x++)
 //for(x=31422; x<31428; x++)
 	{
+//cout << "\n" << x << ":" << y << " ";
 		if (loss_data[x] > 0)
 		{
 			if (agc_data[x] > 0)
 				{
+//cout << "\n forest model data is: " << forestmodel_data[x] << ", ";
 				   if (forestmodel_data[x] == 1)   // forestry
 					{
 						out_data2[x] = -9999;
 						out_data3[x] = -9999;
+						out_data0[x] = -9999;
 						
 						if (peat_data[x] != 0) // peat
 						{
@@ -238,13 +241,14 @@ for(x=0; x<xsize; x++)
 							{
 								out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
 							}
+//cout << "forest model: " << out_data1[x];
 					}
 
 				   else if (forestmodel_data[x] == 2) // conversion
 					{
 						out_data1[x] = -9999;
 						out_data3[x] = -9999;
-						
+						out_data0[x] = -9999;						
 						if (peat_data[x] != 0) // peat
 						{
 							out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
@@ -291,6 +295,7 @@ for(x=0; x<xsize; x++)
 						{
 						out_data2[x] = -9999;
 						}
+//cout << "converison model: " << out_data2[x] << ", ";
 					}
 				   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 				    {
@@ -340,6 +345,8 @@ for(x=0; x<xsize; x++)
 							}
 							else // not on peat
 							{
+
+//cout << "boreal, not on peat: " << outdata3 << ", ";						
 								outdata3 = boreal_biomass + boreal_drainage;
 							}	
 						}
@@ -362,10 +369,14 @@ for(x=0; x<xsize; x++)
 						// set either forest model or mixed raster to the value
 						if (forestmodel_data[x] == 3)
 						{
+//cout << "setting outdata 3 to outdata3"; 						
 							out_data3[x] = outdata3;
+							out_data0[x] = -9999;
 						}
 						else if (forestmodel_data[x] == 0)
 						{
+//cout << "setting outdata 0 to outdata3";		
+							out_data3[x] = -9999;			
 							out_data0[x] = outdata3;
 						}
 						else
@@ -380,6 +391,7 @@ for(x=0; x<xsize; x++)
 					{
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
+						out_data0[x] = -9999;
 						out_data3[x] = -9999;
 					}
 				}
@@ -388,6 +400,7 @@ for(x=0; x<xsize; x++)
 					out_data1[x] = -9999;
 					out_data2[x] = -9999;
 					out_data3[x] = -9999;
+					out_data0[x] = -9999;
 				}
 		}
 		else // not on loss
@@ -395,6 +408,7 @@ for(x=0; x<xsize; x++)
 			out_data1[x] = -9999;
 		    out_data2[x] = -9999;
 			out_data3[x] = -9999;
+			out_data0[x] = -9999;
 		}
     }
 
