@@ -170,9 +170,8 @@ float ifl_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
-//for (y=36800; y<36900; y++) {
+
 for (y=0; y<ysize; y++) {
-for (y=23919; y<23925; y++) {
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -188,7 +187,6 @@ INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0,
 INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
 
 for(x=0; x<xsize; x++)
-//for(x=30460; x<30470; x++)
 	{
 		if (loss_data[x] > 0)
 		{
@@ -253,7 +251,7 @@ for(x=0; x<xsize; x++)
 								out_data2[x] = -9999;
 							}
 						}
-						else if ((climate_data[x]!= 0) && (soil_data[x] > 0))
+						else if ((climate_data[x]!= 0) && (soil_data[x] > 0)) // climate and soil have data
 						{
 							if ((climate_data[x] == 2) || (climate_data[x] == 4) || (climate_data[x] == 8)) // warm/cool temperate/boreal dry
 							{
@@ -285,19 +283,16 @@ for(x=0; x<xsize; x++)
 				    {
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
-						
 						float a_var = (agc_data[x] + bgc_data[x]) * 2;
-						float tropics_ifl_biomass = ((a_var * .36 * (1580/1000)) + (a_var * .36 * (6.8/1000) * 28) + ((a_var * .36 * .2 / 1000) * 265));
-						float tropics_notifl_biomass = (a_var * .55 * (1580/1000)) + (a_var * .55 * (6.8/1000)) + (a_var * .55 * .2/1000);
-						float boreal_biomass = (a_var * .59 * (1569/1000)) + (a_var * .59 * (4.7/1000)) + (a_var * .59 * .26/1000);
-						float temperate_biomass =(a_var * .51 * (1569/1000)) + (a_var * .51 * (4.7/1000)) + (a_var * .51 * .26/1000);
-						
+						float tropics_ifl_biomass = ((a_var * .36 * 1.58) + (a_var * .36 * .0068 * 28) + ((a_var * .36 * .0002) * 265));
+						float tropics_notifl_biomass = (a_var * .55 * 1.58) + (a_var * .55 * .0068) + (a_var * .55 * .0002);
+						float boreal_biomass = (a_var * .59 * 1.569) + (a_var * .59 * .0047) + (a_var * .59 * .00026);
+						float temperate_biomass =(a_var * .51 * 1.569) + (a_var * .51 * .00047) + (a_var * .51 * .00026);
 						float peat_emiss = (15 - loss_data[x] * peat_data[x]) + 917;
-						
 						float tropics_drainage = (15 - loss_data[x]) * 55;
 						float boreal_drainage = (15 - loss_data[x]) * 2.16;
 						float temperate_drainage = (15 - loss_data[x]) * 6.27;
-						
+
 						if ((ecozone_data[x] == 1) && (ifl_data[x] == 1)) // tropics and IFL
 						{
 							if (peat_data[x] != 0) // on peat
@@ -347,6 +342,7 @@ for(x=0; x<xsize; x++)
 							out_data3[x] = -9999;
 						}
 					}
+
 				   else // forest model not 1 or 2 or 3
 					{
 						out_data1[x] = -9999;
