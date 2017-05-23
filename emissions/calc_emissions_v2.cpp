@@ -181,6 +181,9 @@ float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
 
+float outdata0;
+float outdata3;
+
 for (y=0; y<ysize; y++) {
 //for (y=23369; y<23370; y++) {
 
@@ -380,8 +383,13 @@ for(x=0; x<xsize; x++)
 						*/					
 	
 					}
-
-											
+					else // forest model not 1 or 2 or 3
+					{
+						out_data0[x] = -9999;
+						out_data1[x] = -9999;
+                                                out_data2[x] = -9999;
+                                                out_data3[x] = -9999;
+					}
 					if (forestmodel_data[x] == 3)
 					{
 						out_data3[x] = outdata3;
@@ -396,13 +404,6 @@ for(x=0; x<xsize; x++)
 					{
 						out_data3[x] = -9999;
 						out_data0[x] = -9999;
-					}
-				   else // forest model not 1 or 2 or 3
-					{
-						out_data0[x] = -9999;
-						out_data1[x] = -9999;
-						out_data2[x] = -9999;
-						out_data3[x] = -9999;
 					}
 				}
 				else // no agc data
