@@ -204,6 +204,7 @@ for(x=0; x<xsize; x++)
 float outdata3 = -9999;
 float outdata2 = -9999;
 float outdata0 = -9999;
+float outdata1 = -9999;
 		if (loss_data[x] > 0)
 		{
 			if (agc_data[x] > 0)
@@ -211,43 +212,60 @@ float outdata0 = -9999;
 cout << "\n" << x << ":" << y << " ";
 
 cout << "forest model data is: " << forestmodel_data[x] << ", ";
-				   if (forestmodel_data[x] == 1)   // forestry
+				   if ((forestmodel_data[x] == 1)||(forestmodel_data[x] == 0)   // forestry or mixed
 					{
+cout << " forest model is forestry or mixed, ";
 						out_data2[x] = -9999;
 						out_data3[x] = -9999;
 						out_data0[x] = -9999;
 						
 						if (peat_data[x] != 0) // peat
 						{
-							out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
+							outdata1 = ((agc_data[x] + bgc_data[x]) * 3.67) + (15 - loss_data[x]) * peat_data[x] + 917;
 						}
 						else if (hist_data[x] != 0) // histosole
 						{
 							if (ecozone_data[x] == 1)
 							{
-								out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 55);
+								outdata1 = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 55);
 							}
 							else if (ecozone_data[x] == 2)
 							{
-								out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 2.16);
+								outdata1 = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 2.16);
 
 							}
 							else if (ecozone_data[x] == 3)
 							{
-								out_data1[x] = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 6.27);
+								outdata1 = ((agc_data[x] + bgc_data[x]) * 3.67) + ((15 - loss_data[x]) * 6.27);
 							}
 							else 
 							{
-								out_data1[x] = -9999;
+								outdata1 = -9999;
 							}
 						}
-							else  //not on peat and not on histosole
-							{
-								out_data1[x] = (agc_data[x] + bgc_data[x]) * 3.67;
-							}
+						else  //not on peat and not on histosole
+						{
+							outdata1 = (agc_data[x] + bgc_data[x]) * 3.67;
+						}
+						// set either forest model or mixed raster to the value
+						if (forestmodel_data[x] == 1)
+						{					
+							out_data1[x] = outdata1;
+							out_data0[x] = -9999;
+						}
+						else if (forestmodel_data[x] == 0)
+						{
+							out_data1[x] = -9999;			
+							out_data0[x] = outdata1;
+						}
+						else
+						{
+							out_data1[x] = -9999;
+							out_data0[x] = -9999;
+						}
+					
 //cout << "forest model: " << out_data1[x];
 					}
-
 				   if ((forestmodel_data[x] == 2) || (forestmodel_data[x] == 0)) // conversion
 					{
 cout << " forest model is conversion or mixed, ";
@@ -255,6 +273,7 @@ cout << " forest model is conversion or mixed, ";
 //						float outdata0;
 						
 						out_data3[x] = -9999;
+						out_data0[x] = -9999;
 						out_data1[x] = -9999;	
 						
 						if (peat_data[x] != 0) // peat
@@ -421,16 +440,44 @@ cout << "forest model is wildfire or mixed, ";
 						out_data3[x] = -9999;
 					}
 */
+cout << " out data 1[x]: " << out_data1[x];
 cout << " out data 2[x]: " << out_data2[x];
 cout << " out data 3[x]: " << out_data3[x];
 if (forestmodel_data[x] == 0)
 {
 	out_data0[x] = outdata2 + outdata3;
+	out_data1[x] = -9999;
+	out_data2[x] = -9999;
+	out_data3[x] = -9999;
 }
-
-cout << " out data 0[x]: " << out_data0[x];
-
-
+else if (forestmodel_data[x] == 1)
+{
+	out_data1[x] = outdata1;
+	out_data0[x] = -9999;
+	out_data2[x] = -9999;
+	out_data3[x] = -9999;
+}
+else if (forestmodel_data[x] == 2)
+{
+	out_data1[x] = -9999;
+	out_data0[x] = -9999;
+	out_data2[x] = outdata2;
+	out_data3[x] = -9999;
+}
+else if (forestmodel_data[x] == 3)
+{
+	out_data1[x] = -9999;
+	out_data0[x] = -9999;
+	out_data2[x] = -9999;
+	out_data3[x] = outdata3;
+}
+else 
+{
+	out_data1[x] = -9999;
+	out_data0[x] = -9999;
+	out_data2[x] = -9999;
+	out_data3[x] = -9999;
+}
 
 				}
 				else // no agc data
