@@ -423,7 +423,11 @@ cout << "forest model is wildfire or mixed, ";
 */
 cout << " out data 2[x]: " << out_data2[x];
 cout << " out data 3[x]: " << out_data3[x];
-out_data0[x] = outdata2 + outdata3;
+if (forestmodel_data[x] == 0)
+{
+	out_data0[x] = outdata2 + outdata3;
+}
+
 cout << " out data 0[x]: " << out_data0[x];
 
 
