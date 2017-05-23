@@ -182,6 +182,8 @@ float out_data3[xsize];
 float out_data0[xsize];
 
 float outdata0;
+float outdata1;
+float outdata2;
 float outdata3;
 
 //for (y=0; y<ysize; y++) {
@@ -244,63 +246,64 @@ for(x=31422; x<31428; x++)
 							}
 //cout << "forest model: " << out_data1[x];
 					}
-				   else if (forestmodel_data[x] == 2) // conversion
+				   else if ((forestmodel_data[x] == 2) || (forestmodel_data[x] == 0))// conversion or mixed
 					{
-						out_data1[x] = -9999;
+						/*out_data1[x] = -9999;
 						out_data3[x] = -9999;
 						out_data0[x] = -9999;						
+						*/
 						if (peat_data[x] != 0) // peat
 						{
-							out_data2[x] = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
+							outdata2 = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67 + (15 - loss_data[x]) * peat_data[x] + 917;
 						}
 						else if (hist_data[x] != 0) // hist
 						{
 							if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3)) // boreal or temperate
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 29;
 							}
 							else if (ecozone_data[x] == 1) // tropics
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 55;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + 55;
 							}
 							else // no data for ecozone
 							{
-								out_data2[x] = -9999;
+								outdata2 = -9999;
 							}
 						}
 						else if ((climate_data[x]!= 0) && (soil_data[x] > 0)) // climate and soil have data
 						{
 							if ((climate_data[x] == 2) || (climate_data[x] == 4) || (climate_data[x] == 8)) // warm/cool temperate/boreal dry
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
 							}
 							else if ((climate_data[x] == 1) || (climate_data[x] == 3) || (climate_data[x] == 7)) // warm/cool temperate/boreal moist
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
 							}
 							else if (climate_data[x] == 12) // tropical dry
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .58)) * 3.67;
 							}
 							else if ((climate_data[x] == 10) || (climate_data[x] == 11)) // tropical moist/wet
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .48)) * 3.67;
 							}
 							else if (climate_data[x] == 9) // tropical tropical montane
 							{
-								out_data2[x] = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
+								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .64)) * 3.67;
 							}
 						}
 						else
 						{
-						out_data2[x] = -9999;
+						outdata2 = -9999;
 						}
-//cout << "converison model: " << out_data2[x] << ", ";
+
 					}
 				   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 				    {
-						out_data1[x] = -9999;
-						out_data2[x] = -9999;
+//						out_data1[x] = -9999;
+//						out_data2[x] = -9999;
 						
 						
 						float a_var = (agc_data[x] + bgc_data[x]) * 2;
@@ -384,24 +387,37 @@ for(x=31422; x<31428; x++)
 					{
 						out_data0[x] = -9999;
 						out_data1[x] = -9999;
-                                                out_data2[x] = -9999;
-                                                out_data3[x] = -9999;
+                        out_data2[x] = -9999;
+                        out_data3[x] = -9999;
 					}
-
+					// here we set the pixels to the values
 					if (forestmodel_data[x] == 3)
 					{
 						out_data3[x] = outdata3;
 						out_data0[x] = -9999;
+						out_data1[x] = -9999;
+						out_data2[x] = -9999;
+					}
+					else if (forestmodel_data[x] == 2)
+					{
+						out_data2[x] = outdata2;
+						out_data0[x] = -9999;
+						out_data1[x] = -9999;
+						out_data3[x] = -9999;
 					}
 					else if (forestmodel_data[x] == 0)
 					{
-						out_data3[x] = -9999;			
 						out_data0[x] = outdata3;
+						out_data1[x] = -9999;			
+						out_data2[x] = -9999;			
+						out_data3[x] = -9999;			
 					}
 					else
 					{
-						out_data3[x] = -9999;
 						out_data0[x] = -9999;
+						out_data1[x] = -9999;
+						out_data2[x] = -9999;
+						out_data3[x] = -9999;
 					}
 
 				}
