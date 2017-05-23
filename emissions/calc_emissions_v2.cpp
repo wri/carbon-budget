@@ -181,8 +181,8 @@ float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
 
-for (y=0; y<ysize; y++) {
-//for (y=23369; y<23370; y++) {
+//for (y=0; y<ysize; y++) {
+for (y=23369; y<23370; y++) {
 
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -384,7 +384,7 @@ for(x=0; x<xsize; x++)
 							out_data3[x] = -9999;
 							out_data0[x] = -9999;
 						}
-					
+cout << "\n outdata3: " << outdata3;					
 					}
 
 				   else // forest model not 1 or 2 or 3
