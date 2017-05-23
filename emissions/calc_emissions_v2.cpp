@@ -201,12 +201,16 @@ INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 
 for(x=0; x<xsize; x++)
 //for(x=31422; x<31428; x++)
 	{
-//cout << "\n" << x << ":" << y << " ";
+float outdata3 = -9999;
+float outdata2 = -9999;
+float outdata0 = -9999;
 		if (loss_data[x] > 0)
 		{
 			if (agc_data[x] > 0)
 				{
-//cout << "\n forest model data is: " << forestmodel_data[x] << ", ";
+cout << "\n" << x << ":" << y << " ";
+
+cout << "forest model data is: " << forestmodel_data[x] << ", ";
 				   if (forestmodel_data[x] == 1)   // forestry
 					{
 						out_data2[x] = -9999;
@@ -244,10 +248,11 @@ for(x=0; x<xsize; x++)
 //cout << "forest model: " << out_data1[x];
 					}
 
-				   else if (forestmodel_data[x] == 2) // conversion
+				   if ((forestmodel_data[x] == 2) || (forestmodel_data[x] == 0)) // conversion
 					{
-						float outdata2;
-						float outdata0;
+cout << " forest model is conversion or mixed, ";
+//						float outdata2;
+//						float outdata0;
 						
 						out_data3[x] = -9999;
 						out_data1[x] = -9999;	
@@ -308,21 +313,24 @@ for(x=0; x<xsize; x++)
 						else if (forestmodel_data[x] == 0)
 						{
 							out_data2[x] = -9999;			
-							out_data2[x] = outdata2;
+							out_data0[x] = outdata2;
 						}
 						else
 						{
 							out_data2[x] = -9999;
 							out_data0[x] = -9999;
+
 						}
+
 					}
-				   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
+				   if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 				    {
+cout << "forest model is wildfire or mixed, ";
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
 						
-						float outdata3;
-						float outdata0;
+//						float outdata3;
+//						float outdata0;
 						
 						float a_var = (agc_data[x] + bgc_data[x]) * 2;
 						float tropics_ifl_biomass = ((a_var * .36 * 1.58) + (a_var * .36 * .0068 * 28) + ((a_var * .36 * .0002) * 265));
@@ -403,10 +411,8 @@ for(x=0; x<xsize; x++)
 							out_data3[x] = -9999;
 							out_data0[x] = -9999;
 						}
-cout << "\n outdata3: " << outdata3;	
-cout << "\n outdata2: " << outdata2;				
 					}
-
+/*
 				   else // forest model not 1 or 2 or 3
 					{
 						out_data1[x] = -9999;
@@ -414,6 +420,14 @@ cout << "\n outdata2: " << outdata2;
 						out_data0[x] = -9999;
 						out_data3[x] = -9999;
 					}
+*/
+cout << " out data 2[x]: " << out_data2[x];
+cout << " out data 3[x]: " << out_data3[x];
+out_data0[x] = outdata2 + outdata3;
+cout << " out data 0[x]: " << out_data0[x];
+
+
+
 				}
 				else // no agc data
 				{
