@@ -212,7 +212,7 @@ float outdata1 = -9999;
 cout << "\n" << x << ":" << y << " ";
 
 cout << "forest model data is: " << forestmodel_data[x] << ", ";
-				   if ((forestmodel_data[x] == 1)||(forestmodel_data[x] == 0)   // forestry or mixed
+				   if ((forestmodel_data[x] == 1)||(forestmodel_data[x] == 0))   // forestry or mixed
 					{
 cout << " forest model is forestry or mixed, ";
 						out_data2[x] = -9999;
@@ -302,7 +302,7 @@ cout << " forest model is conversion or mixed, ";
 								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .8)) * 3.67;
 							}
 							else if ((climate_data[x] == 1) || (climate_data[x] == 3) || (climate_data[x] == 7)) // warm/cool temperate/boreal moist
-							{
+							{								
 								outdata2 = (((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) -5) * 3.67) + (soil_data[x] - (soil_data[x] * .69)) * 3.67;
 							}
 							else if (climate_data[x] == 12) // tropical dry
@@ -440,12 +440,9 @@ cout << "forest model is wildfire or mixed, ";
 						out_data3[x] = -9999;
 					}
 */
-cout << " out data 1[x]: " << out_data1[x];
-cout << " out data 2[x]: " << out_data2[x];
-cout << " out data 3[x]: " << out_data3[x];
 if (forestmodel_data[x] == 0)
 {
-	out_data0[x] = outdata2 + outdata3;
+	out_data0[x] = ((float(outdata1)*float(.42)) + (float(outdata2)*float(.42)) + (float(outdata3)*float(.16)));
 	out_data1[x] = -9999;
 	out_data2[x] = -9999;
 	out_data3[x] = -9999;
@@ -478,6 +475,14 @@ else
 	out_data2[x] = -9999;
 	out_data3[x] = -9999;
 }
+
+cout << "outdata1: " << outdata1;
+cout << "outdata2: " << outdata2;
+cout << "outdata3: " << outdata3;
+cout << "outdata0: " << outdata0;
+
+
+
 
 				}
 				else // no agc data
