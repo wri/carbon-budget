@@ -17,17 +17,12 @@ def calc_litter(tile_id):
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
     print "rasterizing eco zone"
-    fao_eco_zones = 'fao_ecozones.shp'
+    fao_eco_zones = 'fao_ecozones_bor_tem_tro.shp'
     rasterized_eco_zone_tile = "{}_ecozone.tif".format(tile_id)
     rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-    '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
+    '-tr', '0.00025', '0.00025', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
     '0', fao_eco_zones, rasterized_eco_zone_tile]
     subprocess.check_call(rasterize)
-
-    print "resampling eco zone"
-    resampled_ecozone =  "{}_res_ecozone.tif".format(tile_id)
-    resample_ecozone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', rasterized_eco_zone_tile, resampled_ecozone]
-    subprocess.check_call(resample_ecozone)
 
     print "clipping srtm"
     tile_srtm = '{}_srtm.tif'.format(tile_id)
@@ -62,7 +57,7 @@ def calc_litter(tile_id):
 
     print 'uploading litter tile to s3'
     copy_littertile = ['aws', 's3', 'cp', litter_tile, 's3://gfw-files/sam/carbon_budget/litter/']
-    subprocess.check_call(copy_littertile)
+    #subprocess.check_call(copy_littertile)
 
     print "deleting intermediate data"
     tiles_to_remove = [litter_tile, resample_precip_tile, clipped_precip_tile, biomass_tile, resampled_ecozone, tile_res_srtm, tile_srtm, rasterized_eco_zone_tile]

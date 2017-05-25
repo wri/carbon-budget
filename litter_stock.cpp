@@ -19,13 +19,15 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 //passing arguments
-if (argc != 6){cout << "Use <program name> <above ground biomass> <biome raster> <elevation raster> <precip raster> <output name>" << endl; return 1;}
-string agb_name=argv[1];
-string biome_name=argv[2];
-string elevation_name=argv[3];
-string precip_name=argv[4];
-//either parse this var from inputs or send it in
-string out_name=argv[5];
+//passing arguments
+if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
+string tile_id=argv[1];
+
+string agc_name = tile_id + "_carbon.tif";
+string biome_name= tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
+string elevation_name= tile_id + "_res_srtm.tif";
+string precip_name=tile_id + "_res_precip.tif";
+string out_name=tile_id + "_litter.tif";
 
 //setting variables
 int x, y;
@@ -88,19 +90,30 @@ INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_UInt16, 0, 
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_UInt16, 0, 0); 
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0, 0); 
 
-for(x=0; x<xsize; x++) {
+for(x=0; x<xsize; x++) 
+{
+	
     // biomass * .5 = carbon. so take carbon * the factor
 	// biome =1 are all tropics (subtropical, tropical), biome = 2 are temperate and boreal
-  if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
+	
+  if (biome_data[x] == 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) 
+  {  
+	 out_data1[x] = agb_data[x] * .04 * .37;
+  }
+	
+	
+  else if (biome_data[x] == 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
+    out_data1[x] = agb_data[x] * .01 * .37;}
+	
+  else if (biome_data[x] == 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
+    out_data1[x] = agb_data[x] * .01 * .37;}
+	
+  else if (biome_data[x] == 1 && elevation_data[x] > 2000) {
+    out_data1[x] = agb_data[x] * .01 * .37;}
+	
+  else if ((biome_data[x] == 2) || (biome_data[x] == 3)) {
     out_data1[x] = agb_data[x] * .04 * .37;}
-  else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
-    out_data1[x] = agb_data[x] * .01 * .37;}
-  else if (biome_data[x] = 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
-    out_data1[x] = agb_data[x] * .01 * .37;}
-  else if (biome_data[x] = 1 && elevation_data[x] > 2000) {
-    out_data1[x] = agb_data[x] * .01 * .37;}
-  else if (biome_data[x] = 2) {
-    out_data1[x] = agb_data[x] * .04 * .37;}
+	
   else {
     out_data1[x] = -9999;}
 
