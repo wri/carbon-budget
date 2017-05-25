@@ -181,8 +181,8 @@ float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
 
-//for (y=0; y<ysize; y++) {
-for (y=23369; y<23370; y++) {
+for (y=0; y<ysize; y++) {
+//for (y=23369; y<23370; y++) {
 
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
@@ -209,12 +209,12 @@ float outdata1 = -9999;
 		{
 			if (agc_data[x] > 0)
 				{
-cout << "\n" << x << ":" << y << " ";
+//cout << "\n" << x << ":" << y << " ";
 
-cout << "forest model data is: " << forestmodel_data[x] << ", ";
+//cout << "forest model data is: " << forestmodel_data[x] << ", ";
 				   if ((forestmodel_data[x] == 1)||(forestmodel_data[x] == 0))   // forestry or mixed
 					{
-cout << " forest model is forestry or mixed, ";
+//cout << " forest model is forestry or mixed, ";
 						out_data2[x] = -9999;
 						out_data3[x] = -9999;
 						out_data0[x] = -9999;
@@ -268,7 +268,7 @@ cout << " forest model is forestry or mixed, ";
 					}
 				   if ((forestmodel_data[x] == 2) || (forestmodel_data[x] == 0)) // conversion
 					{
-cout << " forest model is conversion or mixed, ";
+//cout << " forest model is conversion or mixed, ";
 //						float outdata2;
 //						float outdata0;
 						
@@ -344,7 +344,7 @@ cout << " forest model is conversion or mixed, ";
 					}
 				   if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 				    {
-cout << "forest model is wildfire or mixed, ";
+//cout << "forest model is wildfire or mixed, ";
 						out_data1[x] = -9999;
 						out_data2[x] = -9999;
 						
@@ -475,12 +475,12 @@ else
 	out_data2[x] = -9999;
 	out_data3[x] = -9999;
 }
-
+/*
 cout << "outdata1: " << outdata1;
 cout << "outdata2: " << outdata2;
 cout << "outdata3: " << outdata3;
 cout << "outdata0: " << outdata0;
-
+*/
 
 
 
