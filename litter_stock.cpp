@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 string tile_id=argv[1];
 
-string agc_name = tile_id + "_carbon.tif";
+string agb_name = tile_id + "_biomass.tif";
 string biome_name= tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string elevation_name= tile_id + "_res_srtm.tif";
 string precip_name=tile_id + "_res_precip.tif";
