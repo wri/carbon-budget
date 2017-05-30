@@ -2,6 +2,9 @@ import gdal
 import subprocess
 import numpy as np
 from osgeo import gdal
+import os
+import sys
+
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
@@ -46,16 +49,16 @@ def array_to_raster(window, array, xpix, ypix, xmin, ymax):
     dataset.GetRasterBand(1).WriteArray(array)
     dataset.FlushCache()  # Write to disk.
     
-def recode_to_year(ba_tif)
+def recode_to_year(ba_tif, window):
     # ba_tif = MCD64monthly.A2007335.Win05.006.burndate.tif
     year = ba_tif.split(".")[1].strip("A")[:4]
     year_int = int(year) - 2000
-    calc_str = '--calc="{}*(A>0)"'.format(year_int)
+    calc_str = '--calc={}*(A>0)'.format(year_int)
     out_file = '--outfile=ba_{}.tif'.format(year_int)
-    cmd = ['gdal_calc.py', '-A', ba_tif, calc_str,'--outfile=year_ba.tif', '--NoDataValue=0']
-    
+    cmd = ['gdal_calc.py', '-A', ba_tif, calc_str, out_file, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+    print cmd
     subprocess.check_call(cmd)
-    
+
 def raster_to_array(raster):
     ds = gdal.Open(raster)
     array = np.array(ds.GetRasterBand(1).ReadAsArray())
