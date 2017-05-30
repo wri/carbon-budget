@@ -12,3 +12,11 @@ def get_extent(tif):
     data = None
     return minx, miny, maxx, maxy
     
+def get_size(tif):
+    data = gdal.Open(tif, GA_ReadOnly)
+    xsize = data.RasterXSize
+    ysize = data.RasterYSize
+
+    data = None
+    
+    return xsize, ysize
