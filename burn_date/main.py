@@ -64,6 +64,7 @@ tile_id = '10N_060W'
 tile_folder = "{0}/".format(tile_id)
 if not os.path.exists(tile_folder):
     os.mkdir(tile_folder)
+
 print "clipping {0} vrt to {1}".format(year, tile_id)        
 # clip vrt to tile
 clipped_raster_1 = os.path.join(tile_folder, "{0}_{1}_temp.tif".format(tile_id, year))
