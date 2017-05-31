@@ -102,7 +102,6 @@ for w in window:
     build vrt - multi band for all years
     gdal translate to loss tile, .00025
     gdal calc to make new burn tif -> final product
-"""
 
 
 # calc for burn within loss year:
@@ -118,3 +117,4 @@ stack_con2 = stack_con * stack
 final = stack_con2.max(0)
 - then, write it out to a raster. 
 
+"""
