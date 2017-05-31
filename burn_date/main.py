@@ -11,43 +11,44 @@ sys.path.insert(0, parentdir)
 
 import get_extent
 window = '05'
-year = 11
+window_list = ['04', '05']
+year = 7
+for window in window_list:
+    print "processing window: {}".format(window)
+    # download rasters for window
+    #utilities.download_ba(window, year)
 
-# download rasters for window
-#utilities.download_ba(window, year)
+     # convert month rasters to arrays
+    array_list = []
+    year += 2000
+    rasters = glob.glob("ba_{0}_{1}/*".format(window, year))
 
- # convert month rasters to arrays
-array_list = []
-year += 2000
-rasters = glob.glob("ba_{0}_{1}/*".format(window, year))
+    for r in rasters:
+        print r
+        array = utilities.raster_to_array(r)
+        array_list.append(array)
+    # stack month rasters for the year and get max value
+    stacked_year_array = utilities.stack_arrays(array_list)
+    max_stacked_year_array = stacked_year_array.max(0)
 
-for r in rasters:
-    print r
-    array = utilities.raster_to_array(r)
-    array_list.append(array)
-# stack month rasters for the year and get max value
-stacked_year_array = utilities.stack_arrays(array_list)
-max_stacked_year_array = stacked_year_array.max(0)
-
-# convert stacked month arrays to 1 raster for the year
-template_raster = rasters[0]
-outfolder = "win{0}/".format(window)
-if not os.path.exists(outfolder):
-    os.mkdir(outfolder)
-print "making year window raster"        
-utilities.array_to_raster(window, year, max_stacked_year_array, template_raster, outfolder)
+    # convert stacked month arrays to 1 raster for the year
+    template_raster = rasters[0]
+    print "template raster: {}".format(template_raster)
+    outfolder = "win{0}/".format(window)
+    if not os.path.exists(outfolder):
+        os.mkdir(outfolder)
+    print "making year window raster"        
+    utilities.array_to_raster(window, year, max_stacked_year_array, template_raster, outfolder)
 
 #####################################################################################
 # make a list of all the year tifs across windows
-windows = glob.glob("win*/*tif")
+windows = glob.glob("win*/*_{}.tif".format(year))
 vrt_textfile = "{}_vrtlist.txt".format(year)
 print "writing vrt for {}".format(year)
 
 with open (vrt_textfile, "a") as text:
     for w in windows:
-        window_year = w.split("_")[1][:4]
-	if str(window_year) == str(year):
-               text.write(w + "\n")
+        text.write(w + "\n")
 text.close()
 
 # build a vrt for that year
