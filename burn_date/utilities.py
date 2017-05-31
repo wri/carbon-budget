@@ -1,16 +1,18 @@
 import glob
+import os
+#import gdal
+import subprocess
+import numpy as np
+#from osgeo import gdal
+import sys
+
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
 import get_extent
 
-import gdal
-import subprocess
-import numpy as np
-from osgeo import gdal
-import os
-import sys
+
 
 
 def download_ba(window, year):
@@ -19,8 +21,12 @@ def download_ba(window, year):
     
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/Win{0}/{1}'.format(window, year)
     
-    outfolder = "ba_{0}_{1}/".format(window, year)
-    download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', '-A', '*burndate.tif', ftp_path, '-P', outfolder]
+    outfolder = "/ba_{0}_{1}/".format(window, year)
+    if not os.path.exists(outfolder):
+        os.mkdir(outfolder)
+    cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', '-A', '*burndate.tif', ftp_path, '-P', outfolder]
+    
+    print cmd
     
     subprocess.check_call(cmd)
     
