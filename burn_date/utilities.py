@@ -1,9 +1,9 @@
 import glob
 import os
-#import gdal
+import gdal
 import subprocess
 import numpy as np
-#from osgeo import gdal
+from osgeo import gdal
 import sys
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
@@ -58,13 +58,13 @@ def array_to_raster(window, year, array, raster, outfolder):
         x_pixels,
         y_pixels,
         1,
-        gdal.GDT_Float32, )
+        gdal.GDT_Int16, )
 
     dataset.SetGeoTransform((
-        x_min,    # 0
+        minx,    # 0
         pixel_size,  # 1
         0,                      # 2
-        y_max,    # 3
+        maxy,    # 3
         0,                      # 4
         -pixel_size))  
 
@@ -84,7 +84,7 @@ def recode_to_year(ba_tif, window):
 
 def stack_arrays(list_of_year_arrays):
     stack = np.stack((list_of_year_arrays))
-    
+    return stack
 
 
     
