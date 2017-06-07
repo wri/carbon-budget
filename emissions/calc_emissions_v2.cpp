@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 #include "flu_val.cpp"
 #include "calc.cpp"
 using namespace std;
@@ -171,9 +171,7 @@ OUTGDAL0 = OUTDRIVER->Create( out_name0.c_str(), xsize, ysize, 1, GDT_Float32, p
 OUTGDAL0->SetGeoTransform(adfGeoTransform); OUTGDAL0->SetProjection(OUTPRJ);
 OUTBAND0 = OUTGDAL0->GetRasterBand(1);
 OUTBAND0->SetNoDataValue(-9999);
-cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
-cout << "\ntest line 176" << endl;
 //read/write data
 float agb_data[xsize];
 float agc_data[xsize];
@@ -187,9 +185,7 @@ float ecozone_data[xsize];
 float soil_data[xsize];
 float climate_data[xsize];
 float dead_data[xsize];
-cout << "\ntest line 190" << endl;
 float litter_data[xsize];
-cout << "\ntest line 192" << endl;
 float ifl_data[xsize];
 float cifor_data[xsize];
 float plant_data[xsize];
@@ -198,10 +194,8 @@ float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
-cout << "\ntest line 201" << endl;
 for (y=0; y<ysize; y++) 
 {
-	cout << "\n in y for loop" << endl;
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -598,7 +592,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}
-		cout << " \n forest model: " << forestmodel_data[x] << " peat val: " << peat_val <<" burn: " << burn_data[x] << " eco zone: " << ecozone_data[x] << " ifl: " << ifl_data[x]<< " above ground: " << agc_data[x] << " below ground: " << bgc_data[x] << " soil: " << soil_data[x] << " dead: " << dead_data[x] << " litter: " << litter_data[x] << " flu: "  << flu_val << " peat drain: " << peat_drn_ann << " plantation data: " << plant_data[x] << " lossyr: " << loss_data[x] << " climate: " << climate_data[x] << " outdata1: " << out_data1[x] << " outdata2: " << out_data2[x] << " outdata3: " << out_data3[x];
+//		cout << " \n forest model: " << forestmodel_data[x] << " peat val: " << peat_val <<" burn: " << burn_data[x] << " eco zone: " << ecozone_data[x] << " ifl: " << ifl_data[x]<< " above ground: " << agc_data[x] << " below ground: " << bgc_data[x] << " soil: " << soil_data[x] << " dead: " << dead_data[x] << " litter: " << litter_data[x] << " flu: "  << flu_val << " peat drain: " << peat_drn_ann << " plantation data: " << plant_data[x] << " lossyr: " << loss_data[x] << " climate: " << climate_data[x] << " outdata1: " << out_data1[x] << " outdata2: " << out_data2[x] << " outdata3: " << out_data3[x];
 		}
 		else // not on loss AND carbon
 		{

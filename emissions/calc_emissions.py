@@ -23,7 +23,7 @@ def calc_emissions(tile_id):
 
     print 'writing emissions tiles'
     emissions_tiles_cmd = ['./calc_emissions_v2.exe', tile_id]
-    subprocess.check_call(emissions_tiles_cmd)
+    #subprocess.check_call(emissions_tiles_cmd)
 
     print 'uploading emissions tile to s3'
     #upload_emissions = ['aws', 's3', 'cp', emission_tile, 's3://gfw-files/sam/carbon_budget/emissions/']
@@ -40,4 +40,3 @@ def calc_emissions(tile_id):
             pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
-calc_emissions("10N_100E")
