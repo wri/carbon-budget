@@ -11,7 +11,7 @@ def coords(tile_id):
     return ymax, xmin, ymin, xmax
     
     
-def rasterize(shapefile, tile_id, tile_list):
+def rasterize(shapefile, tile_id):
 
     start = datetime.datetime.now()
     print "rasterizing: {}".format(shapefile)
@@ -26,11 +26,11 @@ def rasterize(shapefile, tile_id, tile_list):
                          'Byte', '-a', rvalue, '-a_nodata', '0', shapefile + ".shp", rasterized_tile, '-te', xmin, ymin, xmax, ymax]
                       
     subprocess.check_call(cmd)
-    tile_list.append(rasterized_tile)
-    return tile_list
+
+    return rasterized_tile
     print " elapsed time: {}".format(datetime.datetime.now() - start)
  
-def resample_clip(raster, tile_id, tile_list):
+def resample_clip(raster, tile_id):
     start = datetime.datetime.now()
     print "resampling: {}".format(raster)
     ymax, xmin, ymin, xmax = coords(tile_id)
@@ -67,7 +67,6 @@ def resample_clip(raster, tile_id, tile_list):
         cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999', input_raster, clipped_raster, '-tr', '.00025', '.00025', '-projwin', xmin, ymax, xmax, ymin]
 
         subprocess.check_call(cmd) 
-        
-    tile_list.append(clipped_raster)
-    return tile_list
+
+    return clipped_raster
     print " elapsed time: {}".format(datetime.datetime.now() - start)

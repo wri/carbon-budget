@@ -1,22 +1,24 @@
 import utilities
+import subprocess
 
-def data_prep(tile_id, tile_list): 
-    tile_list = []
-    shapefiles_to_rasterize = ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations']
-    print tile_list
+def upload_tile(folder, tile):
+
+    dst_folder = 's3://gfw-files/sam/carbon_budget/data_inputs/{}/'.format(folder)
+    cmd = ['aws', 's3', 'mv', tile, dst_folder]
+    subprocess.check_call(cmd)
     
+    
+def data_prep(tile_id): 
+
+    shapefiles_to_rasterize = ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations']
     for shapefile in shapefiles_to_rasterize:
-        rasterized_tiles = utilities.rasterize(shapefile, tile_id, tile_list)
+        rasterized_tile = utilities.rasterize(shapefile, tile_id)
+        
+        upload_tile(shapefile, rasterized_tile)
         
     rasters_to_resample = ['hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask']
-    
     for raster in rasters_to_resample:
-        resampled_tiles = utilities.resample_clip(raster, tile_id, tile_list)
+        resampled_tile = utilities.resample_clip(raster, tile_id)
         
-    # upload to s3
-    for tile in tile_list:
-        print "uploading {} to s3".format(tile)
-        cmd = ['aws', 's3', 'mv', tile, 's3://gfw-files/sam/carbon_budget/tile_inputs/']
-        subprocess.check_call(cmd)
+        upload_tile(raster, resampled_tile)
         
-data_prep("10N_100E", [])
