@@ -1,5 +1,3 @@
-
-//
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,40 +16,39 @@
 #include "calc.cpp"
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
-// ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
-// to compile on MINGW
-// g++ calc_emissions_v2.cpp -o calc_emissions_v2.exe -I /usr/local/include -L /usr/local/lib -lgdal
+// to compile on MINGW: g++ calc_emissions_v2.cpp -o calc_emissions_v2.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
 //passing arguments
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
-string agb_name=argv[1];
 
+// in files
+string agb_name=argv[1];
 string tile_id = argv[1];
 string forestmodel_name = tile_id + "_res_forest_model.tif";
 string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
 string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
-string burn_name = tile_id + "_res_burndate.tif";
+string burn_name = tile_id + "_res_burndate.tif"; // dont have this
 string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string climate_name = tile_id + "_res_climate_zone.tif";
 string dead_name = tile_id + "_deadwood.tif";
 string litter_name = tile_id + "_litter.tif";
 string soil_name = tile_id + "_soil.tif";
+
 string ifl_name = tile_id + "_res_ifl_2000.tif";
-string cifor_name = tile_id + "_res_cifor_peat.tif";
-string plant_name = tile_id + "_gfw_plantations.tif";
+string cifor_name = tile_id + "_res_cifor_peat_mask.tif";
+string plant_name = tile_id + "_res_gfw_plantations.tif";
 string jukka_name = tile_id + "_res_peatland_drainage_proj.tif";
 
-//either parse this var from inputs or send it in
+// out files
 string out_name1= "outdata/" + tile_id + "_forest_model.tif";
 string out_name2 = "outdata/" + tile_id + "_conversion_model.tif";
 string out_name3 = "outdata/" + tile_id + "_wildfire_model.tif";
 string out_name0 = "outdata/" + tile_id + "_mixed_model.tif";
 
-//setting variables
 int x, y;
 int xsize, ysize;
 double GeoTransform[6]; double ulx, uly; double pixelsize;
@@ -174,9 +171,9 @@ OUTGDAL0 = OUTDRIVER->Create( out_name0.c_str(), xsize, ysize, 1, GDT_Float32, p
 OUTGDAL0->SetGeoTransform(adfGeoTransform); OUTGDAL0->SetProjection(OUTPRJ);
 OUTBAND0 = OUTGDAL0->GetRasterBand(1);
 OUTBAND0->SetNoDataValue(-9999);
+cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
-
-
+cout << "\ntest line 176" << endl;
 //read/write data
 float agb_data[xsize];
 float agc_data[xsize];
@@ -187,22 +184,24 @@ float forestmodel_data[xsize];
 float burn_data[xsize];
 float hist_data[xsize];
 float ecozone_data[xsize];
+float soil_data[xsize];
 float climate_data[xsize];
 float dead_data[xsize];
+cout << "\ntest line 190" << endl;
 float litter_data[xsize];
-float soil_data[xsize];
+cout << "\ntest line 192" << endl;
 float ifl_data[xsize];
 float cifor_data[xsize];
 float plant_data[xsize];
 float jukka_data[xsize];
-
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
-
+cout << "\ntest line 201" << endl;
 for (y=0; y<ysize; y++) 
 {
+	cout << "\n in y for loop" << endl;
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -221,7 +220,9 @@ INBAND15->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0
 INBAND16->RasterIO(GF_Read, 0, y, xsize, 1, jukka_data, xsize, 1, GDT_Float32, 0, 0);
 
 for(x=0; x<xsize; x++)
+	
 	{
+		
 		float outdata3 = -9999;
 		float outdata2 = -9999;
 		float outdata0 = -9999;
@@ -375,85 +376,65 @@ for(x=0; x<xsize; x++)
 					}
 					else // conversion, peat, not burned
 					{
-						if (ecozone_data[x] == 3) // peat not burned temperate
+						if (ecozone_data[x] == 3) // conversion, peat, not burned, temperate
 						{
-
-							//cout << "peat, not burned, temperate";
 							outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(15 - loss_data[x])*peat_drn_ann;
-										
-
 						}
-						else if (ecozone_data[x] == 2) // peat not burned boreal
+						else if (ecozone_data[x] == 2) // conversion, peat, not burned, boreal
 						{
-							// peat, not burned, boreal
-							//cout << "peat, not burned, boreal";
 							outdata2 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67+(15 - loss_data[x])*peat_drn_ann;
-
 						}
-						else if (ecozone_data[x] == 1) // peat, not burned, tropic
+						else if (ecozone_data[x] == 1) // conversion, peat, not burned, tropic
 						{
-							if (plant_data[x] == 0 ) // peat, not burned, tropic, not on plantations (need to take off loss yr calc)
+							if (plant_data[x] == 0 ) // conversion, peat, not burned, tropic, no plantations
 							{
-								outdata2 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67;				
-
-
+								outdata2 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67;			
 							}
-							else
+							else // conversion, peat, not burned, tropic, plantations
 							{
-								//cout << "peat, not burned, tropics, plantations";
-								// peat, not burned, tropics, plantations
-								outdata2 = (agc_data[x] + bgc_data[x]) * 3.67+(15 - loss_data[x])* peat_drn_ann;										
+								outdata2 = (agc_data[x] + bgc_data[x]) * 3.67+(15 - loss_data[x])* peat_drn_ann;
 							}
-
 						}
-						else // peat, not burned, no ecozone
+						else // conversion, peat, not burned, no ecozone
 						{
 							outdata2 = 0;
-							
 						}
 					}
 				}
 
 				else // conversion, not peat
 				{
-					if (burn_data[x] == 1) // not peat burned
+					if (burn_data[x] == 1) // conversion, not peat, burned
 					{
-						if (ecozone_data[x] == 3) // not peat burned temperate
+						if (ecozone_data[x] == 3) // conversion, not peat, burned, temperate
 						{
-
 							outdata2 = ((((agc_data[x] + bgc_data[x])*(1-0.51)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.51 *1569 * pow(10, -3)) + ((2*(agc_data[x]+bgc_data[x])) * 0.51 * 4.7 * pow(10, -3)* 28) + ((2*(agc_data[x] +bgc_data[x])) *0.51 *0.26 * pow(10,-3) * 265)+(soil_data[x]-(soil_data[x] * flu_val));
-
 						}
-						else if (ecozone_data[x] == 2) // not peat burned boreal
+						else if (ecozone_data[x] == 2) // conversion, not peat, burned, boreal
 						{
 							outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val)));
-
 						}
-						else if (ecozone_data[x] == 1) // not peat burned tropics
+						else if (ecozone_data[x] == 1) // conversion, not peat, burned, tropics
 						{
-							if (ifl_data[x] != 0) // not peat burned tropics ifl
+							if (ifl_data[x] != 0) // conversion, not peat, burned, tropics, ifl
 							{
 								outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val)));
-
 							}
-							else  // not peat burned tropics ifl not ifl
+							else // conversion, not peat, burned, tropics, not ifl
 							{
 								outdata2 =  ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val));
 							}
 						}
-						else  // not peat burned no-ecozone
+						else // conversion, not peat, burned, no ecozone
 						{
 							outdata2 = 0;
 						}
-						
 					}
-					
-					else // not peat not burned
+					else // conversion, not peat, not burned
 					{
 						outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(soil_data[x]-(soil_data[x] * flu_val));
 					}
 				}	
-					
 				// set either forest model or mixed raster to the value
 				if (forestmodel_data[x] == 2)
 				{					
@@ -470,7 +451,6 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					out_data0[x] = -9999;
 				}
-
 			}
 		   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 			{
@@ -485,7 +465,6 @@ for(x=0; x<xsize; x++)
 						else if (ecozone_data[x] == 2) // wildfire, peat, burned, boreal
 						{
 							outdata3 =  ((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)+(15-loss_data[x])*3+104));
-
 						}
 						else if (ecozone_data[x] == 1) // wildfire, peat, burned, tropic
 						{
@@ -519,7 +498,6 @@ for(x=0; x<xsize; x++)
 							{
 								outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67)+(15 - loss_data[x])*peat_drn_ann;
 							}
-
 						}
 						else  // wildfire, peat, not burned, no ecozone
 						{
@@ -527,7 +505,6 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-
 				else  // wildfire, not peat
 				{
 					if (burn_data[x] == 1)  // wildfire, not peat, burned
@@ -539,7 +516,6 @@ for(x=0; x<xsize; x++)
 						else if (ecozone_data[x] == 2)  // wildfire, not peat, burned, boreal
 						{
 							outdata3 = ((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)));
-
 						}
 						else if (ecozone_data[x] == 1)  // wildfire, not peat, burned, tropics
 						{
@@ -557,13 +533,11 @@ for(x=0; x<xsize; x++)
 							outdata3 = 0;
 						}
 					}
-					
 					else  // wildfire, not peat, not burned
 					{
 						outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67);
 					}
 				}	
-					
 				// set either forest model or mixed raster to the value
 				if (forestmodel_data[x] == 2)
 				{					
@@ -580,7 +554,6 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					out_data0[x] = -9999;
 				}
-
 			}
 		   else // forest model not 1 or 2 or 3
 			{
@@ -625,32 +598,22 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}
-
 		cout << " \n forest model: " << forestmodel_data[x] << " peat val: " << peat_val <<" burn: " << burn_data[x] << " eco zone: " << ecozone_data[x] << " ifl: " << ifl_data[x]<< " above ground: " << agc_data[x] << " below ground: " << bgc_data[x] << " soil: " << soil_data[x] << " dead: " << dead_data[x] << " litter: " << litter_data[x] << " flu: "  << flu_val << " peat drain: " << peat_drn_ann << " plantation data: " << plant_data[x] << " lossyr: " << loss_data[x] << " climate: " << climate_data[x] << " outdata1: " << out_data1[x] << " outdata2: " << out_data2[x] << " outdata3: " << out_data3[x];
-			
-			
 		}
 		else // not on loss AND carbon
 		{
+			
 			out_data1[x] = -9999;
 		    out_data2[x] = -9999;
 			out_data3[x] = -9999;
 			out_data0[x] = -9999;
 		}
-
-
-
     }
-
-
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND0->RasterIO( GF_Write, 0, y, xsize, 1, out_data0, xsize, 1, GDT_Float32, 0, 0 );
-//closes for y loop
 }
-
-//close GDAL
 GDALClose(INGDAL);
 GDALClose((GDALDatasetH)OUTGDAL);
 GDALClose((GDALDatasetH)OUTGDAL2);
