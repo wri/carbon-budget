@@ -324,6 +324,7 @@ for(x=0; x<xsize; x++)
 						outdata1 = (agc_data[x] + bgc_data[x]) * 3.67;
 					}
 				}	
+				/*
 				// set either forest model or mixed raster to the value
 				if (forestmodel_data[x] == 1)
 				{					
@@ -340,6 +341,7 @@ for(x=0; x<xsize; x++)
 					out_data1[x] = -9999;
 					out_data0[x] = -9999;
 				}
+				*/
 			}
 		   else if ((forestmodel_data[x] == 2) || (forestmodel_data[x] == 0)) // conversion or mixed
 			{
@@ -429,6 +431,7 @@ for(x=0; x<xsize; x++)
 						outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(soil_data[x]-(soil_data[x] * flu_val));
 					}
 				}	
+				/*
 				// set either forest model or mixed raster to the value
 				if (forestmodel_data[x] == 2)
 				{					
@@ -445,6 +448,7 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					out_data0[x] = -9999;
 				}
+				*/
 			}
 		   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 			{
@@ -532,6 +536,7 @@ for(x=0; x<xsize; x++)
 						outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67);
 					}
 				}	
+				/*
 				// set either forest model or mixed raster to the value
 				if (forestmodel_data[x] == 2)
 				{					
@@ -548,6 +553,7 @@ for(x=0; x<xsize; x++)
 					out_data2[x] = -9999;
 					out_data0[x] = -9999;
 				}
+				*/
 			}
 		   else // forest model not 1 or 2 or 3
 			{
