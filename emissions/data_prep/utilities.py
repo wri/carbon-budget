@@ -27,7 +27,7 @@ def rasterize(shapefile, tile_id):
 
     return rasterized_tile
  
-
+def resample_clip(raster, tile_id):
     print "resampling: {}".format(raster)
     ymax, xmin, ymin, xmax = coords(tile_id)
     
