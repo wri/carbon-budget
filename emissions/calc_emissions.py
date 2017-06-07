@@ -7,50 +7,23 @@ import pandas as pd
 import utilities
 import process_burned_area
 
-currentdir = os.path.dirname(os.path.abspath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
-
-import get_extent
 def calc_emissions(tile_id):
+
     start = datetime.datetime.now()
 
     print "/n-------TILE ID: {}".format(tile_id)
 
-    carbon_pool_files = ['bgc', 'carbon', 'deadwood', 'soil', 'litter']
+    files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations', 'hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask']}
 
-    # download 5 carbon pool files
-    #utilities.download(carbon_pool_files, tile_id)
-
+    # download files
+    utilities.download(files, tile_id)
+    
     # download hansen tile
-    #utilities.wgetloss(tile_id)
-
-    # get extent of a tile
-    xmin, ymin, xmax, ymax = get_extent.get_extent('{}_loss.tif'.format(tile_id))
-    coord_list = [str(xmin), str(ymin), str(xmax), str(ymax)]
-    print "coords are {}".format(coord_list)
-    coords = ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
-
-    # get list of windows intersecting tile
-    #windows_to_dl = utilities.get_windows_in_tile(tile_id)
-    # for all files matching Win*, clip, resample, and stack them (all years, months). output 1 file <tileid>_burn.tif
-    #process_burned_area.process_burned_area(windows_to_dl, coords, tile_id)
-
-    # rasterize shapefiles from one time download
-    shapefiles_to_rasterize = [{'fao_ecozones_bor_tem_tro': 'recode'}, {'ifl_2000': 'temp_id'}, {'peatland_drainage_proj': 'emisC02ha'}]
-    coords = ['-te'] + coord_list
-    print "rasterizing shapefiles...."
-    rasterized_file = utilities.rasterize_shapefile(shapefiles_to_rasterize, tile_id, coords)
-
-    # resample rasters from one time download
-    coords = ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)] 
-    rasters_to_resample = ['hwsd_histosoles', 'forest_model', 'climate_zone']
-    print  "resampling, clipping rasters...."
-    utilities.resample_clip_raster(rasters_to_resample, tile_id, coords)
+    utilities.wgetloss(tile_id)
 
     print 'writing emissions tiles'
-    emissions_tiles_cmd = ['./calc_emissions.exe', tile_id]
-    #subprocess.check_call(emissions_tiles_cmd)
+    emissions_tiles_cmd = ['./calc_emissions_v2.exe', tile_id]
+    subprocess.check_call(emissions_tiles_cmd)
 
     print 'uploading emissions tile to s3'
     #upload_emissions = ['aws', 's3', 'cp', emission_tile, 's3://gfw-files/sam/carbon_budget/emissions/']
@@ -67,3 +40,4 @@ def calc_emissions(tile_id):
             pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
+calc_emissions("10N_100E")
