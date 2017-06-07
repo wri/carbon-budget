@@ -1,6 +1,5 @@
 import subprocess
 import os
-import datetime
 
 def coords(tile_id):
     ymax = str(tile_id.split("_")[0][:2])
@@ -13,7 +12,6 @@ def coords(tile_id):
     
 def rasterize(shapefile, tile_id):
 
-    start = datetime.datetime.now()
     print "rasterizing: {}".format(shapefile)
     ymax, xmin, ymin, xmax = coords(tile_id)
     
@@ -28,10 +26,8 @@ def rasterize(shapefile, tile_id):
     subprocess.check_call(cmd)
 
     return rasterized_tile
-    print " elapsed time: {}".format(datetime.datetime.now() - start)
  
-def resample_clip(raster, tile_id):
-    start = datetime.datetime.now()
+
     print "resampling: {}".format(raster)
     ymax, xmin, ymin, xmax = coords(tile_id)
     
@@ -61,12 +57,10 @@ def resample_clip(raster, tile_id):
         cmd = ['gdalwarp', '-tr', '.00025', '.00025',  '-co', 'COMPRESS=LZW', '-tap', 'test1.tif', clipped_raster, '-te', xmin, ymin, xmax, ymax]        
         subprocess.check_call(cmd)
 
-        os.remove('test1.tif')
-
     else:
         cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999', input_raster, clipped_raster, '-tr', '.00025', '.00025', '-projwin', xmin, ymax, xmax, ymin]
 
         subprocess.check_call(cmd) 
 
     return clipped_raster
-    print " elapsed time: {}".format(datetime.datetime.now() - start)
+    
