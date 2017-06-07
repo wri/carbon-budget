@@ -559,6 +559,18 @@ for(x=0; x<xsize; x++)
 
 			if (forestmodel_data[x] == 0)
 			{
+				if (outdata1 == -9999)
+				{
+					outdata1 = 0;
+				}
+				if (outdata2 == -9999)
+				{
+					outdata2 = 0;
+				}
+				if (outdata3 == -9999)
+				{
+					outdata3 = 0;
+				}				
 				out_data0[x] = ((float(outdata1)*float(.42)) + (float(outdata2)*float(.42)) + (float(outdata3)*float(.16)));
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
