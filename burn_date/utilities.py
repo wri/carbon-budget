@@ -15,20 +15,25 @@ import get_extent
 
 
 
-def download_ba(window, year):
+def download_ba(year, h, v):
 
     year += 2000
+    if len(h) == 1:
+        h = "0{}".format(h)
+    if len(v) == 1:
+        h = "0{}".format(v)
+    for day in ['001', '032', '060', '091', '121', '152', '182', '213', '244', '274', '305', '335']:
+        ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/{1}/'.format(year, day)
     
-    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/Win{0}/{1}'.format(window, year)
-    
-    outfolder = "ba_{0}_{1}/".format(window, year)
-    if not os.path.exists(outfolder):
-        os.mkdir(outfolder)
-    cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', '-A', '*burndate.tif', ftp_path, '-P', outfolder]
-    
-    print cmd
-    
-    subprocess.check_call(cmd)
+        outfolder = "ba_{0}/day_tiles/h{1}v{2}".format(year, h, v)
+        if not os.path.exists(outfolder):
+            os.mkdir(outfolder)
+        file_name = "*.h{0}v{1}*.*".format(horizonal, vertical)
+        cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
+        
+        print cmd
+        
+        subprocess.check_call(cmd)
     
     
 def raster_to_array(raster):

@@ -8,11 +8,27 @@ import sys
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+'''
+ftp://ba1.geog.umd.edu/Collection6/HDF
+- year
+    - day
+        hv
+        hv
+        hv
+        ...
+- build vrt for 
+'''
+
 
 import get_extent
 window = '05'
 window_list = ['04', '05']
-year = 7
+
+year = 6
+for h in range(0, 36):
+    for v in range(0, 18)
+        
+    
 for window in window_list:
     print "processing window: {}".format(window)
     # download rasters for window
