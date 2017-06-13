@@ -52,20 +52,20 @@ for year in [6]:
     
     year_folder = "ba_{}".format(long_year)
     
-    utilities.mkdir(year_folder)
+    utilities.makedir(year_folder)
      
-    for h in range(0, 36):
+    for h in range(29, 30):
     
-        for v in range(0, 18)
+        for v in range(8, 9):
         
             h, v = utilities.get_hv_format(h, v)
-                
-            tile_folder = "day_tiles/h{}v{}/"
+            tile_folder = "day_tiles/h{}v{}/".format(h, v)
 
-            utilities.download_ba(long_year, h, v)
+            #utilities.download_ba(long_year, h, v)
             
             tiles_path = os.path.join(year_folder, tile_folder)
-            rasters = glob.glob(tiles_path)
+            rasters = glob.glob(tiles_path+"*")
+
             array_list = []
             for r in rasters:
                 array = utilities.raster_to_array(r)
@@ -81,7 +81,6 @@ for year in [6]:
             print "making year raster"        
             utilities.array_to_raster(window, year, max_stacked_year_array, template_raster, year_folder)
     
-#####################################################################################
 '''
 # make a list of all the year tifs across windows
 windows = glob.glob("win*/*_{}.tif".format(year))

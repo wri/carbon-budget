@@ -49,7 +49,7 @@ def download_ba(year, h, v):
         cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
 
         #subprocess.check_call(cmd)
-download_ba(6, '0', '0')    
+#download_ba(6, '0', '0')    
     
 def raster_to_array(raster):
     ds = gdal.Open(raster)
