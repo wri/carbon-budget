@@ -62,18 +62,18 @@ for year in [6]:
         
             h, v = utilities.get_hv_format(h, v)
             tile_folder = "day_tiles/h{}v{}/".format(h, v)
-
-            #utilities.download_ba(long_year, h, v)
+	    print "downloading tiles"
+            utilities.download_ba(long_year, h, v)
             
             tiles_path = os.path.join(year_folder, tile_folder)
             rasters = glob.glob(tiles_path+"*hdf")
             
             array_list = []
-            rasters = glob.glob("*wgs84.tif") # this is temp
+            #rasters = glob.glob("*wgs84.tif") # this is temp
             for r in rasters:
                 print r
                 # convert each raster to a tif
-                #tif = utilities.hdf_to_tif(r)
+                tif = utilities.hdf_to_tif(r)
                 #print tif
                 array = utilities.raster_to_array(r)
                 array_list.append(array)
@@ -87,7 +87,7 @@ for year in [6]:
             template_raster = rasters[0]
             print "template raster: {}".format(template_raster)
             print "making year raster"        
-            utilities.array_to_raster(h, v, year, max_stacked_year_array, template_raster, year_folder)
+            utilities.array_to_raster(h, v, long_year, max_stacked_year_array, template_raster, year_folder)
     
 '''
 # make a list of all the year tifs across windows

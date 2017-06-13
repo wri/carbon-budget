@@ -81,7 +81,7 @@ def download_ba(year, h, v):
         file_name = "*.h{0}v{1}*.*".format(h, v)
         cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
 
-        #subprocess.check_call(cmd)
+        subprocess.check_call(cmd)
 #download_ba(6, '0', '0')    
     
 def raster_to_array(raster):
@@ -98,7 +98,7 @@ def array_to_raster(h, v, year, array, raster, outfolder):
 
     pixel_size = get_extent.pixel_size(raster)   
     
-    minx, miny, maxx, maxy = get_extent.get_extent()
+    minx, miny, maxx, maxy = get_extent.get_extent(raster)
 
     wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
     driver = gdal.GetDriverByName('GTiff')
