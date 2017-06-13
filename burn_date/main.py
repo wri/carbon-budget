@@ -65,11 +65,14 @@ for year in [6]:
             
             tiles_path = os.path.join(year_folder, tile_folder)
             rasters = glob.glob(tiles_path+"*")
-
+            
             array_list = []
             for r in rasters:
-                array = utilities.raster_to_array(r)
+                # convert each raster to a tif
+                tif = utilities.hdf_to_tif(r)
+                array = utilities.raster_to_array(tif)
                 array_list.append(array)
+            sys.exit()
                 
     # stack arrays, get 1 raster for the year and tile
             stacked_year_array = utilities.stack_arrays(array_list)

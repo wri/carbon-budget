@@ -26,6 +26,28 @@ def get_hv_format(h, v):
         
     return h, v
     
+def hdf_to_tif(hdf):
+    # hdf= MCD64A1.A2006001.h29v08.006.2017017135341.hdf
+    year = hdf.split(".")[1].strip("A")[:4]
+    day = hdf.split(".")[1].strip("A")[-3:]
+    hv = hdf.split(".")[2]
+    
+    outtif = 'burndate_{}{}_{}.tif'.format(year, day, hv)
+    hdf_file = 'HDF4_EOS:EOS_GRID:"{}":MOD_Grid_Monthly_500m_DB_BA:Burn Date'.format(hdf)
+    cmd = ['gdal_translate', hdf_file, outtif, '-co', 'COMPRESS=LZW']
+    
+    subprocess.check_call(cmd)
+    
+    set_proj = ['gdal_edit.py', '-a_srs', 'sphere.wkt', outtif]
+    subproces.check_call(set_proj)
+
+    proj_tif = outtif.replace(".tif", "_wgs84.tif")
+    wgs84 = ['gdalwarp', '-t_srs', 'EPSG:4326', '-overwrite', '-tap', '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', outtif, proj_tif]
+    subproces.check_call(wgs84)
+    
+    return wgs84
+    
+    
 def coords(tile_id):
     ymax = str(tile_id.split("_")[0][:2])
     xmin = str(tile_id.split("_")[1][:3])
