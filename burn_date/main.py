@@ -62,20 +62,21 @@ for year in [6]:
         
             h, v = utilities.get_hv_format(h, v)
             tile_folder = "day_tiles/h{}v{}/".format(h, v)
-	    print "downloading tiles"
-            utilities.download_ba(long_year, h, v)
+	    #print "downloading tiles"
+            #utilities.download_ba(long_year, h, v)
             
             tiles_path = os.path.join(year_folder, tile_folder)
-            rasters = glob.glob(tiles_path+"*hdf")
+            hdf_files = glob.glob(tiles_path+"*hdf")
             
             array_list = []
-            #rasters = glob.glob("*wgs84.tif") # this is temp
-            for r in rasters:
-                print r
+            hdf_files = glob.glob("*wgs84.tif") # this is temp
+            for hdf in hdf_files:
+                print hdf
                 # convert each raster to a tif
-                tif = utilities.hdf_to_tif(r)
+                #tif = utilities.hdf_to_tif(hdf)
                 #print tif
-                array = utilities.raster_to_array(r)
+                #array = utilities.raster_to_array(tif)
+		array = utilities.raster_to_array(hdf)
                 array_list.append(array)
             print array_list
                 

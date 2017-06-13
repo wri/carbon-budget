@@ -55,7 +55,7 @@ def hdf_to_tif(hdf):
 
 
     subprocess.check_call(wgs84)
-    
+    os.remove(outtif)
     return proj_tif
     
     
