@@ -5,6 +5,8 @@ import utilities
 import glob
 import os
 import sys
+import shutil
+
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
@@ -64,15 +66,18 @@ for year in [6]:
             #utilities.download_ba(long_year, h, v)
             
             tiles_path = os.path.join(year_folder, tile_folder)
-            rasters = glob.glob(tiles_path+"*")
+            rasters = glob.glob(tiles_path+"*hdf")
             
             array_list = []
+            rasters = glob.glob("*wgs84.tif") # this is temp
             for r in rasters:
+                print r
                 # convert each raster to a tif
-                tif = utilities.hdf_to_tif(r)
-                array = utilities.raster_to_array(tif)
+                #tif = utilities.hdf_to_tif(r)
+                #print tif
+                array = utilities.raster_to_array(r)
                 array_list.append(array)
-            sys.exit()
+            print array_list
                 
     # stack arrays, get 1 raster for the year and tile
             stacked_year_array = utilities.stack_arrays(array_list)
@@ -82,7 +87,7 @@ for year in [6]:
             template_raster = rasters[0]
             print "template raster: {}".format(template_raster)
             print "making year raster"        
-            utilities.array_to_raster(window, year, max_stacked_year_array, template_raster, year_folder)
+            utilities.array_to_raster(h, v, year, max_stacked_year_array, template_raster, year_folder)
     
 '''
 # make a list of all the year tifs across windows
