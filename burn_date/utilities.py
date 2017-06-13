@@ -1,9 +1,9 @@
 import glob
 import os
-#import gdal
+import gdal
 import subprocess
 import numpy as np
-#from osgeo import gdal
+from osgeo import gdal
 import sys
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
@@ -12,27 +12,42 @@ sys.path.insert(0, parentdir)
 
 import get_extent
 
-
-
+def makedir(folder):
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+        
+def get_hv_format(h, v):
+    
+    # get right format 
+    if len(str(h)) == 1:
+        h = "0{}".format(h)
+    if len(str(v)) == 1:
+        v = "0{}".format(v)
+        
+    return h, v
+    
+def coords(tile_id):
+    ymax = str(tile_id.split("_")[0][:2])
+    xmin = str(tile_id.split("_")[1][:3])
+    ymin = str(int(ymax) - 10)
+    xmax = str(int(xmin) + 10)
+    
+    return ymax, xmin, ymin, xmax
 
 def download_ba(year, h, v):
 
-    year += 2000
-    if len(h) == 1:
-        h = "0{}".format(h)
-    if len(v) == 1:
-        v = "0{}".format(v)
     for day in ['001', '032', '060', '091', '121', '152', '182', '213', '244', '274', '305', '335']:
+    
         ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/{1}/'.format(year, day)
     
         outfolder = os.path.join(currentdir, r"ba_{0}/day_tiles/h{1}v{2}/".format(year, h, v))
+        
         if not os.path.exists(outfolder):
             os.mkdir(outfolder)
+            
         file_name = "*.h{0}v{1}*.*".format(h, v)
-        cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
-        
-        print cmd
-        
+        cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
+
         #subprocess.check_call(cmd)
 download_ba(6, '0', '0')    
     
@@ -42,20 +57,17 @@ def raster_to_array(raster):
     
     return array
 
+def array_to_raster(h, v, year, array, raster, outfolder):
 
-
-def array_to_raster(window, year, array, raster, outfolder):
-
-    filename = 'win{0}_{1}.tif'.format(window, year)
+    filename = '{0}_h{1}v{2}.tif'.format(year, h, v)
     dst_filename = os.path.join(outfolder, filename)
     x_pixels, y_pixels = get_extent.get_size(raster)
 
     pixel_size = get_extent.pixel_size(raster)   
     
-    minx, miny, maxx, maxy = get_extent.get_extent(raster)
+    minx, miny, maxx, maxy = get_extent.get_extent()
 
     wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
-
     driver = gdal.GetDriverByName('GTiff')
 
     dataset = driver.Create(

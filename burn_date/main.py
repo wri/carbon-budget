@@ -10,53 +10,79 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 '''
 ftp://ba1.geog.umd.edu/Collection6/HDF
-- year
-    - day
-        hv
-        hv
-        hv
-        ...
-- build vrt for 
+- 2006
+    - 001
+        h01v01.tif <------
+        h01v02.tif
+        h03v01.tif
+    - 032
+        h01v01.tif <------
+        h01v02.tif
+        h03v01.tif
+    - 060
+        h01v01.tif <------
+        h01v02.tif
+        h03v01.tif
+    ....
+    - 335
+        h01v01.tif <------
+        h01v02.tif
+        h03v01.tif
+- 2007
+    - 001
+        h01v01.tif
+        h01v02.tif
+        h03v01.tif
+    - 032
+        h01v01.tif
+        h01v02.tif
+        h03v01.tif
+    - 060
+        h01v01.tif
+        h01v02.tif
+        h03v01.tif
 '''
 
 
 import get_extent
-window = '05'
-window_list = ['04', '05']
 
-year = 6
-for h in range(0, 36):
-    for v in range(0, 18)
-        
+for year in [6]:
+
+    long_year = 2000 + year
     
-for window in window_list:
-    print "processing window: {}".format(window)
-    # download rasters for window
-    #utilities.download_ba(window, year)
+    year_folder = "ba_{}".format(long_year)
+    
+    utilities.mkdir(year_folder)
+     
+    for h in range(0, 36):
+    
+        for v in range(0, 18)
+        
+            h, v = utilities.get_hv_format(h, v)
+                
+            tile_folder = "day_tiles/h{}v{}/"
 
-     # convert month rasters to arrays
-    array_list = []
-    year += 2000
-    rasters = glob.glob("ba_{0}_{1}/*".format(window, year))
+            utilities.download_ba(long_year, h, v)
+            
+            tiles_path = os.path.join(year_folder, tile_folder)
+            rasters = glob.glob(tiles_path)
+            array_list = []
+            for r in rasters:
+                array = utilities.raster_to_array(r)
+                array_list.append(array)
+                
+    # stack arrays, get 1 raster for the year and tile
+            stacked_year_array = utilities.stack_arrays(array_list)
+            max_stacked_year_array = stacked_year_array.max(0)
 
-    for r in rasters:
-        print r
-        array = utilities.raster_to_array(r)
-        array_list.append(array)
-    # stack month rasters for the year and get max value
-    stacked_year_array = utilities.stack_arrays(array_list)
-    max_stacked_year_array = stacked_year_array.max(0)
-
-    # convert stacked month arrays to 1 raster for the year
-    template_raster = rasters[0]
-    print "template raster: {}".format(template_raster)
-    outfolder = "win{0}/".format(window)
-    if not os.path.exists(outfolder):
-        os.mkdir(outfolder)
-    print "making year window raster"        
-    utilities.array_to_raster(window, year, max_stacked_year_array, template_raster, outfolder)
-
+            # convert stacked month arrays to 1 raster for the year
+            template_raster = rasters[0]
+            print "template raster: {}".format(template_raster)
+            print "making year raster"        
+            utilities.array_to_raster(window, year, max_stacked_year_array, template_raster, year_folder)
+    
 #####################################################################################
+'''
 # make a list of all the year tifs across windows
 windows = glob.glob("win*/*_{}.tif".format(year))
 vrt_textfile = "{}_vrtlist.txt".format(year)
@@ -102,3 +128,4 @@ os.remove(clipped_raster_1)
 # convert burn year tile to array
 
 # stack arrays, get ne burn years relative to loss years
+'''
