@@ -77,7 +77,7 @@ for(x=0; x<xsize; x++) {
    if (agb_data[x] == -32768) {
     out_data1[x] = -9999;}
    else {
-    out_data1[x] = agb_data[x] * .5;}
+    out_data1[x] = agb_data[x] * .47;}
 //closes for x loop
 }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
