@@ -56,14 +56,14 @@ for year in [6]:
     
     utilities.makedir(year_folder)
      
-    for h in range(29, 31):
+    for h in range(29, 31): # full range is 0, 36
     
-        for v in range(8, 9):
+        for v in range(8, 9): # full range is 0, 18
         
             h, v = utilities.get_hv_format(h, v)
             tile_folder = "day_tiles/h{}v{}/".format(h, v)
             #print "downloading tiles"
-            utilities.download_ba(long_year, h, v)
+            #utilities.download_ba(long_year, h, v)
             
             # convert ba to array then stack, might be better on memory
             tiles_path = os.path.join(year_folder, tile_folder)
@@ -93,9 +93,8 @@ for year in [6]:
      
             stacked_year_raster = utilities.array_to_raster(h, v, long_year, max_stacked_year_array, template_raster, year_folder)
             proj_com_tif = utilities.set_proj(stacked_year_raster)
-            with open('year_list.txt', 'r') as list_of_ba_years:
-                proj_com_tif_path = "ba_{0}/{1}".format(long_year, proj_com_tif)
-                list_of_ba_years.write(proj_com_tif_path + "\n")
+            with open('year_list.txt', 'w') as list_of_ba_years:
+                list_of_ba_years.write(proj_com_tif + "\n")
             
             # upload to somewhere on s3
             cmd = ['aws', 's3', 'cp', proj_com_tif, 's3://gfw-files/sam/carbon_budget/burn_year/']
@@ -103,18 +102,21 @@ for year in [6]:
             
     # build a vrt
     vrt_name = "global_vrt_{}.vrt".format(long_year)
-    file_path = "ba_{}/*{}*comp.tif".format(long_year)
+    file_path = "ba_{0}/*{0}*comp.tif".format(long_year)
     cmd = ['gdalbuildvrt', '-input_file_list', 'year_list.txt', vrt_name]
     subprocess.check_call(cmd)
     
     # clip vrt to hansen tile extent
     tile_id = '10N_110E'
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    clipped_raster = "ba_{0}_{1}".format(long_year, tile_id)
+    clipped_raster = "ba_{0}_{1}.tif".format(long_year, tile_id)
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
         vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
 
     subprocess.check_call(cmd) 
+
+    cmd = ['aws', 's3', 'cp', clipped_raster, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
+    subprocess.check_call(cmd)
 '''
 # make a list of all the year tifs across windows
 windows = glob.glob("win*/*_{}.tif".format(year))

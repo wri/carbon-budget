@@ -53,14 +53,12 @@ def set_proj(tif):
 
     proj_tif = tif.replace(".tif", "_wgs84.tif")
     proj_tif_comp = proj_tif.replace("_wgs84.tif", "_wgs84_comp.tif")
-    wgs84 = ['gdalwarp', '-t_srs', 'EPSG:4326', '-overwrite', '-tap', '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', outtif, proj_tif]
+    wgs84 = ['gdalwarp', '-t_srs', 'EPSG:4326', '-overwrite', '-tap', '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', tif, proj_tif]
     print "projecting"
 
     subprocess.check_call(wgs84)
     
     # compress again
-    
-    proj_tif_comp = os.path.join("ba_{}")
     compress = ['gdal_translate', '-co', 'COMPRESS=LZW', proj_tif, proj_tif_comp]
     subprocess.check_call(compress)
     os.remove(tif)
