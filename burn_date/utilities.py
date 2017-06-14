@@ -33,7 +33,7 @@ def hdf_to_tif(hdf):
     day = hdf.split(".")[1].strip("A")[-3:]
     hv = hdf.split(".")[2]
     hdf_base = os.path.basename(hdf)
-#    gdal_translate 'HDF4_EOS:EOS_GRID:"ba_2006/day_tiles/h29v08/MCD64A1.A2006001.h29v08.006.2017017135341.hdf":MOD_Grid_Monthly_500m_DB_BA:Burn Date' out
+
     hdf3 = '"{}"'.format(os.path.basename(hdf))
     outtif = 'burndate_{}{}_{}.tif'.format(year, day, hv)
     dirname = os.path.dirname(hdf)
@@ -45,18 +45,26 @@ def hdf_to_tif(hdf):
     print "converting to tif"    
     subprocess.check_call(cmd)
     
-    set_proj = ['gdal_edit.py', '-a_srs', 'sphere.wkt', outtif]
+    
+def set_proj(tif)
+    set_proj = ['gdal_edit.py', '-a_srs', 'sphere.wkt', tif]
     print "setting projection"
     subprocess.check_call(set_proj)
 
-    proj_tif = outtif.replace(".tif", "_wgs84.tif")
+    proj_tif = tif.replace(".tif", "_wgs84.tif")
+    proj_tif_comp = proj_tif.replace("_wgs84.tif", "_wgs84_comp.tif")
     wgs84 = ['gdalwarp', '-t_srs', 'EPSG:4326', '-overwrite', '-tap', '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', outtif, proj_tif]
     print "projecting"
 
-
     subprocess.check_call(wgs84)
-    os.remove(outtif)
-    return proj_tif
+    
+    # compress again
+    compress = ['gdal_translate', '-co', 'COMPRESS=LZW', proj_tif, proj_tif_comp]
+
+    os.remove(tif)
+    os.remove(proj_tif)
+    
+    return proj_tif_comp
     
     
 def coords(tile_id):
@@ -118,6 +126,8 @@ def array_to_raster(h, v, year, array, raster, outfolder):
     dataset.SetProjection(wkt_projection)
     dataset.GetRasterBand(1).WriteArray(array)
     dataset.FlushCache()  # Write to disk.
+    
+    return dst_filename
     
 def recode_to_year(ba_tif, window):
     # ba_tif = MCD64monthly.A2007335.Win05.006.burndate.tif

@@ -56,44 +56,47 @@ for year in [6]:
     
     utilities.makedir(year_folder)
      
-    for h in range(29, 30):
+    for h in range(29, 31):
     
         for v in range(8, 9):
         
             h, v = utilities.get_hv_format(h, v)
             tile_folder = "day_tiles/h{}v{}/".format(h, v)
             #print "downloading tiles"
-            #utilities.download_ba(long_year, h, v)
+            utilities.download_ba(long_year, h, v)
             
             # convert ba to array then stack, might be better on memory
             tiles_path = os.path.join(year_folder, tile_folder)
             hdf_files = glob.glob(tiles_path+"*hdf")
             
             array_list = []
-            hdf_files = glob.glob("*wgs84.tif") # this is temp
+
             array_count = 0
             for hdf in hdf_files:
                 array_count += 1
-                
-                print hdf
+
                 # convert each raster to a tif
-                #tif = utilities.hdf_to_tif(hdf)
-                #print tif
-                #array = utilities.raster_to_array(tif)
-                array = utilities.raster_to_array(hdf)
-                array_list.append(array)
-            print array_list
+                tif = utilities.hdf_to_tif(hdf)
+
+                array = utilities.raster_to_array(tif)\
                 
-    # stack arrays, get 1 raster for the year and tile
+                array_list.append(array)
+                
+            # stack arrays, get 1 raster for the year and tile
             stacked_year_array = utilities.stack_arrays(array_list)
             max_stacked_year_array = stacked_year_array.max(0)
 
             # convert stacked month arrays to 1 raster for the year
+            rasters = glob.glob("burndate_{0}*_h{1}v{2}.tif".format(long_year, h, v))
             template_raster = rasters[0]
             print "template raster: {}".format(template_raster)
-            print "making year raster"        
-            utilities.array_to_raster(h, v, long_year, max_stacked_year_array, template_raster, year_folder)
-    
+     
+            stacked_year_raster = utilities.array_to_raster(h, v, long_year, max_stacked_year_array, template_raster, year_folder)
+            proj_com_tif = set_proj(stacked_year_raster)
+            
+            # upload to somewhere on s3
+            cmd = ['aws', 's3', 'cp', proj_com_tif, 's3://gfw-files/sam/carbon_budget/burn_year/']
+            subprocess.check_call(cmd)
 '''
 # make a list of all the year tifs across windows
 windows = glob.glob("win*/*_{}.tif".format(year))
