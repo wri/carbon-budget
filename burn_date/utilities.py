@@ -1,9 +1,9 @@
 import glob
 import os
-import gdal
+#import gdal
 import subprocess
 import numpy as np
-from osgeo import gdal
+#from osgeo import gdal
 import sys
 import shutil 
 
@@ -11,7 +11,7 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import get_extent
+#import get_extent
 
 def makedir(folder):
     if not os.path.exists(folder):
@@ -68,21 +68,18 @@ def coords(tile_id):
     return ymax, xmin, ymin, xmax
 
 def download_ba(year, h, v):
+    
+    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/'.format(year, day)
 
-    for day in ['001', '032', '060', '091', '121', '152', '182', '213', '244', '274', '305', '335']:
+    outfolder = os.path.join(currentdir, r"ba_{0}/day_tiles/h{1}v{2}/".format(year, h, v))
     
-        ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/{1}/'.format(year, day)
-    
-        outfolder = os.path.join(currentdir, r"ba_{0}/day_tiles/h{1}v{2}/".format(year, h, v))
+    if not os.path.exists(outfolder):
+        os.mkdir(outfolder)
         
-        if not os.path.exists(outfolder):
-            os.mkdir(outfolder)
-            
-        file_name = "*.h{0}v{1}*.*".format(h, v)
-        cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
+    file_name = "*.h{0}v{1}*.*".format(h, v)
+    cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
 
-        subprocess.check_call(cmd)
-#download_ba(6, '0', '0')    
+    subprocess.check_call(cmd)
     
 def raster_to_array(raster):
     ds = gdal.Open(raster)
