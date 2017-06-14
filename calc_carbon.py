@@ -7,8 +7,8 @@ def calc_carbon(tile_id):
     start = datetime.datetime.now()
 
     print "copy down biomass tile"
-    biomass_tile = '{}_biomass.tif'.format(tile_id)
-    copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
+    file_to_include = '*{}.tif'.format(tile_id)
+    copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/', '.', '--exclude', '*', '--include', file_to_include, '--recursive']
 
     subprocess.check_call(copy_bio)
 
