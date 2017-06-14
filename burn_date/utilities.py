@@ -1,9 +1,9 @@
 import glob
 import os
-#import gdal
+import gdal
 import subprocess
 import numpy as np
-#from osgeo import gdal
+from osgeo import gdal
 import sys
 import shutil 
 
@@ -11,7 +11,7 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-#import get_extent
+import get_extent
 
 def makedir(folder):
     if not os.path.exists(folder):
@@ -44,9 +44,9 @@ def hdf_to_tif(hdf):
     cmd = ['gdal_translate', hdf_file2, outtif, '-co', 'COMPRESS=LZW']
     print "converting to tif"    
     subprocess.check_call(cmd)
+    return outtif
     
-    
-def set_proj(tif)
+def set_proj(tif):
     set_proj = ['gdal_edit.py', '-a_srs', 'sphere.wkt', tif]
     print "setting projection"
     subprocess.check_call(set_proj)
@@ -59,8 +59,10 @@ def set_proj(tif)
     subprocess.check_call(wgs84)
     
     # compress again
+    
+    proj_tif_comp = os.path.join("ba_{}")
     compress = ['gdal_translate', '-co', 'COMPRESS=LZW', proj_tif, proj_tif_comp]
-
+    subprocess.check_call(compress)
     os.remove(tif)
     os.remove(proj_tif)
     
@@ -77,7 +79,7 @@ def coords(tile_id):
 
 def download_ba(year, h, v):
     
-    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/'.format(year, day)
+    ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/'.format(year)
 
     outfolder = os.path.join(currentdir, r"ba_{0}/day_tiles/h{1}v{2}/".format(year, h, v))
     

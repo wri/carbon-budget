@@ -10,6 +10,7 @@ import shutil
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+import get_extent
 '''
 ftp://ba1.geog.umd.edu/Collection6/HDF
 - 2006
@@ -46,7 +47,6 @@ ftp://ba1.geog.umd.edu/Collection6/HDF
 '''
 
 
-import get_extent
 
 for year in [6]:
 
@@ -78,7 +78,7 @@ for year in [6]:
                 # convert each raster to a tif
                 tif = utilities.hdf_to_tif(hdf)
 
-                array = utilities.raster_to_array(tif)\
+                array = utilities.raster_to_array(tif)
                 
                 array_list.append(array)
                 
@@ -92,11 +92,29 @@ for year in [6]:
             print "template raster: {}".format(template_raster)
      
             stacked_year_raster = utilities.array_to_raster(h, v, long_year, max_stacked_year_array, template_raster, year_folder)
-            proj_com_tif = set_proj(stacked_year_raster)
+            proj_com_tif = utilities.set_proj(stacked_year_raster)
+            with open('year_list.txt', 'r') as list_of_ba_years:
+                proj_com_tif_path = "ba_{0}/{1}".format(long_year, proj_com_tif)
+                list_of_ba_years.write(proj_com_tif_path + "\n")
             
             # upload to somewhere on s3
             cmd = ['aws', 's3', 'cp', proj_com_tif, 's3://gfw-files/sam/carbon_budget/burn_year/']
             subprocess.check_call(cmd)
+            
+    # build a vrt
+    vrt_name = "global_vrt_{}.vrt".format(long_year)
+    file_path = "ba_{}/*{}*comp.tif".format(long_year)
+    cmd = ['gdalbuildvrt', '-input_file_list', 'year_list.txt', vrt_name]
+    subprocess.check_call(cmd)
+    
+    # clip vrt to hansen tile extent
+    tile_id = '10N_110E'
+    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    clipped_raster = "ba_{0}_{1}".format(long_year, tile_id)
+    cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
+        vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
+
+    subprocess.check_call(cmd) 
 '''
 # make a list of all the year tifs across windows
 windows = glob.glob("win*/*_{}.tif".format(year))
