@@ -55,7 +55,7 @@ def calc_litter(tile_id):
     subprocess.check_call(litter_tiles_cmd)
 
     print 'uploading litter tile to s3'
-    copy_littertile = ['aws', 's3', 'cp', litter_tile, 's3://gfw-files/sam/carbon_budget/litter_052517/']
+    copy_littertile = ['aws', 's3', 'cp', litter_tile, 's3://gfw-files/sam/carbon_budget/carbon_061417/litter/']
     subprocess.check_call(copy_littertile)
 
     print "deleting intermediate data"

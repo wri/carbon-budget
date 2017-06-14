@@ -10,7 +10,7 @@ def calc_total(tile_id):
     print "/n-------TILE ID: {}".format(tile_id)
     list_of_types = ['carbon', 'bgc', 'deadwood', 'litter', 'soil']
     for type in list_of_types:
-        file_to_copy = 's3://gfw-files/sam/carbon_budget/{0}/{1}_{0}.tif'.format(type, tile_id)
+        file_to_copy = 's3://gfw-files/sam/carbon_budget/carbon_061417/{0}/{1}_{0}.tif'.format(type, tile_id)
         copy_file = ['aws', 's3', 'cp', file_to_copy, '.']
         subprocess.check_call(copy_file)
         
@@ -28,7 +28,7 @@ def calc_total(tile_id):
 
 
     print 'uploading total carbon tile to s3'
-    copy_totalc_tile = ['aws', 's3', 'cp', total_c_tile, 's3://gfw-files/sam/carbon_budget/total_carbon/']
+    copy_totalc_tile = ['aws', 's3', 'cp', total_c_tile, 's3://gfw-files/sam/carbon_budget/carbon_061417/total_carbon/']
     subprocess.check_call(copy_totalc_tile)
 
     print "deleting intermediate data"

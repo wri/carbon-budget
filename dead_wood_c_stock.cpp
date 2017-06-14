@@ -94,19 +94,19 @@ for(x=0; x<xsize; x++) {
     // biomass * .5 = carbon. so take carbon * the factor
 	// biome =1 are all tropics (subtropical, tropical), biome = 2 are temperate and boreal
   if (biome_data[x] == 1 && elevation_data[x] < 2000 && precip_data[x] < 1000) {
-    out_data1[x] = agb_data[x] * .02 * .5;}
+    out_data1[x] = agb_data[x] * .02 * .47;}
 	
   else if (biome_data[x] == 1 && elevation_data[x] < 2000 && precip_data[x] < 1600 && precip_data[x] > 1000) {
-    out_data1[x] = agb_data[x] * .01 * .5;}
+    out_data1[x] = agb_data[x] * .01 * .47;}
 	
   else if (biome_data[x] == 1 && elevation_data[x] < 2000 && precip_data[x] > 1600) {
-    out_data1[x] = agb_data[x] * .06 * .5;}
+    out_data1[x] = agb_data[x] * .06 * .47;}
 	
   else if (biome_data[x] == 1 && elevation_data[x] > 2000) {
-    out_data1[x] = agb_data[x] * .07 * .5;}
+    out_data1[x] = agb_data[x] * .07 * .47;}
 
   else if ((biome_data[x] == 2) || (biome_data[x] == 3)) {
-    out_data1[x] = agb_data[x] * .08 * .5;}
+    out_data1[x] = agb_data[x] * .08 * .47;}
 	
   else {
     out_data1[x] = -9999;}

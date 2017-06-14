@@ -9,8 +9,9 @@ def calc_deadwood(tile_id):
     start = datetime.datetime.now()
     print "/n-------TILE ID: {}".format(tile_id)
     print "copy down biomass tile"
-    biomass_tile = '{}_biomass.tif'.format(tile_id)
-    copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/redo_tiles/{}.tif'.format(tile_id), biomass_tile]
+    file_to_include = '*{}.tif'.format(tile_id)
+    copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/', '.', '--exclude', '*', '--include', file_to_include, '--recursive']
+
     subprocess.check_call(copy_bio)
 
     print "get extent of biomass tile"
@@ -61,7 +62,7 @@ def calc_deadwood(tile_id):
     subprocess.check_call(deadwood_tiles_cmd)
 
     print 'uploading deadwood tile to s3'
-    copy_deadwoodtile = ['aws', 's3', 'cp', deadwood_tile, 's3://gfw-files/sam/carbon_budget/deadwood/']
+    copy_deadwoodtile = ['aws', 's3', 'cp', deadwood_tile, 's3://gfw-files/sam/carbon_budget/carbon_061417/deadwood/']
     subprocess.check_call(copy_deadwoodtile)
 
     print "deleting intermediate data"

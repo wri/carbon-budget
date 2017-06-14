@@ -18,7 +18,7 @@ def calc_carbon(tile_id):
     subprocess.check_call(c_tiles_cmd)
 
     # print 'uploading belowground biomass tile to s3'
-    copy_carbontile = ['aws', 's3', 'cp', c_tile, 's3://gfw-files/sam/carbon_budget/carbon/']
+    copy_carbontile = ['aws', 's3', 'cp', c_tile, 's3://gfw-files/sam/carbon_budget/carbon_061417/carbon/']
     subprocess.check_call(copy_carbontile)
 
     print "deleting intermediate data"
