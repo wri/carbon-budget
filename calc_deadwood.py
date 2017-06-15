@@ -7,12 +7,12 @@ import get_extent
 
 def calc_deadwood(tile_id):
     start = datetime.datetime.now()
-    print "/n-------TILE ID: {}".format(tile_id)
     print "copy down biomass tile"
     file_to_include = '*{}.tif'.format(tile_id)
     copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/', '.', '--exclude', '*', '--include', file_to_include, '--recursive']
 
     subprocess.check_call(copy_bio)
+    biomass_tile = glob.glob(file_to_include)[0]
 
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
@@ -70,8 +70,8 @@ def calc_deadwood(tile_id):
 
     for tile in tiles_to_remove:
         try:
-            print "test"
-            #os.remove(tile)
+            #print "test"
+            os.remove(tile)
         except:
             pass
 
