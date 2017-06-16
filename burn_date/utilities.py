@@ -94,7 +94,7 @@ def raster_to_array(raster):
     
     return array
 
-def array_to_raster2(array, template_raster, out_file)
+def array_to_raster2(array, template_raster, out_file):
     x_pixels, y_pixels = get_extent.get_size(template_raster)
     pixel_size = get_extent.pixel_size(template_raster) 
     minx, miny, maxx, maxy = get_extent.get_extent(template_raster)  
