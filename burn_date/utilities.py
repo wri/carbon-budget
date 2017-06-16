@@ -32,15 +32,13 @@ def hdf_to_tif(hdf):
     year = hdf.split(".")[1].strip("A")[:4]
     day = hdf.split(".")[1].strip("A")[-3:]
     hv = hdf.split(".")[2]
-    hdf_base = os.path.basename(hdf)
 
-    hdf3 = '"{}"'.format(os.path.basename(hdf))
     outtif = 'burndate_{}{}_{}.tif'.format(year, day, hv)
     dirname = os.path.dirname(hdf)
     hdf_w_quotes = '"{}"'.format(hdf)
     hdf_file = 'HDF4_EOS:EOS_GRID:{}:MOD_Grid_Monthly_500m_DB_BA:Burn Date'.format(hdf_w_quotes)
     hdf_file2 = "{}".format(hdf_file)
-    hdf_path = os.path.join(dirname, hdf_file)
+
     cmd = ['gdal_translate', hdf_file2, outtif, '-co', 'COMPRESS=LZW']
     print "converting to tif"    
     subprocess.check_call(cmd)
@@ -87,6 +85,8 @@ def download_ba(global_grid_hv):
     cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
     
     subprocess.check_call(cmd)
+    
+    
         
 def raster_to_array(raster):
     ds = gdal.Open(raster)
@@ -124,9 +124,9 @@ def array_to_raster2(array, template_raster, out_file)
     return out_file
     
     
-def array_to_raster(h, v, year, array, raster, outfolder):
+def array_to_raster(global_grid_hv, year, array, raster, outfolder):
 
-    filename = '{0}_h{1}v{2}.tif'.format(year, h, v)
+    filename = '{0}_{1}.tif'.format(year, global_grid_hv)
     dst_filename = os.path.join(outfolder, filename)
     x_pixels, y_pixels = get_extent.get_size(raster)
 

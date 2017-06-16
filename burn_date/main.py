@@ -14,86 +14,71 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import get_extent
 
+def process_ba(global_grid_hv):
 
-for year in range (1, 16):
+    for year in range (2001, 2016):
 
-    long_year = 2000 + year
-    
-    year_folder = "ba_{}".format(long_year)
-    multithreaddownload()
-    
-    
-    #utilities.makedir(year_folder)
-     
-    for h in range(0, 36): # full range is 0, 36
-    
-        for v in range(0, 17): # full range is 0, 18
-            h, v = utilities.get_hv_format(h, v)
-            tile_folder = "day_tiles/h{}v{}/".format(h, v)
-            try:
-                os.makedirs(os.path.join(year_folder, tile_folder))
-            except:
-                pass
-            print "downloading tiles"
-            utilities.download_ba(long_year, h, v)
+        download_ba(global_grid_hv) # ba_2006/day_tiles/h00v00
+                        
+        # convert ba to array then stack, might be better on memory
+        tiles_path = 'ba_{0}/day_tiles/{1}'.format(year, global_grid_hv)
+        hdf_files = glob.glob(tiles_path+"*hdf")
+        if len(hdf_files) > 0:
+        
+            array_list = []
+
+            for hdf in hdf_files:
+
+                # convert each hdf to a tif
+                tif = utilities.hdf_to_tif(hdf)
+
+                array = utilities.raster_to_array(tif)
             
-            # convert ba to array then stack, might be better on memory
-            tiles_path = os.path.join(year_folder, tile_folder)
-            hdf_files = glob.glob(tiles_path+"*hdf")
-            if len(hdf_files) > 0:
-                array_list = []
-
-                array_count = 0
-                for hdf in hdf_files:
-                    array_count += 1
-
-                    # convert each raster to a tif
-                    tif = utilities.hdf_to_tif(hdf)
-
-                    array = utilities.raster_to_array(tif)
-                
-                    array_list.append(array)
-                
-                # stack arrays, get 1 raster for the year and tile
-                stacked_year_array = utilities.stack_arrays(array_list)
-                max_stacked_year_array = stacked_year_array.max(0)
-
-                # convert stacked month arrays to 1 raster for the year
-                rasters = glob.glob("burndate_{0}*_h{1}v{2}.tif".format(long_year, h, v))
-                template_raster = rasters[0]
-                print "template raster: {}".format(template_raster)
-     
-                stacked_year_raster = utilities.array_to_raster(h, v, long_year, max_stacked_year_array, template_raster, year_folder)
-                proj_com_tif = utilities.set_proj(stacked_year_raster)
-                with open('year_list.txt', 'w') as list_of_ba_years:
-                    list_of_ba_years.write(proj_com_tif + "\n")
+                array_list.append(array)
             
-                # upload to somewhere on s3
-                cmd = ['aws', 's3', 'cp', proj_com_tif, 's3://gfw-files/sam/carbon_budget/burn_year/']
-                subprocess.check_call(cmd)
-            else:
-                pass
+            # stack arrays, get 1 raster for the year and tile
+            stacked_year_array = utilities.stack_arrays(array_list)
+            max_stacked_year_array = stacked_year_array.max(0)
+
+            # convert stacked month arrays to 1 raster for the year
+            rasters = glob.glob("burndate_{0}*_{1}.tif".format(year, global_grid_hv))
+            template_raster = rasters[0]
+ 
+            stacked_year_raster = utilities.array_to_raster(global_grid_hv, long_year, max_stacked_year_array, template_raster, year_folder)
+            proj_com_tif = utilities.set_proj(stacked_year_raster)
+            with open('year_list.txt', 'w') as list_of_ba_years:
+                list_of_ba_years.write(proj_com_tif + "\n")
+        
+            # upload to somewhere on s3
+            cmd = ['aws', 's3', 'cp', proj_com_tif, 's3://gfw-files/sam/carbon_budget/burn_year/']
+            subprocess.check_call(cmd)
             
-    # build a vrt
-    vrt_name = "global_vrt_{}.vrt".format(long_year)
-    file_path = "ba_{0}/*{0}*comp.tif".format(long_year)
-    cmd = ['gdalbuildvrt', '-input_file_list', 'year_list.txt', vrt_name]
-    subprocess.check_call(cmd)
-    
-    # clip vrt to hansen tile extent
-    tile_id = '10N_110E'
-    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    clipped_raster = "ba_{0}_{1}.tif".format(long_year, tile_id)
-    cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
-        vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
+            # remove files
+            shutil.rmtree(tiles_path)
+            
+        else:
+            pass
+            
+        # build a vrt
+        vrt_name = "global_vrt_{}.vrt".format(long_year)
+        file_path = "ba_{0}/*{0}*comp.tif".format(long_year)
+        cmd = ['gdalbuildvrt', '-input_file_list', 'year_list.txt', vrt_name]
+        subprocess.check_call(cmd)
+        
+        # clip vrt to hansen tile extent
+        tile_id = '10N_110E'
+        ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+        clipped_raster = "ba_{0}_{1}.tif".format(long_year, tile_id)
+        cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
+            vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
 
-    subprocess.check_call(cmd) 
+        subprocess.check_call(cmd) 
 
-    cmd = ['aws', 's3', 'cp', clipped_raster, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
+        cmd = ['aws', 's3', 'cp', clipped_raster, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
 
-    subprocess.check_call(cmd)
+        subprocess.check_call(cmd)
 
-    os.remove('year_list.txt')	
+        os.remove('year_list.txt')	
     
 '''
 # make a list of all the year tifs across windows
