@@ -56,10 +56,13 @@ def process_ba(global_grid_hv):
             # remove files
             
             shutil.rmtree(tiles_path)
-            
+            burndate_name = "burndate_{0}*_{1}.tif".format(year, global_grid_hv)
+            burndate_day_tif = glob.glob(burndate_name)
+            for tif in burndate_day_tif:
+                os.remove(tif)
         else:
             pass
-            
+	sys.exit()            
         # build a vrt
         vrt_name = "global_vrt_{}.vrt".format(year)
         file_path = "ba_{0}/*{0}*comp.tif".format(year)
@@ -87,4 +90,3 @@ def process_ba(global_grid_hv):
         for daytif in day_tifs:
             os.remove(daytif)
 
-process_ba('h31v13')
