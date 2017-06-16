@@ -7,45 +7,12 @@ import os
 import sys
 import shutil
 
+import multithreaddownload
+
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 import get_extent
-'''
-ftp://ba1.geog.umd.edu/Collection6/HDF
-- 2006
-    - 001
-        h01v01.tif <------
-        h01v02.tif
-        h03v01.tif
-    - 032
-        h01v01.tif <------
-        h01v02.tif
-        h03v01.tif
-    - 060
-        h01v01.tif <------
-        h01v02.tif
-        h03v01.tif
-    ....
-    - 335
-        h01v01.tif <------
-        h01v02.tif
-        h03v01.tif
-- 2007
-    - 001
-        h01v01.tif
-        h01v02.tif
-        h03v01.tif
-    - 032
-        h01v01.tif
-        h01v02.tif
-        h03v01.tif
-    - 060
-        h01v01.tif
-        h01v02.tif
-        h03v01.tif
-'''
-
 
 
 for year in range (1, 16):
@@ -53,6 +20,8 @@ for year in range (1, 16):
     long_year = 2000 + year
     
     year_folder = "ba_{}".format(long_year)
+    multithreaddownload()
+    
     
     #utilities.makedir(year_folder)
      

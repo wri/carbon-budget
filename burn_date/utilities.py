@@ -53,7 +53,7 @@ def set_proj(tif):
 
     proj_tif = tif.replace(".tif", "_wgs84.tif")
     proj_tif_comp = proj_tif.replace("_wgs84.tif", "_wgs84_comp.tif")
-    wgs84 = ['gdalwarp', '-t_srs', 'EPSG:4326', '-overwrite', '-tap', '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW', tif, proj_tif]
+    wgs84 = ['gdalwarp', '-t_srs', 'EPSG:4326', '-overwrite', '-tap', '-tr', '.0025', '.0025', '-co', 'COMPRESS=LZW', tif, proj_tif]
     print "projecting"
 
     subprocess.check_call(wgs84)
@@ -75,26 +75,55 @@ def coords(tile_id):
     
     return ymax, xmin, ymin, xmax
 
-def download_ba(year, h, v):
     
+def download_ba(global_grid_hv):
+    year = '2006'
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/'.format(year)
-
-    outfolder = os.path.join(currentdir, r"ba_{0}/day_tiles/h{1}v{2}/".format(year, h, v))
-    
+    outfolder = "ba_{0}/day_tiles/{1}/".format(year, global_grid_hv)
     if not os.path.exists(outfolder):
-        os.mkdir(outfolder)
+        os.makedirs(outfolder)
         
-    file_name = "*.h{0}v{1}*.*".format(h, v)
+    file_name = "*.{}*.*.hdf".format(global_grid_hv)
     cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
-
-    subprocess.check_call(cmd)
     
+    subprocess.check_call(cmd)
+        
 def raster_to_array(raster):
     ds = gdal.Open(raster)
     array = np.array(ds.GetRasterBand(1).ReadAsArray())
     
     return array
 
+def array_to_raster2(array, template_raster, out_file)
+    x_pixels, y_pixels = get_extent.get_size(template_raster)
+    pixel_size = get_extent.pixel_size(template_raster) 
+    minx, miny, maxx, maxy = get_extent.get_extent(template_raster)  
+
+    wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
+    driver = gdal.GetDriverByName('GTiff')
+
+    dataset = driver.Create(
+        out_file,
+        x_pixels,
+        y_pixels,
+        1,
+        gdal.GDT_Int16, )
+
+    dataset.SetGeoTransform((
+        minx,
+        pixel_size,
+        0,
+        maxy,
+        0,
+        -pixel_size))  
+
+    dataset.SetProjection(wkt_projection)
+    dataset.GetRasterBand(1).WriteArray(array)
+    dataset.FlushCache()  # Write to disk.
+    
+    return out_file
+    
+    
 def array_to_raster(h, v, year, array, raster, outfolder):
 
     filename = '{0}_h{1}v{2}.tif'.format(year, h, v)
@@ -145,6 +174,7 @@ def stack_arrays(list_of_year_arrays):
     stack = np.stack((list_of_year_arrays))
     
     return stack
+
 
 
     
