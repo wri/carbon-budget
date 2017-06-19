@@ -8,22 +8,22 @@ biomass_tile_list = ["00N_000E", "00N_010E", "00N_020E", "00N_030E", "00N_040E",
 #biomass_tile_list = ['00N_010E']
 print "copy down eco zone shapefile"
 copy_ecozone = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/fao_ecozones_bor_tem_tro.zip', '.']
-subprocess.check_call(copy_ecozone)
+#subprocess.check_call(copy_ecozone)
 
 print "unzip eco zones"
 unzip_zones = ['unzip', 'fao_ecozones_bor_tem_tro.zip', '-d', '.']
-subprocess.check_call(unzip_zones)
+#subprocess.check_call(unzip_zones)
 
 print "copy down srtm files"
 copy_srtm = ['aws', 's3', 'sync', 's3://gfw2-data/analyses/srtm/', './srtm']
-subprocess.check_call(copy_srtm)
+#subprocess.check_call(copy_srtm)
 
 print "copy down precip file"
 download_precip = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/add_30s_precip.tif', '.']
-subprocess.check_call(download_precip)
+#subprocess.check_call(download_precip)
 
 print "make srtm vrt"
-subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
+#subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()

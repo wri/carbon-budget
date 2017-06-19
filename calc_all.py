@@ -3,7 +3,8 @@ import datetime
 import os
 
 import get_extent
-
+import glob
+import shutil
 
 def calc_all(tile_id):
     start = datetime.datetime.now()
@@ -15,7 +16,8 @@ def calc_all(tile_id):
     subprocess.check_call(copy_bio)
     
     biomass_tile = glob.glob(file_to_include)[0]
-
+    shutil.move(biomass_tile, "{}_biomass.tif".format(tile_id))
+    biomass_tile = "{}_biomass.tif".format(tile_id)
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
@@ -58,7 +60,7 @@ def calc_all(tile_id):
     subprocess.check_call(calc_all_cmd)
 
     print 'uploading tiles to s3'
-    tile_types  = ['carbon', 'bgc', 'deadwood', 'litter', 'total_carbon']
+    tile_types  = ['carbon', 'bgc', 'deadwood', 'litter', 'soil', 'total_carbon']
     for tile in tile_types:
         if tile == 'total_carbon':
             tile_name = "{}_totalc.tif".format(tile_id)
@@ -68,10 +70,10 @@ def calc_all(tile_id):
         tile_dest = 's3://gfw-files/sam/carbon_budget/carbon_061417/{}/'.format(tile)
 
         upload_tile = ['aws', 's3', 'cp', tile_name, tile_dest]
-        subprocess.check_call(copy_deadwoodtile)
+        subprocess.check_call(upload_tile)
 
     print "deleting intermediate data"
-    tiles_to_remove = [deadwood_tile, resample_precip_tile, clipped_precip_tile, biomass_tile, resampled_ecozone, tile_res_srtm, tile_srtm, rasterized_eco_zone_tile]
+    tiles_to_remove = ['{}_srtm.tif'.format(tile_id), '{}_totalc.tif'.format(tile_id), biomass_tile, '{}_soil.tif'.format(tile_id), '{}_deadwood.tif'.format(tile_id), '{}_litter.tif'.format(tile_id), '{}_bgc.tif'.format(tile_id), '{}_carbon.tif'.format(tile_id), '{}_total.tif'.format(tile_id), resampled_ecozone, clip_srtm, tile_res_srtm, clipped_precip_tile, resample_precip_tile]
 
     for tile in tiles_to_remove:
         try:

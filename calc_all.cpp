@@ -53,6 +53,9 @@ GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
 GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
+GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
+GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
+
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
@@ -70,22 +73,6 @@ INBAND4 = INGDAL4->GetRasterBand(1);
 INGDAL5 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
 INBAND5 = INGDAL5->GetRasterBand(1);
 
-INGDAL6 = (GDALDataset *) GDALOpen(outname_carbon.c_str(), GA_ReadOnly );
-INBAND6 = INGDAL6->GetRasterBand(1);
-
-INGDAL7 = (GDALDataset *) GDALOpen(outname_bgc.c_str(), GA_ReadOnly );
-INBAND7 = INGDAL7->GetRasterBand(1);
-
-INGDAL8 = (GDALDataset *) GDALOpen(outname_deadwood.c_str(), GA_ReadOnly );
-INBAND8 = INGDAL8->GetRasterBand(1);
-
-INGDAL9 = (GDALDataset *) GDALOpen(outname_litter.c_str(), GA_ReadOnly );
-INBAND9 = INGDAL9->GetRasterBand(1);
-
-INGDAL10 = (GDALDataset *) GDALOpen(outname_total.c_str(), GA_ReadOnly );
-INBAND10 = INGDAL10->GetRasterBand(1);
-
-
 xsize=INBAND->GetXSize(); 
 ysize=INBAND->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
@@ -97,11 +84,12 @@ cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << en
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
+
 GDALDataset *OUTGDAL2;
 GDALDataset *OUTGDAL3;
 GDALDataset *OUTGDAL4;
 GDALDataset *OUTGDAL5;
-
+cout << "here";
 
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
@@ -161,28 +149,31 @@ float deadwood;
 float litter;
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_UInt16, 0, 0); 
-INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_UInt16, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-// no data value for biomass is set to -32768
    if (agb_data[x] == -32768) 
    {
 		out_carbon[x] = -9999;
 		out_bgc[x] = -9999;
 		out_deadwood[x] = -9999;
+
 		out_litter[x] = -9999;
+                out_total[x] = -9999;
 	}
    else 
    {
 		out_carbon[x] = agb_data[x] * .47;
 		out_bgc[x] = .489 * pow(agb_data[x], 0.89) *.47;
-		out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
-		out_litter[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
-		
+
+         	out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
+
+                
+		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
 		if (out_deadwood[x] == -9999)
 		{
 			deadwood = 0;
@@ -200,7 +191,10 @@ for(x=0; x<xsize; x++) {
 			litter = out_litter[x];
 		}
 		
+
 		out_total[x] = out_carbon[x] + out_bgc[x] + deadwood + litter + soil_data[x];
+
+
 	}
 	
 	
@@ -212,6 +206,8 @@ OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_bgc, xsize, 1, GDT_Float32, 0,
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_deadwood, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_litter, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_total, xsize, 1, GDT_Float32, 0, 0 );  
+
+
 //closes for y loop
 }
 
