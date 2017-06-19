@@ -103,7 +103,6 @@ GDALDataset *OUTGDAL4;
 GDALDataset *OUTGDAL5;
 
 
-
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
 GDALRasterBand *OUTBAND3;
