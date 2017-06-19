@@ -74,8 +74,7 @@ def coords(tile_id):
     return ymax, xmin, ymin, xmax
 
     
-def download_ba(global_grid_hv):
-    year = '2006'
+def download_ba(global_grid_hv, year):
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/'.format(year)
     outfolder = "ba_{0}/day_tiles/{1}/".format(year, global_grid_hv)
     if not os.path.exists(outfolder):

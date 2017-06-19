@@ -16,9 +16,8 @@ def process_ba(global_grid_hv):
 
     for year in range (2006, 2007):
 
-        utilities.download_ba(global_grid_hv) # ba_2006/day_tiles/h00v00
+        utilities.download_ba(global_grid_hv, year) # ba_2006/day_tiles/h00v00
                         
-        # convert ba to array then stack, might be better on memory
         tiles_path = 'ba_{0}/day_tiles/{1}/'.format(year, global_grid_hv)
         
         hdf_files = glob.glob(tiles_path+"*hdf")
