@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 #include "calc.cpp"
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
@@ -57,6 +57,35 @@ GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
 INBAND = INGDAL->GetRasterBand(1);
+
+INGDAL2 = (GDALDataset *) GDALOpen(biome_name.c_str(), GA_ReadOnly );
+INBAND2 = INGDAL2->GetRasterBand(1);
+
+INGDAL3 = (GDALDataset *) GDALOpen(elevation_name.c_str(), GA_ReadOnly );
+INBAND3 = INGDAL3->GetRasterBand(1);
+
+INGDAL4 = (GDALDataset *) GDALOpen(precip_name.c_str(), GA_ReadOnly );
+INBAND4 = INGDAL4->GetRasterBand(1);
+
+INGDAL5 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
+INBAND5 = INGDAL5->GetRasterBand(1);
+
+INGDAL6 = (GDALDataset *) GDALOpen(outname_carbon.c_str(), GA_ReadOnly );
+INBAND6 = INGDAL6->GetRasterBand(1);
+
+INGDAL7 = (GDALDataset *) GDALOpen(outname_bgc.c_str(), GA_ReadOnly );
+INBAND7 = INGDAL7->GetRasterBand(1);
+
+INGDAL8 = (GDALDataset *) GDALOpen(outname_deadwood.c_str(), GA_ReadOnly );
+INBAND8 = INGDAL8->GetRasterBand(1);
+
+INGDAL9 = (GDALDataset *) GDALOpen(outname_litter.c_str(), GA_ReadOnly );
+INBAND9 = INGDAL9->GetRasterBand(1);
+
+INGDAL10 = (GDALDataset *) GDALOpen(outname_total.c_str(), GA_ReadOnly );
+INBAND10 = INGDAL10->GetRasterBand(1);
+
+
 xsize=INBAND->GetXSize(); 
 ysize=INBAND->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
@@ -68,6 +97,13 @@ cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << en
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
+GDALDataset *OUTGDAL2;
+GDALDataset *OUTGDAL3;
+GDALDataset *OUTGDAL4;
+GDALDataset *OUTGDAL5;
+
+
+
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
 GDALRasterBand *OUTBAND3;
@@ -86,21 +122,27 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 
 OUTGDAL = OUTDRIVER->Create( outname_carbon.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
-
-
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
-OUTBAND2 = OUTGDAL->GetRasterBand(1);
+OUTGDAL2 = OUTDRIVER->Create( outname_bgc.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
+OUTBAND2 = OUTGDAL2->GetRasterBand(1);
 OUTBAND2->SetNoDataValue(-9999);
 
-OUTBAND3 = OUTGDAL->GetRasterBand(1);
+OUTGDAL3 = OUTDRIVER->Create( outname_deadwood.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
+OUTBAND3 = OUTGDAL3->GetRasterBand(1);
 OUTBAND3->SetNoDataValue(-9999);
 
-OUTBAND4 = OUTGDAL->GetRasterBand(1);
+OUTGDAL4 = OUTDRIVER->Create( outname_litter.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
+OUTBAND4 = OUTGDAL4->GetRasterBand(1);
 OUTBAND4->SetNoDataValue(-9999);
 
-OUTBAND5 = OUTGDAL->GetRasterBand(1);
+OUTGDAL5 = OUTDRIVER->Create( outname_total.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
+OUTBAND5 = OUTGDAL5->GetRasterBand(1);
 OUTBAND5->SetNoDataValue(-9999);
 
 //read/write data
