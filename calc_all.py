@@ -10,29 +10,22 @@ def calc_all(tile_id):
     start = datetime.datetime.now()
     
     print "copy down biomass tile"
-    file_to_include = '*{}.tif'.format(tile_id)
-    copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/', '.', '--exclude', '*', '--include', file_to_include, '--recursive']
-
+    biomass_tile = '{}_biomass.tif'.format(tile_id)
+    copy_bio = ['aws', 's3', 'cp', 's3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/{}'.format(biomass_tile), '.']
     subprocess.check_call(copy_bio)
     
-    biomass_tile = glob.glob(file_to_include)[0]
-    shutil.move(biomass_tile, "{}_biomass.tif".format(tile_id))
-    biomass_tile = "{}_biomass.tif".format(tile_id)
     print "get extent of biomass tile"
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
     print "copy down soil tile, used for total c"
     copy_soil = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/soil/{}_soil.tif'.format(tile_id), "."]
     subprocess.check_call(copy_soil)
-    
-    print "rasterizing eco zone"
-    fao_eco_zones = 'fao_ecozones_bor_tem_tro.shp'
-    resampled_ecozone = "{}_res_ecozone_bor_tem_tro.tif".format(tile_id)
-    rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-    '-tr', '0.00025', '0.00025', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
-    '0', fao_eco_zones, resampled_ecozone]
-    subprocess.check_call(rasterize)
 
+    print "copy down fao ecozone"
+    src = 's3://gfw-files/sam/carbon_budget/data_inputs/fao_ecozones_bor_tem_tro/{0}_res_fao_ecozones_bor_tem_tro.tif'.format(tile_id)
+    cmd = ['aws', 's3', 'cp', src, '.']
+    subprocess.check_call(cmd)
+    
     print "clipping srtm"
     tile_srtm = '{}_srtm.tif'.format(tile_id)
     srtm = 'srtm.vrt'
@@ -73,7 +66,7 @@ def calc_all(tile_id):
         subprocess.check_call(upload_tile)
 
     print "deleting intermediate data"
-    tiles_to_remove = ['{}_srtm.tif'.format(tile_id), '{}_totalc.tif'.format(tile_id), biomass_tile, '{}_soil.tif'.format(tile_id), '{}_deadwood.tif'.format(tile_id), '{}_litter.tif'.format(tile_id), '{}_bgc.tif'.format(tile_id), '{}_carbon.tif'.format(tile_id), '{}_total.tif'.format(tile_id), resampled_ecozone, clip_srtm, tile_res_srtm, clipped_precip_tile, resample_precip_tile]
+    tiles_to_remove = ['{0}_res_fao_ecozones_bor_tem_tro.tif'.format(tile_id), '{}_srtm.tif'.format(tile_id), '{}_totalc.tif'.format(tile_id), biomass_tile, '{}_soil.tif'.format(tile_id), '{}_deadwood.tif'.format(tile_id), '{}_litter.tif'.format(tile_id), '{}_bgc.tif'.format(tile_id), '{}_carbon.tif'.format(tile_id), '{}_total.tif'.format(tile_id), clip_srtm, tile_res_srtm, clipped_precip_tile, resample_precip_tile]
 
     for tile in tiles_to_remove:
         try:
@@ -82,3 +75,7 @@ def calc_all(tile_id):
             pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
+biomass_tile_list = ["10N_010W", "10N_020E", "10N_030E", "10N_040E", "10S_010E", "10S_020E", "10S_030E", "10S_040E", "10S_050E", "20N_010W", "20N_020W", "20N_030E", "20S_030E", "20S_040E", "30N_010E", "30N_050E", "30S_010E", "10S_140E", "20S_130E", "20S_140E", "30S_140E", "20N_010W", "20N_020W", "20N_030E", "30N_010E", "30N_020E", "30N_050E", "30N_070E", "30N_080E", "30N_090E", "30N_100E", "30N_110E", "40N_000E", "40N_010E", "40N_020E", "40N_020W", "40N_040E", "40N_050E", "40N_070E", "40N_080E", "40N_100E", "40N_110E", "50N_000E", "50N_010E", "50N_010W", "50N_020E", "50N_030E", "50N_040E", "50N_050E", "50N_060E", "50N_070E", "50N_080E", "50N_090E", "50N_100E", "50N_110E", "50N_120E", "50N_130E", "50N_140E", "50N_150E", "60N_000E", "60N_010E", "60N_010W", "60N_020E", "60N_030E", "60N_040E", "60N_050E", "60N_060E", "60N_070E", "60N_080E", "60N_090E", "60N_100E", "60N_110E", "60N_120E", "60N_130E", "60N_140E", "60N_150E", "60N_160E", "60N_170E", "70N_000E", "70N_010E", "70N_020E", "70N_020W", "70N_030E", "70N_030W", "70N_040E", "70N_050E", "70N_060E", "70N_070E", "70N_080E", "70N_090E", "70N_100E", "70N_110E", "70N_120E", "70N_130E", "70N_140E", "70N_150E", "70N_160E", "70N_170E", "70N_170W", "70N_180W", "80N_010E", "80N_020E", "80N_030E", "80N_050E", "80N_060E", "80N_070E", "80N_080E", "80N_090E", "80N_100E", "80N_110E", "80N_120E", "80N_130E", "80N_140E", "80N_150E", "80N_160E", "80N_170E", "80N_180W", "00N_070E", "00N_090E", "00N_100E", "00N_110E", "00N_120E", "00N_130E", "00N_140E", "00N_150E", "00N_160E", "10N_070E", "10N_080E", "10N_090E", "10N_100E", "10N_110E", "10N_120E", "10N_130E", "10N_140E", "10N_150E", "10N_160E", "10S_090E", "10S_100E", "10S_140E", "10S_150E", "20N_070E", "20N_080E", "20N_090E", "20N_100E", "20N_110E", "20N_120E", "20N_140E", "30N_070E", "30N_080E", "30N_090E", "30N_100E", "30N_110E", "30N_140E", "30N_150E", "40N_070E", "40N_080E", "20N_100W", "30N_090W", "30N_100W", "30N_110W", "30N_120W", "40N_070W", "40N_080W", "40N_090W", "40N_100W", "40N_110W", "40N_120W", "40N_130W", "50N_060W", "50N_070W", "50N_080W", "50N_090W", "50N_100W", "50N_110W", "50N_120W", "50N_130W", "60N_060W", "60N_070W", "60N_080W", "60N_090W", "60N_100W", "60N_110W", "60N_120W", "60N_130W", "60N_140W", "60N_150W", "60N_160W", "60N_170W", "60N_180W", "70N_030W", "70N_060W", "70N_070W", "70N_080W", "70N_090W", "70N_100W", "70N_110W", "70N_120W", "70N_130W", "70N_140W", "70N_150W", "70N_160W", "70N_170W", "70N_180W", "80N_060W", "80N_070W", "80N_080W", "80N_090W", "80N_100W", "80N_110W", "80N_120W", "80N_130W", "80N_140W", "80N_150W", "80N_160W", "80N_170W", "00N_040W", "00N_050W", "00N_060W", "00N_070W", "00N_080W", "00N_090W", "00N_100W", "10N_030W", "10N_050W", "10N_060W", "10N_070W", "10N_080W", "10N_090W", "10N_100W", "10S_040W", "10S_050W", "10S_060W", "10S_070W", "10S_080W", "20N_060W", "20N_070W", "20N_080W", "20N_090W", "20N_100W", "20N_110W", "20N_120W", "20S_030W", "20S_040W", "20S_050W", "20S_060W", "20S_070W", "20S_080W", "20S_090W", "20S_110W", "30N_080W", "30N_090W", "30N_100W", "30N_110W", "30N_120W", "30S_060W", "30S_070W", "30S_080W", "40S_070W", "40S_080W", "50S_060W", "50S_070W", "50S_080W"]
+for tile_id in biomass_tile_list:
+    print calc_all(tile_id)
+

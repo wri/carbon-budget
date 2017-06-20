@@ -25,8 +25,8 @@ subprocess.check_call(download_precip)
 print "make srtm vrt"
 subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
-if __name__ == '__main__':
-     count = multiprocessing.cpu_count()
-     pool = multiprocessing.Pool(processes=2)
-     pool.map(calc_all.calc_all, biomass_tile_list)
+#if __name__ == '__main__':
+#     count = multiprocessing.cpu_count()
+#     pool = multiprocessing.Pool(processes=2)
+#     pool.map(calc_all.calc_all, biomass_tile_list)
 

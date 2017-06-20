@@ -24,8 +24,7 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 
 string tile_id =argv[1];
 string agb_name = tile_id + "_biomass.tif";
-
-string biome_name = tile_id + "_res_ecozone_bor_tem_tro.tif";
+string biome_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string elevation_name = tile_id + "_res_srtm.tif";
 string precip_name = tile_id + "_res_precip.tif";
 string soil_name =  tile_id + "_soil.tif";
