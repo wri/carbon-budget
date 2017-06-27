@@ -14,13 +14,14 @@ import get_extent
 
 def process_ba(global_grid_hv):
 
-    for year in range (2006, 2007):
+    for year in range (2001, 2016):
 
-        utilities.download_ba(global_grid_hv, year) # ba_2006/day_tiles/h00v00
-                        
-        tiles_path = 'ba_{0}/day_tiles/{1}/'.format(year, global_grid_hv)
+        os.path.mkdir(year)
+        output_dir = '{}/'.format(year)
+        include = '*A{0}*{1}*'.format(year, global_grid_hv)
+        cmd = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/burn_raw/', output_dir, '--recursive', '--exclude', "*", '--include', include]              
         
-        hdf_files = glob.glob(tiles_path+"*hdf")
+        hdf_files = glob.glob(output_dir+"*hdf")
         if len(hdf_files) > 0:
         
             array_list = []
