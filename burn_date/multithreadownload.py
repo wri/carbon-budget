@@ -9,5 +9,5 @@ global_grid_hv = ["h00v08"]
 if __name__ == '__main__':
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=1)
-    pool.map(download_upload_raw_hdf.download_ba, global_grid_hv)
+    pool.map(main.process_ba, global_grid_hv)
     
