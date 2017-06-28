@@ -76,39 +76,50 @@ def clip_year_tiles(year):
     # download all hv tifs for this year
     include = '{0}_*_wgs84_comp.tif'.format(year)
     year_tifs_folder = "{}_year_tifs".format(year)
+    if not os.path.exists(year_tifs_folder):
+        os.mkdir(year_tifs_folder)
     cmd = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/burn_year/', year_tifs_folder, '--recursive', '--exclude', "*", '--include', include]
+    subprocess.check_call(cmd)
     
     vrt_name = "global_vrt_{}.vrt".format(year)
-    file_path = "ba_{0}/*{0}*comp.tif".format(year)
-    
-    # change this to build vrt based on directory year_tifs_folder
-    cmd = ['aws', 's3', 'cp', ]
-    cmd = ['gdalbuildvrt', '-input_file_list', 'year_list.txt', vrt_name]
+
+    # build list of vrt files (command wont take folder/*.tif)    
+    vrt_source_folder = "{}/*.tif".format(year_tifs_folder)
+    with open('vrt_files.txt', 'w') as vrt_files:
+        vrt_tifs = glob.glob(year_tifs_folder + "/*")
+	for tif in vrt_tifs:
+		vrt_files.write(tif + "\n")
+    cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
     subprocess.check_call(cmd)
     
     # clip vrt to hansen tile extent
-    tile_list = ['10N_110E']
+    tile_list = ['00N_130E']
     for tile_id in tile_list:
-        # download hansen tile
         
         # get coords of hansen tile
         ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-        clipped_raster = "ba_{0}_{1}.tif".format(year, tile_id)
+        clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
         cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
             vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
 
         subprocess.check_call(cmd) 
 
-        cmd = ['aws', 's3', 'mv', clipped_raster, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
+	# calc year tile values to be equal to year
+	calc = '--calc={}*(A>0)'.format(int(year)-2000)
+	recoded_output =  "ba_{0}_{1}.tif".format(year, tile_id)
+	outfile = '--outfile={}'.format(recoded_output)
+
+	cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+	subprocess.check_call(cmd)
+
+	# upload file
+        cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
 
         subprocess.check_call(cmd)
 
-        # rm viles
-        os.remove('year_list.txt')	
-        comp_tifs = glob.glob('ba_{0}/{0}_{1}_wgs84_comp.tif'.format(year, global_grid_hv))
-        for tif in comp_tifs:
-            os.remove(tif)
-        day_tifs = glob.glob("burndate_*{0}.tif".format(global_grid_hv))
-        for daytif in day_tifs:
-            os.remove(daytif)
-
+        # rm files
+        os.remove('vrt_files.txt')	
+	cmd = ['rm', year_tifs_folder+ "/", '-r']
+	subprocess.check_call(cmd)
+	os.remove(clipped_raster)
+clip_year_tiles('2000')
