@@ -72,8 +72,11 @@ def process_ba(global_grid_hv):
         else:
             pass
             
-def clip_year_tiles(tile_id):         
-
+def clip_year_tiles(tile_year_list):
+    tile_id = tile_year_list[0]    
+    year = tile_year_list[1]
+    vrt_name = "global_vrt_{}.vrt".format(year)
+    year_tifs_folder = "{}_year_tifs".format(year)
     # get coords of hansen tile
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
     
@@ -95,11 +98,11 @@ def clip_year_tiles(tile_id):
     # upload file
     cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
 
-    subprocess.check_call(cmd)
+    #subprocess.check_call(cmd)
 
     # rm files
-    os.remove('vrt_files.txt')	
-    cmd = ['rm', year_tifs_folder+ "/", '-r']
-    subprocess.check_call(cmd)
-    os.remove(clipped_raster)
+    #os.remove('vrt_files.txt')	
+    #cmd = ['rm', year_tifs_folder+ "/", '-r']
+    #subprocess.check_call(cmd)
+    #os.remove(clipped_raster)
 
