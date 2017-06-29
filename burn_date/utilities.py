@@ -13,10 +13,18 @@ sys.path.insert(0, parentdir)
 
 import get_extent
 
+def warp84(tif):
+    wgs84tif = tif.replace(".tif", "_wgs.tif")
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', tif, wgs84tif]
+    
+    subprocess.check_call(cmd)
+    
+    return wgs84tif
+    
 def hdf_to_array(hdf):
     hdf_open = gdal.Open(hdf).GetSubDatasets()
     ds = gdal.Open(hdf_open[0][0])
-    array = ds.ReadAsArra()
+    array = ds.ReadAsArray()
 
     return array
 
@@ -79,6 +87,7 @@ def wgetloss(tile_id):
 
     subprocess.check_call(cmd)    
     return hansen_tile
+
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]
@@ -109,59 +118,42 @@ def download_ba(global_grid_hv, year):
     cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name, '--no-directories', '--no-parent', ftp_path, '-P', outfolder]
     
     subprocess.check_call(cmd)
-    
-    
-        
+       
 def raster_to_array(raster):
     ds = gdal.Open(raster)
     array = np.array(ds.GetRasterBand(1).ReadAsArray())
     
     return array
 
-def array_to_raster2(array, template_raster, out_file):
-    x_pixels, y_pixels = get_extent.get_size(template_raster)
-    pixel_size = get_extent.pixel_size(template_raster) 
-    minx, miny, maxx, maxy = get_extent.get_extent(template_raster)  
-
-    wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
-    driver = gdal.GetDriverByName('GTiff')
-
-    dataset = driver.Create(
-        out_file,
-        x_pixels,
-        y_pixels,
-        1,
-        gdal.GDT_Int16, )
-
-    dataset.SetGeoTransform((
-        minx,
-        pixel_size,
-        0,
-        maxy,
-        0,
-        -pixel_size))  
-
-    dataset.SetProjection(wkt_projection)
-    dataset.GetRasterBand(1).WriteArray(array)
-    dataset.FlushCache()  # Write to disk.
-    
-    return out_file
-    
-    
-def array_to_raster(global_grid_hv, year, array, raster, outfolder):
+def array_to_raster(global_grid_hv, year, array, template_hdf, outfolder):
 
     filename = '{0}_{1}.tif'.format(year, global_grid_hv)
     dst_filename = os.path.join(outfolder, filename)
-    x_pixels, y_pixels = get_extent.get_size(raster)
+    # x_pixels, y_pixels = get_extent.get_size(raster)
+    hdf_open = gdal.Open(template_hdf).GetSubDatasets()
+    ds = gdal.Open(hdf_open[0][0])
+    x_pixels = ds.RasterXSize
+    y_pixels = ds.RasterYSize
 
-    pixel_size = get_extent.pixel_size(raster)   
+    geoTransform = ds.GetGeoTransform()
+    height = geoTransform[1]
+    width = geoTransform[5]
     
-    minx, miny, maxx, maxy = get_extent.get_extent(raster)
+    # pixel_size = get_extent.pixel_size(raster)   
+    pixel_size = geoTransform[1]
+    # minx, miny, maxx, maxy = get_extent.get_extent(raster)
 
+    minx = geoTransform[0]
+    maxy = geoTransform[3]
+    maxx = minx + geoTransform[1] * ds.RasterXSize
+    miny = maxy + geoTransform[5] * ds.RasterYSize
+    
+    
     #wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
     
-    wkt_projection = 'PROJCS["Sphere_Sinusoidal",GEOGCS["GCS_Sphere",DATUM["D_Sphere",SPHEROID["Sphere",6371000,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Sinusoidal"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["Central_Meridian",0],UNIT["Meter",1]]'
+    #wkt_projection = 'PROJCS["Sphere_Sinusoidal",GEOGCS["GCS_Sphere",DATUM["D_Sphere",SPHEROID["Sphere",6371000,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Sinusoidal"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["Central_Meridian",0],UNIT["Meter",1]]'
     
+    wkt_projection = 'PROJCS["Sinusoidal",GEOGCS["GCS_Undefined",DATUM["D_Undefined",SPHEROID["User_Defined_Spheroid",6371007.181,0.0]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.017453292519943295]],PROJECTION["Sinusoidal"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],UNIT["Meter",1.0]]'
     # http://spatialreference.org/ref/sr-org/6974/
     #wkt_projection = 'PROJCS["MODIS Sinusoidal",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Sinusoidal"],PARAMETER["false_easting",0.0],PARAMETER["false_northing",0.0],PARAMETER["central_meridian",0.0],PARAMETER["semi_major",6371007.181],PARAMETER["semi_minor",6371007.181],UNIT["m",1.0]]'
     
@@ -207,8 +199,7 @@ def stack_arrays(list_of_year_arrays):
     return stack
 
 
-
-    
+  
 """
 a1 = [1,2,3]
 a2 = [3,2,1]
