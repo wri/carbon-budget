@@ -63,16 +63,33 @@ def set_proj(tif):
     os.remove(proj_tif)
     
     return proj_tif_comp
-    
+
+def wgetloss(tile_id):
+    print "download hansen loss tile"
+    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
+           '-O' '{}_loss.tif'.format(tile_id)]
+
+    subprocess.check_call(cmd)    
     
 def coords(tile_id):
-    ymax = str(tile_id.split("_")[0][:2])
-    xmin = str(tile_id.split("_")[1][:3])
+    NS = tile_id.split("_")[0][-1:]
+    EW = tile_id.split("_")[1][-1:]
+
+    if NS == 'S':
+        ymax =-1*int(tile_id.split("_")[0][:2])
+    else:
+        ymax = int(str(tile_id.split("_")[0][:2]))
+    
+    if EW == 'W':
+        xmin = -1*int(str(tile_id.split("_")[1][:3]))
+    else:
+        xmin = int(str(tile_id.split("_")[1][:3]))
+        
+    
     ymin = str(int(ymax) - 10)
     xmax = str(int(xmin) + 10)
     
     return ymax, xmin, ymin, xmax
-
     
 def download_ba(global_grid_hv, year):
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/{0}/'.format(year)

@@ -97,12 +97,6 @@ def clip_year_tiles(tile_year_list):
     cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/']
 
     subprocess.check_call(cmd)
-'''	
+	
     # rm files
-    os.remove('vrt_files.txt')	
-    cmd = ['rm', year_tifs_folder+ "/", '-r']
-    subprocess.check_call(cmd)
-    os.remove(clipped_raster)
-    os.remove(vrt_name)
-    os.remove(vrt_wgs84)    
-'''
+    #os.remove(clipped_raster)
