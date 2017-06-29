@@ -72,15 +72,16 @@ def process_ba(global_grid_hv):
 def clip_year_tiles(tile_year_list):
     tile_id = tile_year_list[0]    
     year = tile_year_list[1]
-    vrt_name = "global_vrt_{}.vrt".format(year)
+    vrt_wgs84 = "global_vrt_{}_wgs84.vrt".format(year)
     year_tifs_folder = "{}_year_tifs".format(year)
+
     # get coords of hansen tile
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
     
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
-        vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
+        vrt_wgs84, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
 
     subprocess.check_call(cmd) 
 
@@ -93,13 +94,15 @@ def clip_year_tiles(tile_year_list):
     subprocess.check_call(cmd)
 
     # upload file
-    cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles/']
+    cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/']
 
-    #subprocess.check_call(cmd)
-
+    subprocess.check_call(cmd)
+'''	
     # rm files
-    #os.remove('vrt_files.txt')	
-    #cmd = ['rm', year_tifs_folder+ "/", '-r']
-    #subprocess.check_call(cmd)
-    #os.remove(clipped_raster)
-    
+    os.remove('vrt_files.txt')	
+    cmd = ['rm', year_tifs_folder+ "/", '-r']
+    subprocess.check_call(cmd)
+    os.remove(clipped_raster)
+    os.remove(vrt_name)
+    os.remove(vrt_wgs84)    
+'''
