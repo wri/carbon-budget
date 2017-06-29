@@ -1,9 +1,9 @@
 import glob
 import os
-import gdal
+# import gdal
 import subprocess
 import numpy as np
-from osgeo import gdal
+# from osgeo import gdal
 import sys
 import shutil 
 
@@ -11,7 +11,7 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import get_extent
+# import get_extent
 
 def makedir(folder):
     if not os.path.exists(folder):

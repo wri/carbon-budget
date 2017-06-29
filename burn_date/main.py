@@ -1,6 +1,6 @@
 import subprocess
 import numpy as np
-from osgeo import gdal
+# from osgeo import gdal
 import utilities
 import glob
 import os
@@ -10,11 +10,11 @@ import shutil
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-import get_extent
+# import get_extent
 
 def process_ba(global_grid_hv):
 
-    for year in range (2000, 2016):
+    for year in range (2006, 2007):
 
         output_dir = '{0}/{1}/raw/'.format(global_grid_hv, year)
         if not os.path.exists(output_dir):
@@ -37,7 +37,7 @@ def process_ba(global_grid_hv):
                 array = utilities.raster_to_array(tif)
             
                 array_list.append(array)
-            
+            sys.exit()
             # stack arrays, get 1 raster for the year and tile
             stacked_year_array = utilities.stack_arrays(array_list)
             max_stacked_year_array = stacked_year_array.max(0)
