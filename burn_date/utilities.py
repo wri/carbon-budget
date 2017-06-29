@@ -1,9 +1,9 @@
 import glob
 import os
-# import gdal
+import gdal
 import subprocess
 import numpy as np
-# from osgeo import gdal
+from osgeo import gdal
 import sys
 import shutil 
 
@@ -11,7 +11,7 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-# import get_extent
+import get_extent
 
 def makedir(folder):
     if not os.path.exists(folder):
@@ -133,7 +133,14 @@ def array_to_raster(global_grid_hv, year, array, raster, outfolder):
     
     minx, miny, maxx, maxy = get_extent.get_extent(raster)
 
-    wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
+    #wkt_projection =  'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]'
+    
+    wkt_projection = 'PROJCS["Sphere_Sinusoidal",GEOGCS["GCS_Sphere",DATUM["D_Sphere",SPHEROID["Sphere",6371000,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Sinusoidal"],PARAMETER["False_Easting",0],PARAMETER["False_Northing",0],PARAMETER["Central_Meridian",0],UNIT["Meter",1]]'
+    
+    # http://spatialreference.org/ref/sr-org/6974/
+    #wkt_projection = 'PROJCS["MODIS Sinusoidal",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Sinusoidal"],PARAMETER["false_easting",0.0],PARAMETER["false_northing",0.0],PARAMETER["central_meridian",0.0],PARAMETER["semi_major",6371007.181],PARAMETER["semi_minor",6371007.181],UNIT["m",1.0]]'
+    
+    
     driver = gdal.GetDriverByName('GTiff')
 
     dataset = driver.Create(

@@ -1,6 +1,6 @@
 import subprocess
 import numpy as np
-# from osgeo import gdal
+from osgeo import gdal
 import utilities
 import glob
 import os
@@ -10,7 +10,7 @@ import shutil
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-# import get_extent
+import get_extent
 
 def process_ba(global_grid_hv):
 
@@ -37,7 +37,7 @@ def process_ba(global_grid_hv):
                 array = utilities.raster_to_array(tif)
             
                 array_list.append(array)
-            sys.exit()
+   
             # stack arrays, get 1 raster for the year and tile
             stacked_year_array = utilities.stack_arrays(array_list)
             max_stacked_year_array = stacked_year_array.max(0)
@@ -50,14 +50,11 @@ def process_ba(global_grid_hv):
                 os.makedirs(year_folder)
             
             stacked_year_raster = utilities.array_to_raster(global_grid_hv, year, max_stacked_year_array, template_raster, year_folder)
-            proj_com_tif = utilities.set_proj(stacked_year_raster)
-            
-            # after year raster is stacked, write it to text for vrt creation
-            with open('year_list.txt', 'w') as list_of_ba_years:
-                list_of_ba_years.write(proj_com_tif + "\n")
+            #sys.exit()
+            #proj_com_tif = utilities.set_proj(stacked_year_raster)
         
             # upload to somewhere on s3
-            cmd = ['aws', 's3', 'cp', proj_com_tif, 's3://gfw-files/sam/carbon_budget/burn_year/']
+            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/']
             subprocess.check_call(cmd)
             
             
@@ -68,7 +65,7 @@ def process_ba(global_grid_hv):
             burndate_name = "burndate_{0}*_{1}.tif".format(year, global_grid_hv)
             burndate_day_tif = glob.glob(burndate_name)
             for tif in burndate_day_tif:
-                os.remove(tif)
+               os.remove(tif)
         else:
             pass
             
@@ -105,4 +102,4 @@ def clip_year_tiles(tile_year_list):
     #cmd = ['rm', year_tifs_folder+ "/", '-r']
     #subprocess.check_call(cmd)
     #os.remove(clipped_raster)
-
+    
