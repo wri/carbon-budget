@@ -13,6 +13,13 @@ sys.path.insert(0, parentdir)
 
 import get_extent
 
+def hdf_to_array(hdf):
+    hdf_open = gdal.Open(hdf).GetSubDatasets()
+    ds = gdal.Open(hdf_open[0][0])
+    array = ds.ReadAsArra()
+
+    return array
+
 def makedir(folder):
     if not os.path.exists(folder):
         os.mkdir(folder)
@@ -66,11 +73,12 @@ def set_proj(tif):
 
 def wgetloss(tile_id):
     print "download hansen loss tile"
+    hansen_tile = '{}_loss.tif'.format(tile_id)
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
-           '-O' '{}_loss.tif'.format(tile_id)]
+           '-O', hansen_tile]
 
     subprocess.check_call(cmd)    
-    
+    return hansen_tile
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]

@@ -32,10 +32,10 @@ def process_ba(global_grid_hv):
             for hdf in hdf_files:
 
                 # convert each hdf to a tif
-                tif = utilities.hdf_to_tif(hdf)
+                #tif = utilities.hdf_to_tif(hdf)
 
-                array = utilities.raster_to_array(tif)
-            
+                #array = utilities.raster_to_array(tif)
+            	array = utilities.hdf_to_array(hdf)
                 array_list.append(array)
    
             # stack arrays, get 1 raster for the year and tile
@@ -76,8 +76,11 @@ def clip_year_tiles(tile_year_list):
     year_tifs_folder = "{}_year_tifs".format(year)
 
     # get coords of hansen tile
-    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    
+
+    # download hanse tile
+    hansen_tile = utilities.wgetloss(tile_id)
+    #ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    xmin, ymin, xmax, ymax = get_extent.get_extent(hansen_tile)    
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
