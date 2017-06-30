@@ -3,9 +3,9 @@
 #include <stdlib.h>
 using namespace std;
 
-int deadwood_calc(int biome_data, int elevation_data, int precip_data, int agb_data)
+float deadwood_calc(float biome_data, float elevation_data, float precip_data, float agb_data)
 {
-	int deadwood;
+	float deadwood;
 
 	if (biome_data == 1 && elevation_data < 2000 && precip_data< 1000) {
 		deadwood = agb_data * .02 * .47;}
@@ -28,9 +28,9 @@ int deadwood_calc(int biome_data, int elevation_data, int precip_data, int agb_d
 	return deadwood;
 }
 
-int litter_calc(int biome_data, int elevation_data, int precip_data, int agb_data)
+float litter_calc(float biome_data, float elevation_data, float precip_data, float agb_data)
 {
-	int litter;
+	float litter;
 	if (biome_data== 1 && elevation_data < 2000 && precip_data < 1000) 
 	{  
 		litter = agb_data * .04 * .37;
