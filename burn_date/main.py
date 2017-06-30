@@ -30,7 +30,6 @@ def process_ba(global_grid_hv):
         if len(hdf_files) > 0:
         
             array_list = []
-            
             # convert hdf to array
             for hdf in hdf_files:
                 print "converting hdf to array"
@@ -43,57 +42,41 @@ def process_ba(global_grid_hv):
             max_stacked_year_array = stacked_year_array.max(0)
 
             # convert stacked month arrays to 1 raster for the year
-            
             template_hdf = hdf_files[0]
             year_folder ='{0}/{1}/stacked/'.format(global_grid_hv, year)
             if not os.path.exists(year_folder):
                 os.makedirs(year_folder)
             print "making raster"
             stacked_year_raster = utilities.array_to_raster(global_grid_hv, year, max_stacked_year_array, template_hdf, year_folder)
-            
-            # gdal warp to wgs 84
-            print "converting to wgs84"
-            stacked_hdf_wgs84 = utilities.warp84(stacked_year_raster)
-            print stacked_hdf_wgs84
-            sys.exit()
+            print stacked_year_raster
             # upload to somewhere on s3
-            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw-files/sam/carbon_budget/burn_year_wgs84/']
+            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/']
             subprocess.check_call(cmd)
-            
-            
             # remove files
-            
-            shutil.rmtree(year_folder)
-            shutil.rmtree(output_dir)
-            burndate_name = "burndate_{0}*_{1}.tif".format(year, global_grid_hv)
-            burndate_day_tif = glob.glob(burndate_name)
-            for tif in burndate_day_tif:
-               os.remove(tif)
         else:
             pass
-
-#process_ba('h30v09')
-            
+#for hv in ['h30v08', 'h31v08', 'h32v08', 'h30v09', 'h31v09', 'h32v09', 'h30v10', 'h31v10', 'h32v10']:
+#    process_ba(hv)                
 def clip_year_tiles(tile_year_list):
 
     tile_id = tile_year_list[0]    
     year = tile_year_list[1]
-    vrt_name = "global_vrt_{}.vrt".format(year)
+    vrt_name = "global_vrt_{}_wgs84.vrt".format(year)
     year_tifs_folder = "{}_year_tifs".format(year)
 
     # get coords of hansen tile
 
     # download hanse tile
-    #hansen_tile = utilities.wgetloss(tile_id)
-    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    # xmin, ymin, xmax, ymax = get_extent.get_extent(hansen_tile)    
+    hansen_tile = utilities.wgetloss(tile_id)
+    #ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    xmin, ymin, xmax, ymax = get_extent.get_extent(hansen_tile)    
+
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
         vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
+    subprocess.check_call(cmd)
 
-    subprocess.check_call(cmd) 
-    
     # calc year tile values to be equal to year
     calc = '--calc={}*(A>0)'.format(int(year)-2000)
     recoded_output =  "ba_{0}_{1}.tif".format(year, tile_id)
@@ -109,4 +92,4 @@ def clip_year_tiles(tile_year_list):
 	
     # rm files
     #os.remove(clipped_raster)
-clip_year_tiles(["00N_130E",2006])
+#clip_year_tiles(["00N_130E",2006])
