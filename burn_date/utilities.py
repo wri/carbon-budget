@@ -14,6 +14,7 @@ sys.path.insert(0, parentdir)
 import get_extent
 
 def warp84(tif):
+    
     wgs84tif = tif.replace(".tif", "_wgs.tif")
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', tif, wgs84tif]
     

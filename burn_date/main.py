@@ -19,7 +19,8 @@ def process_ba(global_grid_hv):
         output_dir = '{0}/{1}/raw/'.format(global_grid_hv, year)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-        
+            
+        year_tifs_folder = "{}_year_tifs".format(year)
         # download hdf files
         include = '*A{0}*{1}*'.format(year, global_grid_hv)
         cmd = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/burn_raw/', output_dir, '--recursive', '--exclude', "*", '--include', include]  
@@ -71,25 +72,25 @@ def process_ba(global_grid_hv):
         else:
             pass
 
-process_ba('h30v09')
+#process_ba('h30v09')
             
 def clip_year_tiles(tile_year_list):
 
     tile_id = tile_year_list[0]    
     year = tile_year_list[1]
-    vrt_wgs84 = "global_vrt_{}_wgs84.vrt".format(year)
+    vrt_name = "global_vrt_{}.vrt".format(year)
     year_tifs_folder = "{}_year_tifs".format(year)
 
     # get coords of hansen tile
 
     # download hanse tile
-    hansen_tile = utilities.wgetloss(tile_id)
-    #ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    xmin, ymin, xmax, ymax = get_extent.get_extent(hansen_tile)    
+    #hansen_tile = utilities.wgetloss(tile_id)
+    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    # xmin, ymin, xmax, ymax = get_extent.get_extent(hansen_tile)    
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0',
-        vrt_wgs84, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
+        vrt_name, clipped_raster, '-tr', '.00025', '.00025', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
 
     subprocess.check_call(cmd) 
     
@@ -104,7 +105,8 @@ def clip_year_tiles(tile_year_list):
     # upload file
     cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/']
 
-    subprocess.check_call(cmd)
+    #subprocess.check_call(cmd)
 	
     # rm files
     #os.remove(clipped_raster)
+clip_year_tiles(["00N_130E",2006])
