@@ -14,7 +14,7 @@ import get_extent
 
 def process_ba(global_grid_hv):
 
-    for year in range (2006, 2007):
+    for year in range (2015, 2016):
 
         output_dir = '{0}/{1}/raw/'.format(global_grid_hv, year)
         if not os.path.exists(output_dir):
@@ -24,7 +24,7 @@ def process_ba(global_grid_hv):
         # download hdf files
         include = '*A{0}*{1}*'.format(year, global_grid_hv)
         cmd = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/burn_raw/', output_dir, '--recursive', '--exclude', "*", '--include', include]  
-        #subprocess.check_call(cmd)
+        subprocess.check_call(cmd)
         
         hdf_files = glob.glob(output_dir+"*hdf")
         if len(hdf_files) > 0:
@@ -88,8 +88,12 @@ def clip_year_tiles(tile_year_list):
     # upload file
     cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/']
 
-    #subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
 	
     # rm files
-    #os.remove(clipped_raster)
+    os.remove(clipped_raster)
+    os.remove(hanse_tile)
+    os.remove(clipped_raster)
+    os.remove(recoded_output)
+    shutil.rmtree(year_tifs_folder)
 #clip_year_tiles(["00N_130E",2006])

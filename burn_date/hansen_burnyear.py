@@ -13,9 +13,7 @@ def hansen_burnyear(tile_id):
     if not os.path.exists(burn_tiles_dir):
         os.mkdir(burn_tiles_dir)
     cmd = ['aws', 's3', 'cp', burn_year_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]  
-    #subprocess.check_call(cmd)
-    
-    
+#    subprocess.check_call(cmd)
     
     # for each year tile, convert to array and stack them
     array_list = []
@@ -35,9 +33,8 @@ def hansen_burnyear(tile_id):
     
     lossarray_min1 = np.subtract(loss_array, 1)
     
-    
     stack_con =(stacked_year_array >= lossarray_min1) & (stacked_year_array <= loss_array)
-    stack_con2 = stack_con * stack
+    stack_con2 = stack_con * stacked_year_array
     lossyear_burn_array = stack_con2.max(0)
     
     # write burn pixels to raster
