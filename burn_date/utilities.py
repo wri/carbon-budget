@@ -127,6 +127,48 @@ def raster_to_array(raster):
     
     return array
 
+def array_to_raster_simple(array, outname, template):
+    
+    ds = gdal.Open(template)
+    x_pixels = ds.RasterXSize
+    y_pixels = ds.RasterYSize
+    
+    geoTransform = ds.GetGeoTransform()
+    height = geoTransform[1]
+    width = geoTransform[5]
+    
+    pixel_size = height
+    
+    minx = geoTransform[0]
+    maxy = geoTransform[3]
+    maxx = minx + geoTransform[1] * ds.RasterXSize
+    miny = maxy + geoTransform[5] * ds.RasterYSize
+    
+    wkt_projection = ds.GetProjection()
+    
+    driver = gdal.GetDriverByName('GTiff')
+
+    dataset = driver.Create(
+        outname,
+        x_pixels,
+        y_pixels,
+        1,
+        gdal.GDT_Int16, )
+
+    dataset.SetGeoTransform((
+        minx,    # 0
+        pixel_size,  # 1
+        0,                      # 2
+        maxy,    # 3
+        0,                      # 4
+        -pixel_size))  
+
+    dataset.SetProjection(wkt_projection)
+    dataset.GetRasterBand(1).WriteArray(array)
+    dataset.FlushCache()  # Write to disk.
+    
+    return outname
+    
 def array_to_raster(global_grid_hv, year, array, template_hdf, outfolder):
 
     filename = '{0}_{1}.tif'.format(year, global_grid_hv)
