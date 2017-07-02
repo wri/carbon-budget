@@ -91,9 +91,12 @@ def clip_year_tiles(tile_year_list):
     subprocess.check_call(cmd)
 	
     # rm files
+'''
     os.remove(clipped_raster)
     os.remove(hanse_tile)
     os.remove(clipped_raster)
     os.remove(recoded_output)
     shutil.rmtree(year_tifs_folder)
 #clip_year_tiles(["00N_130E",2006])
+'''
+

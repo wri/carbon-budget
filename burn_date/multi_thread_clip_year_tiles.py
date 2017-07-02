@@ -11,7 +11,7 @@ for year in range(2015, 2016):
     if not os.path.exists(year_tifs_folder):
         os.mkdir(year_tifs_folder)
     cmd = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/', year_tifs_folder, '--recursive', '--exclude', "*", '--include', include]
-    subprocess.check_call(cmd)
+#    subprocess.check_call(cmd)
 
     # build list of vrt files (command wont take folder/*.tif)    
     vrt_name = "global_vrt_{}.vrt".format(year)
