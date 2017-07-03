@@ -15,12 +15,10 @@ def create_growth_raster(tile_age):
     
     shapefile = 'gadm_continent_int_ecozones_oldyoung_att.shp'    
     hansen_tile = utilities.wgetloss(tile_id)
-    print hansen_tile
-
     
     xmin, ymin, xmax, ymax = get_extent.get_extent(hansen_tile) 
     
-    output_tif = 'tile_id_{}.tif'.format(age)
+    output_tif = '{0}_{1}.tif'.format(tile_id, age)
     growth = utilities.rasterize_shapefile(str(xmin), str(ymin), str(xmax), str(ymax), shapefile, output_tif, age)
     
     resampled_tif = growth.replace(".tif", "_res.tif")
