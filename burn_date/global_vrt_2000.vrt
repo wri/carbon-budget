@@ -1,0 +1,1869 @@
+<VRTDataset rasterXSize="86400" rasterYSize="31200">
+  <SRS>PROJCS["unnamed",GEOGCS["Unknown datum based upon the custom spheroid",DATUM["Not_specified_based_on_custom_spheroid",SPHEROID["Custom spheroid",6371007.181,0]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Sinusoidal"],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]]]</SRS>
+  <GeoTransform>-2.0015109353999998e+007, 4.6331271652800535e+002, 0.0000000000000000e+000, 7.7836536376660001e+006, 0.0000000000000000e+000,-4.6331271652800535e+002</GeoTransform>
+  <VRTRasterBand dataType="Int16" band="1">
+    <ColorInterp>Gray</ColorInterp>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h00v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="0" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h00v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="0" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h00v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="0" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h01v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="2399.99999999954" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h01v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="2399.99999999954" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h01v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="2399.99999999954" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h01v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="2399.99999999954" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h01v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="2399.99999999954" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h02v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="4799.99999999908" yOff="9600.00000000032" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h02v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="4799.99999999908" yOff="14400.0000000016" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h02v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="4799.99999999908" yOff="16800.0000000011" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h02v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="4799.99999999908" yOff="19200.0000000006" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h02v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="4799.99999999908" yOff="21600.0000000002" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h03v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="7200.00000000078" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h03v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="7200.00000000078" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h03v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="7200.00000000078" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h03v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="7200.00000000078" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h03v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="7200.00000000078" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h04v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="9600.00000000032" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h04v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="9600.00000000032" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h04v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="9600.00000000032" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h05v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="11999.9999999999" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h05v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="11999.9999999999" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h05v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="11999.9999999999" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h06v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="14399.9999999994" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h06v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="14399.9999999994" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h07v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="16799.9999999989" yOff="2400.0000000017" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h07v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="16799.9999999989" yOff="7200.00000000078" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h07v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="16799.9999999989" yOff="9600.00000000032" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h07v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="16799.9999999989" yOff="11999.9999999999" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h08v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="19200.0000000006" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h09v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="21600.0000000002" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h10v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="23999.9999999997" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h11v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="26399.9999999993" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="0" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="2400.0000000017" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="4800.00000000124" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="7200.00000000078" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="11999.9999999999" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="14400.0000000016" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="16800.0000000011" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="19200.0000000006" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="21600.0000000002" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="23999.9999999997" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h12v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="28799.9999999988" yOff="26400.0000000014" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h13v14.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="31200.0000000005" yOff="28800.000000001" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h14v14.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="33600" yOff="28800.000000001" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h15v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="35999.9999999996" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h15v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="35999.9999999996" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h15v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="35999.9999999996" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h15v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="35999.9999999996" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h15v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="35999.9999999996" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h16v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="38399.9999999991" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h16v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="38399.9999999991" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h16v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="38399.9999999991" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h16v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="38399.9999999991" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h16v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="38399.9999999991" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h16v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="38399.9999999991" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="0" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="2400.0000000017" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="4800.00000000124" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="7200.00000000078" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="9600.00000000032" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="11999.9999999999" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="14400.0000000016" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="19200.0000000006" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="23999.9999999997" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h17v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="40799.9999999987" yOff="26400.0000000014" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h18v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="43200.0000000004" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h19v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="45599.9999999999" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h20v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="47999.9999999994" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h21v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="50399.999999999" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="0" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="2400.0000000017" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="4800.00000000124" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="7200.00000000078" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="9600.00000000032" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="11999.9999999999" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="14400.0000000016" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="16800.0000000011" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="19200.0000000006" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="21600.0000000002" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h22v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="52799.9999999985" yOff="26400.0000000014" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h23v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="55200.0000000002" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h24v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="57599.9999999998" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h25v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="59999.9999999993" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v02.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="0" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h26v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="62399.9999999988" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="2400.0000000017" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="4800.00000000124" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="7200.00000000078" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="9600.00000000032" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="11999.9999999999" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="14400.0000000016" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="16800.0000000011" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="19200.0000000006" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="21600.0000000002" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h27v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="64799.9999999984" yOff="23999.9999999997" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v04.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="4800.00000000124" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h28v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="67200.0000000001" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v03.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="2400.0000000017" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v05.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="7200.00000000078" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h29v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="69599.9999999996" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h30v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="71999.9999999992" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v06.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="9600.00000000032" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="23999.9999999997" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h31v13.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="74399.9999999987" yOff="26400.0000000014" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h32v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="76799.9999999983" yOff="11999.9999999999" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h32v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="76799.9999999983" yOff="14400.0000000016" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h32v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="76799.9999999983" yOff="16800.0000000011" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h32v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="76799.9999999983" yOff="19200.0000000006" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h32v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="76799.9999999983" yOff="21600.0000000002" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h32v12.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="76799.9999999983" yOff="23999.9999999997" xSize="2400.0000000017" ySize="2400.0000000017" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h33v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="79199.9999999999" yOff="11999.9999999999" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h33v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="79199.9999999999" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h33v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="79199.9999999999" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h33v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="79199.9999999999" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h33v11.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="79199.9999999999" yOff="21600.0000000002" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h34v07.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="81599.9999999995" yOff="11999.9999999999" xSize="2399.99999999955" ySize="2399.99999999955" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h34v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="81599.9999999995" yOff="14400.0000000016" xSize="2399.99999999955" ySize="2399.99999999955" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h34v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="81599.9999999995" yOff="16800.0000000011" xSize="2399.99999999955" ySize="2399.99999999955" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h34v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="81599.9999999995" yOff="19200.0000000006" xSize="2399.99999999955" ySize="2399.99999999955" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h35v08.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="83999.999999999" yOff="14400.0000000016" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h35v09.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="83999.999999999" yOff="16800.0000000011" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+    <SimpleSource>
+      <SourceFilename relativeToVRT="1">2000_year_tifs\2000_h35v10.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2400" RasterYSize="2400" DataType="Int16" BlockXSize="2400" BlockYSize="1" />
+      <SrcRect xOff="0" yOff="0" xSize="2400" ySize="2400" />
+      <DstRect xOff="83999.999999999" yOff="19200.0000000006" xSize="2399.99999999954" ySize="2399.99999999954" />
+    </SimpleSource>
+  </VRTRasterBand>
+</VRTDataset>

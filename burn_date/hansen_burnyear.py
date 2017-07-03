@@ -3,11 +3,13 @@ import utilities
 import glob
 import numpy as np
 import subprocess
-import shutil
+
 
 def hansen_burnyear(tile_id):
-    
-    # download burn year from s3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/ba_2002_80N_110W.tif
+    # download the 10x10 deg burn year tiles- 1 for each year- in WGS proj, stack and evaluate
+    # to return burn year values on hansen loss pixels within 1 year of loss date
+
+    ## data is in wgs proj, name is wrong
     burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'
     include = 'ba_*_{}.tif'.format(tile_id)
     burn_tiles_dir = 'burn_tiles'
@@ -47,11 +49,11 @@ def hansen_burnyear(tile_id):
     utilities.array_to_raster_simple(lossyear_burn_array, outname, loss_tile)
     cmd = ['aws', 's3', 'mv', outname, 's3://gfw-files/sam/carbon_budget/burn_loss_year/']
     subprocess.check_call(cmd)
+
     # clean up files
-    shutil.rmtree('burn_tiles')
     os.remove(loss_tile)
     
-#tile_list = ['00N_000E', '00N_010E']
+tile_list = ['00N_000E', '00N_010E']
 
-#for tile_id in tile_list:
-#    hansen_burnyear(tile_id)
+for tile_id in tile_list:
+    hansen_burnyear(tile_id)
