@@ -12,9 +12,9 @@ def wgetloss(tile_id):
     return loss_tile
     
       
-def rasterize_shapefile(xmin, ymax, xmax, ymin, shapefile, output_tif, attribute_field):
+def rasterize_shapefile(xmin, ymin, xmax, ymax, shapefile, output_tif, attribute_field):
 
-    cmd= ['gdal_rasterize', '-te', xmin, ymax, xmax, ymin, shapefile, output_tif, '-a', attribute_field, '-co', 'COMPRESS=LZW', '-tr', '.0025', '.0025']
+    cmd= ['gdal_rasterize', '-te', xmin, ymin, xmax, ymax, shapefile, output_tif, '-a', attribute_field, '-co', 'COMPRESS=LZW', '-tr', '.0025', '.0025']
     subprocess.check_call(cmd)
     
     return output_tif
