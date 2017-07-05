@@ -13,7 +13,7 @@ def calc_emissions(tile_id):
 
     print "/n-------TILE ID: {}".format(tile_id)
 
-    files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations', 'hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask']}
+    files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations', 'hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask'], 'burned_area':['burn_loss_year']}
 
     # download files
     utilities.download(files, tile_id)

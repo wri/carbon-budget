@@ -16,6 +16,11 @@ def download(file_dict, tile_id):
         src = 's3://gfw-files/sam/carbon_budget/data_inputs/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
+        
+    burned_area = file_dict['burned_area']
+    src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
+    cmd = ['aws', 's3', 'cp', src, '.']
+    subprocess.check_call(cmd)
 
 
 def wgetloss(tile_id):

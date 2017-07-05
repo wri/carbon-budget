@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal/gdal_priv.h>
-#include <gdal/cpl_conv.h>
-#include <gdal/ogr_spatialref.h>
+//#include <gdal/gdal_priv.h>
+//#include <gdal/cpl_conv.h>
+//#include <gdal/ogr_spatialref.h>
 #include "flu_val.cpp"
 #include "calc.cpp"
 using namespace std;
@@ -30,7 +30,7 @@ string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
 string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
-string burn_name = tile_id + "_res_burndate.tif"; // dont have this
+string burn_name = tile_id + "_burnyear.tif"; // dont have this
 string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string climate_name = tile_id + "_res_climate_zone.tif";
@@ -241,7 +241,7 @@ for(x=0; x<xsize; x++)
 				{
 					peat_val=1;
 
-					if (burn_data[x] == 1 ) // forestry, peat, burned
+					if (burn_data[x] > 0 ) // forestry, peat, burned
 					{
 						if (ecozone_data[x] == 3) // forestry, peat, burned, temperate
 						{
@@ -293,7 +293,7 @@ for(x=0; x<xsize; x++)
 				else 
 				{
 					peat_val = 0;
-					if (burn_data[x] == 1) // forestry, not peat, burned
+					if (burn_data[x] > 0) // forestry, not peat, burned
 					{
 						if (ecozone_data[x] == 3) // forestry, not peat, burned, temperate
 						{
@@ -348,7 +348,7 @@ for(x=0; x<xsize; x++)
 				
 				if ((peat_data[x] > 0) || (hist_data[x] > 0) || (cifor_data[x] > 0)) // conversion, peat
 				{
-					if (burn_data[x] == 1) // conversion, peat, burned
+					if (burn_data[x] > 0) // conversion, peat, burned
 					{
 						if (ecozone_data[x] == 3) // conversion, peat, burned, temperate
 						{
@@ -400,7 +400,7 @@ for(x=0; x<xsize; x++)
 
 				else // conversion, not peat
 				{
-					if (burn_data[x] == 1) // conversion, not peat, burned
+					if (burn_data[x] > 0) // conversion, not peat, burned
 					{
 						if (ecozone_data[x] == 3) // conversion, not peat, burned, temperate
 						{
@@ -454,7 +454,7 @@ for(x=0; x<xsize; x++)
 			{
 				if ((peat_data[x] > 0) || (hist_data[x] > 0) || (cifor_data[x] > 0)) // wildfire, peat
 				{
-					if (burn_data[x] == 1) // wildfire, peat, burned
+					if (burn_data[x] > 0) // wildfire, peat, burned
 					{
 						if (ecozone_data[x] == 3) // wildfire, peat, burned, temperate
 						{
@@ -505,7 +505,7 @@ for(x=0; x<xsize; x++)
 				}
 				else  // wildfire, not peat
 				{
-					if (burn_data[x] == 1)  // wildfire, not peat, burned
+					if (burn_data[x] > 0)  // wildfire, not peat, burned
 					{
 						if (ecozone_data[x] == 3)  // wildfire, not peat, burned, temperate
 						{
