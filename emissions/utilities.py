@@ -17,7 +17,7 @@ def download(file_dict, tile_id):
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
         
-    burned_area = file_dict['burned_area']
+    burned_area = file_dict['burned_area'][0]
     src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
     cmd = ['aws', 's3', 'cp', src, '.']
     subprocess.check_call(cmd)

@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-//#include <gdal/gdal_priv.h>
-//#include <gdal/cpl_conv.h>
-//#include <gdal/ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 #include "flu_val.cpp"
 #include "calc.cpp"
 using namespace std;
