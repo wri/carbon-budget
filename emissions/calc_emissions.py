@@ -18,14 +18,19 @@ def calc_emissions(tile_id):
     files = {'burned_area':['burn_loss_year']}
 
     # download files
-    utilities.download(files, tile_id)
+    #utilities.download(files, tile_id)
     
     # download hansen tile
+<<<<<<< HEAD
     utilities.wgetloss(tile_id)
     sys.exit()
+=======
+    #utilities.wgetloss(tile_id)
+
+>>>>>>> 2c090df89ae4dde7b0755b096a32f4359fee2157
     print 'writing emissions tiles'
     emissions_tiles_cmd = ['./calc_emissions_v2.exe', tile_id]
-    #subprocess.check_call(emissions_tiles_cmd)
+    subprocess.check_call(emissions_tiles_cmd)
 
     print 'uploading emissions tile to s3'
     #upload_emissions = ['aws', 's3', 'cp', emission_tile, 's3://gfw-files/sam/carbon_budget/emissions/']
@@ -43,4 +48,8 @@ def calc_emissions(tile_id):
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
 
+<<<<<<< HEAD
 calc_emissions('00N_140E')
+=======
+calc_emissions('00N_140E')
+>>>>>>> 2c090df89ae4dde7b0755b096a32f4359fee2157
