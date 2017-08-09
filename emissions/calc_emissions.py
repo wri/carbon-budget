@@ -14,13 +14,15 @@ def calc_emissions(tile_id):
     print "/n-------TILE ID: {}".format(tile_id)
 
     files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations', 'hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask'], 'burned_area':['burn_loss_year']}
+    
+    files = {'burned_area':['burn_loss_year']}
 
     # download files
     utilities.download(files, tile_id)
     
     # download hansen tile
     utilities.wgetloss(tile_id)
-
+    sys.exit()
     print 'writing emissions tiles'
     emissions_tiles_cmd = ['./calc_emissions_v2.exe', tile_id]
     #subprocess.check_call(emissions_tiles_cmd)
@@ -40,3 +42,5 @@ def calc_emissions(tile_id):
             pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
+
+calc_emissions('00N_140E')

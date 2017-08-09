@@ -384,7 +384,7 @@ for(x=0; x<xsize; x++)
 						{
 							if (plant_data[x] == 0 ) // conversion, peat, not burned, tropic, no plantations
 							{
-								outdata2 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67;			
+								outdata2 = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67) + ((15 - loss_data[x])* peat_drn_ann);			
 							}
 							else // conversion, peat, not burned, tropic, plantations
 							{
