@@ -4,18 +4,20 @@ import multiprocessing
 import pandas as pd
 import os
 
+
 def download(file_dict, tile_id):
-    # carbon_pool_files = file_dict['carbon_pool']
-    # data_prep_file_list = file_dict['data_prep']
+    carbon_pool_files = file_dict['carbon_pool']
+    data_prep_file_list = file_dict['data_prep']
     # for carbon_file in carbon_pool_files:
         # src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
         # cmd = ['aws', 's3', 'cp', src, '.']
         # subprocess.check_call(cmd)
         
-    # for data_prep_file in data_prep_file_list:
-        # src = 's3://gfw-files/sam/carbon_budget/data_inputs/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
-        # cmd = ['aws', 's3', 'cp', src, '.']
-        # subprocess.check_call(cmd)
+    for data_prep_file in data_prep_file_list:
+        if data_prep_file = 
+        src = 's3://gfw-files/sam/carbon_budget/data_inputs/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
+        cmd = ['aws', 's3', 'cp', src, '.']
+        subprocess.check_call(cmd)
         
     burned_area = file_dict['burned_area'][0]
     src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
