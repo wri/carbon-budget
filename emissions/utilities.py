@@ -5,6 +5,30 @@ import pandas as pd
 import os
 import glob
 
+def merge_tiles(tile_id):
+    mergetif = 'outdata/{}_disturbance_model.tif'.format(tile_id)
+    conversion_tif = 'outdata/{}_conversion_model.tif'.format(tile_id)
+    forestmodel_tif = 'outdata/{}_forest_model.tif'.format(tile_id)
+    wildfire_tif = 'outdata/{}_wildfire_model.tif'.format(tile_id)
+    mixed_tif = 'outdata/{}_mixed_model.tif'.format(tile_id)
+
+    cmd = ['gdal_merge.py', '-o', mergetif, conversion_tif, forestmodel_tif, wildfire_tif, mixed_tif]
+    print "merging tiles"
+    subprocess.check_call(cmd)
+
+
+def upload_final(tile_id):
+    files = ['disturbance', 'conversion', 'forest', 'wildfire', 'mixed']
+    for f in files:
+        to_upload = "outdata/{0}_{1}_model.tif".format(tile_id, f)
+        print "uploading {}".format(to_upload)
+        destination = 's3://gfw-files/carbon_budget/emissions/{}/'.format(f)
+        cmd = ['aws', 's3', 'cp', to_upload, destination]
+        try:
+            subprocess.check_call(cmd)
+        except:
+            print "error uploading"
+        
 def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
