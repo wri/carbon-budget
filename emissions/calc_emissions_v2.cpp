@@ -29,19 +29,21 @@ string forestmodel_name = tile_id + "_res_forest_model.tif";
 string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
-string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
-string burn_name = tile_id + "_burnyear.tif"; // dont have this
-string hist_name = tile_id + "_res_hwsd_histosoles.tif";
+//string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
+string burn_name = tile_id + "_burnyear.tif"; 
+//string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string climate_name = tile_id + "_res_climate_zone.tif";
 string dead_name = tile_id + "_deadwood.tif";
 string litter_name = tile_id + "_litter.tif";
 string soil_name = tile_id + "_soil.tif";
 
+string peat_name = tile_id + "_peat.tif";
+
 string ifl_name = tile_id + "_res_ifl_2000.tif";
-string cifor_name = tile_id + "_res_cifor_peat_mask.tif";
+//string cifor_name = tile_id + "_res_cifor_peat_mask.tif";
 string plant_name = tile_id + "_res_gfw_plantations.tif";
-string jukka_name = tile_id + "_res_peatland_drainage_proj.tif";
+//string jukka_name = tile_id + "_res_peatland_drainage_proj.tif";
 
 // out files
 string out_name1= "outdata/" + tile_id + "_forest_model.tif";
@@ -61,7 +63,7 @@ GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
-GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
+//GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
 GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
 GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
@@ -70,7 +72,7 @@ GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
 GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
 GDALDataset  *INGDAL14; GDALRasterBand  *INBAND14;
 GDALDataset  *INGDAL15; GDALRasterBand  *INBAND15;
-GDALDataset  *INGDAL16; GDALRasterBand  *INBAND16;
+//GDALDataset  *INGDAL16; GDALRasterBand  *INBAND16;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -91,8 +93,8 @@ INBAND5 = INGDAL5->GetRasterBand(1);
 INGDAL6 = (GDALDataset *) GDALOpen(burn_name.c_str(), GA_ReadOnly );
 INBAND6 = INGDAL6->GetRasterBand(1);
 
-INGDAL7 = (GDALDataset *) GDALOpen(hist_name.c_str(), GA_ReadOnly );
-INBAND7 = INGDAL7->GetRasterBand(1);
+//INGDAL7 = (GDALDataset *) GDALOpen(hist_name.c_str(), GA_ReadOnly );
+//INBAND7 = INGDAL7->GetRasterBand(1);
 
 INGDAL8 = (GDALDataset *) GDALOpen(ecozone_name.c_str(), GA_ReadOnly );
 INBAND8 = INGDAL8->GetRasterBand(1);
@@ -112,14 +114,14 @@ INBAND12 = INGDAL12->GetRasterBand(1);
 INGDAL13 = (GDALDataset *) GDALOpen(ifl_name.c_str(), GA_ReadOnly );
 INBAND13 = INGDAL13->GetRasterBand(1);
 
-INGDAL14 = (GDALDataset *) GDALOpen(cifor_name.c_str(), GA_ReadOnly );
-INBAND14 = INGDAL14->GetRasterBand(1);
+//INGDAL14 = (GDALDataset *) GDALOpen(cifor_name.c_str(), GA_ReadOnly );
+//INBAND14 = INGDAL14->GetRasterBand(1);
 
 INGDAL15 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND15 = INGDAL15->GetRasterBand(1);
 
-INGDAL16 = (GDALDataset *) GDALOpen(jukka_name.c_str(), GA_ReadOnly );
-INBAND16 = INGDAL16->GetRasterBand(1);
+//INGDAL16 = (GDALDataset *) GDALOpen(jukka_name.c_str(), GA_ReadOnly );
+//INBAND16 = INGDAL16->GetRasterBand(1);
 
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
@@ -180,16 +182,16 @@ float loss_data[xsize];
 float peat_data[xsize];
 float forestmodel_data[xsize];
 float burn_data[xsize];
-float hist_data[xsize];
+//float hist_data[xsize];
 float ecozone_data[xsize];
 float soil_data[xsize];
 float climate_data[xsize];
 float dead_data[xsize];
 float litter_data[xsize];
 float ifl_data[xsize];
-float cifor_data[xsize];
+//float cifor_data[xsize];
 float plant_data[xsize];
-float jukka_data[xsize];
+//float jukka_data[xsize];
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
@@ -202,16 +204,16 @@ INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, peat_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
+//INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, hist_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND14->RasterIO(GF_Read, 0, y, xsize, 1, cifor_data, xsize, 1, GDT_Float32, 0, 0);
+//INBAND14->RasterIO(GF_Read, 0, y, xsize, 1, cifor_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND15->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND16->RasterIO(GF_Read, 0, y, xsize, 1, jukka_data, xsize, 1, GDT_Float32, 0, 0);
+//INBAND16->RasterIO(GF_Read, 0, y, xsize, 1, jukka_data, xsize, 1, GDT_Float32, 0, 0);
 
 for(x=0; x<xsize; x++)
 	
@@ -237,7 +239,7 @@ for(x=0; x<xsize; x++)
 				out_data3[x] = -9999;
 				out_data0[x] = -9999;
 				
-				if ((peat_data[x] > 0) || (hist_data[x] > 0) || (cifor_data[x] > 0)) // forestry, peat
+				if (peat_data[x] > 0) // forestry, peat
 				{
 					peat_val=1;
 
@@ -346,7 +348,7 @@ for(x=0; x<xsize; x++)
 		   else if ((forestmodel_data[x] == 2) || (forestmodel_data[x] == 0)) // conversion or mixed
 			{
 				
-				if ((peat_data[x] > 0) || (hist_data[x] > 0) || (cifor_data[x] > 0)) // conversion, peat
+				if (peat_data[x] > 0) // conversion, peat
 				{
 					if (burn_data[x] > 0) // conversion, peat, burned
 					{
@@ -452,7 +454,7 @@ for(x=0; x<xsize; x++)
 			}
 		   else if ((forestmodel_data[x] == 3) || (forestmodel_data[x] == 0))// wildfire or mixed
 			{
-				if ((peat_data[x] > 0) || (hist_data[x] > 0) || (cifor_data[x] > 0)) // wildfire, peat
+				if (peat_data[x] > 0) // wildfire, peat
 				{
 					if (burn_data[x] > 0) // wildfire, peat, burned
 					{
