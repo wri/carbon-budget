@@ -12,5 +12,5 @@ for tile_id in tile_id_list:
     
 if __name__ == '__main__':
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=1)
+    pool = multiprocessing.Pool(processes=10)
     pool.map(create_growth_raster.create_growth_raster, tile_age_list)
