@@ -3,18 +3,17 @@ import subprocess
 import multiprocessing
 import pandas as pd
 import os
-
+import glob
 
 def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
-    # for carbon_file in carbon_pool_files:
-        # src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
-        # cmd = ['aws', 's3', 'cp', src, '.']
-        # subprocess.check_call(cmd)
+    for carbon_file in carbon_pool_files:
+        src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
+        cmd = ['aws', 's3', 'cp', src, '.']
+        subprocess.check_call(cmd)
         
     for data_prep_file in data_prep_file_list:
-        if data_prep_file = 
         src = 's3://gfw-files/sam/carbon_budget/data_inputs/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
@@ -24,7 +23,12 @@ def download(file_dict, tile_id):
     cmd = ['aws', 's3', 'cp', src, '.']
     subprocess.check_call(cmd)
 
-
+   # rename whichever peatland file was downloaded
+    peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
+    for peat_file in peat_files:
+        one_peat = glob.glob("*{}*".format(peat_file))
+        if len(one_peat) == 1:
+            os.rename(one_peat[0], '{}_peat.tif'.format(tile_id))
 def wgetloss(tile_id):
     print "download hansen loss tile"
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
