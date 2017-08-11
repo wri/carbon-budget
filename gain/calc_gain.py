@@ -2,24 +2,21 @@ import subprocess
 import datetime
 import os
 import sys
-import pandas as pd
 import glob
 
 import utilities
-import process_burned_area
-import tile_peat_dict
 
 def calc_gain(tile_id):
 
     start = datetime.datetime.now()
 
-    print "/n-------TILE ID: {}".format(tile_id)
+    print "\n-------TILE ID: {}".format(tile_id)
     
     if not os.path.exists("oudata/"):
-    try:
-        os.mkdir("outdata/")
-    except:
-        pass
+        try:
+            os.mkdir("outdata/")
+        except:
+            pass
             
     tcd = '{}_treecover2000.tif'.format(tile_id)
     loss = '{}_loss.tif'.format(tile_id)
@@ -35,4 +32,8 @@ def calc_gain(tile_id):
     
     # download plantations
     utilities.download_plant(tile_id)
+
+    # download growth
+    utilities.download_growth(tile_id)
     
+calc_gain('00N_130E')

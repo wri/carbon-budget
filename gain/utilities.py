@@ -1,6 +1,13 @@
 import subprocess
 
 
+def download_growth(tile_id):
+    for growthtype in ['old', 'young']:
+        source = 's3://gfw-files/sam/carbon_budget/growth_rasters/{0}_{1}_res.tif'.format(tile_id, growthtype)
+	cmd = ['aws', 's3', 'cp', source, '.']
+	subprocess.check_call(cmd)
+
+
 def download_plant(tile_id):
     plantations = 's3://gfw-files/sam/carbon_budget/data_inputs/gfw_plantations/{}_res_gfw_plantations.tif'.format(tile_id)
     cmd = ['aws', 's3', 'cp', plantations, '.']
@@ -33,7 +40,7 @@ def wgetloss(tile_id):
     print "download hansen loss tile"
     loss_tile = '{}_loss.tif'.format(tile_id)
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
-           '-o', loss_tile]
+           '-O', loss_tile]
 
     subprocess.check_call(cmd)
     
@@ -43,9 +50,9 @@ def wget2015data(tile_id, filetype):
 
     outfile = '{0}_{1}.tif'.format(tile_id, filetype)
     
-    website = 'https://storage.googleapis.com/earthenginepartners-hansen/GFC-2015-v1.3/Hansen_GFC-2015-v1.3_{0}_{1).tif'.format(tiletype, tile_id)
-    
-    cmd = ['wget', website, '-o', outfile]
+    website = 'https://storage.googleapis.com/earthenginepartners-hansen/GFC-2015-v1.3/Hansen_GFC-2015-v1.3_{0}_{1}.tif'.format(filetype, tile_id)
+    cmd = ['wget', website, '-O', outfile]
+    print cmd
 
     subprocess.check_call(cmd)
     
