@@ -35,5 +35,17 @@ def calc_gain(tile_id):
 
     # download growth
     utilities.download_growth(tile_id)
-    
-calc_gain('00N_130E')
+
+    # run c++
+    gain_tiles_cmd = ['./calc_gain.exe', tile_id]
+    subprocess.check_call(gain_tiles_cmd)
+    source = 'outdata/{}_gain.tif'.format(tile_id)
+    cmd = ['aws', 's3', 'cp', source, 's3://gfw-files/sam/carbon_budget/gain/']
+    subprocess.check_call(cmd)   
+
+    # remove files:
+    tiles = glob.glob('{}*tif'.format(tile_id))
+    for tile in tiles:
+        os.remove(tile)
+
+#calc_gain('00N_140E')
