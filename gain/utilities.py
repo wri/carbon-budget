@@ -1,5 +1,13 @@
 import subprocess
 
+
+def download_plant(tile_id):
+    plantations = 's3://gfw-files/sam/carbon_budget/data_inputs/gfw_plantations/{}_res_gfw_plantations.tif'.format(tile_id)
+    cmd = ['aws', 's3', 'cp', plantations, '.']
+    
+    subprocess.check_call(cmd)
+    
+    
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]
@@ -31,7 +39,19 @@ def wgetloss(tile_id):
     
     return loss_tile
     
-      
+def wget2015data(tile_id, filetype):
+
+    outfile = '{0}_{1}.tif'.format(tile_id, filetype)
+    
+    website = 'https://storage.googleapis.com/earthenginepartners-hansen/GFC-2015-v1.3/Hansen_GFC-2015-v1.3_{0}_{1).tif'.format(tiletype, tile_id)
+    
+    cmd = ['wget', website, '-o', outfile]
+
+    subprocess.check_call(cmd)
+    
+    return outfile
+    
+    
 def rasterize_shapefile(xmin, ymax, xmax, ymin, shapefile, output_tif, attribute_field):
     layer = shapefile.replace(".shp", "")
 

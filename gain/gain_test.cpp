@@ -23,9 +23,9 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 // in files
 string tile_id = argv[1];
 
-string tcd_name = tile_id + "_tcd.tif";
+string tcd_name = tile_id + "_treecover2000.tif";
 string plant_gr_name = tile_id + "_res_gfw_plantations.tif";
-string loss_name = tile_id + "_loss.tif";
+string loss_name = tile_id + "_lossyear.tif";
 string gain_name = tile_id + "_gain.tif";
 string old_gr_name = tile_id + "_res_old.tif";
 string young_gr_name = tile_id + "_res_young.tif";
