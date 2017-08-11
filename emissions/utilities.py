@@ -28,7 +28,7 @@ def upload_final(tile_id):
     for f in files:
         to_upload = "outdata/{0}_{1}_model.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)
-        destination = 's3://gfw-files/carbon_budget/emissions/{}/'.format(f)
+        destination = 's3://gfw-files/sam/carbon_budget/emissions/{}/'.format(f)
         cmd = ['aws', 's3', 'cp', to_upload, destination]
         try:
             subprocess.check_call(cmd)
