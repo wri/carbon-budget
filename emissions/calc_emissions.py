@@ -40,6 +40,9 @@ def calc_emissions(tile_id):
 
    # upload tiles
     utilities.upload_final(tile_id)    
+    
+    # delete tiels
+    utilities.del_tiles(tile_id)
 
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)

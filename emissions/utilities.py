@@ -5,6 +5,12 @@ import pandas as pd
 import os
 import glob
 
+
+def del_tiles(tile_id):
+    tiles = glob.glob('*{}*tif'.format(tile_id))
+    for tile in tiles:
+        os.remove(tile)
+        
 def merge_tiles(tile_id):
     mergetif = 'outdata/{}_disturbance_model.tif'.format(tile_id)
     conversion_tif = 'outdata/{}_conversion_model.tif'.format(tile_id)
