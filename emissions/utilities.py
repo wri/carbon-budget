@@ -56,7 +56,7 @@ def download(file_dict, tile_id):
    # rename whichever peatland file was downloaded
     peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
     for peat_file in peat_files:
-        one_peat = glob.glob("*{}*".format(peat_file))
+        one_peat = glob.glob("{0}*{1}*".format(tile_id, peat_file))
         if len(one_peat) == 1:
             os.rename(one_peat[0], '{}_peat.tif'.format(tile_id))
 def wgetloss(tile_id):
