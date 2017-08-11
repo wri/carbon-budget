@@ -48,7 +48,7 @@ def wgetloss(tile_id):
     
 def wget2015data(tile_id, filetype):
 
-    outfile = '{0}_{1}.tif'.format(tile_id, filetype)
+    outfile = '{0}_{1}_h.tif'.format(tile_id, filetype)
     
     website = 'https://storage.googleapis.com/earthenginepartners-hansen/GFC-2015-v1.3/Hansen_GFC-2015-v1.3_{0}_{1}.tif'.format(filetype, tile_id)
     cmd = ['wget', website, '-O', outfile]
