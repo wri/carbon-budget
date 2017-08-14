@@ -8,27 +8,12 @@ import utilities
 biomass_tile_list = ['10N_100E']
 biomass_tile_list = ["00N_090E", "00N_100E", "00N_110E", "00N_120E", "00N_130E", "00N_140E", "00N_150E", "00N_160E", "10N_090E", "10N_100E", "10N_110E", "10N_120E", "10N_130E", "10S_110E", "10S_120E", "10S_130E", "10S_140E", "10S_150E", "10S_160E", "20N_090E", "20N_100E", "20N_110E", "20N_120E", "20S_160E"]
 
-for tile_id in biomass_tile_list:
-    files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations', 'hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask'], 'burned_area':['burn_loss_year']}
-
-    # download files
-    peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
-
-    #files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'forest_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
-    utilities.download(files, tile_id)
-
-    # download hansen tile
-    utilities.wgetloss(tile_id)
-    
+   
     
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()
      pool = multiprocessing.Pool(processes=8)
      pool.map(calc_emissions.calc_emissions, biomass_tile_list)
      
-for tile_id in biomass_tile_list:
-       # upload tiles
-    utilities.upload_final(tile_id)    
+
     
-    # delete tiels
-    utilities.del_tiles(tile_id)

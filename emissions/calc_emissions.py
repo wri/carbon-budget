@@ -20,6 +20,8 @@ def calc_emissions(tile_id):
             os.mkdir("outdata/")
         except:
             pass
+            
+    
     files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': ['fao_ecozones_bor_tem_tro', 'ifl_2000', 'peatland_drainage_proj', 'gfw_plantations', 'hwsd_histosoles', 'forest_model', 'climate_zone', 'cifor_peat_mask'], 'burned_area':['burn_loss_year']}
 
     # download files
@@ -38,7 +40,11 @@ def calc_emissions(tile_id):
    # merge tiles
     utilities.merge_tiles(tile_id)
 
-
+   # upload tiles
+    utilities.upload_final(tile_id)    
+    
+    # delete tiels
+    utilities.del_tiles(tile_id)
 
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
