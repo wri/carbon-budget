@@ -1,0 +1,8 @@
+biomass tiles: s3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/
+soil: s3://gfw-files/sam/carbon_budget/soil/
+fao ecozones: s3://gfw-files/sam/carbon_budget/fao_ecozones_bor_tem_tro.zip
+srtm: s3://gfw2-data/analyses/srtm/
+precip: s3://gfw-files/sam/carbon_budget/add_30s_precip.tif
+carbon pool files: s3://gfw-files/sam/carbon_budget/carbon_061417/
+data inputs: s3://gfw-files/sam/carbon_budget/data_inputs/
+
