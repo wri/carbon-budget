@@ -114,7 +114,7 @@ INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, young_gr_data, xsize, 1, GDT_Float32,
 
 for(x=0; x<xsize; x++)
 	{
-		
+		// for now, replace plant_gr_data with old_growth rate
 		if (tcd_data[x] > 0) // on TCD > 0
 		{
 			if (plant_gr_data[x] > 0)   // plantations
