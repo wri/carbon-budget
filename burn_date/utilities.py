@@ -142,4 +142,7 @@ def download_df(year, hv_tile, output_dir):
 
 def remove_list_files(file_list):
     for file in file_list:
-        os.remove(file)
+	try:
+	    os.remove(file)
+        except:
+	    pass

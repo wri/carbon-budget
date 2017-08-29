@@ -39,12 +39,12 @@ def clip_year_tiles(tile_year_list):
     # upload file
     cmd = ['aws', 's3', 'mv', recoded_output, 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/']
 
-    #subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
 
     # rm files
     files_to_remove = [clipped_raster, hansen_tile, clipped_raster, recoded_output]
     utilities.remove_list_files(files_to_remove)
 
-    shutil.rmtree(year_tifs_folder)
+    #shutil.rmtree(year_tifs_folder)
 
 
