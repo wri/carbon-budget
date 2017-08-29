@@ -58,7 +58,8 @@ def array_to_raster_simple(array, outname, template):
         x_pixels,
         y_pixels,
         1,
-        gdal.GDT_Int16, )
+        gdal.GDT_Int16,
+        options=["COMPRESS=LZW"])
 
     dataset.SetGeoTransform((
         minx,    # 0
