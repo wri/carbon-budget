@@ -120,9 +120,10 @@ def array_to_raster(global_grid_hv, year, array, template_hdf, outfolder):
 
 
 def stack_arrays(list_of_year_arrays):
+
     print "stacking arrays"
-    print list_of_year_arrays
-    stack = np.stack((list_of_year_arrays))
+
+    stack = np.stack(list_of_year_arrays)
     
     return stack
 
@@ -143,7 +144,7 @@ def download_df(year, hv_tile, output_dir):
 
 def remove_list_files(file_list):
     for file in file_list:
-	try:
-	    os.remove(file)
+        try:
+            os.remove(file)
         except:
-	    pass
+            pass
