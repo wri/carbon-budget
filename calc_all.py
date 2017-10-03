@@ -18,7 +18,7 @@ def calc_all(tile_id):
     xmin, ymin, xmax, ymax = get_extent.get_extent(biomass_tile)
 
     print "copy down soil tile, used for total c"
-    copy_soil = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/soil/{}_soil.tif'.format(tile_id), "."]
+    copy_soil = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/data_inputs/soil/{}_soil.tif'.format(tile_id), "."]
     subprocess.check_call(copy_soil)
 
     print "copy down fao ecozone"
