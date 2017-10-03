@@ -27,10 +27,21 @@ def calc_all(tile_id):
     copy_soil_tile = ['aws', 's3', 'cp', clip_soil_tile, 's3://gfw-files/sam/carbon_budget/data_inputs/soil/']
     subprocess.check_call(copy_soil_tile)
     
+    print "rasterizing eco zone"
+    fao_eco_zones = 'fao_ecozones_bor_tem_tro.shp'
+    rasterized_eco_zone_tile = "{}_fao_ecozones_bor_tem_tro.tif".format(tile_id)
+    rasterize = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+    '-tr', '0.008', '0.008', '-ot', 'Byte', '-a', 'recode', '-a_nodata',
+    '0', fao_eco_zones, rasterized_eco_zone_tile]
+    subprocess.check_call(rasterize)
 
-    print "copy down fao ecozone"
-    src = 's3://gfw-files/sam/carbon_budget/data_inputs/fao_ecozones_bor_tem_tro/{0}_res_fao_ecozones_bor_tem_tro.tif'.format(tile_id)
-    cmd = ['aws', 's3', 'cp', src, '.']
+    print "resampling eco zone"
+    resampled_ecozone =  "{}_res_fao_ecozones_bor_tem_tro.tif".format(tile_id)
+    resample_ecozone = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', rasterized_eco_zone_tile, resampled_ecozone]
+    subprocess.check_call(resample_ecozone)
+
+    print "upload ecozone to input data"
+    cmd = ['aws', 's3', 'cp', resampled_ecozone, 's3://gfw-files/sam/carbon_budget/data_inputs/fao_ecozones_bor_tem_tro/']
     subprocess.check_call(cmd)
     
     print "clipping srtm"
