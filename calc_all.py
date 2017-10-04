@@ -55,6 +55,10 @@ def calc_all(tile_id):
     resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', tile_srtm, tile_res_srtm]
     subprocess.check_call(resample)
 
+    print "upload srtm to input data"
+    cmd = ['aws', 's3', 'cp', tile_res_srtm, 's3://gfw-files/sam/carbon_budget/data_inputs/srtm/']
+    subprocess.check_call(cmd)
+    
     print "clip precip"
     precip_raster = 'add_30s_precip.tif'
     clipped_precip_tile = '{}_clip_precip.tif'.format(tile_id)
@@ -66,6 +70,10 @@ def calc_all(tile_id):
     resample_precip = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', clipped_precip_tile, resample_precip_tile]
     subprocess.check_call(resample_precip)
 
+    print "upload precip to input data"
+    cmd = ['aws', 's3', 'cp', resample_precip_tile, 's3://gfw-files/sam/carbon_budget/data_inputs/precip/']
+    subprocess.check_call(cmd)
+    
     print 'writing carbon, bgc, deadwood, litter, total'
     calc_all_cmd = ['./calc_all.exe', tile_id]
     subprocess.check_call(calc_all_cmd)
