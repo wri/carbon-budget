@@ -62,7 +62,7 @@ def wget2015data(tile_id, filetype):
 def rasterize_shapefile(xmin, ymax, xmax, ymin, shapefile, output_tif, attribute_field):
     layer = shapefile.replace(".shp", "")
 
-    cmd= ['gdal_rasterize', '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-a', attribute_field, '-co', 'COMPRESS=LZW', '-tr', '.0025', '.0025', '-l', layer, shapefile, output_tif]
+    cmd= ['gdal_rasterize', '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-a', attribute_field, '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-l', layer, shapefile, output_tif]
 
     subprocess.check_call(cmd)
     
