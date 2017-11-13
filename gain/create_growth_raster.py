@@ -23,5 +23,5 @@ def create_growth_raster(tile_age):
     
     cmd = ['aws', 's3', 'mv', growth, 's3://gfw-files/sam/carbon_budget/growth_rasters/']
     print cmd
-    #subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
 
