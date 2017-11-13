@@ -46,10 +46,10 @@ string plant_name = tile_id + "_res_gfw_plantations.tif";
 //string jukka_name = tile_id + "_res_peatland_drainage_proj.tif";
 
 // out files
-string out_name1= "outdata/" + tile_id + "_forest_model.tif";
-string out_name2 = "outdata/" + tile_id + "_deforestation_model.tif";
-string out_name3 = "outdata/" + tile_id + "_wildfire_model.tif";
-string out_name0 = "outdata/" + tile_id + "_mixed_model.tif";
+string out_name1= "outdata/" + tile_id + "_deforestation_model.tif";
+string out_name2 = "outdata/" + tile_id + "_shiftingag_model.tif";
+string out_name3 = "outdata/" + tile_id + "_forestry_model.tif";
+string out_name0 = "outdata/" + tile_id + "_wildfire_model.tif";
 
 int x, y;
 int xsize, ysize;
@@ -236,6 +236,7 @@ for(x=0; x<xsize; x++)
 
 			if (forestmodel_data[x] == 3) // forestry
 			{
+				cout <<  "forestry";
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 				out_data0[x] = -9999;
@@ -331,7 +332,6 @@ for(x=0; x<xsize; x++)
 			}
 		   else if (forestmodel_data[x] == 2) // shifting ag
 			{
-				
 				if (peat_data[x] > 0) // shiting ag, peat
 				{
 					if (burn_data[x] > 0) // shiting ag, peat, burned
