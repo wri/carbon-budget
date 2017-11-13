@@ -25,9 +25,9 @@ def iterate_tiles(tile_id):
 
     print "running: {}".format(tile_id)
     ymax, xmin, ymin, xmax = coords(tile_id)
-    forest_model = "Goode_FinalClassification_15_50uncertain_expanded.tif"
+    forest_model = "Goode_FinalClassification_15_50uncertain_expanded_wgs84.tif"
     out = '{}_res_forest_model.tif'.format(tile_id)
-    rasterize = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '.00025', '.00025', '-tap', '-te', xmin, ymin, xmax, ymax, '-dstnodata', '0', forest_model, 'test.tif']
+    rasterize = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '.00025', '.00025', '-tap', '-te', xmin, ymin, xmax, ymax, '-dstnodata', '0', forest_model, out]
     
     subprocess.check_call(rasterize)
     
