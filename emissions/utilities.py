@@ -59,12 +59,17 @@ def download(file_dict, tile_id):
         one_peat = glob.glob("{0}*{1}*".format(tile_id, peat_file))
         if len(one_peat) == 1:
             os.rename(one_peat[0], '{}_peat.tif'.format(tile_id))
+
 def wgetloss(tile_id):
     print "download hansen loss tile"
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
-           '-O' '{}_loss.tif'.format(tile_id)]
-
+    hansen_tile = 's3://gfw2-data/forest_change/hansen_2016/{}.tif'.format(tile_id)
+    local_hansen_tile = '{}_loss.tif'.format(tile_id)
+    
+    cmd = ['aws', 's3', 'cp', hansen_tile, local_hansen_tile]
+    
     subprocess.check_call(cmd)
+    
+    return local_hansen_tile
 
 
 def rasterize_shapefile(shapefiles_to_raterize, tile_id, coords):
