@@ -1,4 +1,4 @@
-#include <iostream>
+//#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
@@ -9,12 +9,15 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
-#include <gdal/gdal_priv.h>
-#include <gdal/cpl_conv.h>
-#include <gdal/ogr_spatialref.h>
+
+#include <gdal_priv.h>
+#include <cpl_conv.h>
+#include <ogr_spatialref.h>
+
 #include "flu_val.cpp"
 #include "calc.cpp"
 using namespace std;
+
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // to compile on MINGW: g++ calc_emissions_v2.cpp -o calc_emissions_v2.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
@@ -29,27 +32,22 @@ string forestmodel_name = tile_id + "_res_forest_model.tif";
 string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
-//string peat_name = tile_id + "_res_peatland_drainage_proj.tif";
 string burn_name = tile_id + "_burnyear.tif"; 
-//string hist_name = tile_id + "_res_hwsd_histosoles.tif";
 string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string climate_name = tile_id + "_res_climate_zone.tif";
 string dead_name = tile_id + "_deadwood.tif";
 string litter_name = tile_id + "_litter.tif";
 string soil_name = tile_id + "_soil.tif";
-
 string peat_name = tile_id + "_peat.tif";
 
 string ifl_name = tile_id + "_res_ifl_2000.tif";
-//string cifor_name = tile_id + "_res_cifor_peat_mask.tif";
 string plant_name = tile_id + "_res_gfw_plantations.tif";
-//string jukka_name = tile_id + "_res_peatland_drainage_proj.tif";
 
 // out files
-string out_name1= "outdata/" + tile_id + "_deforestation_model.tif";
+string out_name0= "outdata/" + tile_id + "_deforestation_model.tif";
 string out_name2 = "outdata/" + tile_id + "_shiftingag_model.tif";
-string out_name3 = "outdata/" + tile_id + "_forestry_model.tif";
-string out_name0 = "outdata/" + tile_id + "_wildfire_model.tif";
+string out_name1 = "outdata/" + tile_id + "_forestry_model.tif";
+string out_name3 = "outdata/" + tile_id + "_wildfire_model.tif";
 
 int x, y;
 int xsize, ysize;
@@ -130,6 +128,8 @@ INGDAL->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0]; 
 uly=GeoTransform[3]; 
 pixelsize=GeoTransform[1];
+xsize = 5000;
+ysize = 20000;
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 //initialize GDAL for writing
@@ -182,22 +182,22 @@ float loss_data[xsize];
 float peat_data[xsize];
 float forestmodel_data[xsize];
 float burn_data[xsize];
-//float hist_data[xsize];
 float ecozone_data[xsize];
 float soil_data[xsize];
 float climate_data[xsize];
 float dead_data[xsize];
 float litter_data[xsize];
 float ifl_data[xsize];
-//float cifor_data[xsize];
 float plant_data[xsize];
-//float jukka_data[xsize];
+
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
+
 for (y=0; y<ysize; y++) 
 {
+
 INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
@@ -218,14 +218,26 @@ INBAND15->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0
 for(x=0; x<xsize; x++)
 	
 	{
-		
+
 		float outdata3 = -9999;
 		float outdata2 = -9999;
 		float outdata0 = -9999;
 		float outdata1 = -9999;
 		
+		if (dead_data[x] == -9999)
+		{
+			dead_data[x] = 0;
+		}
+		
+		if (litter_data[x] == -9999)
+		{
+				litter_data[x] = 0;
+		}
+		
+		
 		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
 		{
+
 			int peat_drn_ann;
 			peat_drn_ann = peat_drn_ann_calc(forestmodel_data[x], plant_data[x]);
 			
@@ -236,7 +248,7 @@ for(x=0; x<xsize; x++)
 
 			if (forestmodel_data[x] == 3) // forestry
 			{
-				cout <<  "forestry";
+
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 				out_data0[x] = -9999;
@@ -328,7 +340,7 @@ for(x=0; x<xsize; x++)
 						outdata1 = (agc_data[x] + bgc_data[x]) * 3.67;
 					}
 				}	
-
+	
 			}
 		   else if (forestmodel_data[x] == 2) // shifting ag
 			{
@@ -412,12 +424,21 @@ for(x=0; x<xsize; x++)
 							outdata2 = 0;
 						}
 					}
-					else // deforestation, not peat, not burned
+					else // shiting ag, not peat, not burned
 					{
+
+						// cout << "agc:" << agc_data[x] << "\n";
+						// cout << "bgc_data:" << bgc_data[x] << "\n";
+						// cout << "litter_data:" << litter_data[x] << "\n";
+						// cout << "soil_data:" << soil_data[x] << "\n";
+						// cout << "flu_val:" << flu_val << "\n";
+						// cout << "dead_data:" << dead_data[x] << "\n";
+						
 						outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(soil_data[x]-(soil_data[x] * flu_val));
+						
 					}
 				}	
-
+			
 			}
 			
 			else if (forestmodel_data[x] == 1) // deforestation
@@ -425,25 +446,26 @@ for(x=0; x<xsize; x++)
 				
 				if (peat_data[x] > 0) // deforestation, peat
 				{
+	
 					if (burn_data[x] > 0) // deforestation, peat, burned
 					{
 						if (ecozone_data[x] == 3) // deforestation, peat, burned, temperate
 						{
-							outdata2 = ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)));
+							outdata0 = ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)));
 						}
 						else if (ecozone_data[x] == 2) // deforestation, peat, burned, boreal
 						{
-							outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(15 - loss_data[x])*36+104;
+							outdata0 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(15 - loss_data[x])*36+104;
 						}
 						else if (ecozone_data[x] == 1) // deforestation, peat, burned, tropic
 						{
 							if (ifl_data[x] != 0) //  deforestation, peat, burned, tropics, ifl
 							{
-								outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.36)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.36 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.36 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] +bgc_data[x])) *0.36 *0.2 *pow(10,-3) * 265)))+(15 - loss_data[x])*peat_drn_ann+355;
+								outdata0 =  ((((agc_data[x] + bgc_data[x])*(1-0.36)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.36 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.36 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] +bgc_data[x])) *0.36 *0.2 *pow(10,-3) * 265)))+(15 - loss_data[x])*peat_drn_ann+355;
 							}
 							else // deforestation, peat, burned, tropics, not ifl
 							{
-								 outdata2 = ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(15 - loss_data[x])*peat_drn_ann+355;
+								 outdata0 = ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(15 - loss_data[x])*peat_drn_ann+355;
 							}
 						}
 					}
@@ -451,26 +473,26 @@ for(x=0; x<xsize; x++)
 					{
 						if (ecozone_data[x] == 3) // deforestation, peat, not burned, temperate
 						{
-							outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(15 - loss_data[x])*peat_drn_ann;
+							outdata0 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(15 - loss_data[x])*peat_drn_ann;
 						}
 						else if (ecozone_data[x] == 2) // deforestation, peat, not burned, boreal
 						{
-							outdata2 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67+(15 - loss_data[x])*peat_drn_ann;
+							outdata0 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67+(15 - loss_data[x])*peat_drn_ann;
 						}
 						else if (ecozone_data[x] == 1) // deforestation, peat, not burned, tropic
 						{
 							if (plant_data[x] == 0 ) // deforestation, peat, not burned, tropic, no plantations
 							{
-								outdata2 = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67) + ((15 - loss_data[x])* peat_drn_ann);			
+								outdata0 = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67) + ((15 - loss_data[x])* peat_drn_ann);			
 							}
 							else // deforestation, peat, not burned, tropic, plantations
 							{
-								outdata2 = (agc_data[x] + bgc_data[x]) * 3.67+(15 - loss_data[x])* peat_drn_ann;
+								outdata0 = (agc_data[x] + bgc_data[x]) * 3.67+(15 - loss_data[x])* peat_drn_ann;
 							}
 						}
 						else // deforestation, peat, not burned, no ecozone
 						{
-							outdata2 = 0;
+							outdata0 = 0;
 						}
 					}
 				}
@@ -481,31 +503,31 @@ for(x=0; x<xsize; x++)
 					{
 						if (ecozone_data[x] == 3) // deforestation, not peat, burned, temperate
 						{
-							outdata2 = ((((agc_data[x] + bgc_data[x])*(1-0.51)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.51 *1569 * pow(10, -3)) + ((2*(agc_data[x]+bgc_data[x])) * 0.51 * 4.7 * pow(10, -3)* 28) + ((2*(agc_data[x] +bgc_data[x])) *0.51 *0.26 * pow(10,-3) * 265)+(soil_data[x]-(soil_data[x] * flu_val));
+							outdata0 = ((((agc_data[x] + bgc_data[x])*(1-0.51)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.51 *1569 * pow(10, -3)) + ((2*(agc_data[x]+bgc_data[x])) * 0.51 * 4.7 * pow(10, -3)* 28) + ((2*(agc_data[x] +bgc_data[x])) *0.51 *0.26 * pow(10,-3) * 265)+(soil_data[x]-(soil_data[x] * flu_val));
 						}
 						else if (ecozone_data[x] == 2) // deforestation, not peat, burned, boreal
 						{
-							outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val)));
+							outdata0 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val)));
 						}
 						else if (ecozone_data[x] == 1) // deforestation, not peat, burned, tropics
 						{
 							if (ifl_data[x] != 0) // deforestation, not peat, burned, tropics, ifl
 							{
-								outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val)));
+								outdata0 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val)));
 							}
 							else // deforestation, not peat, burned, tropics, not ifl
 							{
-								outdata2 =  ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val));
+								outdata0 =  ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * flu_val));
 							}
 						}
 						else // deforestation, not peat, burned, no ecozone
 						{
-							outdata2 = 0;
+							outdata0 = 0;
 						}
 					}
 					else // deforestation, not peat, not burned
 					{
-						outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(soil_data[x]-(soil_data[x] * flu_val));
+						outdata0 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(soil_data[x]-(soil_data[x] * flu_val));
 					}
 				}	
 
@@ -610,24 +632,13 @@ for(x=0; x<xsize; x++)
 
 			if (forestmodel_data[x] == 0)
 			{
-				if (outdata1 == -9999)
-				{
-					outdata1 = 0;
-				}
-				if (outdata2 == -9999)
-				{
-					outdata2 = 0;
-				}
-				if (outdata3 == -9999)
-				{
-					outdata3 = 0;
-				}				
-				out_data0[x] = ((float(outdata1)*float(.42)) + (float(outdata2)*float(.42)) + (float(outdata3)*float(.16)));
+				
+				out_data0[x] = -9999;
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}
-			else if (forestmodel_data[x] == 1)
+			else if (forestmodel_data[x] == 3)
 			{
 				out_data1[x] = outdata1;
 				out_data0[x] = -9999;
@@ -641,12 +652,19 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = outdata2;
 				out_data3[x] = -9999;
 			}
-			else if (forestmodel_data[x] == 3)
+			else if (forestmodel_data[x] == 4)
 			{
 				out_data1[x] = -9999;
 				out_data0[x] = -9999;
 				out_data2[x] = -9999;
 				out_data3[x] = outdata3;
+			}
+			else if (forestmodel_data[x] == 1)
+			{
+				out_data1[x] = -9999;
+				out_data0[x] = outdata0;
+				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 			}
 			else 
 			{
