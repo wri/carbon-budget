@@ -18,7 +18,7 @@ def merge_tiles(tile_id):
     wildfire_tif = 'outdata/{}_wildfire_model.tif'.format(tile_id)
     mixed_tif = 'outdata/{}_deforestation_model.tif'.format(tile_id)
 
-    cmd = ['gdal_merge.py', '-o', mergetif, conversion_tif, forestmodel_tif, wildfire_tif, mixed_tif]
+    cmd = ['gdal_merge.py', '-o', mergetif, conversion_tif, forestmodel_tif, wildfire_tif, mixed_tif, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     print "merging tiles"
     subprocess.check_call(cmd)
 
