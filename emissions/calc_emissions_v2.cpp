@@ -10,9 +10,9 @@
 #include <sstream>
 #include <iomanip>
 
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 
 #include "flu_val.cpp"
 #include "calc.cpp"
@@ -123,8 +123,8 @@ INGDAL->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0]; 
 uly=GeoTransform[3]; 
 pixelsize=GeoTransform[1];
-xsize = 5000;
-ysize = 15000;
+//xsize = 5000;
+//ysize = 15000;
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 //initialize GDAL for writing
