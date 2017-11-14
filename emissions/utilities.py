@@ -13,10 +13,10 @@ def del_tiles(tile_id):
         
 def merge_tiles(tile_id):
     mergetif = 'outdata/{}_disturbance_model.tif'.format(tile_id)
-    conversion_tif = 'outdata/{}_conversion_model.tif'.format(tile_id)
-    forestmodel_tif = 'outdata/{}_forest_model.tif'.format(tile_id)
+    conversion_tif = 'outdata/{}_shiftingag_model.tif'.format(tile_id)
+    forestmodel_tif = 'outdata/{}_forestry_model.tif'.format(tile_id)
     wildfire_tif = 'outdata/{}_wildfire_model.tif'.format(tile_id)
-    mixed_tif = 'outdata/{}_mixed_model.tif'.format(tile_id)
+    mixed_tif = 'outdata/{}_deforestation_model.tif'.format(tile_id)
 
     cmd = ['gdal_merge.py', '-o', mergetif, conversion_tif, forestmodel_tif, wildfire_tif, mixed_tif]
     print "merging tiles"
@@ -24,7 +24,7 @@ def merge_tiles(tile_id):
 
 
 def upload_final(tile_id):
-    files = ['disturbance', 'conversion', 'forest', 'wildfire', 'mixed']
+    files = ['disturbance', 'shiftingag', 'forestry', 'wildfire', 'deforestation']
     for f in files:
         to_upload = "outdata/{0}_{1}_model.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)

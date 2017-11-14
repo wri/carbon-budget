@@ -37,4 +37,4 @@ coords = ['-projwin', '100.0', '10.0', '110.0', '0.0']
 tile_id = '10N_100E'
 windows = ['19']
 
-process_burned_area(windows, coords, tile_id)
+#process_burned_area(windows, coords, tile_id)
