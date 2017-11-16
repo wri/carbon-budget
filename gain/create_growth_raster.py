@@ -20,8 +20,9 @@ def create_growth_raster(tile_age):
     
     #resampled_tif = growth.replace(".tif", "_res.tif")
     #utilities.resample_00025(growth, resampled_tif)
-    
+
     cmd = ['aws', 's3', 'mv', growth, 's3://gfw-files/sam/carbon_budget/growth_rasters/']
-    print cmd
+    # print cmd
     subprocess.check_call(cmd)
+    
 
