@@ -23,7 +23,7 @@ float deadwood_calc(float biome_data, float elevation_data, float precip_data, f
 		deadwood = agb_data * .08 * .47;}
 		
 	else {
-		deadwood = -9999;}
+		deadwood = 0;}
 	
 	return deadwood;
 }
@@ -58,7 +58,7 @@ float litter_calc(float biome_data, float elevation_data, float precip_data, flo
 
 	else 
 	{
-		litter = -9999;
+		litter = 0;
 	}
 	
 	return litter;

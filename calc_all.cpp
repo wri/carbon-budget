@@ -157,12 +157,12 @@ INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 
 for(x=0; x<xsize; x++) {
    if (agb_data[x] == -32768) 
    {
-		out_carbon[x] = -9999;
-		out_bgc[x] = -9999;
-		out_deadwood[x] = -9999;
+		out_carbon[x] = 0;
+		out_bgc[x] = 0;
+		out_deadwood[x] = 0;
 
-		out_litter[x] = -9999;
-                out_total[x] = -9999;
+		out_litter[x] = 0;
+        out_total[x] = 0;
 	}
    else 
    {
@@ -173,7 +173,7 @@ for(x=0; x<xsize; x++) {
 
                 
 		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
-		if (out_deadwood[x] == -9999)
+		if (out_deadwood[x] == 0)
 		{
 			deadwood = 0;
 		}
@@ -181,7 +181,7 @@ for(x=0; x<xsize; x++) {
 		{
 			deadwood = out_deadwood[x];
 		}
-		if (out_litter[x] == -9999)
+		if (out_litter[x] == 0)
 		{
 			litter = 0;
 		}
