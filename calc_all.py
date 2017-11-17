@@ -25,7 +25,7 @@ def calc_all(tile_id):
 
     print 'uploading soil tile to s3'
     copy_soil_tile = ['aws', 's3', 'cp', clip_soil_tile, 's3://gfw-files/sam/carbon_budget/data_inputs/soil/']
-    subprocess.check_call(copy_soil_tile)
+    #subprocess.check_call(copy_soil_tile)
     
     print "rasterizing eco zone"
     fao_eco_zones = 'fao_ecozones_bor_tem_tro.shp'
@@ -42,7 +42,7 @@ def calc_all(tile_id):
 
     print "upload ecozone to input data"
     cmd = ['aws', 's3', 'cp', resampled_ecozone, 's3://gfw-files/sam/carbon_budget/data_inputs2/fao_ecozones_bor_tem_tro/']
-    subprocess.check_call(cmd)
+    #subprocess.check_call(cmd)
     
     print "clipping srtm"
     tile_srtm = '{}_srtm.tif'.format(tile_id)
@@ -57,7 +57,7 @@ def calc_all(tile_id):
 
     print "upload srtm to input data"
     cmd = ['aws', 's3', 'cp', tile_res_srtm, 's3://gfw-files/sam/carbon_budget/data_inputs2/srtm/']
-    subprocess.check_call(cmd)
+    #subprocess.check_call(cmd)
     
     print "clip precip"
     precip_raster = 'add_30s_precip.tif'
@@ -72,7 +72,7 @@ def calc_all(tile_id):
 
     print "upload precip to input data"
     cmd = ['aws', 's3', 'cp', resample_precip_tile, 's3://gfw-files/sam/carbon_budget/data_inputs2/precip/']
-    subprocess.check_call(cmd)
+    #subprocess.check_call(cmd)
     
     print 'writing carbon, bgc, deadwood, litter, total'
     calc_all_cmd = ['./calc_all.exe', tile_id]

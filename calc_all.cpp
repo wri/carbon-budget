@@ -109,27 +109,27 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL = OUTDRIVER->Create( outname_carbon.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
-OUTBAND1->SetNoDataValue(-9999);
+//OUTBAND1->SetNoDataValue(-9999);
 
 OUTGDAL2 = OUTDRIVER->Create( outname_bgc.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
 OUTBAND2 = OUTGDAL2->GetRasterBand(1);
-OUTBAND2->SetNoDataValue(-9999);
+//OUTBAND2->SetNoDataValue(-9999);
 
 OUTGDAL3 = OUTDRIVER->Create( outname_deadwood.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
 OUTBAND3 = OUTGDAL3->GetRasterBand(1);
-OUTBAND3->SetNoDataValue(-9999);
+//OUTBAND3->SetNoDataValue(-9999);
 
 OUTGDAL4 = OUTDRIVER->Create( outname_litter.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
 OUTBAND4 = OUTGDAL4->GetRasterBand(1);
-OUTBAND4->SetNoDataValue(-9999);
+//OUTBAND4->SetNoDataValue(-9999);
 
 OUTGDAL5 = OUTDRIVER->Create( outname_total.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
-OUTBAND5->SetNoDataValue(-9999);
+//OUTBAND5->SetNoDataValue(-9999);
 
 //read/write data
 float agb_data[xsize];
