@@ -80,8 +80,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
-xsize = 5000
-ysize = 5000
+//xsize = 5000;
+//ysize = 5000;
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
@@ -116,17 +116,17 @@ OUTBAND1->SetNoDataValue(-9999);
 OUTGDAL2 = OUTDRIVER->Create( outname_bgc.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
 OUTBAND2 = OUTGDAL2->GetRasterBand(1);
-//OUTBAND2->SetNoDataValue(-9999);
+OUTBAND2->SetNoDataValue(-9999);
 
 OUTGDAL3 = OUTDRIVER->Create( outname_deadwood.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
 OUTBAND3 = OUTGDAL3->GetRasterBand(1);
-//OUTBAND3->SetNoDataValue(-9999);
+OUTBAND3->SetNoDataValue(-9999);
 
 OUTGDAL4 = OUTDRIVER->Create( outname_litter.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
 OUTBAND4 = OUTGDAL4->GetRasterBand(1);
-//OUTBAND4->SetNoDataValue(-9999);
+OUTBAND4->SetNoDataValue(-9999);
 
 OUTGDAL5 = OUTDRIVER->Create( outname_total.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
@@ -159,40 +159,23 @@ INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 
 for(x=0; x<xsize; x++) {
    if (agb_data[x] == -32768) 
    {
-		out_carbon[x] = 0;
-		out_bgc[x] = 0;
-		out_deadwood[x] = 0;
+		out_carbon[x] = -9999;
+		out_bgc[x] = -9999;
+		out_deadwood[x] = -9999;
 
-		out_litter[x] = 0;
-        out_total[x] = 0;
+		out_litter[x] = -9999;
+        out_total[x] = -9999;
 	}
    else 
    {
 		out_carbon[x] = agb_data[x] * .47;
+
 		out_bgc[x] = .489 * pow(agb_data[x], 0.89) *.47;
 
          	out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
-
                 
 		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
-		if (out_deadwood[x] == 0)
-		{
-			deadwood = 0;
-		}
-		else 
-		{
-			deadwood = out_deadwood[x];
-		}
-		if (out_litter[x] == 0)
-		{
-			litter = 0;
-		}
-		else
-		{
-			litter = out_litter[x];
-		}
-		
-
+ 
 		out_total[x] = out_carbon[x] + out_bgc[x] + deadwood + litter + soil_data[x];
 
 
