@@ -80,6 +80,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
+xsize = 5000
+ysize = 5000
 //initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL;
@@ -109,7 +111,7 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL = OUTDRIVER->Create( outname_carbon.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
-//OUTBAND1->SetNoDataValue(-9999);
+OUTBAND1->SetNoDataValue(-9999);
 
 OUTGDAL2 = OUTDRIVER->Create( outname_bgc.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
@@ -129,7 +131,7 @@ OUTBAND4 = OUTGDAL4->GetRasterBand(1);
 OUTGDAL5 = OUTDRIVER->Create( outname_total.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
-//OUTBAND5->SetNoDataValue(-9999);
+OUTBAND5->SetNoDataValue(-9999);
 
 //read/write data
 float agb_data[xsize];
