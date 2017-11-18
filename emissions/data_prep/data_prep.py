@@ -3,7 +3,7 @@ import subprocess
 
 def upload_tile(folder, tile):
 
-    dst_folder = 's3://gfw-files/sam/carbon_budget/data_inputs/{}/'.format(folder)
+    dst_folder = 's3://gfw-files/sam/carbon_budget/data_inputs2/{}/'.format(folder)
     cmd = ['aws', 's3', 'mv', tile, dst_folder]
     subprocess.check_call(cmd)
     
@@ -21,4 +21,6 @@ def data_prep(tile_id):
         resampled_tile = utilities.resample_clip(raster, tile_id)
         
         upload_tile(raster, resampled_tile)
+        
+
         

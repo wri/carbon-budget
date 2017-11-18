@@ -90,7 +90,6 @@ GDALDataset *OUTGDAL2;
 GDALDataset *OUTGDAL3;
 GDALDataset *OUTGDAL4;
 GDALDataset *OUTGDAL5;
-cout << "here";
 
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
@@ -172,7 +171,7 @@ for(x=0; x<xsize; x++) {
 
 		out_bgc[x] = .489 * pow(agb_data[x], 0.89) *.47;
 
-         	out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
+        out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
                 
 		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
  

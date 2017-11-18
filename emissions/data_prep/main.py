@@ -6,7 +6,7 @@ biomass_tile_list = ["00N_000E", "00N_010E", "00N_020E", "00N_020W", "00N_030E",
 
 #biomass_tile_list= ["10N_100E", "10N_010E"]
 
-onetime_download_files = ['peatland.zip', 'hwsd_histosoles.tif', 'climate_zone.tif', 'forest_model.tif', 'fao_ecozones_bor_tem_tro.zip', 'ifl_2000.zip', 'gfw_plantations.zip', 'cifor_peat_mask.tif']
+onetime_download_files = ['peatland.zip', 'hwsd_histosoles.tif', 'climate_zone.tif', 'Goode_FinalClassification_15_50uncertain_expanded_wgs84.tif', 'ifl_2000.zip', 'gfw_plantations.zip', 'cifor_peat_mask.tif']
 
 for file in onetime_download_files:
 

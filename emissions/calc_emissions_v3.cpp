@@ -15,7 +15,7 @@
 #include <ogr_spatialref.h>
 
 #include "flu_val.cpp"
-#include "calc.cpp"
+// #include "calc.cpp"
 #include "equations.cpp"
 using namespace std;
 
@@ -240,261 +240,145 @@ for(x=0; x<xsize; x++)
 		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
 		{
 			// cout << "model value: " << forestmodel_data[x] << "\n";
-			int peat_drn_ann;
-			peat_drn_ann = peat_drn_ann_calc(forestmodel_data[x], plant_data[x]);
+
+			// float cf;
+			// float c02;
+			// float ch;
+			// float n20;
+			// float peatburn;
+			// float peat_drain;
+			// float flu_val;
+			// float minsoil;
 			
-			float flu_val;
-			flu_val = flu(climate_data[x], ecozone_data[x]);
+			float *vars;
+			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], ecozone_data[x], plant_data[x], loss_data[x]);
 
-			int peat_val;
-
+			float cf = *(vars + 0);
+			float c02 = *(vars + 1);
+			float ch = *(vars + 2);
+			float n20 = *(vars + 3);
+			float peatburn = *(vars + 4);
+			float peatdrain = *(vars + 5);
+			float flu = *(vars + 6);
+			
+			float Biomass_tCO2e_nofire;
+			float Biomass_tCO2e_yesfire;
+			
+			float total_c;
+			total_c = agc_data[x] + bgc_data[x] + dead_data[x] +litter_data[x];
+				
+			float minsoil;
 			if (forestmodel_data[x] == 3) // forestry
 			{
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 				out_data0[x] = -9999;
 				
+				Biomass_tCO2e_yesfire = ((agc_data[x] + bgc_data[x]) * 3.67) + ((2*(agc_data[x] + bgc_data[x])) * cf * ch * pow(10, -3) * 28) + ((2*(agc_data[x] + bgc_data[x])) * cf * n20 * pow(10, -3) * 265);
+				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
+				
 				if (peat_data[x] > 0) // forestry, peat
 				{
-					peat_val=1;
-
 					if (burn_data[x] > 0 ) // forestry, peat, burned
 					{
-						outdata1 = forestry_peat_burned(ecozone_data[x], agc_data[x], bgc_data[x], loss_data[x], ifl_data[x], peat_drn_ann);
+						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 
 					}
 					else // forestry, peat, not burned
 					{
-						outdata1 = forestry_peat_xburned(ecozone_data[x], agc_data[x], bgc_data[x], loss_data[x], peat_drn_ann, plant_data[x]);
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))
+						{
+							outdata1 = Biomass_tCO2e_nofire;							
+						}
+						else
+						{
+							if (plant_data[x] > 0)
+							{
+								outdata1 = Biomass_tCO2e_nofire + peatdrain;
+								
+							}
+							else
+							{
+								outdata1 = Biomass_tCO2e_nofire;
+							}
+						}
 					}
 				}
 				else 
 				{
-					peat_val = 0;
 					if (burn_data[x] > 0) // forestry, not peat, burned
 					{
-						outdata1 = forestry_xpeat_burned(ecozone_data[x], agc_data[x], bgc_data[x], loss_data[x], ifl_data[x], peat_drn_ann);
+						outdata1 = Biomass_tCO2e_yesfire;
 					}
 					else // forestry, not peat, not burned
 					{
-						outdata1 = forestry_xpeat_xburn(agc_data[x], bgc_data[x]);
+						outdata1 = Biomass_tCO2e_nofire;;
 					}
 				}	
-				// cout << "forest model value: " << outdata1 << "\n";
 			}
-		   else if (forestmodel_data[x] == 2) // shifting ag
+			
+			else if ((forestmodel_data[x] == 1) || (forestmodel_data[x] == 2)) // deforestation/conversion or shifting ag. only diff is flu val
 			{
-				if (peat_data[x] > 0) // shiting ag, peat
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				
+				Biomass_tCO2e_nofire = total_c * 3.67;
+
+				if (forestmodel_data[x] == 2) // if shifting ag, change flu val
 				{
-					if (burn_data[x] > 0) // shiting ag, peat, burned
-					{
-						if (ecozone_data[x] == 3) // shiting ag, peat, burned, temperate
-						{
-							outdata2 = ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)));
-						}
-						else if (ecozone_data[x] == 2) // shiting ag, peat, burned, boreal
-						{
-							outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(16 - loss_data[x])*36+104;
-						}
-						else if (ecozone_data[x] == 1) // shiting ag, peat, burned, tropic
-						{
-							if (ifl_data[x] != 0) //  shiting ag, peat, burned, tropics, ifl
-							{
-								outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.36)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.36 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.36 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] +bgc_data[x])) *0.36 *0.2 *pow(10,-3) * 265)))+(16 - loss_data[x])*peat_drn_ann+355;
-							}
-							else // shiting ag, peat, burned, tropics, not ifl
-							{
-								 outdata2 = ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(16 - loss_data[x])*peat_drn_ann+355;
-							}
-						}
-					}
-					else // shiting ag, peat, not burned
-					{
-						if (ecozone_data[x] == 3) // shiting ag, peat, not burned, temperate
-						{
-							outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(16 - loss_data[x])*peat_drn_ann;
-						}
-						else if (ecozone_data[x] == 2) // shiting ag, peat, not burned, boreal
-						{
-							outdata2 = (agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67+(16 - loss_data[x])*peat_drn_ann;
-						}
-						else if (ecozone_data[x] == 1) // shiting ag, peat, not burned, tropic
-						{
-							if (plant_data[x] == 0 ) // shiting ag, peat, not burned, tropic, no plantations
-							{
-								outdata2 = ((agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x]) * 3.67) + ((16 - loss_data[x])* peat_drn_ann);			
-							}
-							else // shiting ag, peat, not burned, tropic, plantations
-							{
-								outdata2 = (agc_data[x] + bgc_data[x]) * 3.67+(16 - loss_data[x])* peat_drn_ann;
-							}
-						}
-						else // shiting ag, peat, not burned, no ecozone
-						{
-							outdata2 = 0;
-						}
-					}
+					flu == .72;
 				}
-
-				else // shiting ag, not peat
-				{
-					if (burn_data[x] > 0) // deforestation, not peat, burned
-					{
-						if (ecozone_data[x] == 3) // deforestation, not peat, burned, temperate
-						{
-							outdata2 = ((((agc_data[x] + bgc_data[x])*(1-0.51)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.51 *1569 * pow(10, -3)) + ((2*(agc_data[x]+bgc_data[x])) * 0.51 * 4.7 * pow(10, -3)* 28) + ((2*(agc_data[x] +bgc_data[x])) *0.51 *0.26 * pow(10,-3) * 265)+(soil_data[x]-(soil_data[x] * .72));
-						}
-						else if (ecozone_data[x] == 2) // deforestation, not peat, burned, boreal
-						{
-							outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * .72)));
-						}
-						else if (ecozone_data[x] == 1) // deforestation, not peat, burned, tropics
-						{
-							if (ifl_data[x] != 0) // deforestation, not peat, burned, tropics, ifl
-							{
-								outdata2 =  ((((agc_data[x] + bgc_data[x])*(1-0.59)) + dead_data[x] + litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * .72)));
-							}
-							else // deforestation, not peat, burned, tropics, not ifl
-							{
-								outdata2 =  ((((agc_data[x] +bgc_data[x])*(1-0.55)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)))+(soil_data[x]-(soil_data[x] * .72));
-							}
-						}
-						else // deforestation, not peat, burned, no ecozone
-						{
-							outdata2 = 0;
-						}
-					}
-					else // shiting ag, not peat, not burned
-					{
-
-						// cout << "agc:" << agc_data[x] << "\n";
-						// cout << "bgc_data:" << bgc_data[x] << "\n";
-						// cout << "litter_data:" << litter_data[x] << "\n";
-						// cout << "soil_data:" << soil_data[x] << "\n";
-						// cout << "flu_val:" << flu_val << "\n";
-						// cout << "dead_data:" << dead_data[x] << "\n";
-						
-						outdata2 = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67+(soil_data[x]-(soil_data[x] * flu_val));
-						
-					}
-				}	
-			
-			}
-			
-			else if (forestmodel_data[x] == 1) // deforestation
-			{
-				float *vars;
-				vars = cf_deforestation(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 				
-				float cf = *(vars + 0);
-				float c02 = *(vars + 1);
-				float ch = *(vars + 2);
-				float n20 = *(vars + 3);
-				float peatburn = *(vars + 4);
-				float peatdrain = *(vars + 5);
-				float flu = *(vars + 6);
-
-				float Biomass_tCO2e_conv_yesfire;
-				
-				Biomass_tCO2e_conv_yesfire = ((((agc_data[x] +bgc_data[x])*(1-cf)) + dead_data[x] +litter_data[x])* 3.67) + (((2*agc_data[x]+bgc_data[x])) * cf * c02 * pow(10,-3)) + (((2*(agc_data[x]+bgc_data[x])) * cf * ch * pow(10,-3) * 28) + (((2*(agc_data[x] + bgc_data[x])) * cf * n20 * pow(10,-3) * 265)));
-				
-				float Biomass_tCO2e_conv_nofire;
-				Biomass_tCO2e_conv_nofire = (agc_data[x] +bgc_data[x] +dead_data[x] +litter_data[x]) * 3.67;
-				
-				float minsoil;
 				minsoil = soil_data[x]-(soil_data[x] * flu);
-				
-				
 				
 				if (peat_data[x] > 0) // deforestation, peat
 				{
-	
 					if (burn_data[x] > 0) // deforestation, peat, burned
 					{
-						outdata0 = Biomass_tCO2e_conv_yesfire + peatdrain + peatburn;
+						outdata0 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 					}
 					
 					else // deforestation, peat, not burned
 					{
-						if (ecozone_data[x] == 1 & plant_data[x] == 1 ) // deforestation, peat, not burned, tropic, plantations
-						{
-							outdata0 = (agc_data[x] + bgc_data[x]) * 3.67 + peatdrain;
-						}
-						
-						else // deforestation, peat, not burned, tropic, no plantations
-						{
-							outdata0 = Biomass_tCO2e_conv_nofire + peatdrain;
-						}
+						outdata0 = Biomass_tCO2e_nofire + peatdrain;
 					}
 				}
-
 				else // deforestation, not peat
 				{
 					
 					if (burn_data[x] > 0) // deforestation, not peat, burned
 					{
-						outdata0 = Biomass_tCO2e_conv_yesfire + minsoil;
+						outdata0 = Biomass_tCO2e_yesfire + minsoil;
 						
 					}
 					else // deforestation, not peat, not burned
 					{
-						outdata0 = Biomass_tCO2e_conv_nofire + minsoil;
+						outdata0 = Biomass_tCO2e_nofire + minsoil;
 					}
 				}	
-
 			}
-			
-			
+						
 		   else if (forestmodel_data[x] == 4) // wildfire
 			{
+				Biomass_tCO2e_yesfire = ((2* agc_data[x] + bgc_data[x]) * cf * c02 * pow(10, -3)) + ((2* agc_data[x] + bgc_data[x]) * cf * ch * pow(10, -3) * 28) + ((2* agc_data[x] + bgc_data[x]) * cf * n20 * pow(10, -3) * 265);
+				
+				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
+				
 				if (peat_data[x] > 0) // wildfire, peat
 				{
 					if (burn_data[x] > 0) // wildfire, peat, burned
 					{
-						if (ecozone_data[x] == 3) // wildfire, peat, burned, temperate
-						{
-							outdata3 = ((2*agc_data[x]+bgc_data[x])) *0.51 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.51 * 4.7 *pow(10,-3 * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.51 *0.26 * pow(10,-3) * 265)+(16 - loss_data[x])*12+104)));
-						}
-						else if (ecozone_data[x] == 2) // wildfire, peat, burned, boreal
-						{
-							outdata3 =  ((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)+(15-loss_data[x])*3+104));
-						}
-						else if (ecozone_data[x] == 1) // wildfire, peat, burned, tropic
-						{
-							if (ifl_data[x] != 0) //  wildfire, peat, burned, tropics, ifl
-							{
-								outdata3 =  (((2*agc_data[x]+bgc_data[x])) *0.36 *1580 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.36 * 6.8 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.36 *0.2 * pow(10,-3) * 265)+(16 - loss_data[x])*peat_drn_ann+808)));
-							}
-							else // wildfire, peat, burned, tropics, not ifl
-							{
-								 outdata3 = (((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 *pow(10,-3 * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)+(16 - loss_data[x])*peat_drn_ann+808))));
-							}
-						}
+						outdata3 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 					}
+					
 					else // wildfire, peat, not burned
 					{
-						if (ecozone_data[x] == 3) // wildfire, peat, not burned, temperate
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3)) // boreal or temperate
 						{
-							outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67)+(16 - loss_data[x])*12;
+							outdata3 = Biomass_tCO2e_nofire;
 						}
-						else if (ecozone_data[x] == 2) // wildfire, peat, not burned, boreal
+						else // tropics
 						{
-							outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67)+(16 - loss_data[x])*3;
-						}
-						else if (ecozone_data[x] == 1) // wildfire, peat, not burned, tropic
-						{
-							if (plant_data[x] == 0 ) // wildfire, peat, not burned, tropic, no plantation
-							{
-								outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67);		
-							}
-							else  // wildfire, peat, not burned, tropic, plantation
-							{
-								outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67)+(16 - loss_data[x])*peat_drn_ann;
-							}
-						}
-						else  // wildfire, peat, not burned, no ecozone
-						{
-							outdata3 = 0;
+							outdata3 = Biomass_tCO2e_nofire + peatdrain;
 						}
 					}
 				}
@@ -502,37 +386,15 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0)  // wildfire, not peat, burned
 					{
-						if (ecozone_data[x] == 3)  // wildfire, not peat, burned, temperate
-						{
-							outdata3 = ((2*agc_data[x]+bgc_data[x])) *0.51 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.51 * 4.7 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.51 *0.26 * pow(10,-3) * 265)));
-						}
-						else if (ecozone_data[x] == 2)  // wildfire, not peat, burned, boreal
-						{
-							outdata3 = ((2*agc_data[x]+bgc_data[x])) *0.59 *1569 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.59 * 4.7 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.59 *0.26 * pow(10,-3) * 265)));
-						}
-						else if (ecozone_data[x] == 1)  // wildfire, not peat, burned, tropics
-						{
-							if (ifl_data[x] != 0)  // wildfire, not peat, burned, tropics, ifl
-							{
-								outdata3 =  ((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)));
-							}
-							else  // wildfire, not peat, burned, tropics, not ifl
-							{
-								outdata3 =  ((2*agc_data[x]+bgc_data[x])) *0.55 *1580 * pow(10,-3) + (((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 *pow(10,-3) * 28)+ (((2*(agc_data[x] + bgc_data[x])) *0.55 *0.2 * pow(10,-3) * 265)));
-							}
-						}
-						else  // wildfire, not peat, burned, no-ecozone
-						{
-							outdata3 = 0;
-						}
+						outdata3 = Biomass_tCO2e_yesfire;
 					}
 					else  // wildfire, not peat, not burned
 					{
-						outdata3 = ((agc_data[x] + bgc_data[x]) * 3.67);
+						outdata3 = Biomass_tCO2e_nofire;
 					}
 				}	
-
 			}
+		
 		   else // forest model not 1 or 2 or 3
 			{
 				out_data1[x] = -9999;
@@ -584,52 +446,6 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}
-				//		cout << " \n forest model: " << forestmodel_data[x] << " peat val: " << peat_val <<" burn: " << burn_data[x] << " eco zone: " << ecozone_data[x] << " ifl: " << ifl_data[x]<< " above ground: " << agc_data[x] << " below ground: " << bgc_data[x] << " soil: " << soil_data[x] << " dead: " << dead_data[x] << " litter: " << litter_data[x] << " flu: "  << flu_val << " peat drain: " << peat_drn_ann << " plantation data: " << plant_data[x] << " lossyr: " << loss_data[x] << " climate: " << climate_data[x] << " outdata1: " << out_data1[x] << " outdata2: " << out_data2[x] << " outdata3: " << out_data3[x];
-
-			// // merge 4 data layers
-			// float out0;
-			// float out1;
-			// float out2;
-			// float out3;
-			
-			// if (out_data0[x] = -9999)
-			// {
-				// out0 = 0;
-			// }
-			// else
-			// {
-				// out0 = outdata0;
-			// }
-			// if (out_data1[x] = -9999)
-			// {
-				// out1 = 0;
-			// }
-			// else
-			// {
-				// out1 = outdata1;
-			// }
-			
-			// if (out_data2[x] = -9999)
-			// {
-				// out2 = 0;
-			// }
-			// else
-			// {
-				// out2 = outdata2;
-			// }
-			
-			// if (out_data3[x] = -9999)
-			// {
-				// out3 = 0;
-			// }
-			// else
-			// {
-				// out3 = outdata3;
-			// }
-					
-
-			// out_data4[x] = out1 + out2 + out3 + out0;
-			
 		}	
 		
 		else // not on loss AND carbon
