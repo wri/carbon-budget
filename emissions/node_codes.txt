@@ -1,0 +1,19 @@
+1	forestry, peat, burned
+2	forest, peat, not burned, boreal or temperate
+3	forest, peat, not burned,tropics, plantations
+4	forest, peat, not burned,tropics,  not plantations
+5	forest, not peat, burned
+6	forestry, not peat, not burned
+7	deforestation, peat, burned
+8	deforestation, peat, not burned
+9	deforestation, not peat, burned
+10	deforestation, not peat, not burned
+11	shifting ag, peat, burned
+12	shifting ag, peat, not burned
+13	shifting ag, not peat, burned
+14	shifting ag, not peat, not burned
+15	wildfire, peat, burned
+16	wildfire, peat, not burned, boreal or temperate
+17	wildfire, peat, not burned, tropics
+18	wildfire, not peat, burned
+19	wildfire, not peat, not burned

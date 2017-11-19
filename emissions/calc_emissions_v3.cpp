@@ -49,7 +49,7 @@ string out_name0= "outdata/" + tile_id + "_deforestation_model.tif";
 string out_name2 = "outdata/" + tile_id + "_shiftingag_model.tif";
 string out_name1 = "outdata/" + tile_id + "_forestry_model.tif";
 string out_name3 = "outdata/" + tile_id + "_wildfire_model.tif";
-// string out_name4 = "outdata/" + tile_id + "_merged.tif";
+string out_name4 = "outdata/" + tile_id + "_node_totals.tif";
 
 int x, y;
 int xsize, ysize;
@@ -63,7 +63,6 @@ GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
-//GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
 GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
 GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
@@ -72,7 +71,6 @@ GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
 GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
 GDALDataset  *INGDAL14; GDALRasterBand  *INBAND14;
 GDALDataset  *INGDAL15; GDALRasterBand  *INBAND15;
-//GDALDataset  *INGDAL16; GDALRasterBand  *INBAND16;
 
 //open file and get extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly ); 
@@ -92,9 +90,6 @@ INBAND5 = INGDAL5->GetRasterBand(1);
 
 INGDAL6 = (GDALDataset *) GDALOpen(burn_name.c_str(), GA_ReadOnly );
 INBAND6 = INGDAL6->GetRasterBand(1);
-
-//INGDAL7 = (GDALDataset *) GDALOpen(hist_name.c_str(), GA_ReadOnly );
-//INBAND7 = INGDAL7->GetRasterBand(1);
 
 INGDAL8 = (GDALDataset *) GDALOpen(ecozone_name.c_str(), GA_ReadOnly );
 INBAND8 = INGDAL8->GetRasterBand(1);
@@ -140,7 +135,7 @@ GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
 GDALRasterBand *OUTBAND3;
 GDALRasterBand *OUTBAND0;
-// GDALRasterBand *OUTBAND4;
+GDALRasterBand *OUTBAND4;
 
 OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
@@ -172,10 +167,10 @@ OUTGDAL0->SetGeoTransform(adfGeoTransform); OUTGDAL0->SetProjection(OUTPRJ);
 OUTBAND0 = OUTGDAL0->GetRasterBand(1);
 OUTBAND0->SetNoDataValue(-9999);
 
-// OUTGDAL4 = OUTDRIVER->Create( out_name4.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-// OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
-// OUTBAND4 = OUTGDAL4->GetRasterBand(1);
-// OUTBAND4->SetNoDataValue(-9999);
+OUTGDAL4 = OUTDRIVER->Create( out_name4.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
+OUTBAND4 = OUTGDAL4->GetRasterBand(1);
+OUTBAND4->SetNoDataValue(-9999);
 
 //read/write data
 float agb_data[xsize];
@@ -239,8 +234,6 @@ for(x=0; x<xsize; x++)
 		
 		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
 		{
-			cout << "\n" << forestmodel_data[x] << "\n";
-
 			
 			float *vars;
 			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
@@ -279,24 +272,27 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0 ) // forestry, peat, burned
 					{
 						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = 1;
 
 					}
 					else // forestry, peat, not burned
 					{
 						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))
 						{
-							outdata1 = Biomass_tCO2e_nofire;							
+							outdata1 = Biomass_tCO2e_nofire;	
+							outdata4 = 2;							
 						}
 						else
 						{
 							if (plant_data[x] > 0)
 							{
 								outdata1 = Biomass_tCO2e_nofire + peatdrain;
-								
+								outdata4 = 3;		
 							}
 							else
 							{
 								outdata1 = Biomass_tCO2e_nofire;
+								outdata4 = 4;
 							}
 						}
 					}
@@ -306,38 +302,31 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // forestry, not peat, burned
 					{
 						outdata1 = Biomass_tCO2e_yesfire;
+						outdata4 = 5;
 					}
 					else // forestry, not peat, not burned
 					{
-						outdata1 = Biomass_tCO2e_nofire;;
+						outdata1 = Biomass_tCO2e_nofire;
+						outdata4 = 6;
 					}
 				}	
 			}
 
 			else if (forestmodel_data[x] == 1)  // deforestation/conversion 
 			{
-				
-				
-				cout << "\n" << forestmodel_data[x] << "\n";
+
 				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 			
 				Biomass_tCO2e_nofire = total_c * 3.67;
 
 
 				flu = flu_val(climate_data[x], ecozone_data[x]);
-				cout << "flu is " << flu << "\n";
+		
 	
 				
 				minsoil = soil_data[x]-(soil_data[x] * flu);
 				
-				cout << cf << "\n";
-                cout << ch << "\n";
-                cout << total_c << "\n";
-                cout << n20 << "\n";
-                cout << flu << "\n";
-                
-                cout << Biomass_tCO2e_yesfire << "\n";
-                cout << minsoil << "\n";
+
 				
 				
 				if (peat_data[x] > 0) // deforestation, peat
@@ -345,14 +334,14 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // deforestation, peat, burned
 					
 					{
-						cout << "peat burned \n";
 						outdata0 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = 7;
 					}
 					
 					else // deforestation, peat, not burned
 					{
-						cout << "peat not burned \n";
 						outdata0 = Biomass_tCO2e_nofire + peatdrain;
+						outdata4 = 8;
 					}
 				}
 				else // deforestation, not peat
@@ -360,17 +349,15 @@ for(x=0; x<xsize; x++)
 					
 					if (burn_data[x] > 0) // deforestation, not peat, burned
 					{
-						cout << "not peat, burned \n";
 						outdata0 = Biomass_tCO2e_yesfire + minsoil;
-						
+						outdata4 = 9;
 					}
 					else // deforestation, not peat, not burned
 					{
-						cout << "not peat, not burned \n";
 						outdata0 = Biomass_tCO2e_nofire + minsoil;
+						outdata4 = 10;
 					}
 				}	
-				cout << outdata0 << "\n"; 
 			}
 			
 			else if (forestmodel_data[x] == 2) // shifting ag. only diff is flu val
@@ -384,31 +371,21 @@ for(x=0; x<xsize; x++)
 
 				
 				minsoil = soil_data[x]-(soil_data[x] * .72);
-				
-				cout << cf << "\n";
-                cout << ch << "\n";
-                cout << total_c << "\n";
-                cout << n20 << "\n";
-                cout << "flu is " << flu << "\n";
-                
-                cout << soil_data[x] << "\n";
-                cout << Biomass_tCO2e_yesfire << "\n";
-                cout << minsoil << "\n";
-				
+							
 				
 				if (peat_data[x] > 0) // deforestation, peat
 				{
 					if (burn_data[x] > 0) // deforestation, peat, burned
 					
 					{
-						cout << "peat burned \n";
 						outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = 11;
 					}
 					
 					else // deforestation, peat, not burned
 					{
-						cout << "peat not burned \n";
 						outdata2 = Biomass_tCO2e_nofire + peatdrain;
+						outdata4 = 12;
 					}
 				}
 				else // deforestation, not peat
@@ -416,22 +393,23 @@ for(x=0; x<xsize; x++)
 					
 					if (burn_data[x] > 0) // deforestation, not peat, burned
 					{
-						cout << "not peat, burned \n";
 						outdata2 = Biomass_tCO2e_yesfire + minsoil;
+						outdata4 = 13;
 						
 					}
 					else // deforestation, not peat, not burned
 					{
-						cout << "not peat, not burned \n";
 						outdata2 = Biomass_tCO2e_nofire + minsoil;
+						outdata4 = 14;
 					}
 				}	
-				cout << outdata2 << "\n"; 
+
 			}
 						
 		   else if (forestmodel_data[x] == 4) // wildfire
 			{
 				flu = flu_val(climate_data[x], ecozone_data[x]);
+				
 				Biomass_tCO2e_yesfire = ((2* agc_data[x] + bgc_data[x]) * cf * c02 * pow(10, -3)) + ((2* agc_data[x] + bgc_data[x]) * cf * ch * pow(10, -3) * 28) + ((2* agc_data[x] + bgc_data[x]) * cf * n20 * pow(10, -3) * 265);
 				
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
@@ -441,6 +419,7 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // wildfire, peat, burned
 					{
 						outdata3 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = 15;
 					}
 					
 					else // wildfire, peat, not burned
@@ -448,10 +427,12 @@ for(x=0; x<xsize; x++)
 						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3)) // boreal or temperate
 						{
 							outdata3 = Biomass_tCO2e_nofire;
+							outdata4 = 16;
 						}
 						else // tropics
 						{
 							outdata3 = Biomass_tCO2e_nofire + peatdrain;
+							outdata4 = 17;
 						}
 					}
 				}
@@ -460,10 +441,12 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0)  // wildfire, not peat, burned
 					{
 						outdata3 = Biomass_tCO2e_yesfire;
+						outdata4 = 18;
 					}
 					else  // wildfire, not peat, not burned
 					{
 						outdata3 = Biomass_tCO2e_nofire;
+						outdata4 = 19;
 					}
 				}	
 			}
@@ -519,6 +502,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}
+				out_data4[x] = outdata4;
 		}	
 		
 		else // not on loss AND carbon
@@ -528,20 +512,20 @@ for(x=0; x<xsize; x++)
 			out_data2[x] = -9999;
 			out_data3[x] = -9999;
 			out_data0[x] = -9999;
-			// out_data4[x] = -9999;
+			out_data4[x] = -9999;
 		}
     }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND0->RasterIO( GF_Write, 0, y, xsize, 1, out_data0, xsize, 1, GDT_Float32, 0, 0 );
-// OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
 }
 GDALClose(INGDAL);
 GDALClose((GDALDatasetH)OUTGDAL);
 GDALClose((GDALDatasetH)OUTGDAL2);
 GDALClose((GDALDatasetH)OUTGDAL3);
 GDALClose((GDALDatasetH)OUTGDAL0);
-// GDALClose((GDALDatasetH)OUTGDAL4);
+GDALClose((GDALDatasetH)OUTGDAL4);
 return 0;
 }
