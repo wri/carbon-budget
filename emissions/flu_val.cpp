@@ -3,7 +3,7 @@
 #include <stdlib.h>
 using namespace std;
 
-float flu(int climate_zone, int eco_zone)
+float flu_val(int climate_zone, int eco_zone)
 {
 	float flu_value;
 	if ((climate_zone == 2) || (climate_zone == 4) || (climate_zone == 6) || (climate_zone == 8) || (climate_zone == 12)) // dry

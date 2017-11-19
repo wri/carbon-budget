@@ -124,8 +124,8 @@ INGDAL->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0]; 
 uly=GeoTransform[3]; 
 pixelsize=GeoTransform[1];
-xsize = 5000;
-ysize = 15000;
+xsize = 2500;
+ysize = 2500;
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 //initialize GDAL for writing
@@ -239,19 +239,11 @@ for(x=0; x<xsize; x++)
 		
 		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
 		{
-			// cout << "model value: " << forestmodel_data[x] << "\n";
+			cout << "\n" << forestmodel_data[x] << "\n";
 
-			// float cf;
-			// float c02;
-			// float ch;
-			// float n20;
-			// float peatburn;
-			// float peat_drain;
-			// float flu_val;
-			// float minsoil;
 			
 			float *vars;
-			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], ecozone_data[x], plant_data[x], loss_data[x]);
+			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float cf = *(vars + 0);
 			float c02 = *(vars + 1);
@@ -259,15 +251,18 @@ for(x=0; x<xsize; x++)
 			float n20 = *(vars + 3);
 			float peatburn = *(vars + 4);
 			float peatdrain = *(vars + 5);
-			float flu = *(vars + 6);
+			// float flu = *(vars + 6);
 			
 			float Biomass_tCO2e_nofire;
 			float Biomass_tCO2e_yesfire;
 			
 			float total_c;
 			total_c = agc_data[x] + bgc_data[x] + dead_data[x] +litter_data[x];
-			float outvar;
+	
 			float minsoil;
+			
+			float flu;
+			
 			if (forestmodel_data[x] == 3) // forestry
 			{
 				out_data2[x] = -9999;
@@ -276,6 +271,8 @@ for(x=0; x<xsize; x++)
 				
 				Biomass_tCO2e_yesfire = ((agc_data[x] + bgc_data[x]) * 3.67) + ((2*(agc_data[x] + bgc_data[x])) * cf * ch * pow(10, -3) * 28) + ((2*(agc_data[x] + bgc_data[x])) * cf * n20 * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
+				
+				flu = flu_val(climate_data[x], ecozone_data[x]);
 				
 				if (peat_data[x] > 0) // forestry, peat
 				{
@@ -316,37 +313,46 @@ for(x=0; x<xsize; x++)
 					}
 				}	
 			}
-			
-			else if ((forestmodel_data[x] == 1) || (forestmodel_data[x] == 2)) // deforestation/conversion or shifting ag. only diff is flu val
+
+			else if (forestmodel_data[x] == 1)  // deforestation/conversion 
 			{
 				
 				
+				cout << "\n" << forestmodel_data[x] << "\n";
 				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 			
 				Biomass_tCO2e_nofire = total_c * 3.67;
 
-				if (forestmodel_data[x] == 2) // if shifting ag, change flu val
-				{
-					flu == .72;
-					outvar = outdata2;
-				}
-				else
-				{
-					outvar = outdata0;
-				}
+
+				flu = flu_val(climate_data[x], ecozone_data[x]);
+				cout << "flu is " << flu << "\n";
+	
 				
 				minsoil = soil_data[x]-(soil_data[x] * flu);
+				
+				cout << cf << "\n";
+                cout << ch << "\n";
+                cout << total_c << "\n";
+                cout << n20 << "\n";
+                cout << flu << "\n";
+                
+                cout << Biomass_tCO2e_yesfire << "\n";
+                cout << minsoil << "\n";
+				
 				
 				if (peat_data[x] > 0) // deforestation, peat
 				{
 					if (burn_data[x] > 0) // deforestation, peat, burned
+					
 					{
-						outvar = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						cout << "peat burned \n";
+						outdata0 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 					}
 					
 					else // deforestation, peat, not burned
 					{
-						outvar = Biomass_tCO2e_nofire + peatdrain;
+						cout << "peat not burned \n";
+						outdata0 = Biomass_tCO2e_nofire + peatdrain;
 					}
 				}
 				else // deforestation, not peat
@@ -354,18 +360,78 @@ for(x=0; x<xsize; x++)
 					
 					if (burn_data[x] > 0) // deforestation, not peat, burned
 					{
-						outvar = Biomass_tCO2e_yesfire + minsoil;
+						cout << "not peat, burned \n";
+						outdata0 = Biomass_tCO2e_yesfire + minsoil;
 						
 					}
 					else // deforestation, not peat, not burned
 					{
-						outvar = Biomass_tCO2e_nofire + minsoil;
+						cout << "not peat, not burned \n";
+						outdata0 = Biomass_tCO2e_nofire + minsoil;
 					}
 				}	
+				cout << outdata0 << "\n"; 
+			}
+			
+			else if (forestmodel_data[x] == 2) // shifting ag. only diff is flu val
+			{
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+			
+				Biomass_tCO2e_nofire = total_c * 3.67;
+
+
+				flu == 0.72;
+
+				
+				minsoil = soil_data[x]-(soil_data[x] * .72);
+				
+				cout << cf << "\n";
+                cout << ch << "\n";
+                cout << total_c << "\n";
+                cout << n20 << "\n";
+                cout << "flu is " << flu << "\n";
+                
+                cout << soil_data[x] << "\n";
+                cout << Biomass_tCO2e_yesfire << "\n";
+                cout << minsoil << "\n";
+				
+				
+				if (peat_data[x] > 0) // deforestation, peat
+				{
+					if (burn_data[x] > 0) // deforestation, peat, burned
+					
+					{
+						cout << "peat burned \n";
+						outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+					}
+					
+					else // deforestation, peat, not burned
+					{
+						cout << "peat not burned \n";
+						outdata2 = Biomass_tCO2e_nofire + peatdrain;
+					}
+				}
+				else // deforestation, not peat
+				{
+					
+					if (burn_data[x] > 0) // deforestation, not peat, burned
+					{
+						cout << "not peat, burned \n";
+						outdata2 = Biomass_tCO2e_yesfire + minsoil;
+						
+					}
+					else // deforestation, not peat, not burned
+					{
+						cout << "not peat, not burned \n";
+						outdata2 = Biomass_tCO2e_nofire + minsoil;
+					}
+				}	
+				cout << outdata2 << "\n"; 
 			}
 						
 		   else if (forestmodel_data[x] == 4) // wildfire
 			{
+				flu = flu_val(climate_data[x], ecozone_data[x]);
 				Biomass_tCO2e_yesfire = ((2* agc_data[x] + bgc_data[x]) * cf * c02 * pow(10, -3)) + ((2* agc_data[x] + bgc_data[x]) * cf * ch * pow(10, -3) * 28) + ((2* agc_data[x] + bgc_data[x]) * cf * n20 * pow(10, -3) * 265);
 				
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
@@ -429,7 +495,7 @@ for(x=0; x<xsize; x++)
 			{
 				out_data1[x] = -9999;
 				out_data0[x] = -9999;
-				out_data2[x] = outvar;
+				out_data2[x] = outdata2;
 				out_data3[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 4)
@@ -442,7 +508,7 @@ for(x=0; x<xsize; x++)
 			else if (forestmodel_data[x] == 1)
 			{
 				out_data1[x] = -9999;
-				out_data0[x] = outvar;
+				out_data0[x] = outdata0;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}

@@ -82,21 +82,15 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 	float n20;
 	float peatburn;
 	float peat_drain;
-	float flu_val;
+	// float flu_val;
 	// maybe define ecozone specific ones up here- gef numbers, flu numbers
+	
+	// flu_val = flu(climate, ecozone);
 	
 	if ((forestmodel_data == 1) || (forestmodel_data == 2)) // deforestation/conversion or shifting ag. only diff is flu val
 	{
 		// flu val is independent of ecozone
-		
-		if (forestmodel_data == 2)
-		{
-			flu_val = .72;
-		}
-		else
-		{
-			flu_val = flu(climate, ecozone);
-		}
+	
 		
 		if (ecozone == 2) // deforestation, boreal
 		{
@@ -146,7 +140,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 	else if (forestmodel_data == 3) // forestry
 	{
 		
-		flu_val = flu(climate, ecozone);
+		
 		
 		if (ecozone == 2) // forestry, boreal
 		{
@@ -196,8 +190,6 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 	else if (forestmodel_data == 4) // wildfire
 	{
 		
-		flu_val = flu(climate, ecozone);
-		
 		if (ecozone == 2) // wildfire, boreal
 		{
 			cf = .59;
@@ -242,7 +234,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			cf = 0;
 		}
 	}
-	static float def_variables[7] = {cf, c02, ch, n20, peatburn, peat_drain, flu_val};
+	static float def_variables[6] = {cf, c02, ch, n20, peatburn, peat_drain};
 	
 	return def_variables;
 	
