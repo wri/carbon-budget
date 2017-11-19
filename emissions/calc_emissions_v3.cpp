@@ -29,7 +29,7 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 // in files
 string agb_name=argv[1];
 string tile_id = argv[1];
-string forestmodel_name = tile_id + "_res_forest_model.tif";
+string forestmodel_name = tile_id + "_res_Goode_FinalClassification_15_50uncertain_expanded_wgs84.tif";
 string bgc_name = tile_id + "_bgc.tif";
 string agc_name = tile_id + "_carbon.tif";
 string loss_name = tile_id + "_loss.tif";
@@ -266,7 +266,7 @@ for(x=0; x<xsize; x++)
 			
 			float total_c;
 			total_c = agc_data[x] + bgc_data[x] + dead_data[x] +litter_data[x];
-				
+			float outvar;
 			float minsoil;
 			if (forestmodel_data[x] == 3) // forestry
 			{
@@ -319,13 +319,20 @@ for(x=0; x<xsize; x++)
 			
 			else if ((forestmodel_data[x] == 1) || (forestmodel_data[x] == 2)) // deforestation/conversion or shifting ag. only diff is flu val
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 				
+				
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+			
 				Biomass_tCO2e_nofire = total_c * 3.67;
 
 				if (forestmodel_data[x] == 2) // if shifting ag, change flu val
 				{
 					flu == .72;
+					outvar = outdata2;
+				}
+				else
+				{
+					outvar = outdata0;
 				}
 				
 				minsoil = soil_data[x]-(soil_data[x] * flu);
@@ -334,12 +341,12 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // deforestation, peat, burned
 					{
-						outdata0 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outvar = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 					}
 					
 					else // deforestation, peat, not burned
 					{
-						outdata0 = Biomass_tCO2e_nofire + peatdrain;
+						outvar = Biomass_tCO2e_nofire + peatdrain;
 					}
 				}
 				else // deforestation, not peat
@@ -347,12 +354,12 @@ for(x=0; x<xsize; x++)
 					
 					if (burn_data[x] > 0) // deforestation, not peat, burned
 					{
-						outdata0 = Biomass_tCO2e_yesfire + minsoil;
+						outvar = Biomass_tCO2e_yesfire + minsoil;
 						
 					}
 					else // deforestation, not peat, not burned
 					{
-						outdata0 = Biomass_tCO2e_nofire + minsoil;
+						outvar = Biomass_tCO2e_nofire + minsoil;
 					}
 				}	
 			}
@@ -422,7 +429,7 @@ for(x=0; x<xsize; x++)
 			{
 				out_data1[x] = -9999;
 				out_data0[x] = -9999;
-				out_data2[x] = outdata2;
+				out_data2[x] = outvar;
 				out_data3[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 4)
@@ -435,7 +442,7 @@ for(x=0; x<xsize; x++)
 			else if (forestmodel_data[x] == 1)
 			{
 				out_data1[x] = -9999;
-				out_data0[x] = outdata0;
+				out_data0[x] = outvar;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
 			}

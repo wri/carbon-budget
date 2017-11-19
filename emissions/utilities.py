@@ -44,7 +44,7 @@ def download(file_dict, tile_id):
         subprocess.check_call(cmd)
         
     for data_prep_file in data_prep_file_list:
-        src = 's3://gfw-files/sam/carbon_budget/data_inputs/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
+        src = 's3://gfw-files/sam/carbon_budget/data_inputs2/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
         
