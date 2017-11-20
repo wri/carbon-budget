@@ -39,7 +39,7 @@ def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
     for carbon_file in carbon_pool_files:
-        src = 's3://gfw-files/sam/carbon_budget/carbon_061417/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
+        src = 's3://gfw-files/sam/carbon_budget/carbon_111717/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
         
