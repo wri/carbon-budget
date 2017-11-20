@@ -3,6 +3,7 @@
 #include <stdlib.h>
 using namespace std;
 
+
 float forestry_peat_burned(int ecozone_data, float agc_data, float bgc_data, int loss_data, int ifl_data, int peat_drn_ann)
 {
 	float outdata1;
@@ -97,6 +98,31 @@ float forestry_peat_xburned(int ecozone_data, int agc_data, int bgc_data, int lo
 	
 	return outdata1;
 						
+}
+
+
+int peat_forestry_burned(int ecozone_data)
+{
+		if (ecozone_data[x] == 3) // forestry, peat, burned, temperate
+	{
+		outdata1 =  ((agc_data[x] + bgc_data[x]) * 3.67) + ((2*(agc_data[x]+bgc_data[x])) *0.62 * 4.7 * pow(10, -3) * 28) + ((2*(agc_data[x] + bgc_data[x])) * 0.62 *0.26 * pow(10, -3) * 265)+(15 - loss_data[x])*12+104;
+	}
+	else if (ecozone_data[x] == 2) // forestry, peat, burned, boreal
+	{
+		outdata1 =  ((agc_data[x] + bgc_data[x]) * 3.67) + ((2*(agc_data[x]+bgc_data[x])) *0.33 * 4.7 * pow(10, -3) * 28) + ((2*(agc_data[x] + bgc_data[x])) * 0.33 *0.26 * pow(10, -3) * 265)+(15 - loss_data[x])*3+104;
+	}
+	else if (ecozone_data[x] == 1) // forestry, peat, burned, tropic
+	{
+		if (ifl_data[x] != 0) // forestry, peat, burned, tropic, ifl
+		{
+			outdata1 =  ((agc_data[x] + bgc_data[x]) * 3.67) + ((2*(agc_data[x]+bgc_data[x])) *0.36 * 6.8 * pow(10, -3) * 28) + ((2*(agc_data[x] + bgc_data[x])) * 0.36 *0.2 * pow(10, -3) * 265)+(15 - loss_data[x])* peat_drn_ann + 355;
+		}
+		else // forestry, peat, burned, tropic, not ifl
+		{
+			 outdata1 = ((agc_data[x] + bgc_data[x]) * 3.67) + ((2*(agc_data[x]+bgc_data[x])) *0.55 * 6.8 * pow(10, -3) * 28) + ((2*(agc_data[x] + bgc_data[x])) * 0.55 *0.2 * pow(10, -3) * 265)+(15 - loss_data[x])* peat_drn_ann +355;
+		}
+	}
+	return outdata1
 }
 
 int peat_drn_ann_calc(int forestmodel_data, int plant_data)

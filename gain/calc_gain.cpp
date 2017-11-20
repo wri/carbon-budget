@@ -10,11 +10,15 @@
 #include <sstream>
 #include <iomanip>
 using namespace std;
-#include <gdal/gdal_priv.h>
-#include <gdal/cpl_conv.h>
-#include <gdal/ogr_spatialref.h>
+#include <gdal_priv.h>
+#include <cpl_conv.h>
+#include <ogr_spatialref.h>
+
+// #include <gdal/gdal_priv.h>
+// #include <gdal/cpl_conv.h>
+// #include <gdal/ogr_spatialref.h>
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
-// to compile on MINGW: g++ calc_emissions_v2.cpp -o calc_emissions_v2.exe -I /usr/local/include -L /usr/local/lib -lgdal
+// to compile on MINGW: g++ calc_gain.cpp -o calc_gain.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
 //passing arguments
@@ -23,12 +27,12 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 // in files
 string tile_id = argv[1];
 
-string tcd_name = tile_id + "_treecover2000_h.tif";
-string plant_gr_name = tile_id + "_res_gfw_plantations.tif";
-string loss_name = tile_id + "_lossyear_h.tif";
-string gain_name = tile_id + "_gain_h.tif";
-string old_gr_name = tile_id + "_old_res.tif";
-string young_gr_name = tile_id + "_young_res.tif";
+string tcd_name = tile_id + "_tcd.tif";
+string plant_gr_name = tile_id + "_plantations.tif";
+string loss_name = tile_id + "_loss.tif";
+string gain_name = tile_id + "_gain.tif";
+string old_gr_name = tile_id + "_old.tif";
+string young_gr_name = tile_id + "_young.tif";
 
 // out files
 string out_name1= "outdata/" + tile_id + "_gain.tif";
@@ -67,6 +71,9 @@ INBAND6 = INGDAL6->GetRasterBand(1);
 
 xsize=INBAND3->GetXSize(); 
 ysize=INBAND3->GetYSize();
+
+xsize = 5000;
+ysize = 5000;
 INGDAL->GetGeoTransform(GeoTransform);
 
 ulx=GeoTransform[0]; 
@@ -114,6 +121,8 @@ INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, young_gr_data, xsize, 1, GDT_Float32,
 
 for(x=0; x<xsize; x++)
 	{
+		int growth_rate;
+		growth_rate = 1.99;
 		// for now, replace plant_gr_data with old_growth rate
 		if (tcd_data[x] > 0) // on TCD > 0
 		{
@@ -125,23 +134,24 @@ for(x=0; x<xsize; x++)
 				{
 					if (gain_data[x] > 0 ) // plantations, loss, gain
 					{
-                                                outdata1[x] = (plant_gr_data[x] * (loss_data[x]-1)) + ((15-(loss_data[x]+1)/2) * plant_gr_data[x]);					}
+						outdata1[x] = (growth_rate * (loss_data[x]-1)) + ((15-(loss_data[x]+1)/2) * growth_rate);					
+					}
 					
 					else // tcd, plantation, loss, no gain
 					{
-						outdata1[x] = (plant_gr_data[x]) * (loss_data[x] -1);
+						outdata1[x] = (growth_rate) * (loss_data[x] -1);
 					}
 				}
 				else // plantation, no loss
 				{
 					if (gain_data[x] > 0 ) // plantations, no loss, gain
 					{
-						outdata1[x] = plant_gr_data[x] * 7.5;
+						outdata1[x] = growth_rate * 7.5;
 						
 					}
 					else // plantations, no loss, no gain
 					{
-						outdata1[x] = plant_gr_data[x] * 15;
+						outdata1[x] = growth_rate * 15;
 					}
 				}
 			}

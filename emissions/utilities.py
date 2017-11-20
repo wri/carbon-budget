@@ -24,9 +24,9 @@ def merge_tiles(tile_id):
 
 
 def upload_final(tile_id):
-    files = ['disturbance', 'shiftingag', 'forestry', 'wildfire', 'deforestation']
+    files = ['disturbance_model', 'shiftingag_model', 'forestry_model', 'wildfire_model', 'deforestation_model', 'node_totals']
     for f in files:
-        to_upload = "outdata/{0}_{1}_model.tif".format(tile_id, f)
+        to_upload = "outdata/{0}_{1}.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)
         destination = 's3://gfw-files/sam/carbon_budget/emissions/{}/'.format(f)
         cmd = ['aws', 's3', 'mv', to_upload, destination]

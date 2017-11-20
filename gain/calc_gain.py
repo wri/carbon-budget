@@ -12,40 +12,42 @@ def calc_gain(tile_id):
 
     print "\n-------TILE ID: {}".format(tile_id)
     
-    if not os.path.exists("oudata/"):
+    if not os.path.exists("outdata/"):
         try:
             os.mkdir("outdata/")
         except:
             pass
-            
-    tcd = '{}_treecover2000.tif'.format(tile_id)
-    loss = '{}_loss.tif'.format(tile_id)
-    gain = '{}_gain.tif'.format(tile_id)
+
+    loss = 's3://gfw2-data/forest_change/hansen_2016/{}.tif'
+    tcd = 's3://gfw2-data/forest_cover/2000_treecover/Hansen_GFC2014_treecover2000_{}.tif'
+    gain = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/Hansen_GFC2015_gain_{}.tif'
+    plantations = 's3://gfw-files/sam/carbon_budget/data_inputs2/gfw_plantations/{}_res_gfw_plantations.tif'
     
-    old_gr = "{}_res_old.tif".format(tile_id)
-    young_gr = "{}_res_youn.tif".format(tile_id)
-    plantations = '{}_res_gfw_plantations.tif'.format(tile_id)
-    
-    # download files
-    for filetype in ['treecover2000', 'lossyear', 'gain']:
-        utilities.wget2015data(tile_id, filetype)
-    
-    # download plantations
-    utilities.download_plant(tile_id)
+    for tree_raster in [{loss:'{}_loss.tif'}, {tcd: '{}_tcd.tif'}, {gain: '{}_gain.tif'}, {plantations: '{}_plantations.tif'}]:
+        for source, dest in tree_raster.iteritems():
+            source = source.format(tile_id)
+            print source
+      
+            dest = dest.format(tile_id)
+            utilities.s3_download(source, dest)
 
     # download growth
-    utilities.download_growth(tile_id)
-
+    for growthtype in ['old', 'young']:
+        source = 's3://gfw-files/sam/carbon_budget/growth_rasters/{0}_{1}.tif'.format(tile_id, growthtype)
+        utilities.s3_download(source, '.')
+    
     # run c++
     gain_tiles_cmd = ['./calc_gain.exe', tile_id]
     subprocess.check_call(gain_tiles_cmd)
-    source = 'outdata/{}_gain.tif'.format(tile_id)
-    cmd = ['aws', 's3', 'cp', source, 's3://gfw-files/sam/carbon_budget/gain/']
-    subprocess.check_call(cmd)   
+    
+    
+    # source = 'outdata/{}_gain.tif'.format(tile_id)
+    # cmd = ['aws', 's3', 'cp', source, 's3://gfw-files/sam/carbon_budget/gain/']
+    # subprocess.check_call(cmd)   
 
-    # remove files:
-    tiles = glob.glob('{}*tif'.format(tile_id))
-    for tile in tiles:
-        os.remove(tile)
+    # # remove files:
+    # tiles = glob.glob('{}*tif'.format(tile_id))
+    # for tile in tiles:
+        # os.remove(tile)
 
-#calc_gain('00N_140E')
+calc_gain('00N_110E')

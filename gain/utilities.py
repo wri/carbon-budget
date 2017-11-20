@@ -1,19 +1,9 @@
 import subprocess
 
 
-def download_growth(tile_id):
-    for growthtype in ['old', 'young']:
-        source = 's3://gfw-files/sam/carbon_budget/growth_rasters/{0}_{1}_res.tif'.format(tile_id, growthtype)
-	cmd = ['aws', 's3', 'cp', source, '.']
-	subprocess.check_call(cmd)
-
-
-def download_plant(tile_id):
-    plantations = 's3://gfw-files/sam/carbon_budget/data_inputs/gfw_plantations/{}_res_gfw_plantations.tif'.format(tile_id)
-    cmd = ['aws', 's3', 'cp', plantations, '.']
-    
+def s3_download(source, dest):
+    cmd = ['aws', 's3', 'cp', source, dest]
     subprocess.check_call(cmd)
-    
     
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
