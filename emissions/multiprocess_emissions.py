@@ -17,15 +17,19 @@ tiles_in_chunk = 20
 for chunk in chunks(biomass_tile_list, 20):
     for tile_id in chunk:
 
-        # download files
-        peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
+        # # download files
+        # peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
 
-        files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'Goode_FinalClassification_15_50uncertain_expanded_wgs84', 'climate_zone'], 'burned_area':['burn_loss_year']}
+        # files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'Goode_FinalClassification_15_50uncertain_expanded_wgs84', 'climate_zone'], 'burned_area':['burn_loss_year']}
         
-        utilities.download(files, tile_id)
-
+        # utilities.download(files, tile_id)
+        
         # download hansen tile
         hansen_tile = utilities.wgetloss(tile_id)
+        
+        # if idn plant tile downloade, mask loss with plantations
+        if tile_id in ['00N_090E', '00N_100E', '00N_110E', '00N_120E', '00N_130E', '00N_140E', '10N_090E', '10N_100E', '10N_110E', '10N_120E', '10N_130E', '10N_140E']:
+            utilities.mask_loss(tile_id)
     
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=20)

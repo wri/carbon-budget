@@ -224,11 +224,18 @@ for(x=0; x<xsize; x++)
 	
 	{
 
-		float outdata3 = 0;
-		float outdata2 = 0;
-		float outdata0 = 0;
-		float outdata1 = 0;
-		float outdata4 = 0;
+		// float outdata3 = 0;
+		// float outdata2 = 0;
+		// float outdata0 = 0;
+		// float outdata1 = 0;
+		// float outdata4 = 0;
+
+		float outdata3;
+		float outdata2;
+		float outdata0;
+		float outdata1;
+		float outdata4;
+
 		
 		// change nodata to 0 bc we want to add them to create total carbon
 		if (dead_data[x] == -9999)

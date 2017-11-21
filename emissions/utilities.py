@@ -34,10 +34,21 @@ def upload_final(tile_id):
             subprocess.check_call(cmd)
         except:
             print "error uploading"
-        
+
+def mask_loss(tile_id):
+    # modify loss tile by erasing where plantations
+    idn_plant_shp = 'plant_est_2000_or_earlier.shp'
+    loss_tile = '{}_loss.tif'.format(tile_id)
+    
+    cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
+    
+    subprocess.check_call(cmd)
+    
+    
 def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
+    
     for carbon_file in carbon_pool_files:
         src = 's3://gfw-files/sam/carbon_budget/carbon_111717/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
         cmd = ['aws', 's3', 'cp', src, '.']
@@ -52,7 +63,18 @@ def download(file_dict, tile_id):
     src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
     cmd = ['aws', 's3', 'cp', src, '.']
     subprocess.check_call(cmd)
+    
+    #download idn plantations tile
+    src = 's3://gfw-files/sam/carbon_budget/idn_plant_est_2000_or_earlier/plant_est_2000_or_earlier.zip'
+    cmd = ['aws', 's3', 'cp', src, '.']
+    
+    subprocess.check_call(cmd)
+    
+    # unzip
+    cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', '.']
+    subprocess.check_call(cmd) 
 
+        
    # rename whichever peatland file was downloaded
     peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
     for peat_file in peat_files:
