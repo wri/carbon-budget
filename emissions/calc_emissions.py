@@ -41,3 +41,5 @@ def calc_emissions(tile_id):
     #utilities.del_tiles(tile_id)
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
+    
+calc_emissions('00N_110E')

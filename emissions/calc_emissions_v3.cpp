@@ -224,17 +224,19 @@ for(x=0; x<xsize; x++)
 	
 	{
 
-		// float outdata3 = 0;
-		// float outdata2 = 0;
-		// float outdata0 = 0;
-		// float outdata1 = 0;
-		// float outdata4 = 0;
+		float outdata3 = 0;
+		float outdata2 = 0;
+		float outdata0 = 0;
+		float outdata1 = 0;
+		float outdata4 = 0;
+		float outdata5 = 0;
+		float outdata5_model = 0;
 
-		float outdata3;
-		float outdata2;
-		float outdata0;
-		float outdata1;
-		float outdata4;
+		// float outdata3 = -9999;
+		// float outdata2 = -9999;
+		// float outdata0 = -9999;
+		// float outdata1 = -9999;
+		// float outdata4 = -9999;
 
 		
 		// change nodata to 0 bc we want to add them to create total carbon
@@ -435,12 +437,61 @@ for(x=0; x<xsize; x++)
 				}	
 			}
 		
-		   else // no forest model data- make it no data
+		   else // no forest model data- make it no data except make disturbance model same as forestry, nancy said.
 			{
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
 				out_data0[x] = -9999;
 				out_data3[x] = -9999;
+				
+				
+				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
+				
+				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
+				flu = flu_val(climate_data[x], ecozone_data[x]);
+				
+				if (peat_data[x] > 0) // no class, peat
+				{
+					if (burn_data[x] > 0 ) // no class, peat, burned
+					{
+						outdata5_model = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = 20;
+					}
+					else // no class, peat, not burned
+					{
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))
+						{
+							outdata5_model = Biomass_tCO2e_nofire;	
+							outdata4 = 21;							
+						}
+						else
+						{
+							if (plant_data[x] > 0)
+							{
+								outdata5_model = Biomass_tCO2e_nofire + peatdrain;
+								outdata4 = 22;		
+							}
+							else
+							{
+								outdata5_model = Biomass_tCO2e_nofire;
+								outdata4 = 23;
+							}
+						}
+					}
+				}
+				else 
+				{
+					if (burn_data[x] > 0) // no class, not peat, burned
+					{
+						outdata5_model = Biomass_tCO2e_yesfire;
+						outdata4 = 24;
+					}
+					else // no class, not peat, not burned
+					{
+						outdata5_model = Biomass_tCO2e_nofire;
+						outdata4 = 25;
+					}
+				}	
 			}
 
 			// write the variable to the pixel value
@@ -483,8 +534,18 @@ for(x=0; x<xsize; x++)
 				// node total raster
 				out_data4[x] = outdata4;
 				
+				
+				
 				// add up all outputs to make merged output
-				out_data5[x] = outdata0 + outdata1 + outdata2 + outdata3;
+	
+				outdata5 = outdata0 + outdata1 + outdata2 + outdata3 + outdata5_model;
+				if ((outdata5 == 0) || (outdata5 == -9999))
+				{
+					out_data5[x] = -9999;
+				}
+				else{
+					out_data5[x] = outdata5;
+				}
 		}	
 		
 		else // not on loss AND carbon

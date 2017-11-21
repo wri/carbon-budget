@@ -72,7 +72,7 @@ def download(file_dict, tile_id):
     
     # unzip
     cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', '.']
-    subprocess.check_call(cmd) 
+    #subprocess.check_call(cmd) 
 
         
    # rename whichever peatland file was downloaded
