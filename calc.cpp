@@ -6,9 +6,9 @@ using namespace std;
 float deadwood_calc(float biome_data, float elevation_data, float precip_data, float agb_data)
 {
 	float deadwood;
-	if (elevation_data == -32768)
+	if (elevation_data == -32768 && biome_data ==2)
 	{
-		deadwood = 0;
+		deadwood = agb_data * .08 * .47;
 	}
 	else
 	{
