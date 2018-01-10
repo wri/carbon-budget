@@ -6,5 +6,5 @@ tiles_over_gadm = ['00N_000E', '00N_010E', '00N_020E', '00N_020W', '00N_030E', '
 #tiles_over_gadm = ['60N_060E']
 if __name__ == '__main__':
      count = multiprocessing.cpu_count()
-     pool = multiprocessing.Pool(processes=8)
+     pool = multiprocessing.Pool(processes=5)
      pool.map(calc_all_inputs_exist.calc_all_inputs_exist, tiles_over_gadm)
