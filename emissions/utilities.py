@@ -10,7 +10,7 @@ def del_tiles(tile_id):
     tiles = glob.glob('*{}*tif'.format(tile_id))
     for tile in tiles:
         os.remove(tile)
-        
+
 def merge_tiles(tile_id):
     mergetif = 'outdata/{}_disturbance_model.tif'.format(tile_id)
     conversion_tif = 'outdata/{}_shiftingag_model.tif'.format(tile_id)
@@ -39,42 +39,47 @@ def mask_loss(tile_id):
     # modify loss tile by erasing where plantations
     idn_plant_shp = 'plant_est_2000_or_earlier.shp'
     loss_tile = '{}_loss.tif'.format(tile_id)
-    
+
     cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
-    
+
     subprocess.check_call(cmd)
-    
-    
+
+
 def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
-    
+
     for carbon_file in carbon_pool_files:
         src = 's3://gfw-files/sam/carbon_budget/carbon_111717/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
-        
+
     for data_prep_file in data_prep_file_list:
-        src = 's3://gfw-files/sam/carbon_budget/data_inputs2/{1}/{0}_res_{1}.tif'.format(tile_id, data_prep_file)
+        file_name = {0}_res_{1}.tif'.format(tile_id, data_prep_file)
+
+        if data_prep_file == 'tsc_model':
+            file_name = '{0}_{1}.tif'.format(tile_id, data_prep_file)
+
+        src = 's3://gfw-files/sam/carbon_budget/data_inputs2/{0}/{1}'.format(data_prep_file, file_namne)
         cmd = ['aws', 's3', 'cp', src, '.']
         subprocess.check_call(cmd)
-        
+
     burned_area = file_dict['burned_area'][0]
     src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
     cmd = ['aws', 's3', 'cp', src, '.']
     subprocess.check_call(cmd)
-    
+
     #download idn plantations tile
     src = 's3://gfw-files/sam/carbon_budget/idn_plant_est_2000_or_earlier/plant_est_2000_or_earlier.zip'
     cmd = ['aws', 's3', 'cp', src, '.']
-    
+
     subprocess.check_call(cmd)
-    
+
     # unzip
     cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', '.']
-    #subprocess.check_call(cmd) 
+    #subprocess.check_call(cmd)
 
-        
+
    # rename whichever peatland file was downloaded
     peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
     for peat_file in peat_files:
@@ -86,11 +91,11 @@ def wgetloss(tile_id):
     print "download hansen loss tile"
     hansen_tile = 's3://gfw2-data/forest_change/hansen_2016/{}.tif'.format(tile_id)
     local_hansen_tile = '{}_loss.tif'.format(tile_id)
-    
+
     cmd = ['aws', 's3', 'cp', hansen_tile, local_hansen_tile]
-    
+
     subprocess.check_call(cmd)
-    
+
     return local_hansen_tile
 
 
@@ -156,11 +161,11 @@ def resample_clip_raster(rasters_to_resample, tile_id, coords, coords_te):
         if raster == "forest_model":
             base_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999',
                         input_raster, clipped_raster, '-tr', '.00025', '.00025']
-                        
+
             clip_cmd = base_cmd + coords
             print clip_cmd
             subprocess.check_call(clip_cmd)
-        
+
         elif raster == 'cifor_peat_mask':
             clipped_raster = 'test1.tif'
             final_raster = '{0}_res_{1}.tif'.format(tile_id, raster)
@@ -168,28 +173,28 @@ def resample_clip_raster(rasters_to_resample, tile_id, coords, coords_te):
                         input_raster, clipped_raster, '-tr', '.00025', '.00025']
             cmd = base_cmd + coords
             subprocess.check_call(cmd)
-            
+
             clipped_raster2 = 'test.tif'
             basecmd = ['gdalwarp', '-tr', '.00025', '.00025', '-tap', clipped_raster, clipped_raster2]
             cmd = basecmd + coords_te
             subprocess.check_call(cmd)
-            
+
             base_cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999',
                         clipped_raster2, final_raster, '-tr', '.00025', '.00025']
             cmd = base_cmd + coords
             subprocess.check_call(cmd)
-            
+
             os.remove('test1.tif', 'test2.tif')
-            
+
         else:
             base_cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '-9999',
             input_raster, clipped_raster, '-tr', '.00025', '.00025']
             clip_cmd = base_cmd + coords
             print clip_cmd
-            subprocess.check_call(clip_cmd)        
-       
-        
-        
+            subprocess.check_call(clip_cmd)
+
+
+
     return clipped_raster
 
 
@@ -204,11 +209,11 @@ def download_burned_areas(window):
 
 
 def download_allburned_areas():
-    
+
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/TIFF/'
     download_cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--no-parent', '-A', '*burndate.tif', ftp_path]
     print download_cmd
-    #subprocess.check_call(download_cmd)  
+    #subprocess.check_call(download_cmd)
 
 
 def multiprocess_download(windows):
@@ -230,16 +235,16 @@ def get_windows_in_tile(tile_id):
     csv = 'burned_area_tile_index.csv'
 
     burned_index_df = pd.read_csv(csv)
-    
+
     # find the windows for the given tile id
     window = burned_index_df.loc[burned_index_df['tile'] == tile_id, 'window']
-    
+
     # convert results to list
     list_of_windows = window.values.tolist()
-    
+
     # remove any duplicates
     list_of_windows = list(set(list_of_windows))
-    
+
     return list_of_windows
 
 
