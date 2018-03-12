@@ -1,4 +1,4 @@
-from utilities import util
+from util import utilities as util
 import multiprocessing
 
 # get list of tile from s3
@@ -6,7 +6,7 @@ tiles_on_s3 = util.check_output_exists('deadwood')
 
 if __name__ == '__main__':
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=8)
+    pool = multiprocessing.Pool(processes=count-3)
     pool.map(util.qc_minmax_vals, tiles_on_s3)
 
 # download tile
