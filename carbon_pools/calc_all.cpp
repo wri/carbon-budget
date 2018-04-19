@@ -12,7 +12,7 @@
 #include <gdal/gdal_priv.h>
 #include <gdal/cpl_conv.h>
 #include <gdal/ogr_spatialref.h>
-#include "calc.cpp"
+#include "deadwood_litter.cpp"
 using namespace std;
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt

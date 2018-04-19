@@ -1,14 +1,13 @@
-import subprocess
-from osgeo import gdal
-import utilities
-import shutil
 import os
+import subprocess
 import sys
+
+import utilities
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-import get_extent
+from carbon_pools import get_extent
 
 
 def clip_year_tiles(tile_year_list):

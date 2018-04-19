@@ -15,8 +15,8 @@
 #include <ogr_spatialref.h>
 
 #include "flu_val.cpp"
-// #include "calc.cpp"
 #include "equations.cpp"
+
 using namespace std;
 
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal

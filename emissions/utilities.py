@@ -55,7 +55,7 @@ def download(file_dict, tile_id):
         subprocess.check_call(cmd)
 
     for data_prep_file in data_prep_file_list:
-        file_name = {0}_res_{1}.tif'.format(tile_id, data_prep_file)
+        file_name = '{0}_res_{1}.tif'.format(tile_id, data_prep_file)
 
         if data_prep_file == 'tsc_model':
             file_name = '{0}_{1}.tif'.format(tile_id, data_prep_file)

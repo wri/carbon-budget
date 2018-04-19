@@ -1,10 +1,9 @@
-import subprocess
 import datetime
 import os
+import subprocess
 
 import get_extent
-import glob
-import shutil
+
 
 def calc_all(tile_id):
     start = datetime.datetime.now()
