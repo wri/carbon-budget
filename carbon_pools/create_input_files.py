@@ -9,7 +9,7 @@ def create_input_files(tile_id, carbon_budget_input_data_dir, biomass_tile):
     xmin, ymin, xmax, ymax = util.get_extent(biomass_tile)
 
     print "clip soil"
-    extra_param = ['-tr', '.00025', '.00025', '-a_nodata', '0']
+    extra_param = ['-tr', '.00025', '.00025', '-dstnodata', '0']
     clip_soil_tile = util.clip('hwsd_oc_final.tif', '{}_soil.tif'.format(tile_id), xmin, ymin, xmax, ymax, extra_param)
 
     print "removing no data flag from soil"

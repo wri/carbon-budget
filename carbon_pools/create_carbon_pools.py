@@ -23,11 +23,11 @@ def create_carbon_pools(tile_id):
 
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
-    #util.download('s3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/{}'.format(biomass_tile))
+    util.download('s3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/{}'.format(biomass_tile))
 
     print "creating input files"
     create_input_files(tile_id, carbon_budget_input_data_dir, biomass_tile)
-
+ 
     print 'writing carbon, bgc, deadwood, litter, total'
     calc_all_cmd = ['./calc_all.exe', tile_id]
     subprocess.check_call(calc_all_cmd)

@@ -34,11 +34,12 @@ def resample(in_file, out_file):
 
 
 def clip(in_file, out_file,  xmin, ymin, xmax, ymax, extra_param=None):
-    cmd = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW',
-            in_file, out_file]
+    #cmd = ['gdal_translate', '-projwin', str(xmin), str(ymax), str(xmax), str(ymin), '-co', 'COMPRESS=LZW',
+     #       in_file, out_file]
 
+    cmd = ['gdalwarp', '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-co', 'COMPRESS=LZW', in_file, out_file]
     if extra_param:
-        cmd += extra_param
+        cmd += extra_param + ['-tap']
 
     subprocess.check_call(cmd)
 
