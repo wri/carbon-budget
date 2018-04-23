@@ -88,3 +88,6 @@ config/hot_export_token.txt
 *.tif
 *.csv
 *.txt
+*.zip
+*.exe
+

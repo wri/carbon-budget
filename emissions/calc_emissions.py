@@ -30,8 +30,7 @@ def calc_emissions(tile_id):
    
     print 'writing emissions tiles'
     
-        
-    emissions_tiles_cmd = ['./calc_emissions_v3.exe', tile_id]
+    emissions_tiles_cmd = ['cpp_util/calc_emissions_v3.exe', tile_id]
     subprocess.check_call(emissions_tiles_cmd)
 
    #upload tiles
