@@ -20,7 +20,7 @@
 using namespace std;
 
 //to compile:  c++ raster_math.cpp -o raster_math -lgdal
-// to compile on MINGW: g++ calc_emissions_v2.cpp -o calc_emissions_v2.exe -I /usr/local/include -L /usr/local/lib -lgdal
+// to compile on MINGW: g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
 //passing arguments
@@ -30,18 +30,18 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 string agb_name=argv[1];
 string tile_id = argv[1];
 string forestmodel_name = tile_id + "_res_Goode_FinalClassification_15_50uncertain_expanded_wgs84.tif";
-string bgc_name = tile_id + "_bgc.tif";
-string agc_name = tile_id + "_carbon.tif";
-string loss_name = tile_id + "_loss.tif";
-string burn_name = tile_id + "_burnyear.tif"; 
-string ecozone_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
-string climate_name = tile_id + "_res_climate_zone.tif";
-string dead_name = tile_id + "_deadwood.tif";
-string litter_name = tile_id + "_litter.tif";
-string soil_name = tile_id + "_soil.tif";
-string peat_name = tile_id + "_peat.tif";
-string ifl_name = tile_id + "_res_ifl_2000.tif";
-string plant_name = tile_id + "_res_gfw_plantations.tif";
+string bgc_name = '../' + tile_id + "_bgc.tif";
+string agc_name = '../' + tile_id + "_carbon.tif";
+string loss_name = '../' + tile_id + "_loss.tif";
+string burn_name = '../' + tile_id + "_burnyear.tif";
+string ecozone_name = '../' + tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
+string climate_name = '../' + tile_id + "_res_climate_zone.tif";
+string dead_name = '../' + tile_id + "_deadwood.tif";
+string litter_name = '../' + tile_id + "_litter.tif";
+string soil_name = '../' + tile_id + "_soil.tif";
+string peat_name = '../' + tile_id + "_peat.tif";
+string ifl_name = '../' + tile_id + "_res_ifl_2000.tif";
+string plant_name = '../' + tile_id + "_res_gfw_plantations.tif";
 
 // out files
 string out_name0= "outdata/" + tile_id + "_deforestation_model.tif";
