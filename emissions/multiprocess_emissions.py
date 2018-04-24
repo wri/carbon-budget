@@ -37,8 +37,8 @@ for chunk in chunks(biomass_tile_list, tiles_in_chunk):
         # were established in yr 2000.
         if tile_id in ['00N_090E', '00N_100E', '00N_110E', '00N_120E', '00N_130E', '00N_140E', '10N_090E', '10N_100E', '10N_110E', '10N_120E', '10N_130E', '10N_140E']:
             print "cutting out plantations in idn, mys"
-            utilities.mask_loss(tile_id)
-
+#            utilities.mask_loss(tile_id)
+        sys.exit()
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=20)
     pool.map(calc_emissions.calc_emissions, chunk)
