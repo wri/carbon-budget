@@ -48,10 +48,10 @@ def mask_loss(tile_id):
 def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
-
+    dest_folder = 'cpp_util/'
     for carbon_file in carbon_pool_files:
         src = 's3://gfw-files/sam/carbon_budget/carbon_030218/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
-        cmd = ['aws', 's3', 'cp', src, '.']
+        cmd = ['aws', 's3', 'cp', src, dest_folder]
         subprocess.check_call(cmd)
 
     for data_prep_file in data_prep_file_list:
@@ -61,36 +61,37 @@ def download(file_dict, tile_id):
             file_name = '{0}_{1}.tif'.format(tile_id, data_prep_file)
 
         src = 's3://gfw-files/sam/carbon_budget/data_inputs2/{0}/{1}'.format(data_prep_file, file_name)
-        cmd = ['aws', 's3', 'cp', src, '.']
+        cmd = ['aws', 's3', 'cp', src, dest_folder]
         subprocess.check_call(cmd)
 
     burned_area = file_dict['burned_area'][0]
     src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
-    cmd = ['aws', 's3', 'cp', src, '.']
+    cmd = ['aws', 's3', 'cp', src, dest_folder]
     subprocess.check_call(cmd)
 
     #download idn plantations tile
     src = 's3://gfw-files/sam/carbon_budget/idn_plant_est_2000_or_earlier/plant_est_2000_or_earlier.zip'
-    cmd = ['aws', 's3', 'cp', src, '.']
+    cmd = ['aws', 's3', 'cp', src, dest_folder]
 
     subprocess.check_call(cmd)
 
     # unzip
-    cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', '.']
+    cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', dest_folder]
     #subprocess.check_call(cmd)
 
 
    # rename whichever peatland file was downloaded
     peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
     for peat_file in peat_files:
-        one_peat = glob.glob("{0}*{1}*".format(tile_id, peat_file))
+        one_peat = glob.glob("{0}/{1}*{2}*".format(dest_folder, tile_id, peat_file))
         if len(one_peat) == 1:
-            os.rename(one_peat[0], '{}_peat.tif'.format(tile_id))
+            os.rename(one_peat[0], '{0}/{1}_peat.tif'.format(dest_folder, tile_id))
 
 def wgetloss(tile_id):
     print "download hansen loss tile"
+    dest_folder = 'cpp_util/'
     hansen_tile = 's3://gfw2-data/forest_change/hansen_2016/{}.tif'.format(tile_id)
-    local_hansen_tile = '{}_loss.tif'.format(tile_id)
+    local_hansen_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
 
     cmd = ['aws', 's3', 'cp', hansen_tile, local_hansen_tile]
 

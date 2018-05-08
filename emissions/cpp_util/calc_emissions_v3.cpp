@@ -10,9 +10,9 @@
 #include <sstream>
 #include <iomanip>
 
-#include <gdal_priv.h>
-#include <cpl_conv.h>
-#include <ogr_spatialref.h>
+#include <gdal/gdal_priv.h>
+#include <gdal/cpl_conv.h>
+#include <gdal/ogr_spatialref.h>
 
 #include "flu_val.cpp"
 #include "equations.cpp"
@@ -29,19 +29,22 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 // in files
 string agb_name=argv[1];
 string tile_id = argv[1];
-string forestmodel_name = tile_id + "_res_Goode_FinalClassification_15_50uncertain_expanded_wgs84.tif";
-string bgc_name = "../" + tile_id + "_bgc.tif";
-string agc_name = "../" + tile_id + "_carbon.tif";
-string loss_name = "../" + tile_id + "_loss.tif";
-string burn_name = "../" + tile_id + "_burnyear.tif";
-string ecozone_name = "../" + tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
-string climate_name = "../" + tile_id + "_res_climate_zone.tif";
-string dead_name = "../" + tile_id + "_deadwood.tif";
-string litter_name = "../" + tile_id + "_litter.tif";
-string soil_name = "../" + tile_id + "_soil.tif";
-string peat_name = "../" + tile_id + "_peat.tif";
-string ifl_name = "../" + tile_id + "_res_ifl_2000.tif";
-string plant_name = "../" + tile_id + "_res_gfw_plantations.tif";
+
+string infolder = "cpp_util/";
+
+string forestmodel_name = infolder + tile_id + "_tsc_model.tif";
+string bgc_name = infolder + tile_id + "_bgc.tif";
+string agc_name = infolder + tile_id + "_carbon.tif";
+string loss_name = infolder + tile_id + "_loss.tif";
+string burn_name = infolder + tile_id + "_burnyear.tif";
+string ecozone_name = infolder + tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
+string climate_name = infolder + tile_id + "_res_climate_zone.tif";
+string dead_name = infolder + tile_id + "_deadwood.tif";
+string litter_name = infolder + tile_id + "_litter.tif";
+string soil_name = infolder + tile_id + "_soil.tif";
+string peat_name = infolder + tile_id + "_peat.tif";
+string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
+string plant_name = infolder + tile_id + "_res_gfw_plantations.tif";
 
 // out files
 string out_name0= "outdata/" + tile_id + "_deforestation_model.tif";
@@ -119,8 +122,8 @@ INGDAL->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
-xsize = 2500;
-ysize = 2500;
+//xsize = 2500;
+//ysize = 2500;
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 //initialize GDAL for writing

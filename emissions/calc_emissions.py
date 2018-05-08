@@ -14,14 +14,15 @@ def calc_emissions(tile_id):
     start = datetime.datetime.now()
 
     print "\n-------TILE ID: {}".format(tile_id)
+    outdata_dir = 'outdata/'
 
-    if not os.path.exists("oudata/"):
+    if not os.path.exists(outdata_dir):
         try:
-            os.mkdir("outdata/")
+            os.mkdir(outdata_dir)
         except:
             pass
     else:
-        files = glob.glob("outdata/*")
+        files = glob.glob("{}*".format(outdata_dir))
         print files
 
         for f in files:
@@ -34,11 +35,9 @@ def calc_emissions(tile_id):
     subprocess.check_call(emissions_tiles_cmd)
 
    #upload tiles
-    utilities.upload_final(tile_id)    
+#    utilities.upload_final(tile_id)    
     
     #delete tiels
-    utilities.del_tiles(tile_id)
+#    utilities.del_tiles(tile_id)
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
-    
-#calc_emissions('00N_110E')
