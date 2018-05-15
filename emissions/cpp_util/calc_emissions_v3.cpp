@@ -19,7 +19,7 @@
 
 using namespace std;
 
-//to compile:  c++ raster_math.cpp -o raster_math -lgdal
+//to compile:  c++ raster_math.cpp -o raster_math.exe -lgdal
 // to compile on MINGW: g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {

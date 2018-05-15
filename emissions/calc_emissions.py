@@ -35,9 +35,9 @@ def calc_emissions(tile_id):
     subprocess.check_call(emissions_tiles_cmd)
 
    #upload tiles
-#    utilities.upload_final(tile_id)    
+   utilities.upload_final(tile_id)
     
-    #delete tiels
+    #delete tiles
 #    utilities.del_tiles(tile_id)
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
