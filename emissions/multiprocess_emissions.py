@@ -40,5 +40,5 @@ for chunk in chunks(biomass_tile_list, tiles_in_chunk):
             utilities.mask_loss(tile_id)
     
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=7)
+    pool = multiprocessing.Pool(processes=1)
     pool.map(calc_emissions.calc_emissions, chunk)
