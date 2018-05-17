@@ -11,7 +11,7 @@ onetime_download_files = ['peatland.zip', 'hwsd_histosoles.tif', 'climate_zone.t
 for file in onetime_download_files:
 
     print "copy down {}".format(file)
-    download_file = ['aws', 's3', 'cp', 's3://gfw-files/dgibbs/carbon_budget/{}'.format(file), '.']
+    download_file = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/{}'.format(file), '.']
     subprocess.check_call(download_file)
 
     file_extension = file.split(".")[-1:][0]
