@@ -36,9 +36,9 @@ def calc_emissions(tile_id):
 
     print 'tile writing completed'
 
-    # #upload tiles
-    # print 'uploading tiles to AWS'
-    # utilities.upload_final(tile_id)
+    #upload tiles
+    print 'uploading tiles to AWS'
+    utilities.upload_final(tile_id)
     
     #delete tiles
 #    utilities.del_tiles(tile_id)
