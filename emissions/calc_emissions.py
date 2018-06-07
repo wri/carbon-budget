@@ -36,11 +36,12 @@ def calc_emissions(tile_id):
 
     print 'tile writing completed'
 
-    #upload tiles
-    print 'uploading tiles to AWS'
+    # Upload tiles to s3
+    print 'Uploading tiles to s3'
     utilities.upload_final(tile_id)
     
-    #delete tiles
-#    utilities.del_tiles(tile_id)
+    # # Delete tiles from spot machine-- not necessary because the files are being moved, not copied, from the spot machine
+    # print 'Deleting tiles from spot machine'
+    # utilities.del_tiles(tile_id)
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
