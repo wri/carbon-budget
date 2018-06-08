@@ -41,14 +41,8 @@ def mask_loss(tile_id):
     idn_plant_shp = 'plant_est_2000_or_earlier.shp'
     loss_tile = '{}_loss.tif'.format(tile_id)
 
-    cmd = ['cd', 'cpp_util']
-    subprocess.check_call(cmd)
-
     cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
     print cmd
-    subprocess.check_call(cmd)
-
-    cmd = ['cd', '..']
     subprocess.check_call(cmd)
 
 
@@ -83,6 +77,7 @@ def download(file_dict, tile_id):
 
     # Unzips shapefile of Indonesia and Malaysia plantations
     cmd = ['unzip', 'cpp_util/plant_est_2000_or_earlier.zip', '-d', dest_folder]
+    cmd = ['unzip', 'cpp_util/plant_est_2000_or_earlier.zip']
     subprocess.check_call(cmd)
 
    # rename whichever peatland file was downloaded
