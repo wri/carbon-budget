@@ -41,14 +41,15 @@ def mask_loss(tile_id):
     idn_plant_shp = 'plant_est_2000_or_earlier.shp'
     loss_tile = '{}_loss.tif'.format(tile_id)
 
-    subprocess.check_call('cd cpp_util')
+    cmd = ['cd', 'cpp_util']
+    subprocess.check_call(cmd)
 
     cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
     print cmd
-
     subprocess.check_call(cmd)
 
-    subprocess.check_call('cd ..')
+    cmd = ['cd', '..']
+    subprocess.check_call(cmd)
 
 
 def download(file_dict, tile_id):
