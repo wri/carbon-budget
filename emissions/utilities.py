@@ -76,7 +76,8 @@ def download(file_dict, tile_id):
     subprocess.check_call(cmd)
 
     # Unzips shapefile of Indonesia and Malaysia plantations
-    cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', dest_folder]
+    # cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', dest_folder]
+    cmd = ['unzip', 'plant_est_2000_or_earlier.zip']
     subprocess.check_call(cmd)
 
    # rename whichever peatland file was downloaded
