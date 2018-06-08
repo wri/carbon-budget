@@ -77,7 +77,7 @@ def download(file_dict, tile_id):
 
     # Unzips shapefile of Indonesia and Malaysia plantations
     # cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', dest_folder]
-    cmd = ['unzip', 'plant_est_2000_or_earlier.zip']
+    cmd = ['unzip', 'cpp_util/plant_est_2000_or_earlier.zip']
     print cmd
     subprocess.check_call(cmd)
 
