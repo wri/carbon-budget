@@ -255,3 +255,29 @@ def recode_burned_area(raster):
     outfile_cmd = '--outfile={}'.format(outfile_name)
     recode_cmd = ['gdal_calc.py', '-A', raster, '--calc=A>0', 'NoDataValue=0', '--co', 'COMPRESS=LZW', outfile_cmd]
     subprocess.check_call(recode_cmd)
+
+def tile_list():
+
+    prefix = 'sam/carbon_budget/total_carbon'
+
+    s3 = boto3.resource('s3')
+
+    # identifies the buket
+    bucket = s3.Bucket(name='gfw-files')
+
+    # creates an empty list of files in the folder
+    file_list = []
+
+    # iterates through folders in bucket to get item names
+    for obj in bucket.objects.filter(Prefix=prefix):
+        # corrects the file name
+        tile_long_name = '{}'.format(obj.key)
+        tile_shorter_name = tile_long_name.replace('_totalc.tif', '')
+        tile_short_name = tile_shorter_name.replace('sam/carbon_budget/total_carbon/', '')
+
+        # adds the file to the end of the file list
+        file_list.append(tile_short_name)
+
+    print(file_list)
+
+    return(file_list)
