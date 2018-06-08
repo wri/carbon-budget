@@ -41,7 +41,7 @@ def mask_loss(tile_id):
     idn_plant_shp = 'plant_est_2000_or_earlier.shp'
     loss_tile = '{}_loss.tif'.format(tile_id)
 
-    cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', '{1}/{2}'.format("cpp_util", idn_plant_shp), loss_tile]
+    cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', '{0}/{1}'.format("cpp_util", idn_plant_shp), loss_tile]
     print cmd
 
     subprocess.check_call(cmd)
