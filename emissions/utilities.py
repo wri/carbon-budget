@@ -4,6 +4,7 @@ import multiprocessing
 import pandas as pd
 import os
 import glob
+import boto3
 
 
 def del_tiles(tile_id):
@@ -262,7 +263,7 @@ def tile_list():
 
     s3 = boto3.resource('s3')
 
-    # identifies the buket
+    # identifies the bucket
     bucket = s3.Bucket(name='gfw-files')
 
     # creates an empty list of files in the folder
@@ -279,5 +280,4 @@ def tile_list():
         file_list.append(tile_short_name)
 
     print(file_list)
-
     return(file_list)
