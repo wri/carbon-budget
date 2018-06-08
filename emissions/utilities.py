@@ -70,16 +70,14 @@ def download(file_dict, tile_id):
     cmd = ['aws', 's3', 'cp', src, dest_folder]
     subprocess.check_call(cmd)
 
-    #download idn plantations tile
+    # Download shapefile of Indonesia and Malaysia plantations
     src = 's3://gfw-files/sam/carbon_budget/idn_plant_est_2000_or_earlier/plant_est_2000_or_earlier.zip'
     cmd = ['aws', 's3', 'cp', src, dest_folder]
-
     subprocess.check_call(cmd)
 
-    # unzip
+    # Unzips shapefile of Indonesia and Malaysia plantations
     cmd = ['unzip', 'plant_est_2000_or_earlier.zip', '-d', dest_folder]
-    #subprocess.check_call(cmd)
-
+    subprocess.check_call(cmd)
 
    # rename whichever peatland file was downloaded
     peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
