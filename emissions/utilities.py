@@ -259,8 +259,8 @@ def recode_burned_area(raster):
 
 def tile_list():
 
-    # prefix = 'sam/carbon_budget/total_carbon'
-    #
+    prefix = 'sam/carbon_budget/total_carbon'
+
     # s3 = boto3.resource('s3')
     #
     # # identifies the bucket
