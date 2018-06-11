@@ -4,7 +4,6 @@ import multiprocessing
 import pandas as pd
 import os
 import glob
-import boto3
 
 
 def del_tiles(tile_id):
