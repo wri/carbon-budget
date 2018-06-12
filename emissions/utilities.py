@@ -261,8 +261,8 @@ def recode_burned_area(raster):
 def tile_list():
 
     ## For an s3 folder in a bucket using AWSCLI
-    # Gets the list of files and pipes them to a textfile
     source = 's3://gfw-files/sam/carbon_budget/total_carbon/'
+
     # cmd = ['aws', 's3', 'ls', source, '>', 'totalctiles.txt']
     # # cmd = ['aws', 's3', 'ls', source]
     # subprocess.check_output(cmd)
@@ -273,9 +273,13 @@ def tile_list():
     print(stdout)
     print(type(stdout))
 
+    text_file = open("Output.txt", "w")
+    text_file.write(stdout)
+    text_file.close()
+
     file_list = []
 
-    print stdout.split("_totalc")[0]
+    # print stdout.split("_totalc")[0]
 
 
     # Iterates through the text file to get the names of the tiles and appends them to list
@@ -287,13 +291,13 @@ def tile_list():
 
     # return file_list
 
-    # # Iterates through the text file to get the names of the tiles and appends them to list
-    # with open('totalctiles.txt', 'r') as tile:
-    #     for line in tile:
-    #
-    #         num = len(line.strip('\n').split(" "))
-    #         tile_name = line.strip('\n').split(" ")[num - 1]
-    #         tile_short_name = tile_name.replace('_totalc.tif', '')
-    #         file_list.append(tile_short_name)
-    #
-    # return file_list
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open("Output.txt", 'r') as tile:
+        for line in tile:
+
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+            tile_short_name = tile_name.replace('_totalc.tif', '')
+            file_list.append(tile_short_name)
+
+    return file_list
