@@ -275,7 +275,7 @@ def tile_list():
 
     file_list = []
 
-    print my_string.split(".tif")[0]
+    print stdout.split("_totalc")[0]
 
 
     # Iterates through the text file to get the names of the tiles and appends them to list
