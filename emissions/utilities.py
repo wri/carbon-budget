@@ -37,9 +37,10 @@ def upload_final(tile_id):
             print "error uploading"
 
 def mask_loss(tile_id):
+    dest_folder = 'cpp_util/'
     # modify loss tile by erasing where plantations
-    idn_plant_shp = 'plant_est_2000_or_earlier.shp'
-    loss_tile = '{}_loss.tif'.format(tile_id)
+    idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format{dest_folder}
+    loss_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
 
     cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
     print cmd
@@ -256,27 +257,26 @@ def recode_burned_area(raster):
     recode_cmd = ['gdal_calc.py', '-A', raster, '--calc=A>0', 'NoDataValue=0', '--co', 'COMPRESS=LZW', outfile_cmd]
     subprocess.check_call(recode_cmd)
 
+# Lists the tiles in a folder in s3
 def tile_list():
 
-    prefix = 'sam/carbon_budget/total_carbon'
+    ## For an s3 folder in a bucket using AWSCLI
+    # Gets the list of files and pipes them to a textfile
+    dest = 's3://gfw-files/sam/carbon_budget/total_carbon/'
+    cmd = ['aws', 's3', 'ls', dest, '>', 'totalctiles.txt']
+    subprocess.check_call(cmd, shell=True)
 
-    # s3 = boto3.resource('s3')
-    #
-    # # identifies the bucket
-    # bucket = s3.Bucket(name='gfw-files')
-    #
-    # # creates an empty list of files in the folder
-    # file_list = []
-    #
-    # # iterates through folders in bucket to get item names
-    # for obj in bucket.objects.filter(Prefix=prefix):
-    #     # corrects the file name
-    #     tile_long_name = '{}'.format(obj.key)
-    #     tile_shorter_name = tile_long_name.replace('_totalc.tif', '')
-    #     tile_short_name = tile_shorter_name.replace('sam/carbon_budget/total_carbon/', '')
-    #
-    #     # adds the file to the end of the file list
-    #     file_list.append(tile_short_name)
-    #
-    # print(file_list)
-    # return(file_list)
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open('totalctiles.txt', 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            tile_short_name = tile_name.replace('_totalc.tif', '')
+
+            file_list.append(tile_short_name)
+
+    return file_list
