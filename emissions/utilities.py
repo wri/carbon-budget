@@ -267,12 +267,10 @@ def tile_list():
     # # cmd = ['aws', 's3', 'ls', source]
     # subprocess.check_output(cmd)
 
-    # out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    out = subprocess.check_call(['aws', 's3', 'ls', source], stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     stdout, stderr = out.communicate()
-    print(stdout)
+    print(type(stdout))
 
     file_list = []
 
