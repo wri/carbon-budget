@@ -19,7 +19,7 @@ biomass_tile_list = ['00N_000E', '00N_010E', '00N_020E', '00N_020W', '00N_030E',
 # print (biomass_tile_list)
 biomass_tile_list = ['00N_090E'] # This tile doesn't work because I can't get the plantation shapefile to rasterize
 # biomass_tile_list = ['00N_000E']
-tiles_in_chunk = 5
+tiles_in_chunk = 8
 
 for chunk in chunks(biomass_tile_list, tiles_in_chunk):
 
@@ -48,5 +48,5 @@ for chunk in chunks(biomass_tile_list, tiles_in_chunk):
             utilities.mask_loss(tile_id)
     
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=7)
+    pool = multiprocessing.Pool(processes=tiles_in_chunk)
     pool.map(calc_emissions.calc_emissions, chunk)
