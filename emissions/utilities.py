@@ -262,10 +262,15 @@ def tile_list():
 
     ## For an s3 folder in a bucket using AWSCLI
     # Gets the list of files and pipes them to a textfile
-    dest = 's3://gfw-files/sam/carbon_budget/total_carbon/'
-    cmd = ['aws', 's3', 'ls', dest, '>', 'totalctiles.txt']
-    # cmd = ['aws', 's3', 'ls', dest]
-    subprocess.check_output(cmd)
+    source = 's3://gfw-files/sam/carbon_budget/total_carbon/'
+    # cmd = ['aws', 's3', 'ls', source, '>', 'totalctiles.txt']
+    # # cmd = ['aws', 's3', 'ls', source]
+    # subprocess.check_output(cmd)
+
+    out = subprocess.Popen(['aws', 's3', 'ls', source, '>', 'totalctiles.txt'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    stdout, stderr = out.communicate()
+    print(stdout)
 
     file_list = []
 
