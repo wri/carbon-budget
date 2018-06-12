@@ -267,7 +267,7 @@ def tile_list():
     # # cmd = ['aws', 's3', 'ls', source]
     # subprocess.check_output(cmd)
 
-    out = subprocess.Popen(['aws', 's3', 'ls', source, 'totalctiles.txt'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     stdout, stderr = out.communicate()
     print(stdout)
