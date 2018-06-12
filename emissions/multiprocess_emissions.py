@@ -27,7 +27,7 @@ for chunk in chunks(biomass_tile_list, tiles_in_chunk):
         textfile.write(str(chunk) + "\n")
 
     for tile_id in chunk:
-        print 'tile_id is: ' + str(tile_id)
+        print '     tile_id is: ' + str(tile_id)
 
         # download files
         peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
