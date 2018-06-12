@@ -277,10 +277,11 @@ def tile_list():
 
     # Iterates through the text file to get the names of the tiles and appends them to list
     for line in stdout:
-        num = len(line.strip('\n').split(" "))
-        tile_name = line.strip('\n').split(" ")[num - 1]
-        tile_short_name = tile_name.replace('_totalc.tif', '')
-        file_list.append(tile_short_name)
+        print line
+        # num = len(line.strip('\n').split(" "))
+        # tile_name = line.strip('\n').split(" ")[num - 1]
+        # tile_short_name = tile_name.replace('_totalc.tif', '')
+        # file_list.append(tile_short_name)
 
     return file_list
 
