@@ -38,7 +38,7 @@ def upload_final(tile_id):
 
 def mask_loss(tile_id):
     dest_folder = 'cpp_util/'
-    # modify loss tile by erasing where plantations
+    # modify loss tile by erasing where plantations are
     idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format(dest_folder)
     loss_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
 
@@ -77,8 +77,7 @@ def download(file_dict, tile_id):
     subprocess.check_call(cmd)
 
     # Unzips shapefile of Indonesia and Malaysia plantations
-    cmd = ['unzip', 'cpp_util/plant_est_2000_or_earlier.zip', '-d', dest_folder]
-    # cmd = ['unzip', 'cpp_util/plant_est_2000_or_earlier.zip']
+    cmd = ['unzip', '-o', '{0}/plant_est_2000_or_earlier.zip'.format(dest_folder), '-d', dest_folder]
     subprocess.check_call(cmd)
 
    # rename whichever peatland file was downloaded

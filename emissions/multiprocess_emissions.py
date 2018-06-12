@@ -15,8 +15,8 @@ def chunks(l, n):
 # # sys.exit()
 
 biomass_tile_list = utilities.tile_list()
-# biomass_tile_list = ['00N_000E']
-print 'Biomass tile list is:' + str(biomass_tile_list)
+# biomass_tile_list = ['00N_000E'] # test tile
+print 'Biomass tile list is: ' + str(biomass_tile_list)
 tiles_in_chunk = 8
 
 for chunk in chunks(biomass_tile_list, tiles_in_chunk):
@@ -27,7 +27,7 @@ for chunk in chunks(biomass_tile_list, tiles_in_chunk):
         textfile.write(str(chunk) + "\n")
 
     for tile_id in chunk:
-        print 'tile_id is:' + str(tile_id)
+        print 'tile_id is: ' + str(tile_id)
 
         # download files
         peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
