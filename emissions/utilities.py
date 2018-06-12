@@ -275,15 +275,17 @@ def tile_list():
 
     file_list = []
 
+    print my_string.split(".tif")[0]
+
+
     # Iterates through the text file to get the names of the tiles and appends them to list
-    for line in stdout:
-        print line
+    # for line in stdout:
         # num = len(line.strip('\n').split(" "))
         # tile_name = line.strip('\n').split(" ")[num - 1]
         # tile_short_name = tile_name.replace('_totalc.tif', '')
         # file_list.append(tile_short_name)
 
-    return file_list
+    # return file_list
 
     # # Iterates through the text file to get the names of the tiles and appends them to list
     # with open('totalctiles.txt', 'r') as tile:
