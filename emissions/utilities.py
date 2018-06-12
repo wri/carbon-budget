@@ -264,6 +264,7 @@ def tile_list():
     # Gets the list of files and pipes them to a textfile
     dest = 's3://gfw-files/sam/carbon_budget/total_carbon/'
     cmd = ['aws', 's3', 'ls', dest, '>', 'totalctiles.txt']
+    cmd = ['aws', 's3', 'ls', dest]
     subprocess.check_call(cmd)
 
     file_list = []
