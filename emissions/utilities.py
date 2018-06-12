@@ -39,7 +39,7 @@ def upload_final(tile_id):
 def mask_loss(tile_id):
     dest_folder = 'cpp_util/'
     # modify loss tile by erasing where plantations
-    idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format{dest_folder}
+    idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format(dest_folder)
     loss_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
 
     cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
