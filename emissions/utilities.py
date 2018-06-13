@@ -71,22 +71,15 @@ def download(file_dict, tile_id):
     cmd = ['aws', 's3', 'cp', src, dest_folder]
     subprocess.check_call(cmd)
 
+    # Download and unzip shapefile of Indonesia and Malaysia plantations if they have not already been downloaded
     if os.path.exists('{0}/plant_est_2000_or_earlier.zip'.format(dest_folder)) == False:
 
-        print 'Does not exist'
-
-        # Download shapefile of Indonesia and Malaysia plantations
         src = 's3://gfw-files/sam/carbon_budget/idn_plant_est_2000_or_earlier/plant_est_2000_or_earlier.zip'
         cmd = ['aws', 's3', 'cp', src, dest_folder]
         subprocess.check_call(cmd)
 
-        # Unzips shapefile of Indonesia and Malaysia plantations
         cmd = ['unzip', '-o', '{0}/plant_est_2000_or_earlier.zip'.format(dest_folder), '-d', dest_folder]
         subprocess.check_call(cmd)
-
-    else:
-
-        print 'Does exist'
 
    # rename whichever peatland file was downloaded
     peat_files = ['peatland_drainage_proj', 'cifor_peat_mask', 'hwsd_histosoles']
@@ -269,7 +262,7 @@ def tile_list():
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    source = 's3://gfw-files/sam/carbon_budget/total_carbon/'
+    source = 's3://gfw-files/sam/carbon_budget/carbon_030218/total_carbon/'
     out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
 
