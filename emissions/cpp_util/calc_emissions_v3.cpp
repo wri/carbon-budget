@@ -157,7 +157,7 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 
 OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
-OUTBAND3 = OUTGDAL3->GetRasterBand(3);
+OUTBAND3 = OUTGDAL3->GetRasterBand(1);
 OUTBAND3->SetNoDataValue(-9999);
 
 OUTGDAL2 = OUTDRIVER->Create( out_name2.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
