@@ -16,7 +16,7 @@ def chunks(l, n):
 
 biomass_tile_list = utilities.tile_list('s3://gfw-files/sam/carbon_budget/carbon_030218/total_carbon/')
 biomass_tile_list = ['00N_000E'] # test tile
-biomass_tile_list = ['30S_080W'] # test tile
+biomass_tile_list = ['30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
 print 'Biomass tile list is: ' + str(biomass_tile_list)
 tiles_in_chunk = 8
 
