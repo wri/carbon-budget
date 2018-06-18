@@ -14,8 +14,8 @@ def chunks(l, n):
 # print chunks(['cat', 'dog', 'mouse', 'rat'], 2)
 # # sys.exit()
 
-biomass_tile_list = utilities.tile_list()
-# biomass_tile_list = ['00N_000E'] # test tile
+biomass_tile_list = utilities.tile_list('s3://gfw-files/sam/carbon_budget/carbon_030218/total_carbon/')
+biomass_tile_list = ['00N_000E'] # test tile
 print 'Biomass tile list is: ' + str(biomass_tile_list)
 tiles_in_chunk = 8
 

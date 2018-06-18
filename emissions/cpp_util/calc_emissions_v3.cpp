@@ -19,7 +19,7 @@
 
 using namespace std;
 
-//to compile:  c++ raster_math.cpp -o raster_math.exe -lgdal
+//to compile:  c++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -lgdal
 // to compile on MINGW: g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
@@ -53,6 +53,7 @@ string out_name1 = "outdata/" + tile_id + "_forestry_model.tif";
 string out_name3 = "outdata/" + tile_id + "_wildfire_model.tif";
 string out_name4 = "outdata/" + tile_id + "_node_totals.tif";
 string out_name5 = "outdata/" + tile_id + "_disturbance_model.tif";
+string out_name6 = "outdata/" + tile_id + "_urbanization_model.tif";
 
 int x, y;
 int xsize, ysize;
@@ -134,6 +135,7 @@ GDALDataset *OUTGDAL3;
 GDALDataset *OUTGDAL0;
 GDALDataset *OUTGDAL4;
 GDALDataset *OUTGDAL5;
+GDALDataset *OUTGDAL6;
 
 GDALRasterBand *OUTBAND1;
 GDALRasterBand *OUTBAND2;
@@ -141,6 +143,7 @@ GDALRasterBand *OUTBAND3;
 GDALRasterBand *OUTBAND0;
 GDALRasterBand *OUTBAND4;
 GDALRasterBand *OUTBAND5;
+GDALRasterBand *OUTBAND6;
 
 OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
@@ -180,10 +183,14 @@ OUTBAND4->SetNoDataValue(-9999);
 OUTGDAL5 = OUTDRIVER->Create( out_name5.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
-OUTBAND5->SetNoDataValue(-9999);
+
+OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
+OUTBAND6 = OUTGDAL6->GetRasterBand(1);
+OUTBAND6->SetNoDataValue(-9999);
 
 //read/write data...
-//In Data
+//In data
 float agb_data[xsize];
 float agc_data[xsize];
 float bgc_data[xsize];
@@ -198,13 +205,15 @@ float dead_data[xsize];
 float litter_data[xsize];
 float ifl_data[xsize];
 float plant_data[xsize];
-//Out Data
+
+//Out data
 float out_data1[xsize];
 float out_data2[xsize];
 float out_data3[xsize];
 float out_data0[xsize];
 float out_data4[xsize];
 float out_data5[xsize];
+float out_data6[xsize];
 
 for (y=0; y<ysize; y++)
 {
@@ -227,13 +236,14 @@ for(x=0; x<xsize; x++)
 
 	{
 
-		float outdata3 = 0;
-		float outdata2 = 0;
-		float outdata0 = 0;
-		float outdata1 = 0;
-		float outdata4 = 0;
-		float outdata5 = 0;
-		float outdata5_model = 0;
+		float outdata3 = 0;  // wildfire
+		float outdata2 = 0;  // shifting ag.
+		float outdata0 = 0;  // deforestation/conversion
+		float outdata1 = 0;  // forestry
+		float outdata4 = 0;  // flowchart node
+		float outdata5 = 0;  // total of all drivers
+		float outdata5_model = 0;  // no disturbance driver
+		float outdata6 = 0;  // urbanization
 
 		// float outdata3 = -9999;
 		// float outdata2 = -9999;
@@ -440,13 +450,48 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
+		   else if (forestmodel_data[x] == 5)  // urbanization
+			{
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				Biomass_tCO2e_nofire = total_c * 3.67;
+				flu = 0.8;
+				minsoil = soil_data[x]-(soil_data[x] * flu);
+
+				if (peat_data[x] > 0) // urbanization, peat
+				{
+					if (burn_data[x] > 0) // urbanization, peat, burned
+					{
+						outdata6 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = 20;
+					}
+					else // urbanization, peat, not burned
+					{
+						outdata6 = Biomass_tCO2e_nofire + peatdrain;
+						outdata4 = 21;
+					}
+				}
+				else // urbanization, not peat
+				{
+					if (burn_data[x] > 0) // urbanization, not peat, burned
+					{
+						outdata6 = Biomass_tCO2e_yesfire + minsoil;
+						outdata4 = 22;
+					}
+					else // urbanization, not peat, not burned
+					{
+						outdata6 = Biomass_tCO2e_nofire + minsoil;
+						outdata4 = 23;
+					}
+				}
+			}
+
 		   else // no forest model data- make it no data except make disturbance model same as forestry, nancy said.
 			{
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
 				out_data0[x] = -9999;
 				out_data3[x] = -9999;
-
+				out_data6[x] = -9999;
 
 				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 
@@ -458,26 +503,26 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0 ) // no class, peat, burned
 					{
 						outdata5_model = Biomass_tCO2e_yesfire + peatdrain + peatburn;
-						outdata4 = 20;
+						outdata4 = 24;
 					}
 					else // no class, peat, not burned
 					{
 						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))
 						{
 							outdata5_model = Biomass_tCO2e_nofire;
-							outdata4 = 21;
+							outdata4 = 25;
 						}
 						else
 						{
 							if (plant_data[x] > 0)
 							{
 								outdata5_model = Biomass_tCO2e_nofire + peatdrain;
-								outdata4 = 22;
+								outdata4 = 26;
 							}
 							else
 							{
 								outdata5_model = Biomass_tCO2e_nofire;
-								outdata4 = 23;
+								outdata4 = 27;
 							}
 						}
 					}
@@ -487,12 +532,12 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // no class, not peat, burned
 					{
 						outdata5_model = Biomass_tCO2e_yesfire;
-						outdata4 = 24;
+						outdata4 = 28;
 					}
 					else // no class, not peat, not burned
 					{
 						outdata5_model = Biomass_tCO2e_nofire;
-						outdata4 = 25;
+						outdata4 = 29;
 					}
 				}
 			}
@@ -504,6 +549,7 @@ for(x=0; x<xsize; x++)
 				out_data0[x] = outdata0;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 2)
 			{
@@ -511,6 +557,7 @@ for(x=0; x<xsize; x++)
 				out_data0[x] = -9999;
 				out_data2[x] = outdata2;
 				out_data3[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 3)
 			{
@@ -518,6 +565,7 @@ for(x=0; x<xsize; x++)
 				out_data0[x] = -9999;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 4)
 			{
@@ -525,6 +573,15 @@ for(x=0; x<xsize; x++)
 				out_data0[x] = -9999;
 				out_data2[x] = -9999;
 				out_data3[x] = outdata3;
+				out_data6[x] = -9999;
+			}
+			else if (forestmodel_data[x] == 5)
+			{
+				out_data1[x] = -9999;
+				out_data0[x] = -9999;
+				out_data2[x] = -9999;
+				out_data3[x] = -9999;
+				out_data6[x] = outdata6;
 			}
 
 			else // another else statement to handle if no forest model data
@@ -533,6 +590,7 @@ for(x=0; x<xsize; x++)
 				out_data0[x] = -9999;
 				out_data2[x] = -9999;
 				out_data3[x] = -9999;
+				out_data6[x] = -9999;
 			}
 				// node total raster
 				out_data4[x] = outdata4;
@@ -541,7 +599,7 @@ for(x=0; x<xsize; x++)
 
 				// add up all outputs to make merged output
 
-				outdata5 = outdata0 + outdata1 + outdata2 + outdata3 + outdata5_model;
+				outdata5 = outdata0 + outdata1 + outdata2 + outdata3 + outdata6 + outdata5_model;
 				if ((outdata5 == 0) || (outdata5 == -9999))
 				{
 					out_data5[x] = -9999;
@@ -560,6 +618,7 @@ for(x=0; x<xsize; x++)
 			out_data0[x] = -9999;
 			out_data4[x] = -9999;
 			out_data5[x] = -9999;
+			out_data6[x] = -9999;
 		}
     }
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 );
@@ -568,6 +627,7 @@ OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 
 OUTBAND0->RasterIO( GF_Write, 0, y, xsize, 1, out_data0, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
 }
 GDALClose(INGDAL);
 GDALClose((GDALDatasetH)OUTGDAL);
@@ -576,5 +636,6 @@ GDALClose((GDALDatasetH)OUTGDAL3);
 GDALClose((GDALDatasetH)OUTGDAL0);
 GDALClose((GDALDatasetH)OUTGDAL4);
 GDALClose((GDALDatasetH)OUTGDAL5);
+GDALClose((GDALDatasetH)OUTGDAL6);
 return 0;
 }

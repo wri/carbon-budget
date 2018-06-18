@@ -16,19 +16,19 @@ def merge_tiles(tile_id):
     conversion_tif = 'outdata/{}_shiftingag_model.tif'.format(tile_id)
     forestmodel_tif = 'outdata/{}_forestry_model.tif'.format(tile_id)
     wildfire_tif = 'outdata/{}_wildfire_model.tif'.format(tile_id)
+    urbanization_tif = 'outdata/{}_urbanization_model.tif'.format(tile_id)
     mixed_tif = 'outdata/{}_deforestation_model.tif'.format(tile_id)
 
-    cmd = ['gdal_merge.py', '-o', mergetif, conversion_tif, forestmodel_tif, wildfire_tif, mixed_tif, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
+    cmd = ['gdal_merge.py', '-o', mergetif, conversion_tif, forestmodel_tif, wildfire_tif, urbanization_tif, mixed_tif, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     print "merging tiles"
     subprocess.check_call(cmd)
 
 
 def upload_final(tile_id):
-    files = ['disturbance_model', 'shiftingag_model', 'forestry_model', 'wildfire_model', 'deforestation_model', 'node_totals']
+    files = ['disturbance_model', 'shiftingag_model', 'forestry_model', 'wildfire_model', 'deforestation_model', 'urbanization_model', 'node_totals']
     for f in files:
         to_upload = "outdata/{0}_{1}.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)
-        # destination = 's3://gfw-files/sam/carbon_budget/emissions/{}/'.format(f)
         destination = 's3://gfw-files/dgibbs/Carbon_model/Spot_machine_output/{}/'.format(f)
         cmd = ['aws', 's3', 'mv', to_upload, destination]
         try:
@@ -195,8 +195,6 @@ def resample_clip_raster(rasters_to_resample, tile_id, coords, coords_te):
             print clip_cmd
             subprocess.check_call(clip_cmd)
 
-
-
     return clipped_raster
 
 
@@ -258,11 +256,10 @@ def recode_burned_area(raster):
     subprocess.check_call(recode_cmd)
 
 # Lists the tiles in a folder in s3
-def tile_list():
+def tile_list(source):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    source = 's3://gfw-files/sam/carbon_budget/carbon_030218/total_carbon/'
     out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
 
