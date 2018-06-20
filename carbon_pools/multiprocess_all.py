@@ -1,7 +1,7 @@
-# import subprocess
-# import create_carbon_pools
-# import multiprocessing
-# import util
+import subprocess
+import create_carbon_pools
+import multiprocessing
+import util
 
 print "starting"
 
