@@ -3,6 +3,8 @@ import create_carbon_pools
 import multiprocessing
 import util
 
+print "starting"
+
 # files to copy down
 files_to_copy = ['s3://gfw-files/sam/carbon_budget/fao_ecozones_bor_tem_tro.zip',
                 's3://gfw-files/sam/carbon_budget/add_30s_precip.tif',
