@@ -7,7 +7,7 @@ import util
 from create_input_files import create_input_files
 
 '''
-first cretae these files:
+first create these files:
 "_biomass.tif", "_res_fao_ecozones_bor_tem_tro.tif", "_res_srtm.tif", _res_precip.tif", "_soil.tif";
 
 in order to create these files:
@@ -42,13 +42,13 @@ def create_carbon_pools(tile_id):
 
        util.upload(tile_name, 's3://gfw-files/sam/carbon_budget/carbon_111717/{}/'.format(tile))
 
-    print "deleting intermediate data"
-    tiles_to_remove = glob.glob('*{}*'.format(tile_id))
-    for tile in tiles_to_remove:
-        try:
-            os.remove(tile)
-        except:
-            pass
+    # print "deleting intermediate data"
+    # tiles_to_remove = glob.glob('*{}*'.format(tile_id))
+    # for tile in tiles_to_remove:
+    #     try:
+    #         os.remove(tile)
+    #     except:
+    #         pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
 
