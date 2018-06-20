@@ -33,6 +33,6 @@ biomass_tile_list = ['00N_000E']
 print biomass_tile_list
 
 # if __name__ == '__main__':
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=5)
-pool.map(create_carbon_pools.create_carbon_pools, biomass_tile_list)
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=5)
+# pool.map(create_carbon_pools.create_carbon_pools, biomass_tile_list)
