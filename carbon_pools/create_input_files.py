@@ -16,7 +16,7 @@ def create_input_files(tile_id, carbon_budget_input_data_dir, biomass_tile):
     cmd = ['gdal_edit.py', '-unsetnodata', clip_soil_tile]
     subprocess.check_call(cmd)
 
-    print 'uploading soil tile to s3'
+    print "uploading soil tile to s3"
     util.upload(clip_soil_tile, carbon_budget_input_data_dir + 'soil/')
 
     print "rasterizing eco zone"
