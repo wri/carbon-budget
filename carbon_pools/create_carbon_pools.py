@@ -54,4 +54,4 @@ def create_carbon_pools(tile_id):
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
 
-create_carbon_pools('00N_000E')
+# create_carbon_pools('00N_000E')
