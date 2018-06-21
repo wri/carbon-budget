@@ -18,8 +18,6 @@ _carbon.tif", "_bgc.tif",  "_deadwood.tif", "_litter.tif", _totalc.tif";
 def create_carbon_pools(tile_id):
     start = datetime.datetime.now()
 
-    print "starting function"
-
     # location where files will be saved on s3
     carbon_budget_input_data_dir = 's3://gfw-files/sam/carbon_budget/data_inputs3/'
 
