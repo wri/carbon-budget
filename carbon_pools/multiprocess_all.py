@@ -10,9 +10,9 @@ files_to_copy = [
                 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
                  ]
 
-for file in files_to_copy:
-     cmd = ['aws', 's3', 'cp', file, '.']
-     subprocess.check_call(cmd)
+# for file in files_to_copy:
+#      cmd = ['aws', 's3', 'cp', file, '.']
+#      subprocess.check_call(cmd)
 
 print "unzip eco zones"
 unzip_zones = ['unzip', 'fao_ecozones_bor_tem_tro.zip', '-d', '.']
