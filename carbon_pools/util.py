@@ -65,19 +65,19 @@ def tile_list(source):
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
-    totalCtiles = open("totalCtiles.txt", "w")
+    totalCtiles = open("biomass_tiles.txt", "w")
     totalCtiles.write(stdout)
     totalCtiles.close()
 
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
-    with open("totalCtiles.txt", 'r') as tile:
+    with open("biomass_tiles.txt", 'r') as tile:
         for line in tile:
 
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
-            tile_short_name = tile_name.replace('_totalc.tif', '')
+            tile_short_name = tile_name.replace('_biomass.tif', '')
             file_list.append(tile_short_name)
 
     return file_list
