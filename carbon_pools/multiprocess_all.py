@@ -3,11 +3,16 @@ import create_carbon_pools
 import multiprocessing
 import util
 
+# Raw input files
+ecozones = 'fao_ecozones_bor_tem_tro_20180619.zip'
+precip = 'add_30s_precip.tif'
+soil = 'hwsd_oc_final.tif'
+
 # files to copy down
 files_to_copy = [
-                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/fao_ecozones_bor_tem_tro_20180619.zip',
-                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif',
-                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
+                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{0}'.format(ecozones),
+                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{1}'.format(precip),
+                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{2}'.format(soil)
                  ]
 
 for file in files_to_copy:
@@ -15,7 +20,7 @@ for file in files_to_copy:
      subprocess.check_call(cmd)
 
 print "unzip eco zones"
-unzip_zones = ['unzip', 'fao_ecozones_bor_tem_tro.zip', '-d', '.']
+unzip_zones = ['unzip', '{}'.format(ecozones), '-d', '.']
 subprocess.check_call(unzip_zones)
 
 print "copy srtm files"
