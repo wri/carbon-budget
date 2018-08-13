@@ -166,15 +166,15 @@ for(x=0; x<xsize; x++) {
         out_total[x] = -9999;
 	}
 
-	else if (agb_data[x] == -9999)
-    {
+   else if (agb_data[x] == -9999)
+   {
 		out_carbon[x] = -9999;
 		out_bgc[x] = -9999;
 		out_deadwood[x] = -9999;
 
 		out_litter[x] = -9999;
         out_total[x] = -9999;
-	 }
+	}
    else 
    {
 		out_carbon[x] = agb_data[x] * .47;
