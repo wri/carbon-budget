@@ -18,7 +18,7 @@ print "unzip eco zones"
 unzip_zones = ['unzip', 'fao_ecozones_bor_tem_tro.zip', '-d', '.']
 subprocess.check_call(unzip_zones)
 
-print "copy down srtm files"
+print "copy srtm files"
 copy_srtm = ['aws', 's3', 'sync', 's3://gfw2-data/analyses/srtm/', './srtm']
 subprocess.check_call(copy_srtm)
 

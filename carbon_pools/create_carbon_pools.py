@@ -20,7 +20,7 @@ def create_carbon_pools(tile_id):
 
     # location where files will be saved on s3
     # carbon_budget_input_data_dir = 's3://gfw-files/sam/carbon_budget/data_inputs3/'       # previously
-    carbon_budget_input_data_dir = 's3://gfw-files/climate/carbon_model/inputs_for_carbon_pools/processed/'
+    carbon_budget_input_data_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/'
 
     print "copy down biomass tile"
     biomass_tile = '{}_biomass.tif'.format(tile_id)
