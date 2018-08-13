@@ -30,19 +30,19 @@ def create_carbon_pools(tile_id):
     print "creating input files"
     create_input_files(tile_id, carbon_budget_input_data_dir, biomass_tile)
  
-    # print 'writing aboveground carbon, belowground carbon, deadwood, litter, total carbon'
-    # calc_all_cmd = ['./calc_all.exe', tile_id]
-    # subprocess.check_call(calc_all_cmd)
-    #
-    # print 'uploading tiles to s3'
-    # tile_types  = ['carbon', 'bgc', 'deadwood', 'litter', 'soil', 'total_carbon']
-    # for tile in tile_types:
-    #    if tile == 'total_carbon':
-    #        tile_name = "{}_totalc.tif".format(tile_id)
-    #    else:
-    #        tile_name = "{0}_{1}.tif".format(tile_id, tile)
-    #
-    #    util.upload(tile_name, 's3://gfw-files/sam/carbon_budget/carbon_20180620/{}/'.format(tile))
+    print 'writing aboveground carbon, belowground carbon, deadwood, litter, total carbon'
+    calc_all_cmd = ['./calc_all.exe', tile_id]
+    subprocess.check_call(calc_all_cmd)
+
+    print 'uploading tiles to s3'
+    tile_types  = ['carbon', 'bgc', 'deadwood', 'litter', 'soil', 'total_carbon']
+    for tile in tile_types:
+       if tile == 'total_carbon':
+           tile_name = "{}_totalc.tif".format(tile_id)
+       else:
+           tile_name = "{0}_{1}.tif".format(tile_id, tile)
+
+       util.upload(tile_name, 's3://gfw-files/sam/carbon_budget/carbon_20180620/{}/'.format(tile))
 
     # print "deleting intermediate data"
     # tiles_to_remove = glob.glob('*{}*'.format(tile_id))
