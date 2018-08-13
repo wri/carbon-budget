@@ -11,8 +11,8 @@ soil = 'hwsd_oc_final.tif'
 # files to copy down
 files_to_copy = [
                 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{0}'.format(ecozones),
-                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{1}'.format(precip),
-                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{2}'.format(soil)
+                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{0}'.format(precip),
+                's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{0}'.format(soil)
                  ]
 
 for file in files_to_copy:
