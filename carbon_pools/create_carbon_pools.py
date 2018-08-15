@@ -44,13 +44,13 @@ def create_carbon_pools(tile_id):
 
        util.upload(tile_name, 's3://gfw2-data/climate/carbon_model/carbon_pools/20180814/{}/'.format(tile))
 
-    # print "deleting intermediate data"
-    # tiles_to_remove = glob.glob('*{}*'.format(tile_id))
-    # for tile in tiles_to_remove:
-    #     try:
-    #         os.remove(tile)
-    #     except:
-    #         pass
+    print "deleting intermediate data"
+    tiles_to_remove = glob.glob('*{}*'.format(tile_id))
+    for tile in tiles_to_remove:
+        try:
+            os.remove(tile)
+        except:
+            pass
 
     print "elapsed time: {}".format(datetime.datetime.now() - start)
 
