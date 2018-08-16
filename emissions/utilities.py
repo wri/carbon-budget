@@ -29,7 +29,7 @@ def upload_final(tile_id):
     for f in files:
         to_upload = "outdata/{0}_{1}.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)
-        destination = 's3://gfw-files/dgibbs/Carbon_model/Spot_machine_output/{}/'.format(f)
+        destination = 's3://gfw2-data/climate/carbon_model/output_emissions/20180816/{}/'.format(f)
         cmd = ['aws', 's3', 'mv', to_upload, destination]
         try:
             subprocess.check_call(cmd)
@@ -278,5 +278,7 @@ def tile_list(source):
             tile_name = line.strip('\n').split(" ")[num - 1]
             tile_short_name = tile_name.replace('_totalc.tif', '')
             file_list.append(tile_short_name)
+
+    file_list = file_list[1:]
 
     return file_list
