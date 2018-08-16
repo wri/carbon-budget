@@ -22,32 +22,32 @@ print 'Carbon tile list is: ' + str(carbon_tile_list)
 print 'Number of carbon tiles is: ' + str(len(carbon_tile_list))
 tiles_in_chunk = 8
 
-# for chunk in chunks(carbon_tile_list, tiles_in_chunk):
-#
-#     print 'Chunk is: ' + str(chunk)
-#
-#     with open('status.txt', 'a') as textfile:
-#         textfile.write(str(chunk) + "\n")
-#
-#     for tile_id in chunk:
-#         print '     tile_id is: ' + str(tile_id)
-#
-#         # download files
-#         peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
-#
-#         files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
-#
-#         utilities.download(files, tile_id, carbon_pool_dir)
-#
-#         #download hansen tile
-#         hansen_tile = utilities.wgetloss(tile_id)
-#
-#         #if idn plant tile downloaded, mask loss with plantations because we know that idn gfw_plantations
-#         # were established in yr 2000.
-#         if tile_id in ['00N_090E', '00N_100E', '00N_110E', '00N_120E', '00N_130E', '00N_140E', '10N_090E', '10N_100E', '10N_110E', '10N_120E', '10N_130E', '10N_140E']:
-#             print "cutting out plantations in Indonesia, Malaysia"
-#             utilities.mask_loss(tile_id)
-#
-#     count = multiprocessing.cpu_count()
-#     pool = multiprocessing.Pool(processes=tiles_in_chunk)
-#     pool.map(calc_emissions.calc_emissions, chunk)
+for chunk in chunks(carbon_tile_list, tiles_in_chunk):
+
+    print 'Chunk is: ' + str(chunk)
+
+    with open('status.txt', 'a') as textfile:
+        textfile.write(str(chunk) + "\n")
+
+    for tile_id in chunk:
+        print '     tile_id is: ' + str(tile_id)
+
+        # download files
+        peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
+
+        files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
+
+        utilities.download(files, tile_id, carbon_pool_dir)
+
+        #download hansen tile
+        hansen_tile = utilities.wgetloss(tile_id)
+
+        #if idn plant tile downloaded, mask loss with plantations because we know that idn gfw_plantations
+        # were established in yr 2000.
+        if tile_id in ['00N_090E', '00N_100E', '00N_110E', '00N_120E', '00N_130E', '00N_140E', '10N_090E', '10N_100E', '10N_110E', '10N_120E', '10N_130E', '10N_140E']:
+            print "cutting out plantations in Indonesia, Malaysia"
+            utilities.mask_loss(tile_id)
+
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=tiles_in_chunk)
+    pool.map(calc_emissions.calc_emissions, chunk)
