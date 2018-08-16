@@ -185,7 +185,7 @@ for(x=0; x<xsize; x++) {
                 
 		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
  
-		out_total[x] = out_carbon[x] + out_bgc[x] + deadwood + litter + soil_data[x];
+		out_total[x] = out_carbon[x] + out_bgc[x] + out_deadwood[x] + out_litter[x] + soil_data[x];
 
 		cout << "AGC:" << out_carbon[x] << "  ";
 		cout << "BGC:" << out_bgc[x]  << "  ";
