@@ -189,8 +189,8 @@ for(x=0; x<xsize; x++) {
 
 		cout << "AGC:" << out_carbon[x] << "  ";
 		cout << "BGC:" << out_bgc[x]  << "  ";
-		cout << "Deadwood:" << out_deadwood << "  ";
-		cout << "Litter" << out_litter << "  ";
+		cout << "Deadwood:" << out_deadwood[x] << "  ";
+		cout << "Litter" << out_litter[x] << "  ";
         cout << "Soil:" << soil_data[x] << "  ";
         cout << "TotalC" << out_total[x] << "  ";
         cout << endl;
