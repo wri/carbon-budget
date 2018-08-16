@@ -42,7 +42,7 @@ def create_carbon_pools(tile_id):
        else:
            tile_name = "{0}_{1}.tif".format(tile_id, tile)
 
-       util.upload(tile_name, 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/{}/'.format(tile))
+       util.upload(tile_name, 's3://gfw2-data/climate/carbon_model/carbon_pools/20180816/{}/'.format(tile))
 
     print "deleting intermediate data"
     tiles_to_remove = glob.glob('*{}*'.format(tile_id))
