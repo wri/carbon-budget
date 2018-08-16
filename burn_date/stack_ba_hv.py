@@ -7,7 +7,7 @@ import shutil
 
 def stack_ba_hv(hv_tile):
 
-    for year in range(2015, 2018):
+    for year in range(2000, 2018):
 
         # download hdf files
         output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))
