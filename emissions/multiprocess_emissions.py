@@ -14,9 +14,7 @@ def chunks(l, n):
 # print chunks(['cat', 'dog', 'mouse', 'rat'], 2)
 # # sys.exit()
 
-carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
-
-biomass_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
+biomass_tile_list = utilities.tile_list('WHRC-carbon/WHRC_V4/Processed/')
 # biomass_tile_list = ['00N_000E'] # test tile
 # biomass_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
 print 'Biomass tile list is: ' + str(biomass_tile_list)
@@ -38,6 +36,7 @@ for chunk in chunks(biomass_tile_list, tiles_in_chunk):
 
         files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
 
+        carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
         utilities.download(files, tile_id, carbon_pool_dir)
 
         #download hansen tile
