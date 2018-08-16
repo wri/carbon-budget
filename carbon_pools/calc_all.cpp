@@ -187,12 +187,12 @@ for(x=0; x<xsize; x++) {
  
 		out_total[x] = out_carbon[x] + out_bgc[x] + deadwood + litter + soil_data[x];
 
-		cout << "AGC:" << out_carbon[x]
-		cout << "BGC:" << out_bgc[x]
-		cout << "Deadwood:" << out_deadwood
-		cout << "Litter" << out_litter
-        cout << "Soil:" << soil_data[x]
-        cout << "TotalC" << out_total[x]
+		cout << "AGC:" << out_carbon[x];
+		cout << "BGC:" << out_bgc[x];
+		cout << "Deadwood:" << out_deadwood;
+		cout << "Litter" << out_litter;
+        cout << "Soil:" << soil_data[x];
+        cout << "TotalC" << out_total[x];
 
 	}
 	
