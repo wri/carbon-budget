@@ -47,12 +47,12 @@ def mask_loss(tile_id):
     subprocess.check_call(cmd)
 
 
-def download(file_dict, tile_id):
+def download(file_dict, tile_id, carbon_pool_dir):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
     dest_folder = 'cpp_util/'
     for carbon_file in carbon_pool_files:
-        src = 's3://gfw-files/sam/carbon_budget/carbon_030218/{0}/{1}_{0}.tif'.format(carbon_file, tile_id)
+        src = '{0}/{1}/{2}_{1}.tif'.format(carbon_pool_dir, carbon_file, tile_id)
         cmd = ['aws', 's3', 'cp', src, dest_folder]
         subprocess.check_call(cmd)
 
