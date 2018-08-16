@@ -18,6 +18,7 @@ biomass_tile_list = utilities.tile_list('s3://WHRC-carbon/WHRC_V4/Processed/')
 # biomass_tile_list = ['00N_000E'] # test tile
 # biomass_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
 print 'Biomass tile list is: ' + str(biomass_tile_list)
+print 'Number of biomass tiles is: ' + str(len(biomass_tile_list))
 tiles_in_chunk = 8
 
 # for chunk in chunks(biomass_tile_list, tiles_in_chunk):
