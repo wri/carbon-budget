@@ -193,6 +193,7 @@ for(x=0; x<xsize; x++) {
 		cout << "Litter" << out_litter;
         cout << "Soil:" << soil_data[x];
         cout << "TotalC" << out_total[x];
+        cout << "            ";
 
 	}
 	
