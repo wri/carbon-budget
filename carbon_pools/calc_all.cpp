@@ -185,7 +185,7 @@ for(x=0; x<xsize; x++) {
                 
 		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
  
-		out_total[x] = out_carbon[x] + out_bgc[x] + deadwood + litter + soil_data[x];  // Why aren't these deadwood[x] and litter[x]????
+		out_total[x] = out_carbon[x] + out_bgc[x] + deadwood[x] + litter[x] + soil_data[x];  // Why aren't these deadwood[x] and litter[x]????
 
 
 	}
