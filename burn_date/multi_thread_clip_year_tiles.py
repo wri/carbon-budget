@@ -24,8 +24,8 @@ for year in range(2000, 2018):
     cmd += ['--recursive', '--exclude', "*", '--include', include]
     subprocess.check_call(cmd)
 
-    cmd = ['aws', 's3', 'cp', Hansen_loss_dir, '.', '--recursive']
-    subprocess.check_call(cmd)
+    # cmd = ['aws', 's3', 'cp', Hansen_loss_dir, '.', '--recursive']
+    # subprocess.check_call(cmd)
 
     # build list of vrt files (command wont take folder/*.tif)
     vrt_name = "global_vrt_{}.vrt".format(year)

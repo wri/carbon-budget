@@ -21,7 +21,7 @@ def clip_year_tiles(tile_year_list):
     year_tifs_folder = "{}_year_tifs".format(year)
 
     # get coords of hansen tile
-    # hansen_tile = utilities.wgetloss(tile_id)
+    hansen_tile = utilities.wgetloss(tile_id)
     xmin, ymin, xmax, ymax = utilities.get_extent(tile_id)
 
     # clip vrt to tile extent
