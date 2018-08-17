@@ -182,6 +182,7 @@ def list_tiles(source):
 
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
-            file_list.append(tile_name)
+            tile_name_short = tile_name[0:8]
+            file_list.append(tile_name_short)
 
     return file_list
