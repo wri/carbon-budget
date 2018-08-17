@@ -32,6 +32,8 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
         print '   tile_id is: ' + str(tile_id)
 
         # download files
+
+        #### MAY NEED TO CHANGE THIS TO REFLECT THE NEW SOIL AND PEAT MASK THAT THAI CREATED
         peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
 
         # files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
