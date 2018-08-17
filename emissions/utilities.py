@@ -4,7 +4,7 @@ import multiprocessing
 import pandas as pd
 import os
 import glob
-
+import multiprocess_emissions
 
 def del_tiles(tile_id):
     tiles = glob.glob('*{}*tif'.format(tile_id))
@@ -24,12 +24,12 @@ def merge_tiles(tile_id):
     subprocess.check_call(cmd)
 
 
-def upload_final(output_dir, tile_id):
+def upload_final(tile_id):
     files = ['disturbance_model', 'shiftingag_model', 'forestry_model', 'wildfire_model', 'deforestation_model', 'urbanization_model', 'node_totals']
     for f in files:
         to_upload = "outdata/{0}_{1}.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)
-        destination = '{0}/{1}/'.format(output_dir, f)
+        destination = '{0}/{1}/'.format(multiprocess_emissions.output_dir, f)
         cmd = ['aws', 's3', 'mv', to_upload, destination]
         try:
             subprocess.check_call(cmd)
