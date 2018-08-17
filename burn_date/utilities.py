@@ -21,7 +21,7 @@ def makedir(folder):
 def wgetloss(tile_id):
     print "download hansen loss tile"
     hansen_tile = '{}_loss.tif'.format(tile_id)
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
+    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}.tif'.format(tile_id),
            '-O', hansen_tile]
 
     subprocess.check_call(cmd)    
@@ -148,3 +148,40 @@ def remove_list_files(file_list):
             os.remove(file)
         except:
             pass
+
+def get_extent(tif):
+    data = gdal.Open(tif, GA_ReadOnly)
+    geoTransform = data.GetGeoTransform()
+    minx = geoTransform[0]
+    maxy = geoTransform[3]
+    maxx = minx + geoTransform[1] * data.RasterXSize
+    miny = maxy + geoTransform[5] * data.RasterYSize
+    print [minx, miny, maxx, maxy]
+    data = None
+
+    return minx, miny, maxx, maxy
+
+# Lists the tiles in a folder in s3
+def tile_list(source):
+
+    ## For an s3 folder in a bucket using AWSCLI
+    # Captures the list of the files in the folder
+    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+
+    # Writes the output string to a text file for easier interpretation
+    Hansen_tiles = open("Hansen_tiles.txt", "w")
+    Hansen_tiles.write(stdout)
+    Hansen_tiles.close()
+
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open("Hanen_tiles.txt", 'r') as tile:
+        for line in tile:
+
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+            file_list.append(tile_name)
+
+    return file_list
