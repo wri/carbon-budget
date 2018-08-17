@@ -13,6 +13,7 @@ for year in range(2000, 2018):
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
     modis_burnyear_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/'
+    Hansen_loss_dir = 's3://gfw2-data/forest_change/hansen_2017'
 
     # download all hv tifs for this year
     include = '{0}_*.tif'.format(year)
@@ -23,7 +24,10 @@ for year in range(2000, 2018):
     cmd += ['--recursive', '--exclude', "*", '--include', include]
     subprocess.check_call(cmd)
 
-    # build list of vrt files (command wont take folder/*.tif)    
+    cmd = ['aws', 's3', 'cp', Hansen_loss_dir, '.', '--recursive']
+    subprocess.check_call(cmd)
+
+    # build list of vrt files (command wont take folder/*.tif)
     vrt_name = "global_vrt_{}.vrt".format(year)
     vrt_source_folder = "{}/*.tif".format(year_tifs_folder)
     
