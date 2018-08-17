@@ -14,6 +14,8 @@ def chunks(l, n):
 # print chunks(['cat', 'dog', 'mouse', 'rat'], 2)
 # # sys.exit()
 
+output_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
+
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 carbon_tile_list = ['00N_000E'] # test tile
@@ -51,6 +53,6 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
             print "cutting out plantations in Indonesia, Malaysia"
             utilities.mask_loss(tile_id)
 
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=tiles_in_chunk)
-    # pool.map(calc_emissions.calc_emissions, chunk)
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=tiles_in_chunk)
+    pool.map(calc_emissions.calc_emissions(output_dir), chunk)
