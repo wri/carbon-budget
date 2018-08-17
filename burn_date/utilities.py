@@ -137,7 +137,7 @@ def makedir(dir):
 
 def download_df(year, hv_tile, output_dir):
         include = '*A{0}*{1}*'.format(year, hv_tile)
-        cmd = ['aws', 's3', 'cp', 's3://gfw-files/sam/carbon_budget/burn_raw/', output_dir, '--recursive', '--exclude',
+        cmd = ['aws', 's3', 'cp', 'gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/raw_hdf/', output_dir, '--recursive', '--exclude',
                "*", '--include', include]
         subprocess.check_call(cmd)
 
