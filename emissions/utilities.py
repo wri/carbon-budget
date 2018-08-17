@@ -68,7 +68,7 @@ def download(file_dict, tile_id, carbon_pool_dir):
         subprocess.check_call(cmd)
 
     for ecozone_files in fao_ecozone_file_list:
-        file_name = '{0}_res_{1}.tif'.format(tile_id, ecozone_files)
+        file_name = '{0}_{1}.tif'.format(tile_id, ecozone_files)
 
         src = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/{0}/{1}'.format(ecozone_files, file_name)
         cmd = ['aws', 's3', 'cp', src, dest_folder]
