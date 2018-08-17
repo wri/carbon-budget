@@ -11,10 +11,10 @@ def chunks(l, n):
     for i in xrange(0, len(l), n):
         yield l[i:i + n]
 
+# print chunks(['cat', 'dog', 'mouse', 'rat'], 2)
+# # sys.exit()
+
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
-output_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
-
-
 carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 carbon_tile_list = ['00N_000E'] # test tile
 # carbon_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
