@@ -177,7 +177,7 @@ def list_tiles(source):
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
-    with open("Hanen_tiles.txt", 'r') as tile:
+    with open("Hansen_tiles.txt", 'r') as tile:
         for line in tile:
 
             num = len(line.strip('\n').split(" "))
