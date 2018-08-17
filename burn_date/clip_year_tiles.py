@@ -22,6 +22,7 @@ def clip_year_tiles(tile_year_list):
 
     # get coords of hansen tile
     hansen_tile = utilities.wgetloss(tile_id)
+    print "did it get here?"
     xmin, ymin, xmax, ymax = utilities.get_extent(tile_id)
 
     # clip vrt to tile extent
