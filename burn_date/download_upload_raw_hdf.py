@@ -16,7 +16,7 @@ def download_ba(hv_tile):
     
     subprocess.check_call(cmd)
 
-    s3_burn_raw = 's3://gfw-files/sam/carbon_budget/burn_raw/'
+    s3_burn_raw = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/raw_hdf/'
 
     cmd = ['aws', 's3', 'mv', outfolder, s3_burn_raw, '--recursive']
     subprocess.check_call(cmd)
