@@ -11,18 +11,15 @@ def chunks(l, n):
     for i in xrange(0, len(l), n):
         yield l[i:i + n]
 
-# print chunks(['cat', 'dog', 'mouse', 'rat'], 2)
-# # sys.exit()
+# carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 
-upload_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
-
-carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
-carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
+carbon_tile_list = utilities.tile_list('{}/carbon/'.format(utilities.carbon_pool_dir))
 carbon_tile_list = ['00N_000E'] # test tile
 # carbon_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
 print 'Carbon tile list is: ' + str(carbon_tile_list)
 print 'Number of carbon tiles is: ' + str(len(carbon_tile_list))
-tiles_in_chunk = 8
+
+tiles_in_chunk = 7
 
 for chunk in chunks(carbon_tile_list, tiles_in_chunk):
 
@@ -42,7 +39,7 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
                  'fao_ecozone': ['fao_ecozones_bor_tem_tro'], 'burned_area': ['burn_loss_year']}
 
         print '      Downloading input tiles'
-        utilities.download(files, tile_id, carbon_pool_dir)
+        utilities.download(files, tile_id, utilities.carbon_pool_dir)
 
         #download hansen tile
         hansen_tile = utilities.wgetloss(tile_id)
@@ -54,5 +51,5 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
             utilities.mask_loss(tile_id)
 
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=tiles_in_chunk)
+    pool = multiprocessing.Pool(processes = count/3)
     pool.map(calc_emissions.calc_emissions, chunk)

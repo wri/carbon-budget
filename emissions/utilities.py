@@ -5,6 +5,8 @@ import pandas as pd
 import os
 import glob
 
+carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
+output_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
 
 def del_tiles(tile_id):
     tiles = glob.glob('*{}*tif'.format(tile_id))
@@ -47,7 +49,7 @@ def mask_loss(tile_id):
     subprocess.check_call(cmd)
 
 
-def download(file_dict, tile_id, carbon_pool_dir):
+def download(file_dict, tile_id):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
     fao_ecozone_file_list = file_dict['fao_ecozone']
