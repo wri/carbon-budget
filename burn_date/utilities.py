@@ -3,6 +3,7 @@ import os
 import subprocess
 import numpy as np
 from osgeo import gdal
+from gdalconst import GA_ReadOnly
 
 
 def hdf_to_array(hdf):
@@ -20,7 +21,7 @@ def makedir(folder):
 
 def wgetloss(tile_id):
     print "download hansen loss tile"
-    print tile_id
+
     hansen_tile = '{}_loss.tif'.format(tile_id)
     # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
     #       '-O', hansen_tile]
@@ -152,6 +153,9 @@ def remove_list_files(file_list):
             pass
 
 def get_extent(tif):
+
+    print "Getting extent of", tif
+
     data = gdal.Open(tif, GA_ReadOnly)
     geoTransform = data.GetGeoTransform()
     minx = geoTransform[0]
