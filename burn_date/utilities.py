@@ -21,7 +21,7 @@ def makedir(folder):
 def wgetloss(tile_id):
     print "download hansen loss tile"
     hansen_tile = '{}_loss.tif'.format(tile_id)
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}.tif'.format(tile_id),
+    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
            '-O', hansen_tile]
 
     subprocess.check_call(cmd)    
