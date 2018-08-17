@@ -8,6 +8,7 @@ import glob
 import utilities
 import process_burned_area
 import tile_peat_dict
+import multiprocess_emissions
 
 def calc_emissions(tile_id):
 
@@ -38,7 +39,8 @@ def calc_emissions(tile_id):
 
     # Upload tiles to s3
     print 'Uploading tiles to s3'
-    upload_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
+    # upload_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
+    upload_dir = multiprocess_emissions.upload_dir
     utilities.upload_final(upload_dir, tile_id)
     
     # Delete tiles from spot machine-- not necessary because the files are being moved, not copied, from the spot machine

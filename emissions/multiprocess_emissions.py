@@ -14,6 +14,8 @@ def chunks(l, n):
 # print chunks(['cat', 'dog', 'mouse', 'rat'], 2)
 # # sys.exit()
 
+upload_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180817'
+
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 carbon_tile_list = ['00N_000E'] # test tile
