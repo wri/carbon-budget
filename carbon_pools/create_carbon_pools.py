@@ -18,17 +18,17 @@ _carbon.tif", "_bgc.tif",  "_deadwood.tif", "_litter.tif", _totalc.tif";
 def create_carbon_pools(tile_id):
     start = datetime.datetime.now()
 
-    # # location where files will be saved on s3
-    # # carbon_budget_input_data_dir = 's3://gfw-files/sam/carbon_budget/data_inputs3/'       # previously
-    # carbon_budget_input_data_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/'
-    #
-    # print "copy down biomass tile"
-    # biomass_tile = '{}_biomass.tif'.format(tile_id)
-    # # util.download('s3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/{}'.format(biomass_tile))    # previously
-    # util.download('s3://WHRC-carbon/WHRC_V4/Processed/{}'.format(biomass_tile))
-    #
-    # print "creating input files"
-    # create_input_files(tile_id, carbon_budget_input_data_dir, biomass_tile)
+    # location where files will be saved on s3
+    # carbon_budget_input_data_dir = 's3://gfw-files/sam/carbon_budget/data_inputs3/'       # previously
+    carbon_budget_input_data_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/'
+
+    print "copy down biomass tile"
+    biomass_tile = '{}_biomass.tif'.format(tile_id)
+    # util.download('s3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/{}'.format(biomass_tile))    # previously
+    util.download('s3://WHRC-carbon/WHRC_V4/Processed/{}'.format(biomass_tile))
+
+    print "creating input files"
+    create_input_files(tile_id, carbon_budget_input_data_dir, biomass_tile)
  
     print 'writing aboveground carbon, belowground carbon, deadwood, litter, total carbon'
     calc_all_cmd = ['./calc_all.exe', tile_id]

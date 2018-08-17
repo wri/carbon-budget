@@ -16,7 +16,7 @@ def chunks(l, n):
 
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
-# carbon_tile_list = ['00N_000E'] # test tile
+carbon_tile_list = ['00N_000E'] # test tile
 # carbon_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
 print 'Carbon tile list is: ' + str(carbon_tile_list)
 print 'Number of carbon tiles is: ' + str(len(carbon_tile_list))
@@ -36,7 +36,8 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
         peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
 
         # files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
-        files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'ifl_2000', 'fao_ecozones_bor_tem_tro', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
+        files = {'carbon_pool': ['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'],
+                 'fao_ecozone': ['fao_ecozones_bor_tem_tro'], 'burned_area': ['burn_loss_year']}
 
         print '      Downloading input tiles'
         utilities.download(files, tile_id, carbon_pool_dir)
@@ -50,6 +51,6 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
             print "cutting out plantations in Indonesia, Malaysia"
             utilities.mask_loss(tile_id)
 
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=tiles_in_chunk)
-    pool.map(calc_emissions.calc_emissions, chunk)
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=tiles_in_chunk)
+    # pool.map(calc_emissions.calc_emissions, chunk)

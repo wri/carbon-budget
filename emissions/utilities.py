@@ -50,6 +50,7 @@ def mask_loss(tile_id):
 def download(file_dict, tile_id, carbon_pool_dir):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
+    fao_ecozone_file_list = file_dict['fao_ecozone']
     dest_folder = 'cpp_util/'
     for carbon_file in carbon_pool_files:
         src = '{0}/{1}/{2}_{1}.tif'.format(carbon_pool_dir, carbon_file, tile_id)
@@ -62,7 +63,14 @@ def download(file_dict, tile_id, carbon_pool_dir):
         if data_prep_file == 'tsc_model':
             file_name = '{0}_{1}.tif'.format(tile_id, data_prep_file)
 
-        src = 's3://gfw-files/sam/carbon_budget/data_inputs2/{0}/{1}'.format(data_prep_file, file_name)
+        src = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/{0}/{1}'.format(data_prep_file, file_name)
+        cmd = ['aws', 's3', 'cp', src, dest_folder]
+        subprocess.check_call(cmd)
+
+    for ecozone_files in fao_ecozone_file_list:
+        file_name = '{0}_res_{1}.tif'.format(tile_id, ecozone_files)
+
+        src = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/{0}/{1}'.format(ecozone_files, file_name)
         cmd = ['aws', 's3', 'cp', src, dest_folder]
         subprocess.check_call(cmd)
 

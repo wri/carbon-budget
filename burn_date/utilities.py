@@ -162,7 +162,7 @@ def get_extent(tif):
     return minx, miny, maxx, maxy
 
 # Lists the tiles in a folder in s3
-def tile_list(source):
+def list_tiles(source):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
