@@ -20,9 +20,9 @@ for year in range(2000, 2018):
     year_tifs_folder = "{}_year_tifs".format(year)
     utilities.makedir(year_tifs_folder)
 
-    cmd = ['aws', 's3', 'cp', modis_burnyear_dir, year_tifs_folder]
-    cmd += ['--recursive', '--exclude', "*", '--include', include]
-    subprocess.check_call(cmd)
+    # cmd = ['aws', 's3', 'cp', modis_burnyear_dir, year_tifs_folder]
+    # cmd += ['--recursive', '--exclude', "*", '--include', include]
+    # subprocess.check_call(cmd)
 
     # cmd = ['aws', 's3', 'cp', Hansen_loss_dir, '.', '--recursive']
     # subprocess.check_call(cmd)
