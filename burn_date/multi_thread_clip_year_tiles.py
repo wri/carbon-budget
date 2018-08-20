@@ -50,12 +50,12 @@ for year in range(2000, 2018):
     for tile_id in tile_list:
         tile_year_list.append([tile_id, year])
 
-    clip_year_tiles.clip_year_tiles(tile_year_list)
+    # clip_year_tiles.clip_year_tiles(tile_year_list)
 
     # if __name__ == '__main__':
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes = count/3)
-    # pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes = count/3)
+    pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
     # year_tifs_folder = "{}_year_tifs".format(year)
     # shutil.rmtree(year_tifs_folder)
