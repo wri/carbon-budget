@@ -14,7 +14,6 @@ from carbon_pools import get_extent
 def clip_year_tiles(tile_year_list):
 
     tile_id = tile_year_list[0]
-    tile_id = tile_id[0, 9]
 
     print tile_id
 
@@ -25,6 +24,8 @@ def clip_year_tiles(tile_year_list):
     # get coords of hansen tile
     hansen_tile = utilities.wgetloss(tile_id)
     xmin, ymin, xmax, ymax = utilities.get_extent(tile_id)
+
+    tile_id = tile_id[0:9]
 
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
