@@ -48,7 +48,7 @@ def clip_year_tiles(tile_year_list):
 
     subprocess.check_call(cmd)
 
-    # rm files
+    # remove files
     print "Removing files"
     files_to_remove = [clipped_raster, hansen_tile, recoded_output]
     utilities.remove_list_files(files_to_remove)
