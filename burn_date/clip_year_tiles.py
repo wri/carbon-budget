@@ -53,7 +53,5 @@ def clip_year_tiles(tile_year_list):
     files_to_remove = [clipped_raster, hansen_tile, recoded_output]
     utilities.remove_list_files(files_to_remove)
 
-    print "Done removing individual files. Now removing folder."
-
-    shutil.rmtree(year_tifs_folder)
+    print "Done removing individual files"
 
