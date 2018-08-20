@@ -22,7 +22,6 @@ def clip_year_tiles(tile_year_list):
 
     # get coords of hansen tile
     hansen_tile = utilities.wgetloss(tile_id)
-    print "did it get here?"
     xmin, ymin, xmax, ymax = utilities.get_extent(tile_id)
 
     # clip vrt to tile extent
@@ -33,7 +32,7 @@ def clip_year_tiles(tile_year_list):
 
     # calc year tile values to be equal to year
     calc = '--calc={}*(A>0)'.format(int(year)-2000)
-    recoded_output =  "ba_{0}_{1}.tif".format(year, tile_id)
+    recoded_output =  "ba_{0}_{1}".format(year, tile_id)
     outfile = '--outfile={}'.format(recoded_output)
 
     cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
