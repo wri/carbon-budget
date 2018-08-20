@@ -50,8 +50,6 @@ for year in range(2000, 2018):
     for tile_id in tile_list:
         tile_year_list.append([tile_id, year])
 
-        print tile_year_list
-
     # if __name__ == '__main__':
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes = count/3)
