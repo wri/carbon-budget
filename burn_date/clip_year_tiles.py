@@ -14,6 +14,7 @@ from carbon_pools import get_extent
 def clip_year_tiles(tile_year_list):
 
     tile_id = tile_year_list[0]
+    tile_id = tile_id[0, 9]
 
     print tile_id
 
@@ -51,5 +52,4 @@ def clip_year_tiles(tile_year_list):
     utilities.remove_list_files(files_to_remove)
 
     # shutil.rmtree(year_tifs_folder)
-
 
