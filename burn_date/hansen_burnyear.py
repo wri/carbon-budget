@@ -6,16 +6,20 @@ import subprocess
 
 
 def hansen_burnyear(tile_id):
+
+    input_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year_10x10_clip/'
+    output_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/'
+
     # download the 10x10 deg burn year tiles- 1 for each year- in WGS proj, stack and evaluate
     # to return burn year values on hansen loss pixels within 1 year of loss date
 
     ## data is in wgs proj, name is wrong
-    burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'
+    # burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'  # Previous location
     include = 'ba_*_{}.tif'.format(tile_id)
     burn_tiles_dir = 'burn_tiles'
     if not os.path.exists(burn_tiles_dir):
         os.mkdir(burn_tiles_dir)
-    cmd = ['aws', 's3', 'cp', burn_year_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]  
+    cmd = ['aws', 's3', 'cp', input_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
     subprocess.check_call(cmd)
     
     # for each year tile, convert to array and stack them
@@ -47,13 +51,17 @@ def hansen_burnyear(tile_id):
     outname = '{}_burnyear.tif'.format(tile_id)
     
     utilities.array_to_raster_simple(lossyear_burn_array, outname, loss_tile)
-    cmd = ['aws', 's3', 'mv', outname, 's3://gfw-files/sam/carbon_budget/burn_loss_year/']
+    cmd = ['aws', 's3', 'mv', outname, output_tiles]
     subprocess.check_call(cmd)
 
     # clean up files
     os.remove(loss_tile)
-    
-tile_list = ['00N_000E', '00N_010E']
+
+
+
+tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
+print "Tile list: ", tile_list
 
 for tile_id in tile_list:
+    print "Processing ", tile_id
     hansen_burnyear(tile_id)
