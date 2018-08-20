@@ -52,13 +52,12 @@ for year in range(2000, 2018):
     for tile_id in tile_list:
         tile_year_list.append([tile_id, year])
 
-    # if __name__ == '__main__':
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes = 5)
-    pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+    if __name__ == '__main__':
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(processes=50)
+        pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
     print "Multiprocessing for year done. Moving to next year."
 
-    # print "Deleting year folder"
-    # year_tifs_folder = "{}_year_tifs".format(year)
-    # shutil.rmtree(year_tifs_folder)
+    year_tifs_folder = "{}_year_tifs".format(year)
+    shutil.rmtree(year_tifs_folder)
