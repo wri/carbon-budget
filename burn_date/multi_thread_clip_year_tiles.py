@@ -16,7 +16,7 @@ import utilities
 # So, I decided it's be faster (though more annoying) to create a spot machine to run each year separately.
 # Thus, I created 18 spot 16xlarge spot machines, with year inputs of (2000, 2001), (2001, 2002), (2002, 2003), etc. and 40 processors.
 # It was annoying but got the job done more quickly than troubleshooting this.
-for year in range(2017, 2018):
+for year in range(2000, 2018):
 
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
