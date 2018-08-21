@@ -7,7 +7,15 @@ import shutil
 import utilities
 
 # creates a 10x10 degree wgs 84 tile of .00025 res burned year. Download all modis hv tile from s3,
-# make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3
+# make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
+# When I tried running this iterating across all years (2000 to 2017) to get updated burned area in August 2018,
+# it didn't work if I had it process all tiles. It kept hanging up at the end of the multiprocessor step for the first year.
+# That didn't happen when I had it multiprocess a few tiles (it went to the next year just fine), so there was some issue
+# with it handling all tiles.
+# I tried using different numbers of processors (as low as 6) but it still got hung up at the end of the first year.
+# So, I decided it's be faster (though more annoying) to create a spot machine to run each year separately.
+# Thus, I created 18 spot 16xlarge spot machines, with year inputs of (2000, 2001), (2001, 2002), (2002, 2003), etc. and 40 processors.
+# It was annoying but got the job done more quickly than troubleshooting this.
 for year in range(2017, 2018):
 
     # Input files
@@ -52,6 +60,8 @@ for year in range(2017, 2018):
     for tile_id in tile_list:
         tile_year_list.append([tile_id, year])
 
+    # Again, this configuration doesn't work for multiple years. It got hung up after the first year.
+    # But using 40 processors for a 16xlarge spot machine works well for a single year of burn data.
     if __name__ == '__main__':
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=40)

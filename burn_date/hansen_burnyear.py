@@ -58,10 +58,10 @@ def hansen_burnyear(tile_id):
     os.remove(loss_tile)
 
 
-
 tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
 print "Tile list: ", tile_list
 
 for tile_id in tile_list:
+    tile_id =  tile_id[0:8]
     print "Processing ", tile_id
     hansen_burnyear(tile_id)
