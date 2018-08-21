@@ -8,7 +8,7 @@ import utilities
 
 # creates a 10x10 degree wgs 84 tile of .00025 res burned year. Download all modis hv tile from s3,
 # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3
-for year in range(2013, 2014):
+for year in range(2014, 2015):
 
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
