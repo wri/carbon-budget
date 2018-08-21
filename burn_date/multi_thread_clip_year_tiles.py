@@ -32,7 +32,7 @@ for year in range(2000, 2018):
         vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
         for tif in vrt_tifs:
             vrt_files.write(tif + "\n")
- 
+
     # create vrt with wgs84 modis tiles
     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
     subprocess.check_call(cmd)
