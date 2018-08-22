@@ -51,12 +51,12 @@ def hansen_burnyear(tile_id):
     # write burn pixels to raster
     outname = '{}_burnyear.tif'.format(tile_id)
 
-    utilities.array_to_raster_simple(lossyear_burn_array, outname, loss_tile)
+    utilities.array_to_raster_simple(lossyear_burn_array, outname, '{}.tif'.format(tile_id))
     cmd = ['aws', 's3', 'mv', outname, output_tiles]
     subprocess.check_call(cmd)
 
     # clean up files
-    os.remove(loss_tile)
+    os.remove('{}.tif'.format(tile_id))
 
 
 tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
