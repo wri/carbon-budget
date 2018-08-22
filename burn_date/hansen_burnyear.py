@@ -22,13 +22,13 @@ def hansen_burnyear(tile_id):
     # cmd = ['aws', 's3', 'cp', input_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
     # subprocess.check_call(cmd)
     #
-    # # for each year tile, convert to array and stack them
-    # array_list = []
-    # ba_tifs = glob.glob(burn_tiles_dir + '/*{}*'.format(tile_id))
-    # for ba_tif in ba_tifs:
-    #     print "creating array with {}".format(ba_tif)
-    #     array = utilities.raster_to_array(ba_tif)
-    #     array_list.append(array)
+    # for each year tile, convert to array and stack them
+    array_list = []
+    ba_tifs = glob.glob(burn_tiles_dir + '/*{}*'.format(tile_id))
+    for ba_tif in ba_tifs:
+        print "creating array with {}".format(ba_tif)
+        array = utilities.raster_to_array(ba_tif)
+        array_list.append(array)
 
     # stack arrays
     print "stacking arrays"
