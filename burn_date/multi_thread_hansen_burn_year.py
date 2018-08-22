@@ -8,5 +8,5 @@ tile_list = tile_list[1:]
 print tile_list
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
+pool = multiprocessing.Pool(processes=7)
 pool.map(hansen_burnyear.hansen_burnyear, tile_list)
