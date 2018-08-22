@@ -40,7 +40,7 @@ def hansen_burnyear(tile_id):
 
     # convert hansen tile to array
     print "creating loss year array"
-    loss_array = utilities.raster_to_array(loss_tile)
+    loss_array = utilities.raster_to_array('{}.tif'.format(tile_id))
 
     lossarray_min1 = np.subtract(loss_array, 1)
 
