@@ -13,10 +13,10 @@ def hansen_burnyear(tile_id):
     # download the 10x10 deg burn year tiles- 1 for each year- in WGS proj, stack and evaluate
     # to return burn year values on hansen loss pixels within 1 year of loss date
 
-    # ## data is in wgs proj, name is wrong
-    # # burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'  # Previous location
-    # include = 'ba_*_{}.tif'.format(tile_id)
-    # burn_tiles_dir = 'burn_tiles'
+    ## data is in wgs proj
+    # burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'  # Previous location
+    include = 'ba_*_{}.tif'.format(tile_id)
+    burn_tiles_dir = 'burn_tiles'
     # if not os.path.exists(burn_tiles_dir):
     #     os.mkdir(burn_tiles_dir)
     # cmd = ['aws', 's3', 'cp', input_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
