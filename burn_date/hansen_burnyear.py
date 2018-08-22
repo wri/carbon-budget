@@ -13,22 +13,22 @@ def hansen_burnyear(tile_id):
     # download the 10x10 deg burn year tiles- 1 for each year- in WGS proj, stack and evaluate
     # to return burn year values on hansen loss pixels within 1 year of loss date
 
-    ## data is in wgs proj, name is wrong
-    # burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'  # Previous location
-    include = 'ba_*_{}.tif'.format(tile_id)
-    burn_tiles_dir = 'burn_tiles'
-    if not os.path.exists(burn_tiles_dir):
-        os.mkdir(burn_tiles_dir)
-    cmd = ['aws', 's3', 'cp', input_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
-    subprocess.check_call(cmd)
-
-    # for each year tile, convert to array and stack them
-    array_list = []
-    ba_tifs = glob.glob(burn_tiles_dir + '/*{}*'.format(tile_id))
-    for ba_tif in ba_tifs:
-        print "creating array with {}".format(ba_tif)
-        array = utilities.raster_to_array(ba_tif)
-        array_list.append(array)
+    # ## data is in wgs proj, name is wrong
+    # # burn_year_tiles = 's3://gfw-files/sam/carbon_budget/burn_year_10degtiles_modisproj/'  # Previous location
+    # include = 'ba_*_{}.tif'.format(tile_id)
+    # burn_tiles_dir = 'burn_tiles'
+    # if not os.path.exists(burn_tiles_dir):
+    #     os.mkdir(burn_tiles_dir)
+    # cmd = ['aws', 's3', 'cp', input_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
+    # subprocess.check_call(cmd)
+    #
+    # # for each year tile, convert to array and stack them
+    # array_list = []
+    # ba_tifs = glob.glob(burn_tiles_dir + '/*{}*'.format(tile_id))
+    # for ba_tif in ba_tifs:
+    #     print "creating array with {}".format(ba_tif)
+    #     array = utilities.raster_to_array(ba_tif)
+    #     array_list.append(array)
 
     # stack arrays
     print "stacking arrays"
