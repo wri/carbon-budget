@@ -62,10 +62,11 @@ def hansen_burnyear(tile_id):
     os.remove('{}.tif'.format(tile_id))
 
 
-tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
-tile_list = tile_list[1:]
-print "Tile list: ", tile_list
+if __name__ == '__main__':
 
-for tile_id in tile_list:
-    print "Processing", tile_id
-    hansen_burnyear(tile_id)
+    tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
+    tile_list = tile_list[1:]
+    print "Tile list: ", tile_list
+
+    for tile_id in tile_list:
+        hansen_burnyear(tile_id)
