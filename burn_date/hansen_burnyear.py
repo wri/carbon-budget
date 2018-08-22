@@ -36,6 +36,7 @@ def hansen_burnyear(tile_id):
 
     # download hansen tile
     loss_tile = utilities.wgetloss(tile_id)
+    print loss_tile
 
     # convert hansen tile to array
     print "creating loss year array"
@@ -64,5 +65,5 @@ print "Tile list: ", tile_list
 
 for tile_id in tile_list:
     tile_id =  tile_id[0:8]
-    print "Processing ", tile_id
+    print "Processing", tile_id
     hansen_burnyear(tile_id)
