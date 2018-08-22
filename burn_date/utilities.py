@@ -22,7 +22,9 @@ def makedir(folder):
 def wgetloss(tile_id):
     print "download hansen loss tile"
 
+    print tile_id
     hansen_tile = '{}_loss.tif'.format(tile_id)
+    print hansen_tile
     # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
     #       '-O', hansen_tile]
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id)]
@@ -123,8 +125,6 @@ def array_to_raster(global_grid_hv, year, array, template_hdf, outfolder):
 
 
 def stack_arrays(list_of_year_arrays):
-
-    print "stacking arrays"
 
     stack = np.stack(list_of_year_arrays)
     
