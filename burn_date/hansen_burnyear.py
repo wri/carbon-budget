@@ -56,7 +56,7 @@ def hansen_burnyear(tile_id):
 
     # clean up files
     os.remove(loss_tile)
-
+ 
 
 tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
 tile_list = tile_list[1:]
