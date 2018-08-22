@@ -27,7 +27,7 @@ def wgetloss(tile_id):
     print hansen_tile
     # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
     #       '-O', hansen_tile]
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}.tif'.format(tile_id)]
+    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id)]
 
     subprocess.check_call(cmd)    
     return hansen_tile

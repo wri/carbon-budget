@@ -35,7 +35,7 @@ def hansen_burnyear(tile_id):
     stacked_year_array = utilities.stack_arrays(array_list)
 
     # download hansen tile
-    loss_tile = utilities.wgetloss(tile_id)
+    loss_tile = utilities.wgetloss('{}.tif'.format(tile_id))
 
     # convert hansen tile to array
     print "creating loss year array"
