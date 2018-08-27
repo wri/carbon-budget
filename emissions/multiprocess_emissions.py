@@ -14,7 +14,7 @@ def chunks(l, n):
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 
 carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
-carbon_tile_list = ['00N_000E'] # test tile
+# carbon_tile_list = ['00N_000E'] # test tile
 # carbon_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
 print 'Carbon tile list is: ' + str(carbon_tile_list)
 print 'Number of carbon tiles is: ' + str(len(carbon_tile_list))
