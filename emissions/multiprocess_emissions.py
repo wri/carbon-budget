@@ -38,7 +38,7 @@ for chunk in chunks(carbon_tile_list, tiles_in_chunk):
 
         # files = {'carbon_pool':['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'fao_ecozones_bor_tem_tro', 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'], 'burned_area':['burn_loss_year']}
         files = {'carbon_pool': ['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'],
-                 'fao_ecozone': ['fao_ecozones_bor_tem_tro'], 'burned_area': ['burn_loss_year']}
+                 'fao_ecozone': ['fao_ecozones_bor_tem_tro'], 'burned_area': ['burn_year_with_Hansen_loss']}
 
         print '      Downloading input tiles'
         utilities.download(files, tile_id, carbon_pool_dir)

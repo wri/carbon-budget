@@ -75,7 +75,7 @@ def download(file_dict, tile_id, carbon_pool_dir):
         subprocess.check_call(cmd)
 
     burned_area = file_dict['burned_area'][0]
-    src = 's3://gfw-files/sam/carbon_budget/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
+    src = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/{0}/{1}_burnyear.tif'.format(burned_area, tile_id)
     cmd = ['aws', 's3', 'cp', src, dest_folder]
     subprocess.check_call(cmd)
 
