@@ -41,7 +41,7 @@ def calc_emissions(tile_id):
     output_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828'
     utilities.upload_final(output_dir, tile_id)
     
-    # Delete tiles from spot machine-- not necessary because the files are being moved, not copied, from the spot machine
+    # Delete tiles from spot machine
     print 'Deleting tiles from spot machine'
     utilities.del_tiles(tile_id)
 

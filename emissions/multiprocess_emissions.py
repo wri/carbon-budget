@@ -25,7 +25,7 @@ pool = multiprocessing.Pool(processes=count / 3)
 
 # How many tiles the spot machine will process at one time
 # Set to process half as many tiles at one time as processors it is using
-tiles_in_chunk = count / 6
+tiles_in_chunk = count / 9
 
 for chunk in chunks(carbon_tile_list, tiles_in_chunk):
 
