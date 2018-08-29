@@ -61,7 +61,7 @@ def create_gain_year_count(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
+ 
     print "Processing time for tile", tile_id, ":", elapsed_time
 
 
