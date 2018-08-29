@@ -21,11 +21,11 @@ print 'Carbon tile list is: ' + str(carbon_tile_list)
 print 'Number of carbon tiles is: ' + str(len(carbon_tile_list))
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 3)
+pool = multiprocessing.Pool(processes=count / 4)
 
 # How many tiles the spot machine will process at one time
 # Set to process half as many tiles at one time as processors it is using
-tiles_in_chunk = count / 9
+tiles_in_chunk = count / 10
 
 for chunk in chunks(carbon_tile_list, tiles_in_chunk):
 

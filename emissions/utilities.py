@@ -7,7 +7,7 @@ import glob
 
 
 def del_tiles(tile_id):
-    tiles = glob.glob('/cpp_util/*{}*tif'.format(tile_id))
+    tiles = glob.glob('cpp_util/{}*.tif'.format(tile_id))
     for tile in tiles:
         os.remove(tile)
 
