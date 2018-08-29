@@ -42,6 +42,7 @@ def upload_final(upload_dir, tile_id):
 
         print "uploading {}".format(f)
         cmd = ['aws', 's3', 'cp', f, upload_dir]
+        print cmd
 
         try:
             subprocess.check_call(cmd)
