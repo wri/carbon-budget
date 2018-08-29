@@ -1,9 +1,57 @@
 import subprocess
+import glob
 
 
 def s3_download(source, dest):
+
     cmd = ['aws', 's3', 'cp', source, dest]
     subprocess.check_call(cmd)
+
+# Lists the tiles in a folder in s3
+def tile_list(source):
+
+    ## For an s3 folder in a bucket using AWSCLI
+    # Captures the list of the files in the folder
+    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+
+    # Writes the output string to a text file for easier interpretation
+    aboveground_c_tiles = open("aboveground_c_tiles.txt", "w")
+    aboveground_c_tiles.write(stdout)
+    aboveground_c_tiles.close()
+
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open("aboveground_c_tiles.txt", 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+            tile_short_name = tile_name.replace('_carbon.tif', '')
+            file_list.append(tile_short_name)
+
+    return file_list
+
+def upload_final(upload_dir, tile_id):
+
+    files = glob.glob('growth_years_*{}.tif'.format(tile_id))
+
+    print files
+
+    for f in files:
+
+        print "uploading {}".format(f)
+        cmd = ['aws', 's3', 'cp', f, upload_dir]
+
+        try:
+            subprocess.check_call(cmd)
+        except:
+            print "Error uploading output tile"
+
+
+
+##### Not currently using the below functions
+
 
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
@@ -65,28 +113,3 @@ def resample_00025(input_tif, resampled_tif):
     subprocess.check_call(cmd)
 
 
-# Lists the tiles in a folder in s3
-def tile_list(source):
-
-    ## For an s3 folder in a bucket using AWSCLI
-    # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
-
-    # Writes the output string to a text file for easier interpretation
-    aboveground_c_tiles = open("aboveground_c_tiles.txt", "w")
-    aboveground_c_tiles.write(stdout)
-    aboveground_c_tiles.close()
-
-    file_list = []
-
-    # Iterates through the text file to get the names of the tiles and appends them to list
-    with open("aboveground_c_tiles.txt", 'r') as tile:
-        for line in tile:
-
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
-            tile_short_name = tile_name.replace('_carbon.tif', '')
-            file_list.append(tile_short_name)
-
-    return file_list

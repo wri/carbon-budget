@@ -9,6 +9,8 @@ def create_gain_year_count(tile_id):
     gain = 'Hansen_GFC2015_gain_{}.tif'.format(tile_id)
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
 
+    upload_dir = 'gfw2-data/climate/carbon_model/forest_age/20180829'
+
     print 'Loss tile is', loss
     print 'Gain tile is', gain
     print 'tcd tile is', tcd
@@ -48,5 +50,9 @@ def create_gain_year_count(tile_id):
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
     cmd = ['gdal_merge.py', '-o', loss_outfile, gain_outfile, no_change_outfile, loss_and_gain_outfile, '-co', 'COMPRESS=LZW', '-n', '0', '-a_nodata', '0']
     subprocess.check_call(cmd)
+
+    utilities.upload_final(upload_dir, tile_id)
+
+
 
 
