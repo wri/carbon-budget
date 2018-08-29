@@ -15,7 +15,7 @@ def create_gain_year_count(tile_id):
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
 
     # Location to upload files to
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age/20180829'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age/20180829/'
 
     print 'Loss tile is', loss
     print 'Gain tile is', gain
