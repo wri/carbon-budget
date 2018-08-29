@@ -17,8 +17,9 @@ carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
 utilities.s3_download('{}00N_050W.tif'.format(loss), '.')
-utilities.s3_download('{}Hansen_GFC2015_gain_00N_050W.tif', '.')
-utilities.s3_download('{}Hansen_GFC2014_treecover2000_00N_050W.tif', '.')
+utilities.s3_download('{}Hansen_GFC2015_gain_00N_050W.tif'.format(gain), '.')
+utilities.s3_download('{}Hansen_GFC2014_treecover2000_00N_050W.tif'.format(tcd), '.')
+
 
 for tile in carbon_tile_list:
 
