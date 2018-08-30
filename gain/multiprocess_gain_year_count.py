@@ -20,7 +20,7 @@ print carbon_tile_list
 # utilities.s3_download('{}'.format(tcd), '.')
 
 tile = '00N_050W'
-utilities.s3_download('{0}{1}.tif'.format(loss, tile), '.')
+utilities.s3_download('{0}00N_050W.tif'.format(loss), '.')
 
 # For downloading select files for testing
 for tile in carbon_tile_list:
