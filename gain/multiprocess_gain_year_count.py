@@ -28,6 +28,6 @@ if __name__ == '__main__':
     pool = multiprocessing.Pool(processes=count / 8)
     pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
-for tile in carbon_tile_list:
-
-    create_gain_year_count.create_gain_year_count(tile)
+# for tile in carbon_tile_list:
+#
+#     create_gain_year_count.create_gain_year_count(tile)
