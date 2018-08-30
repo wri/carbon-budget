@@ -4,7 +4,7 @@ import glob
 
 def s3_download(source, dest):
 
-    cmd = ['aws', 's3', 'cp', source, dest]
+    cmd = ['aws', 's3', 'cp', source, dest, '-r']
     subprocess.check_call(cmd)
 
 # Lists the tiles in a folder in s3
