@@ -23,10 +23,9 @@ def create_gain_year_count(tile_id):
 
     # calc year tile values to be equal to year
     calc = '--calc=(A>0)*(B==0)*(A-1)'
-    loss_outfile = 'growth_years_loss_only_{}.tif'.format(tile_id)
-    outfile = '--outfile={}'.format(loss_outfile)
-
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, calc, outfile, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    loss_outfile1 = 'growth_years_loss_only_{}.tif'.format(tile_id)
+    loss_outfile2 = '--outfile={}'.format(loss_outfile1)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, calc, loss_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
 
