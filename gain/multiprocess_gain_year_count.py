@@ -22,10 +22,10 @@ print carbon_tile_list
 # utilities.s3_download('{}Hansen_GFC2015_gain_00N_050W.tif'.format(gain), '.')
 # utilities.s3_download('{}Hansen_GFC2014_treecover2000_00N_050W.tif'.format(tcd), '.')
 
-if __name__ == '__main__':
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=40)
-    pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+# if __name__ == '__main__':
+#     count = multiprocessing.cpu_count()
+#     pool = multiprocessing.Pool(processes=40)
+#     pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
 if __name__ == '__main__':
 
