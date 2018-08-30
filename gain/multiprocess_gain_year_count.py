@@ -19,13 +19,16 @@ print carbon_tile_list
 # utilities.s3_download('{}'.format(gain), '.')
 # utilities.s3_download('{}'.format(tcd), '.')
 
+tile = '00N_050W'
+utilities.s3_download('{0}{1}.tif'.format(loss, tile), '.')
+
 # For downloading select files for testing
 for tile in carbon_tile_list:
 
     print "Downloading", tile
-    utilities.s3_download('{0}{1}.tif'.format([loss, tile]), '.')
-    utilities.s3_download('{0}Hansen_GFC2015_gain_{1}.tif'.format([gain, tile]), '.')
-    utilities.s3_download('{0}Hansen_GFC2014_treecover2000_(1).tif'.format([tcd, tile]), '.')
+    utilities.s3_download('{0}{1}.tif'.format(loss, tile), '.')
+    utilities.s3_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')
+    utilities.s3_download('{0}Hansen_GFC2014_treecover2000_(1).tif'.format(tcd, tile), '.')
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=2)
