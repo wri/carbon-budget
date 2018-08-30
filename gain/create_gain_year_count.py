@@ -53,11 +53,10 @@ def create_gain_year_count(tile_id):
     # Pixels with both loss and gain
     print "Creating raster of growth years for loss and gain pixels"
     # gdal_calc.py -A 00N_050W.tif -B Hansen_GFC2015_gain_00N_050W.tif --calc="((A>0)*(B==1)*((A-1)+(16-A)/2))" --outfile=gain_and_loss.tif --NoDataValue=0 --overwrite
-    # loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+(16-A)/2))'
-    loss_and_gain_calc = '--calc=(A>0)*(B==1)'
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+(16-A)/2))'
     loss_and_gain_outfile1 = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
     loss_and_gain_outfile2 = '--outfile={}'.format(loss_and_gain_outfile1)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc, loss_and_gain_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc, no_change_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
