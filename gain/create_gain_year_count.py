@@ -27,7 +27,7 @@ def create_gain_year_count(tile_id):
     recoded_output = "ba_{0}.tif".format(tile_id)
     outfile = '--outfile={}'.format(recoded_output)
 
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, calc, outfile, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
 
