@@ -31,11 +31,9 @@ for tile in carbon_tile_list:
 #     pool = multiprocessing.Pool(processes=40)
 #     pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
-if __name__ == '__main__':
-
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=2)
-    pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=2)
+pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # for tile in carbon_tile_list:
 #
