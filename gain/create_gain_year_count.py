@@ -44,10 +44,10 @@ def create_gain_year_count(tile_id):
     # Pixels with neither loss nor gain but in areas with tree cover density >0
     print "Creating raster of growth years for no change pixels"
     # gdal_calc.py -A 00N_050W.tif -B Hansen_GFC2015_gain_00N_050W.tif -C Hansen_GFC2014_treecover2000_00N_050W.tif --calc "(A==0)*(B==0)*(C>0)*15" --outfile=no_change.tif --NoDataValue=0 --overwrite
-    # no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*15'
+    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*15'
     no_change_outfile1 = 'growth_years_no_change_{}.tif'.format(tile_id)
     no_change_outfile2 = '--outfile={}'.format(no_change_outfile1)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd,  gain_calc, gain_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd,  no_change_calc, no_change_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # # Pixels with both loss and gain
