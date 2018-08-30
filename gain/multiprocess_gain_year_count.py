@@ -1,7 +1,5 @@
 import utilities
 import create_gain_year_count
-import subprocess
-
 
 # Location of the carbon pools
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
@@ -15,12 +13,9 @@ carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
-cmd = ['aws', 's3', 'cp', '{}'.format(loss), '.', '--recursive']
-subprocess.check_call(cmd)
-
-# utilities.s3_download('{}'.format(loss), '.')
-# utilities.s3_download('{}'.format(gain), '.')
-# utilities.s3_download('{}'.format(tcd), '.')
+utilities.s3_download('{}'.format(loss), '.')
+utilities.s3_download('{}'.format(gain), '.')
+utilities.s3_download('{}'.format(tcd), '.')
 
 # utilities.s3_download('{}00N_050W.tif'.format(loss), '.')
 # utilities.s3_download('{}Hansen_GFC2015_gain_00N_050W.tif'.format(gain), '.')
