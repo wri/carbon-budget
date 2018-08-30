@@ -25,11 +25,11 @@ for tile in carbon_tile_list:
     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')
     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')
 
-# if __name__ == '__main__':
-#
-#     count = multiprocessing.cpu_count()
-#     pool = multiprocessing.Pool(processes=2)
-#     pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
+if __name__ == '__main__':
+
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=2)
+    pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # for tile in carbon_tile_list:
 #
