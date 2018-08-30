@@ -15,7 +15,7 @@ carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
-cmd = ['aws', 's3', 'cp', '{}'.format(loss), '.', '-r']
+cmd = ['aws', 's3', 'cp', '{}'.format(loss), '.', '--recursive']
 subprocess.check_call(cmd)
 
 # utilities.s3_download('{}'.format(loss), '.')
