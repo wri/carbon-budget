@@ -21,11 +21,13 @@ def create_gain_year_count(tile_id):
     print 'Gain tile is', gain
     print 'tcd tile is', tcd
 
-    print "Creating raster of growth years for loss-only pixels"
-    loss_calc = '58'
-    loss_outfile = 'test_{}.tif'.format(tile_id)
-    #gdal_calc.py -A 00N_050W.tif -B Hansen_GFC2015_gain_00N_050W.tif --calc="(A>0)*(B==0)*(A-1)" --outfile=loss_only.tif --NoDataValue=0 --overwrite
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '--calc={}'.format(loss_calc), '--outfile={}'.format(loss_outfile), '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    # calc year tile values to be equal to year
+    year = 2018
+    calc = '--calc={}*(A>0)'.format(int(year)-2000)
+    recoded_output =  "ba_{0}_{1}.tif".format(year, tile_id)
+    outfile = '--outfile={}'.format(recoded_output)
+
+    cmd = ['gdal_calc.py', '-A', loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
 

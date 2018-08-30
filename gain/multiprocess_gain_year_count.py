@@ -23,9 +23,14 @@ print carbon_tile_list
 # utilities.s3_download('{}Hansen_GFC2014_treecover2000_00N_050W.tif'.format(tcd), '.')
 
 if __name__ == '__main__':
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=40)
+    pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+
+if __name__ == '__main__':
 
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=count / 8)
+    pool = multiprocessing.Pool(processes=40)
     pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # for tile in carbon_tile_list:
