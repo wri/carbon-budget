@@ -24,7 +24,7 @@ def create_gain_year_count(tile_id):
     # calc year tile values to be equal to year
     year = 2018
     calc = '--calc=(A>0)'
-    recoded_output = "ba_{0}_{1}.tif".format(year, tile_id)
+    recoded_output = "ba_{0}.tif".format(tile_id)
     outfile = '--outfile={}'.format(recoded_output)
 
     cmd = ['gdal_calc.py', '-A', loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
