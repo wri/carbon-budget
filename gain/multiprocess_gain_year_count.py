@@ -11,7 +11,7 @@ gain = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
 tcd = 's3://gfw2-data/forest_cover/2000_treecover/'
 
 # carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
-carbon_tile_list = ["80N_110E", "80N_120E", "80N_130E"]
+carbon_tile_list = ["80N_110E", "80N_120E"]
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
@@ -31,7 +31,7 @@ print carbon_tile_list
 if __name__ == '__main__':
 
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=40)
+    pool = multiprocessing.Pool(processes=2)
     pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # for tile in carbon_tile_list:
