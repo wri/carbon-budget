@@ -19,11 +19,11 @@ print carbon_tile_list
 # utilities.s3_folder_download('{}'.format(gain), '.')
 # utilities.s3_folder_download('{}'.format(tcd), '.')
 
-for tile in carbon_tile_list:
-
-    utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')
-    utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')
-    utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')
+# for tile in carbon_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')
+#     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')
+#     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')
 
 if __name__ == '__main__':
 
