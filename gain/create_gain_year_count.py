@@ -23,7 +23,7 @@ def create_gain_year_count(tile_id):
 
     # calc year tile values to be equal to year
     year = 2018
-    calc = '--calc=(A>0)'
+    calc = '--calc=(A>0)*(B==0)*(A-1)'
     recoded_output = "ba_{0}.tif".format(tile_id)
     outfile = '--outfile={}'.format(recoded_output)
 
