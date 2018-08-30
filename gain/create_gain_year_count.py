@@ -47,7 +47,7 @@ def create_gain_year_count(tile_id):
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*15'
     no_change_outfile1 = 'growth_years_no_change_{}.tif'.format(tile_id)
     no_change_outfile2 = '--outfile={}'.format(no_change_outfile1)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', '-C', tcd, gain, no_change_calc, no_change_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd,  no_change_calc, no_change_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # # Pixels with both loss and gain
