@@ -12,6 +12,7 @@ tcd = 's3://gfw2-data/forest_cover/2000_treecover/'
 
 # carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 carbon_tile_list = ["80N_110E", "80N_120E"]
+# carbon_tile_list = ["00N_050W", "00N_060W"]
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 

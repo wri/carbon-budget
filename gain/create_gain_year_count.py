@@ -61,7 +61,7 @@ def create_gain_year_count(tile_id):
 
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
     age_outfile = 'growth_years_total_{}.tif'.format(tile_id)
-    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfile1, gain_outfile1, no_change_outfile1, loss_and_gain_outfile1, '-co', 'COMPRESS=LZW', '-n', '0', '-a_nodata', '0']
+    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfile1, gain_outfile1, no_change_outfile1, loss_and_gain_outfile1, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
     utilities.upload_final(upload_dir, tile_id)
