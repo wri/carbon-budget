@@ -21,7 +21,6 @@ def create_gain_year_count(tile_id):
     print 'Gain tile is', gain
     print 'tcd tile is', tcd
 
-
     # Creates four separate rasters for the four tree cover loss/gain combinations for pixels. The merges the rasters.
     # Pixels with loss only
     print "Creating raster of growth years for loss-only pixels"

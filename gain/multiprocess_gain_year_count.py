@@ -1,3 +1,4 @@
+import multiprocessing
 import utilities
 import create_gain_year_count
 
@@ -22,6 +23,10 @@ utilities.s3_download('{}'.format(tcd), '.')
 # utilities.s3_download('{}Hansen_GFC2014_treecover2000_00N_050W.tif'.format(tcd), '.')
 
 
-for tile in carbon_tile_list:
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count / 4)
+pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
-    create_gain_year_count.create_gain_year_count(tile)
+# for tile in carbon_tile_list:
+#
+#     create_gain_year_count.create_gain_year_count(tile)
