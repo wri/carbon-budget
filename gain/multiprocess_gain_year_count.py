@@ -11,13 +11,13 @@ gain = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
 tcd = 's3://gfw2-data/forest_cover/2000_treecover/'
 
 # carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
-carbon_tile_list = ["80N_110E", "80N_120E", "80N_130E", "80N_140E", "80N_150E", "80N_160E", "80N_170E", "80N_180W"]
+carbon_tile_list = ["80N_110E", "80N_120E", "80N_130E"]
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
-utilities.s3_download('{}'.format(loss), '.')
-utilities.s3_download('{}'.format(gain), '.')
-utilities.s3_download('{}'.format(tcd), '.')
+# utilities.s3_download('{}'.format(loss), '.')
+# utilities.s3_download('{}'.format(gain), '.')
+# utilities.s3_download('{}'.format(tcd), '.')
 
 # utilities.s3_download('{}00N_050W.tif'.format(loss), '.')
 # utilities.s3_download('{}Hansen_GFC2015_gain_00N_050W.tif'.format(gain), '.')
