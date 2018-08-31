@@ -36,7 +36,7 @@ utilities.s3_folder_download('{}'.format(tcd), '.')
 #     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=8)
+pool = multiprocessing.Pool(processes=6)
 pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # # For single processor use
