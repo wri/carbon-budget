@@ -80,13 +80,10 @@ def coords(tile_id):
 
 def wgetloss(tile_id):
     print "download hansen loss tile"
-    loss_tile = '{}_loss.tif'.format(tile_id)
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id),
-           '-O', loss_tile]
+    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id)]
 
     subprocess.check_call(cmd)
-
-    return loss_tile
+    
 
 def wget2015data(tile_id, filetype):
 

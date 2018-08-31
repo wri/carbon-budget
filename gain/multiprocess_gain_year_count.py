@@ -23,6 +23,10 @@ carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
+for tile in carbon_tile_list:
+
+    utilities.wgetloss(tile)
+
 # For downloading all tiles in the folders
 utilities.s3_folder_download('{}'.format(loss), '.')
 utilities.s3_folder_download('{}'.format(gain), '.')
