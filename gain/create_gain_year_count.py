@@ -18,8 +18,8 @@ def create_gain_year_count(tile_id):
     upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age/20180831/'
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
-    loss_years = 15
-    gain_years = 12
+    loss_years = 15  # currently, loss raster for carbon model is 2001-2015
+    gain_years = 12  # currently, gain raster is 2000-2012
 
     print 'Loss tile is', loss
     print 'Gain tile is', gain
