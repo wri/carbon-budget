@@ -83,7 +83,7 @@ def wgetloss(tile_id):
     cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id)]
 
     subprocess.check_call(cmd)
-    
+
 
 def wget2015data(tile_id, filetype):
 

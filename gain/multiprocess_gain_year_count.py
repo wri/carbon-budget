@@ -27,10 +27,10 @@ for tile in carbon_tile_list:
 
     utilities.wgetloss(tile)
 
-# For downloading all tiles in the folders
-utilities.s3_folder_download('{}'.format(loss), '.')
-utilities.s3_folder_download('{}'.format(gain), '.')
-utilities.s3_folder_download('{}'.format(tcd), '.')
+# # For downloading all tiles in the folders
+# utilities.s3_folder_download('{}'.format(loss), '.')
+# utilities.s3_folder_download('{}'.format(gain), '.')
+# utilities.s3_folder_download('{}'.format(tcd), '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in carbon_tile_list:
@@ -39,9 +39,9 @@ utilities.s3_folder_download('{}'.format(tcd), '.')
 #     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')
 #     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
-pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/4)
+# pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # # For single processor use
 # for tile in carbon_tile_list:
