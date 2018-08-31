@@ -17,6 +17,10 @@ def create_gain_year_count(tile_id):
     # Location to upload files to
     upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age/20180831/'
 
+    # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
+    loss_years = 15
+    gain_years = 12
+
     print 'Loss tile is', loss
     print 'Gain tile is', gain
     print 'tcd tile is', tcd
@@ -35,7 +39,7 @@ def create_gain_year_count(tile_id):
     # Pixels with gain only
     print "Creating raster of growth years for gain-only pixels"
     #gdal_calc.py -A 00N_050W.tif -B Hansen_GFC2015_gain_00N_050W.tif --calc="(A==0)*(B==1)*6" --outfile=gain_only.tif --NoDataValue=0 --overwrite
-    gain_calc = '--calc=(A==0)*(B==1)*6'
+    gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(gain_years)
     gain_outfile1 = 'growth_years_gain_only_{}.tif'.format(tile_id)
     gain_outfile2 = '--outfile={}'.format(gain_outfile1)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
@@ -44,7 +48,7 @@ def create_gain_year_count(tile_id):
     # Pixels with neither loss nor gain but in areas with tree cover density >0
     print "Creating raster of growth years for no change pixels"
     # gdal_calc.py -A 00N_050W.tif -B Hansen_GFC2015_gain_00N_050W.tif -C Hansen_GFC2014_treecover2000_00N_050W.tif --calc "(A==0)*(B==0)*(C>0)*15" --outfile=no_change.tif --NoDataValue=0 --overwrite
-    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*15'
+    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(loss_years)
     no_change_outfile1 = 'growth_years_no_change_{}.tif'.format(tile_id)
     no_change_outfile2 = '--outfile={}'.format(no_change_outfile1)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd,  no_change_calc, no_change_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
@@ -53,7 +57,7 @@ def create_gain_year_count(tile_id):
     # Pixels with both loss and gain
     print "Creating raster of growth years for loss and gain pixels"
     # gdal_calc.py -A 00N_050W.tif -B Hansen_GFC2015_gain_00N_050W.tif --calc="((A>0)*(B==1)*((A-1)+(16-A)/2))" --outfile=gain_and_loss.tif --NoDataValue=0 --overwrite
-    loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+(16-A)/2))'
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(loss_years)
     loss_and_gain_outfile1 = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
     loss_and_gain_outfile2 = '--outfile={}'.format(loss_and_gain_outfile1)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc, loss_and_gain_outfile2, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
