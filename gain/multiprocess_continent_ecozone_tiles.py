@@ -17,9 +17,9 @@ import subprocess
 # Location of the carbon pools, used for tile boundaries
 biomass_dir = 's3://WHRC-carbon/WHRC_V4/Processed/'
 
-biomass_tile_list = utilities.tile_list(biomass_dir)
+# biomass_tile_list = utilities.tile_list(biomass_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-# biomass_tile_list = ['00N_050W'] # test tile
+biomass_tile_list = ['00N_050W'] # test tile
 print biomass_tile_list
 
 # # For downloading all tiles
@@ -29,7 +29,7 @@ print biomass_tile_list
 for tile in biomass_tile_list:
 
     print tile
-    utilities.s3_file_download('{0}{1}.tif'.format(biomass_dir, tile), '.')
+    utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass_dir, tile), '.')
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count/4)
