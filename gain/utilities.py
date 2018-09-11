@@ -73,6 +73,7 @@ def upload_final(pattern, upload_dir, tile_id):
 
     files = glob.glob('{0}_{1}.tif'.format(pattern, tile_id))
 
+    print '{0}_{1}.tif'.format(pattern, tile_id)
     print files
 
     for f in files:
