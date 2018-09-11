@@ -12,7 +12,7 @@ def create_continent_ecozone_tiles(tile_id):
     print "rasterizing ecozone"
     rasterized_eco_zone_tile = utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
                                               "{}_fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.tif".format(tile_id),
-                                              xmin, ymin, xmax, ymax, '.008', 'Byte', 'recode', '0')
+                                              xmin, ymin, xmax, ymax, '.008', 'Byte', 'gainEcozon', '0')
 
     utilities.upload_final(output_dir, rasterized_eco_zone_tile)
 
