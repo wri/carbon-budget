@@ -69,9 +69,9 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, recod
     return out_tif
 
 
-def upload_final(upload_dir, tile_id):
+def upload_final(pattern, upload_dir, tile_id):
 
-    files = glob.glob('growth_years_*{}.tif'.format(tile_id))
+    files = glob.glob('{0}_{1}.tif'.format(pattern, tile_id))
 
     print files
 
