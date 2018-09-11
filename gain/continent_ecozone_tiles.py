@@ -16,7 +16,7 @@ def create_continent_ecozone_tiles(tile_id):
                                               "fao_ecozones_{}".format(tile_id),
                                               xmin, ymin, xmax, ymax, '.008', 'Byte', 'gainEcozon', '0')
 
-    utilities.upload_final('fao_ecozones', output_dir, rasterized_eco_zone_tile)
+    utilities.upload_final('fao_ecozones', output_dir, tile_id)
 
 
 
