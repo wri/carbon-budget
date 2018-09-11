@@ -5,13 +5,13 @@ import continent_ecozone_tiles
 import subprocess
 
 
-# cont_ecozone_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/'
-# cont_ecozone = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
-#
-# utilities.s3_file_download('{0}{1}'.format(cont_ecozone_dir, cont_ecozone), '.', )
-#
-# cmd = ['unzip', cont_ecozone]
-# subprocess.check_call(cmd)
+cont_ecozone_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/'
+cont_ecozone = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
+
+utilities.s3_file_download('{0}{1}'.format(cont_ecozone_dir, cont_ecozone), '.', )
+
+cmd = ['unzip', cont_ecozone]
+subprocess.check_call(cmd)
 
 
 # Location of the carbon pools, used for tile boundaries
