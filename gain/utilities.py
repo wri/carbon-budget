@@ -37,7 +37,7 @@ def tile_list(source):
 
     return file_list
 
-
+# Gets the bounding coordinates of a tile
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]
@@ -58,7 +58,7 @@ def coords(tile_id):
 
     return ymax, xmin, ymin, xmax
 
-
+# Rasterizes the shapefile within the bounding coordinates of a tile
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, recode=None, anodata=None):
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', recode, '-a_nodata',
@@ -68,7 +68,7 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, recod
 
     return out_tif
 
-
+# Uploads tile to specified location
 def upload_final(pattern, upload_dir, tile_id):
 
     files = glob.glob('{0}_{1}.tif'.format(pattern, tile_id))
