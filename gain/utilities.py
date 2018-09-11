@@ -33,6 +33,8 @@ def tile_list(source):
             tile_short_name = tile_name.replace('_biomass.tif', '')
             file_list.append(tile_short_name)
 
+    file_list = file_list[1:]
+
     return file_list
 
 
