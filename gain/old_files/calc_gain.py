@@ -4,7 +4,7 @@ import os
 import sys
 import glob
 
-import utilities
+import gain.utilities
 
 def calc_gain(tile_id):
 
@@ -29,12 +29,12 @@ def calc_gain(tile_id):
             print source
       
             dest = dest.format(tile_id)
-            utilities.s3_download(source, dest)
+            gain.utilities.s3_download(source, dest)
 
     # download growth
     for growthtype in ['old', 'young']:
         source = 's3://gfw-files/sam/carbon_budget/growth_rasters/{0}_{1}.tif'.format(tile_id, growthtype)
-        utilities.s3_download(source, '.')
+        gain.utilities.s3_download(source, '.')
     
     # run c++
     gain_tiles_cmd = ['./calc_gain.exe', tile_id]

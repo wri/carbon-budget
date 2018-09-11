@@ -8,7 +8,7 @@
 
 import multiprocessing
 import utilities
-import create_gain_year_count
+import gain_year_count
 
 # Location of the carbon pools
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
@@ -23,10 +23,10 @@ carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
 # carbon_tile_list = ['00N_050W'] # test tile
 print carbon_tile_list
 
-# # For downloading all tiles in the folders
-# utilities.s3_folder_download('{}'.format(loss), '.')
-# utilities.s3_folder_download('{}'.format(gain), '.')
-# utilities.s3_folder_download('{}'.format(tcd), '.')
+# For downloading all tiles in the folders
+utilities.s3_folder_download('{}'.format(loss), '.')
+utilities.s3_folder_download('{}'.format(gain), '.')
+utilities.s3_folder_download('{}'.format(tcd), '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in carbon_tile_list:
@@ -37,7 +37,7 @@ print carbon_tile_list
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=6)
-pool.map(create_gain_year_count.create_gain_year_count, carbon_tile_list)
+pool.map(gain_year_count.create_gain_year_count, carbon_tile_list)
 
 # # For single processor use
 # for tile in carbon_tile_list:

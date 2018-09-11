@@ -15,7 +15,7 @@ def create_gain_year_count(tile_id):
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
 
     # Location to upload files to
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age/20180831/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180831/'
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015

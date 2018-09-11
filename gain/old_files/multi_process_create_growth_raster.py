@@ -1,8 +1,3 @@
-import multiprocessing
-
-import create_growth_raster
-import utilities
-
 # Location of the carbon pools
 carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 

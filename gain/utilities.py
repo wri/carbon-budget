@@ -19,42 +19,21 @@ def tile_list(source):
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
-    aboveground_c_tiles = open("aboveground_c_tiles.txt", "w")
-    aboveground_c_tiles.write(stdout)
-    aboveground_c_tiles.close()
+    biomass_tiles = open("biomass_tiles.txt", "w")
+    biomass_tiles.write(stdout)
+    biomass_tiles.close()
 
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
-    with open("aboveground_c_tiles.txt", 'r') as tile:
+    with open("biomass_tiles.txt", 'r') as tile:
         for line in tile:
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
-            tile_short_name = tile_name.replace('_carbon.tif', '')
+            tile_short_name = tile_name.replace('_biomass.tif', '')
             file_list.append(tile_short_name)
 
     return file_list
-
-def upload_final(upload_dir, tile_id):
-
-    files = glob.glob('growth_years_*{}.tif'.format(tile_id))
-
-    print files
-
-    for f in files:
-
-        print "uploading {}".format(f)
-        cmd = ['aws', 's3', 'cp', f, upload_dir]
-        print cmd
-
-        try:
-            subprocess.check_call(cmd)
-        except:
-            print "Error uploading output tile"
-
-
-
-##### Not currently using the below functions
 
 
 def coords(tile_id):
@@ -76,6 +55,38 @@ def coords(tile_id):
     xmax = str(int(xmin) + 10)
 
     return ymax, xmin, ymin, xmax
+
+
+def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, recode=None, anodata=None):
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-tr', tr, tr, '-ot', ot, '-a', recode, '-a_nodata',
+           anodata, in_shape, out_tif]
+
+    subprocess.check_call(cmd)
+
+    return out_tif
+
+
+def upload_final(upload_dir, tile_id):
+
+    files = glob.glob('growth_years_*{}.tif'.format(tile_id))
+
+    print files
+
+    for f in files:
+
+        print "uploading {}".format(f)
+        cmd = ['aws', 's3', 'cp', f, upload_dir]
+        print cmd
+
+        try:
+            subprocess.check_call(cmd)
+        except:
+            print "Error uploading output tile"
+
+
+
+##### Not currently using the below functions
 
 
 def wgetloss(tile_id):
@@ -112,5 +123,3 @@ def resample_00025(input_tif, resampled_tif):
     # resample to .00025
     cmd = ['gdal_translate', input_tif, resampled_tif, '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
-
-
