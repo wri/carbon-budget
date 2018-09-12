@@ -19,6 +19,8 @@ def forest_age_category(tile_id):
 
         tropics = 1
 
+    print tropics
+
     # start time
     start = datetime.datetime.now()
 
