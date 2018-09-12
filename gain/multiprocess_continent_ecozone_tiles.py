@@ -23,14 +23,14 @@ biomass_tile_list = utilities.tile_list(biomass_dir)
 # biomass_tile_list = ['00N_050W'] # test tile
 print biomass_tile_list
 
-# For downloading all tiles
-utilities.s3_folder_download('{}'.format(biomass_dir), '.')
-
-# # For copying individual tiles to s3 for testing
-# for tile in biomass_tile_list:
+# # For downloading all tiles
+# utilities.s3_folder_download('{}'.format(biomass_dir), '.')
 #
-#     print tile
-#     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass_dir, tile), '.')
+# # # For copying individual tiles to s3 for testing
+# # for tile in biomass_tile_list:
+# #
+# #     print tile
+# #     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass_dir, tile), '.')
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
