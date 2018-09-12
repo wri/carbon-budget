@@ -32,7 +32,7 @@ def forest_age_category(tile_id):
     biomass = '{}_biomass.tif'.format(tile_id)
     cont_eco = 'fao_ecozones_{0}.tif'.format(tile_id)
 
-    print "  Reading input files and evaluating condtions"
+    print "  Reading input files and evaluating conditions"
 
     # open loss and grab metadata about the tif,
     # like its location / projection / cellsize
@@ -67,12 +67,19 @@ def forest_age_category(tile_id):
                         # where loss & gain, set output to 100, otherwise keep dst_data value
                         # dst_data[np.where((tcd > 0) & (loss >= 0) & (gain >= 0))] = 100
 
-                        dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (tropics == 0))] = 1
-                        dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (tropics == 1) & (ifl == 0))] = 2
-                        dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (tropics == 1) & (ifl == 1))] = 3
+                        if tropics == 0:
 
+                            dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0))] = 1
+
+                        if tropics == 1:
+
+                            dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 0))] = 2
+                            dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 1))] = 3
 
                         dst_data[np.where((tcd > 0) & (gain == 0) & (loss > 0) & (ifl == 1))] = 6
+                        dst_data[np.where((tcd > 0) & (gain == 1) & (loss == 0))] = 7
+                        dst_data[np.where((tcd > 0) & (gain == 1) & (loss >= 13))] = 8
+                        dst_data[np.where((tcd > 0) & (gain == 1) & (loss <= 6) & (loss > 0))] = 10
 
 
                         # # where loss & gain, set output to 100, otherwise keep dst_data value
