@@ -15,7 +15,7 @@ def create_gain_year_count(tile_id):
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
 
     # Location to upload files to
-    upload_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180831/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180912/'
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
@@ -64,12 +64,11 @@ def create_gain_year_count(tile_id):
     subprocess.check_call(cmd)
 
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = 'gain_year_count_{}.tif'.format(tile_id)
+    age_outfile = 'gain_year_count_{}'.format(tile_id)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfile1, gain_outfile1, no_change_outfile1, loss_and_gain_outfile1, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
-
     subprocess.check_call(cmd)
 
-    utilities.upload_final(upload_dir, tile_id)
+    utilities.upload_final("gain_year_count", upload_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

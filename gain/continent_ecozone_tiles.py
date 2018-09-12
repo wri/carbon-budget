@@ -3,7 +3,7 @@ import subprocess
 
 def create_continent_ecozone_tiles(tile_id):
 
-    print tile_id
+    print "Processing:", tile_id
 
     output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone/20180912/'
 

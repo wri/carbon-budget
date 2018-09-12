@@ -26,7 +26,7 @@ utilities.s3_file_download('{0}{1}'.format(cont_ecozone_dir, cont_ecozone), '.',
 cmd = ['unzip', cont_ecozone]
 subprocess.check_call(cmd)
 
-# Location of the carbon pools, used for tile boundaries
+# Location of the biomass tiles, used for ecozone-continent tile boundaries
 biomass_dir = 's3://WHRC-carbon/WHRC_V4/Processed/'
 
 biomass_tile_list = utilities.tile_list(biomass_dir)
