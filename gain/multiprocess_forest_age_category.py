@@ -25,15 +25,15 @@ print biomass_tile_list
 # for input in download_list:
 #     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to s3 for testing
-for tile in biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
-    utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')            # gain tiles
-    utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')    # tcd 2000
-    utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(ifl, tile), '.')                    # ifl 2000
-    utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
-    utilities.s3_file_download('{0}fao_ecozones_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
+# # For copying individual tiles to s3 for testing
+# for tile in biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
+#     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')            # gain tiles
+#     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')    # tcd 2000
+#     utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(ifl, tile), '.')                    # ifl 2000
+#     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
+#     utilities.s3_file_download('{0}fao_ecozones_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count/4)
