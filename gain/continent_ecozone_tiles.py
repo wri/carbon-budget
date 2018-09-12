@@ -14,7 +14,7 @@ def create_continent_ecozone_tiles(tile_id):
     print "Rasterizing ecozone to extent of biomass tile"
     utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
                                               "fao_ecozones_{}".format(tile_id),
-                                              xmin, ymin, xmax, ymax, '.00025', 'Byte', 'gainEcoCon', '0')
+                                              xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
 
     utilities.upload_final('fao_ecozones', output_dir, tile_id)
 
