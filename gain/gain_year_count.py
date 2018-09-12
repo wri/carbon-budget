@@ -68,6 +68,10 @@ def create_gain_year_count(tile_id):
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfile1, gain_outfile1, no_change_outfile1, loss_and_gain_outfile1, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
+    utilities.upload_final("growth_years_loss_only", upload_dir, tile_id)
+    utilities.upload_final("growth_years_gain_only", upload_dir, tile_id)
+    utilities.upload_final("growth_years_no_change", upload_dir, tile_id)
+    utilities.upload_final("growth_years_loss_and_gain", upload_dir, tile_id)
     utilities.upload_final("gain_year_count", upload_dir, tile_id)
 
     end = datetime.datetime.now()
