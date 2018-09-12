@@ -1,3 +1,10 @@
+### Creates tiles in which each pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
+### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
+### First it calculates rasters of gain years for pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
+### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.
+### Then it combines those four rasters into a single gain year raster for each tile.
+### This is one of the inputs for the carbon gain model.
+### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count.py must be changed.
 
 
 
