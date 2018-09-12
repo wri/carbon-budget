@@ -69,17 +69,21 @@ def forest_age_category(tile_id):
 
                         if tropics == 0:
 
+                            print "Not tropical"
+
                             dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0))] = 1
 
                         if tropics == 1:
 
+                            print "Tropical"
+
                             dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 0))] = 2
                             dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 1))] = 3
 
-                        # dst_data[np.where((tcd > 0) & (gain == 0) & (loss > 0) & (ifl == 1))] = 6
-                        # dst_data[np.where((tcd > 0) & (gain == 1) & (loss == 0))] = 7
-                        # dst_data[np.where((tcd > 0) & (gain == 1) & (loss >= 13))] = 8
-                        # dst_data[np.where((tcd > 0) & (gain == 1) & (loss <= 6) & (loss > 0))] = 10
+                        dst_data[np.where((gain == 0) & (loss > 0) & (ifl == 1))] = 6
+                        dst_data[np.where((gain == 1) & (loss == 0))] = 7
+                        dst_data[np.where((gain == 1) & (loss >= 13))] = 8
+                        dst_data[np.where((gain == 1) & (loss <= 6) & (loss > 0))] = 10
 
 
                         # # where loss & gain, set output to 100, otherwise keep dst_data value
