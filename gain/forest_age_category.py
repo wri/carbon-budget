@@ -15,7 +15,7 @@ def forest_age_category(tile_id):
 
     tropics = 0
 
-    if ymax > -30:
+    if (ymax > -30) & (ymax <= 30) :
 
         tropics = 1
 
