@@ -29,7 +29,7 @@ def forest_age_category(tile_id):
     biomass = '{}_biomass.tif'.format(tile_id)
     cont_eco = 'fao_ecozones_{0}.tif'.format(tile_id)
 
-    print "  Reading input files"
+    print "  Reading input files and evaluating condtions"
 
     # open loss and grab metadata about the tif,
     # like its location / projection / cellsize
@@ -61,15 +61,15 @@ def forest_age_category(tile_id):
                         # create an empty array
                         dst_data = np.zeros((window.height, window.width), dtype='uint8')
 
-                        print "  Evaluating conditions"
-
-
                         # where loss & gain, set output to 100, otherwise keep dst_data value
                         dst_data[np.where((loss_data >= 0) & (gain_data >= 0))] = 100
 
-                        dst_data[np.where((loss_data == 0) & (gain_data > 0) & (tropics == 0))] = 1
-                        dst_data[np.where((loss_data == 0) & (gain_data > 0) & (tropics == 1) & (ifl == 0))] = 2
-                        dst_data[np.where((loss_data == 0) & (gain_data > 0) & (tropics == 1) & (ifl == 1))] = 3
+                        dst_data[np.where((gain_data == 0) & (loss_data == 0) & (tropics == 0))] = 1
+                        dst_data[np.where((gain_data == 0) & (loss_data == 0) & (tropics == 1) & (ifl == 0))] = 2
+                        dst_data[np.where((gain_data == 0) & (loss_data == 0) & (tropics == 1) & (ifl == 1))] = 3
+
+
+                        dst_data[np.where((gain_data == 0) & (loss_data > 0) & (ifl == 1))] = 6
 
 
                         # # where loss & gain, set output to 100, otherwise keep dst_data value
@@ -80,7 +80,6 @@ def forest_age_category(tile_id):
                         # dst_data[np.where((loss_data < 10) & (gain_data == 0) & (extent_data < 50))] = 1
                         # dst_data[np.where((loss_data > 10) & (gain_data > 0) & (extent_data >= 90))] = 2
 
-                        print "  Writing output file"
                         dst.write_band(1, dst_data, window=window)
 
 
