@@ -71,10 +71,10 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainE
 # Uploads tile to specified location
 def upload_final(pattern, upload_dir, tile_id):
 
+    # Gets all files with the specified pattern
     files = glob.glob('{0}_{1}*'.format(pattern, tile_id))
 
     print '{0}_{1}.tif'.format(pattern, tile_id)
-    print files
 
     for f in files:
 

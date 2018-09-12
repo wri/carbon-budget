@@ -19,7 +19,7 @@ def forest_age_category(tile_id):
 
         tropics = 1
 
-    print tropics
+    print "  Tile in tropics:", tropics
 
     # start time
     start = datetime.datetime.now()
@@ -65,7 +65,7 @@ def forest_age_category(tile_id):
                         dst_data = np.zeros((window.height, window.width), dtype='uint8')
 
                         # where loss & gain, set output to 100, otherwise keep dst_data value
-                        dst_data[np.where((tcd > 0) & (loss >= 0) & (gain >= 0))] = 100
+                        # dst_data[np.where((tcd > 0) & (loss >= 0) & (gain >= 0))] = 100
 
                         dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (tropics == 0))] = 1
                         dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (tropics == 1) & (ifl == 0))] = 2
