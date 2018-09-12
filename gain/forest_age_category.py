@@ -11,6 +11,7 @@ def forest_age_category(tile_id):
     print "Processing:", tile_id
 
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    print "ymax: ", ymax
 
     tropics = 0
 

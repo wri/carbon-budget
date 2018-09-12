@@ -4,6 +4,9 @@ import multiprocessing
 import utilities
 import forest_age_category
 
+### Need to update rasterio package on spot machine before running
+### sudo pip install rasterio --update
+
 # Loss, gain, and tree cover density, intact forest landscape, biomass tiles, and continent-ecozone
 # All of these are needed for the forest age decision tree
 loss = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
