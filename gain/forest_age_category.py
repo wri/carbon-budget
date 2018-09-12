@@ -6,9 +6,17 @@ import rasterio
 
 def forest_age_category(tile_id):
 
+    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180912/'
+
     print "Processing:", tile_id
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180912/'
+    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+
+    tropics = 0
+
+    if ymax > -30 & ymax <= 30:
+
+        tropics = 1
 
     # start time
     start = datetime.datetime.now()
@@ -21,7 +29,7 @@ def forest_age_category(tile_id):
     biomass = '{}_biomass.tif'.format(tile_id)
     cont_eco = 'fao_ecozones_{0}.tif'.format(tile_id)
 
-
+    print "  Reading input files"
 
     # open loss and grab metadata about the tif,
     # like its location / projection / cellsize
@@ -53,17 +61,27 @@ def forest_age_category(tile_id):
                         # create an empty array
                         dst_data = np.zeros((window.height, window.width), dtype='uint8')
 
+                        print "  Evaluating conditions"
+
+
                         # where loss & gain, set output to 100, otherwise keep dst_data value
-                        dst_data[np.where((loss_data > 0) & (gain_data > 0))] = 100
+                        dst_data[np.where((loss_data >= 0) & (gain_data >= 0))] = 100
 
-                        # etc
-                        dst_data[np.where((loss_data > 10) & (gain_data > 0) & (extent_data > 50))] = 99
-                        dst_data[np.where((loss_data < 10) & (gain_data == 0) & (extent_data < 50))] = 1
-                        dst_data[np.where((loss_data > 10) & (gain_data > 0) & (extent_data >= 90))] = 2
+                        dst_data[np.where((loss_data == 0) & (gain_data > 0) & (tropics == 0))] = 1
+                        dst_data[np.where((loss_data == 0) & (gain_data > 0) & (tropics == 1) & (ifl == 0))] = 2
+                        dst_data[np.where((loss_data == 0) & (gain_data > 0) & (tropics == 1) & (ifl == 1))] = 3
 
+
+                        # # where loss & gain, set output to 100, otherwise keep dst_data value
+                        # dst_data[np.where((loss_data > 0) & (gain_data > 0))] = 100
+                        #
+                        # # etc
+                        # dst_data[np.where((loss_data > 10) & (gain_data > 0) & (extent_data > 50))] = 99
+                        # dst_data[np.where((loss_data < 10) & (gain_data == 0) & (extent_data < 50))] = 1
+                        # dst_data[np.where((loss_data > 10) & (gain_data > 0) & (extent_data >= 90))] = 2
+
+                        print "  Writing output file"
                         dst.write_band(1, dst_data, window=window)
-
-
 
 
     pattern = 'forest_age_category'
