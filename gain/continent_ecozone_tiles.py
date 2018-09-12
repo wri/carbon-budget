@@ -5,7 +5,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     print tile_id
 
-    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone/20180912'
+    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone/20180912/'
 
     print "Getting extent of biomass tile"
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
