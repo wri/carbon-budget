@@ -77,7 +77,7 @@ def forest_age_category(tile_id):
 
                             print "Tropical"
 
-                            dst_data[np.where((tcd > 0) & (gain == 0))] = 2
+                            dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl != 1))] = 2
                             # dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 0))] = 2
                             # dst_data[np.where((tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 1))] = 3
 
