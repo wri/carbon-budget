@@ -9,9 +9,9 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Getting extent of biomass tile"
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    print "ymax:", ymax, "; xmin: ", xmin, "; ymin: ", ymin, "; xmax", xmax
+    print "ymax:", ymax, "; ymin: ", ymin, "; xmax", xmax, "; xmin: ", xmin
 
-    print "rasterizing ecozone"
+    print "Rasterizing ecozone to extent of biomass tile"
     utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
                                               "fao_ecozones_{}".format(tile_id),
                                               xmin, ymin, xmax, ymax, '.008', 'Byte', 'gainEcozon', '0')
