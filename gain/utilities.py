@@ -62,7 +62,7 @@ def coords(tile_id):
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, recode=None, anodata=None):
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', recode, '-a_nodata',
-           anodata, in_shape, out_tif]
+           anodata, in_shape, '{}.tif'.format(out_tif)]
 
     subprocess.check_call(cmd)
 
