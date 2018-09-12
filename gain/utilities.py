@@ -79,7 +79,7 @@ def upload_final(pattern, upload_dir, tile_id):
     for f in files:
 
         print "uploading {}".format(f)
-        cmd = ['aws', 's3', 'cp', '{}.tif'.format(f), upload_dir]
+        cmd = ['aws', 's3', 'cp', '{}'.format(f), upload_dir]
         print cmd
 
         try:
