@@ -11,7 +11,7 @@ import utilities
 import gain_year_count
 
 # Location of the biomass tiles, used for tile boundaries
-biomass_dir = 's3://WHRC-carbon/WHRC_V4/Processed/'
+biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Loss, gain, and tree cover density tiles
 loss = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'

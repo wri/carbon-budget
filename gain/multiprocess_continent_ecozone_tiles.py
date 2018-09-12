@@ -27,7 +27,7 @@ cmd = ['unzip', cont_ecozone]
 subprocess.check_call(cmd)
 
 # Location of the biomass tiles, used for ecozone-continent tile boundaries
-biomass_dir = 's3://WHRC-carbon/WHRC_V4/Processed/'
+biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 biomass_tile_list = utilities.tile_list(biomass_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
