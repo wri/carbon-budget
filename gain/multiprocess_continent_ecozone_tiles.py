@@ -6,7 +6,7 @@
 ### continents assigned to it.
 ### In the resulting ecozone-continent shapefile, the final field has continent and ecozone concatenated.
 ### That ecozone-continent field can be parsed to get the ecozone and continent for every pixel,
-### which are necessary for assigning gain rates to pixels. 
+### which are necessary for assigning gain rates to pixels.
 
 
 
