@@ -34,7 +34,7 @@ print biomass_tile_list
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
+pool = multiprocessing.Pool(processes=count/3)
 pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
 
 # # For single processor use
