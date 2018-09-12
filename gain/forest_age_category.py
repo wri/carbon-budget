@@ -8,7 +8,7 @@ def forest_age_category(tile_id):
 
     print "Processing:", tile_id
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180912'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180912/'
 
     # start time
     start = datetime.datetime.now()
