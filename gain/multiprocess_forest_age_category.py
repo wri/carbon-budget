@@ -3,6 +3,8 @@
 import multiprocessing
 import utilities
 import forest_age_category
+import pandas as pd
+import subprocess
 
 ### Need to update rasterio package on spot machine before running
 ### sudo pip install rasterio --update
@@ -22,13 +24,13 @@ cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone/20180912/'
 biomass_tile_list = ['00N_050W'] # test tile
 print biomass_tile_list
 
-# download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
-#
-# # For downloading all tiles in the folders
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
 
-# # For copying individual tiles to s3 for testing
+# For downloading all tiles in the folders
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
+
+# # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
 #     utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
@@ -38,6 +40,22 @@ print biomass_tile_list
 #     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
 #     utilities.s3_file_download('{0}fao_ecozones_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
+cmd = ['aws', 's3', 'cp', 'http://gfw2-data.s3.amazonaws.com/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
+subprocess.check_call(cmd)
+
+# Imports the table with the ecozone-continent codes and the carbon gain rates
+gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180907.xlsx",
+                           sheet_name="con-ezn-age gain, for model")
+
+# Removes rows with duplicate codes (N. and S. America for the same ecozone)
+gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+# Converts the continent-ecozone codes and young forest gain rates to a dictionary
+gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
+
+# Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
+gain_table_dict[0] = 0
+
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count/4)
 # pool.map(forest_age_category.forest_age_category, biomass_tile_list)
@@ -45,5 +63,5 @@ print biomass_tile_list
 # For single processor use
 for tile in biomass_tile_list:
 
-    forest_age_category.forest_age_category(tile)
+    forest_age_category.forest_age_category(tile, gain_table_dict)
 
