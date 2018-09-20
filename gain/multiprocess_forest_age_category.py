@@ -40,7 +40,7 @@ for tile in biomass_tile_list:
     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
     utilities.s3_file_download('{0}fao_ecozones_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
-cmd = ['aws', 's3', 'cp', 'http://gfw2-data.s3.amazonaws.com/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
