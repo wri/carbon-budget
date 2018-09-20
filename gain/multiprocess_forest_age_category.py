@@ -5,6 +5,7 @@ import utilities
 import forest_age_category
 import pandas as pd
 import subprocess
+from functools import partial
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
@@ -58,9 +59,16 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_table_dict[0] = 0
 
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/4)
+# pool.map(forest_age_category.forest_age_category, biomass_tile_list, gain_table_dict)
+
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/4)
-pool.map(forest_age_category.forest_age_category, biomass_tile_list, gain_table_dict)
+func = partial(forest_age_category.forest_age_category, gain_table_dict)
+pool.map(func, biomass_tile_list)
+pool.close()
+pool.join()
 
 # # For single processor use
 # for tile in biomass_tile_list:
