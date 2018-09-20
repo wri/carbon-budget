@@ -7,7 +7,7 @@ import pandas as pd
 import subprocess
 
 ### Need to update rasterio package on spot machine before running
-### sudo pip install rasterio --update
+### sudo pip install rasterio --upgrade
 
 # Loss, gain, and tree cover density, intact forest landscape, biomass tiles, and continent-ecozone
 # All of these are needed for the forest age decision tree
@@ -26,25 +26,25 @@ print biomass_tile_list
 
 download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
 
-# For downloading all tiles in the folders
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in the folders
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
-# # For copying individual tiles to spot machine for testing
-# for tile in biomass_tile_list:
-#
-#     utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
-#     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')            # gain tiles
-#     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')    # tcd 2000
-#     utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(ifl, tile), '.')                    # ifl 2000
-#     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
-#     utilities.s3_file_download('{0}fao_ecozones_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
+# For copying individual tiles to spot machine for testing
+for tile in biomass_tile_list:
+
+    utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
+    utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')            # gain tiles
+    utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')    # tcd 2000
+    utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(ifl, tile), '.')                    # ifl 2000
+    utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
+    utilities.s3_file_download('{0}fao_ecozones_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
 cmd = ['aws', 's3', 'cp', 'http://gfw2-data.s3.amazonaws.com/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
-gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180907.xlsx",
+gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180918.xlsx",
                            sheet_name="con-ezn-age gain, for model")
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
