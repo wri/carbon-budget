@@ -28,9 +28,9 @@ print biomass_tile_list
 
 download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
 
-# For downloading all tiles in the folders
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in the folders
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -60,7 +60,7 @@ gain_table_dict[0] = 0
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/4)
-pool.map(forest_age_category.forest_age_category, biomass_tile_list)
+pool.map(forest_age_category.forest_age_category, biomass_tile_list, gain_table_dict)
 
 # # For single processor use
 # for tile in biomass_tile_list:
