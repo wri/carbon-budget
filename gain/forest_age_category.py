@@ -7,7 +7,7 @@ import rasterio
 
 def forest_age_category(tile_id, gain_table_dict):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180918/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180920/'
     # upload_dir = r'C:\GIS\Carbon_model\test_forest_age_category'
 
     print "Processing:", tile_id
