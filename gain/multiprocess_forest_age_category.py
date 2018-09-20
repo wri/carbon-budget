@@ -65,8 +65,8 @@ gain_table_dict[0] = 0
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/4)
-func = partial(forest_age_category.forest_age_category, gain_table_dict)
-pool.map(func, biomass_tile_list)
+# func = partial(forest_age_category.forest_age_category, gain_table_dict)
+pool.map(partial(forest_age_category.forest_age_category, gain_table_dict), biomass_tile_list)
 pool.close()
 pool.join()
 
