@@ -8,6 +8,7 @@ import subprocess
 
 ### Need to update rasterio package on spot machine before running
 ### sudo pip install rasterio --upgrade
+### sudo pip install xlrd
 
 # Loss, gain, and tree cover density, intact forest landscape, biomass tiles, and continent-ecozone
 # All of these are needed for the forest age decision tree
@@ -45,7 +46,7 @@ subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
 gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180918.xlsx",
-                           sheet_name="con-ezn-age gain, for model")
+                           sheet_name = "con-ezn-age gain, for model")
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
