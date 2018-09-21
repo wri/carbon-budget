@@ -5,6 +5,9 @@ import rasterio
 
 # np.set_printoptions(threshold=np.nan)
 
+def my_fun2(x, general_const):
+    return 2*x + general_const
+
 def forest_age_category(tile_id, gain_table_dict):
 
     upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180920/'
