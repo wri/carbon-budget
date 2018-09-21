@@ -43,21 +43,21 @@ print biomass_tile_list
 #     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
 #     utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
-# cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
-# subprocess.check_call(cmd)
-#
-# # Imports the table with the ecozone-continent codes and the carbon gain rates
-# gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180918.xlsx",
-#                            sheet_name = "con-ezn-age gain, for model")
-#
-# # Removes rows with duplicate codes (N. and S. America for the same ecozone)
-# gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
-#
-# # Converts the continent-ecozone codes and young forest gain rates to a dictionary
-# gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
-#
-# # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
-# gain_table_dict[0] = 0
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
+subprocess.check_call(cmd)
+
+# Imports the table with the ecozone-continent codes and the carbon gain rates
+gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180918.xlsx",
+                           sheet_name = "con-ezn-age gain, for model")
+
+# Removes rows with duplicate codes (N. and S. America for the same ecozone)
+gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+# Converts the continent-ecozone codes and young forest gain rates to a dictionary
+gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
+
+# Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
+gain_table_dict[0] = 0
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count/4)
@@ -80,7 +80,7 @@ my_const = 1000
 num_of_processes = 4
 pool = Pool(num_of_processes)
 
-result_list = pool.map(partial(forest_age_category.my_fun2, general_const=my_const), input_list)
+result_list = pool.map(partial(forest_age_category.my_fun2, general_const=gain_table_dict), input_list)
 ## if you prefer, you can also separate them (just another layout, does not change anything)
 # my_fun2_partial = partial(my_fun2, general_const=my_const)
 # result_list = pool.map(my_func2_partial, input_list)
