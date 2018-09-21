@@ -1,11 +1,13 @@
 # ###
-#
-# import multiprocessing
-# import utilities
-# import forest_age_category
-# import pandas as pd
-# import subprocess
-# from functools import partial
+
+
+from multiprocessing.pool import Pool
+from functools import partial
+import utilities
+import forest_age_category
+import pandas as pd
+import subprocess
+
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
@@ -70,10 +72,6 @@ gain_table_dict[0] = 0
 # # pool.map(partial(forest_age_category.forest_age_category, biomass_tile_list), biomass_tile_list)
 # pool.close()
 # pool.join()
-
-from multiprocessing.pool import Pool
-from functools import partial
-import forest_age_category
 
 input_list = biomass_tile_list
 my_const = 1000
