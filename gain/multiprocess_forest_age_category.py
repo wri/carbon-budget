@@ -1,4 +1,12 @@
-###
+### This script creates tiles of forest age category according to a decision tree.
+### The categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
+### The decision tree uses several input tiles, including IFL status, gain, and loss.
+### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations. 
+### The output tiles have 10 possible values, each value representing an end of the decision tree.
+### These 10 values map to the three forest age categories.
+### The forest age category tiles are inputs for assigning gain rates to pixels.
+### Unlike other multiprocessing scripts, this one passes two arguments to the main script: the tile list
+### and the dictionary of gain rates for different continent-ecozone combinations (needed for one node in the decision tree).
 
 from multiprocessing.pool import Pool
 from functools import partial
@@ -22,26 +30,26 @@ biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20180912/'
 
 
-# biomass_tile_list = utilities.tile_list(biomass)
+biomass_tile_list = utilities.tile_list(biomass)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
+# biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
 
-# # For downloading all tiles in the folders
-# download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
+# For downloading all tiles in the folders
+download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
+
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
+
+# # For copying individual tiles to spot machine for testing
+# for tile in biomass_tile_list:
 #
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
-
-# For copying individual tiles to spot machine for testing
-for tile in biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
-    utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')            # gain tiles
-    utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')    # tcd 2000
-    utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(ifl, tile), '.')                    # ifl 2000
-    utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
-    utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}.tif'.format(loss, tile), '.')                                # loss tiles
+#     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(gain, tile), '.')            # gain tiles
+#     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(tcd, tile), '.')    # tcd 2000
+#     utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(ifl, tile), '.')                    # ifl 2000
+#     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
+#     utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
 subprocess.check_call(cmd)
@@ -66,7 +74,7 @@ gain_table_dict[0] = 0
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 num_of_processes = 4
 pool = Pool(num_of_processes)
-  
+
 pool.map(partial(forest_age_category.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
 # result_list = pool.map(partial(forest_age_category.my_fun2, general_const=gain_table_dict), biomass_tile_list)
 pool.close()
