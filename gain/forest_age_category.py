@@ -6,7 +6,7 @@ import rasterio
 # np.set_printoptions(threshold=np.nan)
 
 def my_fun2(x, general_const):
-    return x[2:]
+    return x[2:], general_const
 
 def forest_age_category(tile_id, gain_table_dict):
 
