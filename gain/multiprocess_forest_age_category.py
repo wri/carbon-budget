@@ -1,5 +1,4 @@
-# ###
-
+###
 
 from multiprocessing.pool import Pool
 from functools import partial
@@ -7,7 +6,6 @@ import utilities
 import forest_age_category
 import pandas as pd
 import subprocess
-
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
