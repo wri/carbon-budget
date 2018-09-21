@@ -66,7 +66,7 @@ gain_table_dict[0] = 0
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 num_of_processes = 4
 pool = Pool(num_of_processes)
- 
+  
 pool.map(partial(forest_age_category.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
 # result_list = pool.map(partial(forest_age_category.my_fun2, general_const=gain_table_dict), biomass_tile_list)
 pool.close()
