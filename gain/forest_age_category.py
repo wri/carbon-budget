@@ -1,12 +1,16 @@
+### This script creates tiles of forest age category according to a decision tree.
+### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
+### The decision tree uses several input tiles, including IFL status, gain, and loss.
+### Downloading all of these tiles can take awhile.
+### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
+### The output tiles have 10 possible values, each value representing an end of the decision tree.
+### These 10 values map to the three forest age categories.
+### The forest age category tiles are inputs for assigning gain rates to pixels.
+
 import utilities
 import datetime
 import numpy as np
 import rasterio
-
-# np.set_printoptions(threshold=np.nan)
-
-def my_fun2(x, general_const):
-    return x[2:], general_const
 
 def forest_age_category(tile_id, gain_table_dict):
 

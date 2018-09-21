@@ -1,7 +1,8 @@
 ### This script creates tiles of forest age category according to a decision tree.
-### The categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
+### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
 ### The decision tree uses several input tiles, including IFL status, gain, and loss.
-### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations. 
+### Downloading all of these tiles can take awhile.
+### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
 ### The output tiles have 10 possible values, each value representing an end of the decision tree.
 ### These 10 values map to the three forest age categories.
 ### The forest age category tiles are inputs for assigning gain rates to pixels.
@@ -29,17 +30,16 @@ ifl = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/ifl_2000/'
 biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20180912/'
 
-
 biomass_tile_list = utilities.tile_list(biomass)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
 
-# For downloading all tiles in the folders
-download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
-
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in the folders
+# download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
+#
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -67,16 +67,11 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_table_dict[0] = 0
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/4)
-# pool.map(forest_age_category.forest_age_category, biomass_tile_list, gain_table_dict)
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 num_of_processes = 4
 pool = Pool(num_of_processes)
-
 pool.map(partial(forest_age_category.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
-# result_list = pool.map(partial(forest_age_category.my_fun2, general_const=gain_table_dict), biomass_tile_list)
 pool.close()
 pool.join()
 
