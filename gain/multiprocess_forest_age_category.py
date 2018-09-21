@@ -66,7 +66,7 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_table_dict[0] = 0
-
+ 
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 num_of_processes = 16
