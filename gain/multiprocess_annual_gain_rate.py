@@ -24,7 +24,7 @@ biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 biomass_tile_list = ['20S_110E'] # test tiles
 print biomass_tile_list
 
-# # # For downloading all tiles in the folders
+# # # For downloading all tiles in the input folders
 # # download_list = [age_cat, cont_eco]
 # #
 # # for input in download_list:
@@ -74,6 +74,7 @@ gain_table_dict = pd.Series(gain_table_all_combos.value.values,index=gain_table_
 # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
 gain_table_dict[0] = 0
 
+# Adds a dictionary entry for each forest age code for pixels that have forest age but no continent-ecozone
 for key, value in age_dict.iteritems():
 
     gain_table_dict[value] = 0

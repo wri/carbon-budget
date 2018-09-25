@@ -5,14 +5,14 @@ import datetime
 import numpy as np
 import rasterio
 
+# Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, gain_table_dict):
 
-    # upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
-    upload_dir = r'C:\GIS\Carbon_model\test_annual_gain_rate'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20180925/'
 
-    # Converts the forest age category decision tree values to the three age categories.
+    # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
     # These are five digits so they can easily be added to the four digits of the continent-ecozone code to make unique codes
     # for each continent-ecozone-age combination.
@@ -20,7 +20,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     print "Processing:", tile_id
 
-    # start time
+    # Start time
     start = datetime.datetime.now()
 
     # Names of the forest age category and continent-ecozone tiles
@@ -29,19 +29,20 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     print "  Reading input files and evaluating conditions"
 
-    # Opens biomass tile
+    # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize
         kwargs = cont_eco_src.meta
 
-        # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+        # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = cont_eco_src.block_windows(1)
 
-        # Opens gain tile
+        # Opens age category tile
         with rasterio.open(age_cat) as age_cat_src:
 
-            # Updates kwargs for the output dataset
+            # Updates kwargs for the output dataset.
+            # Need to update data type to float 32 so that it can handle fractional gain rates
             kwargs.update(
                 driver='GTiff',
                 count=1,
