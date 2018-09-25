@@ -35,11 +35,11 @@ biomass_tile_list = utilities.tile_list(biomass)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
 
-# # For downloading all tiles in the folders
-# download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
-#
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+# For downloading all tiles in the folders
+download_list = [loss, gain, tcd, ifl, biomass, cont_eco]
+
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -51,6 +51,7 @@ print biomass_tile_list
 #     utilities.s3_file_download('{0}{1}_biomass.tif'.format(biomass, tile), '.')                     # biomass 2000
 #     utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')               # continents and FAO ecozones 2000
 
+# Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
 subprocess.check_call(cmd)
 
@@ -66,9 +67,10 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_table_dict[0] = 0
- 
+
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
 num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(forest_age_category.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)

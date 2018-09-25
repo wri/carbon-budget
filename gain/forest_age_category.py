@@ -14,7 +14,7 @@ import rasterio
 
 def forest_age_category(tile_id, gain_table_dict):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180920/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
     # upload_dir = r'C:\GIS\Carbon_model\test_forest_age_category'
 
     print "Processing:", tile_id
@@ -36,7 +36,7 @@ def forest_age_category(tile_id, gain_table_dict):
     # start time
     start = datetime.datetime.now()
 
-    # Names of the loss, gain and tree cover density tiles
+    # Names of the input tiles
     loss = '{}.tif'.format(tile_id)
     gain = 'Hansen_GFC2015_gain_{}.tif'.format(tile_id)
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
