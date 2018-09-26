@@ -10,7 +10,7 @@ np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, gain_table_dict):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20180925/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20180926/'
 
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
