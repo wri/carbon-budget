@@ -2,7 +2,10 @@ import subprocess
 import glob
 import os
 
+
 def calc_all_inputs_exist(tile_id):
+    # run the cpp code which creates carbon pool files, if the inputs to the carbon pool code already exists
+    # takes a single tile ID and downloads all the carbon input files from s3. those are passed to c code
     inputs_list = [
     's3://WHRC-carbon/global_27m_tiles/final_global_27m_tiles/biomass_10x10deg/',
     's3://gfw-files/sam/carbon_budget/data_inputs2/soil/',
@@ -11,10 +14,12 @@ def calc_all_inputs_exist(tile_id):
     's3://gfw-files/sam/carbon_budget/data_inputs2/precip/',
     ]
 
+    # download the inputs
     for input in inputs_list:
-        cmd = ['aws', 's3', 'cp', input, '.', '--recursive', '--exclude' , '*', '--include', "*{}*".format(tile_id)]
+        cmd = ['aws', 's3', 'cp', input, '.', '--recursive', '--exclude', '*', '--include', "*{}*".format(tile_id)]
         subprocess.check_call(cmd)
 
+    # run the code that creates carbon pool files
     print 'writing carbon, bgc, deadwood, litter, total'
     calc_all_cmd = ['./calc_all.exe', tile_id]
     subprocess.check_call(calc_all_cmd)

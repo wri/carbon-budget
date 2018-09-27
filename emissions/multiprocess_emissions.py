@@ -1,9 +1,7 @@
 import multiprocessing
-import subprocess
 import calc_emissions
 import utilities
 import tile_peat_dict
-import sys
 
 
 def chunks(l, n):

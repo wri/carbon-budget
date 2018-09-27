@@ -1,13 +1,12 @@
 import subprocess
 import datetime
 import os
-import sys
-import pandas as pd
 import glob
 
 import utilities
-import process_burned_area
-import tile_peat_dict
+
+# once all the carbon pools are created, run this to calculate emissions
+
 
 def calc_emissions(tile_id):
 
@@ -28,7 +27,6 @@ def calc_emissions(tile_id):
         for f in files:
             os.remove(f)
 
-   
     print 'writing emissions tiles'
     
     emissions_tiles_cmd = ['cpp_util/calc_emissions_v3.exe', tile_id]

@@ -14,6 +14,7 @@
 #include <gdal/cpl_conv.h>
 #include <gdal/ogr_spatialref.h>
 
+// these are the functions we call when doing complicated calculations
 #include "flu_val.cpp"
 #include "equations.cpp"
 
@@ -23,15 +24,17 @@ using namespace std;
 // to compile on MINGW: g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
-//passing arguments
+// if code is run other than <program name> <tile id> , will raise this error
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 
 // in files
 string agb_name=argv[1];
-string tile_id = argv[1];
+string tile_id = argv[1]; // the tile id comes from the second argument. the first argument is the name of this code
 
 string infolder = "cpp_util/";
 
+// all these starting with "string" are naming variables
+// these are all the input files
 string forestmodel_name = infolder + tile_id + "_tsc_model.tif";
 string bgc_name = infolder + tile_id + "_bgc.tif";
 string agc_name = infolder + tile_id + "_carbon.tif";
@@ -46,7 +49,7 @@ string peat_name = infolder + tile_id + "_peat.tif";
 string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
 string plant_name = infolder + tile_id + "_res_gfw_plantations.tif";
 
-// out files
+// naming all of the output files
 string out_name1= "outdata/" + tile_id + "_deforestation_model.tif";
 string out_name2 = "outdata/" + tile_id + "_shiftingag_model.tif";
 string out_name3 = "outdata/" + tile_id + "_forestry_model.tif";
@@ -55,11 +58,14 @@ string out_name5 = "outdata/" + tile_id + "_urbanization_model.tif";
 string out_name10 = "outdata/" + tile_id + "_disturbance_model.tif";
 string out_name20 = "outdata/" + tile_id + "_node_totals.tif";
 
+// setting up the variables to hold the pixel location in x/y values
 int x, y;
 int xsize, ysize;
-double GeoTransform[6]; double ulx, uly; double pixelsize;
+double GeoTransform[6]; // Fetch the affine transformation coefficients
+double ulx, uly; double pixelsize;
 
 //initialize GDAL for reading
+// each of these "INBAND" are later associated with the string variables defined above
 GDALAllRegister();
 GDALDataset  *INGDAL; GDALRasterBand  *INBAND;
 GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
@@ -76,7 +82,7 @@ GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
 GDALDataset  *INGDAL14; GDALRasterBand  *INBAND14;
 GDALDataset  *INGDAL15; GDALRasterBand  *INBAND15;
 
-//open file and get extent and projection
+//open file (string variables defined above) and assign it extent and projection
 INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly );
 INBAND = INGDAL->GetRasterBand(1);
 
@@ -116,6 +122,7 @@ INBAND13 = INGDAL13->GetRasterBand(1);
 INGDAL15 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND15 = INGDAL15->GetRasterBand(1);
 
+// the rest of the code runs on the size of INBAND3. this can be changed
 xsize=INBAND3->GetXSize();
 ysize=INBAND3->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
@@ -123,8 +130,12 @@ INGDAL->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
+
+// if wanting to test a small corner of a raster, can manually set this. This starts at top left of raster
 //xsize = 2500;
 //ysize = 2500;
+
+// print the raster size. should be 40,000 x 40,000 and pixel size 0.00025
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 //initialize GDAL for writing
@@ -215,6 +226,7 @@ float out_data5[xsize];
 float out_data10[xsize];
 float out_data20[xsize];
 
+// loop over the y coords, then the x coords
 for (y=0; y<ysize; y++)
 {
 
@@ -265,6 +277,8 @@ for(x=0; x<xsize; x++)
 		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
 		{
 			float *vars;
+			// in equations.cpp, a function called def_variables, we get back what the emissions factors should be,
+			/// based on disturbance type and climate zone. these are later used for calculating emissions
 			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float cf = *(vars + 0);
@@ -274,6 +288,7 @@ for(x=0; x<xsize; x++)
 			float peatburn = *(vars + 4);
 			float peatdrain = *(vars + 5);
 
+            // define and calculate several values used later
 			float total_c;
 			total_c = agc_data[x] + bgc_data[x] + dead_data[x] +litter_data[x];
 
@@ -287,6 +302,8 @@ for(x=0; x<xsize; x++)
 			float Biomass_tCO2e_nofire;
 			float Biomass_tCO2e_yesfire;
 
+            // each disturbance type is a raster- outdata3 is forestry emissions. outdata20 is the code for each
+            // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
 			if (forestmodel_data[x] == 3) // forestry
 			{
 				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);

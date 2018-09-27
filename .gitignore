@@ -91,3 +91,5 @@ config/hot_export_token.txt
 *.zip
 *.exe
 
+.DS_Store
+
