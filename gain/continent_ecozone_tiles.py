@@ -71,6 +71,7 @@ def create_continent_ecozone_tiles(tile_id):
                     print "Not all zeros"
                     mode = stats.mode(non_zeros[0])
 
+                print "mode"
                 print mode
 
                 cont_eco_processed = cont_eco_raw
