@@ -54,6 +54,7 @@ def create_continent_ecozone_tiles(tile_id):
                 print cont_eco_raw
 
                 cont_eco_raw_flat = cont_eco_raw.flatten()
+                print cont_eco_raw_flat
 
                 non_zeros = np.delete(cont_eco_raw_flat, np.where(cont_eco_raw_flat[0] == 0))
                 print non_zeros
