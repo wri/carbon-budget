@@ -17,7 +17,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Rasterizing ecozone to extent of biomass tile"
 
-    cont_eco_raw = "{0}_{1}".format(file_name_base, tile_id),
+    cont_eco_raw = "{0}_{1}".format(file_name_base, tile_id)
 
     utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
                                               cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
@@ -58,8 +58,7 @@ def create_continent_ecozone_tiles(tile_id):
                 # Writes the output window to the output
                 dst.write_band(1, cont_eco_raw, window=window)
 
-
-
+    utilities.upload_final(file_name_base, output_dir, tile_id)
 
 
 
