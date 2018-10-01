@@ -15,9 +15,9 @@ annual_gain = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20180926/'
 gain_year_count = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180912/'
 
 biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
-biomass_tile_list = utilities.tile_list(biomass)
+# biomass_tile_list = utilities.tile_list(biomass)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-# biomass_tile_list = ['20S_110E'] # test tiles
+biomass_tile_list = ['20S_110E'] # test tiles
 print biomass_tile_list
 
 # # For downloading all tiles in the input folders
