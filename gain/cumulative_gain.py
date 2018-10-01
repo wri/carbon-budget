@@ -1,4 +1,5 @@
-### This
+### This script calculates the cumulative carbon gain in natural forest pixels from 2001-2015.
+### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion
 
 import utilities
 import datetime
