@@ -8,7 +8,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Processing:", tile_id
 
-    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone/20181001/'
+    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181001/'
     file_name_base_raw = 'fao_ecozones_continents_raw'
     file_name_base_processed = 'fao_ecozones_continents_processed'
 
