@@ -1,5 +1,8 @@
 import utilities
 import subprocess
+import rasterio
+import numpy as np
+from scipy import stats
 
 def create_continent_ecozone_tiles(tile_id):
 
@@ -13,15 +16,49 @@ def create_continent_ecozone_tiles(tile_id):
     print "ymax:", ymax, "; ymin: ", ymin, "; xmax", xmax, "; xmin: ", xmin
 
     print "Rasterizing ecozone to extent of biomass tile"
+
+    cont_eco_raw = "{0}_{1}".format(file_name_base, tile_id),
+
     utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
-                                              "{0}{1}".format(file_name_base, tile_id),
-                                              xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
-
-    cmd = ['gdal_translate', "{0}_raw_{1}".format(file_name_base, tile_id), "{0}_interpolated_{1}".format(file_name_base, tile_id), '-co', 'COMPRESS=LZW', '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=512', '-co', 'BLOCKYSIZE=512']
-
-    # subprocess.check_call(cmd)
+                                              cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
 
     utilities.upload_final(file_name_base, output_dir, tile_id)
+
+    # Opens continent-ecozone tile
+    with rasterio.open(cont_eco_raw) as cont_eco_raw_src:
+
+        # Grabs metadata about the tif, like its location/projection/cellsize
+        kwargs = cont_eco_raw_src.meta
+
+        # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
+        windows = cont_eco_raw_src.block_windows(1)
+
+        # Updates kwargs for the output dataset.
+        # Need to update data type to float 32 so that it can handle fractional gain rates
+        kwargs.update(
+            driver='GTiff',
+            count=1,
+            compress='lzw',
+            nodata=0
+        )
+
+        # Opens the output tile, giving it the arguments of the input tiles
+        with rasterio.open('fao_ecozones_continents_extrap_{}.tif'.format(tile_id), 'w', **kwargs) as dst:
+
+            # Iterates across the windows (1 pixel strips) of the input tile
+            for idx, window in windows:
+
+                # Creates windows for each input raster
+                cont_eco_raw = cont_eco_raw_src.read(1, window=window)
+
+                m = stats.mode(cont_eco_raw)
+                print m
+                print m[0]
+
+                # Writes the output window to the output
+                dst.write_band(1, cont_eco_raw, window=window)
+
+
 
 
 

@@ -1,6 +1,7 @@
 import subprocess
 import glob
 
+biomass_to_c = 0.5
 
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
