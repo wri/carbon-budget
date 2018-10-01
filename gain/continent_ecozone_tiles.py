@@ -51,12 +51,19 @@ def create_continent_ecozone_tiles(tile_id):
 
                 # Creates windows for each input raster
                 cont_eco_raw = cont_eco_raw_src.read(1, window=window)
-                print cont_eco_raw[0]
+                print cont_eco_raw
 
                 non_zeros = np.delete(cont_eco_raw, np.where(cont_eco_raw[0] == 0), axis = 0)
                 print non_zeros
 
-                mode = stats.mode(non_zeros[0])
+                if non_zeros.size < 1:
+
+                    mode = 0
+
+                else:
+
+                    mode = stats.mode(non_zeros[0])
+
                 print mode
                 print mode[0]
 
