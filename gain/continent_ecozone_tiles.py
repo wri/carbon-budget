@@ -67,7 +67,7 @@ def create_continent_ecozone_tiles(tile_id):
                     mode = stats.mode(non_zeros[0])
 
                 print mode
-
+ 
                 cont_eco_processed = cont_eco_raw
 
                 cont_eco_processed[cont_eco_processed == 0] = mode[0]
