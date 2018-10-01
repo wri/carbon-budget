@@ -59,7 +59,7 @@ def create_continent_ecozone_tiles(tile_id):
 
                 cont_eco_processed = cont_eco_raw
 
-                cont_eco_processed[cont_eco_processed == 0] = mode
+                cont_eco_processed[cont_eco_processed == 0] = mode[0]
 
                 # Writes the output window to the output
                 dst.write_band(1, cont_eco_processed, window=window)
