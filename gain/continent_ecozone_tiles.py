@@ -58,10 +58,12 @@ def create_continent_ecozone_tiles(tile_id):
 
                 if non_zeros.size < 1:
 
+                    print "All zeros"
                     mode = 0
 
                 else:
 
+                    print "Not all zeros"
                     mode = stats.mode(non_zeros[0])
 
                 print mode
