@@ -25,9 +25,9 @@ cont_ecozone = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_201809
 # Downloads ecozone shapefile
 utilities.s3_file_download('{0}{1}'.format(cont_ecozone_dir, cont_ecozone), '.', )
 
-# Unzips ecozone shapefile
-cmd = ['unzip', cont_ecozone]
-subprocess.check_call(cmd)
+# # Unzips ecozone shapefile
+# cmd = ['unzip', cont_ecozone]
+# subprocess.check_call(cmd)
 
 # Location of the biomass tiles, used for ecozone-continent tile boundaries
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
