@@ -51,7 +51,6 @@ def create_continent_ecozone_tiles(tile_id):
 
                 # Creates windows for each input raster
                 cont_eco_raw = cont_eco_raw_src.read(1, window=window)
-                print cont_eco_raw
 
                 cont_eco_raw_flat = cont_eco_raw.flatten()
 
