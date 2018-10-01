@@ -34,12 +34,12 @@ biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 biomass_tile_list = ['20S_110E'] # test tile
 print biomass_tile_list
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
-pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/3)
+# pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
 
-# # For single processor use
-# for tile in biomass_tile_list:
-#
-#     continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
+# For single processor use
+for tile in biomass_tile_list:
+
+    continent_ecozone_tiles.create_continent_ecozone_tiles(tile)

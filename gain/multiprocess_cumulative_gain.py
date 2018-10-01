@@ -1,11 +1,4 @@
-### This script assigns an annual biomass gain rate (in the units of IPCC Table 4.9 (currently tons aboveground
-### biomass/ha/yr)) to pixels.
-### The inputs are continent-ecozone tiles and forest age category tiles, as well as IPCC Table 4.9, formatted
-### for easy ingestion by pandas.
-### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
-### to every pixel in every tile.
-### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
-### processed IPCC table.
+### This
 
 from multiprocessing.pool import Pool
 from functools import partial
@@ -14,14 +7,12 @@ import annual_gain_rate
 import pandas as pd
 import subprocess
 
-pd.options.mode.chained_assignment = None
-
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-# Continent-ecozone and forest age category are needed for assigning gain rates
+# Continent-ecozone and forest age category are needed for the forest age decision tree
 age_cat = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
 cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20180912/'
 
@@ -92,7 +83,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 16
+num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()

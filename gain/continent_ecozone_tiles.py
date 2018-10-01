@@ -19,7 +19,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     cmd = ['gdal_translate', "{0}_raw_{1}".format(file_name_base, tile_id), "{0}_interpolated_{1}".format(file_name_base, tile_id), '-co', 'COMPRESS=LZW', '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=512', '-co', 'BLOCKYSIZE=512']
 
-    subprocess.check_call(cmd)
+    # subprocess.check_call(cmd)
 
     utilities.upload_final(file_name_base, output_dir, tile_id)
 

@@ -60,7 +60,8 @@ def coords(tile_id):
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainEcoCon=None, anodata=None):
-    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=512', '-co', 'BLOCKYSIZE=512',
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
            anodata, in_shape, '{}.tif'.format(out_tif)]
 

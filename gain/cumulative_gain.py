@@ -1,11 +1,4 @@
-### This script assigns an annual biomass gain rate (in the units of IPCC Table 4.9 (currently tons aboveground
-### biomass/ha/yr)) to pixels.
-### The inputs are continent-ecozone tiles and forest age category tiles, as well as IPCC Table 4.9, formatted
-### for easy ingestion by pandas.
-### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
-### to every pixel in every tile.
-### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
-### processed IPCC table.
+### This
 
 import utilities
 import datetime
