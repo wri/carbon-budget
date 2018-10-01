@@ -3,10 +3,11 @@
 #include <stdlib.h>
 using namespace std;
 
+// calculate deadwood little biomass. uses 4 data inputs.
 float deadwood_calc(float biome_data, float elevation_data, float precip_data, float agb_data)
 {
 	float deadwood;
-	if (elevation_data == -32768 && biome_data ==2)
+	if (elevation_data == -32768 && biome_data ==2) // where we are missing elevation data and biome is 2
 	{
 		deadwood = agb_data * .08 * .47;
 	}

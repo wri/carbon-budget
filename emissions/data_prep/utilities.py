@@ -1,6 +1,7 @@
 import subprocess
 import os
 
+
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]
@@ -14,8 +15,7 @@ def coords(tile_id):
         xmin = -1*int(str(tile_id.split("_")[1][:3]))
     else:
         xmin = int(str(tile_id.split("_")[1][:3]))
-        
-    
+
     ymin = str(int(ymax) - 10)
     xmax = str(int(xmin) + 10)
     
@@ -38,7 +38,8 @@ def rasterize(shapefile, tile_id):
     subprocess.check_call(cmd)
 
     return rasterized_tile
- 
+
+
 def resample_clip(raster, tile_id):
     print "resampling: {}".format(raster)
     
@@ -70,4 +71,3 @@ def resample_clip(raster, tile_id):
         subprocess.check_call(cmd) 
 
     return clipped_raster
-    

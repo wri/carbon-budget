@@ -4,7 +4,6 @@ conn = S3Connection(host="s3.amazonaws.com")
 bucket = conn.get_bucket('gfw-files')
 
 
-
 def check_output_exists(tileid, carbon_pool):
 
     prefix = 'sam/carbon_budget/carbon_030218/30tcd/{}/tif/'.format(carbon_pool)

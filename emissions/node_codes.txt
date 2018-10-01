@@ -1,3 +1,5 @@
+each of these represents a unique combination of loss driver and what it falls on. Use this to generate
+a raster used for calculating zonal stats. ex: how much loss in Ache was due to wildfire on peat in the tropics
 1	forestry, peat, burned
 2	forest, peat, not burned, boreal or temperate
 3	forest, peat, not burned,tropics, plantations

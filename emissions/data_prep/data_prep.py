@@ -1,6 +1,7 @@
 import utilities
 import subprocess
 
+
 def upload_tile(folder, tile):
 
     dst_folder = 's3://gfw-files/sam/carbon_budget/data_inputs2/{}/'.format(folder)

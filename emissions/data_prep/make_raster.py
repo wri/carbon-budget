@@ -8,7 +8,7 @@ def main():
 
     # use an ordereddict so we're sure that the list comprehension
     # uses the rasters in the right order
-    raster_dict =  OrderedDict((
+    raster_dict = OrderedDict((
                     ('forest_model', [0, 1, 2, 3]),
                     ('loss', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
                     ('peat', [0, 1]),

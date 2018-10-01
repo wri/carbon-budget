@@ -7,7 +7,7 @@ import subprocess
 
 def hansen_burnyear(tile_id):
 
-    tile_id =  tile_id[0:8]
+    tile_id = tile_id[0:8]
     print "Processing", tile_id
 
     input_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year_10x10_clip/'

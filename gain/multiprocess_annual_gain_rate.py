@@ -19,22 +19,22 @@ age_cat = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
 cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20180912/'
 
 biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
-# biomass_tile_list = utilities.tile_list(biomass)
+biomass_tile_list = utilities.tile_list(biomass)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-biomass_tile_list = ['20S_110E'] # test tiles
+# biomass_tile_list = ['20S_110E'] # test tiles
 print biomass_tile_list
 
-# # # For downloading all tiles in the input folders
-# # download_list = [age_cat, cont_eco]
-# #
-# # for input in download_list:
-# #     utilities.s3_folder_download('{}'.format(input), '.')
+# For downloading all tiles in the input folders
+download_list = [age_cat, cont_eco]
 
-# For copying individual tiles to spot machine for testing
-for tile in biomass_tile_list:
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
-    utilities.s3_file_download('{0}forest_age_category_{1}.tif'.format(age_cat, tile), '.')             # forest age category tiles
-    utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')        # continents and FAO ecozones 2000
+# # For copying individual tiles to spot machine for testing
+# for tile in biomass_tile_list:
+
+#     utilities.s3_file_download('{0}forest_age_category_{1}.tif'.format(age_cat, tile), '.')             # forest age category tiles
+#     utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')        # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']

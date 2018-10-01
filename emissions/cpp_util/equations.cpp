@@ -3,6 +3,7 @@
 #include <stdlib.h>
 using namespace std;
 
+// come up with the peat drainage number based on different disturbance and plantations type
 int peat_drn_ann_calc(int forestmodel_data, int plant_data, int lossyr)
 {
 	int peat_drn_ann;
@@ -139,9 +140,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 	
 	else if (forestmodel_data == 3) // forestry
 	{
-		
-		
-		
+
 		if (ecozone == 2) // forestry, boreal
 		{
 			cf = .33;

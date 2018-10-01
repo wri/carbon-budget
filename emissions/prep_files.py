@@ -12,7 +12,9 @@ def main():
     
     tile_id = args.tile_id
     
-    file_to_copy = ['_res_forest_model', '_bgc', '_carbon', '_loss', '_res_peatland_drainage_proj', '_res_hwsd_histosoles', '_res_ifl_2000', '_res_fao_ecozones_bor_tem_tro', '_res_climate_zone', '_deadwood', '_litter', '_soil']
+    file_to_copy = ['_res_forest_model', '_bgc', '_carbon', '_loss', '_res_peatland_drainage_proj',
+                    '_res_hwsd_histosoles', '_res_ifl_2000', '_res_fao_ecozones_bor_tem_tro', '_res_climate_zone',
+                    '_deadwood', '_litter', '_soil']
 
     for file in file_to_copy:
         filename = '{0}{1}.tif'.format(tile_id, file)
