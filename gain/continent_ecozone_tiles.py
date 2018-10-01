@@ -54,26 +54,18 @@ def create_continent_ecozone_tiles(tile_id):
                 print cont_eco_raw
 
                 cont_eco_raw_flat = cont_eco_raw.flatten()
-                print "flat"
-                print cont_eco_raw_flat
 
                 non_zeros = np.delete(cont_eco_raw_flat, np.where(cont_eco_raw_flat == 0))
-                print "non-zeros"
-                print non_zeros
 
                 if non_zeros.size < 1:
 
-                    print "All zeros"
+                    print "  Window is all 0s"
                     mode = 0
 
                 else:
 
-                    print "Not all zeros"
-                    print stats.mode(non_zeros)
                     mode = stats.mode(non_zeros)[0]
-
-                print "mode"
-                print mode
+                    print "  Window is not all 0s. Mode is", mode
 
                 cont_eco_processed = cont_eco_raw
 
