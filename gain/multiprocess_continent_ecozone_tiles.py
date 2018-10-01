@@ -25,24 +25,24 @@ cont_ecozone = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_201809
 # Downloads ecozone shapefile
 utilities.s3_file_download('{0}{1}'.format(cont_ecozone_dir, cont_ecozone), '.', )
 
-# # Unzips ecozone shapefile
-# cmd = ['unzip', cont_ecozone]
-# subprocess.check_call(cmd)
+# Unzips ecozone shapefile
+cmd = ['unzip', cont_ecozone]
+subprocess.check_call(cmd)
 
 # Location of the biomass tiles, used for ecozone-continent tile boundaries
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
-# biomass_tile_list = utilities.tile_list(biomass_dir)
+biomass_tile_list = utilities.tile_list(biomass_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-biomass_tile_list = ['20S_110E'] # test tile
+# biomass_tile_list = ['20S_110E'] # test tile
 print biomass_tile_list
 
-# # For multiprocessor use
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/3)
-# pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
+# For multiprocessor use
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count/3)
+pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
 
-# For single processor use
-for tile in biomass_tile_list:
-
-    continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
+# # For single processor use
+# for tile in biomass_tile_list:
+#
+#     continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
