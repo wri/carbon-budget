@@ -53,7 +53,9 @@ def create_continent_ecozone_tiles(tile_id):
                 cont_eco_raw = cont_eco_raw_src.read(1, window=window)
                 print cont_eco_raw
 
-                non_zeros = np.delete(cont_eco_raw, np.where(cont_eco_raw[0] == 0))
+                cont_eco_raw_flat = np.flatten(cont_eco_raw)
+                
+                non_zeros = np.delete(cont_eco_raw_flat, np.where(cont_eco_raw_flat[0] == 0))
                 print non_zeros
 
                 if non_zeros.size < 1:
