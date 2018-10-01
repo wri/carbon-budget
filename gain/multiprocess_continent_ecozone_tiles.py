@@ -16,6 +16,7 @@ import continent_ecozone_tiles
 import subprocess
 
 ### sudo pip install rasterio --upgrade
+### sudo pip install scipy
 
 # Ecozone shapefile location and file
 cont_ecozone_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/'

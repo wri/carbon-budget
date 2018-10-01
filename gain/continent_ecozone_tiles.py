@@ -20,8 +20,8 @@ def create_continent_ecozone_tiles(tile_id):
 
     cont_eco_raw = "{0}_{1}".format(file_name_base_raw, tile_id)
 
-    utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
-                                              cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
+    # utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
+    #                                           cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
 
     utilities.upload_final(file_name_base_raw, '{}raw/'.format(output_dir), tile_id)
 
@@ -53,12 +53,16 @@ def create_continent_ecozone_tiles(tile_id):
                 cont_eco_raw = cont_eco_raw_src.read(1, window=window)
                 print cont_eco_raw[0]
 
-                m = stats.mode(cont_eco_raw[0])
-                print m
-                print m[0]
+                mode = stats.mode(cont_eco_raw[0])
+                print mode
+                print mode[0]
+
+                cont_eco_processed = cont_eco_raw
+
+                cont_eco_processed[cont_eco_processed == 0] = mode
 
                 # Writes the output window to the output
-                dst.write_band(1, cont_eco_raw, window=window)
+                dst.write_band(1, cont_eco_processed, window=window)
 
     utilities.upload_final(file_name_base_processed, '{}processed/'.format(output_dir), tile_id)
 
