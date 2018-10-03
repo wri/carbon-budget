@@ -9,7 +9,7 @@ import rasterio
 
 def cumulative_gain(tile_id):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain/20181001/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain/20181003/'
 
     print "Processing:", tile_id
 
