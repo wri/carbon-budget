@@ -27,11 +27,11 @@ download_list = [annual_gain, gain_year_count]
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in biomass_tile_list:
-
-    utilities.s3_file_download('{0}annual_gain_rate_{1}.tif'.format(annual_gain, tile), '.')           # annual gain rate tiles
-    utilities.s3_file_download('{0}gain_year_count_{1}.tif'.format(gain_year_count, tile), '.')        # number of years with gain tiles
+# # For copying individual tiles to spot machine for testing
+# for tile in biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}annual_gain_rate_{1}.tif'.format(annual_gain, tile), '.')           # annual gain rate tiles
+#     utilities.s3_file_download('{0}gain_year_count_{1}.tif'.format(gain_year_count, tile), '.')        # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
