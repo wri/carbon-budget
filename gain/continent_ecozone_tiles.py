@@ -24,7 +24,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Processing:", tile_id
 
-    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181001/'
+    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/'
     file_name_base_raw = 'fao_ecozones_continents_raw'
     file_name_base_processed = 'fao_ecozones_continents_processed'
 
@@ -36,7 +36,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     cont_eco_raw = "{0}_{1}".format(file_name_base_raw, tile_id)
 
-    # This makes rasters that are made of 512 x 512 pixel windows instead of 40000 x 1 pixel windows
+    # This makes rasters that are made of 1024 x 1024 pixel windows instead of 40000 x 1 pixel windows
     # to improve assigning pixels without continent-ecozone codes to a continent-ecozone code.
     # This way, pixels without continent-ecozone are assigned a code based on what's in a window nearby, rather
     # than a window that spans the entire 10x10 degree tile.

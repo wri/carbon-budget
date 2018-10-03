@@ -12,7 +12,7 @@ import subprocess
 ### sudo pip install xlrd
 
 # Annual gain rate and the number of years with gain are needed
-annual_gain = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20180926/'
+annual_gain = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20181002/'
 gain_year_count = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180912/'
 
 biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'

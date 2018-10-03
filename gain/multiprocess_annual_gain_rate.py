@@ -23,7 +23,7 @@ pd.options.mode.chained_assignment = None
 
 # Continent-ecozone and forest age category are needed for assigning gain rates
 age_cat = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
-cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181001/processed/'
+cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
 
 biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 biomass_tile_list = utilities.tile_list(biomass)

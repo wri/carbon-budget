@@ -63,8 +63,8 @@ def coords(tile_id):
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainEcoCon=None, anodata=None):
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
 
-           # Input raster is ingested as 512x512 pixel tiles (rather than the default of 1 pixel wide strips
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=512', '-co', 'BLOCKYSIZE=512',
+           # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
            anodata, in_shape, '{}.tif'.format(out_tif)]
