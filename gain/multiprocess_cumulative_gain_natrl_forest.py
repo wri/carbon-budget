@@ -1,9 +1,9 @@
-### This script calculates the cumulative carbon gain in natural forest pixels from 2001-2015.
+### This script calculates the cumulative carbon gain in natural non-mangrove forest pixels from 2001-2015.
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion
 
 import multiprocessing
 import utilities
-import cumulative_gain
+import cumulative_gain_natrl_forest
 import subprocess
 
 ### Need to update and install some packages on spot machine before running
@@ -35,10 +35,10 @@ for input in download_list:
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
-pool.map(cumulative_gain.cumulative_gain, biomass_tile_list)
+pool.map(cumulative_gain_natrl_forest.cumulative_gain, biomass_tile_list)
 
 # # For single processor use
 # for tile in biomass_tile_list:
 #
-#     cumulative_gain.cumulative_gain(tile)
+#     cumulative_gain_natrl_forest.cumulative_gain(tile)
 

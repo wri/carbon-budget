@@ -1,6 +1,6 @@
 ### This script assigns an annual biomass gain rate (in the units of IPCC Table 4.9 (currently tons aboveground
-### biomass/ha/yr)) to pixels.
-### The inputs are continent-ecozone tiles and forest age category tiles, as well as IPCC Table 4.9, formatted
+### biomass/ha/yr)) to natural non-mangrove forest pixels.
+### The inputs are continent-ecozone tiles and natural forest age category tiles, as well as IPCC Table 4.9, formatted
 ### for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
 ### to every pixel in every tile.
@@ -10,7 +10,7 @@
 from multiprocessing.pool import Pool
 from functools import partial
 import utilities
-import annual_gain_rate
+import annual_gain_rate_natrl_forest
 import pandas as pd
 import subprocess
 
@@ -24,6 +24,9 @@ pd.options.mode.chained_assignment = None
 # Continent-ecozone and forest age category are needed for assigning gain rates
 age_cat = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
 cont_eco = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
+
+# Spreadsheet with annual gain rates
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
 
 biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 biomass_tile_list = utilities.tile_list(biomass)
@@ -44,12 +47,12 @@ for input in download_list:
 #     utilities.s3_file_download('{0}fao_ecozones_continents_{1}.tif'.format(cont_eco, tile), '.')        # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
-cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/gain_rate_continent_ecozone_age_20180918.xlsx', '.']
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
-gain_table = pd.read_excel("gain_rate_continent_ecozone_age_20180918.xlsx",
-                           sheet_name = "con-ezn-age gain, for model")
+gain_table = pd.read_excel("{}".format(gain_spreadsheet),
+                           sheet_name = "natrl fores gain, for model")
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -94,12 +97,12 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(annual_gain_rate.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
+pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()
 pool.join()
 
 # # For single processor use
 # for tile in biomass_tile_list:
 #
-#     annual_gain_rate.annual_gain_rate(tile, gain_table_dict)
+#     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
 

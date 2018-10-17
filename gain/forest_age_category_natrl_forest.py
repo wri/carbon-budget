@@ -1,4 +1,4 @@
-### This script creates tiles of forest age category according to a decision tree.
+### This script creates tiles of natural non-mangrove forest age category according to a decision tree.
 ### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
 ### The decision tree uses several input tiles, including IFL status, gain, and loss.
 ### Downloading all of these tiles can take awhile.
@@ -14,7 +14,7 @@ import rasterio
 
 def forest_age_category(tile_id, gain_table_dict):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
     # upload_dir = r'C:\GIS\Carbon_model\test_forest_age_category'
 
     print "Processing:", tile_id
@@ -79,7 +79,7 @@ def forest_age_category(tile_id, gain_table_dict):
                             )
 
                             # Opens the output tile, giving it the arguments of the input tiles
-                            with rasterio.open('forest_age_category_{}.tif'.format(tile_id), 'w', **kwargs) as dst:
+                            with rasterio.open('forest_age_category_natural_forest{}.tif'.format(tile_id), 'w', **kwargs) as dst:
 
                                 # Iterates across the windows (1 pixel strips) of the input tile
                                 for idx, window in windows:
@@ -127,7 +127,7 @@ def forest_age_category(tile_id, gain_table_dict):
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
 
-    pattern = 'forest_age_category'
+    pattern = 'forest_age_category_natural_forest'
 
     utilities.upload_final(pattern, upload_dir, tile_id)
 

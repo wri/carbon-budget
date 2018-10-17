@@ -1,3 +1,11 @@
+### Creates tiles in which each nutral non-mangrove forest pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
+### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
+### First it calculates rasters of gain years for natural forest pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
+### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.
+### Then it combines those four rasters into a single gain year raster for each tile.
+### This is one of the natural forest inputs for the carbon gain model.
+### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count.py must be changed.
+
 import utilities
 import subprocess
 import datetime
@@ -15,7 +23,7 @@ def create_gain_year_count(tile_id):
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
 
     # Location to upload files to
-    upload_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180912/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20180912/'
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
@@ -64,7 +72,7 @@ def create_gain_year_count(tile_id):
     subprocess.check_call(cmd)
 
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = 'gain_year_count_{}.tif'.format(tile_id)
+    age_outfile = 'gain_year_count_natural_forest_{}.tif'.format(tile_id)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfile1, gain_outfile1, no_change_outfile1, loss_and_gain_outfile1, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
@@ -72,7 +80,7 @@ def create_gain_year_count(tile_id):
     utilities.upload_final("growth_years_gain_only", upload_dir, tile_id)
     utilities.upload_final("growth_years_no_change", upload_dir, tile_id)
     utilities.upload_final("growth_years_loss_and_gain", upload_dir, tile_id)
-    utilities.upload_final("gain_year_count", upload_dir, tile_id)
+    utilities.upload_final("gain_year_count_natural_forest", upload_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

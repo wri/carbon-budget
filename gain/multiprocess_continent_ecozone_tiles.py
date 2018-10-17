@@ -7,7 +7,7 @@
 ### In the resulting ecozone-continent shapefile, the final field has continent and ecozone concatenated.
 ### That ecozone-continent field can be parsed to get the ecozone and continent for every pixel,
 ### which are necessary for assigning gain rates to pixels.
-### This script also breaks the input tiles into windows that are 512x512 pixels and assigns all pixels that
+### This script also breaks the input tiles into windows that are 1024 pixels on each side and assigns all pixels that
 ### don't have a continent-ecozone code to the most common code in that window.
 ### This is done to expand the extent of the continent-ecozone tiles to include pixels that don't have a continent-ecozone
 ### code because they are just outside the original shapefile.

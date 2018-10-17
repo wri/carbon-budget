@@ -1,4 +1,4 @@
-### This script calculates the cumulative carbon gain in natural forest pixels from 2001-2015.
+### This script calculates the cumulative carbon gain in natural non-mangrove forest pixels from 2001-2015.
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion
 
 import utilities
@@ -9,7 +9,7 @@ import rasterio
 
 def cumulative_gain(tile_id):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain/20181003/'
+    upload_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_natural_forest/20181003/'
 
     print "Processing:", tile_id
 
@@ -44,7 +44,7 @@ def cumulative_gain(tile_id):
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
-            with rasterio.open('aboveground_C_gain_{}.tif'.format(tile_id), 'w', **kwargs) as dst:
+            with rasterio.open('aboveground_C_gain_natural_forest{}.tif'.format(tile_id), 'w', **kwargs) as dst:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
@@ -59,7 +59,7 @@ def cumulative_gain(tile_id):
                     # Writes the output window to the output
                     dst.write_band(1, dst_data, window=window)
 
-    pattern = 'aboveground_C_gain'
+    pattern = 'aboveground_C_gain_natural_forest'
 
     utilities.upload_final(pattern, upload_dir, tile_id)
 

@@ -7,7 +7,7 @@
 ### In the resulting ecozone-continent shapefile, the final field has continent and ecozone concatenated.
 ### That ecozone-continent field can be parsed to get the ecozone and continent for every pixel,
 ### which are necessary for assigning gain rates to pixels.
-### This script also breaks the input tiles into windows that are 512x512 pixels and assigns all pixels that
+### This script also breaks the input tiles into windows that are 1024 pixels on each side and assigns all pixels that
 ### don't have a continent-ecozone code to the most common code in that window.
 ### This is done to expand the extent of the continent-ecozone tiles to include pixels that don't have a continent-ecozone
 ### code because they are just outside the original shapefile.
@@ -69,7 +69,7 @@ def create_continent_ecozone_tiles(tile_id):
         # Opens the output tile, giving it the arguments of the input tiles
         with rasterio.open('{0}_{1}.tif'.format(file_name_base_processed, tile_id), 'w', **kwargs) as dst:
 
-            # Iterates across the windows (512 x 512 pixel boxes) of the input tile.
+            # Iterates across the windows (1024 x 1024 pixel boxes) of the input tile.
             for idx, window in windows:
 
                 # Creates windows for each input raster
@@ -100,7 +100,7 @@ def create_continent_ecozone_tiles(tile_id):
                 cont_eco_processed[cont_eco_processed == 0] = mode
 
                 # Writes the output window to the output.
-                # Although the windows for the input tiles are 512 x 512 pixels,
+                # Although the windows for the input tiles are 1024 x 1024 pixels,
                 # the windows for these output files are 40000 x 1 pixels, like all the other tiles in this model,
                 # so they should work fine with all the other tiles.
                 dst.write_band(1, cont_eco_processed, window=window)
