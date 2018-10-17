@@ -11,13 +11,13 @@ mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 
 
 
-# utilities.s3_file_download(os.path.join(mangrove_raw_dir, mangrove_raw), '.')
-#
-# # Unzips ecozone shapefile
-# cmd = ['unzip', mangrove_raw]
-# subprocess.check_call(cmd)
-#
-# utilities.gather_tifs()
+utilities.s3_file_download(os.path.join(mangrove_raw_dir, mangrove_raw), '.')
+
+# Unzips ecozone shapefile
+cmd = ['unzip', mangrove_raw]
+subprocess.check_call(cmd)
+
+utilities.gather_tifs()
 
 utilities.build_vrt(utilities.mangrove_vrt)
 
