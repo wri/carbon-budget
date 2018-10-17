@@ -1,4 +1,11 @@
 import subprocess
+import glob
+
+mangrove_vrt = 'mangrove.vrt'
+
+mangrove_tile_out = 'mangrove_abg_biomass'
+
+out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/'
 
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
@@ -9,10 +16,12 @@ def s3_file_download(source, dest):
     subprocess.check_call(cmd)
 
 def gather_tifs():
+    print "Moving tifs into main directory"
     cmd = ['cp', '-R', '*', '.']
     subprocess.check_call(cmd)
 
 def build_vrt(out_vrt):
+    print "Creating vrt of mangroves"
     cmd = ['gdalbuildvrt', out_vrt, '*.tif']
     subprocess.check_call(cmd)
 
@@ -63,4 +72,23 @@ def coords(tile_id):
     ymin = str(int(ymax) - 10)
     xmax = str(int(xmin) + 10)
 
-    return ymax, xmin, ymin, xmax
+    return xmin, xmax, ymin, ymax
+
+# Uploads tile to specified location
+def upload_final(pattern, upload_dir, tile_id):
+
+    # Gets all files with the specified pattern
+    files = glob.glob('{0}_{1}*'.format(pattern, tile_id))
+
+    print '{0}_{1}.tif'.format(pattern, tile_id)
+
+    for f in files:
+
+        print "uploading {}".format(f)
+        cmd = ['aws', 's3', 'cp', '{}'.format(f), upload_dir]
+        print cmd
+
+        try:
+            subprocess.check_call(cmd)
+        except:
+            print "Error uploading output tile"
