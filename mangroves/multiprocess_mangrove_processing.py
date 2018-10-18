@@ -19,20 +19,6 @@ mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 # cmd = ['unzip', '-j', mangrove_raw]
 # subprocess.check_call(cmd)
 
-# destination = "./"
-# fromdir = "./MaskedSRTMCountriesAGB_WRI/"
-# for f in utilities.getfiles(fromdir):
-#     print f
-#     filename = string.split(f, '/')[-1]
-#     print filename
-#     if os.path.isfile(destination+filename):
-#         filename = f.replace(fromdir,"",1).replace("/","_")
-#     #os.rename(f, destination+filename)
-#     shutil.copy(f, destination+filename)
-
-
-# utilities.gather_tifs()
-
 utilities.build_vrt(utilities.mangrove_vrt)
 
 # Location of the biomass tiles, used for getting tile boundaries

@@ -17,24 +17,9 @@ def s3_file_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest]
     subprocess.check_call(cmd)
 
-def gather_tifs():
-    print "Moving tifs into main directory"
-    cmd = ['cp', '-R', '*', '.']
-    subprocess.check_call(cmd)
-
-#Generate the file paths to traverse, or a single path if a file name was given
-def getfiles(path):
-    if os.path.isdir(path):
-        for root, dirs, files in os.walk(path):
-            for name in files:
-                yield os.path.join(root, name)
-    else:
-        yield path
-
 def build_vrt(out_vrt):
     print "Creating vrt of mangroves"
-    cmd = ['gdalbuildvrt', out_vrt, '*.tif']
-    subprocess.check_call(cmd)
+    os.system('gdalbuildvrt {} *.tif'.format(out_vrt))
 
 
 # Lists the tiles in a folder in s3
