@@ -1,5 +1,7 @@
 import subprocess
 import glob
+import os
+import shutil
 
 mangrove_vrt = 'mangrove.vrt'
 
@@ -19,6 +21,15 @@ def gather_tifs():
     print "Moving tifs into main directory"
     cmd = ['cp', '-R', '*', '.']
     subprocess.check_call(cmd)
+
+def move(destination, depth=None):
+    if not depth:
+        depth = []
+    for file_or_dir in os.listdir(os.path.join([destination] + depth, os.sep)):
+        if os.path.isfile(file_or_dir):
+            shutil.move(file_or_dir, destination)
+        else:
+            move(destination, os.path.join(depth + [file_or_dir], os.sep))
 
 def build_vrt(out_vrt):
     print "Creating vrt of mangroves"
