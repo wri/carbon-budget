@@ -59,16 +59,10 @@ def coords(tile_id):
     else:
         ymax = int(str(tile_id.split("_")[0][:2]))
 
-        print ymax
-
     if EW == 'W':
         xmin = -1*int(str(tile_id.split("_")[1][:3]))
-        print xmin
     else:
         xmin = int(str(tile_id.split("_")[1][:3]))
-
-        print xmin
-
 
     ymin = str(int(ymax) - 10)
     xmax = str(int(xmin) + 10)
