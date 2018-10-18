@@ -22,7 +22,9 @@ mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 destination = "./"
 fromdir = "./MaskedSRTMCountriesAGB_WRI/"
 for f in utilities.getfiles(fromdir):
+    print f
     filename = string.split(f, '/')[-1]
+    print filename
     if os.path.isfile(destination+filename):
         filename = f.replace(fromdir,"",1).replace("/","_")
     #os.rename(f, destination+filename)
