@@ -3,7 +3,7 @@ import glob
 import os
 import shutil
 
-mangrove_vrt = 'mangrove.vrt'
+mangrove_vrt = 'mangrove_biomass.vrt'
 
 mangrove_tile_out = 'mangrove_abg_biomass'
 
@@ -53,6 +53,9 @@ def tile_list(source):
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]
+
+    print NS
+    print EW
 
     if NS == 'S':
         ymax =-1*int(tile_id.split("_")[0][:2])
