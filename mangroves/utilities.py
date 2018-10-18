@@ -1,12 +1,14 @@
 import subprocess
 import glob
 import os
-import shutil
 
+# name of mangrove vrt
 mangrove_vrt = 'mangrove_biomass.vrt'
 
-mangrove_tile_out = 'mangrove_agb_biomass'
+# base name of mangrove biomass tiles
+mangrove_tile_out = 'mangrove_agb_t_ha'
 
+# output location for mangrove biomass tiles
 out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181018/'
 
 def s3_folder_download(source, dest):
@@ -20,7 +22,6 @@ def s3_file_download(source, dest):
 def build_vrt(out_vrt):
     print "Creating vrt of mangroves"
     os.system('gdalbuildvrt {} *.tif'.format(out_vrt))
-
 
 # Lists the tiles in a folder in s3
 def tile_list(source):

@@ -1,18 +1,19 @@
 import utilities
 import subprocess
 
+# Creates mangrove tiles using Hansen tile properties
 def create_mangrove_tiles(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
     xmin, xmax, ymin, ymax = utilities.coords(tile_id)
-    print "ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
+    print "  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
-    print "Warping tile"
+    print "Creating tile", tile_id
     out_tile = '{0}_{1}.tif'.format(utilities.mangrove_tile_out, tile_id)
-    warp = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-tap', '-te',
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', utilities.mangrove_vrt, out_tile]
-    subprocess.check_call(warp)
-    print "Tile warped"
+    subprocess.check_call(cmd)
+    print "  Tile created"
 
     utilities.upload_final(utilities.mangrove_tile_out, utilities.out_dir, tile_id)
 
