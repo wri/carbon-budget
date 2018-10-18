@@ -63,6 +63,7 @@ def coords(tile_id):
 
     if EW == 'W':
         xmin = -1*int(str(tile_id.split("_")[1][:3]))
+        print xmin
     else:
         xmin = int(str(tile_id.split("_")[1][:3]))
 
