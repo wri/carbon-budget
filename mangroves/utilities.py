@@ -5,7 +5,7 @@ import shutil
 
 mangrove_vrt = 'mangrove_biomass.vrt'
 
-mangrove_tile_out = 'mangrove_abg_biomass'
+mangrove_tile_out = 'mangrove_agb_biomass'
 
 out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181018/'
 
