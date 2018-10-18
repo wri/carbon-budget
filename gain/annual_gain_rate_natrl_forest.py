@@ -17,8 +17,6 @@ np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, gain_table_dict):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_natural_forest/20181003/'
-
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
     # These are five digits so they can easily be added to the four digits of the continent-ecozone code to make unique codes
@@ -90,7 +88,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     pattern = 'annual_gain_rate_natural_forest'
 
-    utilities.upload_final(pattern, upload_dir, tile_id)
+    utilities.upload_final(pattern, utilities.annual_gain_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

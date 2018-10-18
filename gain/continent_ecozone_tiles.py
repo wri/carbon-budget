@@ -24,7 +24,6 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Processing:", tile_id
 
-    output_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/'
     file_name_base_raw = 'fao_ecozones_continents_raw'
     file_name_base_processed = 'fao_ecozones_continents_processed'
 
@@ -45,7 +44,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     # Uploads the continent-ecozone tile to s3 before the codes are expanded to tiles without codes.
     # These are not used for the model. They are for reference and completeness.
-    utilities.upload_final(file_name_base_raw, '{}raw/'.format(output_dir), tile_id)
+    utilities.upload_final(file_name_base_raw, utilities.cont_eco_raw_dir, tile_id)
 
     # Opens continent-ecozone tile.
     # Everything from here down is used to assign pixels without continent ecozone codes to a continent-ecozone.
@@ -106,7 +105,7 @@ def create_continent_ecozone_tiles(tile_id):
                 dst.write_band(1, cont_eco_processed, window=window)
 
     # This is the output used for the rest of the model
-    utilities.upload_final(file_name_base_processed, '{}processed/'.format(output_dir), tile_id)
+    utilities.upload_final(file_name_base_processed, utilities.cont_eco_dir, tile_id)
 
 
 

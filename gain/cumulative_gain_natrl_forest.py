@@ -9,8 +9,6 @@ import rasterio
 
 def cumulative_gain(tile_id):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_natural_forest/20181003/'
-
     print "Processing:", tile_id
 
     # Start time
@@ -61,7 +59,7 @@ def cumulative_gain(tile_id):
 
     pattern = 'aboveground_C_gain_natural_forest'
 
-    utilities.upload_final(pattern, upload_dir, tile_id)
+    utilities.upload_final(pattern, utilities.cumul_gain_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

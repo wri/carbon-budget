@@ -22,11 +22,12 @@ import os
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Biomass tiles to iterate through
-# biomass_tile_list = utilities.tile_list(biomass_dir)
-biomass_tile_list = ['20S_020E', '20N_140E', '20N_120W','20N_100E', '20N_080E', '20N_030E', '20N_020E', '20N_010W', '20N_010E',
-                     '20N_000E', '10S_160W', '10S_130E', '10S_110E', '10S_100E', '10S_090E', '10S_080W', '10S_060W', '10S_060E',
-                     '10S_050E', '10S_040E'] # test tile
+biomass_tile_list = utilities.tile_list(biomass_dir)
+# biomass_tile_list = ['20S_020E', '20N_140E', '20N_120W','20N_100E', '20N_080E', '20N_030E', '20N_020E', '20N_010W', '20N_010E',
+#                      '20N_000E', '10S_160W', '10S_130E', '10S_110E', '10S_100E', '10S_090E', '10S_080W', '10S_060W', '10S_060E',
+#                      '10S_050E', '10S_040E'] # test tile
 # biomass_tile_list = ['20S_120W'] # test tile
+biomass_tile_list = biomass_tile_list[30:45]
 print biomass_tile_list
 
 # For multiprocessor use

@@ -14,9 +14,6 @@ import rasterio
 
 def forest_age_category(tile_id, gain_table_dict):
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
-    # upload_dir = r'C:\GIS\Carbon_model\test_forest_age_category'
-
     print "Processing:", tile_id
 
     # Gets the bounding coordinates of each tile. Needed to determine if the tile is in the tropics (within 30 deg of the equator)
@@ -129,7 +126,7 @@ def forest_age_category(tile_id, gain_table_dict):
 
     pattern = 'forest_age_category_natural_forest'
 
-    utilities.upload_final(pattern, upload_dir, tile_id)
+    utilities.upload_final(pattern, utilities.age_cat_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
