@@ -2,6 +2,10 @@ import subprocess
 import glob
 import os
 
+# Location of source mangrove aboveground biomass images
+mangrove_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
+mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
+
 # name of mangrove vrt
 mangrove_vrt = 'mangrove_biomass.vrt'
 
