@@ -54,18 +54,19 @@ def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
     EW = tile_id.split("_")[1][-1:]
 
-    print NS
-    print EW
-
     if NS == 'S':
         ymax =-1*int(tile_id.split("_")[0][:2])
     else:
         ymax = int(str(tile_id.split("_")[0][:2]))
 
+        print ymax
+
     if EW == 'W':
         xmin = -1*int(str(tile_id.split("_")[1][:3]))
     else:
         xmin = int(str(tile_id.split("_")[1][:3]))
+
+        print xmin
 
 
     ymin = str(int(ymax) - 10)
