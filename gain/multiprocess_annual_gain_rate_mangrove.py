@@ -52,6 +52,7 @@ gain_table_dict[0] = 0
 # Converts all the keys (continent-ecozone codes) to float type
 gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
+print gain_table_dict
 
 # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
