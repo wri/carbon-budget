@@ -14,7 +14,7 @@ def create_mangrove_tiles(tile_id):
     # subprocess.check_call(cmd)
     out = '{}_biomass.tif'.format(tile_id)
     warp = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-tap', '-te',
-            xmin, ymin, xmax, ymax, '-dstnodata', '-9999', utilities.mangrove_vrt, out]
+            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '-9999', utilities.mangrove_vrt, out]
     subprocess.check_call(warp)
 
     print "Tile warped"
