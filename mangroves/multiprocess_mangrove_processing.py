@@ -30,12 +30,12 @@ biomass_tile_list = utilities.tile_list(biomass_dir)
 biomass_tile_list = biomass_tile_list[30:45]
 print biomass_tile_list
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
-pool.map(mangrove_processing.create_mangrove_tiles, biomass_tile_list)
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/4)
+# pool.map(mangrove_processing.create_mangrove_tiles, biomass_tile_list)
 
-# # For single processor use, for testing purposes
-# for tile in biomass_tile_list:
-#
-#     mangrove_processing.create_mangrove_tiles(tile)
+# For single processor use, for testing purposes
+for tile in biomass_tile_list:
+
+    mangrove_processing.create_mangrove_tiles(tile)

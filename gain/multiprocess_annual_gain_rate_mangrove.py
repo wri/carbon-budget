@@ -15,14 +15,9 @@ pd.options.mode.chained_assignment = None
 ### sudo pip install xlrd
 
 
-
-# Spreadsheet with annual gain rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
-
-biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
-# biomass_tile_list = utilities.tile_list(biomass)
+# biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-biomass_tile_list = ['20S_110E'] # test tiles
+biomass_tile_list = ['00N_080W'] # test tiles
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
@@ -38,11 +33,11 @@ for tile in biomass_tile_list:
     utilities.s3_file_download('{0}mangrove_agb_t_ha_{1}.tif'.format(utilities.mangrove_biomass_dir, tile), '.')         # continents and FAO ecozones 2000
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(gain_spreadsheet), '.']
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(utilities.gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
-gain_table = pd.read_excel("{}".format(gain_spreadsheet),
+gain_table = pd.read_excel("{}".format(utilities.gain_spreadsheet),
                            sheet_name = "mangrove gain, for model")
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
