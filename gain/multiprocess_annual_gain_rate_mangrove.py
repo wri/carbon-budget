@@ -44,7 +44,7 @@ gain_table = pd.read_excel("{}".format(utilities.gain_spreadsheet),
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
 # Converts the continent-ecozone codes and corresponding gain rates to a dictionary
-gain_table_dict = pd.Series(gain_table_simplified.gain_tons_yr.values,index=gain_table_simplified.cont_eco_age).to_dict()
+gain_table_dict = pd.Series(gain_table_simplified.gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_table_dict[0] = 0
