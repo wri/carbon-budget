@@ -5,6 +5,8 @@ import utilities
 import mangrove_processing
 import subprocess
 import os
+import shutil
+import string
 
 mangrove_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
 mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
@@ -17,7 +19,16 @@ mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 # cmd = ['unzip', mangrove_raw]
 # subprocess.check_call(cmd)
 
-utilities.move("MaskedSRTMCountriesAGB_WRI")
+destination = "./"
+fromdir = "./MaskedSRTMCountriesAGB_WRI/"
+for f in utilities.getfiles(fromdir):
+    filename = string.split(f, '/')[-1]
+    if os.path.isfile(destination+filename):
+        filename = f.replace(fromdir,"",1).replace("/","_")
+    #os.rename(f, destination+filename)
+    shutil.copy(f, destination+filename)
+
+
 # utilities.gather_tifs()
 
 utilities.build_vrt(utilities.mangrove_vrt)

@@ -22,14 +22,14 @@ def gather_tifs():
     cmd = ['cp', '-R', '*', '.']
     subprocess.check_call(cmd)
 
-def move(destination, depth=None):
-    if not depth:
-        depth = []
-    for file_or_dir in os.listdir(os.path.join([destination] + depth, os.sep)):
-        if os.path.isfile(file_or_dir):
-            shutil.move(file_or_dir, destination)
-        else:
-            move(destination, os.path.join(depth + [file_or_dir], os.sep))
+#Generate the file paths to traverse, or a single path if a file name was given
+def getfiles(path):
+    if os.path.isdir(path):
+        for root, dirs, files in os.walk(path):
+            for name in files:
+                yield os.path.join(root, name)
+    else:
+        yield path
 
 def build_vrt(out_vrt):
     print "Creating vrt of mangroves"
