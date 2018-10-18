@@ -11,18 +11,13 @@ import subprocess
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-# Annual gain rate and the number of years with gain are needed
-annual_gain = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20181003/'
-gain_year_count = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180912/'
-
-biomass = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
-biomass_tile_list = utilities.tile_list(biomass)
+biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['20S_110E'] # test tiles
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
-download_list = [annual_gain, gain_year_count]
+download_list = [utilities.annual_gain_dir, utilities.gain_year_count_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -30,8 +25,8 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}annual_gain_rate_{1}.tif'.format(annual_gain, tile), '.')           # annual gain rate tiles
-#     utilities.s3_file_download('{0}gain_year_count_{1}.tif'.format(gain_year_count, tile), '.')        # number of years with gain tiles
+#     utilities.s3_file_download('{0}annual_gain_rate_{1}.tif'.format(utilities.annual_gain_dir, tile), '.')           # annual gain rate tiles
+#     utilities.s3_file_download('{0}gain_year_count_{1}.tif'.format(utilities.gain_year_count_dir, tile), '.')        # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)

@@ -20,7 +20,7 @@ def create_mangrove_tiles(tile_id):
     subprocess.check_call(cmd)
     print "  Tile created"
 
-    print "Checking if {} contains any data in it...".format(tile_id)
+    print "Checking if {} contains any data...".format(tile_id)
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find min, max
     gtif = gdal.Open(out_tile)

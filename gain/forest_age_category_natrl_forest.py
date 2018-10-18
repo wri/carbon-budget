@@ -42,7 +42,7 @@ def forest_age_category(tile_id, gain_table_dict):
     tcd = 'Hansen_GFC2014_treecover2000_{}.tif'.format(tile_id)
     ifl = '{}_res_ifl_2000.tif'.format(tile_id)
     biomass = '{}_biomass.tif'.format(tile_id)
-    cont_eco = 'fao_ecozones_continents_{0}.tif'.format(tile_id)
+    cont_eco = 'fao_ecozones_continents_processed_{0}.tif'.format(tile_id)
 
     print "  Reading input files and evaluating conditions"
 

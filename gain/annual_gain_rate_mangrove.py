@@ -12,7 +12,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     pattern = 'annual_gain_rate_mangrove'
 
-    upload_dir = 's3://gfw2-data/climate/carbon_model/{}/20181017/'.format(pattern)
+    upload_dir = 's3://gfw2-data/climate/carbon_model/{}/20181018/'.format(pattern)
 
     print "Processing:", tile_id
 
@@ -33,37 +33,40 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = cont_eco_src.block_windows(1)
 
-        # Updates kwargs for the output dataset.
-        # Need to update data type to float 32 so that it can handle fractional gain rates
-        kwargs.update(
-            driver='GTiff',
-            count=1,
-            compress='lzw',
-            nodata=0,
-            dtype='float32'
-        )
+        # Opens age category tile
+        with rasterio.open(age_cat) as age_cat_src:
 
-        # Opens the output tile, giving it the arguments of the input tiles
-        with rasterio.open('{0}_{1}.tif'.format(pattern, tile_id), 'w', **kwargs) as dst:
+            # Updates kwargs for the output dataset.
+            # Need to update data type to float 32 so that it can handle fractional gain rates
+            kwargs.update(
+                driver='GTiff',
+                count=1,
+                compress='lzw',
+                nodata=0,
+                dtype='float32'
+            )
 
-            # Iterates across the windows (1 pixel strips) of the input tile
-            for idx, window in windows:
+            # Opens the output tile, giving it the arguments of the input tiles
+            with rasterio.open('{0}_{1}.tif'.format(pattern, tile_id), 'w', **kwargs) as dst:
 
-                # Creates windows for each input raster
-                cont_eco = cont_eco_src.read(1, window=window)
+                # Iterates across the windows (1 pixel strips) of the input tile
+                for idx, window in windows:
 
-                # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
-                cont_eco = cont_eco.astype('float32')
+                    # Creates windows for each input raster
+                    cont_eco = cont_eco_src.read(1, window=window)
 
-                # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
-                # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
-                for key, value in gain_table_dict.iteritems():
-                    cont_eco[cont_eco == key] = value
+                    # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
+                    cont_eco = cont_eco.astype('float32')
 
-                dst_data = cont_eco
+                    # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
+                    # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+                    for key, value in gain_table_dict.iteritems():
+                        cont_eco[cont_eco == key] = value
 
-                # Writes the output window to the output
-                dst.write_band(1, dst_data, window=window)
+                    dst_data = cont_eco
+
+                    # Writes the output window to the output
+                    dst.write_band(1, dst_data, window=window)
 
     utilities.upload_final(pattern, upload_dir, tile_id)
 

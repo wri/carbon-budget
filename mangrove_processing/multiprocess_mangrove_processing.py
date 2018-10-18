@@ -22,9 +22,9 @@ import os
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Biomass tiles to iterate through
-biomass_tile_list = utilities.tile_list(biomass_dir)
+# biomass_tile_list = utilities.tile_list(biomass_dir)
 # biomass_tile_list = ['20S_110E'] # test tile
-# biomass_tile_list = ['20N_080W'] # test tile
+biomass_tile_list = ['20N_120W'] # test tile
 print biomass_tile_list
 
 # For multiprocessor use

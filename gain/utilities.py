@@ -3,6 +3,32 @@ import glob
 
 biomass_to_c = 0.5
 
+cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
+
+# Ecozone shapefile
+cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
+
+# Continent-ecozone and forest age category are needed for assigning gain rates
+age_cat_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category/20180921/'
+
+# Annual gain rate and the number of years with gain are needed
+annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate/20181003/'
+gain_year_count_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count/20180912/'
+
+# Loss, gain, and tree cover density, intact forest landscape, biomass tiles, and continent-ecozone
+# All of these are needed for the forest age decision tree
+loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
+gain_dir = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
+tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
+ifl_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/ifl_2000/'
+biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
+
+# Processed abovegroung mangrove biomass tiles
+mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181018/'
+
+# Spreadsheet with annual gain rates
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
+
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
     subprocess.check_call(cmd)
