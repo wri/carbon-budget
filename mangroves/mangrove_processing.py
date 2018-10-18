@@ -5,6 +5,7 @@ def create_mangrove_tiles(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
     xmin, xmax, ymin, ymax = utilities.coords(tile_id)
+    print "ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
     print ""
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-tap', '-te', xmin,
