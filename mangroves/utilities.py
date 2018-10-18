@@ -7,7 +7,7 @@ mangrove_vrt = 'mangrove_biomass.vrt'
 
 mangrove_tile_out = 'mangrove_abg_biomass'
 
-out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181017'
+out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181018'
 
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
