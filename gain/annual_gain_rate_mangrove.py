@@ -15,9 +15,10 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Start time
     start = datetime.datetime.now()
 
+    # Name of the mangrove biomass tile
     mangrove_biomass = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
-    # Names of the continent-ecozone tiles
+    # Name of the continent-ecozone tile
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
     print "  Reading input files and evaluating conditions"
@@ -52,6 +53,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                     # Creates windows for each input raster
                     cont_eco = cont_eco_src.read(1, window=window)
+                    mangrove_biomass = mangrove_biomass_src.read(1, window=window)
 
                     # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
                     cont_eco = cont_eco.astype('float32')
@@ -66,7 +68,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(pattern, utilities.mangrove_annual_gain_dir, tile_id)
+    utilities.upload_final(utilities.pattern_mangrove_annual_gain, utilities.mangrove_annual_gain_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
