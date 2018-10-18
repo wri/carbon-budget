@@ -13,11 +13,11 @@ mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 
 
 
-utilities.s3_file_download(os.path.join(mangrove_raw_dir, mangrove_raw), '.')
-
-# Unzips ecozone shapefile
-cmd = ['unzip', '-j', mangrove_raw]
-subprocess.check_call(cmd)
+# utilities.s3_file_download(os.path.join(mangrove_raw_dir, mangrove_raw), '.')
+#
+# # Unzips ecozone shapefile
+# cmd = ['unzip', '-j', mangrove_raw]
+# subprocess.check_call(cmd)
 
 # destination = "./"
 # fromdir = "./MaskedSRTMCountriesAGB_WRI/"
