@@ -25,10 +25,10 @@ import subprocess
 ### sudo pip install scipy
 
 # Downloads ecozone shapefile
-utilities.s3_file_download('{0}{1}'.format(utilities.cont_ecozone_dir, utilities.cont_ecozone_shp), '.', )
+utilities.s3_file_download('{}'.format(utilities.cont_eco_zip), '.', )
 
 # Unzips ecozone shapefile
-cmd = ['unzip', cont_ecozone]
+cmd = ['unzip', utilities.cont_eco_zip]
 subprocess.check_call(cmd)
 
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)

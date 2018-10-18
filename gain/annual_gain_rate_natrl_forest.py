@@ -31,7 +31,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     # Names of the forest age category and continent-ecozone tiles
     age_cat = 'forest_age_category_{}.tif'.format(tile_id)
-    cont_eco = 'fao_ecozones_continents_processed_{}.tif'.format(tile_id)
+    cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
     print "  Reading input files and evaluating conditions"
 

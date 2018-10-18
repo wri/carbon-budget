@@ -15,8 +15,10 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Start time
     start = datetime.datetime.now()
 
+    mangrove_biomass = '{0}_{1}_.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+
     # Names of the continent-ecozone tiles
-    cont_eco = 'fao_ecozones_continents_processed_{}.tif'.format(tile_id)
+    cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
     print "  Reading input files and evaluating conditions"
 
@@ -29,8 +31,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = cont_eco_src.block_windows(1)
 
-        # Opens age category tile
-        with rasterio.open('{0}_{1}_.tif'.format(utilities.pattern_mangrove_biomass, tile_id)) as mangrove_biomass_src:
+        # Opens mangrove biomass tile
+        with rasterio.open(mangrove_biomass) as mangrove_biomass_src:
 
             # Updates kwargs for the output dataset.
             # Need to update data type to float 32 so that it can handle fractional gain rates

@@ -29,8 +29,8 @@ download_list = [utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
 # For copying individual tiles to spot machine for testing
 for tile in biomass_tile_list:
 
-    utilities.s3_file_download('{0}fao_ecozones_continents_processed_{1}.tif'.format(utilities.cont_eco_dir, tile), '.')    # continents and FAO ecozones 2000
-    utilities.s3_file_download('{0}mangrove_agb_t_ha_{1}.tif'.format(utilities.mangrove_biomass_dir, tile), '.')         # continents and FAO ecozones 2000
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cont_eco_dir, utilities.pattern_cont_eco_processed, tile), '.')    # continents and FAO ecozones 2000
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')         # continents and FAO ecozones 2000
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(utilities.gain_spreadsheet), '.']

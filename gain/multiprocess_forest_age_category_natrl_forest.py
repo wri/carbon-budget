@@ -40,7 +40,7 @@ for input in download_list:
 #     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(utilities.tcd_dir, tile), '.')    # tcd 2000
 #     utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(utilities.ifl_dir, tile), '.')                    # ifl 2000
 #     utilities.s3_file_download('{0}{1}_biomass.tif'.format(utilities.biomass_dir, tile), '.')                     # biomass 2000
-#     utilities.s3_file_download('{0}fao_ecozones_continents_processed_{1}.tif'.format(utilities.cont_eco_dir, tile), '.')               # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cont_eco_dir, pattern_cont_eco_processed, tile), '.')               # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(utilities.gain_spreadsheet), '.']

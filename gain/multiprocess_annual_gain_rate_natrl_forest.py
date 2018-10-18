@@ -36,7 +36,7 @@ for input in download_list:
 # for tile in biomass_tile_list:
 
 #     utilities.s3_file_download('{0}forest_age_category_{1}.tif'.format(utilities.age_cat_dir, tile), '.')             # forest age category tiles
-#     utilities.s3_file_download('{0}fao_ecozones_continents_processed_{1}.tif'.format(utilities.cont_eco_dir, tile), '.')        # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cont_eco_dir, pattern_cont_eco_processed, tile), '.')        # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(utilities.gain_spreadsheet), '.']
