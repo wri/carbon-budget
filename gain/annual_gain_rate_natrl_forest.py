@@ -33,7 +33,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     age_cat = 'forest_age_category_{}.tif'.format(tile_id)
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
-    print "  Reading input file and evaluating conditions"
+    print "  Reading input files and evaluating conditions"
 
     # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
