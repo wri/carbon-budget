@@ -13,22 +13,22 @@ mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 
 
 
-# utilities.s3_file_download(os.path.join(mangrove_raw_dir, mangrove_raw), '.')
-#
-# # Unzips ecozone shapefile
-# cmd = ['unzip', mangrove_raw]
-# subprocess.check_call(cmd)
+utilities.s3_file_download(os.path.join(mangrove_raw_dir, mangrove_raw), '.')
 
-destination = "./"
-fromdir = "./MaskedSRTMCountriesAGB_WRI/"
-for f in utilities.getfiles(fromdir):
-    print f
-    filename = string.split(f, '/')[-1]
-    print filename
-    if os.path.isfile(destination+filename):
-        filename = f.replace(fromdir,"",1).replace("/","_")
-    #os.rename(f, destination+filename)
-    shutil.copy(f, destination+filename)
+# Unzips ecozone shapefile
+cmd = ['unzip', '-j', mangrove_raw]
+subprocess.check_call(cmd)
+
+# destination = "./"
+# fromdir = "./MaskedSRTMCountriesAGB_WRI/"
+# for f in utilities.getfiles(fromdir):
+#     print f
+#     filename = string.split(f, '/')[-1]
+#     print filename
+#     if os.path.isfile(destination+filename):
+#         filename = f.replace(fromdir,"",1).replace("/","_")
+#     #os.rename(f, destination+filename)
+#     shutil.copy(f, destination+filename)
 
 
 # utilities.gather_tifs()
