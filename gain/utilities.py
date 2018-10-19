@@ -80,7 +80,9 @@ def tile_list(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
             tile_short_name = tile_name.replace('_biomass.tif', '')
-            tile_short_name = tile_short_name.replace('mangrove_agb_t_ha_', '')
+
+            # For stripping down mangrove biomass tiles to the tile id
+            tile_short_name = tile_short_name.replace('{}_'.format(pattern_mangrove_biomass), '')
             tile_short_name = tile_short_name.replace('.tif', '')
             file_list.append(tile_short_name)
 
@@ -129,7 +131,7 @@ def upload_final(pattern, upload_dir, tile_id):
     # Gets all files with the specified pattern
     files = glob.glob('{0}_{1}*'.format(pattern, tile_id))
 
-    print '{0}_{1}.tif'.format(pattern, tile_id)
+    print 'Upload file: {0}_{1}.tif'.format(pattern, tile_id)
 
     for f in files:
 
