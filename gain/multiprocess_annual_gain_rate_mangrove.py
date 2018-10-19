@@ -23,11 +23,11 @@ mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # biomass_tile_list = ['30N_090W'] # test tiles
 print mangrove_biomass_tile_list
 
-# For downloading all tiles in the input folders
-download_list = [utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
-
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in the input folders
+# download_list = [utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
+#
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -55,16 +55,16 @@ gain_table_dict[0] = 0
 # Converts all the keys (continent-ecozone codes) to float type
 gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
-# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# num_of_processes = 8
-# pool = Pool(num_of_processes)
-# pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_table_dict=gain_table_dict), mangrove_biomass_tile_list)
-# pool.close()
-# pool.join()
+# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+num_of_processes = 8
+pool = Pool(num_of_processes)
+pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_table_dict=gain_table_dict), mangrove_biomass_tile_list)
+pool.close()
+pool.join()
 
-# For single processor use
-for tile in mangrove_biomass_tile_list:
-
-    annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
+# # For single processor use
+# for tile in mangrove_biomass_tile_list:
+#
+#     annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
 
