@@ -47,8 +47,9 @@ cumul_gain_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_natural_fo
 pattern_mangrove_biomass = 'mangrove_agb_t_ha'
 mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
 
+# Mangrove aboveground biomass gain rate tiles
 pattern_mangrove_annual_gain = 'annual_gain_rate_mangrove'
-mangrove_annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181018/'
+mangrove_annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181019/'
 
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
