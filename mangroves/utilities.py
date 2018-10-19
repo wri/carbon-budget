@@ -2,6 +2,9 @@ import subprocess
 import glob
 import os
 
+# Woods Hole biomass 2000 version 4 tiles
+biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
+
 # Location of source mangrove aboveground biomass images
 mangrove_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
 mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
