@@ -80,6 +80,8 @@ def tile_list(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
             tile_short_name = tile_name.replace('_biomass.tif', '')
+            tile_short_name = tile_short_name.replace('mangrove_agb_t_ha_', '')
+            tile_short_name = tile_short_name.replace('.tif', '')
             file_list.append(tile_short_name)
 
     file_list = file_list[1:]
