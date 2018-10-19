@@ -18,9 +18,9 @@ pd.options.mode.chained_assignment = None
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
 # there are many fewer mangrove biomass tiles (approximately 90 vs 315)
-mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
-# biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-# biomass_tile_list = ['30N_090W'] # test tiles
+# mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
+# mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
+mangrove_biomass_tile_list = ['00N_000E'] # test tiles
 print mangrove_biomass_tile_list
 
 # # For downloading all tiles in the input folders
@@ -57,6 +57,9 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# This script didn't work calling 16 processors on an m4.16xlarge because when it tried uploading the output tiles to s3
+# simultaneously (the first set of tiles finished simultaneously) it couldn't upload them, perhaps because the upload channel got clogged.
+# So I tried using 8 processors instead, which works. I don't know what the highest number of processors would be.
 num_of_processes = 8
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_table_dict=gain_table_dict), mangrove_biomass_tile_list)
