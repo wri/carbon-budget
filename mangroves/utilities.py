@@ -16,7 +16,7 @@ mangrove_vrt = 'mangrove_biomass.vrt'
 mangrove_tile_out = 'mangrove_agb_t_ha'
 
 # output location for mangrove biomass tiles
-out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019b/'
+out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
 
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
