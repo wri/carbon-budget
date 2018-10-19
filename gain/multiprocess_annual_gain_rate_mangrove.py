@@ -17,10 +17,10 @@ pd.options.mode.chained_assignment = None
 ### sudo pip install xlrd
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
-# there are many fewer mangrove biomass tiles (approximately 90 vs 315)
-# mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
+# there are many fewer mangrove biomass tiles (88 vs 315)
+mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-mangrove_biomass_tile_list = ['00N_000E'] # test tiles
+# mangrove_biomass_tile_list = ['00N_000E'] # test tiles
 print mangrove_biomass_tile_list
 
 # # For downloading all tiles in the input folders
