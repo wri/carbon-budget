@@ -1,4 +1,6 @@
-###
+### Creates tiles of annual aboveground biomass gain rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
+### Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC
+### gain rate table.
 
 from multiprocessing.pool import Pool
 from functools import partial

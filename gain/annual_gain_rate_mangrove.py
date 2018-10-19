@@ -21,6 +21,9 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Name of the continent-ecozone tile
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
+    # Name of the output mangrove gain rate tile
+    mangrove_annual_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_mangrove_annual_gain, tile_id)
+
     print "  Reading input files and evaluating conditions"
 
     # Opens continent-ecozone tile
@@ -46,7 +49,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
-            with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_mangrove_annual_gain, tile_id), 'w', **kwargs) as dst:
+            with rasterio.open(mangrove_annual_gain_rate, 'w', **kwargs) as dst:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
@@ -55,15 +58,25 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     cont_eco = cont_eco_src.read(1, window=window)
                     mangrove_biomass = mangrove_biomass_src.read(1, window=window)
 
-                    # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
+                    print "mangrove biomass:"
+                    print mangrove_biomass
+
+                    # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
                     cont_eco = cont_eco.astype('float32')
 
-                    # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
+                    # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
                     # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
                     for key, value in gain_table_dict.iteritems():
                         cont_eco[cont_eco == key] = value
 
-                    dst_data = cont_eco
+                    # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels
+                    mangrove_biomass[mangrove_biomass > 0] = 1
+
+                    print "mangrove biomass_reclass:"
+                    print mangrove_biomass
+
+                    # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
+                    dst_data = cont_eco * mangrove_biomass
 
                     # Writes the output window to the output
                     dst.write_band(1, dst_data, window=window)

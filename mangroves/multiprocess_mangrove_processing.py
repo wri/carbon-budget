@@ -27,15 +27,15 @@ biomass_tile_list = utilities.tile_list(biomass_dir)
 #                      '20N_000E', '10S_160W', '10S_130E', '10S_110E', '10S_100E', '10S_090E', '10S_080W', '10S_060W', '10S_060E',
 #                      '10S_050E', '10S_040E'] # test tile
 # biomass_tile_list = ['20S_120W'] # test tile
-biomass_tile_list = biomass_tile_list[62:]
+# biomass_tile_list = biomass_tile_list[62:]
 print biomass_tile_list
 
-# # For multiprocessor use
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/4)
-# pool.map(mangrove_processing.create_mangrove_tiles, biomass_tile_list)
+# For multiprocessor use
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count/5)
+pool.map(mangrove_processing.create_mangrove_tiles, biomass_tile_list)
 
-# For single processor use, for testing purposes
-for tile in biomass_tile_list:
-
-    mangrove_processing.create_mangrove_tiles(tile)
+# # For single processor use, for testing purposes
+# for tile in biomass_tile_list:
+#
+#     mangrove_processing.create_mangrove_tiles(tile)
