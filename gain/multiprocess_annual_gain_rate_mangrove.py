@@ -16,11 +16,12 @@ pd.options.mode.chained_assignment = None
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-
-biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
+# Lists the mangrove biomass tiles instead of the general tree biomass tiles because
+# there are many fewer mangrove biomass tiles (approximately 90 vs 315)
+mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['30N_090W'] # test tiles
-print biomass_tile_list
+print mangrove_biomass_tile_list
 
 # For downloading all tiles in the input folders
 download_list = [utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
@@ -58,7 +59,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
+pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_table_dict=gain_table_dict), mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
