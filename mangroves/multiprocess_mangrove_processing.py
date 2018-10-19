@@ -8,15 +8,15 @@ import mangrove_processing
 import subprocess
 import os
 
-# # Downloads zipped raw mangrove files
-# utilities.s3_file_download(os.path.join(utilities.mangrove_raw_dir, utilities.mangrove_raw), '.')
-#
-# # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
-# cmd = ['unzip', '-j', utilities.mangrove_raw]
-# subprocess.check_call(cmd)
-#
-# # Creates vrt of all raw mangrove tifs
-# utilities.build_vrt(utilities.mangrove_vrt)
+# Downloads zipped raw mangrove files
+utilities.s3_file_download(os.path.join(utilities.mangrove_raw_dir, utilities.mangrove_raw), '.')
+
+# Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
+cmd = ['unzip', '-j', utilities.mangrove_raw]
+subprocess.check_call(cmd)
+
+# Creates vrt of all raw mangrove tifs
+utilities.build_vrt(utilities.mangrove_vrt)
 
 # Biomass tiles to iterate through
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
