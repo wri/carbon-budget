@@ -28,6 +28,8 @@ biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 print biomass_tile_list
 
 # For multiprocessor use
+# This script didn't work with count/4; perhaps that was using too many processors.
+# It did work with ocunt/5, though.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/5)
 pool.map(mangrove_processing.create_mangrove_tiles, biomass_tile_list)
