@@ -33,3 +33,6 @@ def create_tile_statistics(tile_id):
     print np.percentile(tile_array_flat_mask, 25)
     print np.percentile(tile_array_flat_mask, 75)
     print np.percentile(tile_array_flat_mask, 90)
+    print np.mean(tile_array_flat_mask, dtype=np.float64)
+    print np.amin(tile_array_flat_mask)
+    print np.amax(tile_array_flat_mask)
