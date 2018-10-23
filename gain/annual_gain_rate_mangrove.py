@@ -60,9 +60,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     cont_eco = cont_eco_src.read(1, window=window)
                     mangrove_biomass = mangrove_biomass_src.read(1, window=window)
 
-                    # print "mangrove biomass:"
-                    # print mangrove_biomass
-
                     # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
                     cont_eco = cont_eco.astype('float32')
 
@@ -73,9 +70,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                     # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels
                     mangrove_biomass[mangrove_biomass > 0] = 1
-
-                    # print "mangrove biomass_reclass:"
-                    # print mangrove_biomass
 
                     # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
                     dst_data = cont_eco * mangrove_biomass
