@@ -23,18 +23,20 @@ def create_tile_statistics(tile_id):
     # Removes 0s from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
 
-    stat = [None] * 9
+    stat_dict = {'0': 0}
 
 
-    stat[0] = tile_array_flat_mask.size
-    stat[1] = np.median(tile_array_flat_mask)
-    stat[2] = np.percentile(tile_array_flat_mask, 10)
-    stat['25p'] = np.percentile(tile_array_flat_mask, 25)
-    stat['75p'] = np.percentile(tile_array_flat_mask, 75)
-    stat['90p'] = np.percentile(tile_array_flat_mask, 90)
-    stat['mean'] = np.mean(tile_array_flat_mask, dtype=np.float64)
-    stat['min'] = np.amin(tile_array_flat_mask)
-    stat['max'] = np.amax(tile_array_flat_mask)
+    stat_dict['size'] = tile_array_flat_mask.size
+    stat_dict['median'] = np.median(tile_array_flat_mask)
+    stat_dict['mean'] = np.mean(tile_array_flat_mask, dtype=np.float64)
+    stat_dict['p10'] = np.percentile(tile_array_flat_mask, 10)
+    stat_dict['p25'] = np.percentile(tile_array_flat_mask, 25)
+    stat_dict['p75'] = np.percentile(tile_array_flat_mask, 75)
+    stat_dict['p90'] = np.percentile(tile_array_flat_mask, 90)
+    stat_dict['min'] = np.amin(tile_array_flat_mask)
+    stat_dict['max'] = np.amax(tile_array_flat_mask)
+
+    print stat_dict
 
     print tile_array_flat_mask.size
     print np.median(tile_array_flat_mask)
