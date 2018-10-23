@@ -9,7 +9,7 @@ def create_tile_statistics(tile_id):
 
     tile = '{}.tif'.format(tile_id)
 
-    print "Checking if {} contains any data...".format(tile_id)
+    print "Calculating tile statistics for {}...".format(tile_id)
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find statistics
     gtif = gdal.Open(tile)
@@ -23,12 +23,12 @@ def create_tile_statistics(tile_id):
     # Removes 0s from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
 
-    stat = []
+    stat = [None] * 9
 
 
     stat[0] = tile_array_flat_mask.size
     stat[1] = np.median(tile_array_flat_mask)
-    stat['10p'] = np.percentile(tile_array_flat_mask, 10)
+    stat[2] = np.percentile(tile_array_flat_mask, 10)
     stat['25p'] = np.percentile(tile_array_flat_mask, 25)
     stat['75p'] = np.percentile(tile_array_flat_mask, 75)
     stat['90p'] = np.percentile(tile_array_flat_mask, 90)
