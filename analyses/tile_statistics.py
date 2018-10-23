@@ -17,13 +17,14 @@ def create_tile_statistics(tile_id):
     stats = srcband.GetStatistics(True, True)
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
-    ds = gdal.Open(tile)
-    myarray = np.array(ds.GetRasterBand(1).ReadAsArray())
+    myarray = np.array(gtif.GetRasterBand(1).ReadAsArray())
 
     print myarray
     print myarray.shape
     print myarray.size
-    print np.median(ds)
+    print np.median(myarray)
+
+
 
     # # Opens continent-ecozone tile
     # with rasterio.open(tile) as tile_src:
