@@ -24,7 +24,12 @@ def create_tile_statistics(tile_id):
     print myarray.size
     print np.median(myarray)
 
+    myarray_flat = myarray.flatten()
 
+    print myarray_flat
+    print myarray_flat.shape
+    print myarray_flat.size
+    print np.median(myarray_flat)
 
     # # Opens continent-ecozone tile
     # with rasterio.open(tile) as tile_src:
