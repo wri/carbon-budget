@@ -13,9 +13,6 @@ def create_tile_statistics(tile_id):
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find statistics
     gtif = gdal.Open(tile)
-    srcband = gtif.GetRasterBand(1)
-    stats = srcband.GetStatistics(True, True)
-    print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
     # Turns the raster into a numpy array
     tile_array = np.array(gtif.GetRasterBand(1).ReadAsArray())
@@ -26,16 +23,18 @@ def create_tile_statistics(tile_id):
     # Removes 0s from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
 
+    stat = []
 
-    stats['size'] = tile_array_flat_mask.size
-    stats['median'] = np.median(tile_array_flat_mask)
-    stats['10p'] = np.percentile(tile_array_flat_mask, 10)
-    stats['25p'] = np.percentile(tile_array_flat_mask, 25)
-    stats['75p'] = np.percentile(tile_array_flat_mask, 75)
-    stats['90p'] = np.percentile(tile_array_flat_mask, 90)
-    stats['mean'] = np.mean(tile_array_flat_mask, dtype=np.float64)
-    stats['min'] = np.amin(tile_array_flat_mask)
-    stats['max'] = np.amax(tile_array_flat_mask)
+
+    stat[0] = tile_array_flat_mask.size
+    stat[1] = np.median(tile_array_flat_mask)
+    stat['10p'] = np.percentile(tile_array_flat_mask, 10)
+    stat['25p'] = np.percentile(tile_array_flat_mask, 25)
+    stat['75p'] = np.percentile(tile_array_flat_mask, 75)
+    stat['90p'] = np.percentile(tile_array_flat_mask, 90)
+    stat['mean'] = np.mean(tile_array_flat_mask, dtype=np.float64)
+    stat['min'] = np.amin(tile_array_flat_mask)
+    stat['max'] = np.amax(tile_array_flat_mask)
 
     print tile_array_flat_mask.size
     print np.median(tile_array_flat_mask)
