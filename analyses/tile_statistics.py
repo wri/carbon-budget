@@ -2,6 +2,7 @@ import utilities
 import subprocess
 import rasterio
 from osgeo import gdal
+import numpy as np
 
 
 def create_tile_statistics(tile_id):
@@ -16,12 +17,19 @@ def create_tile_statistics(tile_id):
     stats = srcband.GetStatistics(True, True)
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
-    # Opens continent-ecozone tile
-    with rasterio.open(tile) as tile_src:
+    ds = gdal.Open(tile)
+    myarray = np.array(ds.GetRasterBand(1).ReadAsArray())
 
-        # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = tile_src.meta
-
-        windows = tile_src.block_windows(1)
-
-        print tile_src
+    print myarray
+    print myarray.shape
+    print myarray.size
+    
+    # # Opens continent-ecozone tile
+    # with rasterio.open(tile) as tile_src:
+    #
+    #     # Grabs metadata about the tif, like its location/projection/cellsize
+    #     kwargs = tile_src.meta
+    #
+    #     windows = tile_src.block_windows(1)
+    #
+    #     print tile_src
