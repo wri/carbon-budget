@@ -19,10 +19,10 @@ print mangrove_biomass_tile_list
 # for input in download_list:
 #     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in mangrove_biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')      # loss tiles
+# # For copying individual tiles to spot machine for testing
+# for tile in mangrove_biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')      # loss tiles
 
 
 # # For multiprocessor use

@@ -20,7 +20,7 @@ def create_tile_statistics(tile_id):
     with rasterio.open(tile) as tile_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = tile.meta
+        kwargs = tile_src.meta
 
         windows = tile_src.block_windows(1)
 
