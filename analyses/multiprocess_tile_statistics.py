@@ -24,6 +24,7 @@ print mangrove_biomass_tile_list
 #
 #     utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')      # loss tiles
 
+f = open("tile_stats.txt", "w+")
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
