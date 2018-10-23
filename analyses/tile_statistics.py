@@ -26,6 +26,17 @@ def create_tile_statistics(tile_id):
     # Removes 0s from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
 
+
+    stats['size'] = tile_array_flat_mask.size
+    stats['median'] = np.median(tile_array_flat_mask)
+    stats['10p'] = np.percentile(tile_array_flat_mask, 10)
+    stats['25p'] = np.percentile(tile_array_flat_mask, 25)
+    stats['75p'] = np.percentile(tile_array_flat_mask, 75)
+    stats['90p'] = np.percentile(tile_array_flat_mask, 90)
+    stats['mean'] = np.mean(tile_array_flat_mask, dtype=np.float64)
+    stats['min'] = np.amin(tile_array_flat_mask)
+    stats['max'] = np.amax(tile_array_flat_mask)
+
     print tile_array_flat_mask.size
     print np.median(tile_array_flat_mask)
     print np.percentile(tile_array_flat_mask, 50)
