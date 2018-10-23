@@ -40,6 +40,5 @@ def create_tile_statistics(tile_id):
     print stats
 
     with open('your_file.txt', 'w') as f:
-        for item in stats:
-            f.write("%s\n" % item)
+        f.write(str(stats))
     f.close()
