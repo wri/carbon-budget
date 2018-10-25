@@ -37,13 +37,13 @@ def create_tile_statistics(tile_id):
     stats[9] = np.amin(tile_array_flat_mask)
     stats[10] = np.amax(tile_array_flat_mask)
 
-    print stats
-
     # with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'a+') as f:
     #     f.write('{}\r\n'.format(str(stats)))
     # f.close()
 
-    stats_no_brackets = ', '.join(str(stats))
+    stats_no_brackets = ', '.join(map(str, stats))
+
+    print stats_no_brackets
 
     with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'w+') as f:
         f.write(stats_no_brackets + '\r\n')
