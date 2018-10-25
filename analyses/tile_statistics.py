@@ -43,7 +43,7 @@ def create_tile_statistics(tile_id):
     #     f.write('{}\r\n'.format(str(stats)))
     # f.close()
 
-    stats_no_brackets = ', '.join(stats)
+    stats_no_brackets = ', '.join(str(stats))
 
     with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'w+') as f:
         f.write(stats_no_brackets + '\r\n')
