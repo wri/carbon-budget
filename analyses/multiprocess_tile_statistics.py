@@ -27,9 +27,9 @@ for tile in mangrove_biomass_tile_list:
 headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max']
 
-# with open('your_file.txt', 'w+') as f:
-#     f.write(str(headers))
-# f.close()
+with open('your_file.txt', 'w+') as f:
+    f.write(str(headers))
+f.close()
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
