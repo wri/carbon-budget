@@ -42,9 +42,9 @@ f.close()
 # pool = multiprocessing.Pool(processes=count/4)
 # pool.map(tile_statistics.create_tile_statistics, biomass_tile_list)
 
-# For single processor use
-for tile in mangrove_biomass_tile_list:
-    tile_statistics.create_tile_statistics(tile)
+# # For single processor use
+# for tile in mangrove_biomass_tile_list:
+#     tile_statistics.create_tile_statistics(tile)
 
 cmd = ['aws', 's3', 'cp', '{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), utilities.mangrove_biomass_dir]
 subprocess.check_call(cmd)
