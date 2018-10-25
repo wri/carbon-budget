@@ -51,6 +51,9 @@ mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/pro
 pattern_mangrove_annual_gain = 'annual_gain_rate_mangrove'
 mangrove_annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181019/'
 
+# Tile statistics output txt file
+tile_stats = 'tile_stats'
+
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
     subprocess.check_call(cmd)
