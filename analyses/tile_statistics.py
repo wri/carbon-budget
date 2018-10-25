@@ -9,7 +9,7 @@ def create_tile_statistics(tile_id):
 
     tile = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
-    print "Calculating tile statistics for {}...".format(tile_id)
+    print "Calculating tile statistics for {}...".format(tile)
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find statistics
     gtif = gdal.Open(tile)
