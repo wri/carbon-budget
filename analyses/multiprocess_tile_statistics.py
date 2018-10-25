@@ -27,8 +27,14 @@ for tile in mangrove_biomass_tile_list:
 headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max']
 
+# with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'w+') as f:
+#     f.write('{}\r\n'.format(str(headers)))
+# f.close()
+
+s = ', '.join(str(headers))
+
 with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'w+') as f:
-    f.write('{}\r\n'.format(str(headers)))
+    f.write(s +'\r\n')
 f.close()
 
 # # For multiprocessor use
@@ -36,9 +42,9 @@ f.close()
 # pool = multiprocessing.Pool(processes=count/4)
 # pool.map(tile_statistics.create_tile_statistics, biomass_tile_list)
 
-# For single processor use
-for tile in mangrove_biomass_tile_list:
-    tile_statistics.create_tile_statistics(tile)
+# # For single processor use
+# for tile in mangrove_biomass_tile_list:
+#     tile_statistics.create_tile_statistics(tile)
 
 cmd = ['aws', 's3', 'cp', '{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), utilities.mangrove_biomass_dir]
 subprocess.check_call(cmd)
