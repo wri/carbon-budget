@@ -40,5 +40,5 @@ def create_tile_statistics(tile_id):
     print stats
 
     with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'a+') as f:
-        f.write('{}\n'.format(str(stats)))
+        f.write('{}\r\n'.format(str(stats)))
     f.close()

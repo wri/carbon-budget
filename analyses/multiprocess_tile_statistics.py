@@ -10,7 +10,7 @@ import subprocess
 
 # mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # mangrove_biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-mangrove_biomass_tile_list = ['20S_110E', '00N_000E', '00N_050W'] # test tile
+mangrove_biomass_tile_list = ['20S_110E', '00N_000E'] # test tile
 print mangrove_biomass_tile_list
 
 # # For downloading all tiles in the folders
@@ -28,7 +28,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
            'percentile75', 'percentile90', 'min', 'max']
 
 with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'w+') as f:
-    f.write('{}\n'.format(str(headers)))
+    f.write('{}\r\n'.format(str(headers)))
 f.close()
 
 # # For multiprocessor use
