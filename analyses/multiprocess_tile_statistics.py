@@ -31,7 +31,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 #     f.write('{}\r\n'.format(str(headers)))
 # f.close()
 
-s = ', '.join(str(headers))
+s = ', '.join(headers)
 
 with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'w+') as f:
     f.write(s +'\r\n')
