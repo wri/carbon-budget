@@ -22,7 +22,7 @@ print mangrove_biomass_tile_list
 # For copying individual tiles to spot machine for testing
 for tile in mangrove_biomass_tile_list:
 
-    utilities.s3_file_download('{0}{1}.tif'.format(utilities.mangrove_biomass_dir, tile), '.')      # mangrove biomass tiles
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 
 headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max']
