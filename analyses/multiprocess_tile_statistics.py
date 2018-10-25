@@ -28,7 +28,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
            'percentile75', 'percentile90', 'min', 'max']
 
 with open('your_file.txt', 'w+') as f:
-    f.write(str(headers))
+    f.write('{}\n'.format(str(headers)))
 f.close()
 
 # # For multiprocessor use
