@@ -55,7 +55,7 @@ mangrove_annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate
 tile_stats = 'tile_stats'
 
 def s3_folder_download(source, dest):
-    cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
+    cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*', '--include', '*.tif']
     subprocess.check_call(cmd)
 
 def s3_file_download(source, dest):
