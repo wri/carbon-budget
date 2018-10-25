@@ -5,7 +5,7 @@ import utilities
 import tile_statistics
 import subprocess
 
-
+# Creates list of mangrove biomass tiles to iterate through
 mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # mangrove_biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # mangrove_biomass_tile_list = ['20S_110E', '00N_000E'] # test tile
@@ -31,7 +31,7 @@ f.close()
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
+pool = multiprocessing.Pool(processes=count/8)
 pool.map(tile_statistics.create_tile_statistics, mangrove_biomass_tile_list)
 
 # # For single processor use
