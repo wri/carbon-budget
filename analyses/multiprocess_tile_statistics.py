@@ -19,19 +19,19 @@ print mangrove_biomass_tile_list
 # for input in download_list:
 #     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in mangrove_biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
+# # For copying individual tiles to spot machine for testing
+# for tile in mangrove_biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 
 headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max']
 
 print headers
 
-with open('your_file.txt', 'w+') as f:
-    f.write(str(headers))
-f.close()
+# with open('your_file.txt', 'w+') as f:
+#     f.write(str(headers))
+# f.close()
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
