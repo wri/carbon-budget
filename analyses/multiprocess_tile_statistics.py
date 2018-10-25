@@ -38,7 +38,6 @@ f.close()
 
 # For single processor use
 for tile in mangrove_biomass_tile_list:
-
     tile_statistics.create_tile_statistics(tile)
 
 cmd = ['aws', 's3', 'cp', '{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), utilities.mangrove_biomass_dir]
