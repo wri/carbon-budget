@@ -90,6 +90,8 @@ def tile_list(source):
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
 
+                print "it's a tif"
+
                 # For stripping down standard tree biomass tiles to the tile id
                 if '_biomass.tif' in tile_name:
 
