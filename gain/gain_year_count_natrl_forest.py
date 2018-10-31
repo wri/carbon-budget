@@ -28,7 +28,7 @@ def create_gain_year_count(tile_id):
     gain_years = 12  # currently, gain raster is 2000-2012
 
     # The calculations for tiles with and without mangroves anywhere in them are different.
-    # This is for tiles with mangroves somewhere in them.
+    # For tiles with mangroves somewhere in them.
     if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)):
 
         print "  {} has mangroves.".format(tile_id)
@@ -90,7 +90,7 @@ def create_gain_year_count(tile_id):
                loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
-    # This is for tiles without mangroves anywhere in them.
+    # For tiles without mangroves anywhere in them
     else:
 
         print "  {} does not have mangroves.".format(tile_id)
