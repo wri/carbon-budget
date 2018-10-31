@@ -2,7 +2,7 @@
 ### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
 ### First it calculates rasters of gain years for mangrove pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
 ### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.
-### At this point, those rules are the same as for non-mangrove natural forests.
+### At this point, those rules are the same as for non-mangrove natural forests, except that no change pixels don't use tcd as a factor.
 ### Then it combines those four rasters into a single gain year raster for each tile.
 ### This is one of the mangrove inputs for the carbon gain model.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_mangrove.py must be changed.
@@ -21,7 +21,6 @@ def create_gain_year_count(tile_id):
     # Names of the loss, gain and tree cover density tiles
     loss = '{0}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(utilities.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(utilities.pattern_tcd, tile_id)
     mangrove = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
@@ -30,7 +29,6 @@ def create_gain_year_count(tile_id):
 
     print 'Loss tile is', loss
     print 'Gain tile is', gain
-    print 'tcd tile is', tcd
     print 'mangrove biomass tile is', mangrove
 
     # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
@@ -79,6 +77,8 @@ def create_gain_year_count(tile_id):
     utilities.upload_final("growth_years_gain_only", utilities.gain_year_count_mangrove_dir, tile_id)
     utilities.upload_final("growth_years_no_change", utilities.gain_year_count_mangrove_dir, tile_id)
     utilities.upload_final("growth_years_loss_and_gain", utilities.gain_year_count_mangrove_dir, tile_id)
+
+    # This is the final output used later in the model
     utilities.upload_final(utilities.pattern_gain_year_count_mangrove, utilities.gain_year_count_mangrove_dir, tile_id)
 
     end = datetime.datetime.now()
