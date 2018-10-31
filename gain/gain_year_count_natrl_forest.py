@@ -9,6 +9,7 @@
 import utilities
 import subprocess
 import datetime
+import os
 
 def create_gain_year_count(tile_id):
 
@@ -17,14 +18,28 @@ def create_gain_year_count(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Names of the loss, gain, tree cover density, and mangrove tiles
+    # Names of the loss, gain, and tree cover density tiles
     loss = '{0}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(utilities.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(utilities.pattern_tcd, tile_id)
-    mangrove = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
-    # Mangrove tiles that have the nodata pixels removed
-    mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)):
+
+        print "  {} has mangroves.".format(tile_id)
+
+        # Name of mangrove tile
+        mangrove = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+
+        # Mangrove tiles that have the nodata pixels removed
+        mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+
+        # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+        # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+        cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
+        subprocess.check_call(cmd)
+
+    else:
+        print "  {} does not have mangroves.".format(tile_id)
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
@@ -38,11 +53,6 @@ def create_gain_year_count(tile_id):
     # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
     # Then merges the rasters.
     # In all rasters, 0 is NoData value.
-
-    # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-    # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
-    subprocess.check_call(cmd)
 
     # Pixels with loss only and not in mangroves
     print "Creating raster of growth years for loss-only pixels"
