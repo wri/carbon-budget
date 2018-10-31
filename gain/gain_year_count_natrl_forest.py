@@ -49,40 +49,40 @@ def create_gain_year_count(tile_id):
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, loss_calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    # # Pixels with gain only
-    # print "Creating raster of growth years for gain-only pixels"
-    # gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(gain_years)
-    # gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
-    # gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-    # cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    # subprocess.check_call(cmd)
-    #
-    # # Pixels with neither loss nor gain but in areas with tree cover density >0
-    # print "Creating raster of growth years for no change pixels"
-    # no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(loss_years)
-    # no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
-    # no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    # cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, '-D', tcd, no_change_calc, no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    # subprocess.check_call(cmd)
-    #
-    # # Pixels with both loss and gain
-    # print "Creating raster of growth years for loss and gain pixels"
-    # loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(loss_years)
-    # loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
-    # loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-    # cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc, loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    # subprocess.check_call(cmd)
-    #
-    # print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    # age_outfile = '{}_{}.tif'.format(utilities.pattern_gain_year_count_natrl_forests, tile_id)
-    # cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
-    # subprocess.check_call(cmd)
+    # Pixels with gain only
+    print "Creating raster of growth years for gain-only pixels"
+    gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(gain_years)
+    gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
+    gain_outfilearg = '--outfile={}'.format(gain_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, gain_calc, gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
+
+    # Pixels with neither loss nor gain but in areas with tree cover density >0
+    print "Creating raster of growth years for no change pixels"
+    no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(loss_years)
+    no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
+    no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, '-D', tcd, no_change_calc, no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
+
+    # Pixels with both loss and gain
+    print "Creating raster of growth years for loss and gain pixels"
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(loss_years)
+    loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
+    loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, loss_and_gain_calc, loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
+
+    print "Merging loss, gain, no change, and loss/gain pixels into single raster"
+    age_outfile = '{}_{}.tif'.format(utilities.pattern_gain_year_count_natrl_forests, tile_id)
+    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
+    subprocess.check_call(cmd)
 
     utilities.upload_final("growth_years_loss_only", utilities.gain_year_count_natrl_forest_dir, tile_id)
-    # utilities.upload_final("growth_years_gain_only", utilities.gain_year_count_natrl_forest_dir, tile_id)
-    # utilities.upload_final("growth_years_no_change", utilities.gain_year_count_natrl_forest_dir, tile_id)
-    # utilities.upload_final("growth_years_loss_and_gain", utilities.gain_year_count_natrl_forest_dir, tile_id)
-    # utilities.upload_final(utilities.pattern_gain_year_count_natrl_forests, utilities.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final("growth_years_gain_only", utilities.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final("growth_years_no_change", utilities.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final("growth_years_loss_and_gain", utilities.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final(utilities.pattern_gain_year_count_natrl_forests, utilities.gain_year_count_natrl_forest_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
