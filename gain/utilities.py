@@ -106,9 +106,6 @@ def tile_list(source):
                     file_list.append(tile_short_name)
                     file_list = file_list[0:]
 
-    if '_biomass.tif' in tile_name:
-        file_list = file_list[1:]
-
     return file_list
 
 # Gets the bounding coordinates of a tile
