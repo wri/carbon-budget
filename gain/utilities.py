@@ -87,11 +87,17 @@ def tile_list(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
+            print "are we here yet?"
+
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
 
+                print "it's a tif"
+
                 # For stripping down standard tree biomass tiles to the tile id
                 if '_biomass.tif' in tile_name:
+
+                    print "It has biomass"
 
                     tile_short_name = tile_name.replace('_biomass.tif', '')
                     file_list.append(tile_short_name)
@@ -99,6 +105,8 @@ def tile_list(source):
 
                 # For stripping down mangrove biomass tiles to the tile id
                 if pattern_mangrove_biomass in tile_name:
+
+                    print "It has mangroves"
 
                     tile_short_name = tile_name.replace('{}_'.format(pattern_mangrove_biomass), '')
                     tile_short_name = tile_short_name.replace('.tif', '')
