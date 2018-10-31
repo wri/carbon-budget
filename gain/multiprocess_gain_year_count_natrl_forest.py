@@ -28,6 +28,7 @@ for tile in biomass_tile_list:
     utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.gain_dir, utilities.pattern_gain, tile), '.')
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.tcd_dir, utilities.pattern_tcd, tile), '.')
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=6)
