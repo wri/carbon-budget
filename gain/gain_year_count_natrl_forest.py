@@ -38,7 +38,8 @@ def create_gain_year_count(tile_id):
 
     # Pixels with loss only
     print "Creating raster of growth years for loss-only pixels"
-    loss_calc = '--calc=(A>0)*(B==0)*(C<0.001)*(A-1)'
+    # loss_calc = '--calc=(A>0)*(B==0)*(C<0.001)*(A-1)'
+    loss_calc = '--calc=(A>0)*(B==0)*(A-1)'
     loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
