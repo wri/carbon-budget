@@ -4,12 +4,13 @@ import rasterio
 from osgeo import gdal
 import numpy as np
 
-
+# Calculates a range of tile statistics
 def create_tile_statistics(tile_id):
 
     tile = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     print "Calculating tile statistics for {}...".format(tile)
+
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find statistics
     gtif = gdal.Open(tile)
@@ -23,8 +24,10 @@ def create_tile_statistics(tile_id):
     # Removes 0s from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
 
+    # Empty statistics list
     stats = [None] * 11
 
+    # Calculates the statistics
     stats[0] = tile_id
     stats[1] = tile
     stats[2] = tile_array_flat_mask.size
@@ -37,14 +40,11 @@ def create_tile_statistics(tile_id):
     stats[9] = np.amin(tile_array_flat_mask)
     stats[10] = np.amax(tile_array_flat_mask)
 
-    # with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'a+') as f:
-    #     f.write('{}\r\n'.format(str(stats)))
-    # f.close()
-
     stats_no_brackets = ', '.join(map(str, stats))
 
     print stats_no_brackets
 
+    # Adds the tile's statistis to the txt file
     with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()

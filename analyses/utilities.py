@@ -3,9 +3,6 @@ import glob
 
 biomass_to_c = 0.5
 
-# Spreadsheet with annual gain rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
-
 # Woods Hole biomass 2000 version 4 tiles
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
@@ -51,7 +48,7 @@ mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/pro
 pattern_mangrove_annual_gain = 'annual_gain_rate_mangrove'
 mangrove_annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181019/'
 
-# Tile statistics output txt file
+# Tile statistics output txt file core name
 tile_stats = 'tile_stats'
 
 def s3_folder_download(source, dest):
@@ -99,96 +96,5 @@ def tile_list(source):
 
     return file_list
 
-# Gets the bounding coordinates of a tile
-def coords(tile_id):
-    NS = tile_id.split("_")[0][-1:]
-    EW = tile_id.split("_")[1][-1:]
-
-    if NS == 'S':
-        ymax =-1*int(tile_id.split("_")[0][:2])
-    else:
-        ymax = int(str(tile_id.split("_")[0][:2]))
-
-    if EW == 'W':
-        xmin = -1*int(str(tile_id.split("_")[1][:3]))
-    else:
-        xmin = int(str(tile_id.split("_")[1][:3]))
 
 
-    ymin = str(int(ymax) - 10)
-    xmax = str(int(xmin) + 10)
-
-    return ymax, xmin, ymin, xmax
-
-# Rasterizes the shapefile within the bounding coordinates of a tile
-def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainEcoCon=None, anodata=None):
-    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
-
-           # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
-           anodata, in_shape, '{}.tif'.format(out_tif)]
-
-    subprocess.check_call(cmd)
-
-    return out_tif
-
-# Uploads tile to specified location
-def upload_final(pattern, upload_dir, tile_id):
-
-    # Gets all files with the specified pattern
-    files = glob.glob('{0}_{1}*'.format(pattern, tile_id))
-
-    print 'Upload file: {0}_{1}.tif'.format(pattern, tile_id)
-
-    for f in files:
-
-        print "uploading {}".format(f)
-        cmd = ['aws', 's3', 'cp', '{}'.format(f), upload_dir]
-        print cmd
-
-        try:
-            subprocess.check_call(cmd)
-        except:
-            print "Error uploading output tile"
-
-
-
-##### Not currently using the below functions
-
-
-def wgetloss(tile_id):
-    print "download hansen loss tile"
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2015/tiles/{}.tif'.format(tile_id)]
-
-    subprocess.check_call(cmd)
-
-
-def wget2015data(tile_id, filetype):
-
-    outfile = '{0}_{1}_h.tif'.format(tile_id, filetype)
-
-    website = 'https://storage.googleapis.com/earthenginepartners-hansen/GFC-2015-v1.3/Hansen_GFC-2015-v1.3_{0}_{1}.tif'.format(filetype, tile_id)
-    cmd = ['wget', website, '-O', outfile]
-    print cmd
-
-    subprocess.check_call(cmd)
-
-    return outfile
-
-
-def rasterize_shapefile(xmin, ymax, xmax, ymin, shapefile, output_tif, attribute_field):
-    layer = shapefile.replace(".shp", "")
-    # attribute_field = 'old_100'
-    cmd= ['gdal_rasterize', '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-a', attribute_field, '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', '-tap', '-a_nodata', '0', '-l', layer, shapefile, output_tif]
-
-    subprocess.check_call(cmd)
-
-    return output_tif
-
-
-def resample_00025(input_tif, resampled_tif):
-    # resample to .00025
-    cmd = ['gdal_translate', input_tif, resampled_tif, '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW']
-    subprocess.check_call(cmd)

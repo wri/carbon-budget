@@ -13,9 +13,11 @@ biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
 
 # Hansen gain tiles (2001-2012)
+pattern_gain = 'Hansen_GFC2015_gain'
 gain_dir = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
 
 # Tree cover density 2000 tiles
+pattern_tcd = 'Hansen_GFC2014_treecover2000'
 tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
 
 # Intact forest landscape 2000 tiles
@@ -31,8 +33,13 @@ cont_eco_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fr
 cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/raw/'
 cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
 
-# Number of gain year tiles
-gain_year_count_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20180912/'
+# Number of gain year tiles for non-mangrove natural forests
+pattern_gain_year_count_natrl_forests = 'gain_year_count_natural_forest'
+gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20180931/'
+
+# Number of gain year tiles for mangroves
+pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
+gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20181031/'
 
 # Forest age category tiles
 age_cat_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
