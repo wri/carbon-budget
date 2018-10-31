@@ -14,29 +14,30 @@ import gain_year_count_mangrove
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
 # there are many fewer mangrove biomass tiles (88 vs 315)
-# mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
+mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-mangrove_biomass_tile_list = ['10N_080W'] # test tiles
+# mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
 
-# # For downloading all tiles in the folders
-# utilities.s3_folder_download('{}'.format(utilities.loss_dir), '.')
-# utilities.s3_folder_download('{}'.format(utilities.gain_dir), '.')
-# utilities.s3_folder_download('{}'.format(utilities.tcd_dir), '.')
+# For downloading all tiles in the folders
+utilities.s3_folder_download('{}'.format(utilities.loss_dir), '.')
+utilities.s3_folder_download('{}'.format(utilities.gain_dir), '.')
+utilities.s3_folder_download('{}'.format(utilities.tcd_dir), '.')
+utilities.s3_folder_download('{}'.format(utilities.mangrove_biomass_dir), '.')
 
-# For copying individual tiles to s3 for testing
-for tile in mangrove_biomass_tile_list:
+# # For copying individual tiles to s3 for testing
+# for tile in mangrove_biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.gain_dir, utilities.pattern_gain, tile), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.tcd_dir, utilities.pattern_tcd, tile), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')
 
-    utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.gain_dir, utilities.pattern_gain, tile), '.')
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.tcd_dir, utilities.pattern_tcd, tile), '.')
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count/10)
+pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/10)
-# pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
-
-# For single processor use
-for tile in mangrove_biomass_tile_list:
-
-    gain_year_count_mangrove.create_gain_year_count(tile)
+# # For single processor use
+# for tile in mangrove_biomass_tile_list:
+#
+#     gain_year_count_mangrove.create_gain_year_count(tile)
