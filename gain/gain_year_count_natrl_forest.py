@@ -18,10 +18,11 @@ def create_gain_year_count(tile_id):
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss = '{}.tif'.format(tile_id)
-    gain = '{}_{}.tif'.format(utilities.pattern_gain, tile_id)
-    tcd = '{}_{}.tif'.format(utilities.pattern_tcd, tile_id)
-    mangrove = '{}_{}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    loss = '{0}.tif'.format(tile_id)
+    gain = '{0}_{1}.tif'.format(utilities.pattern_gain, tile_id)
+    tcd = '{0}_{1}.tif'.format(utilities.pattern_tcd, tile_id)
+    mangrove = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
@@ -36,13 +37,16 @@ def create_gain_year_count(tile_id):
     # Then merges the rasters.
     # In all rasters, 0 is NoData value.
 
+    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
+    subprocess.check_call(cmd)
+
     # Pixels with loss only
     print "Creating raster of growth years for loss-only pixels"
     # loss_calc = '--calc=(A>0)*(B==0)*(C<0.001)*(A-1)'
     loss_calc = '--calc=(A>0)*(B==0)*(A-1)'
     loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, loss_calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # # Pixels with gain only

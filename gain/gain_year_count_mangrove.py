@@ -19,10 +19,10 @@ def create_gain_year_count(tile_id):
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss = '{}.tif'.format(tile_id)
-    gain = '{}_{}.tif'.format(utilities.pattern_gain, tile_id)
-    tcd = '{}_{}.tif'.format(utilities.pattern_tcd, tile_id)
-    mangrove = '{}_{}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    loss = '{0}.tif'.format(tile_id)
+    gain = '{0}_{1}.tif'.format(utilities.pattern_gain, tile_id)
+    tcd = '{0}_{1}.tif'.format(utilities.pattern_tcd, tile_id)
+    mangrove = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
