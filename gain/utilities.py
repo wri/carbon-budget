@@ -100,8 +100,11 @@ def tile_list(source):
                     print "It has biomass"
 
                     tile_short_name = tile_name.replace('_biomass.tif', '')
+                    print tile_short_name
                     file_list.append(tile_short_name)
+                    print file_list
                     file_list = file_list[1:]
+                    print file_list
 
                 # For stripping down mangrove biomass tiles to the tile id
                 if pattern_mangrove_biomass in tile_name:
