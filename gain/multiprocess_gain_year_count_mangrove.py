@@ -19,10 +19,10 @@ mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
 
-# For downloading all tiles in the folders
-utilities.s3_folder_download('{}'.format(utilities.loss_dir), '.')
-utilities.s3_folder_download('{}'.format(utilities.gain_dir), '.')
-utilities.s3_folder_download('{}'.format(utilities.mangrove_biomass_dir), '.')
+# # For downloading all tiles in the folders
+# utilities.s3_folder_download('{}'.format(utilities.loss_dir), '.')
+# utilities.s3_folder_download('{}'.format(utilities.gain_dir), '.')
+# utilities.s3_folder_download('{}'.format(utilities.mangrove_biomass_dir), '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in mangrove_biomass_tile_list:
@@ -32,7 +32,7 @@ utilities.s3_folder_download('{}'.format(utilities.mangrove_biomass_dir), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/10)
+pool = multiprocessing.Pool(6)
 pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
 
 # # For single processor use
