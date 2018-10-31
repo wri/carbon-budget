@@ -41,6 +41,7 @@ def create_gain_year_count(tile_id):
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+        print "Removing nodata values in mangrove biomass raster"
         cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
         subprocess.check_call(cmd)
 
