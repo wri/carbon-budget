@@ -35,7 +35,7 @@ cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_contine
 
 # Number of gain year tiles for non-mangrove natural forests
 pattern_gain_year_count_natrl_forests = 'gain_year_count_natural_forest'
-gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20180931/'
+gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20181031/'
 
 # Number of gain year tiles for mangroves
 pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
