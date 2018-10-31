@@ -23,6 +23,10 @@ def create_gain_year_count(tile_id):
     gain = '{0}_{1}.tif'.format(utilities.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(utilities.pattern_tcd, tile_id)
 
+    # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
+    loss_years = 15  # currently, loss raster for carbon model is 2001-2015
+    gain_years = 12  # currently, gain raster is 2000-2012
+
     if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)):
 
         print "  {} has mangroves.".format(tile_id)
@@ -38,17 +42,15 @@ def create_gain_year_count(tile_id):
         cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
         subprocess.check_call(cmd)
 
+        print 'Loss tile is', loss
+        print 'Gain tile is', gain
+        print 'tcd tile is', tcd
+        print 'Mangrove biomass tile is', mangrove
+
     else:
         print "  {} does not have mangroves.".format(tile_id)
 
-    # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
-    loss_years = 15  # currently, loss raster for carbon model is 2001-2015
-    gain_years = 12  # currently, gain raster is 2000-2012
 
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'tcd tile is', tcd
-    print 'Mangrove biomass tile is', mangrove
 
     # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
     # Then merges the rasters.

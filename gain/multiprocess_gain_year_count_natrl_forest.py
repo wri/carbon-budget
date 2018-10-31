@@ -16,11 +16,11 @@ biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['10N_080W'] # test tile
 print biomass_tile_list
 
-# # For downloading all tiles in the folders
-# utilities.s3_folder_download('{}'.format(utilities.loss_dir), '.')
-# utilities.s3_folder_download('{}'.format(utilities.gain_dir), '.')
-# utilities.s3_folder_download('{}'.format(utilities.tcd_dir), '.')
-# utilities.s3_folder_download('{}'.format(utilities.mangrove_biomass_dir), '.')
+# For downloading all tiles in the folders
+utilities.s3_folder_download('{}'.format(utilities.loss_dir), '.')
+utilities.s3_folder_download('{}'.format(utilities.gain_dir), '.')
+utilities.s3_folder_download('{}'.format(utilities.tcd_dir), '.')
+utilities.s3_folder_download('{}'.format(utilities.mangrove_biomass_dir), '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in biomass_tile_list:
@@ -30,9 +30,9 @@ print biomass_tile_list
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.tcd_dir, utilities.pattern_tcd, tile), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool()
-pool.map(gain_year_count_natrl_forest.create_gain_year_count, biomass_tile_list)
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool()
+# pool.map(gain_year_count_natrl_forest.create_gain_year_count, biomass_tile_list)
 
 # # For single processor use
 # for tile in biomass_tile_list:
