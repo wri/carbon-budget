@@ -53,7 +53,8 @@ def create_gain_year_count(tile_id):
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    # Pixels with neither loss nor gain but in areas with tree cover density >0
+    # Pixels with neither loss nor gain but in areas with mangroves.
+    # This is the only equation which really differs from the non-mangrove equations; it does not invoke tcd since that is irrelevant for mangroves.
     print "Creating raster of growth years for no change pixels"
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(loss_years)
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
