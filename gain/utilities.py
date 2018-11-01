@@ -66,6 +66,14 @@ cumul_gain_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_ga
 pattern_cumul_gain_mangrove = 'aboveground_C_gain_t_ha_mangrove_2001_15'
 cumul_gain_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_mangrove/20181101/'
 
+# Annual aboveground gain rate for all forest types
+pattern_annual_gain_combo = 'annual_gain_rate_t_C_ha_all_forest_types'
+annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_all_forest_types/20181101/'
+
+# Cumulative gain for all forest types
+pattern_cumul_gain_combo = 'aboveground_C_gain_t_C_ha_all_forest_types_2001_15'
+cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_forest_types/20181101/'
+
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
     subprocess.check_call(cmd)

@@ -1,9 +1,9 @@
-### This script calculates the cumulative carbon gain in natural non-mangrove forest pixels from 2001-2015.
-### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion
+### This script combines the annual gain rate tiles from different forest types (non-mangrove natural forests, mangroves,
+### plantations, into combined tiles. It does the same for cumulative gain over the study period.
 
 import multiprocessing
 import utilities
-import cumulative_annual_gain_all_forest_types
+import merge_cumulative_annual_gain_all_forest_types
 
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
@@ -27,10 +27,10 @@ for input in download_list:
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
-pool.map(cumulative_annual_gain_all_forest_types.cumulative_annual_gain, biomass_tile_list)
+pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, biomass_tile_list)
 
 # # For single processor use
 # for tile in biomass_tile_list:
 #
-#     cumulative_gain_all_forest_types.cumulative_gain(tile)
+#     cumulative_gain_all_forest_types.cumulative_annual_gain_merge(tile)
 
