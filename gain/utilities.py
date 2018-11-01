@@ -3,6 +3,9 @@ import glob
 
 biomass_to_c = 0.5
 
+above_to_below_natrl_forest = 0.26
+above_to_below_natrl_forest = 0.608
+
 # Spreadsheet with annual gain rates
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
 
@@ -50,25 +53,44 @@ gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_co
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
 age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
 
-# Annual aboveground gain rate for non-mangrove natural forests
-pattern_annual_gain_natrl_forest = 'annual_gain_rate_natural_forest'
-annual_gain_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_natural_forest/20181003/'
 
-# Annual aboveground gain rate for mangroves
-pattern_annual_gain_mangrove = 'annual_gain_rate_mangrove'
-annual_gain_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181019/'
+# Annual aboveground biomass gain rate for non-mangrove natural forests
+pattern_annual_gain_AGB_natrl_forest = 'annual_rate_AGB_t_ha_natural_forest'
+annual_gain_AGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_natural_forest/20181101/'
 
-# Cumulative gain for natural forests
-pattern_cumul_gain_natrl_forest = 'aboveground_C_gain_t_ha_natural_forest_2001_15'
-cumul_gain_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_natural_forest/20181101/'
+# Annual aboveground biomass gain rate for mangroves
+pattern_annual_gain_AGB_mangrove = 'annual_rate_AGB_t_ha_mangrove'
+annual_gain_AGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_mangrove/20181101/'
 
-# Cumulative gain for mangroves
-pattern_cumul_gain_mangrove = 'aboveground_C_gain_t_ha_mangrove_2001_15'
-cumul_gain_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_mangrove/20181101/'
+# Annual belowground biomass gain rate for non-mangrove natural forests
+pattern_annual_gain_BGB_natrl_forest = 'annual_rate_BGB_t_ha_natural_forest'
+annual_gain_BGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_natural_forest/20181101/'
+
+# Annual belowground biomass gain rate for mangroves
+pattern_annual_gain_BGB_mangrove = 'annual_rate_BGB_t_ha_mangrove'
+annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_mangrove/20181101/'
+
+
+# Cumulative aboveground gain for natural forests
+pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_2001_15'
+cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_natural_forest/20181101/'
+
+# Cumulative aboveground gain for mangroves
+pattern_cumul_gain_AGC_AGC_mangrove = 'cumul_gain_AGC_t_ha_mangrove_2001_15'
+cumul_gain_AGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_mangrove/20181101/'
+
+# Cumulative aboveground gain for natural forests
+pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_2001_15'
+cumul_gain_BGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_natural_forest/20181101/'
+
+# Cumulative aboveground gain for mangroves
+pattern_cumul_gain_BGC_mangrove = 'cumul_gain_BGC_t_ha_mangrove_2001_15'
+cumul_gain_BGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_mangrove/20181101/'
+
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_combo = 'annual_gain_rate_t_C_ha_all_forest_types'
-annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_all_forest_types/20181101/'
+annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_AGC_gain_rate_all_forest_types/20181101/'
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_combo = 'aboveground_C_gain_t_C_ha_all_forest_types_2001_15'

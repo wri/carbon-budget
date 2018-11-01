@@ -11,6 +11,7 @@ import utilities
 import datetime
 import numpy as np
 import rasterio
+import subprocess
 
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
@@ -33,7 +34,9 @@ def annual_gain_rate(tile_id, gain_table_dict):
     age_cat = '{0}_{1}.tif'.format(utilities.pattern_age_cat_natrl_forest, tile_id)
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
-    print "  Reading input files and evaluating conditions"
+    AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+
+    print "  Reading input files and creating aboveground biomass gain rate tile"
 
     # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
@@ -58,7 +61,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
-            with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_annual_gain_natrl_forest, tile_id), 'w', **kwargs) as dst:
+            with rasterio.open(AGB_gain_rate, 'w', **kwargs) as dst_above:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
@@ -81,12 +84,23 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     for key, value in gain_table_dict.iteritems():
                         cont_eco_age[cont_eco_age == key] = value
 
-                    dst_data = cont_eco_age
+                    dst_above_data = cont_eco_age
 
                     # Writes the output window to the output
-                    dst.write_band(1, dst_data, window=window)
+                    dst_above.write_band(1, dst_above_data, window=window)
 
-    utilities.upload_final(utilities.pattern_annual_gain_natrl_forest, utilities.annual_gain_natrl_forest_dir, tile_id)
+    utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
+
+    # Calculates belowground biomass from aboveground biomass
+    print "  Creating belowground biomass gain rate tile"
+    above_to_below_calc = '--calc=(A>0)*{}'.format(utilities.above_to_below_natrl_forest)
+    below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
+    below_outfilearg = '--outfile={}'.format(below_outfilename)
+    cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
+
+    utilities.upload_final(utilities.pattern_annual_gain_BGB_natrl_forest, utilities.annual_gain_BGB_natrl_forest_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
