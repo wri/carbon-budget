@@ -32,7 +32,7 @@ print mangrove_biomass_tile_list
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(6)
+pool = multiprocessing.Pool(4)
 pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
 
 # # For single processor use
