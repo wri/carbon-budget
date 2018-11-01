@@ -7,7 +7,6 @@ import cumulative_gain_natrl_forest
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
-### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
