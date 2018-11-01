@@ -7,7 +7,7 @@ import numpy as np
 import rasterio
 
 
-def cumulative_gain(tile_id):
+def cumulative_annual_gain(tile_id):
 
     print "Processing:", tile_id
 

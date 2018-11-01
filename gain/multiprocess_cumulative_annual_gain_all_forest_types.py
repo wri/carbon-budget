@@ -3,7 +3,7 @@
 
 import multiprocessing
 import utilities
-import cumulative_gain_all_forest_types
+import cumulative_annual_gain_all_forest_types
 
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
@@ -27,7 +27,7 @@ for input in download_list:
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
-pool.map(cumulative_gain_all_forest_types.cumulative_gain, biomass_tile_list)
+pool.map(cumulative_annual_gain_all_forest_types.cumulative_annual_gain, biomass_tile_list)
 
 # # For single processor use
 # for tile in biomass_tile_list:
