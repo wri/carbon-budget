@@ -24,7 +24,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
     # Name of the output mangrove gain rate tile
-    mangrove_annual_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_mangrove_annual_gain, tile_id)
+    mangrove_annual_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_mangrove, tile_id)
 
     print "  Reading input files and evaluating conditions"
 
@@ -77,7 +77,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(utilities.pattern_mangrove_annual_gain, utilities.mangrove_annual_gain_dir, tile_id)
+    utilities.upload_final(utilities.pattern_annual_gain_mangrove, utilities.mangrove_annual_gain_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

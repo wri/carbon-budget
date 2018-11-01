@@ -30,7 +30,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     start = datetime.datetime.now()
 
     # Names of the forest age category and continent-ecozone tiles
-    age_cat = 'forest_age_category_{}.tif'.format(tile_id)
+    age_cat = '{0}_{1}.tif'.format(utilities.pattern_age_cat_natrl_forest, tile_id)
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
     print "  Reading input files and evaluating conditions"
@@ -58,7 +58,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
-            with rasterio.open('annual_gain_rate_natural_forest_{}.tif'.format(tile_id), 'w', **kwargs) as dst:
+            with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_annual_gain_natrl_forest, tile_id), 'w', **kwargs) as dst:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
@@ -86,9 +86,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst.write_band(1, dst_data, window=window)
 
-    pattern = 'annual_gain_rate_natural_forest'
-
-    utilities.upload_final(pattern, utilities.annual_gain_dir, tile_id)
+    utilities.upload_final(utilities.pattern_annual_gain_natrl_forest, utilities.annual_gain_natrl_forest_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

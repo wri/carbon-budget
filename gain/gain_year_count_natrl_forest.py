@@ -142,7 +142,7 @@ def create_gain_year_count(tile_id):
 
     # Regardless of whether the tile had mangroves, all four components are merged together to the final output raster
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = '{}_{}.tif'.format(utilities.pattern_gain_year_count_natrl_forests, tile_id)
+    age_outfile = '{}_{}.tif'.format(utilities.pattern_gain_year_count_natrl_forest, tile_id)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
@@ -152,7 +152,7 @@ def create_gain_year_count(tile_id):
     utilities.upload_final("growth_years_loss_and_gain", utilities.gain_year_count_natrl_forest_dir, tile_id)
 
     # This is the final output used later in the model
-    utilities.upload_final(utilities.pattern_gain_year_count_natrl_forests, utilities.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final(utilities.pattern_gain_year_count_natrl_forest, utilities.gain_year_count_natrl_forest_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

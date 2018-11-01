@@ -32,7 +32,7 @@ cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_contine
 gain_year_count_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20180912/'
 
 # Forest age category tiles
-age_cat_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
+age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
 
 # Annual gain rate tiles
 annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_natural_forest/20181003/'

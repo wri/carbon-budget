@@ -9,6 +9,10 @@ gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
 # Woods Hole biomass 2000 version 4 tiles
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
+# Lola Fatoyinbo aboveground mangrove biomass tiles
+pattern_mangrove_biomass = 'mangrove_agb_t_ha'
+mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
+
 # Annual Hansen loss tiles (2001-2015)
 loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
 
@@ -21,6 +25,7 @@ pattern_tcd = 'Hansen_GFC2014_treecover2000'
 tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
 
 # Intact forest landscape 2000 tiles
+pattern_ifl = 'res_ifl_2000'
 ifl_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/ifl_2000/'
 
 # Processed FAO ecozone shapefile
@@ -33,30 +38,33 @@ cont_eco_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fr
 cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/raw/'
 cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
 
-# Number of gain year tiles for non-mangrove natural forests
-pattern_gain_year_count_natrl_forests = 'gain_year_count_natural_forest'
+# Number of gain years for non-mangrove natural forests
+pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'
 gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20181031/'
 
-# Number of gain year tiles for mangroves
+# Number of gain years for mangroves
 pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
 gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20181031/'
 
 # Forest age category tiles
-age_cat_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
+pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
+age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
 
-# Annual gain rate tiles
-annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_natural_forest/20181003/'
+# Annual aboveground gain rate for non-mangrove natural forests
+pattern_annual_gain_natrl_forest = 'annual_gain_rate_natural_forest'
+annual_gain_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_natural_forest/20181003/'
 
-# Cumulative natural forest gain tiles
-cumul_gain_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_natural_forest/20181003/'
+# Annual aboveground gain rate for mangroves
+pattern_annual_gain_mangrove = 'annual_gain_rate_mangrove'
+annual_gain_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181019/'
 
-# Lola Fatoyinbo aboveground mangrove biomass tiles
-pattern_mangrove_biomass = 'mangrove_agb_t_ha'
-mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
+# Cumulative gain for natural forests
+pattern_cumul_gain_natrl_forest = 'aboveground_C_gain_t_ha_natural_forest_2001_15'
+cumul_gain_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_natural_forest/20181101/'
 
-# Mangrove aboveground biomass gain rate tiles
-pattern_mangrove_annual_gain = 'annual_gain_rate_mangrove'
-mangrove_annual_gain_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_mangrove/20181019/'
+# Cumulative gain for mangroves
+pattern_cumul_gain_mangrove = 'aboveground_C_gain_t_ha_mangrove_2001_15'
+cumul_gain_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_mangrove/20181101/'
 
 def s3_folder_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive']

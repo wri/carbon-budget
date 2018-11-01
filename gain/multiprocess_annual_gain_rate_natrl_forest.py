@@ -27,7 +27,7 @@ biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
-download_list = [utilities.age_cat_dir, utilities.cont_eco_dir]
+download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -35,7 +35,7 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 
-#     utilities.s3_file_download('{0}forest_age_category_{1}.tif'.format(utilities.age_cat_dir, tile), '.')             # forest age category tiles
+#     utilities.s3_file_download('{0}forest_age_category_{1}.tif'.format(utilities.age_cat_natrl_forest_dir, tile), '.')             # forest age category tiles
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cont_eco_dir, pattern_cont_eco_processed, tile), '.')        # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
