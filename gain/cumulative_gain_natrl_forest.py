@@ -14,7 +14,7 @@ def cumulative_gain(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the forest age category and continent-ecozone tiles
+    # Names of the annual gain rate and gain year count tiles
     gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_natrl_forest, tile_id)
     gain_year_count = '{0}_{1}.tif'.format(utilities.pattern_gain_year_count_natrl_forest, tile_id)
 
@@ -29,7 +29,7 @@ def cumulative_gain(tile_id):
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = gain_rate_src.block_windows(1)
 
-        # Opens age category tile
+        # Opens gain year count tile
         with rasterio.open(gain_year_count) as gain_year_count_src:
 
             # Updates kwargs for the output dataset.

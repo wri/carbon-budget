@@ -3,11 +3,7 @@
 
 import multiprocessing
 import utilities
-import cumulative_gain_natrl_forest
-
-### Need to update and install some packages on spot machine before running
-### sudo pip install rasterio --upgrade
-### sudo pip install xlrd
+import cumulative_gain_all_forest_types
 
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
@@ -15,16 +11,16 @@ biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
-download_list = [utilities.annual_gain_natrl_forest_dir, utilities.gain_year_count_natrl_forest_dir]
+download_list = [utilities.cumul_gain_natrl_forest_dir, utilities.cumul_gain_mangrove_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
 
-# # For copying individual tiles to spot machine for testing
-# for tile in biomass_tile_list:
-#
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.annual_gain_natrl_forest_dir, utilities.pattern_annual_gain_natrl_forest, tile), '.')           # annual gain rate tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.gain_year_count_natrl_forest_dir, utilities.pattern_gain_year_count_natrl_forest, tile), '.')        # number of years with gain tiles
+# For copying individual tiles to spot machine for testing
+for tile in biomass_tile_list:
+
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cumul_gain_natrl_forest_dir, utilities.pattern_cumul_gain_natrl_forest, tile), '.')           # annual gain rate tiles for natural forests
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cumul_gain_mangrove_dir, utilities.pattern_cumul_gain_mangrove, tile), '.')  # annual gain rate tiles for mangroves
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
