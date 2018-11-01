@@ -152,21 +152,15 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainE
 # Uploads tile to specified location
 def upload_final(pattern, upload_dir, tile_id):
 
-    # Gets all files with the specified pattern
-    files = glob.glob('{0}_{1}*'.format(pattern, tile_id))
+    file = '{}_{}.tif'.format(pattern, tile_id)
 
-    print 'Upload file: {0}_{1}.tif'.format(pattern, tile_id)
+    print "Uploading {}".format(file)
+    cmd = ['aws', 's3', 'cp', file, upload_dir]
 
-    for f in files:
-
-        print "uploading {}".format(f)
-        cmd = ['aws', 's3', 'cp', '{}'.format(f), upload_dir]
-        print cmd
-
-        try:
-            subprocess.check_call(cmd)
-        except:
-            print "Error uploading output tile"
+    try:
+        subprocess.check_call(cmd)
+    except:
+        print "Error uploading output tile"
 
 
 
