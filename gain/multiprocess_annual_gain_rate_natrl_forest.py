@@ -1,11 +1,12 @@
-### This script assigns an annual biomass gain rate (in the units of IPCC Table 4.9 (currently tons aboveground
-### biomass/ha/yr)) to natural non-mangrove forest pixels.
+### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
+### biomass/ha/yr)) to nnon-mangrove natural forest pixels.
 ### The inputs are continent-ecozone tiles and natural forest age category tiles, as well as IPCC Table 4.9, formatted
 ### for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
 ### to every pixel in every tile.
 ### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 ### processed IPCC table.
+### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate.
 
 from multiprocessing.pool import Pool
 from functools import partial
@@ -23,7 +24,7 @@ pd.options.mode.chained_assignment = None
 
 # biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-biomass_tile_list = ['20S_110E'] # test tiles
+biomass_tile_list = ['10N_080W'] # test tiles
 print biomass_tile_list
 
 # # For downloading all tiles in the input folders

@@ -1,11 +1,12 @@
-### This script assigns an annual biomass gain rate (in the units of IPCC Table 4.9 (currently tons aboveground
-### biomass/ha/yr)) to natural forest non-mangrove pixels.
+### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
+### biomass/ha/yr)) to nnon-mangrove natural forest pixels.
 ### The inputs are continent-ecozone tiles and natural forest age category tiles, as well as IPCC Table 4.9, formatted
 ### for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
 ### to every pixel in every tile.
 ### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 ### processed IPCC table.
+### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate.
 
 import utilities
 import datetime
@@ -60,7 +61,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                 dtype='float32'
             )
 
-            # Opens the output tile, giving it the arguments of the input tiles
+            # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
             with rasterio.open(AGB_gain_rate, 'w', **kwargs) as dst_above:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
@@ -91,7 +92,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
-    # Calculates belowground biomass from aboveground biomass
+    # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate tile"
     above_to_below_calc = '--calc=(A>0)*{}'.format(utilities.above_to_below_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
@@ -106,7 +107,3 @@ def annual_gain_rate(tile_id, gain_table_dict):
     elapsed_time = end-start
 
     print "  Processing time for tile", tile_id, ":", elapsed_time
-
-
-
-
