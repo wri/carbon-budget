@@ -4,7 +4,7 @@ import glob
 biomass_to_c = 0.5
 
 above_to_below_natrl_forest = 0.26
-above_to_below_natrl_forest = 0.608
+above_to_below_mangrove = 0.608
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
