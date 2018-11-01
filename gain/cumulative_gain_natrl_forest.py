@@ -42,7 +42,7 @@ def cumulative_gain(tile_id):
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
-            with rasterio.open('{0}{1}.tif'.format(utilities.pattern_cumul_gain_natrl_forest, tile_id), 'w', **kwargs) as dst:
+            with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_cumul_gain_natrl_forest, tile_id), 'w', **kwargs) as dst:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
