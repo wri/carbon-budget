@@ -46,7 +46,7 @@ def cumulative_gain(tile_id):
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
-
+ 
                     # Creates windows for each input raster
                     gain_rate = gain_rate_src.read(1, window=window)
                     gain_year_count = gain_year_count_src.read(1, window=window)
