@@ -28,7 +28,7 @@ biomass_tile_list = ['10N_080W'] # test tiles
 print biomass_tile_list
 
 # # For downloading all tiles in the input folders
-# download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir]
+# download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
 #
 # for input in download_list:
 #     utilities.s3_folder_download('{}'.format(input), '.')
@@ -38,6 +38,7 @@ for tile in biomass_tile_list:
 
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.age_cat_natrl_forest_dir, utilities.pattern_age_cat_natrl_forest, tile), '.')   # forest age category tiles
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cont_eco_dir, utilities.pattern_cont_eco_processed, tile), '.')        # continents and FAO ecozones 2000
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.mangrove_biomass_dir, utilities.pattern_mangrove_biomass, tile), '.')  # mangrove aboveground biomass
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(utilities.gain_spreadsheet), '.']
@@ -86,16 +87,16 @@ for key, value in age_dict.iteritems():
 gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
 
-# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 16
-pool = Pool(num_of_processes)
-pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
-pool.close()
-pool.join()
+# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# num_of_processes = 16
+# pool = Pool(num_of_processes)
+# pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use
-# for tile in biomass_tile_list:
-#
-#     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
+# For single processor use
+for tile in biomass_tile_list:
+
+    annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
 
