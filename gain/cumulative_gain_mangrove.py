@@ -15,8 +15,14 @@ def cumulative_gain(tile_id):
     start = datetime.datetime.now()
 
     # Names of the annual gain rate and gain year count tiles
-    gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
+    gain_rate_AGB = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
+    gain_rate_BGB = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
     gain_year_count = '{0}_{1}.tif'.format(utilities.pattern_gain_year_count_mangrove, tile_id)
+
+    accum_AGC = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
+    accum_BGC = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
+
+    dict = {gain_rate_AGB: accum_AGC, gain_rate_BGB, accum_BGC}
 
     print "  Reading input files and calculating cumulative gain for mangroves"
 

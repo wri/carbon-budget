@@ -34,7 +34,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Names of the forest age category, continent-ecozone, and mangrove biomass tiles
     age_cat = '{0}_{1}.tif'.format(utilities.pattern_age_cat_natrl_forest, tile_id)
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
-    mangrove_biomass = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_gain_year_count_mangrove, tile_id)
 
     # Name of the output natural forest gain rate tile
     AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
@@ -51,7 +51,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         windows = cont_eco_src.block_windows(1)
 
         # Opens age category tile
-        with rasterio.open(mangrove_biomass) as mangrove_biomass_src:
+        with rasterio.open(mangrove_mask) as mangrove_mask_src:
 
             # Opens age category tile
             with rasterio.open(age_cat) as age_cat_src:
@@ -74,7 +74,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         # Creates windows for each input raster
                         cont_eco = cont_eco_src.read(1, window=window)
-                        mangrove = mangrove_biomass_src.read(1, window=window)
+                        mangrove = mangrove_mask_src.read(1, window=window)
                         age_cat = age_cat_src.read(1, window=window)
 
                         # print mangrove
