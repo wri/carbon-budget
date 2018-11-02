@@ -103,9 +103,9 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         dst_above_data = cont_eco_age
 
-                        dst_short = dst_above_data[0][0:30]
+                        dst_short = dst_above_data[0][39950:40000]
 
-                        mangrove_short =mangrove[0][0:30]
+                        mangrove_short =mangrove[0][39950:40000]
 
                         print dst_short
                         print mangrove_short
