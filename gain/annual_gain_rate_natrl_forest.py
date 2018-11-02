@@ -99,7 +99,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         # test = np.ma.masked_where(mangrove == 0, dst_above_data)
 
-                        test = dst_above_data[mangrove_biomass != 0]
+                        test = dst_above_data[mangrove != 0]
 
                         # print test
 
