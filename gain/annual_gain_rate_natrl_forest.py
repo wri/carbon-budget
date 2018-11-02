@@ -103,14 +103,14 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         dst_above_data = cont_eco_age
 
-                        # test = dst_above_data[mangrove == 0]
+                        test = dst_above_data[mangrove == 0]
 
 
                         print dst_above_data
 
                         print mangrove
 
-                        test = np.ma.masked_where(mangrove != 0, dst_above_data)
+                        # test = np.ma.masked_where(mangrove != 0, dst_above_data)
 
                         print test
 
