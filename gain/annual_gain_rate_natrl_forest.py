@@ -113,6 +113,10 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         print mangrove_short
                         print test
 
+                        print dst_short.dtype
+                        print mangrove_short.dtype
+                        
+
                         # print dst_above_data
                         #
                         # print mangrove
