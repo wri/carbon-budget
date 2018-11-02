@@ -16,7 +16,7 @@ import pandas as pd
 import subprocess
 
 pd.options.mode.chained_assignment = None
-
+ 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
 ### sudo pip install pandas --upgrade
