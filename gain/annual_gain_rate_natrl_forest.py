@@ -103,33 +103,37 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         dst_above_data = cont_eco_age
 
-                        dst_short = dst_above_data[0][39950:40000]
-
-                        mangrove_short =mangrove[0][39950:40000]
+                        # dst_short = dst_above_data[0][39950:40000]
+                        #
+                        # mangrove_short =mangrove[0][39950:40000]
+                        #
+                        # # test = dst_short[mangrove_short == 0]
+                        #
+                        # test = dst_short*mangrove_short[mangrove_short == 0]
 
                         # test = dst_short[mangrove_short == 0]
 
-                        test = dst_short*mangrove_short[mangrove_short == 0]
+                        test = dst_above_data*mangrove[mangrove == 0]
 
                         # test = np.ma.masked_where(mangrove_short != 0, dst_short)
 
-                        print dst_short
-                        print mangrove_short
-                        print test
-
-                        print dst_short.dtype
-                        print mangrove_short.dtype
-                        print test.dtype
-
-                        # print dst_above_data
+                        # print dst_short
+                        # print mangrove_short
+                        # print test
                         #
-                        # print mangrove
-
-
-
-                        print mangrove_short.shape
-                        print dst_short.shape
-                        print test.shape
+                        # print dst_short.dtype
+                        # print mangrove_short.dtype
+                        # print test.dtype
+                        #
+                        # # print dst_above_data
+                        # #
+                        # # print mangrove
+                        #
+                        #
+                        #
+                        # print mangrove_short.shape
+                        # print dst_short.shape
+                        # print test.shape
 
                         # test = dst_above_data[mangrove != 0]
 
