@@ -22,7 +22,7 @@ mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
-
+ 
 # For downloading all tiles in the input folders
 download_list = [utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
 
