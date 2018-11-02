@@ -95,10 +95,13 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         ###### NEED TO ADD MANGROVE BIOMASS TO RASTERIO TO MASK OUT MANGROVES FROM GAIN RATE
                         # # Removes 0s from the array
+
+                        test = np.ma.masked_where(mangrove != 0, dst_above_data)
+
                         # dst_above_data = dst_above_data[mangrove != 0]
 
                         # Writes the output window to the output
-                        dst_above.write_band(1, dst_above_data, window=window)
+                        dst_above.write_band(1, test, window=window)
 
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
