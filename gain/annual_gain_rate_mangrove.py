@@ -89,7 +89,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(utilities.pattern_annual_gain_BGB_mangrove, utilities.annual_gain_BGB_mangrove, tile_id)
+    utilities.upload_final(utilities.pattern_annual_gain_BGB_mangrove, utilities.annual_gain_BGB_mangrove_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
