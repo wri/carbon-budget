@@ -1,4 +1,4 @@
-### This script calculates the cumulative carbon gain in mangrove forest pixels from 2001-2015.
+### This script calculates the cumulative above and belowground carbon gain in mangrove forest pixels from 2001-2015.
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion.
 
 import utilities
@@ -15,7 +15,7 @@ def cumulative_gain(tile_id):
     start = datetime.datetime.now()
 
     # Names of the annual gain rate and gain year count tiles
-    gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_mangrove, tile_id)
+    gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
     gain_year_count = '{0}_{1}.tif'.format(utilities.pattern_gain_year_count_mangrove, tile_id)
 
     print "  Reading input files and calculating cumulative gain for mangroves"
@@ -42,7 +42,7 @@ def cumulative_gain(tile_id):
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
-            with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_cumul_gain_mangrove, tile_id), 'w', **kwargs) as dst:
+            with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id), 'w', **kwargs) as dst:
 
                 # Iterates across the windows (1 pixel strips) of the input tile
                 for idx, window in windows:
@@ -57,7 +57,7 @@ def cumulative_gain(tile_id):
                     # Writes the output window to the output
                     dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(utilities.pattern_cumul_gain_mangrove, utilities.cumul_gain_mangrove_dir, tile_id)
+    utilities.upload_final(utilities.pattern_cumul_gain_AGC_mangrove, utilities.cumul_gain_AGC_mangrove_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
