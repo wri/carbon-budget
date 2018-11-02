@@ -27,7 +27,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Name of the output mangrove gain rate tile
     AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
 
-    print "  Reading input files and creating aboveground biomass gain rate tile"
+    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
     # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
@@ -81,8 +81,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
     utilities.upload_final(utilities.pattern_annual_gain_AGB_mangrove, utilities.annual_gain_AGB_mangrove_dir, tile_id)
 
     # Calculates belowground biomass rate from aboveground biomass rate
-    print "  Creating belowground biomass gain rate tile"
-    above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_natrl_forest)
+    print "  Creating belowground biomass gain rate for {}".format(tile_id)
+    above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_mangrove)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,

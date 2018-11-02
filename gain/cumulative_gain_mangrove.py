@@ -29,7 +29,7 @@ def cumulative_gain(tile_id):
 
     utilities.upload_final(utilities.pattern_cumul_gain_AGC_mangrove, utilities.cumul_gain_AGC_mangrove_dir, tile_id)
 
-    print "  Reading input files and calculating cumulative belowround gain for mangrove tile {}".format(tile_id)
+    print "  Reading input files and calculating cumulative belowground gain for mangrove tile {}".format(tile_id)
     accum_calc = '--calc=A*B*{}'.format(utilities.biomass_to_c)
     accum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
     accum_outfilearg = '--outfile={}'.format(accum_outfilename)
