@@ -34,12 +34,20 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Names of the forest age category, continent-ecozone, and mangrove biomass tiles
     age_cat = '{0}_{1}.tif'.format(utilities.pattern_age_cat_natrl_forest, tile_id)
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
-    mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_gain_year_count_mangrove, tile_id)
+    mangrove_biomass = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Name of the output natural forest gain rate tile
     AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
-    print "  Reading input files and creating aboveground biomass gain rate tile"
+    # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+    # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+    # Mangrove tiles that have the nodata pixels removed
+    mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    print "Removing nodata values in mangrove biomass {}".format(tile_id)
+    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
+    subprocess.check_call(cmd)
+
+    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
     # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
@@ -51,7 +59,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         windows = cont_eco_src.block_windows(1)
 
         # Opens age category tile
-        with rasterio.open(mangrove_mask) as mangrove_mask_src:
+        with rasterio.open(mangrove_reclass) as mangrove_biomass_src:
 
             # Opens age category tile
             with rasterio.open(age_cat) as age_cat_src:
@@ -74,7 +82,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         # Creates windows for each input raster
                         cont_eco = cont_eco_src.read(1, window=window)
-                        mangrove = mangrove_mask_src.read(1, window=window)
+                        mangrove = mangrove_biomass_src.read(1, window=window)
                         age_cat = age_cat_src.read(1, window=window)
 
                         # print mangrove
@@ -88,16 +96,16 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
                         cont_eco_age = cont_eco_age.astype('float32')
 
+                        gain_rate = cont_eco_age
+
                         # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
                         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
                         for key, value in gain_table_dict.iteritems():
-                            cont_eco_age[cont_eco_age == key] = value
-
-                        dst_above_data = cont_eco_age
+                            gain_rate[gain_rate == key] = value
 
                         # print dst_above_data
 
-                        test = np.ma.masked_where(mangrove > 0, dst_above_data)
+                        # test = np.ma.masked_where(mangrove != 0, dst_above_data)
 
                         # print test
                         #
@@ -105,12 +113,12 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # print dst_above_data.shape
                         # print test.shape
 
-                        # test = dst_above_data[mangrove > 0]
+                        gain_masked_for_mangrove = gain_rate[mangrove == 0]
 
                         # test = dst_above_data[mangrove != 0]
 
                         # Writes the output window to the output
-                        dst_above.write_band(1, test, window=window)
+                        dst_above.write_band(1, gain_masked_for_mangrove, window=window)
 
                         # sys.exit()
 
