@@ -36,11 +36,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
     age_cat = '{0}_{1}.tif'.format(utilities.pattern_age_cat_natrl_forest, tile_id)
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
 
-    # Name of the output natural forest gain rate tile, before mangroves are masked out
-    AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    # # Name of the output natural forest gain rate tile, before mangroves are masked out
+    # AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
     # Name of the output natural forest gain rate tile, with mangroves masked out
-    AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    AGB_gain_rate= '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
     print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
@@ -79,7 +79,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     )
 
                     # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
-                    with rasterio.open(AGB_gain_rate_unmasked, 'w', **kwargs) as dst_above:
+                    with rasterio.open(AGB_gain_rate, 'w', **kwargs) as dst_above:
 
                         # Iterates across the windows (1 pixel strips) of the input tile
                         for idx, window in windows:
@@ -142,7 +142,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                 )
 
                 # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
-                with rasterio.open(AGB_gain_rate_unmasked, 'w', **kwargs) as dst_above:
+                with rasterio.open(AGB_gain_rate, 'w', **kwargs) as dst_above:
 
                     # Iterates across the windows (1 pixel strips) of the input tile
                     for idx, window in windows:
@@ -195,7 +195,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_mangrove_mask, above_to_below_calc, below_outfilearg,
+    cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 

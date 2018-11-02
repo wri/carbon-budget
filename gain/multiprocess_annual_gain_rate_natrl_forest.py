@@ -24,7 +24,7 @@ pd.options.mode.chained_assignment = None
 
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-biomass_tile_list = ['00N_070W'] # test tiles
+biomass_tile_list = ['10N_080W', '00N_070W'] # test tiles
 print biomass_tile_list
 
 # # For downloading all tiles in the input folders
