@@ -37,17 +37,19 @@ def annual_gain_rate(tile_id, gain_table_dict):
     mangrove_biomass = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Name of the output natural forest gain rate tile
-    AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+
+    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
+
+    # Mangrove tiles that have the nodata pixels removed
+    mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
     # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    # Mangrove tiles that have the nodata pixels removed
-    mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
-    # print "Removing nodata values in mangrove biomass {}".format(tile_id)
-    # cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
-    # subprocess.check_call(cmd)
-
-    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
+    print "Removing nodata values in mangrove biomass raster"
+    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
+    subprocess.check_call(cmd)
 
     # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
@@ -59,88 +61,56 @@ def annual_gain_rate(tile_id, gain_table_dict):
         windows = cont_eco_src.block_windows(1)
 
         # Opens age category tile
-        with rasterio.open(mangrove_reclass) as mangrove_biomass_src:
+        with rasterio.open(age_cat) as age_cat_src:
 
-            # Opens age category tile
-            with rasterio.open(age_cat) as age_cat_src:
+            # Updates kwargs for the output dataset.
+            # Need to update data type to float 32 so that it can handle fractional gain rates
+            kwargs.update(
+                driver='GTiff',
+                count=1,
+                compress='lzw',
+                nodata=0,
+                dtype='float32'
+            )
 
-                # Updates kwargs for the output dataset.
-                # Need to update data type to float 32 so that it can handle fractional gain rates
-                kwargs.update(
-                    driver='GTiff',
-                    count=1,
-                    compress='lzw',
-                    nodata=0,
-                    dtype='float32'
-                )
+            # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
+            with rasterio.open(AGB_gain_rate_unmasked, 'w', **kwargs) as dst_above:
 
-                # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
-                with rasterio.open(AGB_gain_rate, 'w', **kwargs) as dst_above:
+                # Iterates across the windows (1 pixel strips) of the input tile
+                for idx, window in windows:
 
-                    # Iterates across the windows (1 pixel strips) of the input tile
-                    for idx, window in windows:
+                    # Creates windows for each input raster
+                    cont_eco = cont_eco_src.read(1, window=window)
+                    age_cat = age_cat_src.read(1, window=window)
 
-                        # Creates windows for each input raster
-                        cont_eco = cont_eco_src.read(1, window=window)
-                        mangrove = mangrove_biomass_src.read(1, window=window)
-                        age_cat = age_cat_src.read(1, window=window)
+                    # Recodes the input forest age category array with 10 different values into the 3 actual age categories
+                    age_recode = np.vectorize(age_dict.get)(age_cat)
 
-                        # print mangrove
+                    # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
+                    cont_eco_age = cont_eco + age_recode
 
-                        # Recodes the input forest age category array with 10 different values into the 3 actual age categories
-                        age_recode = np.vectorize(age_dict.get)(age_cat)
+                    # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
+                    cont_eco_age = cont_eco_age.astype('float32')
 
-                        # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
-                        cont_eco_age = cont_eco + age_recode
+                    gain_rate_AGB = cont_eco_age
 
-                        # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
-                        cont_eco_age = cont_eco_age.astype('float32')
+                    # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
+                    # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+                    for key, value in gain_table_dict.iteritems():
+                        gain_rate_AGB[gain_rate_AGB  == key] = value
 
-                        # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
-                        # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
-                        for key, value in gain_table_dict.iteritems():
-                            cont_eco_age[cont_eco_age == key] = value
+                    # Writes the output window to the output
+                    dst_above.write_band(1, gain_rate_AGB , window=window)
 
-                        dst_above_data = cont_eco_age
 
-                        # dst_short = dst_above_data[0][39950:40000]
-                        #
-                        # mangrove_short =mangrove[0][39950:40000]
-                        #
-                        # # test = dst_short[mangrove_short == 0]
-                        #
-                        # test = dst_short*mangrove_short[mangrove_short == 0]
-
-                        # test = dst_short[mangrove_short == 0]
-
-                        test = dst_above_data*mangrove[mangrove == 0]
-
-                        # test = np.ma.masked_where(mangrove_short != 0, dst_short)
-
-                        # print dst_short
-                        # print mangrove_short
-                        # print test
-                        #
-                        # print dst_short.dtype
-                        # print mangrove_short.dtype
-                        # print test.dtype
-                        #
-                        # # print dst_above_data
-                        # #
-                        # # print mangrove
-                        #
-                        #
-                        #
-                        # print mangrove_short.shape
-                        # print dst_short.shape
-                        # print test.shape
-
-                        # test = dst_above_data[mangrove != 0]
-
-                        # Writes the output window to the output
-                        dst_above.write_band(1, test, window=window)
-
-                        sys.exit()
+    # Masks out the mangrove biomass from the natural forest gain rate
+    print "  Creating belowground biomass gain rate tile"
+    mangrove_mask_calc = '--calc=A*(B==0)'
+    mask_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    mask_outfilearg = '--outfile={}'.format(mask_outfilename)
+    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, '-B', mangrove_reclass, mangrove_mask_calc, mask_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
 
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
