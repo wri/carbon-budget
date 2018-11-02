@@ -40,16 +40,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
     AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
     AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
-
-
     # Mangrove tiles that have the nodata pixels removed
     mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
-
-    # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-    # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    print "  Removing nodata values in mangrove biomass raster"
-    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
-    subprocess.check_call(cmd)
 
     print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
@@ -104,8 +96,15 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst_above.write_band(1, gain_rate_AGB , window=window)
 
+    # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+    # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+    print "  Removing nodata values in mangrove biomass raster {}".format(tile_id)
+    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
+    subprocess.check_call(cmd)
 
     # Masks out the mangrove biomass from the natural forest gain rate
+    # Ideally this would be part of the rasterio/numpy operation (not its own gdal operation after) but I couldn't
+    # figure out how to get the mask working in numpy for some reason
     print "  Masking mangroves from aboveground gain rate tile {}".format(tile_id)
     mangrove_mask_calc = '--calc=A*(B==0)'
     mask_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
@@ -121,7 +120,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
+    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
