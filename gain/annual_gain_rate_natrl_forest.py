@@ -109,22 +109,22 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # Writes the output window to the output
                         dst_above.write_band(1, gain_rate_AGB , window=window)
 
-    # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-    # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    print "  Removing nodata values in mangrove biomass raster {}".format(tile_id)
-    cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
-    subprocess.check_call(cmd)
-
-    # Masks out the mangrove biomass from the natural forest gain rate
-    # Ideally this would be part of the rasterio/numpy operation (not its own gdal operation later) but I couldn't
-    # figure out how to get the mask working in numpy for some reason
-    print "  Masking mangroves from aboveground gain rate for tile {}".format(tile_id)
-    mangrove_mask_calc = '--calc=A*(B==0)'
-    mask_outfilename = AGB_gain_rate_mangrove_mask
-    mask_outfilearg = '--outfile={}'.format(mask_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, '-B', mangrove_reclass, mangrove_mask_calc, mask_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    subprocess.check_call(cmd)
+    # # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+    # # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+    # print "  Removing nodata values in mangrove biomass raster {}".format(tile_id)
+    # cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
+    # subprocess.check_call(cmd)
+    #
+    # # Masks out the mangrove biomass from the natural forest gain rate
+    # # Ideally this would be part of the rasterio/numpy operation (not its own gdal operation later) but I couldn't
+    # # figure out how to get the mask working in numpy for some reason
+    # print "  Masking mangroves from aboveground gain rate for tile {}".format(tile_id)
+    # mangrove_mask_calc = '--calc=A*(B==0)'
+    # mask_outfilename = AGB_gain_rate_mangrove_mask
+    # mask_outfilearg = '--outfile={}'.format(mask_outfilename)
+    # cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, '-B', mangrove_reclass, mangrove_mask_calc, mask_outfilearg,
+    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    # subprocess.check_call(cmd)
 
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
