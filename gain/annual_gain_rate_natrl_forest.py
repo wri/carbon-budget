@@ -56,48 +56,58 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = cont_eco_src.block_windows(1)
 
-        # Opens age category tile
-        with rasterio.open(age_cat) as age_cat_src:
+        # Opens aboveground mangrove biomass tile
+        with rasterio.open(mangrove_biomass) as mangrove_AGB_src:
 
-            # Updates kwargs for the output dataset.
-            # Need to update data type to float 32 so that it can handle fractional gain rates
-            kwargs.update(
-                driver='GTiff',
-                count=1,
-                compress='lzw',
-                nodata=0,
-                dtype='float32'
-            )
+            # Opens age category tile
+            with rasterio.open(age_cat) as age_cat_src:
 
-            # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
-            with rasterio.open(AGB_gain_rate_unmasked, 'w', **kwargs) as dst_above:
+                # Updates kwargs for the output dataset.
+                # Need to update data type to float 32 so that it can handle fractional gain rates
+                kwargs.update(
+                    driver='GTiff',
+                    count=1,
+                    compress='lzw',
+                    nodata=0,
+                    dtype='float32'
+                )
 
-                # Iterates across the windows (1 pixel strips) of the input tile
-                for idx, window in windows:
+                # Opens the output aboveground biomass gain rate tile, giving it the arguments of the input tiles
+                with rasterio.open(AGB_gain_rate_unmasked, 'w', **kwargs) as dst_above:
 
-                    # Creates windows for each input raster
-                    cont_eco = cont_eco_src.read(1, window=window)
-                    age_cat = age_cat_src.read(1, window=window)
+                    # Iterates across the windows (1 pixel strips) of the input tile
+                    for idx, window in windows:
 
-                    # Recodes the input forest age category array with 10 different values into the 3 actual age categories
-                    age_recode = np.vectorize(age_dict.get)(age_cat)
+                        # Creates windows for each input raster
+                        cont_eco = cont_eco_src.read(1, window=window)
+                        age_cat = age_cat_src.read(1, window=window)
+                        mangrove_AGB = mangrove_AGB_src.read(1, window=window)
 
-                    # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
-                    cont_eco_age = cont_eco + age_recode
+                        # Recodes the input forest age category array with 10 different values into the 3 actual age categories
+                        age_recode = np.vectorize(age_dict.get)(age_cat)
 
-                    # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
-                    cont_eco_age = cont_eco_age.astype('float32')
+                        # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
+                        cont_eco_age = cont_eco + age_recode
 
-                    # Creates a new array which will have the annual aboveground gain rates
-                    gain_rate_AGB = cont_eco_age
+                        # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
+                        cont_eco_age = cont_eco_age.astype('float32')
 
-                    # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
-                    # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
-                    for key, value in gain_table_dict.iteritems():
-                        gain_rate_AGB[gain_rate_AGB  == key] = value
+                        # Creates a new array which will have the annual aboveground gain rates
+                        gain_rate_AGB = cont_eco_age
 
-                    # Writes the output window to the output
-                    dst_above.write_band(1, gain_rate_AGB , window=window)
+                        # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
+                        # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+                        for key, value in gain_table_dict.iteritems():
+                            gain_rate_AGB[gain_rate_AGB  == key] = value
+
+                        # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels
+                        mangrove_AGB[mangrove_AGB > 0] = 1
+
+                        # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
+                        gain_rate_AGB = gain_rate_AGB * mangrove_AGB
+
+                        # Writes the output window to the output
+                        dst_above.write_band(1, gain_rate_AGB , window=window)
 
     # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
     # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
