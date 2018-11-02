@@ -101,7 +101,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         test = dst_above_data[mangrove != 0]
 
-                        # print test
+                        print test
 
                         # dst_above_data = dst_above_data[mangrove != 0]
 
