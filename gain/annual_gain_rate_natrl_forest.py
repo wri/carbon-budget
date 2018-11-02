@@ -96,12 +96,12 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
                         cont_eco_age = cont_eco_age.astype('float32')
 
-                        gain_rate = cont_eco_age
-
                         # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
                         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
                         for key, value in gain_table_dict.iteritems():
-                            gain_rate[gain_rate == key] = value
+                            cont_eco_age[cont_eco_age == key] = value
+
+                        dst_above_data = cont_eco_age
 
                         # print dst_above_data
 
@@ -113,12 +113,12 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # print dst_above_data.shape
                         # print test.shape
 
-                        gain_masked_for_mangrove = gain_rate[mangrove == 0]
+                        test = dst_above_data[mangrove == 0]
 
                         # test = dst_above_data[mangrove != 0]
 
                         # Writes the output window to the output
-                        dst_above.write_band(1, gain_masked_for_mangrove, window=window)
+                        dst_above.write_band(1, test, window=window)
 
                         # sys.exit()
 
