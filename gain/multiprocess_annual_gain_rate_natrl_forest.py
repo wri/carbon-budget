@@ -27,11 +27,11 @@ biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['10N_080W'] # test tiles
 print biomass_tile_list
 
-# # For downloading all tiles in the input folders
-# download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
-#
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+# For downloading all tiles in the input folders
+download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
+
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
