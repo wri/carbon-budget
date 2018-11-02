@@ -1,12 +1,12 @@
 ### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
-### biomass/ha/yr)) to nnon-mangrove natural forest pixels.
+### biomass/ha/yr)) to non-mangrove natural forest pixels.
 ### The inputs are continent-ecozone tiles and natural forest age category tiles, as well as IPCC Table 4.9, formatted
 ### for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
 ### to every pixel in every tile.
 ### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 ### processed IPCC table.
-### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate.
+### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate, again according to IPCC tables.
 
 from multiprocessing.pool import Pool
 from functools import partial
@@ -22,16 +22,16 @@ pd.options.mode.chained_assignment = None
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-# biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
+biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-biomass_tile_list = ['10N_080W'] # test tiles
+# biomass_tile_list = ['10N_080W'] # test tiles
 print biomass_tile_list
 
-# # For downloading all tiles in the input folders
-# download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
-#
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+# For downloading all tiles in the input folders
+download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
+
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -87,16 +87,16 @@ for key, value in age_dict.iteritems():
 gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
 
-# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# num_of_processes = 16
-# pool = Pool(num_of_processes)
-# pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
-# pool.close()
-# pool.join()
+# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+num_of_processes = 16
+pool = Pool(num_of_processes)
+pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
+pool.close()
+pool.join()
 
-# For single processor use
-for tile in biomass_tile_list:
-
-    annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
+# # For single processor use
+# for tile in biomass_tile_list:
+#
+#     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
 

@@ -20,18 +20,23 @@ def cumulative_gain(tile_id):
     gain_rate_BGB = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
     gain_year_count = '{0}_{1}.tif'.format(utilities.pattern_gain_year_count_mangrove, tile_id)
 
-    accum_AGC = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
-    accum_BGC = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
-
-    dict = {gain_rate_AGB: accum_AGC, gain_rate_BGB, accum_BGC}
-
-    print "  Reading input files and calculating cumulative gain for mangrove tile {}".format(tile_id)
-
+    print "  Reading input files and calculating cumulative aboveground gain for mangrove tile {}".format(tile_id)
     accum_calc = '--calc=A*B*{}'.format(utilities.biomass_to_c)
     accum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
     accum_outfilearg = '--outfile={}'.format(accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
+
+    utilities.upload_final(utilities.pattern_cumul_gain_AGC_mangrove, utilities.cumul_gain_AGC_mangrove_dir, tile_id)
+
+    print "  Reading input files and calculating cumulative belowround gain for mangrove tile {}".format(tile_id)
+    accum_calc = '--calc=A*B*{}'.format(utilities.biomass_to_c)
+    accum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
+    accum_outfilearg = '--outfile={}'.format(accum_outfilename)
+    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
+
+    utilities.upload_final(utilities.pattern_cumul_gain_BGC_mangrove, utilities.cumul_gain_BGC_mangrove_dir, tile_id)
 
     # # Opens continent-ecozone tile
     # with rasterio.open(gain_rate) as gain_rate_src:
@@ -70,7 +75,7 @@ def cumulative_gain(tile_id):
     #                 # Writes the output window to the output
     #                 dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(utilities.pattern_cumul_gain_AGC_mangrove, utilities.cumul_gain_AGC_mangrove_dir, tile_id)
+
 
     end = datetime.datetime.now()
     elapsed_time = end-start

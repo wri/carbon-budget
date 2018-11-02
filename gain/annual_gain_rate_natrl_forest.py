@@ -1,12 +1,12 @@
 ### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
-### biomass/ha/yr)) to nnon-mangrove natural forest pixels.
+### biomass/ha/yr)) to non-mangrove natural forest pixels.
 ### The inputs are continent-ecozone tiles and natural forest age category tiles, as well as IPCC Table 4.9, formatted
 ### for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
 ### to every pixel in every tile.
 ### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 ### processed IPCC table.
-### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate.
+### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate, again according to IPCC tables.
 
 import utilities
 import datetime
@@ -36,12 +36,14 @@ def annual_gain_rate(tile_id, gain_table_dict):
     cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
     mangrove_biomass = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
-    # Name of the output natural forest gain rate tile
-    AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
-    AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
-
-    # Mangrove tiles that have the nodata pixels removed
+    # Mangrove biomass tiles that have the nodata pixels removed
     mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+
+    # Name of the output natural forest gain rate tile, before mangroves are masked out
+    AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+
+    # Name of the output natural forest gain rate tile, with mangroves masked out
+    AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
     print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
@@ -86,6 +88,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
                     cont_eco_age = cont_eco_age.astype('float32')
 
+                    # Creates a new array which will have the annual aboveground gain rates
                     gain_rate_AGB = cont_eco_age
 
                     # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
@@ -103,11 +106,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
     subprocess.check_call(cmd)
 
     # Masks out the mangrove biomass from the natural forest gain rate
-    # Ideally this would be part of the rasterio/numpy operation (not its own gdal operation after) but I couldn't
+    # Ideally this would be part of the rasterio/numpy operation (not its own gdal operation later) but I couldn't
     # figure out how to get the mask working in numpy for some reason
-    print "  Masking mangroves from aboveground gain rate tile {}".format(tile_id)
+    print "  Masking mangroves from aboveground gain rate for tile {}".format(tile_id)
     mangrove_mask_calc = '--calc=A*(B==0)'
-    mask_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    mask_outfilename = AGB_gain_rate_mangrove_mask
     mask_outfilearg = '--outfile={}'.format(mask_outfilename)
     cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, '-B', mangrove_reclass, mangrove_mask_calc, mask_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
@@ -116,11 +119,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
     # Calculates belowground biomass rate from aboveground biomass rate
-    print "  Creating belowground biomass gain rate tile"
+    print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
     above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, above_to_below_calc, below_outfilearg,
+    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_mangrove_mask, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
