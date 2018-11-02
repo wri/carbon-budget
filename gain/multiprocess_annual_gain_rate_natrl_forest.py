@@ -22,7 +22,7 @@ pd.options.mode.chained_assignment = None
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
+# biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 biomass_tile_list = ['10N_080W', '00N_070W'] # test tiles
 print biomass_tile_list
@@ -89,7 +89,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 8
+num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()
