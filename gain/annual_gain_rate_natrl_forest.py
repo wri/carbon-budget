@@ -109,11 +109,12 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         # print test
                         #
-                        # print mangrove.shape
-                        # print dst_above_data.shape
-                        # print test.shape
 
                         test = dst_above_data[mangrove == 0]
+
+                        print mangrove.shape
+                        print dst_above_data.shape
+                        print test.shape
 
                         # test = dst_above_data[mangrove != 0]
 
