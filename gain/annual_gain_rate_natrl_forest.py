@@ -77,7 +77,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         mangrove = mangrove_biomass_src.read(1, window=window)
                         age_cat = age_cat_src.read(1, window=window)
 
-                        print mangrove
+                        # print mangrove
 
                         # Recodes the input forest age category array with 10 different values into the 3 actual age categories
                         age_recode = np.vectorize(age_dict.get)(age_cat)
@@ -95,15 +95,15 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         dst_above_data = cont_eco_age
 
-                        print dst_above_data
+                        # print dst_above_data
 
                         test = np.ma.masked_where(mangrove != 0, dst_above_data)
 
-                        print test
-
-                        print mangrove.shape
-                        print dst_above_data.shape
-                        print test.shape
+                        # print test
+                        #
+                        # print mangrove.shape
+                        # print dst_above_data.shape
+                        # print test.shape
 
                         # test = dst_above_data[mangrove > 0]
 
@@ -112,7 +112,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # Writes the output window to the output
                         dst_above.write_band(1, test, window=window)
 
-                        sys.exit()
+                        # sys.exit()
 
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
