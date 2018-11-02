@@ -94,7 +94,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate tile"
-    above_to_below_calc = '--calc=(A>0)*{}'.format(utilities.above_to_below_natrl_forest)
+    above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
