@@ -10,7 +10,7 @@ import cumulative_gain_mangrove
 
 # mangrove_biomass_tile_list = utilities.tile_list(utilities.mangrove_biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-mangrove_biomass_tile_list = ['10S_080W'] # test tiles
+mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
 
 # # For downloading all tiles in the input folders
