@@ -40,16 +40,18 @@ def annual_gain_rate(tile_id, gain_table_dict):
     AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
     AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
-    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
+
 
     # Mangrove tiles that have the nodata pixels removed
     mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
 
     # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
     # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    print "    Removing nodata values in mangrove biomass raster"
+    print "  Removing nodata values in mangrove biomass raster"
     cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
     subprocess.check_call(cmd)
+
+    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
     # Opens continent-ecozone tile
     with rasterio.open(cont_eco) as cont_eco_src:
