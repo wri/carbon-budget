@@ -102,6 +102,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # Writes the output window to the output
                         dst_above.write_band(1, test, window=window)
 
+                        sys.exit()
+
     utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
     # Calculates belowground biomass rate from aboveground biomass rate
