@@ -99,6 +99,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         test = np.ma.masked_where(mangrove != 0, dst_above_data)
 
+                        print test
+
                         print mangrove.shape
                         print dst_above_data.shape
                         print test.shape
@@ -106,8 +108,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
                         # test = dst_above_data[mangrove > 0]
 
                         # test = dst_above_data[mangrove != 0]
-
-                        print test
 
                         # Writes the output window to the output
                         dst_above.write_band(1, test, window=window)
