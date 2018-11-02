@@ -39,10 +39,10 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Name of the output natural forest gain rate tile
     AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
-    # # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-    # # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    # # Mangrove tiles that have the nodata pixels removed
-    # mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+    # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+    # Mangrove tiles that have the nodata pixels removed
+    mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
     # print "Removing nodata values in mangrove biomass {}".format(tile_id)
     # cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
     # subprocess.check_call(cmd)
