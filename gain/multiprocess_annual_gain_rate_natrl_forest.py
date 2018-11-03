@@ -27,11 +27,11 @@ biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['10N_080W', '00N_070W'] # test tiles
 print biomass_tile_list
 
-# For downloading all tiles in the input folders
-download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
-
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in the input folders
+# download_list = [utilities.age_cat_natrl_forest_dir, utilities.cont_eco_dir, utilities.mangrove_biomass_dir]
+#
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -89,7 +89,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 6
+num_of_processes = 8
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()

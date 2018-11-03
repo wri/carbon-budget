@@ -40,7 +40,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     AGB_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
     # Name of the output natural forest gain rate tile, with mangroves masked out
-    AGB_gain_rate_mangrove_mask = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+    AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
 
     print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
@@ -115,24 +115,24 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # figure out how to get the mask working in numpy for some reason
         print "  Masking mangroves from aboveground gain rate for tile {}".format(tile_id)
         mangrove_mask_calc = '--calc=A*(B==0)'
-        mask_outfilename = AGB_gain_rate_mangrove_mask
+        mask_outfilename = AGB_gain_rate
         mask_outfilearg = '--outfile={}'.format(mask_outfilename)
         cmd = ['gdal_calc.py', '-A', AGB_gain_rate_unmasked, '-B', mangrove_reclass, mangrove_mask_calc, mask_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
+        utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
+
     else:
 
-        AGB_gain_rate_mangrove_mask = AGB_gain_rate_unmasked
-
-    utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
+        utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
     # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
     above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_gain_rate_mangrove_mask, above_to_below_calc, below_outfilearg,
+    cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
