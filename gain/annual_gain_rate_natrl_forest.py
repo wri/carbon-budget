@@ -121,11 +121,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
-        utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
+        # utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
-    else:
+    # else:
 
-        utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
+    utilities.upload_final(utilities.pattern_annual_gain_AGB_natrl_forest, utilities.annual_gain_AGB_natrl_forest_dir, tile_id)
 
     # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
