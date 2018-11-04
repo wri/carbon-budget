@@ -5,9 +5,6 @@ import multiprocessing
 import utilities
 import cumulative_gain_natrl_forest
 
-### Need to update and install some packages on spot machine before running
-### sudo pip install rasterio --upgrade
-
 biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['20S_110E'] # test tiles
