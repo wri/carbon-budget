@@ -74,7 +74,7 @@ annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_
 # Cumulative aboveground gain for natural forests
 pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_2001_15'
 cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_natural_forest/20181104/'
-
+ 
 # Cumulative aboveground gain for mangroves
 pattern_cumul_gain_AGC_mangrove = 'cumul_gain_AGC_t_ha_mangrove_2001_15'
 cumul_gain_AGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_mangrove/20181102/'
