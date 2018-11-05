@@ -5,9 +5,9 @@ import multiprocessing
 import utilities
 import merge_cumulative_annual_gain_all_forest_types
 
-biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
+# biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-# biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
+biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 print biomass_tile_list
 
 # # For downloading all tiles in the input folders
