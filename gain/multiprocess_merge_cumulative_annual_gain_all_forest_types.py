@@ -33,7 +33,7 @@ print biomass_tile_list
 
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 6)
+pool = multiprocessing.Pool(count / 10)
 pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, biomass_tile_list)
 
 # # For single processor use
