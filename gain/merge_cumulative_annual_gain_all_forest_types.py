@@ -30,27 +30,28 @@ def gain_merge(tile_id):
 
         print "{} has mangroves".format(tile_id)
 
-        # # Mangrove biomass tiles that have the nodata pixels removed
-        # mangrove_reclass_AGB = '{0}_reclass_AGB_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
-        #
-        # # Mangrove biomass tiles that have the nodata pixels removed
-        # mangrove_reclass_BGB = '{0}_reclass_BGB_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
-        #
-        # # Mangrove biomass tiles that have the nodata pixels removed
-        # mangrove_reclass_AGC = '{0}_reclass_AGC_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
-        #
-        # # Mangrove biomass tiles that have the nodata pixels removed
-        # mangrove_reclass_BGC = '{0}_reclass_BGC_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+        # Mangrove biomass tiles that have the nodata pixels removed
+        annual_gain_AGB_natrl_forest_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
+        annual_gain_AGB_mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
+        cumul_gain_AGC_natrl_forest_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_natrl_forest, tile_id)
+        cumul_gain_AGC_mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
+        annual_gain_BGB_natrl_forest_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
+        annual_gain_BGB_mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
+        cumul_gain_BGC_natrl_forest_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_natrl_forest, tile_id)
+        cumul_gain_BGC_mangrove_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
 
-        mangrove_tiles = [annual_gain_AGB_natrl_forest, annual_gain_AGB_mangrove, cumul_gain_AGC_natrl_forest, cumul_gain_AGC_mangrove,
+        tiles_in = [annual_gain_AGB_natrl_forest, annual_gain_AGB_mangrove, cumul_gain_AGC_natrl_forest, cumul_gain_AGC_mangrove,
                           annual_gain_BGB_natrl_forest, annual_gain_BGB_mangrove, cumul_gain_BGC_natrl_forest, cumul_gain_BGC_mangrove]
+
+        tiles_out = [annual_gain_AGB_natrl_forest_reclass, annual_gain_AGB_mangrove_reclass, cumul_gain_AGC_natrl_forest_reclass, cumul_gain_AGC_mangrove_reclass,
+                          annual_gain_BGB_natrl_forest_reclass, annual_gain_BGB_mangrove_reclass, cumul_gain_BGC_natrl_forest_reclass, cumul_gain_BGC_mangrove_reclass]
 
         # Removes the nodata values in the tiles because having nodata values kept gdal_calc from properly summing values.
         # The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
         print "  Removing nodata values in all annual and cumulative tiles for {}".format(tile_id)
-        for tile in mangrove_tiles:
+        for in_tile, out_tile in zip(tiles_in, tiles_out):
 
-            cmd = ['gdal_translate', '-a_nodata', 'none', tile, tile]
+            cmd = ['gdal_translate', '-a_nodata', 'none', in_tile, out_tile]
             subprocess.check_call(cmd)
 
         print "Combining annual above and belowground biomass gain rate tiles from different forest types for {}".format(tile_id)
