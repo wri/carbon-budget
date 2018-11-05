@@ -26,7 +26,7 @@ def gain_merge(tile_id):
     cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_natrl_forest, tile_id)
     cumul_gain_BGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
 
-    if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)):
+    if os.path.exists(annual_gain_AGB_mangrove):
 
         print "{} has mangroves".format(tile_id)
 
