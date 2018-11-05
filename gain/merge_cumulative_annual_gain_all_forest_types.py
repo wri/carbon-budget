@@ -58,7 +58,7 @@ def gain_merge(tile_id):
         biomass_rate_sum_calc = '--calc=A+B+C+D'
         rate_sum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id)
         rate_sum_outfilearg = '--outfile={}'.format(rate_sum_outfilename)
-        cmd = ['gdal_calc.py', '-A', annual_gain_AGB_natrl_forest, '-B', annual_gain_AGB_mangrove, '-C', annual_gain_BGB_natrl_forest, '-D', annual_gain_BGB_mangrove,
+        cmd = ['gdal_calc.py', '-A', annual_gain_AGB_natrl_forest_reclass, '-B', annual_gain_AGB_mangrove_reclass, '-C', annual_gain_BGB_natrl_forest_reclass, '-D', annual_gain_BGB_mangrove_reclass,
                biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
@@ -66,7 +66,7 @@ def gain_merge(tile_id):
         biomass_rate_sum_calc = '--calc=A+B+C+D'
         rate_sum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_combo, tile_id)
         rate_sum_outfilearg = '--outfile={}'.format(rate_sum_outfilename)
-        cmd = ['gdal_calc.py', '-A', cumul_gain_AGC_natrl_forest, '-B', cumul_gain_AGC_mangrove, '-C', cumul_gain_BGC_natrl_forest, '-D', cumul_gain_BGC_mangrove,
+        cmd = ['gdal_calc.py', '-A', cumul_gain_AGC_natrl_forest_reclass, '-B', cumul_gain_AGC_mangrove_reclass, '-C', cumul_gain_BGC_natrl_forest_reclass, '-D', cumul_gain_BGC_mangrove_reclass,
                biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
