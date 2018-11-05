@@ -38,6 +38,6 @@ print biomass_tile_list
 
 # For single processor use
 for tile in biomass_tile_list:
-
-    cumulative_gain_all_forest_types.cumulative_annual_gain_merge(tile)
+    
+    merge_cumulative_annual_gain_all_forest_types.gain_merge(tile)
 
