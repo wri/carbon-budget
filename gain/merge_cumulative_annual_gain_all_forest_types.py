@@ -13,22 +13,21 @@ def gain_merge(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the annual gain rate and cumulative gain tiles
+    # Names of the annual gain rate and cumulative gain tiles for non-mangrove natural forests
     annual_gain_AGB_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
-    annual_gain_AGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
-
     cumul_gain_AGC_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_natrl_forest, tile_id)
-    cumul_gain_AGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
-
     annual_gain_BGB_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
-    annual_gain_BGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
-
     cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_natrl_forest, tile_id)
-    cumul_gain_BGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
 
-    if os.path.exists(annual_gain_AGB_mangrove):
+    if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)):
 
         print "{} has mangroves".format(tile_id)
+
+        # Names of the annual gain rate and cumulative gain tiles for mangroves
+        annual_gain_AGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
+        cumul_gain_AGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
+        annual_gain_BGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
+        cumul_gain_BGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
 
         # Mangrove biomass tiles that have the nodata pixels removed
         annual_gain_AGB_natrl_forest_reclass = '{0}_reclass_{1}.tif'.format(utilities.pattern_annual_gain_AGB_natrl_forest, tile_id)
@@ -69,6 +68,10 @@ def gain_merge(tile_id):
         cmd = ['gdal_calc.py', '-A', cumul_gain_AGC_natrl_forest_reclass, '-B', cumul_gain_AGC_mangrove_reclass, '-C', cumul_gain_BGC_natrl_forest_reclass, '-D', cumul_gain_BGC_mangrove_reclass,
                biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
+
+        # Delete intermediate tiles that take up memory
+        for tile in tiles_out:
+            os.remove(tile)
 
     else:
 
