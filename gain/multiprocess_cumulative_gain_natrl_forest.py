@@ -19,9 +19,9 @@ for input in download_list:
 # For copying individual tiles to spot machine for testing
 for tile in biomass_tile_list:
 
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.annual_gain_AGB_natrl_forest_dir, utilities.pattern_annual_gain_AGB_natrl_forest, tile), '.')           # annual AGB gain rate tiles
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.annual_gain_AGB_natrl_forest_dir, utilities.pattern_annual_gain_AGB_natrl_forest, tile), '.')  # annual AGB gain rate tiles
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.annual_gain_BGB_natrl_forest_dir, utilities.pattern_annual_gain_BGB_natrl_forest, tile), '.')  # annual AGB gain rate tiles
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.gain_year_count_natrl_forest_dir, utilities.pattern_gain_year_count_natrl_forest, tile), '.')        # number of years with gain tiles
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.gain_year_count_natrl_forest_dir, utilities.pattern_gain_year_count_natrl_forest, tile), '.')  # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
