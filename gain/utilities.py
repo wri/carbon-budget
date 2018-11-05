@@ -90,7 +90,7 @@ cumul_gain_BGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_ga
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_combo = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_AGC_gain_rate_all_forest_types/20181105/'
+annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_all_forest_types/20181105/'
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
