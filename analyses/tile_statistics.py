@@ -1,13 +1,11 @@
-import utilities
-import subprocess
-import rasterio
+import constants_and_names
 from osgeo import gdal
 import numpy as np
 
 # Calculates a range of tile statistics
 def create_tile_statistics(tile_id):
 
-    tile = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    tile = '{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
 
     print "Calculating tile statistics for {}...".format(tile)
 
@@ -45,6 +43,6 @@ def create_tile_statistics(tile_id):
     print stats_no_brackets
 
     # Adds the tile's statistis to the txt file
-    with open('{0}_{1}.txt'.format(utilities.tile_stats, utilities.pattern_mangrove_biomass), 'a+') as f:
+    with open('{0}_{1}.txt'.format(constants_and_names.tile_stats, constants_and_names.pattern_mangrove_biomass), 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()

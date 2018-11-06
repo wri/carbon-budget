@@ -12,6 +12,7 @@
 from multiprocessing.pool import Pool
 from functools import partial
 import utilities
+import constants_and_names
 import forest_age_category_natrl_forest
 import pandas as pd
 import subprocess
@@ -21,13 +22,13 @@ import subprocess
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
+biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
 
 # For downloading all tiles in the folders
-download_list = [utilities.loss_dir, utilities.gain_dir, utilities.tcd_dir, utilities.ifl_dir, utilities.biomass_dir, utilities.cont_eco_dir]
+download_list = [constants_and_names.loss_dir, constants_and_names.gain_dir, constants_and_names.tcd_dir, constants_and_names.ifl_dir, constants_and_names.biomass_dir, constants_and_names.cont_eco_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -35,19 +36,19 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')                                # loss tiles
-#     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(utilities.gain_dir, tile), '.')            # gain tiles
-#     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(utilities.tcd_dir, tile), '.')    # tcd 2000
-#     utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(utilities.ifl_dir, tile), '.')                    # ifl 2000
-#     utilities.s3_file_download('{0}{1}_biomass.tif'.format(utilities.biomass_dir, tile), '.')                     # biomass 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(utilities.cont_eco_dir, pattern_cont_eco_processed, tile), '.')               # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), '.')                                # loss tiles
+#     utilities.s3_file_download('{0}Hansen_GFC2015_gain_{1}.tif'.format(constants_and_names.gain_dir, tile), '.')            # gain tiles
+#     utilities.s3_file_download('{0}Hansen_GFC2014_treecover2000_{1}.tif'.format(constants_and_names.tcd_dir, tile), '.')    # tcd 2000
+#     utilities.s3_file_download('{0}{1}_res_ifl_2000.tif'.format(constants_and_names.ifl_dir, tile), '.')                    # ifl 2000
+#     utilities.s3_file_download('{0}{1}_biomass.tif'.format(constants_and_names.biomass_dir, tile), '.')                     # biomass 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, pattern_cont_eco_processed, tile), '.')               # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
-cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(utilities.gain_spreadsheet), '.']
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(constants_and_names.gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
-gain_table = pd.read_excel("{}".format(utilities.gain_spreadsheet),
+gain_table = pd.read_excel("{}".format(constants_and_names.gain_spreadsheet),
                            sheet_name = "natrl fores gain, for model")
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)

@@ -3,6 +3,7 @@
 ### gain rate table.
 
 import utilities
+import constants_and_names
 import datetime
 import numpy as np
 import rasterio
@@ -19,13 +20,13 @@ def annual_gain_rate(tile_id, gain_table_dict):
     start = datetime.datetime.now()
 
     # Name of the mangrove biomass tile
-    mangrove_biomass = '{0}_{1}.tif'.format(utilities.pattern_mangrove_biomass, tile_id)
+    mangrove_biomass = '{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
 
     # Name of the continent-ecozone tile
-    cont_eco = '{0}_{1}.tif'.format(utilities.pattern_cont_eco_processed, tile_id)
+    cont_eco = '{0}_{1}.tif'.format(constants_and_names.pattern_cont_eco_processed, tile_id)
 
     # Name of the output mangrove gain rate tile
-    AGB_gain_rate = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
+    AGB_gain_rate = '{0}_{1}.tif'.format(constants_and_names.pattern_annual_gain_AGB_mangrove, tile_id)
 
     print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
 
@@ -78,18 +79,18 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst_above.write_band(1, dst_above_data, window=window)
 
-    utilities.upload_final(utilities.pattern_annual_gain_AGB_mangrove, utilities.annual_gain_AGB_mangrove_dir, tile_id)
+    utilities.upload_final(constants_and_names.pattern_annual_gain_AGB_mangrove, constants_and_names.annual_gain_AGB_mangrove_dir, tile_id)
 
     # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate for {}".format(tile_id)
-    above_to_below_calc = '--calc=(A>0)*A*{}'.format(utilities.above_to_below_mangrove)
-    below_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
+    above_to_below_calc = '--calc=(A>0)*A*{}'.format(constants_and_names.above_to_below_mangrove)
+    below_outfilename = '{0}_{1}.tif'.format(constants_and_names.pattern_annual_gain_BGB_mangrove, tile_id)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(utilities.pattern_annual_gain_BGB_mangrove, utilities.annual_gain_BGB_mangrove_dir, tile_id)
+    utilities.upload_final(constants_and_names.pattern_annual_gain_BGB_mangrove, constants_and_names.annual_gain_BGB_mangrove_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

@@ -18,6 +18,7 @@
 
 import multiprocessing
 import utilities
+import constants_and_names
 import continent_ecozone_tiles
 import subprocess
 
@@ -25,13 +26,13 @@ import subprocess
 ### sudo pip install scipy
 
 # Downloads ecozone shapefile
-utilities.s3_file_download('{}'.format(utilities.cont_eco_zip), '.', )
+utilities.s3_file_download('{}'.format(constants_and_names.cont_eco_zip), '.', )
 
 # Unzips ecozone shapefile
-cmd = ['unzip', utilities.cont_eco_zip]
+cmd = ['unzip', constants_and_names.cont_eco_zip]
 subprocess.check_call(cmd)
 
-biomass_tile_list = utilities.tile_list(utilities.biomass_dir)
+biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E'] # test tile
 print biomass_tile_list
