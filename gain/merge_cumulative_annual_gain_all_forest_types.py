@@ -35,7 +35,7 @@ def gain_merge(tile_id):
 
         if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)):
 
-            print "{} has mangroves".format(tile_id)
+            print "{0} has mangroves. Adding tiles for level {1}.".format(tile_id, level)
 
             # Opens first input tile
             with rasterio.open(in_tiles[level+0]) as gain_AGB_natrl_forest_src:
@@ -79,7 +79,7 @@ def gain_merge(tile_id):
 
         else:
 
-            print "{} does not have mangroves".format(tile_id)
+            print "{0} does not have mangroves. Adding tiles for level {1}.".format(tile_id, level)
 
             # Opens first input tile
             with rasterio.open(in_tiles[level+0]) as gain_AGB_natrl_forest_src:
@@ -170,7 +170,7 @@ def gain_merge(tile_id):
     #     subprocess.check_call(cmd)
 
     utilities.upload_final(utilities.pattern_annual_gain_combo, utilities.annual_gain_combo_dir, tile_id)
-    # utilities.upload_final(utilities.pattern_cumul_gain_combo, utilities.cumul_gain_combo_dir, tile_id)
+    utilities.upload_final(utilities.pattern_cumul_gain_combo, utilities.cumul_gain_combo_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
