@@ -21,18 +21,23 @@ def gain_merge(tile_id):
     annual_gain_BGB_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_natrl_forest, tile_id)
     cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_natrl_forest, tile_id)
 
+    # Names of the annual gain rate and cumulative gain tiles for mangroves.
+    # These names are created even if the tile doesn't have any mangroves.
     annual_gain_AGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)
     cumul_gain_AGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_AGC_mangrove, tile_id)
     annual_gain_BGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
     cumul_gain_BGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
 
+    # These tiles need to be listed in this particular order because of how they are iterated through below.
     in_tiles = [annual_gain_AGB_natrl_forest, cumul_gain_AGC_natrl_forest, annual_gain_AGB_mangrove,  cumul_gain_AGC_mangrove,
                 annual_gain_BGB_natrl_forest, cumul_gain_BGC_natrl_forest, annual_gain_BGB_mangrove,  cumul_gain_BGC_mangrove]
 
     out_tiles = ['{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id), '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_combo, tile_id)]
 
+    # Levels are the annual gain rate and cumulative gain
     for level in range(0, 2):
 
+        # Checks if this tile has any mangroves
         if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)):
 
             print "{0} has mangroves. Adding tiles for level {1}.".format(tile_id, level)
@@ -114,60 +119,6 @@ def gain_merge(tile_id):
                             dst_data = AGB_natrl_forest + BGB_natrl_forest
 
                             dst.write_band(1, dst_data, window=window)
-
-        # Names of the annual gain rate and cumulative gain tiles for mangroves
-
-
-    #     tiles_out = [annual_gain_AGB_natrl_forest_reclass, annual_gain_AGB_mangrove_reclass, cumul_gain_AGC_natrl_forest_reclass, cumul_gain_AGC_mangrove_reclass,
-    #                       annual_gain_BGB_natrl_forest_reclass, annual_gain_BGB_mangrove_reclass, cumul_gain_BGC_natrl_forest_reclass, cumul_gain_BGC_mangrove_reclass]
-    #
-    #     # Removes the nodata values in the tiles because having nodata values kept gdal_calc from properly summing values.
-    #     # The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-    #     print "  Removing nodata values in all annual and cumulative tiles for {}".format(tile_id)
-    #     for in_tile, out_tile in zip(tiles_in, tiles_out):
-    #
-    #         cmd = ['gdal_translate', '-a_nodata', 'none', in_tile, out_tile]
-    #         subprocess.check_call(cmd)
-    #
-    #     print "Combining annual above and belowground biomass gain rate tiles from different forest types for {}".format(tile_id)
-    #     biomass_rate_sum_calc = '--calc=A+B+C+D'
-    #     rate_sum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id)
-    #     rate_sum_outfilearg = '--outfile={}'.format(rate_sum_outfilename)
-    #     cmd = ['gdal_calc.py', '-A', annual_gain_AGB_natrl_forest_reclass, '-B', annual_gain_AGB_mangrove_reclass, '-C', annual_gain_BGB_natrl_forest_reclass, '-D', annual_gain_BGB_mangrove_reclass,
-    #            biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    #     subprocess.check_call(cmd)
-    #
-    #     print "Combining cumulative above and belowground carbon gain tiles from different forest types for {}".format(tile_id)
-    #     biomass_rate_sum_calc = '--calc=A+B+C+D'
-    #     rate_sum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_combo, tile_id)
-    #     rate_sum_outfilearg = '--outfile={}'.format(rate_sum_outfilename)
-    #     cmd = ['gdal_calc.py', '-A', cumul_gain_AGC_natrl_forest_reclass, '-B', cumul_gain_AGC_mangrove_reclass, '-C', cumul_gain_BGC_natrl_forest_reclass, '-D', cumul_gain_BGC_mangrove_reclass,
-    #            biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    #     subprocess.check_call(cmd)
-    #
-    #     # Delete intermediate tiles that take up memory
-    #     for tile in tiles_out:
-    #         os.remove(tile)
-    #
-    # else:
-    #
-    #     print "{} does not have mangroves".format(tile_id)
-    #
-    #     print "Combining annual above and belowground biomass gain rate tiles from different forest types for {}".format(tile_id)
-    #     biomass_rate_sum_calc = '--calc=A+B'
-    #     rate_sum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id)
-    #     rate_sum_outfilearg = '--outfile={}'.format(rate_sum_outfilename)
-    #     cmd = ['gdal_calc.py', '-A', annual_gain_AGB_natrl_forest, '-B', annual_gain_BGB_natrl_forest,
-    #            biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    #     subprocess.check_call(cmd)
-    #
-    #     print "Combining cumulative above and belowground carbon gain tiles from different forest types for {}".format(tile_id)
-    #     biomass_rate_sum_calc = '--calc=A+B'
-    #     rate_sum_outfilename = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_combo, tile_id)
-    #     rate_sum_outfilearg = '--outfile={}'.format(rate_sum_outfilename)
-    #     cmd = ['gdal_calc.py', '-A', cumul_gain_AGC_natrl_forest, '-B', cumul_gain_BGC_natrl_forest,
-    #            biomass_rate_sum_calc, rate_sum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    #     subprocess.check_call(cmd)
 
     utilities.upload_final(utilities.pattern_annual_gain_combo, utilities.annual_gain_combo_dir, tile_id)
     utilities.upload_final(utilities.pattern_cumul_gain_combo, utilities.cumul_gain_combo_dir, tile_id)
