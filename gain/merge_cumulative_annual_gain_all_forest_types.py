@@ -33,7 +33,7 @@ def gain_merge(tile_id):
 
         print "{} has mangroves".format(tile_id)
 
-        # Opens biomass tile
+        # Opens first input tile
         with rasterio.open(annual_gain_AGB_natrl_forest) as annual_gain_AGB_natrl_forest_src:
 
             # Grabs metadata about the tif, like its location/projection/cellsize
@@ -42,11 +42,11 @@ def gain_merge(tile_id):
             # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
             windows = annual_gain_AGB_natrl_forest_src.block_windows(1)
 
-            # Opens gain tile
+            # Opens second input tile
             with rasterio.open(annual_gain_BGB_natrl_forest) as annual_gain_BGB_natrl_forest_src:
-                # Opens ifl tile
+                # Opens third input tile
                 with rasterio.open(annual_gain_AGB_mangrove) as annual_gain_AGB_mangrove_src:
-                    # Opens continent-ecozone combinations tile
+                    # Opens fourth input tile
                     with rasterio.open(annual_gain_BGB_mangrove) as annual_gain_BGB_mangrove_src:
                         # Updates kwargs for the output dataset
                         kwargs.update(
@@ -63,7 +63,7 @@ def gain_merge(tile_id):
                             # Iterates across the windows (1 pixel strips) of the input tile
                             for idx, window in windows:
 
-                                # Creates windows for each input raster
+                                # Creates windows for each input tile
                                 annual_AGB_natrl_forest = annual_gain_AGB_natrl_forest_src.read(1, window=window)
                                 annual_BGB_natrl_forest = annual_gain_BGB_natrl_forest_src.read(1, window=window)
                                 annual_AGB_mangrove = annual_gain_AGB_mangrove_src.read(1, window=window)
@@ -72,6 +72,7 @@ def gain_merge(tile_id):
                                 # # Create a 0s array for the output
                                 # dst_data = np.zeros((window.height, window.width), dtype='float32')
 
+                                # Adds all the input tiles together to get the combined values
                                 dst_data = annual_AGB_natrl_forest + annual_BGB_natrl_forest + annual_AGB_mangrove + annual_BGB_mangrove
 
                                 dst.write_band(1, dst_data, window=window)
@@ -80,7 +81,7 @@ def gain_merge(tile_id):
 
         print "{} does not have mangroves".format(tile_id)
 
-        # Opens biomass tile
+        # Opens first input tile
         with rasterio.open(annual_gain_AGB_natrl_forest) as annual_gain_AGB_natrl_forest_src:
 
             # Grabs metadata about the tif, like its location/projection/cellsize
@@ -89,7 +90,7 @@ def gain_merge(tile_id):
             # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
             windows = annual_gain_AGB_natrl_forest_src.block_windows(1)
 
-            # Opens gain tile
+            # Opens second input tile
             with rasterio.open(annual_gain_BGB_natrl_forest) as annual_gain_BGB_natrl_forest_src:
                 # Updates kwargs for the output dataset
                 kwargs.update(
@@ -102,15 +103,18 @@ def gain_merge(tile_id):
                 # Opens the output tile, giving it the arguments of the input tiles
                 with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id),
                                    'w', **kwargs) as dst:
+
                     # Iterates across the windows (1 pixel strips) of the input tile
                     for idx, window in windows:
-                        # Creates windows for each input raster
+
+                        # Creates windows for each input tile
                         annual_AGB_natrl_forest = annual_gain_AGB_natrl_forest_src.read(1, window=window)
                         annual_BGB_natrl_forest = annual_gain_BGB_natrl_forest_src.read(1, window=window)
 
                         # # Create a 0s array for the output
                         # dst_data = np.zeros((window.height, window.width), dtype='float32')
 
+                        # Adds all the input tiles together to get the combined values
                         dst_data = annual_AGB_natrl_forest + annual_BGB_natrl_forest
 
                         dst.write_band(1, dst_data, window=window)
