@@ -26,98 +26,94 @@ def gain_merge(tile_id):
     annual_gain_BGB_mangrove = '{0}_{1}.tif'.format(utilities.pattern_annual_gain_BGB_mangrove, tile_id)
     cumul_gain_BGC_mangrove = '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_BGC_mangrove, tile_id)
 
-    tiles_in = [annual_gain_AGB_natrl_forest, annual_gain_AGB_mangrove, cumul_gain_AGC_natrl_forest, cumul_gain_AGC_mangrove,
-                annual_gain_BGB_natrl_forest, annual_gain_BGB_mangrove, cumul_gain_BGC_natrl_forest, cumul_gain_BGC_mangrove]
+    in_tiles = [annual_gain_AGB_natrl_forest, cumul_gain_AGC_natrl_forest, annual_gain_AGB_mangrove,  cumul_gain_AGC_mangrove,
+                annual_gain_BGB_natrl_forest, cumul_gain_BGC_natrl_forest, annual_gain_BGB_mangrove,  cumul_gain_BGC_mangrove]
 
-    if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)):
+    out_tiles = ['{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id), '{0}_{1}.tif'.format(utilities.pattern_cumul_gain_combo, tile_id)]
 
-        print "{} has mangroves".format(tile_id)
+    for level in range(0, 2):
 
-        # Opens first input tile
-        with rasterio.open(annual_gain_AGB_natrl_forest) as annual_gain_AGB_natrl_forest_src:
+        if os.path.exists('{0}_{1}.tif'.format(utilities.pattern_annual_gain_AGB_mangrove, tile_id)):
 
-            # Grabs metadata about the tif, like its location/projection/cellsize
-            kwargs = annual_gain_AGB_natrl_forest_src.meta
+            print "{} has mangroves".format(tile_id)
 
-            # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-            windows = annual_gain_AGB_natrl_forest_src.block_windows(1)
+            # Opens first input tile
+            with rasterio.open(in_tiles[level+0]) as gain_AGB_natrl_forest_src:
 
-            # Opens second input tile
-            with rasterio.open(annual_gain_BGB_natrl_forest) as annual_gain_BGB_natrl_forest_src:
-                # Opens third input tile
-                with rasterio.open(annual_gain_AGB_mangrove) as annual_gain_AGB_mangrove_src:
-                    # Opens fourth input tile
-                    with rasterio.open(annual_gain_BGB_mangrove) as annual_gain_BGB_mangrove_src:
-                        # Updates kwargs for the output dataset
-                        kwargs.update(
-                            driver='GTiff',
-                            count=1,
-                            compress='lzw',
-                            nodata=0
-                        )
+                # Grabs metadata about the tif, like its location/projection/cellsize
+                kwargs = gain_AGB_natrl_forest_src.meta
 
-                        # Opens the output tile, giving it the arguments of the input tiles
-                        with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id),
-                                           'w', **kwargs) as dst:
+                # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+                windows = gain_AGB_natrl_forest_src.block_windows(1)
 
-                            # Iterates across the windows (1 pixel strips) of the input tile
-                            for idx, window in windows:
+                # Opens second input tile
+                with rasterio.open(in_tiles[level+4]) as gain_BGB_natrl_forest_src:
+                    # Opens third input tile
+                    with rasterio.open(in_tiles[level+2]) as gain_AGB_mangrove_src:
+                        # Opens fourth input tile
+                        with rasterio.open(in_tiles[level+6]) as gain_BGB_mangrove_src:
+                            # Updates kwargs for the output dataset
+                            kwargs.update(
+                                driver='GTiff',
+                                count=1,
+                                compress='lzw',
+                                nodata=0
+                            )
 
-                                # Creates windows for each input tile
-                                annual_AGB_natrl_forest = annual_gain_AGB_natrl_forest_src.read(1, window=window)
-                                annual_BGB_natrl_forest = annual_gain_BGB_natrl_forest_src.read(1, window=window)
-                                annual_AGB_mangrove = annual_gain_AGB_mangrove_src.read(1, window=window)
-                                annual_BGB_mangrove = annual_gain_BGB_mangrove_src.read(1, window=window)
+                            # Opens the output tile, giving it the arguments of the input tiles
+                            with rasterio.open(out_tiles[level], 'w', **kwargs) as dst:
 
-                                # # Create a 0s array for the output
-                                # dst_data = np.zeros((window.height, window.width), dtype='float32')
+                                # Iterates across the windows (1 pixel strips) of the input tile
+                                for idx, window in windows:
 
-                                # Adds all the input tiles together to get the combined values
-                                dst_data = annual_AGB_natrl_forest + annual_BGB_natrl_forest + annual_AGB_mangrove + annual_BGB_mangrove
+                                    # Creates windows for each input tile
+                                    AGB_natrl_forest = gain_AGB_natrl_forest_src.read(1, window=window)
+                                    BGB_natrl_forest = gain_BGB_natrl_forest_src.read(1, window=window)
+                                    AGB_mangrove = gain_AGB_mangrove_src.read(1, window=window)
+                                    BGB_mangrove = gain_BGB_mangrove_src.read(1, window=window)
 
-                                dst.write_band(1, dst_data, window=window)
+                                    # Adds all the input tiles together to get the combined values
+                                    dst_data = AGB_natrl_forest + BGB_natrl_forest + AGB_mangrove + BGB_mangrove
 
-    else:
+                                    dst.write_band(1, dst_data, window=window)
 
-        print "{} does not have mangroves".format(tile_id)
+        else:
 
-        # Opens first input tile
-        with rasterio.open(annual_gain_AGB_natrl_forest) as annual_gain_AGB_natrl_forest_src:
+            print "{} does not have mangroves".format(tile_id)
 
-            # Grabs metadata about the tif, like its location/projection/cellsize
-            kwargs = annual_gain_AGB_natrl_forest_src.meta
+            # Opens first input tile
+            with rasterio.open(in_tiles[level+0]) as gain_AGB_natrl_forest_src:
 
-            # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-            windows = annual_gain_AGB_natrl_forest_src.block_windows(1)
+                # Grabs metadata about the tif, like its location/projection/cellsize
+                kwargs = gain_AGB_natrl_forest_src.meta
 
-            # Opens second input tile
-            with rasterio.open(annual_gain_BGB_natrl_forest) as annual_gain_BGB_natrl_forest_src:
-                # Updates kwargs for the output dataset
-                kwargs.update(
-                    driver='GTiff',
-                    count=1,
-                    compress='lzw',
-                    nodata=0
-                )
+                # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+                windows = gain_AGB_natrl_forest_src.block_windows(1)
 
-                # Opens the output tile, giving it the arguments of the input tiles
-                with rasterio.open('{0}_{1}.tif'.format(utilities.pattern_annual_gain_combo, tile_id),
-                                   'w', **kwargs) as dst:
+                # Opens second input tile
+                with rasterio.open(in_tiles[level + 4]) as gain_BGB_natrl_forest_src:
+                    # Updates kwargs for the output dataset
+                    kwargs.update(
+                        driver='GTiff',
+                        count=1,
+                        compress='lzw',
+                        nodata=0
+                    )
 
-                    # Iterates across the windows (1 pixel strips) of the input tile
-                    for idx, window in windows:
+                    # Opens the output tile, giving it the arguments of the input tiles
+                    with rasterio.open(out_tiles[level], 'w', **kwargs) as dst:
 
-                        # Creates windows for each input tile
-                        annual_AGB_natrl_forest = annual_gain_AGB_natrl_forest_src.read(1, window=window)
-                        annual_BGB_natrl_forest = annual_gain_BGB_natrl_forest_src.read(1, window=window)
+                        # Iterates across the windows (1 pixel strips) of the input tile
+                        for idx, window in windows:
 
-                        # # Create a 0s array for the output
-                        # dst_data = np.zeros((window.height, window.width), dtype='float32')
+                            # Creates windows for each input tile
+                            AGB_natrl_forest = gain_AGB_natrl_forest_src.read(1, window=window)
+                            BGB_natrl_forest = gain_BGB_natrl_forest_src.read(1, window=window)
 
-                        # Adds all the input tiles together to get the combined values
-                        dst_data = annual_AGB_natrl_forest + annual_BGB_natrl_forest
+                            # Adds all the input tiles together to get the combined values
+                            dst_data = AGB_natrl_forest + BGB_natrl_forest
 
-                        dst.write_band(1, dst_data, window=window)
+                            dst.write_band(1, dst_data, window=window)
 
         # Names of the annual gain rate and cumulative gain tiles for mangroves
 
