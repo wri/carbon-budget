@@ -37,7 +37,7 @@ for input in download_list:
 
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 5)
+pool = multiprocessing.Pool(count / 4)
 pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, biomass_tile_list)
 
 # # For single processor use
