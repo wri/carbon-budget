@@ -11,6 +11,7 @@ import constants_and_names
 ### sudo pip install rasterio --upgrade
 
 biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
+print constants_and_names.biomass_dir
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 # biomass_tile_list = ['40N_120E'] # test tiles
 print biomass_tile_list
