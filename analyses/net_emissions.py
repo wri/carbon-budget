@@ -1,6 +1,7 @@
 ### Calculates the net emissions over the study period, with units of CO2/ha on a pixel-by-pixel basis
 
 import utilities
+import os
 import datetime
 import rasterio
 import subprocess
@@ -66,5 +67,8 @@ def net_calc(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
+
+    os.remove(loss_reclass)
+    os.remove(net_emis)
 
     print "  Processing time for tile", tile_id, ":", elapsed_time
