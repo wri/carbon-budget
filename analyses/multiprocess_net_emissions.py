@@ -4,7 +4,7 @@ import multiprocessing
 import utilities
 import net_emissions
 import sys
-sys.path.insert(0, './carbon-budget')
+sys.path.append('../')
 import constants_and_names
 
 ### Need to update and install some packages on spot machine before running

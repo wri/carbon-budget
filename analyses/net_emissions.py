@@ -4,7 +4,7 @@ import utilities
 import datetime
 import rasterio
 import sys
-sys.path.insert(0, './carbon-budget')
+sys.path.append('../')
 import constants_and_names
 
 def net_calc(tile_id):
