@@ -1,9 +1,11 @@
 ### Calculates the net emissions over the study period, with units of CO2/ha on a pixel-by-pixel basis
 
 import utilities
-import constants_and_names
 import datetime
 import rasterio
+import sys
+sys.path.insert(0, '~/carbon-budget')
+import constants_and_names
 
 def net_calc(tile_id):
 
