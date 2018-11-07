@@ -33,19 +33,22 @@ def tile_list(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            # For stripping down standard tree biomass tiles to the tile id
-            if '_biomass.tif' in tile_name:
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
 
-                tile_short_name = tile_name.replace('_biomass.tif', '')
-                file_list = file_list[1:]
+                # For stripping down standard tree biomass tiles to the tile id
+                if '_biomass.tif' in tile_name:
 
-            # For stripping down mangrove biomass tiles to the tile id
-            if constants_and_names.pattern_mangrove_biomass in tile_name:
+                    tile_short_name = tile_name.replace('_biomass.tif', '')
+                    file_list.append(tile_short_name)
 
-                tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_mangrove_biomass), '')
-                tile_short_name = tile_short_name.replace('.tif', '')
-                file_list.append(tile_short_name)
-                file_list = file_list[0:]
+                # For stripping down mangrove biomass tiles to the tile id
+                if constants_and_names.pattern_mangrove_biomass in tile_name:
+
+                    tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_mangrove_biomass), '')
+                    tile_short_name = tile_short_name.replace('.tif', '')
+                    file_list.append(tile_short_name)
+                    file_list = file_list[0:]
 
     return file_list
 
