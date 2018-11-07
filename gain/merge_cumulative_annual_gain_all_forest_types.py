@@ -3,10 +3,11 @@
 
 import utilities
 import datetime
-import subprocess
 import os
-import constants_and_names
 import rasterio
+import sys
+sys.path.append('../')
+import constants_and_names
 
 def gain_merge(tile_id):
 

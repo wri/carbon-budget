@@ -8,9 +8,11 @@
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_mangrove.py must be changed.
 
 import utilities
-import constants_and_names
 import subprocess
 import datetime
+import sys
+sys.path.append('../')
+import constants_and_names
 
 def create_gain_year_count(tile_id):
 

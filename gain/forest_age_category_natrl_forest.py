@@ -8,10 +8,12 @@
 ### The forest age category tiles are inputs for assigning gain rates to pixels.
 
 import utilities
-import constants_and_names
 import datetime
 import numpy as np
 import rasterio
+import sys
+sys.path.append('../')
+import constants_and_names
 
 def forest_age_category(tile_id, gain_table_dict):
 

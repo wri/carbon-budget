@@ -9,8 +9,10 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import gain_year_count_mangrove
+import sys
+sys.path.append('../')
+import constants_and_names
 
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because

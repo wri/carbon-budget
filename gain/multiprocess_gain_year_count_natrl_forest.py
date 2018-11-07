@@ -8,8 +8,10 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import gain_year_count_natrl_forest
+import sys
+sys.path.append('../')
+import constants_and_names
 
 # The list of tiles to iterate through
 biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)

@@ -2,9 +2,11 @@
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion.
 
 import utilities
-import constants_and_names
 import datetime
 import subprocess
+import sys
+sys.path.append('../')
+import constants_and_names
 
 
 def cumulative_gain(tile_id):

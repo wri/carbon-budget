@@ -11,10 +11,12 @@
 from multiprocessing.pool import Pool
 from functools import partial
 import utilities
-import constants_and_names
 import annual_gain_rate_natrl_forest
 import pandas as pd
 import subprocess
+import sys
+sys.path.append('../')
+import constants_and_names
 
 pd.options.mode.chained_assignment = None
 

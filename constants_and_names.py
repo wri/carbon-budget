@@ -106,8 +106,8 @@ pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
 cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_forest_types/20181105/'
 
 # Net emissions for all forest types and all carbon pools
-pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_2001_15'
-net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types/20181106/'
+pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
+net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181106/'
 
 
 # Tile statistics output txt file core name

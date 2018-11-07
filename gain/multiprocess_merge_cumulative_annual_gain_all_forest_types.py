@@ -3,8 +3,10 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import merge_cumulative_annual_gain_all_forest_types
+import sys
+sys.path.append('../')
+import constants_and_names
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade

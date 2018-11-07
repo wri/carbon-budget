@@ -1,6 +1,8 @@
-import constants_and_names
 from osgeo import gdal
 import numpy as np
+import sys
+sys.path.append('../')
+import constants_and_names
 
 # Calculates a range of tile statistics
 def create_tile_statistics(tile_id):

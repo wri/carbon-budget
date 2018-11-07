@@ -18,9 +18,11 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import continent_ecozone_tiles
 import subprocess
+import sys
+sys.path.append('../')
+import constants_and_names
 
 ### sudo pip install rasterio --upgrade
 ### sudo pip install scipy

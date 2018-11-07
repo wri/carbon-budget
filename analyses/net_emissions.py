@@ -3,6 +3,7 @@
 import utilities
 import datetime
 import rasterio
+import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -18,6 +19,11 @@ def net_calc(tile_id):
     gain_in = '{0}_{1}.tif'.format(constants_and_names.pattern_cumul_gain_combo, tile_id)
     loss_in = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_emissions_total)
 
+    print "Removing nodata values in emissions tile", tile_id
+    loss_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_emissions_total)
+    cmd = ['gdal_translate', '-a_nodata', 'none', loss_in, loss_reclass]
+    subprocess.check_call(cmd)
+
     # Output net emissions file
     net_emis = '{0}_{1}.tif'.format(constants_and_names.pattern_net_emis, tile_id)
 
@@ -31,7 +37,7 @@ def net_calc(tile_id):
         windows = gain_src.block_windows(1)
 
         # Opens loss tile
-        with rasterio.open(loss_in) as loss_src:
+        with rasterio.open(loss_reclass) as loss_src:
             kwargs.update(
                 driver='GTiff',
                 count=1,

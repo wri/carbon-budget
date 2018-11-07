@@ -12,10 +12,12 @@
 from multiprocessing.pool import Pool
 from functools import partial
 import utilities
-import constants_and_names
 import forest_age_category_natrl_forest
 import pandas as pd
 import subprocess
+import sys
+sys.path.append('../')
+import constants_and_names
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade

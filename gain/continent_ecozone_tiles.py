@@ -16,10 +16,12 @@
 ### This maneuver provides the necessary continent-ecozone information to assign gain rates.
 
 import utilities
-import constants_and_names
 import rasterio
 import numpy as np
 from scipy import stats
+import sys
+sys.path.append('../')
+import constants_and_names
 
 def create_continent_ecozone_tiles(tile_id):
 

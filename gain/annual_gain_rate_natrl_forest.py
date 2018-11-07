@@ -9,12 +9,14 @@
 ### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate, again according to IPCC tables.
 
 import utilities
-import constants_and_names
 import datetime
 import numpy as np
 import rasterio
 import subprocess
 import os
+import sys
+sys.path.append('../')
+import constants_and_names
 
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)

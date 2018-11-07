@@ -2,9 +2,11 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import tile_statistics
 import subprocess
+import sys
+sys.path.append('../')
+import constants_and_names
 
 # Creates list of mangrove biomass tiles to iterate through
 mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)

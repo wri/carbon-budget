@@ -3,8 +3,10 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import cumulative_gain_natrl_forest
+import sys
+sys.path.append('../')
+import constants_and_names
 
 biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
