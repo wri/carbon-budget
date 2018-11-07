@@ -31,7 +31,7 @@ for tile in biomass_tile_list:
 # pool = multiprocessing.Pool(count / 4)
 # pool.map(net_emissions.net_calc, biomass_tile_list)
 
-# For single processor use
-for tile in biomass_tile_list:
-
-    net_emissions.net_calc(tile)
+# # For single processor use
+# for tile in biomass_tile_list:
+#
+#     net_emissions.net_calc(tile)

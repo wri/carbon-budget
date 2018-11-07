@@ -19,9 +19,11 @@ def net_calc(tile_id):
     gain_in = '{0}_{1}.tif'.format(constants_and_names.pattern_cumul_gain_combo, tile_id)
     loss_in = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_emissions_total)
 
+    # Emissions nodata values are currently -9999, which messes up the net calculation. This converts the
+    # emissions nodata values to nothing so that they aren't part of the net calculation.
     print "Removing nodata values in emissions tile", tile_id
     loss_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_emissions_total)
-    cmd = ['gdal_translate', '-a_nodata', 'none', loss_in, loss_reclass]
+    cmd = ['gdalwarp', '-srcnonodata', '-9999', '-dstnodata', 'none', '-overwrite', loss_in, loss_reclass]
     subprocess.check_call(cmd)
 
     # Output net emissions file
