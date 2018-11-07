@@ -2,8 +2,10 @@
 
 import multiprocessing
 import utilities
-import constants_and_names
 import net_emissions
+import sys
+sys.path.insert(0, '~/carbon-budget')
+import constants_and_names
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
