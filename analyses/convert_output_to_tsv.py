@@ -62,20 +62,20 @@ for tile in biomass_tile_list:
 
     print "Joining net emissions and tcd2000"
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'netEmis_tcd2000', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     print "Joining gross emissions and tcd2000 and tree cover loss"
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'grossEmis_tcd2000_treeCoverLoss', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     print "Joining annual gain and tcd2000"
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'annualGain_tcd2000', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     print "Joining cumulative gain and tcd2000"
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'cumulGain_tcd2000', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
