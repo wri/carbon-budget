@@ -10,10 +10,10 @@ import constants_and_names
 ### git clone https://github.com/wri/carbon-budget
 
 ### need to install some files beforehand
-### sudo apt install nco
 ### sudo pip install xarray
 ### sudo pip install scipy
 ### sudo pip install netcdf4
+### sudo apt install nco
 
 print "Making list of biomass tiles..."
 # biomass_tile_list = list_tiles()
@@ -49,12 +49,12 @@ for tile in biomass_tile_list:
 
     print "Processing tile", tile
 
-    net_emis = '{0}_{1}.tif'.format(constants_and_names.pattern_net_emis, tile)
-    gross_emis = '{0}_{1}.tif'.format(tile, constants_and_names.pattern_emissions_total)
-    annual_gain = '{0}_{1}.tif'.format(constants_and_names.pattern_annual_gain_combo, tile)
-    cumul_gain = '{0}_{1}.tif'.format(constants_and_names.pattern_cumul_gain_combo, tile)
-    tcd = '{0}_{1}.tif'.format(constants_and_names.pattern_tcd, tile)
-    tcl = '{0}.tif'.format(tile)
+    net_emis = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_net_emis, tile)
+    gross_emis = '{0}{1}_{2}.tif'.format(local_dir, tile, constants_and_names.pattern_emissions_total)
+    annual_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_annual_gain_combo, tile)
+    cumul_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_cumul_gain_combo, tile)
+    tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
+    tcl = '{0}{1}.tif'.format(local_dir, tile)
 
     ras_cwd = r'/home/ubuntu/raster-to-tsv'
 
