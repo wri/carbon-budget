@@ -44,7 +44,7 @@ local_dir = r'/home/ubuntu/data/'
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), local_dir)  # tree cover density
 #     utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), local_dir)  # tree cover loss
 
-out_locn = 'gfw2-data/climate/carbon_model/test_output_tsvs/'
+out_locn = 's3://gfw2-data/climate/carbon_model/test_output_tsvs/'
 
 # Iterates through tiles to convert them to tsvs
 for tile in biomass_tile_list:
