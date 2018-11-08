@@ -34,15 +34,15 @@ local_dir = r'/home/ubuntu/data/'
 #     utilities.s3_folder_download('{}'.format(input), local_dir)
 
 
-# # For copying individual tiles to spot machine for testing
-# for tile in biomass_tile_list:
-#
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.net_emis_dir, constants_and_names.pattern_net_emis, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.emissions_total_dir, tile, constants_and_names.pattern_emissions_total), local_dir)  # emissions from all drivers
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_combo_dir, constants_and_names.pattern_annual_gain_combo, tile), local_dir)  # annual gain rate
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_combo_dir, constants_and_names.pattern_cumul_gain_combo, tile), local_dir)  # cumulative gain
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), local_dir)  # tree cover density
-#     utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), local_dir)  # tree cover loss
+# For copying individual tiles to spot machine for testing
+for tile in biomass_tile_list:
+
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.net_emis_dir, constants_and_names.pattern_net_emis, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.emissions_total_dir, tile, constants_and_names.pattern_emissions_total), local_dir)  # emissions from all drivers
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_combo_dir, constants_and_names.pattern_annual_gain_combo, tile), local_dir)  # annual gain rate
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_combo_dir, constants_and_names.pattern_cumul_gain_combo, tile), local_dir)  # cumulative gain
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), local_dir)  # tree cover density
+    utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), local_dir)  # tree cover loss
 
 out_locn = 's3://gfw2-data/climate/carbon_model/test_output_tsvs/'
 
@@ -60,18 +60,22 @@ for tile in biomass_tile_list:
 
     ras_cwd = r'/home/ubuntu/raster-to-tsv'
 
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'netEmis_tcd2000', '--separate']
-    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
+    # print "Joining net emissions and tcd2000"
+    # ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(out_locn)]
+    # ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'netEmis_tcd2000', '--separate']
+    # subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
+    #
+    # print "Joining gross emissions and tcd2000 and tree cover loss"
+    # ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(out_locn)]
+    # ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'grossEmis_tcd2000_treeCoverLoss', '--separate']
+    # subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'grossEmis_tcd2000_treeCoverLoss', '--separate']
-    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
-
+    print "Joining annual gain and tcd2000"
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(out_locn)]
     ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'annualGain_tcd2000', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'cumulGain_tcd2000', '--separate']
-    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
+    # print "Joining cumulative gain and tcd2000"
+    # ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(out_locn)]
+    # ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'area', '--prefix', 'cumulGain_tcd2000', '--separate']
+    # subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
