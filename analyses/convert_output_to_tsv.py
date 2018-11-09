@@ -1,5 +1,6 @@
+### Joins tiles from the model together and converts them to tsvs so that they can be put through Hadoop
+### for zonal statistics
 
-import os
 import utilities
 import subprocess
 import sys
@@ -7,25 +8,17 @@ sys.path.append('../')
 import constants_and_names
 
 ### git clone https://github.com/wri/raster-to-tsv
-
 ### git pull https://github.com/wri/raster-to-tsv float_output
-
 ### git clone https://github.com/wri/carbon-budget
-
 ### cd carbon-budget/analyses/
-
-### need to install some files beforehand
-### sudo pip install xarray
-### sudo pip install scipy
-### sudo pip install netcdf4
-### sudo apt install nco
 
 print "Making list of biomass tiles..."
 # biomass_tile_list = list_tiles()
-# biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
-biomass_tile_list = ['00N_000E'] # test tiles
+biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
+# biomass_tile_list = ['00N_000E'] # test tiles
 print "  Biomass tile list retrieved. There are", len(biomass_tile_list), "biomass tiles total."
 
+# Input files will be downloaded to here
 local_dir = r'/home/ubuntu/data/'
 
 # # For downloading all tiles in the input folders
@@ -49,11 +42,12 @@ for tile in biomass_tile_list:
 
 out_locn = 's3://gfw2-data/climate/carbon_model/test_output_tsvs/'
 
-# Iterates through tiles to convert them to tsvs
+# Iterates through tiles to join the desired rasters and convert them to tsvs
 for tile in biomass_tile_list:
 
     print "Processing tile", tile
 
+    # Names of the files that are used for this analysis
     net_emis = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_net_emis, tile)
     gross_emis = '{0}{1}_{2}.tif'.format(local_dir, tile, constants_and_names.pattern_emissions_total)
     annual_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_annual_gain_combo, tile)
@@ -61,24 +55,25 @@ for tile in biomass_tile_list:
     tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
     tcl = '{0}{1}.tif'.format(local_dir, tile)
 
+    # Location of write-tsv.py
     ras_cwd = r'/home/ubuntu/raster-to-tsv'
 
-    print "Joining net emissions and tcd2000"
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000', '--separate']
-    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
-
-    print "Joining annual gain and tcd2000"
+    print "Joining annual gain and tcd2000 for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(out_locn)]
     ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
-    print "Joining cumulative gain and tcd2000"
+    print "Joining cumulative gain and tcd2000 for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(out_locn)]
     ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
-    print "Joining gross emissions and tcd2000 and tree cover loss"
+    print "Joining net emissions and tcd2000 and tree cover loss for", tile
+    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, tcl, '--s3-output', '{}netEmis_tcd2000_tcl/'.format(out_locn)]
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_treeCoverLoss', '--separate']
+    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
+
+    print "Joining gross emissions and tcd2000 and tree cover loss for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(out_locn)]
     ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss', '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
