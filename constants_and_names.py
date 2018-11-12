@@ -1,6 +1,10 @@
 
 ##### Constants
 
+
+# Number of biomass tiles
+biomass_tile_count = 315
+
 # Biomass to carbon ratio
 biomass_to_c = 0.5
 
@@ -12,7 +16,25 @@ above_to_below_mangrove = 0.608
 
 ##### File names and directories
 
-pattern_emissions_total = 'disturbance_model'
+pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
+fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
+pattern_fao_ecozone_processed = 'res_fao_ecozones_bor_tem_tro'
+fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/'
+
+precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
+pattern_precip = 'res_precip'
+precip_processed_dir = 's3://gfw2-data/gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/'
+
+soil_C_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
+pattern_soil_C = 'soil'
+soil_C_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/soil/'
+
+srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
+pattern_srtm = 'res_srtm'
+srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/srtm/'
+
+
+pattern_emissions_total = 'gross_emissions_t_CO2_ha'
 emissions_total_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model/'
 
 # Spreadsheet with annual gain rates
