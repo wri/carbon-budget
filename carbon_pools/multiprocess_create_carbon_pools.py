@@ -1,27 +1,49 @@
-import subprocess
 import create_carbon_pools
 import multiprocessing
-import util
-import os
 import sys
 sys.path.append('../')
 import constants_and_names
+import universal_util
 
+# tile_list = universal_util.tile_list(constants_and_names.biomass_dir)
+tile_list = ['10N_080W', '40N_120E'] # test tiles
+print tile_list
 
-# Run this if creating carbon pool files and the data inputs don't exist
-# this copies down raw data and makes a vrt of SRTM then calls the other code which will
-# create the the data inputs and use those to write carbon pool files
-
+# For downloading all tiles in the input folders
 input_files = [
+    constants_and_names.biomass_dir,
     constants_and_names.fao_ecozone_processed_dir,
     constants_and_names.precip_processed_dir,
-    constants_and_names.soil_C_dir
+    constants_and_names.soil_C_dir,
+    constants_and_names.cumul_gain_AGC_mangrove_dir,
+    constants_and_names.cumul_gain_AGC_natrl_forest_dir
     ]
+
+for input in input_files:
+    universal_util.s3_folder_download('{}'.format(input), '.')
+
+# For copying individual tiles to spot machine for testing
+for tile in tile_list:
+
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir,
+                                                            constants_and_names.pattern_biomass, tile), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.fao_ecozone_processed_dir, tile,
+                                                            constants_and_names.pattern_fao_ecozone_processed), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.precip_processed_dir, tile,
+                                                            constants_and_names.pattern_precip), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.soil_C_dir, tile,
+                                                            constants_and_names.pattern_soil_C), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.srtm_processed_dir, tile,
+                                                            constants_and_names.pattern_srtm), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_mangrove_dir,
+                                                            constants_and_names.pattern_cumul_gain_AGC_mangrove, tile), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_natrl_forest_dir,
+                                                            constants_and_names.pattern_cumul_gain_AGC_natrl_forest, tile), '.')
 
 tile_count = []
 for i, input in enumerate(input_files):
 
-    tile_count[i] = util.count_tiles(input)
+    tile_count[i] = universal_util.count_tiles(input)
 
 print "The number of tiles for each input to the carbon pools is", tile_count
 
@@ -29,27 +51,10 @@ if len(set(tile_count)) > 0 & tile_count[0] == constants_and_names.biomass_tile_
 
     print "Input tiles for carbon pool generation do not exist. Creating them now..."
 
-    for file in input_files:
-        cmd = ['aws', 's3', 'cp', file, '.']
-        subprocess.check_call(cmd)
+    exit()
 
-    print "unzip eco zones"
-    unzip_zones = ['unzip', '{}'.format(constants_and_names.pattern_fao_ecozone_raw), '-d', '.']
-    subprocess.check_call(unzip_zones)
-
-    print "copy srtm files"
-    copy_srtm = ['aws', 's3', 'sync', constants_and_names.srtm_raw_dir, './srtm']
-    subprocess.check_call(copy_srtm)
-
-    print "make srtm vrt"
-    subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
-
-    print " Done creating inputs for carbon tile generation"
-
-biomass_tile_list = util.tile_list(constants_and_names.biomass_dir)
-
-print biomass_tile_list
+print "Creating carbon pools"
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/3)
-pool.map(create_carbon_pools.create_carbon_pools, biomass_tile_list)
+pool.map(create_carbon_pools.create_carbon_pools, tile_list)

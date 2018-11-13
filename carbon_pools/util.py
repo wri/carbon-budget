@@ -80,22 +80,3 @@ def tile_list(source):
     file_list = file_list[1:]
 
     return file_list
-
-# Lists the tiles in a folder in s3
-def count_tiles(source):
-
-    ## For an s3 folder in a bucket using AWSCLI
-    # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
-
-    # Writes the output string to a text file for easier interpretation
-    tile_file = open("tiles.txt", "w")
-    tile_file.write(stdout)
-    tile_file.close()
-
-    i=0
-    with open(tile_file) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1

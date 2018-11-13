@@ -41,6 +41,7 @@ emissions_total_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/2018
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
 
 # Woods Hole biomass 2000 version 4 tiles
+pattern_biomass = "biomass"
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Lola Fatoyinbo aboveground mangrove biomass tiles
