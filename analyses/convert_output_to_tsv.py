@@ -93,7 +93,7 @@ for tile in biomass_tile_list:
     gross_emis = '{0}{1}_{2}.tif'.format(local_dir, tile, constants_and_names.pattern_emissions_total)
     tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
     tcl = '{0}{1}.tif'.format(local_dir, tile)
-    
+
     print "Joining gross emissions and tcd2000 and tree cover loss for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(constants_and_names.tsv_output_dir)]
     ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss_{}'.format(tile), '--separate']
