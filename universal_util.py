@@ -1,4 +1,5 @@
 import subprocess
+import constants_and_names
 
 
 # Lists the tiles in a folder in s3
