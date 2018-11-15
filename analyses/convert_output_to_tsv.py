@@ -14,8 +14,8 @@ import constants_and_names
 
 print "Making list of biomass tiles..."
 # biomass_tile_list = list_tiles()
-biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
-# biomass_tile_list = ['00N_000E'] # test tiles
+# biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
+biomass_tile_list = ['00N_000E'] # test tiles
 print "  Biomass tile list retrieved. There are", len(biomass_tile_list), "biomass tiles total."
 
 # Input files will be downloaded to here
@@ -59,21 +59,24 @@ for tile in biomass_tile_list:
     ras_cwd = r'/home/ubuntu/raster-to-tsv'
 
     print "Joining annual gain and tcd2000 for", tile
+    # # Code to run write-tsv.py directly on one annual gain tile
+    # python write-tsv.py --datasets annual_gain_rate_AGB_BGB_t_ha_all_forest_types_00N_000E.tif Hansen_GFC2014_treecover2000_00N_000E.tif - -s3 - output
+    # s3://gfw2-data/climate/carbon_model/test_output_tsvs/annualGain_tcd2000_v2/ --threads 3 --csv-process emissions_gain --prefix annualGain_tcd2000_00N_000E --separate
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     print "Joining cumulative gain and tcd2000 for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
-    print "Joining net emissions and tcd2000 and tree cover loss for", tile
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, tcl, '--s3-output', '{}netEmis_tcd2000_tcl/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_treeCoverLoss', '--separate']
+    print "Joining net emissions and tcd2000", tile
+    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(out_locn)]
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     print "Joining gross emissions and tcd2000 and tree cover loss for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(out_locn)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss', '--separate']
+    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
