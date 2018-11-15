@@ -6,15 +6,16 @@ import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names
+import universal_util
 
 ### git clone https://github.com/wri/raster-to-tsv
 ### git clone https://github.com/wri/carbon-budget
 ### cd carbon-budget/analyses/
 
 print "Making list of biomass tiles..."
-# biomass_tile_list = list_tiles()
+biomass_tile_list = universal_util.tile_list(constants_and_names.biomass_dir)
 # biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
-biomass_tile_list = ['00N_000E'] # test tiles
+# biomass_tile_list = ['00N_000E'] # test tiles
 print "  Biomass tile list retrieved. There are", len(biomass_tile_list), "biomass tiles total."
 
 # Input files will be downloaded to here
