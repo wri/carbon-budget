@@ -34,7 +34,7 @@ pattern_srtm = 'res_srtm'
 srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/srtm/'
 
 
-pattern_emissions_total = 'gross_emissions_t_CO2_ha'
+pattern_emissions_total = 'disturbance_model'
 emissions_total_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model/'
 
 # Spreadsheet with annual gain rates
