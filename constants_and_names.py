@@ -34,8 +34,8 @@ pattern_srtm = 'res_srtm'
 srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/srtm/'
 
 
-pattern_emissions_total = 'disturbance_model'
-emissions_total_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model/'
+pattern_gross_emissions = 'disturbance_model'
+gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model/'
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
@@ -133,7 +133,7 @@ pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
 net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
 
 
-tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181115/'
+tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181116/'
 
 # Tile statistics output txt file core name
 tile_stats = 'tile_stats'

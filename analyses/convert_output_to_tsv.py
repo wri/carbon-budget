@@ -24,7 +24,7 @@ local_dir = r'/home/ubuntu/data/'
 
 # For downloading all tiles in the input folders
 download_list = [constants_and_names.net_emis_dir,
-                 constants_and_names.emissions_total_dir,
+                 constants_and_names.gross_emissions_dir,
                  constants_and_names.annual_gain_combo_dir,
                  constants_and_names.cumul_gain_combo_dir,
                  # constants_and_names.loss_dir,
@@ -41,30 +41,30 @@ ras_cwd = r'/home/ubuntu/raster-to-tsv'
 # for tile in biomass_tile_list:
 #
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.net_emis_dir, constants_and_names.pattern_net_emis, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.emissions_total_dir, tile, constants_and_names.pattern_emissions_total), local_dir)  # emissions from all drivers
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gross_emissions_dir, tile, constants_and_names.pattern_gross_emissions), local_dir)  # emissions from all drivers
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_combo_dir, constants_and_names.pattern_annual_gain_combo, tile), local_dir)  # annual gain rate
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_combo_dir, constants_and_names.pattern_cumul_gain_combo, tile), local_dir)  # cumulative gain
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), local_dir)  # tree cover density
 #     utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), local_dir)  # tree cover loss
 
-# Iterates through annual gain tiles to join the tcd rasters and convert them to tsvs
-for tile in biomass_tile_list:
-
-    print "Processing annual gain for biomass tile", tile
-
-    # Names of the files that are used for this analysis
-    annual_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_annual_gain_combo, tile)
-    tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
-
-    print "Joining annual gain and tcd2000 for", tile
-    # # Code to run write-tsv.py directly on one annual gain tile
-    # python write-tsv.py --datasets annual_gain_rate_AGB_BGB_t_ha_all_forest_types_00N_000E.tif Hansen_GFC2014_treecover2000_00N_000E.tif --s3-output
-    # s3://gfw2-data/climate/carbon_model/test_output_tsvs/annualGain_tcd2000_v2/ --threads 3 --csv-process emissions_gain --prefix annualGain_tcd2000_00N_000E --separate
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000_{}'.format(tile), '--separate']
-    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
-
-    os.remove(annual_gain)
+# # Iterates through annual gain tiles to join the tcd rasters and convert them to tsvs
+# for tile in biomass_tile_list:
+#
+#     print "Processing annual gain for biomass tile", tile
+#
+#     # Names of the files that are used for this analysis
+#     annual_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_annual_gain_combo, tile)
+#     tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
+#
+#     print "Joining annual gain and tcd2000 for", tile
+#     # # Code to run write-tsv.py directly on one annual gain tile
+#     # python write-tsv.py --datasets annual_gain_rate_AGB_BGB_t_ha_all_forest_types_00N_000E.tif Hansen_GFC2014_treecover2000_00N_000E.tif --s3-output
+#     # s3://gfw2-data/climate/carbon_model/test_output_tsvs/annualGain_tcd2000_v2/ --threads 3 --csv-process emissions_gain --prefix annualGain_tcd2000_00N_000E --separate
+#     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
+#     ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000_{}'.format(tile), '--separate']
+#     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
+#
+#     os.remove(annual_gain)
 
 # Iterates through cumulative gain tiles to join the tcd rasters and convert them to tsvs
 for tile in biomass_tile_list:
@@ -101,7 +101,7 @@ for tile in biomass_tile_list:
 #     print "Processing gross emissions for tile", tile
 #
 #     # Names of the files that are used for this analysis
-#     gross_emis = '{0}{1}_{2}.tif'.format(local_dir, tile, constants_and_names.pattern_emissions_total)
+#     gross_emis = '{0}{1}_{2}.tif'.format(local_dir, tile, constants_and_names.pattern_gross_emissions)
 #     tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
 #     tcl = '{0}{1}.tif'.format(local_dir, tile)
 #

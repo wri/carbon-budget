@@ -17,7 +17,7 @@ print constants_and_names.biomass_dir
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
-download_list = [constants_and_names.cumul_gain_combo_dir, constants_and_names.emissions_total_dir]
+download_list = [constants_and_names.cumul_gain_combo_dir, constants_and_names.gross_emissions_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -26,7 +26,7 @@ for input in download_list:
 # for tile in biomass_tile_list:
 #
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_combo_dir, constants_and_names.pattern_cumul_gain_combo, tile), '.')  # cumulative aboveand belowground carbon gain for all forest types
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.emissions_total_dir, tile, constants_and_names.pattern_emissions_total), '.')  # emissions from all drivers
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gross_emissions_dir, tile, constants_and_names.pattern_gross_emissions), '.')  # emissions from all drivers
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 6)
