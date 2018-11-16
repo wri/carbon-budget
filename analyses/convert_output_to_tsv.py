@@ -24,9 +24,9 @@ local_dir = r'/home/ubuntu/data/'
 
 # For downloading all tiles in the input folders
 download_list = [constants_and_names.net_emis_dir,
-                 constants_and_names.gross_emissions_dir,
-                 constants_and_names.annual_gain_combo_dir,
-                 constants_and_names.cumul_gain_combo_dir,
+                 # constants_and_names.gross_emissions_dir,
+                 # constants_and_names.annual_gain_combo_dir,
+                 # constants_and_names.cumul_gain_combo_dir,
                  # constants_and_names.loss_dir,
                  constants_and_names.tcd_dir]
 
