@@ -16,7 +16,7 @@ import universal_util
 print "Making list of biomass tiles..."
 # biomass_tile_list = universal_util.tile_list(constants_and_names.biomass_dir)
 # biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
-biomass_tile_list = ['00N_140W'] # test tiles
+biomass_tile_list = ['00N_140W', '00N_000E'] # test tiles
 print "  Biomass tile list retrieved. There are", len(biomass_tile_list), "biomass tiles total."
 
 # Input files will be downloaded to here
@@ -63,7 +63,7 @@ for tile in biomass_tile_list:
     # python write-tsv.py --datasets annual_gain_rate_AGB_BGB_t_ha_all_forest_types_00N_000E.tif Hansen_GFC2014_treecover2000_00N_000E.tif --s3-output
     # s3://gfw2-data/climate/carbon_model/test_output_tsvs/annualGain_tcd2000_v2/ --threads 3 --csv-process emissions_gain --prefix annualGain_tcd2000_00N_000E --separate
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', '{}_annualGain_tcd2000'.format(tile), '--separate']
+    ras_to_vec_cmd += ['--threads', '25', '--csv-process', 'emissions_gain', '--prefix', '{}_annualGain_tcd2000'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     os.remove(annual_gain)
