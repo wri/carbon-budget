@@ -61,7 +61,7 @@ for tile in biomass_tile_list:
     # python write-tsv.py --datasets annual_gain_rate_AGB_BGB_t_ha_all_forest_types_00N_000E.tif Hansen_GFC2014_treecover2000_00N_000E.tif --s3-output
     # s3://gfw2-data/climate/carbon_model/test_output_tsvs/annualGain_tcd2000_v2/ --threads 3 --csv-process emissions_gain --prefix annualGain_tcd2000_00N_000E --separate
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', annual_gain, tcd, '--s3-output', '{}annualGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000_{}'.format(tile), '--separate']
+    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'annualGain_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     os.remove(annual_gain)
@@ -76,7 +76,7 @@ for tile in biomass_tile_list:
 
     print "Joining cumulative gain and tcd2000 for", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000_{}'.format(tile), '--separate']
+    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     os.remove(cumul_gain)
@@ -91,7 +91,7 @@ for tile in biomass_tile_list:
 
     print "Joining net emissions and tcd2000", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_{}'.format(tile), '--separate']
+    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     os.remove(net_emis)
@@ -107,7 +107,7 @@ for tile in biomass_tile_list:
 #
 #     print "Joining gross emissions and tcd2000 and tree cover loss for", tile
 #     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', gross_emis, tcd, tcl, '--s3-output', '{}grossEmis_tcd2000_tcl/'.format(constants_and_names.tsv_output_dir)]
-#     ras_to_vec_cmd += ['--threads', '20', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss_{}'.format(tile), '--separate']
+#     ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'grossEmis_tcd2000_treeCoverLoss_{}'.format(tile), '--separate']
 #     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 #
 #     os.remove(gross_emis)
