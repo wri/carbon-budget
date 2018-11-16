@@ -24,15 +24,15 @@ local_dir = r'/home/ubuntu/data/'
 
 # For downloading all tiles in the input folders
 download_list = [
-                 # constants_and_names.annual_gain_combo_dir,
+                 constants_and_names.annual_gain_combo_dir,
                  # constants_and_names.cumul_gain_combo_dir,
                  # constants_and_names.net_emis_dir,
                  # constants_and_names.gross_emissions_dir,
                  # constants_and_names.loss_dir,
                  constants_and_names.tcd_dir]
 
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), local_dir)
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), local_dir)
 
 
 # Location of write-tsv.py
