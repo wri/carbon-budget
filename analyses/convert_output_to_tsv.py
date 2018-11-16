@@ -30,8 +30,8 @@ download_list = [constants_and_names.net_emis_dir,
                  # constants_and_names.loss_dir,
                  constants_and_names.tcd_dir]
 
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), local_dir)
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), local_dir)
 
 
 # Location of write-tsv.py
@@ -91,7 +91,7 @@ for tile in biomass_tile_list:
 
     print "Joining net emissions and tcd2000", tile
     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', net_emis, tcd, '--s3-output', '{}netEmis_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_{}'.format(tile), '--separate']
+    ras_to_vec_cmd += ['--threads', '25', '--csv-process', 'emissions_gain', '--prefix', 'netEmis_tcd2000_{}'.format(tile), '--separate']
     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
 
     os.remove(net_emis)
