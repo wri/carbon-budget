@@ -30,8 +30,8 @@ download_list = [constants_and_names.net_emis_dir,
                  # constants_and_names.loss_dir,
                  constants_and_names.tcd_dir]
 
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), local_dir)
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), local_dir)
 
 
 # Location of write-tsv.py
@@ -66,20 +66,20 @@ ras_cwd = r'/home/ubuntu/raster-to-tsv'
 #
 #     os.remove(annual_gain)
 
-# Iterates through cumulative gain tiles to join the tcd rasters and convert them to tsvs
-for tile in biomass_tile_list:
-    print "Processing cumulative gain for tile", tile
-
-    # Names of the files that are used for this analysis
-    cumul_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_cumul_gain_combo, tile)
-    tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
-
-    print "Joining cumulative gain and tcd2000 for", tile
-    ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
-    ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000_{}'.format(tile), '--separate']
-    subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
-
-    os.remove(cumul_gain)
+# # Iterates through cumulative gain tiles to join the tcd rasters and convert them to tsvs
+# for tile in biomass_tile_list:
+#     print "Processing cumulative gain for tile", tile
+#
+#     # Names of the files that are used for this analysis
+#     cumul_gain = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_cumul_gain_combo, tile)
+#     tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
+#
+#     print "Joining cumulative gain and tcd2000 for", tile
+#     ras_to_vec_cmd = ['python', 'write-tsv.py', '--datasets', cumul_gain, tcd, '--s3-output', '{}cumulGain_tcd2000/'.format(constants_and_names.tsv_output_dir)]
+#     ras_to_vec_cmd += ['--threads', '15', '--csv-process', 'emissions_gain', '--prefix', 'cumulGain_tcd2000_{}'.format(tile), '--separate']
+#     subprocess.check_call(ras_to_vec_cmd, cwd=ras_cwd)
+#
+#     os.remove(cumul_gain)
 
 # Iterates through net emissions tiles to join the tcd rasters and convert them to tsvs
 for tile in biomass_tile_list:
