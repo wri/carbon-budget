@@ -1,5 +1,6 @@
 ### Joins tiles from the model together and converts them to tsvs so that they can be put through Hadoop
-### for zonal statistics
+### for zonal statistics. This does not call multiprocessor because the write-tsv.py script can use
+### use multiple processors at once.
 
 import utilities
 import subprocess
@@ -29,7 +30,8 @@ download_list = [
                  # constants_and_names.net_emis_dir,
                  constants_and_names.gross_emissions_dir,
                  constants_and_names.loss_dir,
-                 constants_and_names.tcd_dir]
+                 constants_and_names.tcd_dir
+                 ]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), local_dir)
