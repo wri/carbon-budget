@@ -252,9 +252,9 @@ for(x=0; x<xsize; x++)
 		float outdata2 = 0;  // shifting ag.
 		float outdata1 = 0;  // deforestation/conversion
 		float outdata3 = 0;  // forestry
-		float outdata5 = 0;  // total of all drivers
+		float outdata5 = 0;  // urbanization
 		float outdata6 = 0;  // no disturbance driver
-		float outdata10 = 0;  // urbanization
+		float outdata10 = 0;  // total of all drivers
 		float outdata20 = 0;  // flowchart node
 
 		// float outdata4 = -9999;

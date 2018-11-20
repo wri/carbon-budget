@@ -13,7 +13,7 @@ def del_tiles(tile_id):
 
 
 def upload_final(upload_dir, tile_id):
-    files = ['disturbance_model', 'shiftingag_model', 'forestry_model', 'wildfire_model', 'deforestation_model', 'urbanization_model', 'node_totals']
+    files = ['disturbance_model_t_CO2_ha', 'shiftingag_model_t_CO2_ha', 'forestry_model_t_CO2_ha', 'wildfire_model_t_CO2_ha', 'deforestation_model_t_CO2_ha', 'urbanization_model_t_CO2_ha', 'node_totals_reclass']
     for f in files:
         to_upload = "outdata/{0}_{1}.tif".format(tile_id, f)
         print "uploading {}".format(to_upload)
@@ -123,3 +123,16 @@ def tile_list(source):
             file_list.append(tile_short_name)
 
     return file_list
+
+
+def remove_nodata(tile_id):
+    print "Removing nodata values in output tiles"
+    files = ['disturbance_model', 'shiftingag_model', 'forestry_model', 'wildfire_model', 'deforestation_model', 'urbanization_model']
+    for f in files:
+        to_process = "outdata/{0}_{1}.tif".format(tile_id, f)
+        out_reclass = "outdata/{0}_{1}_t_CO2_ha"
+        cmd = ['gdal_translate', '-a_nodata', 'none', to_process, out_reclass]
+        subprocess.check_call(cmd)
+
+    cmd = ['gdal_translate', '-a_nodata', 'none', "outdata/{0}_node_totals.tif".format(tile_id), "outdata/{0}_node_totals_reclass.tif".format(tile_id)]
+    subprocess.check_call(cmd)

@@ -34,9 +34,12 @@ def calc_emissions(tile_id):
 
     print 'tile writing completed'
 
+    # Removes no data pixels from raster-- I HAVEN'T TESTED THIS YET
+    utilities.remove_nodata(tile_id)
+
     # Upload tiles to s3
     print 'Uploading tiles to s3'
-    output_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828'
+    output_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20181117'
     utilities.upload_final(output_dir, tile_id)
     
     # Delete input tiles from spot machine. I don't think this is actually deleting the tiles at this point.

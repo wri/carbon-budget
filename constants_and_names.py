@@ -133,7 +133,7 @@ pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
 net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
 
 
-tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181116/'
+tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181119/'
 
 # Tile statistics output txt file core name
 tile_stats = 'tile_stats'
