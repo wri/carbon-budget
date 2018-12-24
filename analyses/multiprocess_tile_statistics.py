@@ -4,7 +4,6 @@ import multiprocessing
 import utilities
 import tile_statistics
 import subprocess
-import universal_util
 from functools import partial
 import sys
 sys.path.append('../')
@@ -40,7 +39,7 @@ f.close()
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
+pool = multiprocessing.Pool(processes=count/4)
 pool.map(tile_statistics.create_tile_statistics, tile_list)
 
 # # For single processor use
