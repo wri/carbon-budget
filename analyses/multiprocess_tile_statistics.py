@@ -9,20 +9,20 @@ sys.path.append('../')
 import constants_and_names
 
 # Creates list of mangrove biomass tiles to iterate through
-mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)
-# mangrove_biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
+# mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)
+mangrove_biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # mangrove_biomass_tile_list = ['20S_110E', '00N_000E'] # test tile
 print mangrove_biomass_tile_list
 
-# For downloading all tiles in the folders
-download_list = [constants_and_names.mangrove_biomass_dir]
+# # For downloading all tiles in the folders
+# download_list = [constants_and_names.mangrove_biomass_dir]
+#
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
-
-# # For copying individual tiles to spot machine for testing
-# for tile in mangrove_biomass_tile_list:
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
+# For copying individual tiles to spot machine for testing
+for tile in mangrove_biomass_tile_list:
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
