@@ -6,9 +6,9 @@ sys.path.append('../')
 import constants_and_names
 
 # Calculates a range of tile statistics
-def create_tile_statistics(tile_id):
+def create_tile_statistics(tile):
 
-    tile = '{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
+    # tile = '{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
 
     print "Calculating tile statistics for {}...".format(tile)
 
@@ -29,7 +29,7 @@ def create_tile_statistics(tile_id):
     stats = [None] * 11
 
     # Calculates the statistics
-    stats[0] = tile_id
+    stats[0] = "tile_id"
     stats[1] = tile
     stats[2] = tile_array_flat_mask.size
     stats[3] = np.mean(tile_array_flat_mask, dtype=np.float64)

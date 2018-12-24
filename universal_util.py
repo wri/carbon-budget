@@ -47,6 +47,35 @@ def tile_list(source):
     return file_list
 
 
+# Lists the tiles on the spot machine
+def tile_list_spot_machine(source):
+
+    ## For an s3 folder in a bucket using AWSCLI
+    # Captures the list of the files in the folder
+    out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+
+    # Writes the output string to a text file for easier interpretation
+    biomass_tiles = open("tiles.txt", "w")
+    biomass_tiles.write(stdout)
+    biomass_tiles.close()
+
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open("tiles.txt", 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
+
+                file_list.append(tile_name)
+
+    return file_list
+
+
 # Counts the number of tiles in a folder in s3
 def count_tiles(source):
 

@@ -1,6 +1,7 @@
 ###
 
 import multiprocessing
+import universal_util
 import utilities
 import tile_statistics
 import subprocess
@@ -11,8 +12,8 @@ import constants_and_names
 
 # Creates list of tiles to iterate through
 # mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)
-tile_list = ["00N_000E", "00N_050W"] # test tiles
-print tile_list
+download_tile_list = ["00N_000E", "00N_050W"] # test tiles
+print download_tile_list
 
 # # For downloading all tiles in the folders
 # download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
@@ -21,7 +22,7 @@ print tile_list
 #     utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
-# for tile in tile_list:
+# for tile in download_tile_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
 
@@ -31,6 +32,8 @@ print tile_list
 headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max']
 header_no_brackets = ', '.join(headers)
+
+tile_list = universal_util.tile_list_spot_machine(".")
 
 # Creates the output text file with the column names
 with open(constants_and_names.tile_stats, 'w+') as f:
