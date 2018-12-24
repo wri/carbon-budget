@@ -15,15 +15,15 @@ tile_list = ["00N_000E", "00N_050W"] # test tiles
 print tile_list
 
 # # For downloading all tiles in the folders
-# download_list = [constants_and_names.mangrove_biomass_dir]
+# download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
 #
 # for input in download_list:
 #     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
+# # For copying individual tiles to spot machine for testing
+# for tile in tile_list:
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
 
 
 # The column names for the tile summary statistics.
@@ -39,7 +39,7 @@ f.close()
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
+pool = multiprocessing.Pool(processes=count/8)
 pool.map(tile_statistics.create_tile_statistics, tile_list)
 
 # # For single processor use
