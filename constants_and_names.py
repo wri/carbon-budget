@@ -1,3 +1,5 @@
+import universal_util
+
 
 ##### Constants
 
@@ -133,7 +135,7 @@ pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
 net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
 
 # Tile summary spreadsheets
-tile_stats = 'tile_stats'
+tile_stats = 'tile_stats_{}.txt'.format(universal_util.date)
 tile_stats_dir = 's3://gfw2-data/climate/carbon_model/tile_stats/'
 
 

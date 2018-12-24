@@ -5,13 +5,14 @@ import utilities
 import tile_statistics
 import subprocess
 import universal_util
+from functools import partial
 import sys
 sys.path.append('../')
 import constants_and_names
 
 # Creates list of tiles to iterate through
 # mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)
-tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E"] # test tiles
+tile_list = ["00N_000E", "00N_050W"] # test tiles
 print tile_list
 
 # # For downloading all tiles in the folders
@@ -33,7 +34,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 header_no_brackets = ', '.join(headers)
 
 # Creates the output text file with the column names
-with open('{0}_{1}.txt'.format(constants_and_names.tile_stats, constants_and_names.pattern_mangrove_biomass), 'w+') as f:
+with open(constants_and_names.tile_stats, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
 f.close()
 
@@ -47,5 +48,5 @@ pool.map(tile_statistics.create_tile_statistics, tile_list)
 #     tile_statistics.create_tile_statistics(tile)
 
 # Copies the text file to the location on s3 that the tiles are from
-cmd = ['aws', 's3', 'cp', '{0}_{1}.txt'.format(constants_and_names.tile_stats, universal_util.date), constants_and_names.tile_stats_dir]
+cmd = ['aws', 's3', 'cp', constants_and_names.tile_stats, constants_and_names.tile_stats_dir]
 subprocess.check_call(cmd)

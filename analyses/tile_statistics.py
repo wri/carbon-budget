@@ -46,6 +46,6 @@ def create_tile_statistics(tile_id):
     print stats_no_brackets
 
     # Adds the tile's statistis to the txt file
-    with open('{0}_{1}.txt'.format(constants_and_names.tile_stats, universal_util.date), 'a+') as f:
+    with open(constants_and_names.tile_stats, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()
