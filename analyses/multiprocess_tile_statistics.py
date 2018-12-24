@@ -1,10 +1,10 @@
-###
+### This script calculates various statistics on all tiles in input folders and saves them to a txt.
+### Users can input as many folders as they want for calculating statistics on each tile
 
 import multiprocessing
 import utilities
 import tile_statistics
 import subprocess
-from functools import partial
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -19,11 +19,11 @@ import universal_util
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
 
-# For downloading all tiles in selected folders
-download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
-
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in selected folders
+# download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
+#
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
