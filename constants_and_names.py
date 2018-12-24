@@ -132,8 +132,18 @@ cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_
 pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
 net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
 
+# Tile summary spreadsheets
+tile_stats = 'tile_stats'
+tile_stats_dir = 's3://gfw2-data/climate/carbon_model/tile_stats/'
 
+
+# Locations of tsvs from model output
 tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181119/'
 
-# Tile statistics output txt file core name
-tile_stats = 'tile_stats'
+# Location of raw Hadoop output
+hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
+
+# Location of processed (cumsummed) Hadoop output
+hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
+hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
+

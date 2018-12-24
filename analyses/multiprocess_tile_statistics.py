@@ -45,5 +45,5 @@ pool.map(tile_statistics.create_tile_statistics, mangrove_biomass_tile_list)
 #     tile_statistics.create_tile_statistics(tile)
 
 # Copies the text file to the location on s3 that the tiles are from
-cmd = ['aws', 's3', 'cp', '{0}_{1}.txt'.format(constants_and_names.tile_stats, constants_and_names.pattern_mangrove_biomass), constants_and_names.mangrove_biomass_dir]
+cmd = ['aws', 's3', 'cp', '{0}_{1}.txt'.format(constants_and_names.tile_stats, constants_and_names.pattern_mangrove_biomass), constants_and_names.tile_stats_dir]
 subprocess.check_call(cmd)

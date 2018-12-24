@@ -1,13 +1,12 @@
-
 # # Charlie's general directions for how to join the plantation growth rate table to the plantation geodatabase and
-# # make it into 10x10 tiles. From a Slack conversation with Liz Goldman on 11/7/18.
+# # make it into 10x10 tiles. From a Slack conversation with Charlie and Liz on 11/7/18.
 # so if it were me, i would do something like this
 # ```1. start giant spot
 # 2. ogr2ogr GDB --> postGIS database to append everything
 # 3. add Liz's growth rate lookup table, join to the global plantations table
 # 4. use gdal_rasterize to make your 10x10 tiles```
-
-### Getting geodatabase into a single PostGIS table
+#
+# ## Getting geodatabase into a single PostGIS table
 # # Copy zipped plantation gdb and growth rate table to spot machine
 # aws s3 cp s3://gfw2-data/climate/carbon_model/plantations/raw/ . --recursive
 #
@@ -24,7 +23,7 @@
 # # Get a list of all feature classes in the geodatabase and save it as a txt
 # ogrinfo plantations_merged_single.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v cmr | grep -v Open | sed -e 's/ //g' > out.txt
 #
-# # Make sure the tables are listed in the txt
+# # Make sure all the country tables are listed in the txt
 # more out.txt
 #
 # # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
@@ -33,7 +32,7 @@
 # # To check how many rows are in the table of all plantations
 # SELECT COUNT(*) FROM all_plant;
 #
-# Charlie used Pandas to remove the unnecessary columns from the growth table. Saved the csv with just final_id and growth to filtered.csv
+# Charlie used Pandas on the spot machine to remove the unnecessary columns from the growth table. I don’t have steps for that. Saved the csv with just final_id and growth to filtered.csv
 #
 # # Export growth rate table from Pandas to Postgres
 # >>> import pandas as pd
@@ -41,13 +40,17 @@
 # >>> from sqlalchemy import create_engine
 # >>> engine = create_engine('postgresql://ubuntu@localhost')
 # >>> df.to_sql('filtered', engine)
-
+#
+# # I’m not sure this is actually the right join to use because of the column issues when I tried doing this before.
+# # Need to look up various other SQL joins and check the results of this and others using psql \d+ growth;
 # CREATE TABLE growth AS SELECT all_plant.wkb_geometry, filtered.final_id, filtered.growth FROM all_plant LEFT OUTER JOIN filtered ON all_plant.final_id = filtered.final_id;
-
-# # Reading a table from Postgres into Pandas
+#
+# # Check that join is correct
+# psql \d+ growth;
+# SELECT COUNT(*) FROM growth;   # Should be the same number of rows as in all_plant
+#
+# ### General code tip: Reading a table from Postgres into Pandas
 # >>> from sqlalchemy import create_engine                                                                                                                              │·····················
 # >>> engine = create_engine('postgresql://ubuntu@localhost')                                                                                                           │·····················
 # >>> all_plant = pd.read_sql(con=engine, 'SELECT final_id FROM all_plant')
 # growth = pd.read_sql('SELECT final_id FROM growth', con=engine)
-
-
