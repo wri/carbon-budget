@@ -32,6 +32,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 header_no_brackets = ', '.join(headers)
 
 tile_list = universal_util.tile_list_spot_machine(".")
+tile_list = ['00N_070W_biomass.tif']
 print tile_list
 
 # Creates the output text file with the column names
@@ -39,14 +40,14 @@ with open(constants_and_names.tile_stats, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
 f.close()
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/6)
-pool.map(tile_statistics.create_tile_statistics, tile_list)
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/6)
+# pool.map(tile_statistics.create_tile_statistics, tile_list)
 
-# # For single processor use
-# for tile in mangrove_biomass_tile_list:
-#     tile_statistics.create_tile_statistics(tile)
+# For single processor use
+for tile in tile_list:
+    tile_statistics.create_tile_statistics(tile)
 
 # Copies the text file to the location on s3 that the tiles are from
 cmd = ['aws', 's3', 'cp', constants_and_names.tile_stats, constants_and_names.tile_stats_dir]
