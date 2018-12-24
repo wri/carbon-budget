@@ -21,9 +21,9 @@ import universal_util
 
 # For downloading all tiles in selected folders
 download_list = [
-                 constants_and_names.pixel_area_dir
-                 ,constants_and_names.mangrove_biomass_dir
-                 # ,constants_and_names.biomass_dir
+                 # constants_and_names.pixel_area_dir
+                 # ,constants_and_names.mangrove_biomass_dir
+                 constants_and_names.biomass_dir
 ]
 
 for input in download_list:
