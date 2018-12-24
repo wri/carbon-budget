@@ -33,8 +33,9 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
            'percentile75', 'percentile90', 'min', 'max', 'sum']
 header_no_brackets = ', '.join(headers)
 
-tile_list = universal_util.tile_list_spot_machine(".")
+# tile_list = universal_util.tile_list_spot_machine(".")
 # tile_list = ['00N_070W_biomass.tif']
+tile_list = download_tile_list
 print tile_list
 
 # Creates the output text file with the column names
