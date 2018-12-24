@@ -2,7 +2,6 @@
 ### Users can input as many folders as they want for calculating statistics on each tile
 
 import multiprocessing
-import utilities
 import tile_statistics
 import subprocess
 import sys
@@ -10,25 +9,28 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# # Creates list of tiles to iterate through, for testing
-# download_tile_list = ["00N_000E", "00N_050W"] # test tiles
-# print download_tile_list
-#
-# # For copying individual tiles to spot machine for testing
-# for tile in download_tile_list:
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
+# Creates list of tiles to iterate through, for testing
+download_tile_list = ["00N_000E", "00N_050W"] # test tiles
+print download_tile_list
+
+# For copying individual tiles to spot machine for testing
+for tile in download_tile_list:
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
 
 # # For downloading all tiles in selected folders
-# download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
+# download_list = [constants_and_names.pixel_area_dir,
+#                  constants_and_names.mangrove_biomass_dir,
+#                  constants_and_names.biomass_dir]
 #
 # for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+#     universal_util.s3_folder_download('{}'.format(input), '.')
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
 headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
-           'percentile75', 'percentile90', 'min', 'max']
+           'percentile75', 'percentile90', 'min', 'max', 'sum']
 header_no_brackets = ', '.join(headers)
 
 tile_list = universal_util.tile_list_spot_machine(".")

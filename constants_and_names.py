@@ -10,7 +10,11 @@ biomass_tile_count = 315
 # Biomass to carbon ratio
 biomass_to_c = 0.5
 
+# Carbon to CO2 ratio
 c_to_co2 = 3.67
+
+# m2 per hectare
+m2_per_ha = 100 * 100
 
 # Aboveground to belowground biomass ratios
 above_to_below_natrl_forest = 0.26
@@ -138,6 +142,9 @@ net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_typ
 tile_stats = 'tile_stats_{}.txt'.format(universal_util.date)
 tile_stats_dir = 's3://gfw2-data/climate/carbon_model/tile_stats/'
 
+# The area of each pixel in m^2
+pattern_pixel_area = 'hanson_2013_area_00N_000E.tif'
+pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Locations of tsvs from model output
 tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181119/'

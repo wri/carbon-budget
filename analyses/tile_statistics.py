@@ -1,5 +1,6 @@
 from osgeo import gdal
 import numpy as np
+import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -10,14 +11,15 @@ def create_tile_statistics(tile):
 
     print "Calculating tile statistics for {}...".format(tile)
 
+    # Extracts the tile id from the full tile name
     tile_id = universal_util.get_tile_id(tile)
 
     # Source: http://gis.stackexchange.com/questions/90726
-    # Opens raster and chooses band to find statistics
-    gtif = gdal.Open(tile)
+    # Opens raster we're getting statistics on
+    focus_tile = gdal.Open(tile)
 
     # Turns the raster into a numpy array
-    tile_array = np.array(gtif.GetRasterBand(1).ReadAsArray())
+    tile_array = np.array(focus_tile.GetRasterBand(1).ReadAsArray())
 
     # Flattens the numpy array to a single dimension
     tile_array_flat = tile_array.flatten()
@@ -25,8 +27,40 @@ def create_tile_statistics(tile):
     # Removes 0s from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
 
+    # Removes -9999 from the array
+    tile_array_flat_mask = tile_array_flat_mask[tile_array_flat_mask != -9999]
+
+
+    # Tile with the area of each pixel in m2
+    area_tile = '{0}_{1}.tif'.format(constants_and_names.pattern_pixel_area, tile_id)
+
+    # Output file name
+    outname = '{}_value_per_pixel.tif'.format(tile_id)
+
+    # Equation argument for converting emissions from per hectare to per pixel.
+    # First, multiplies the per hectare emissions by the area of the pixel in m2, then divides by the number of m2 in a hectare.
+    calc = '--calc=A*B/{}'.format(constants_and_names.m2_per_ha)
+
+    # Argument for outputting file
+    out = '--outfile={}'.format(outname)
+
+    print "Converting {} from /ha to /pixel...".format(tile_id)
+    cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
+           '--overwrite']
+    subprocess.check_call(cmd)
+    print "  {} converted...".format(tile_id)
+
+    # Opens raster with value per pixel
+    value_per_pixel = gdal.Open(outname)
+
+    # Turns the pixel area raster into a numpy array
+    value_per_pixel_array = np.array(value_per_pixel.GetRasterBand(1).ReadAsArray())
+
+    # Flattens the pixel area numpy array to a single dimension
+    value_per_pixel_array_flat = value_per_pixel_array.flatten()
+
     # Empty statistics list
-    stats = [None] * 11
+    stats = [None] * 12
 
     # Calculates the statistics
     stats[0] = tile_id
@@ -40,6 +74,7 @@ def create_tile_statistics(tile):
     stats[8] = np.percentile(tile_array_flat_mask, 90)
     stats[9] = np.amin(tile_array_flat_mask)
     stats[10] = np.amax(tile_array_flat_mask)
+    stats[11] = np.sum(value_per_pixel_array_flat)
 
     stats_no_brackets = ', '.join(map(str, stats))
 
