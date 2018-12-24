@@ -50,7 +50,7 @@ f.close()
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/8)
+pool = multiprocessing.Pool(processes=5)
 pool.map(tile_statistics.create_tile_statistics, tile_list)
 
 # # For single processor use
