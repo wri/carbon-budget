@@ -9,10 +9,10 @@ import universal_util
 # Calculates a range of tile statistics
 def create_tile_statistics(tile):
 
-    print "Calculating tile statistics for {}...".format(tile)
-
     # Extracts the tile id from the full tile name
     tile_id = universal_util.get_tile_id(tile)
+
+    print "Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id)
 
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster we're getting statistics on
