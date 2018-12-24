@@ -24,13 +24,11 @@ def create_tile_statistics(tile):
     # Flattens the numpy array to a single dimension
     tile_array_flat = tile_array.flatten()
 
-    # Removes 0s from the array
+    # Removes NoData values from the array
     tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
-
-    # Removes -9999 from the array
     tile_array_flat_mask = tile_array_flat_mask[tile_array_flat_mask != -9999]
 
-
+    ### For converting value/hectare to value/pixel
     # Tile with the area of each pixel in m2
     area_tile = '{0}_{1}.tif'.format(constants_and_names.pattern_pixel_area, tile_id)
 
@@ -50,7 +48,7 @@ def create_tile_statistics(tile):
     subprocess.check_call(cmd)
     print "{} converted".format(tile)
 
-    print "Summing pixels for {}...".format(tile)
+    print "Converting value/pixel tile {} to numpy array...".format(tile)
     # Opens raster with value per pixel
     value_per_pixel = gdal.Open(outname)
 
@@ -60,7 +58,7 @@ def create_tile_statistics(tile):
     # Flattens the pixel area numpy array to a single dimension
     value_per_pixel_array_flat = value_per_pixel_array.flatten()
 
-    print "Summed pixels for {}".format(tile)
+    print "Converted {} to numpy array".format(tile)
 
     # Empty statistics list
     stats = [None] * 12

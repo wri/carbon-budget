@@ -20,14 +20,16 @@ import universal_util
 #     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
 
 # For downloading all tiles in selected folders
-# download_list = [
-                 # constants_and_names.pixel_area_dir
-                 # ,constants_and_names.mangrove_biomass_dir
+download_list = [
+                 constants_and_names.pixel_area_dir
+                 ,constants_and_names.mangrove_biomass_dir
                  # ,constants_and_names.biomass_dir
-# ]
-#
-# for input in download_list:
-#     universal_util.s3_folder_download('{}'.format(input), '.')
+]
+
+sys.quit()
+
+for input in download_list:
+    universal_util.s3_folder_download('{}'.format(input), '.')
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
