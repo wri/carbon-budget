@@ -34,7 +34,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 header_no_brackets = ', '.join(headers)
 
 # tile_list = universal_util.tile_list_spot_machine(".")
-tile_list = ['00N_070W_biomass.tif']
+tile_list = ['00N_000E_biomass.tif']
 # tile_list = download_tile_list
 print tile_list
 

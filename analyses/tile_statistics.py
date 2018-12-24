@@ -44,12 +44,13 @@ def create_tile_statistics(tile):
     # Argument for outputting file
     out = '--outfile={}'.format(outname)
 
-    print "Converting {} from /ha to /pixel...".format(tile_id)
+    print "Converting {} from /ha to /pixel...".format(tile)
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
            '--overwrite']
     subprocess.check_call(cmd)
-    print "  {} converted...".format(tile_id)
+    print "{} converted".format(tile)
 
+    print "Summing pixels for {}...".format(tile)
     # Opens raster with value per pixel
     value_per_pixel = gdal.Open(outname)
 
@@ -58,6 +59,8 @@ def create_tile_statistics(tile):
 
     # Flattens the pixel area numpy array to a single dimension
     value_per_pixel_array_flat = value_per_pixel_array.flatten()
+
+    print "Summed pixels for {}".format(tile)
 
     # Empty statistics list
     stats = [None] * 12
