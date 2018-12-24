@@ -19,12 +19,11 @@ import universal_util
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
 
-# For downloading all tiles in the folders
+# For downloading all tiles in selected folders
 download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
-
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
@@ -42,7 +41,7 @@ f.close()
 
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/8)
+pool = multiprocessing.Pool(processes=count/6)
 pool.map(tile_statistics.create_tile_statistics, tile_list)
 
 # # For single processor use

@@ -8,8 +8,6 @@ import universal_util
 # Calculates a range of tile statistics
 def create_tile_statistics(tile):
 
-    # tile = '{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
-
     print "Calculating tile statistics for {}...".format(tile)
 
     tile_id = universal_util.get_tile_id(tile)
