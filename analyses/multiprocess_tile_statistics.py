@@ -19,15 +19,15 @@ import universal_util
 #     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
 #     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
 
-# For downloading all tiles in selected folders
-download_list = [
-                 # constants_and_names.pixel_area_dir
-                 # ,constants_and_names.mangrove_biomass_dir
-                 constants_and_names.biomass_dir
-]
-
-for input in download_list:
-    universal_util.s3_folder_download('{}'.format(input), '.')
+# # For downloading all tiles in selected folders
+# download_list = [
+#                  constants_and_names.pixel_area_dir
+#                  ,constants_and_names.mangrove_biomass_dir
+#                  ,constants_and_names.biomass_dir
+# ]
+#
+# for input in download_list:
+#     universal_util.s3_folder_download('{}'.format(input), '.')
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
@@ -35,7 +35,8 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
            'percentile75', 'percentile90', 'min', 'max', 'sum']
 header_no_brackets = ', '.join(headers)
 
-# List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles from gdal_calc)
+# List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
+# (in case this script was already run on this spot machine and created output from gdal_calc)
 tile_list = universal_util.tile_list_spot_machine(".")
 # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
 tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
