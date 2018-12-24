@@ -10,21 +10,20 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# Creates list of tiles to iterate through
-# mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)
-download_tile_list = ["00N_000E", "00N_050W"] # test tiles
-print download_tile_list
-
-# # For downloading all tiles in the folders
-# download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
+# # Creates list of tiles to iterate through, for testing
+# download_tile_list = ["00N_000E", "00N_050W"] # test tiles
+# print download_tile_list
 #
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
-
 # # For copying individual tiles to spot machine for testing
 # for tile in download_tile_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')      # mangrove biomass tiles
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
+
+# For downloading all tiles in the folders
+download_list = [constants_and_names.mangrove_biomass_dir, constants_and_names.biomass_dir]
+
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 
 # The column names for the tile summary statistics.
