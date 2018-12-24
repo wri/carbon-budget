@@ -1,7 +1,6 @@
 ###
 
 import multiprocessing
-import universal_util
 import utilities
 import tile_statistics
 import subprocess
@@ -9,6 +8,7 @@ from functools import partial
 import sys
 sys.path.append('../')
 import constants_and_names
+import universal_util
 
 # Creates list of tiles to iterate through
 # mangrove_biomass_tile_list = utilities.tile_list(constants_and_names.mangrove_biomass_dir)

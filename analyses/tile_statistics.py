@@ -1,6 +1,5 @@
 from osgeo import gdal
 import numpy as np
-import universal_util
 import sys
 sys.path.append('../')
 import constants_and_names
