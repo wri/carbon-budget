@@ -1,5 +1,6 @@
 from osgeo import gdal
 import numpy as np
+import universal_util
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -45,6 +46,6 @@ def create_tile_statistics(tile_id):
     print stats_no_brackets
 
     # Adds the tile's statistis to the txt file
-    with open('{0}_{1}.txt'.format(constants_and_names.tile_stats, constants_and_names.pattern_mangrove_biomass), 'a+') as f:
+    with open('{0}_{1}.txt'.format(constants_and_names.tile_stats, universal_util.date), 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()

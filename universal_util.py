@@ -1,6 +1,10 @@
 import subprocess
 import constants_and_names
+import datetime
 
+# Prints the date as YYYYmmdd
+d = datetime.datetime.today()
+date = d.strftime('%Y%m%d')
 
 # Lists the tiles in a folder in s3
 def tile_list(source):
