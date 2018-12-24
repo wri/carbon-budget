@@ -26,8 +26,6 @@ download_list = [
                  # ,constants_and_names.biomass_dir
 ]
 
-sys.quit()
-
 for input in download_list:
     universal_util.s3_folder_download('{}'.format(input), '.')
 
