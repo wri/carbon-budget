@@ -143,7 +143,7 @@ tile_stats = 'tile_stats_{}.txt'.format(universal_util.date)
 tile_stats_dir = 's3://gfw2-data/climate/carbon_model/tile_stats/'
 
 # The area of each pixel in m^2
-pattern_pixel_area = 'hanson_2013_area_00N_000E.tif'
+pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Locations of tsvs from model output
