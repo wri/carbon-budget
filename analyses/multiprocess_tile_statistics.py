@@ -9,15 +9,15 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# Creates list of tiles to iterate through, for testing
-download_tile_list = ["00N_000E", "00N_050W"] # test tiles
-print download_tile_list
-
-# For copying individual tiles to spot machine for testing
-for tile in download_tile_list:
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
+# # Creates list of tiles to iterate through, for testing
+# download_tile_list = ["00N_000E", "00N_050W"] # test tiles
+# print download_tile_list
+#
+# # For copying individual tiles to spot machine for testing
+# for tile in download_tile_list:
+#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')
+#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
+#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
 
 # # For downloading all tiles in selected folders
 # download_list = [constants_and_names.pixel_area_dir,
@@ -34,8 +34,8 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 header_no_brackets = ', '.join(headers)
 
 # tile_list = universal_util.tile_list_spot_machine(".")
-# tile_list = ['00N_070W_biomass.tif']
-tile_list = download_tile_list
+tile_list = ['00N_070W_biomass.tif']
+# tile_list = download_tile_list
 print tile_list
 
 # Creates the output text file with the column names
