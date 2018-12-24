@@ -34,6 +34,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 header_no_brackets = ', '.join(headers)
 
 tile_list = universal_util.tile_list_spot_machine(".")
+print tile_list
 
 # Creates the output text file with the column names
 with open(constants_and_names.tile_stats, 'w+') as f:

@@ -1,6 +1,7 @@
 import subprocess
 import constants_and_names
 import datetime
+import re
 
 # Prints the date as YYYYmmdd
 d = datetime.datetime.today()
@@ -74,6 +75,20 @@ def tile_list_spot_machine(source):
                 file_list.append(tile_name)
 
     return file_list
+
+# Gets the tile id from the full tile name
+def get_tile_id(tile_name):
+
+    # For getting tile id of biomass tiles
+    if '_biomass.tif' in tile_name:
+        tile_id = tile_name.replace('_biomass.tif', '')
+
+    # For getting tile id of all other tiles
+    else:
+        tile_short_name = tile_name.replace('.tif', '')
+        tile_id = tile_short_name[-8:]
+
+    return tile_id
 
 
 # Counts the number of tiles in a folder in s3
