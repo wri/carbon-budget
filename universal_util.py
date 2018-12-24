@@ -80,8 +80,8 @@ def tile_list_spot_machine(source):
 def get_tile_id(tile_name):
 
     # For getting tile id of biomass tiles
-    if '_biomass_ha_2000.tif' in tile_name:
-        tile_id = tile_name.replace('_biomass_ha_2000.tif', '')
+    if '_t_aboveground_biomass_ha_2000.tif' in tile_name:
+        tile_id = tile_name[8:]
 
     # For getting tile id of all other tiles
     else:
