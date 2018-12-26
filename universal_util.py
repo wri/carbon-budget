@@ -6,6 +6,10 @@ import datetime
 d = datetime.datetime.today()
 date = d.strftime('%Y%m%d')
 
+# Creates a list of all the biomass tiles (WHRC non-mangrove and mangrove)
+def read_biomass_tile_list():
+    
+
 # Lists the tiles in a folder in s3
 def tile_list(source):
 
