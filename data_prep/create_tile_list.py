@@ -60,5 +60,5 @@ unique_tiles = list(set(all_tiles))
 print "There are {} unique tiles with biomass.".format(len(unique_tiles))
 print unique_tiles
 
-df = pd.DataFrame.from_records(unique_tiles, columns=['tile_id'])
+df = pd.DataFrame(unique_tiles, columns=['tile_id'])
 print df
