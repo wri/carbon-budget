@@ -61,4 +61,5 @@ print "There are {} unique tiles with biomass.".format(len(unique_tiles))
 print unique_tiles
 
 df = pd.DataFrame(unique_tiles, columns=['tile_id'])
+df = df.sort_values(by=['tile_id'])
 print df
