@@ -22,8 +22,8 @@ import universal_util
 # # Creates vrt of all raw mangrove tifs
 # utilities.build_vrt(utilities.mangrove_vrt)
 
-# Biomass tiles to iterate through
-biomass_tile_list = universal_util.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
+# Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
+biomass_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
 # biomass_tile_list = ['00N_000E', '20S_120W', '00N_120E'] # test tile
 # biomass_tile_list = biomass_tile_list[62:]
 print biomass_tile_list

@@ -44,6 +44,14 @@ def tile_list(source):
                     file_list.append(tile_short_name)
                     file_list = file_list[0:]
 
+                # For stripping down pixel area tiles to the tile id
+                if constants_and_names.pattern_pixel_area in tile_name:
+
+                    tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_pixel_area), '')
+                    tile_short_name = tile_short_name.replace('.tif', '')
+                    file_list.append(tile_short_name)
+                    file_list = file_list[0:]
+
     return file_list
 
 
