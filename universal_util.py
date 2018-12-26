@@ -8,7 +8,14 @@ date = d.strftime('%Y%m%d')
 
 # Creates a list of all the biomass tiles (WHRC non-mangrove and mangrove)
 def read_biomass_tile_list():
-    
+
+    file_list = []
+
+    with open('{}{}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list), 'r') as tiles:
+        for tile in tiles:
+            file_list.append(tile)
+            
+    return file_list
 
 # Lists the tiles in a folder in s3
 def tile_list(source):
