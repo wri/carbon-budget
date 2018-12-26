@@ -36,7 +36,7 @@ universal_util.s3_folder_download(constants_and_names.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
-                 constants_and_names.mangrove_biomass_dir
+                 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
                  ,constants_and_names.biomass_dir
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
