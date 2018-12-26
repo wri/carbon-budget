@@ -65,6 +65,7 @@ srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pool
 # Base location for all carbon pools
 base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/'
 
+# These must match the word before .tif in the outnames of calc_carbon_pools.cpp
 pool_types = ['natrl', 'mang', 'total']
 
 # Aboveground carbon

@@ -196,7 +196,6 @@ OUTGDAL15->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND15 = OUTGDAL15->GetRasterBand(1);
 OUTBAND15->SetNoDataValue(-9999);
 
-
 // mangrove and non-mangrove forests combined
 OUTGDAL21 = OUTDRIVER->Create( outname_agc_total.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL21->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ);

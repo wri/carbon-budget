@@ -18,12 +18,12 @@ def create_carbon_pools(tile_id):
     print 'Uploading tiles to s3'
     for type in constants_and_names.pool_types:
 
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.agc_dir, type), tile_id, constants_and_names.pattern_agc)
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.bgc_dir, type), tile_id, constants_and_names.pattern_bgc)
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.deadwood_dir, type), tile_id, constants_and_names.pattern_deadwood)
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.litter_dir, type), tile_id, constants_and_names.pattern_litter)
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.soil_C_pool_dir, type), tile_id, constants_and_names.pattern_soil_pool)
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.total_C_dir, type), tile_id, constants_and_names.pattern_total_C)
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.agc_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_agc, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.bgc_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_bgc, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.deadwood_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_deadwood, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.litter_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_litter, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.soil_C_pool_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_soil_pool, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.total_C_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_total_C, type))
 
     print "Deleting intermediate tiles"
     tiles_to_remove = glob.glob('*{}*'.format(tile_id))

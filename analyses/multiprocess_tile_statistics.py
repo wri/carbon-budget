@@ -91,6 +91,6 @@ for input in download_list:
         except:
             pass
 
-# Copies the text file to the location on s3 that the tiles are from
-cmd = ['aws', 's3', 'cp', constants_and_names.tile_stats, constants_and_names.tile_stats_dir]
-subprocess.check_call(cmd)
+    # Copies the text file to the location on s3 that the tiles are from
+    cmd = ['aws', 's3', 'cp', constants_and_names.tile_stats, constants_and_names.tile_stats_dir]
+    subprocess.check_call(cmd)
