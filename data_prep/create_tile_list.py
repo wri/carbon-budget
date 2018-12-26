@@ -25,7 +25,7 @@ biomass_tiles.close()
 file_list_natrl = []
 file_list_mangrove = []
 
-# Iterates through the text file to get the names of the tiles and appends them to list
+# Iterates through the Woods Hole biomass text file to get the names of the tiles and appends them to list
 with open("natrl_forest_biomass_tiles.txt", 'r') as tile:
 
     for line in tile:
@@ -38,7 +38,7 @@ with open("natrl_forest_biomass_tiles.txt", 'r') as tile:
             tile_short_name = tile_name[:8]
             file_list_natrl.append(tile_short_name)
 
-# Iterates through the text file to get the names of the tiles and appends them to list
+# Iterates through the mangrove biomass text file to get the names of the tiles and appends them to list
 with open("mangrove_biomass_tiles.txt", 'r') as tile:
 
     for line in tile:
@@ -51,8 +51,11 @@ with open("mangrove_biomass_tiles.txt", 'r') as tile:
             tile_short_name = tile_name[:8]
             file_list_mangrove.append(tile_short_name)
 
+# Combines Woods Hole and mangrove biomass tile lists
 all_tiles = file_list_natrl + file_list_mangrove
-print all_tiles
 
+# Tile list with tiles found in both lists removed
 unique_tiles = set(all_tiles)
+
+unique_tiles_sorted = sorted(unique_tiles)
 print unique_tiles
