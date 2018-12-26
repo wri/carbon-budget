@@ -59,15 +59,16 @@ all_tiles = file_list_natrl + file_list_mangrove
 # Tile list with tiles found in both lists removed
 unique_tiles = list(set(all_tiles))
 print "There are {} unique tiles with biomass.".format(len(unique_tiles))
-print unique_tiles
+
+df = pd.DataFrame(unique_tiles, columns=['tile_id'])
+df = df.sort_values(by=['tile_id'])
+print df
+
+unique_tiles_ordered_list = df.tolist()
 
 with open(constants_and_names.pattern_biomass_tile_list, 'w') as f:
-    for item in unique_tiles:
+    for item in unique_tiles_ordered_list:
         f.write("%s\n" % item)
-
-# df = pd.DataFrame(unique_tiles, columns=['tile_id'])
-# df = df.sort_values(by=['tile_id'])
-# print df
 #
 # np.savetxt(constants_and_names.pattern_biomass_tile_list, df, fmt='%s', delimiter='\n')
 
