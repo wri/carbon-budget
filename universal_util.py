@@ -31,9 +31,9 @@ def tile_list(source):
             if '.tif' in tile_name:
 
                 # For stripping down standard tree biomass tiles to the tile id
-                if '_biomass.tif' in tile_name:
+                if '{}.tif'.format(constants_and_names.pattern_biomass) in tile_name:
 
-                    tile_short_name = tile_name.replace('_biomass.tif', '')
+                    tile_short_name = tile_name.replace('_{}.tif'.format(constants_and_names.pattern_biomass), '')
                     file_list.append(tile_short_name)
 
                 # For stripping down mangrove biomass tiles to the tile id

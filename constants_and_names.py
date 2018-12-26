@@ -65,29 +65,31 @@ srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pool
 # Base location for all carbon pools
 base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/'
 
+pool_types = ['natrl', 'mang', 'total']
+
 # Aboveground carbon
 pattern_agc = 't_AGC_ha'
 agc_dir = '{}/aboveground_C'.format(base_carbon_pool_dir)
 
 # Belowground carbon
 pattern_bgc = 't_BGC_ha'
-bgc_dir = '{}/belowground_C'.format(base_carbon_pool_dir)
+bgc_dir = '{}/belowground_C/'.format(base_carbon_pool_dir)
 
 # Deadwood
 pattern_deadwood = 't_deadwood_C_ha'
-deadwood_dir = '{}/deadwood_C'.format(base_carbon_pool_dir)
+deadwood_dir = '{}/deadwood_C/'.format(base_carbon_pool_dir)
 
 # Litter
 pattern_litter = 't_litter_C_ha'
-litter_dir = '{}/litter_C'.format(base_carbon_pool_dir)
+litter_dir = '{}/litter_C/'.format(base_carbon_pool_dir)
 
 # Soil
 pattern_soil_pool = 't_soil_C_ha'
-soil_C_pool_dir = '{}/soil_C'.format(base_carbon_pool_dir)
+soil_C_pool_dir = '{}/soil_C/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
 pattern_total_C = 't_total_C_ha'
-total_C_dir = '{}/total_carbon'.format(base_carbon_pool_dir)
+total_C_dir = '{}/total_carbon/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions

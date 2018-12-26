@@ -32,6 +32,7 @@ def create_mangrove_tiles(tile_id):
     stats = srcband.GetStatistics(True, True)
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
+    # Checks if there are any pixels with mangrove biomass in the tile
     if stats[0] > 0:
 
         print "  Data found in {}. Removing NoData values and copying tile to s3...".format(tile_id)

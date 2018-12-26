@@ -39,14 +39,16 @@ def create_gain_year_count(tile_id):
         # Name of mangrove tile
         mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
 
-        # Mangrove tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
-
-        # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-        # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-        print "Removing nodata values in mangrove biomass raster"
-        cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
-        subprocess.check_call(cmd)
+        # # This should no longer be necessary because the mangrove processing script removes NoData values.
+        # # Leaving this here for now, though, in case I do need it again.
+        # # Mangrove tiles that have the nodata pixels removed
+        # mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+        #
+        # # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+        # # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+        # print "Removing nodata values in mangrove biomass raster"
+        # cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
+        # subprocess.check_call(cmd)
 
         print 'Loss tile is', loss
         print 'Gain tile is', gain
@@ -62,7 +64,7 @@ def create_gain_year_count(tile_id):
         loss_calc = '--calc=(A>0)*(B==0)*(C==0)*(A-1)'
         loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
         loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, loss_calc, loss_outfilearg,
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
@@ -71,7 +73,7 @@ def create_gain_year_count(tile_id):
         gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(gain_years)
         gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
         gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, gain_calc, gain_outfilearg,
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
@@ -80,7 +82,7 @@ def create_gain_year_count(tile_id):
         no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(loss_years)
         no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
         no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, '-D', tcd, no_change_calc,
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, '-D', tcd, no_change_calc,
                no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
@@ -89,7 +91,7 @@ def create_gain_year_count(tile_id):
         loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(loss_years)
         loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
         loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove_reclass, loss_and_gain_calc,
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc,
                loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
