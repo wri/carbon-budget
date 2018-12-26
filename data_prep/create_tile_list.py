@@ -1,5 +1,6 @@
 import subprocess
 import pandas as pd
+import numpy as np
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -63,3 +64,5 @@ print unique_tiles
 df = pd.DataFrame(unique_tiles, columns=['tile_id'])
 df = df.sort_values(by=['tile_id'])
 print df
+
+np.savetxt('{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list), df.values, fmt='%d')

@@ -25,6 +25,10 @@ above_to_below_mangrove = 0.608
 ### File names and directories ###
 ########                  ########
 
+### Biomass tile list (WHRC/natural forests and mangroves)
+pattern_biomass_tile_list = 'biomass_tile_list_20181226.txt'
+biomass_tile_list_dir = 's3://gfw2-data/climate/carbon_model/biomass_tile_list/'
+
 ### Biomass tiles
 
 ## Biomass in 2000
