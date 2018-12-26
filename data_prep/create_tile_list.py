@@ -61,11 +61,15 @@ unique_tiles = list(set(all_tiles))
 print "There are {} unique tiles with biomass.".format(len(unique_tiles))
 print unique_tiles
 
-df = pd.DataFrame(unique_tiles, columns=['tile_id'])
-df = df.sort_values(by=['tile_id'])
-print df
+with open(constants_and_names.pattern_biomass_tile_list, 'w') as f:
+    for item in unique_tiles:
+        f.write("%s\n" % item)
 
-np.savetxt(constants_and_names.pattern_biomass_tile_list, df, fmt='%s', delimiter='\n')
+# df = pd.DataFrame(unique_tiles, columns=['tile_id'])
+# df = df.sort_values(by=['tile_id'])
+# print df
+#
+# np.savetxt(constants_and_names.pattern_biomass_tile_list, df, fmt='%s', delimiter='\n')
 
 cmd = ['aws', 's3', 'cp', constants_and_names.pattern_biomass_tile_list, '{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list)]
 subprocess.check_call(cmd)
