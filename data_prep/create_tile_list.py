@@ -56,7 +56,7 @@ with open("mangrove_biomass_tiles.txt", 'r') as tile:
 all_tiles = file_list_natrl + file_list_mangrove
 
 # Tile list with tiles found in both lists removed
-unique_tiles = set(all_tiles)
+unique_tiles = list(set(all_tiles))
 print "There are {} unique tiles with biomass.".format(len(unique_tiles))
 print unique_tiles
 
