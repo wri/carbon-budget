@@ -7,7 +7,7 @@ import constants_and_names
 import universal_util
 
 
-print "Making a fileof Woods Hole biomass 2000 tiles"
+print "Making a file of Woods Hole biomass 2000 tiles"
 out = subprocess.Popen(['aws', 's3', 'ls', constants_and_names.natrl_forest_biomass_2000_dir], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 stdout, stderr = out.communicate()
 # Writes the output string to a text file for easier interpretation
@@ -65,7 +65,7 @@ df = pd.DataFrame(unique_tiles, columns=['tile_id'])
 df = df.sort_values(by=['tile_id'])
 print df
 
-df.to_csv(constants_and_names.pattern_biomass_tile_list, header=False, index=False, sep=' ', mode='w')
+np.savetxt(constants_and_names.pattern_biomass_tile_list, df, fmt='%s')
 
 cmd = ['aws', 's3', 'cp', constants_and_names.pattern_biomass_tile_list, '{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list)]
 subprocess.check_call(cmd)
