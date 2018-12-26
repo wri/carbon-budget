@@ -3,10 +3,7 @@
 ### Output tiles conform to the dimensions, resolution, and other properties of Hansen loss tiles.
 
 import multiprocessing
-import utilities
 import mangrove_processing
-import subprocess
-import os
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -27,7 +24,7 @@ import universal_util
 
 # Biomass tiles to iterate through
 biomass_tile_list = universal_util.tile_list(constants_and_names.biomass_dir)
-# biomass_tile_list = ['20S_120W'] # test tile
+biomass_tile_list = ['00N_000E', '20S_120W', '00N_120E'] # test tile
 # biomass_tile_list = biomass_tile_list[62:]
 print biomass_tile_list
 
