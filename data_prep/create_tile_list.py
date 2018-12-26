@@ -59,5 +59,5 @@ all_tiles = file_list_natrl + file_list_mangrove
 unique_tiles = set(all_tiles)
 print "There are {} unique tiles with biomass.".format(len(unique_tiles))
 
-df = pd.DataFrame(unique_tiles)
+df = pd.DataFrame(unique_tiles, columns=['tile_id'])
 print df
