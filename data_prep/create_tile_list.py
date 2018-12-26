@@ -67,5 +67,5 @@ print df
 
 np.savetxt(constants_and_names.pattern_biomass_tile_list, df.values, fmt='%d')
 
-cmd = ['aws', 's3', 'cp', constants_and_names.pattern_biomass_tile_list, '{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list))
+cmd = ['aws', 's3', 'cp', constants_and_names.pattern_biomass_tile_list, '{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list)]
 subprocess.check_call(cmd)
