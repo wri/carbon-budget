@@ -76,7 +76,7 @@ for input in download_list:
 
     # For multiprocessor use
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=5)
+    pool = multiprocessing.Pool(processes=4)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
 
     # # For single processor use
