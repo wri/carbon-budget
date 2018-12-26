@@ -39,16 +39,14 @@ def create_gain_year_count(tile_id):
         # Name of mangrove tile
         mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
 
-        # # This should no longer be necessary because the mangrove processing script removes NoData values.
-        # # Leaving this here for now, though, in case I do need it again.
-        # # Mangrove tiles that have the nodata pixels removed
-        # mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
-        #
-        # # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-        # # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-        # print "Removing nodata values in mangrove biomass raster"
-        # cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
-        # subprocess.check_call(cmd)
+        # Mangrove tiles that have the nodata pixels removed
+        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+
+        # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
+        # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
+        print "Removing nodata values in mangrove biomass raster"
+        cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
+        subprocess.check_call(cmd)
 
         print 'Loss tile is', loss
         print 'Gain tile is', gain

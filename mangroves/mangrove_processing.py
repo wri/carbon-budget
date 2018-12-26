@@ -18,7 +18,7 @@ def create_mangrove_tiles(tile_id):
     print "  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
     print "Creating tile", tile_id
-    out_tile = '{0}_with_NoData_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+    out_tile = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', utilities.mangrove_vrt, out_tile]
     subprocess.check_call(cmd)
@@ -32,17 +32,9 @@ def create_mangrove_tiles(tile_id):
     stats = srcband.GetStatistics(True, True)
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
-    # Checks if there are any pixels with mangrove biomass in the tile
     if stats[0] > 0:
 
-        print "  Data found in {}. Removing NoData values and copying tile to s3...".format(tile_id)
-
-        # Mangrove tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
-
-        cmd = ['gdal_translate', '-a_nodata', 'none', out_tile, mangrove_reclass]
-        subprocess.check_call(cmd)
-
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
         universal_util.upload_final(constants_and_names.mangrove_biomass_dir, tile_id, constants_and_names.pattern_mangrove_biomass)
         print "    Tile copied to s3"
 
