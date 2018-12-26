@@ -68,7 +68,7 @@ unique_tiles_ordered_list = df.tile_id.tolist()
 
 with open(constants_and_names.pattern_biomass_tile_list, 'w') as f:
     for item in unique_tiles_ordered_list:
-        f.write("%s\n" % item)
+        f.write("%s, " % item)
 #
 # np.savetxt(constants_and_names.pattern_biomass_tile_list, df, fmt='%s', delimiter='\n')
 
