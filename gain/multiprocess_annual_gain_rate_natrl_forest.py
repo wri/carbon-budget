@@ -39,9 +39,9 @@ print biomass_tile_list
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.age_cat_natrl_forest_dir, constants_and_names.pattern_age_cat_natrl_forest, tile), '.')   # forest age category tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, constants_and_names.pattern_cont_eco_processed, tile), '.')        # continents and FAO ecozones 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')  # mangrove aboveground biomass
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.age_cat_natrl_forest_dir, tile, constants_and_names.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, tile, constants_and_names.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, tile, constants_and_names.pattern_mangrove_biomass), '.')  # mangrove aboveground biomass
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(constants_and_names.gain_spreadsheet), '.']

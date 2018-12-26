@@ -17,27 +17,27 @@ def cumulative_gain(tile_id):
     start = datetime.datetime.now()
 
     # Names of the annual gain rate and gain year count tiles
-    gain_rate_AGB = '{0}_{1}.tif'.format(constants_and_names.pattern_annual_gain_AGB_natrl_forest, tile_id)
-    gain_rate_BGB = '{0}_{1}.tif'.format(constants_and_names.pattern_annual_gain_BGB_natrl_forest, tile_id)
-    gain_year_count = '{0}_{1}.tif'.format(constants_and_names.pattern_gain_year_count_natrl_forest, tile_id)
+    gain_rate_AGB = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_annual_gain_AGB_natrl_forest)
+    gain_rate_BGB = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_annual_gain_BGB_natrl_forest)
+    gain_year_count = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_gain_year_count_natrl_forest)
 
     print "  Reading input files and calculating cumulative aboveground gain for natural forest tile {}".format(tile_id)
     accum_calc = '--calc=A*B*{}'.format(constants_and_names.biomass_to_c)
-    accum_outfilename = '{0}_{1}.tif'.format(constants_and_names.pattern_cumul_gain_AGC_natrl_forest, tile_id)
+    accum_outfilename = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cumul_gain_AGC_natrl_forest)
     accum_outfilearg = '--outfile={}'.format(accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(constants_and_names.pattern_cumul_gain_AGC_natrl_forest, constants_and_names.cumul_gain_AGC_natrl_forest_dir, tile_id)
+    utilities.upload_final(constants_and_names.cumul_gain_AGC_natrl_forest_dir, tile_id, constants_and_names.pattern_cumul_gain_AGC_natrl_forest)
 
     print "  Reading input files and calculating cumulative belowground gain for natural forest tile {}".format(tile_id)
     accum_calc = '--calc=A*B*{}'.format(constants_and_names.biomass_to_c)
-    accum_outfilename = '{0}_{1}.tif'.format(constants_and_names.pattern_cumul_gain_BGC_natrl_forest, tile_id)
+    accum_outfilename = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cumul_gain_BGC_natrl_forest)
     accum_outfilearg = '--outfile={}'.format(accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(constants_and_names.pattern_cumul_gain_BGC_natrl_forest, constants_and_names.cumul_gain_BGC_natrl_forest_dir, tile_id)
+    utilities.upload_final(constants_and_names.cumul_gain_BGC_natrl_forest_dir, tile_id, constants_and_names.pattern_cumul_gain_BGC_natrl_forest)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

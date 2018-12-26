@@ -3,9 +3,8 @@ import universal_util
 
 ##### Constants
 
-
 # Number of biomass tiles
-biomass_tile_count = 315
+biomass_tile_count = 280
 
 # Biomass to carbon ratio
 biomass_to_c = 0.5
@@ -20,39 +19,81 @@ m2_per_ha = 100 * 100
 above_to_below_natrl_forest = 0.26
 above_to_below_mangrove = 0.608
 
-##### File names and directories
 
-pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
-fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
-pattern_fao_ecozone_processed = 'res_fao_ecozones_bor_tem_tro'
-fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/'
+########
+# File names and directories
+########
 
-precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
-pattern_precip = 'res_precip'
-precip_processed_dir = 's3://gfw2-data/gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/'
-
-soil_C_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
-pattern_soil_C = 'soil'
-soil_C_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/soil/'
-
-srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
-pattern_srtm = 'res_srtm'
-srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/srtm/'
-
-
-pattern_gross_emissions = 'disturbance_model_noData_reclass'
-gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
-
-# Spreadsheet with annual gain rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
-
-# Woods Hole biomass 2000 version 4 tiles
+### Biomass tiles
+# Woods Hole aboveground biomass 2000 version 4 tiles
 pattern_biomass = "t_aboveground_biomass_ha_2000"
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Lola Fatoyinbo aboveground mangrove biomass tiles
 pattern_mangrove_biomass = 'mangrove_agb_t_ha'
 mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
+
+
+### Inputs to carbon pools
+# FAO ecozones
+pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
+fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
+pattern_fao_ecozone_processed = 'res_fao_ecozones_bor_tem_tro'
+fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/'
+
+# Precipitation
+precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
+pattern_precip = 'res_precip'
+precip_processed_dir = 's3://gfw2-data/gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/'
+
+# Soil C
+soil_C_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
+pattern_soil_C = 'soil_t_C_ha'
+soil_C_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/soil/'
+
+# Elevation
+srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
+pattern_srtm = 'res_srtm'
+srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/srtm/'
+
+
+### Carbon pools
+# Base location for all carbon pools
+base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/'
+
+# Aboveground carbon
+pattern_agc = 't_AGC_ha'
+agc_dir = '{}/aboveground_C'.format(base_carbon_pool_dir)
+
+# Belowground carbon
+pattern_bgc = 't_BGC_ha'
+bgc_dir = '{}/belowground_C'.format(base_carbon_pool_dir)
+
+# Deadwood
+pattern_deadwood = 't_deadwood_C_ha'
+deadwood_dir = '{}/deadwood_C'.format(base_carbon_pool_dir)
+
+# Litter
+pattern_litter = 't_litter_C_ha'
+litter_dir = '{}/litter_C'.format(base_carbon_pool_dir)
+
+# Soil
+pattern_soil_pool = 't_soil_C_ha'
+soil_C_pool_dir = '{}/soil_C'.format(base_carbon_pool_dir)
+
+# All carbon pools combined
+pattern_total_C = 't_total_C_ha'
+total_C_dir = '{}/total_carbon'.format(base_carbon_pool_dir)
+
+
+### Gross emissions
+pattern_gross_emissions = 'disturbance_model_noData_reclass'
+gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
+
+
+
+# Spreadsheet with annual gain rates
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
@@ -71,13 +112,6 @@ ifl_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/ifl_2000/'
 
 # Processed FAO ecozone shapefile
 cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
-
-# Directory and names for the continent-ecozone tiles, raw and processed
-pattern_cont_eco_raw = 'fao_ecozones_continents_raw'
-pattern_cont_eco_processed = 'fao_ecozones_continents_processed'
-cont_eco_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
-cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/raw/'
-cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
 
 # Number of gain years for non-mangrove natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'
@@ -135,8 +169,8 @@ pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
 cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_forest_types/20181105/'
 
 # Net emissions for all forest types and all carbon pools
-pattern_net_emis = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
-net_emis_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
+pattern_net_flux = 'net_emis_t_CO2_ha_all_forest_types_all_drivers_2001_15'
+net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
 
 # Tile summary spreadsheets
 tile_stats = 'tile_stats_{}.txt'.format(universal_util.date)

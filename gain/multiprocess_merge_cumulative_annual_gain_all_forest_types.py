@@ -29,14 +29,14 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_natrl_forest_dir, constants_and_names.pattern_annual_gain_AGB_natrl_forest, tile), '.')  # annual aboveground gain rate tiles for natural forests
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_mangrove_dir, constants_and_names.pattern_annual_gain_AGB_mangrove, tile), '.')  # annual aboveground gain rate tiles for mangroves
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_natrl_forest_dir, constants_and_names.pattern_cumul_gain_AGC_natrl_forest, tile), '.')           # cumulative aboveground gain tiles for natural forests
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_mangrove_dir, constants_and_names.pattern_cumul_gain_AGC_mangrove, tile), '.')  # cumulative aboveground gain tiles for mangroves
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_natrl_forest_dir, constants_and_names.pattern_annual_gain_BGB_natrl_forest, tile), '.')  # annual belowground gain rate tiles for natural forests
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_mangrove_dir, constants_and_names.pattern_annual_gain_BGB_mangrove, tile), '.')  # annual belowground gain rate tiles for mangroves
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_BGC_natrl_forest_dir, constants_and_names.pattern_cumul_gain_BGC_natrl_forest, tile), '.')           # cumulative belowground gain tiles for natural forests
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_BGC_mangrove_dir, constants_and_names.pattern_cumul_gain_BGC_mangrove, tile), '.')  # cumulative belowground gain tiles for mangroves
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_natrl_forest_dir, tile, constants_and_names.pattern_annual_gain_AGB_natrl_forest), '.')  # annual aboveground gain rate tiles for natural forests
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_mangrove_dir, tile, constants_and_names.pattern_annual_gain_AGB_mangrove), '.')  # annual aboveground gain rate tiles for mangroves
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_natrl_forest_dir, tile, constants_and_names.pattern_cumul_gain_AGC_natrl_forest), '.')           # cumulative aboveground gain tiles for natural forests
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_mangrove_dir, tile, constants_and_names.pattern_cumul_gain_AGC_mangrove), '.')  # cumulative aboveground gain tiles for mangroves
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_natrl_forest_dir, tile, constants_and_names.pattern_annual_gain_BGB_natrl_forest), '.')  # annual belowground gain rate tiles for natural forests
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_mangrove_dir, tile, constants_and_names.pattern_annual_gain_BGB_mangrove), '.')  # annual belowground gain rate tiles for mangroves
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_BGC_natrl_forest_dir, tile, constants_and_names.pattern_cumul_gain_BGC_natrl_forest), '.')           # cumulative belowground gain tiles for natural forests
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_BGC_mangrove_dir, tile, constants_and_names.pattern_cumul_gain_BGC_mangrove), '.')  # cumulative belowground gain tiles for mangroves
 
 
 count = multiprocessing.cpu_count()

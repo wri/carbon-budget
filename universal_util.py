@@ -1,7 +1,6 @@
 import subprocess
 import constants_and_names
 import datetime
-import re
 
 # Prints the date as YYYYmmdd
 d = datetime.datetime.today()
@@ -140,3 +139,16 @@ def s3_folder_download(source, dest):
 def s3_file_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest]
     subprocess.check_call(cmd)
+
+# Uploads tile to specified location
+def upload_final(upload_dir, tile_id, pattern):
+
+    file = '{}_{}.tif'.format(tile_id, pattern)
+
+    print "Uploading {}".format(file)
+    cmd = ['aws', 's3', 'cp', file, upload_dir]
+
+    try:
+        subprocess.check_call(cmd)
+    except:
+        print "Error uploading output tile"

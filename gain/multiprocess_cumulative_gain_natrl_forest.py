@@ -19,12 +19,12 @@ download_list = [constants_and_names.annual_gain_AGB_natrl_forest_dir, constants
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_natrl_forest_dir, constants_and_names.pattern_annual_gain_AGB_natrl_forest, tile), '.')  # annual AGB gain rate tiles
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_natrl_forest_dir, constants_and_names.pattern_annual_gain_BGB_natrl_forest, tile), '.')  # annual AGB gain rate tiles
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_year_count_natrl_forest_dir, constants_and_names.pattern_gain_year_count_natrl_forest, tile), '.')  # number of years with gain tiles
+# # For copying individual tiles to spot machine for testing
+# for tile in biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_natrl_forest_dir, tile, constants_and_names.pattern_annual_gain_AGB_natrl_forest), '.')  # annual AGB gain rate tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_natrl_forest_dir, tile, constants_and_names.pattern_annual_gain_BGB_natrl_forest), '.')  # annual AGB gain rate tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_year_count_natrl_forest_dir, tile, constants_and_names.pattern_gain_year_count_natrl_forest), '.')  # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)

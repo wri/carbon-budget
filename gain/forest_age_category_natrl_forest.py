@@ -41,8 +41,8 @@ def forest_age_category(tile_id, gain_table_dict):
     gain = '{0}_{1}.tif'.format(constants_and_names.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(constants_and_names.pattern_tcd, tile_id)
     ifl = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_ifl)
-    biomass = '{}_biomass.tif'.format(tile_id)
-    cont_eco = '{0}_{1}.tif'.format(constants_and_names.pattern_cont_eco_processed, tile_id)
+    biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_biomass)
+    cont_eco = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed)
 
     print "  Reading input files and evaluating conditions"
 
@@ -79,7 +79,7 @@ def forest_age_category(tile_id, gain_table_dict):
                             )
 
                             # Opens the output tile, giving it the arguments of the input tiles
-                            with rasterio.open('{0}{1}.tif'.format(constants_and_names.pattern_age_cat_natrl_forest, tile_id), 'w', **kwargs) as dst:
+                            with rasterio.open('{0}{1}.tif'.format(tile_id, constants_and_names.pattern_age_cat_natrl_forest), 'w', **kwargs) as dst:
 
                                 # Iterates across the windows (1 pixel strips) of the input tile
                                 for idx, window in windows:
@@ -127,7 +127,7 @@ def forest_age_category(tile_id, gain_table_dict):
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(constants_and_names.pattern_age_cat_natrl_forest, constants_and_names.age_cat_natrl_forest_dir, tile_id)
+    utilities.upload_final(constants_and_names.age_cat_natrl_forest_dir, tile_id, constants_and_names.pattern_age_cat_natrl_forest)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

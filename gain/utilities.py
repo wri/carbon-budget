@@ -88,9 +88,9 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainE
     return out_tif
 
 # Uploads tile to specified location
-def upload_final(pattern, upload_dir, tile_id):
+def upload_final(upload_dir, tile_id, pattern):
 
-    file = '{}_{}.tif'.format(pattern, tile_id)
+    file = '{}_{}.tif'.format(tile_id, pattern)
 
     print "Uploading {}".format(file)
     cmd = ['aws', 's3', 'cp', file, upload_dir]

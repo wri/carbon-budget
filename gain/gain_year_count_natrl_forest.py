@@ -32,15 +32,15 @@ def create_gain_year_count(tile_id):
 
     # The calculations for tiles with and without mangroves anywhere in them are different.
     # For tiles with mangroves somewhere in them.
-    if os.path.exists('{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)):
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)):
 
         print "  {} has mangroves.".format(tile_id)
 
         # Name of mangrove tile
-        mangrove = '{0}_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
+        mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
 
         # Mangrove tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_reclass_{1}.tif'.format(constants_and_names.pattern_mangrove_biomass, tile_id)
+        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
@@ -145,17 +145,17 @@ def create_gain_year_count(tile_id):
 
     # Regardless of whether the tile had mangroves, all four components are merged together to the final output raster
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = '{}_{}.tif'.format(constants_and_names.pattern_gain_year_count_natrl_forest, tile_id)
+    age_outfile = '{}_{}.tif'.format(tile_id, constants_and_names.pattern_gain_year_count_natrl_forest)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
-    utilities.upload_final("growth_years_loss_only", constants_and_names.gain_year_count_natrl_forest_dir, tile_id)
-    utilities.upload_final("growth_years_gain_only", constants_and_names.gain_year_count_natrl_forest_dir, tile_id)
-    utilities.upload_final("growth_years_no_change", constants_and_names.gain_year_count_natrl_forest_dir, tile_id)
-    utilities.upload_final("growth_years_loss_and_gain", constants_and_names.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_only")
+    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_gain_only")
+    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_no_change")
+    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_and_gain")
 
     # This is the final output used later in the model
-    utilities.upload_final(constants_and_names.pattern_gain_year_count_natrl_forest, constants_and_names.gain_year_count_natrl_forest_dir, tile_id)
+    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, constants_and_names.pattern_gain_year_count_natrl_forest)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

@@ -14,13 +14,14 @@ input_files = [
     constants_and_names.biomass_dir,
     constants_and_names.fao_ecozone_processed_dir,
     constants_and_names.precip_processed_dir,
-    constants_and_names.soil_C_dir,
+    constants_and_names.soil_C_processed_dir,
+    constants_and_names.srtm_processed_dir,
     constants_and_names.cumul_gain_AGC_mangrove_dir,
     constants_and_names.cumul_gain_AGC_natrl_forest_dir
     ]
 
-for input in input_files:
-    universal_util.s3_folder_download('{}'.format(input), '.')
+# for input in input_files:
+#     universal_util.s3_folder_download('{}'.format(input), '.')
 
 # For copying individual tiles to spot machine for testing
 for tile in tile_list:
@@ -31,7 +32,7 @@ for tile in tile_list:
                                                             constants_and_names.pattern_fao_ecozone_processed), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.precip_processed_dir, tile,
                                                             constants_and_names.pattern_precip), '.')
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.soil_C_dir, tile,
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.soil_C_processed_dir, tile,
                                                             constants_and_names.pattern_soil_C), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.srtm_processed_dir, tile,
                                                             constants_and_names.pattern_srtm), '.')
@@ -49,7 +50,7 @@ print "The number of tiles for each input to the carbon pools is", tile_count
 
 if len(set(tile_count)) > 0 & tile_count[0] == constants_and_names.biomass_tile_count:
 
-    print "Input tiles for carbon pool generation do not exist. Creating them now..."
+    print "Input tiles for carbon pool generation do not exist. You must create them. Exiting now."
 
     exit()
 

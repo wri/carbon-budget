@@ -25,9 +25,9 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in mangrove_biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_mangrove_dir, constants_and_names.pattern_annual_gain_AGB_mangrove, tile), '.')           # annual AGB gain rate tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_mangrove_dir, constants_and_names.pattern_annual_gain_BGB_mangrove, tile), '.')  # annual AGB gain rate tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_year_count_mangrove_dir, constants_and_names.pattern_gain_year_count_mangrove, tile), '.')        # number of years with gain tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_AGB_mangrove_dir, tile, constants_and_names.pattern_annual_gain_AGB_mangrove), '.')      # annual AGB gain rate tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_BGB_mangrove_dir, tile, constants_and_names.pattern_annual_gain_BGB_mangrove), '.')      # annual AGB gain rate tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_year_count_mangrove_dir, tile, constants_and_names.pattern_gain_year_count_mangrove), '.')      # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)

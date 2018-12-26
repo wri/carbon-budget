@@ -31,8 +31,8 @@ utilities.s3_folder_download('{}'.format(constants_and_names.mangrove_biomass_di
 # for tile in mangrove_biomass_tile_list:
 #
 #     utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), '.')
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_dir, constants_and_names.pattern_gain, tile), '.')
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_dir, tile, constants_and_names.pattern_gain), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, tile, constants_and_names.pattern_mangrove_biomass), '.')
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(4)

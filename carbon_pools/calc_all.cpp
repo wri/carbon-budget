@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 
 string tile_id =argv[1];
-string agb_name = tile_id + "_biomass.tif";
+string agb_name = tile_id + "_t_aboveground_biomass_ha_2000.tif";
 string biome_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string elevation_name = tile_id + "_res_srtm.tif";
 string precip_name = tile_id + "_res_precip.tif";

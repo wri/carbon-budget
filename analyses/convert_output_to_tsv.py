@@ -28,7 +28,7 @@ local_dir = r'/home/ubuntu/data/'
 download_list = [
                  constants_and_names.annual_gain_combo_dir,
                  constants_and_names.cumul_gain_combo_dir,
-                 constants_and_names.net_emis_dir,
+                 constants_and_names.net_flux_dir,
                  constants_and_names.gross_emissions_dir,
                  constants_and_names.loss_dir,
                  constants_and_names.tcd_dir
@@ -46,7 +46,7 @@ ras_cwd = r'/home/ubuntu/raster-to-tsv'
 #
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.annual_gain_combo_dir, constants_and_names.pattern_annual_gain_combo, tile), local_dir)  # annual gain rate
 #     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_combo_dir, constants_and_names.pattern_cumul_gain_combo, tile), local_dir)  # cumulative gain
-#     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.net_emis_dir, constants_and_names.pattern_net_emis, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
+#     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.net_flux_dir, constants_and_names.pattern_net_flux, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
 #     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gross_emissions_dir, tile, constants_and_names.pattern_gross_emissions), local_dir)  # emissions from all drivers
 #     # utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), local_dir)  # tree cover loss
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), local_dir)  # tree cover density
@@ -91,7 +91,7 @@ for tile in biomass_tile_list:
     print "Processing net emissions for tile", tile
 
     # Names of the files that are used for this analysis
-    net_emis = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_net_emis, tile)
+    net_emis = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_net_flux, tile)
     tcd = '{0}{1}_{2}.tif'.format(local_dir, constants_and_names.pattern_tcd, tile)
 
     print "Joining net emissions and tcd2000", tile

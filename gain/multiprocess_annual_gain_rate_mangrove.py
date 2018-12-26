@@ -32,11 +32,11 @@ download_list = [constants_and_names.cont_eco_dir, constants_and_names.mangrove_
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
 
-# # For copying individual tiles to spot machine for testing
-# for tile in mangrove_biomass_tile_list:
-#
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, constants_and_names.pattern_cont_eco_processed, tile), '.')    # continents and FAO ecozones 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')         # mangrove aboveground biomass
+# For copying individual tiles to spot machine for testing
+for tile in mangrove_biomass_tile_list:
+
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, tile, constants_and_names.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, tile, constants_and_names.pattern_mangrove_biomass), '.')         # mangrove aboveground biomass
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(constants_and_names.gain_spreadsheet), '.']
