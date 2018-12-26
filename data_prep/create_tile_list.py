@@ -35,7 +35,7 @@ with open("natrl_forest_biomass_tiles.txt", 'r') as tile:
         # Only tifs will be in the tile list
         if '.tif' in tile_name:
 
-            tile_short_name = tile_name[8:]
+            tile_short_name = tile_name[:8]
             file_list_natrl.append(tile_short_name)
 
 # Iterates through the text file to get the names of the tiles and appends them to list
@@ -48,7 +48,7 @@ with open("mangrove_biomass_tiles.txt", 'r') as tile:
         # Only tifs will be in the tile list
         if '.tif' in tile_name:
 
-            tile_short_name = tile_name[8:]
+            tile_short_name = tile_name[:8]
             file_list_mangrove.append(tile_short_name)
 
 all_tiles = file_list_natrl + file_list_mangrove
