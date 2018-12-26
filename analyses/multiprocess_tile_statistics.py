@@ -87,6 +87,9 @@ for input in download_list:
     print "Deleting tiles..."
     for tile in tile_list:
         os.remove(tile)
+        tile_short = tile[:-4]
+        outname = '{0}_value_per_pixel.tif'.format(tile_short)
+        os.remove(tile_short)
         print "  Tiles deleted"
 
     # Copies the text file to the location on s3 that the tiles are from
