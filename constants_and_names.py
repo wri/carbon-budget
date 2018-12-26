@@ -34,7 +34,7 @@ mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass
 mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_WRI.zip'
 
 pattern_mangrove_biomass = 'mangrove_agb_t_ha'
-mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
+mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181226/'
 
 
 ### Inputs to carbon pools
