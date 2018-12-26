@@ -1,4 +1,5 @@
 import subprocess
+import pandas as pd
 import sys
 sys.path.append('../')
 import constants_and_names
@@ -15,10 +16,10 @@ biomass_tiles.close()
 
 print "Making a file of mangrove biomass 2000 tiles"
 out = subprocess.Popen(['aws', 's3', 'ls', constants_and_names.mangrove_biomass_2000_dir], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-stdout, stderr = out.communicate()
+stdout2, stderr2 = out.communicate()
 # Writes the output string to a text file for easier interpretation
 biomass_tiles = open("mangrove_biomass_tiles.txt", "w")
-biomass_tiles.write(stdout)
+biomass_tiles.write(stdout2)
 biomass_tiles.close()
 
 # Empty lists for filling with biomass tile ids
@@ -56,7 +57,7 @@ all_tiles = file_list_natrl + file_list_mangrove
 
 # Tile list with tiles found in both lists removed
 unique_tiles = set(all_tiles)
-print len(unique_tiles)
+print "There are {} unique tiles with biomass.".format(len(unique_tiles))
 
-unique_tiles_sorted = sorted(unique_tiles)
-print unique_tiles
+df = pd.DataFrame(unique_tiles)
+print df
