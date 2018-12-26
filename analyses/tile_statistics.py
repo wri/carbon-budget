@@ -24,9 +24,8 @@ def create_tile_statistics(tile):
     # Flattens the numpy array to a single dimension
     tile_array_flat = tile_array.flatten()
 
-    # Removes NoData values from the array
-    tile_array_flat_mask = tile_array_flat[tile_array_flat != 0]
-    tile_array_flat_mask = tile_array_flat_mask[tile_array_flat_mask != -9999]
+    # Removes NoData values from the array. NoData are generally either 0 or -9999.
+    tile_array_flat_mask = tile_array_flat[tile_array_flat > 0]
 
     ### For converting value/hectare to value/pixel
     # Tile with the area of each pixel in m2
