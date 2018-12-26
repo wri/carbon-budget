@@ -56,6 +56,7 @@ all_tiles = file_list_natrl + file_list_mangrove
 
 # Tile list with tiles found in both lists removed
 unique_tiles = set(all_tiles)
+print len(unique_tiles)
 
 unique_tiles_sorted = sorted(unique_tiles)
 print unique_tiles
