@@ -43,9 +43,9 @@ def tile_list(source):
                     file_list.append(tile_short_name)
 
                 # For stripping down mangrove biomass tiles to the tile id
-                if constants_and_names.pattern_mangrove_biomass in tile_name:
+                if constants_and_names.pattern_mangrove_biomass_2000 in tile_name:
 
-                    tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_mangrove_biomass), '')
+                    tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_mangrove_biomass_2000), '')
                     tile_short_name = tile_short_name.replace('.tif', '')
                     file_list.append(tile_short_name)
                     file_list = file_list[0:]

@@ -1,7 +1,8 @@
 import universal_util
 
-
-##### Constants
+######     ######
+### Constants ###
+######     ######
 
 # Number of biomass tiles
 biomass_tile_count = 280
@@ -20,24 +21,38 @@ above_to_below_natrl_forest = 0.26
 above_to_below_mangrove = 0.608
 
 
-########
-# File names and directories
-########
+########                  ########
+### File names and directories ###
+########                  ########
 
 ### Biomass tiles
-# Woods Hole aboveground biomass 2000 version 4 tiles
-pattern_biomass = "t_aboveground_biomass_ha_2000"
-biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
-# Lola Fatoyinbo aboveground mangrove biomass tiles
+## Biomass in 2000
+# Woods Hole aboveground biomass 2000 version 4 tiles
+pattern_natrl_forest_biomass_2000 = "t_aboveground_biomass_ha_2000"
+natrl_forest_biomass_2000_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
+
+# Raw Lola Fatoyinbo aboveground mangrove biomass in the year 2000 rasters
 mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
 mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_WRI.zip'
 
-pattern_mangrove_biomass = 'mangrove_agb_t_ha'
-mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181226/'
+# Processed mangrove aboveground biomass in the year 2000
+pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha2000'
+mangrove_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181226/'
+
+## Biomass in the year of emission
+base_biomass_emitted_dir = 's3://gfw2-data/climate/carbon_model/emitted_biomass/20181226/'
+
+# Woods Hole aboveground biomass in the year of emission
+pattern_natrl_forest_biomass_emitted = "t_aboveground_biomass_ha_emitted"
+natrl_forest_biomass_emitted_dir = '{0}/natural_forest/'.format(base_biomass_emitted_dir)
+
+# Mangrove aboveground biomass in the year of emission
+pattern_mangrove_biomass_emitted = 'mangrove_agb_t_ha_emitted'
+mangrove_biomass_emitted_dir = '{0}/mangrove/'.format(base_biomass_emitted_dir)
 
 
-### Inputs to carbon pools
+### Non-biomass inputs to carbon pools
 # FAO ecozones
 pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
 fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
@@ -62,15 +77,15 @@ srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pool
 
 ### Carbon pools
 ### NOTE: the patterns for the carbon pools must be set separately in carbon_pools/calc_carbon_pools.cpp
-# Base location for all carbon pools
+# Base directory for all carbon pools
 base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/'
 
-# These must match the word before .tif in the outnames of calc_carbon_pools.cpp
-pool_types = ['natrl', 'mang', 'total']
+# NOTE: These must match the word before .tif in the outnames of calc_carbon_pools.cpp, e.g., "string outname_litter_total = tile_id + "_t_litter_C_ha_total.tif";"
+pool_types = ['natrl', 'mangrove', 'total']
 
 # Aboveground carbon
 pattern_agc = 't_AGC_ha'
-agc_dir = '{}/aboveground_C'.format(base_carbon_pool_dir)
+agc_dir = '{}/aboveground_C/'.format(base_carbon_pool_dir)
 
 # Belowground carbon
 pattern_bgc = 't_BGC_ha'
@@ -119,6 +134,13 @@ ifl_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/ifl_2000/'
 
 # Processed FAO ecozone shapefile
 cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
+
+# Directory and names for the continent-ecozone tiles, raw and processed
+pattern_cont_eco_raw = 'fao_ecozones_continents_raw'
+pattern_cont_eco_processed = 'fao_ecozones_continents_processed'
+cont_eco_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
+cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/raw/'
+cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20181002/processed/'
 
 # Number of gain years for non-mangrove natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'

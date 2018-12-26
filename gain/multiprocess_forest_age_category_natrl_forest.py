@@ -24,13 +24,13 @@ import constants_and_names
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
+biomass_tile_list = utilities.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
 
 # For downloading all tiles in the folders
-download_list = [constants_and_names.loss_dir, constants_and_names.gain_dir, constants_and_names.tcd_dir, constants_and_names.ifl_dir, constants_and_names.biomass_dir, constants_and_names.cont_eco_dir]
+download_list = [constants_and_names.loss_dir, constants_and_names.gain_dir, constants_and_names.tcd_dir, constants_and_names.ifl_dir, constants_and_names.natrl_forest_biomass_2000_dir, constants_and_names.cont_eco_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -42,7 +42,7 @@ for tile in biomass_tile_list:
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_dir, constants_and_names.pattern_gain, tile), '.')            # gain tiles
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), '.')    # tcd 2000
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.ifl_dir, tile, constants_and_names.pattern_ifl), '.')                    # ifl 2000
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')                     # biomass 2000
+    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.natrl_forest_biomass_2000_dir, tile, constants_and_names.pattern_natrl_forest_biomass_2000), '.')                     # biomass 2000
     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, tile, constants_and_names.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates

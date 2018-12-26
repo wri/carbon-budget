@@ -32,7 +32,8 @@ def create_tile_statistics(tile):
     area_tile = '{0}_{1}.tif'.format(constants_and_names.pattern_pixel_area, tile_id)
 
     # Output file name
-    outname = '{0}_{1}_value_per_pixel.tif'.format(tile_id, tile)
+    tile_short = tile[:-4]
+    outname = '{0}_value_per_pixel.tif'.format(tile_short)
 
     # Equation argument for converting emissions from per hectare to per pixel.
     # First, multiplies the per hectare emissions by the area of the pixel in m2, then divides by the number of m2 in a hectare.

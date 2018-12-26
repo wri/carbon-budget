@@ -11,7 +11,7 @@ import constants_and_names
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
 
-biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
+biomass_tile_list = utilities.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 # biomass_tile_list = ['40N_120E'] # test tiles

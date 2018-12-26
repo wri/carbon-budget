@@ -99,13 +99,13 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst_above.write_band(1, gain_rate_AGB , window=window)
 
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)):
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)):
 
         # Aboveground mangrove biomass tile
-        mangrove_biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+        mangrove_biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
 
         # Mangrove biomass tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.

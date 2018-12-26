@@ -22,7 +22,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     start = datetime.datetime.now()
 
     # Name of the mangrove biomass tile
-    mangrove_biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+    mangrove_biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
 
     # Name of the continent-ecozone tile
     cont_eco = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed)

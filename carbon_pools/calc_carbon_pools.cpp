@@ -39,11 +39,11 @@ string outname_litter_natrl = tile_id + "_t_litter_C_ha_natrl.tif";
 string outname_total_C_natrl = tile_id + "_t_total_C_ha_natrl.tif";
 
 //output carbon pool tif names for mangrove forests
-string outname_agc_mang = tile_id + "_t_AGC_ha_mang.tif";
-string outname_bgc_mang = tile_id + "_t_BGC_ha_mang.tif";
-string outname_deadwood_mang = tile_id + "_t_deadwood_C_ha_mang.tif";
-string outname_litter_mang = tile_id + "_t_litter_C_ha_mang.tif";
-string outname_total_C_mang = tile_id + "_t_total_C_ha_mang.tif";
+string outname_agc_mang = tile_id + "_t_AGC_ha_mangrove.tif";
+string outname_bgc_mang = tile_id + "_t_BGC_ha_mangrove.tif";
+string outname_deadwood_mang = tile_id + "_t_deadwood_C_ha_mangrove.tif";
+string outname_litter_mang = tile_id + "_t_litter_C_ha_mangrove.tif";
+string outname_total_C_mang = tile_id + "_t_total_C_ha_mangrove.tif";
 
 //output tif names for non-mangrove and mangrove forests combined
 string outname_agc_total = tile_id + "_t_AGC_ha_total.tif";

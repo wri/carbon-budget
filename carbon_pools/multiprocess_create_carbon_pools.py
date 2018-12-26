@@ -5,34 +5,30 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# tile_list = universal_util.tile_list(constants_and_names.biomass_dir)
+# tile_list = universal_util.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
 tile_list = ['10N_080W', '40N_120E'] # test tiles
 print tile_list
 
 # For downloading all tiles in the input folders.
-# The cumulative carbon gain tiles are for adding to the biomass 2000 tiles to get AGC at the time of tree cover loss.
 input_files = [
-    constants_and_names.biomass_dir,
-    constants_and_names.mangrove_biomass_dir,
+    constants_and_names.natrl_forest_biomass_2000_dir,
+    constants_and_names.mangrove_biomass_2000_dir,
     constants_and_names.fao_ecozone_processed_dir,
     constants_and_names.precip_processed_dir,
     constants_and_names.soil_C_processed_dir,
-    constants_and_names.srtm_processed_dir,
-    constants_and_names.cumul_gain_AGC_mangrove_dir,
-    constants_and_names.cumul_gain_AGC_natrl_forest_dir
+    constants_and_names.srtm_processed_dir
     ]
 
 # for input in input_files:
 #     universal_util.s3_folder_download('{}'.format(input), '.')
 
 # For copying individual tiles to spot machine for testing.
-# The cumulative carbon gain tiles are for adding to the biomass 2000 tiles to get AGC at the time of tree cover loss.
 for tile in tile_list:
 
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile,
-                                                            constants_and_names.pattern_biomass), '.')
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile,
-                                                            constants_and_names.pattern_biomass), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.natrl_forest_biomass_emitted_dir, tile,
+                                                            constants_and_names.pattern_natrl_forest_biomass_emitted), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_emitted_dir, tile,
+                                                            constants_and_names.pattern_mangrove_biomass_emitted), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.fao_ecozone_processed_dir, tile,
                                                             constants_and_names.pattern_fao_ecozone_processed), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.precip_processed_dir, tile,
@@ -41,10 +37,6 @@ for tile in tile_list:
                                                             constants_and_names.pattern_soil_C), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.srtm_processed_dir, tile,
                                                             constants_and_names.pattern_srtm), '.')
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_mangrove_dir,
-                                                            constants_and_names.pattern_cumul_gain_AGC_mangrove, tile), '.')
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_AGC_natrl_forest_dir,
-                                                            constants_and_names.pattern_cumul_gain_AGC_natrl_forest, tile), '.')
 
 tile_count = []
 for i, input in enumerate(input_files):

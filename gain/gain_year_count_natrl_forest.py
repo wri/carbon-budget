@@ -32,15 +32,15 @@ def create_gain_year_count(tile_id):
 
     # The calculations for tiles with and without mangroves anywhere in them are different.
     # For tiles with mangroves somewhere in them.
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)):
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)):
 
         print "  {} has mangroves.".format(tile_id)
 
         # Name of mangrove tile
-        mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+        mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
 
         # Mangrove tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass)
+        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.

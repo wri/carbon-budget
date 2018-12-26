@@ -14,7 +14,7 @@ sys.path.append('../')
 import constants_and_names
 
 # The list of tiles to iterate through
-biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
+biomass_tile_list = utilities.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['10N_080W'] # test tile
 print biomass_tile_list
@@ -23,7 +23,7 @@ print biomass_tile_list
 utilities.s3_folder_download('{}'.format(constants_and_names.loss_dir), '.')
 utilities.s3_folder_download('{}'.format(constants_and_names.gain_dir), '.')
 utilities.s3_folder_download('{}'.format(constants_and_names.tcd_dir), '.')
-utilities.s3_folder_download('{}'.format(constants_and_names.mangrove_biomass_dir), '.')
+utilities.s3_folder_download('{}'.format(constants_and_names.mangrove_biomass_2000_dir), '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in biomass_tile_list:
@@ -31,7 +31,7 @@ utilities.s3_folder_download('{}'.format(constants_and_names.mangrove_biomass_di
 #     utilities.s3_file_download('{0}{1}.tif'.format(utilities.loss_dir, tile), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_dir, tile, constants_and_names.pattern_gain), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, tile, constants_and_names.pattern_tcd), '.')
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, tile, constants_and_names.pattern_mangrove_biomass), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_2000_dir, tile, constants_and_names.pattern_mangrove_biomass_2000), '.')
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/10)

@@ -1,48 +1,26 @@
-### This script creates tiles of natural non-mangrove forest age category according to a decision tree.
-### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
-### The decision tree uses several input tiles, including IFL status, gain, and loss.
-### Downloading all of these tiles can take awhile.
-### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
-### The output tiles have 10 possible values, each value representing an end of the decision tree.
-### These 10 values map to the three forest age categories.
-### The forest age category tiles are inputs for assigning gain rates to pixels.
-
-import utilities
 import datetime
+import sys
 import numpy as np
 import rasterio
-import sys
+import os
+import subprocess
+import glob
 sys.path.append('../')
 import constants_and_names
+import universal_util
 
-def forest_age_category(tile_id, gain_table_dict):
+def create_emitted_biomass(tile_id):
 
-    print "Processing:", tile_id
-
-    # Gets the bounding coordinates of each tile. Needed to determine if the tile is in the tropics (within 30 deg of the equator)
-    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    print "  ymax:", ymax
-
-    # Default value is that the tile is not in the tropics
-    tropics = 0
-
-    # Criteria for assigning a tile to the tropics
-    if (ymax > -30) & (ymax <= 30) :
-
-        tropics = 1
-
-    print "  Tile in tropics:", tropics
-
-    # start time
     start = datetime.datetime.now()
 
+
     # Names of the input tiles
-    loss = '{}.tif'.format(tile_id)
-    gain = '{0}_{1}.tif'.format(constants_and_names.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(constants_and_names.pattern_tcd, tile_id)
-    ifl = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_ifl)
-    biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_natrl_forest_biomass_2000)
-    cont_eco = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed)
+    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_natrl_forest_biomass_2000)
+    mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
+    natrl_forest_gain = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cumul_gain_AGC_natrl_forest)
+    mangrove_gain = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cumul_gain_AGC_mangrove)
+    natrl_forest_emitted = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_natrl_forest_biomass_2000)
+    mangrove_emitted = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed)
 
     print "  Reading input files and evaluating conditions"
 
@@ -127,13 +105,24 @@ def forest_age_category(tile_id, gain_table_dict):
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(constants_and_names.age_cat_natrl_forest_dir, tile_id, constants_and_names.pattern_age_cat_natrl_forest)
-
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
 
 
 
 
+
+
+
+
+
+
+    print 'Uploading tiles to s3'
+    for type in constants_and_names.pool_types:
+
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.agc_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_agc, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.bgc_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_bgc, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.deadwood_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_deadwood, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.litter_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_litter, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.soil_C_pool_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_soil_pool, type))
+        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.total_C_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_total_C, type))
+
+    print "Elapsed time: {}".format(datetime.datetime.now() - start)

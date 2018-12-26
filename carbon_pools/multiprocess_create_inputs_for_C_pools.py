@@ -6,7 +6,7 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# tile_list = util.tile_list(constants_and_names.biomass_dir)
+# tile_list = util.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
 tile_list = ['10N_080W', '40N_120E'] # test tiles
 print tile_list
 

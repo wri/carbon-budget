@@ -28,8 +28,8 @@ f.close()
 #
 # # For copying individual tiles to spot machine for testing
 # for tile in download_tile_list:
-#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_dir, constants_and_names.pattern_mangrove_biomass, tile), '.')
-#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile, constants_and_names.pattern_biomass), '.')
+#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_2000_dir, constants_and_names.pattern_mangrove_biomass_2000, tile), '.')
+#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.natrl_forest_biomass_2000_dir, tile, constants_and_names.pattern_natrl_forest_biomass_2000), '.')
 #     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
 
 
@@ -39,7 +39,7 @@ f.close()
 # For downloading all tiles in selected folders
 download_list = [
                  's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
-                 ,constants_and_names.biomass_dir
+                 ,constants_and_names.natrl_forest_biomass_2000_dir
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
@@ -84,12 +84,10 @@ for input in download_list:
     #     tile_statistics.create_tile_statistics(tile)
 
     # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
-    print "Deleting tiles"
+    print "Deleting tiles..."
     for tile in tile_list:
-        try:
-            os.remove(tile)
-        except:
-            pass
+        os.remove(tile)
+        print "  Tiles deleted"
 
     # Copies the text file to the location on s3 that the tiles are from
     cmd = ['aws', 's3', 'cp', constants_and_names.tile_stats, constants_and_names.tile_stats_dir]

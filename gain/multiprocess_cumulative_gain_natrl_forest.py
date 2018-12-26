@@ -8,7 +8,7 @@ import sys
 sys.path.append('../')
 import constants_and_names
 
-biomass_tile_list = utilities.tile_list(constants_and_names.biomass_dir)
+biomass_tile_list = utilities.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['20S_110E'] # test tiles
 print biomass_tile_list
