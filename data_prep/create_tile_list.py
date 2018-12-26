@@ -64,7 +64,7 @@ df = pd.DataFrame(unique_tiles, columns=['tile_id'])
 df = df.sort_values(by=['tile_id'])
 print df
 
-unique_tiles_ordered_list = df.tolist()
+unique_tiles_ordered_list = df.tile_id.tolist()
 
 with open(constants_and_names.pattern_biomass_tile_list, 'w') as f:
     for item in unique_tiles_ordered_list:
