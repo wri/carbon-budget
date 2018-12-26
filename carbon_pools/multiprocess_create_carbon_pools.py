@@ -9,9 +9,11 @@ import universal_util
 tile_list = ['10N_080W', '40N_120E'] # test tiles
 print tile_list
 
-# For downloading all tiles in the input folders
+# For downloading all tiles in the input folders.
+# The cumulative carbon gain tiles are for adding to the biomass 2000 tiles to get AGC at the time of tree cover loss.
 input_files = [
     constants_and_names.biomass_dir,
+    constants_and_names.mangrove_biomass_dir,
     constants_and_names.fao_ecozone_processed_dir,
     constants_and_names.precip_processed_dir,
     constants_and_names.soil_C_processed_dir,
@@ -23,11 +25,14 @@ input_files = [
 # for input in input_files:
 #     universal_util.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
+# For copying individual tiles to spot machine for testing.
+# The cumulative carbon gain tiles are for adding to the biomass 2000 tiles to get AGC at the time of tree cover loss.
 for tile in tile_list:
 
-    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir,
-                                                            constants_and_names.pattern_biomass, tile), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile,
+                                                            constants_and_names.pattern_biomass), '.')
+    universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.biomass_dir, tile,
+                                                            constants_and_names.pattern_biomass), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.fao_ecozone_processed_dir, tile,
                                                             constants_and_names.pattern_fao_ecozone_processed), '.')
     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.precip_processed_dir, tile,

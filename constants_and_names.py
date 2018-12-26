@@ -30,6 +30,9 @@ pattern_biomass = "t_aboveground_biomass_ha_2000"
 biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Lola Fatoyinbo aboveground mangrove biomass tiles
+mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
+mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_WRI.zip'
+
 pattern_mangrove_biomass = 'mangrove_agb_t_ha'
 mangrove_biomass_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
 
@@ -58,6 +61,7 @@ srtm_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pool
 
 
 ### Carbon pools
+### NOTE: the patterns for the carbon pools must be set separately in carbon_pools/calc_carbon_pools.cpp
 # Base location for all carbon pools
 base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/'
 

@@ -14,7 +14,7 @@
 #include <gdal/ogr_spatialref.h>
 #include "deadwood_litter.cpp"
 using namespace std;
-//to compile:  c++ calc_all.cpp -o calc_all.exe -lgdal
+//to compile:  c++ calc_carbon_pools.cpp -o calc_carbon_pools.exe -lgdal
 // ./dead_wood_c_stock.exe 00N_000E_biomass.tif 00N_000E_res_ecozone.tif 00N_000E_res_srtm.tif 00N_000E_res_srtm.tif test.tif > values.txt
 
 int main(int argc, char* argv[])
@@ -23,19 +23,19 @@ int main(int argc, char* argv[])
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 
 string tile_id =argv[1];
-string agb_name = tile_id + "_t_aboveground_biomass_ha_2000.tif";
+string agb_natrl_name = tile_id + "_t_aboveground_biomass_ha_2000.tif";   //Aboveground biomass of natural, non-mangrove forests
 string biome_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
 string elevation_name = tile_id + "_res_srtm.tif";
 string precip_name = tile_id + "_res_precip.tif";
-string soil_name =  tile_id + "_soil.tif";
+string soil_name =  tile_id + "_soil_t_C_ha.tif";
 
 
 //either parse this var from inputs or send it in
-string outname_carbon = tile_id + "_carbon.tif";
-string outname_bgc = tile_id + "_bgc.tif";
-string outname_deadwood = tile_id + "_deadwood.tif";
-string outname_litter = tile_id + "_litter.tif";
-string outname_total = tile_id + "_totalc.tif";
+string outname_agc = tile_id + "_t_AGC_ha.tif";
+string outname_bgc = tile_id + "_t_BGC_ha.tif";
+string outname_deadwood = tile_id + "_t_deadwood_C_ha.tif";
+string outname_litter = tile_id + "_t_litter_C_ha.tif";
+string outname_total_C = tile_id + "_t_total_C_ha.tif";
 
 //setting variables
 int x, y;
@@ -57,7 +57,7 @@ GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
 
 
 //open file and get extent and projection
-INGDAL = (GDALDataset *) GDALOpen(agb_name.c_str(), GA_ReadOnly ); 
+INGDAL = (GDALDataset *) GDALOpen(agb_natrl_name.c_str(), GA_ReadOnly );
 INBAND = INGDAL->GetRasterBand(1);
 
 INGDAL2 = (GDALDataset *) GDALOpen(biome_name.c_str(), GA_ReadOnly );
@@ -107,7 +107,7 @@ oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 
-OUTGDAL = OUTDRIVER->Create( outname_carbon.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL = OUTDRIVER->Create( outname_agc.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL->SetGeoTransform(adfGeoTransform); OUTGDAL->SetProjection(OUTPRJ); 
 OUTBAND1 = OUTGDAL->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
@@ -127,13 +127,13 @@ OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
 OUTBAND4 = OUTGDAL4->GetRasterBand(1);
 OUTBAND4->SetNoDataValue(-9999);
 
-OUTGDAL5 = OUTDRIVER->Create( outname_total.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL5 = OUTDRIVER->Create( outname_total_C_C.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
 OUTBAND5->SetNoDataValue(-9999);
 
 //read/write data
-float agb_data[xsize];
+float agb_natrl_data[xsize];
 float biome_data[xsize];
 float elevation_data[xsize];
 float precip_data[xsize];
@@ -143,49 +143,40 @@ float out_carbon[xsize];
 float out_bgc[xsize];
 float out_deadwood[xsize];
 float out_litter[xsize];
-float out_total[xsize];
+float out_total_C[xsize];
 
 float deadwood;
 float litter;
 
 for(y=0; y<ysize; y++) {
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_data, xsize, 1, GDT_Float32, 0, 0); 
+INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agb_natrl_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, biome_data, xsize, 1, GDT_Float32, 0, 0); 
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, elevation_data, xsize, 1, GDT_Float32, 0, 0); 
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, precip_data, xsize, 1, GDT_Float32, 0, 0); 
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0); 
 
 for(x=0; x<xsize; x++) {
-   if (agb_data[x] == -32768) 
+   if (agb_natrl_data[x] < 0)
    {
-		out_carbon[x] = -9999;
+		out_agc[x] = -9999;
 		out_bgc[x] = -9999;
 		out_deadwood[x] = -9999;
 
 		out_litter[x] = -9999;
-        out_total[x] = -9999;
+        out_total_C[x] = -9999;
 	}
 
-   else if (agb_data[x] == -9999)
+   else
    {
-		out_carbon[x] = -9999;
-		out_bgc[x] = -9999;
-		out_deadwood[x] = -9999;
+		out_agc[x] = agb_natrl_data[x] * .47;
 
-		out_litter[x] = -9999;
-        out_total[x] = -9999;
-	}
-   else 
-   {
-		out_carbon[x] = agb_data[x] * .47;
+		out_bgc[x] = .489 * pow(agb_natrl_data[x], 0.89) *.47;
 
-		out_bgc[x] = .489 * pow(agb_data[x], 0.89) *.47;
-
-        out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
+        out_deadwood[x] = deadwood_calc(biome_data[x], elevation_data[x], precip_data[x], agb_natrl_data[x]);
                 
-		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_data[x]);
+		out_litter[x] = litter_calc(biome_data[x], elevation_data[x], precip_data[x], agb_natrl_data[x]);
  
-		out_total[x] = out_carbon[x] + out_bgc[x] + out_deadwood[x] + out_litter[x] + soil_data[x];
+		out_total_C[x] = out_agc[x] + out_bgc[x] + out_deadwood[x] + out_litter[x] + soil_data[x];
 
 	}
 	
@@ -193,11 +184,11 @@ for(x=0; x<xsize; x++) {
 	
 //closes for x loop
 }
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_carbon, xsize, 1, GDT_Float32, 0, 0 ); 
+OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_agc, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_bgc, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_deadwood, xsize, 1, GDT_Float32, 0, 0 ); 
 OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_litter, xsize, 1, GDT_Float32, 0, 0 ); 
-OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_total, xsize, 1, GDT_Float32, 0, 0 );  
+OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_total_C, xsize, 1, GDT_Float32, 0, 0 );
 
 
 //closes for y loop

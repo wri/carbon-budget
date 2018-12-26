@@ -1,33 +1,11 @@
 import subprocess
-import glob
 import os
-
-# Woods Hole biomass 2000 version 4 tiles
-biomass_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
-
-# Location of source mangrove aboveground biomass images
-mangrove_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
-mangrove_raw = 'MaskedSRTMCountriesAGB_WRI.zip'
 
 # name of mangrove vrt
 mangrove_vrt = 'mangrove_biomass.vrt'
 
-# base name of mangrove biomass tiles
-mangrove_tile_out = 'mangrove_agb_t_ha'
-
-# output location for mangrove biomass tiles
-out_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
-
-def s3_folder_download(source, dest):
-    cmd = ['aws', 's3', 'cp', source, dest, '--recursive']
-    subprocess.check_call(cmd)
-
-def s3_file_download(source, dest):
-    cmd = ['aws', 's3', 'cp', source, dest]
-    subprocess.check_call(cmd)
-
 def build_vrt(out_vrt):
-    print "Creating vrt of mangroves"
+    print "Creating vrt of mangroves..."
     os.system('gdalbuildvrt {} *.tif'.format(out_vrt))
 
 # Lists the tiles in a folder in s3
@@ -76,22 +54,3 @@ def coords(tile_id):
     xmax = str(int(xmin) + 10)
 
     return xmin, xmax, ymin, ymax
-
-# Uploads tile to specified location
-def upload_final(pattern, upload_dir, tile_id):
-
-    # Gets all files with the specified pattern
-    files = glob.glob('{0}_{1}*tif'.format(pattern, tile_id))
-
-    print '{0}_{1}.tif'.format(pattern, tile_id)
-
-    for f in files:
-
-        print "uploading {}".format(f)
-        cmd = ['aws', 's3', 'cp', '{}'.format(f), upload_dir]
-        print cmd
-
-        try:
-            subprocess.check_call(cmd)
-        except:
-            print "Error uploading output tile"
