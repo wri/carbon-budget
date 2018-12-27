@@ -119,7 +119,7 @@ gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/2018
 
 
 # Spreadsheet with annual gain rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181017.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181227.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'

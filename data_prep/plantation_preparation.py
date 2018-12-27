@@ -54,3 +54,12 @@
 # >>> engine = create_engine('postgresql://ubuntu@localhost')                                                                                                           │·····················
 # >>> all_plant = pd.read_sql(con=engine, 'SELECT final_id FROM all_plant')
 # growth = pd.read_sql('SELECT final_id FROM growth', con=engine)
+
+
+##### Getting plantation tiles from plantation GeoJSON
+
+# Copy GeoJSON to s3
+# aws s3 cp s3://gfw-files/plantations/final/global/geojson/final_plantations.geojson .
+
+# Import GeoJSON to PostGIS
+# ogr2ogr -f "PostgreSQL" PG:"dbname=ubuntu" "final_plantations.geojson" -nln plantations -append -progress -sql "SELECT growth FROM final_plantations"
