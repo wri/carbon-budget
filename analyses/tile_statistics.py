@@ -63,11 +63,13 @@ def create_tile_statistics(tile):
     # Empty statistics list
     stats = [None] * 12
 
-    # Calculates the statistics
+    # Calculates basic tile info
     stats[0] = tile_id
     stats[1] = tile
     stats[2] = tile_array_flat_mask.size
 
+    # If there are no pixels with values in the tile (as determined by the length of the array when NoData values are removed),
+    # the statistics are all N/A.
     if stats[2] == 0:
 
         stats[3] = "N/A"
@@ -80,6 +82,7 @@ def create_tile_statistics(tile):
         stats[10] = "N/A"
         stats[11] = "N/A"
 
+    # If there are pixels with values in the tile, the following statistics are calculated
     else:
 
         stats[3] = np.mean(tile_array_flat_mask, dtype=np.float64)

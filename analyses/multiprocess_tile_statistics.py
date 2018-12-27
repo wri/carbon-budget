@@ -63,7 +63,7 @@ download_list = [
 
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
-    # universal_util.s3_folder_download(input, '.')
+    universal_util.s3_folder_download(input, '.')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
@@ -76,7 +76,7 @@ for input in download_list:
 
     # For multiprocessor use
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=6)
+    pool = multiprocessing.Pool(processes=8)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
 
     # # For single processor use
