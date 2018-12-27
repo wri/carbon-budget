@@ -1,7 +1,9 @@
 import subprocess
 import constants_and_names
 import datetime
+import os
 import re
+import pandas as pd
 
 # Prints the date as YYYYmmdd
 d = datetime.datetime.today()
@@ -95,9 +97,89 @@ def tile_list_spot_machine(source):
 
     return file_list
 
-# Gets the tile id from the full tile name
+# Creates a list of all biomass 2000 tiles-- those from WHRC and those only in the mangrove set
+def create_combined_biomass_tile_list(WHRC, mangrove):
+
+    print "Making a combined biomass tile list..."
+
+    out = subprocess.Popen(['aws', 's3', 'ls', WHRC], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    # Writes the output string to a text file for easier interpretation
+    biomass_tiles = open("natrl_forest_biomass_tiles.txt", "w")
+    biomass_tiles.write(stdout)
+    biomass_tiles.close()
+
+    out = subprocess.Popen(['aws', 's3', 'ls', mangrove], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout2, stderr2 = out.communicate()
+    # Writes the output string to a text file for easier interpretation
+    biomass_tiles = open("mangrove_biomass_tiles.txt", "w")
+    biomass_tiles.write(stdout2)
+    biomass_tiles.close()
+
+    # Empty lists for filling with biomass tile ids
+    file_list_natrl = []
+    file_list_mangrove = []
+
+    # Iterates through the Woods Hole biomass text file to get the names of the tiles and appends them to list
+    with open("natrl_forest_biomass_tiles.txt", 'r') as tile:
+
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
+
+                tile_id = get_tile_id(tile_name)
+                file_list_natrl.append(tile_id)
+
+    # Iterates through the mangrove biomass text file to get the names of the tiles and appends them to list
+    with open("mangrove_biomass_tiles.txt", 'r') as tile:
+
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
+
+                tile_id = get_tile_id(tile_name)
+                file_list_natrl.append(tile_id)
+
+    # Combines Woods Hole and mangrove biomass tile lists
+    all_tiles = file_list_natrl + file_list_mangrove
+
+    # Tile list with tiles found in both lists removed, so only the unique tiles remain
+    unique_tiles = list(set(all_tiles))
+    print "  There are {} unique tiles with biomass.".format(len(unique_tiles))
+
+    # Converts the set to a pandas dataframe to put the tiles in the correct order
+    df = pd.DataFrame(unique_tiles, columns=['tile_id'])
+    df = df.sort_values(by=['tile_id'])
+    print "Tile list is:", df
+
+    # Converts the pandas dataframe to a Python list so that it can be written to a txt
+    unique_tiles_ordered_list = df.tile_id.tolist()
+
+    # Writes the biomass tile list to a txt
+    with open(constants_and_names.pattern_biomass_tile_list, 'w') as f:
+        for item in unique_tiles_ordered_list:
+            f.write("%s, " % item)
+
+    # Copies that list to s3
+    cmd = ['aws', 's3', 'cp', constants_and_names.pattern_biomass_tile_list, '{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list)]
+    subprocess.check_call(cmd)
+
+    os.remove("natrl_forest_biomass_tiles.txt")
+    os.remove("mangrove_biomass_tiles.txt")
+
+    return unique_tiles_ordered_list
+
+
+# Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
 
+    # based on https://stackoverflow.com/questions/20003025/find-1-letter-and-2-numbers-using-regex and https://docs.python.org/3.4/howto/regex.html
     tile_id = re.search("[0-9]{2}[A-Z][_][0-9]{3}[A-Z]", tile_name).group()
 
     return tile_id

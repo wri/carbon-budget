@@ -46,7 +46,7 @@ def create_tile_statistics(tile):
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
            '--overwrite']
     subprocess.check_call(cmd)
-    print "{} converted".format(tile)
+    print "{} converted to /pixel".format(tile)
 
     print "Converting value/pixel tile {} to numpy array...".format(tile)
     # Opens raster with value per pixel
