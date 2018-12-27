@@ -44,7 +44,7 @@ def create_tile_statistics(tile):
 
     print "Converting {} from /ha to /pixel...".format(tile)
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-           '--overwrite']
+           '--overwrite', '-progress']
     subprocess.check_call(cmd)
     print "{} converted to /pixel".format(tile)
 
@@ -67,20 +67,30 @@ def create_tile_statistics(tile):
     stats[0] = tile_id
     stats[1] = tile
     stats[2] = tile_array_flat_mask.size
-    print stats[2]
-    stats[3] = np.mean(tile_array_flat_mask, dtype=np.float64)
-    print stats[3]
-    stats[4] = np.median(tile_array_flat_mask)
-    print stats[4]
-    stats[5] = np.percentile(tile_array_flat_mask, 10)
-    print stats[5]
-    stats[6] = np.percentile(tile_array_flat_mask, 25)
-    print stats[6]
-    stats[7] = np.percentile(tile_array_flat_mask, 75)
-    stats[8] = np.percentile(tile_array_flat_mask, 90)
-    stats[9] = np.amin(tile_array_flat_mask)
-    stats[10] = np.amax(tile_array_flat_mask)
-    stats[11] = np.sum(value_per_pixel_array_flat)
+
+    if stats[2] == 0:
+
+        stats[3] = "N/A"
+        stats[4] = "N/A"
+        stats[5] = "N/A"
+        stats[6] = "N/A"
+        stats[7] = "N/A"
+        stats[8] = "N/A"
+        stats[9] = "N/A"
+        stats[10] = "N/A"
+        stats[11] = "N/A"
+
+    else:
+
+        stats[3] = np.mean(tile_array_flat_mask, dtype=np.float64)
+        stats[4] = np.median(tile_array_flat_mask)
+        stats[5] = np.percentile(tile_array_flat_mask, 10)
+        stats[6] = np.percentile(tile_array_flat_mask, 25)
+        stats[7] = np.percentile(tile_array_flat_mask, 75)
+        stats[8] = np.percentile(tile_array_flat_mask, 90)
+        stats[9] = np.amin(tile_array_flat_mask)
+        stats[10] = np.amax(tile_array_flat_mask)
+        stats[11] = np.sum(value_per_pixel_array_flat)
 
     stats_no_brackets = ', '.join(map(str, stats))
 
