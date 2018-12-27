@@ -1,6 +1,7 @@
 import subprocess
 import constants_and_names
 import datetime
+import re
 
 # Prints the date as YYYYmmdd
 d = datetime.datetime.today()
@@ -97,14 +98,7 @@ def tile_list_spot_machine(source):
 # Gets the tile id from the full tile name
 def get_tile_id(tile_name):
 
-    # For getting tile id of biomass tiles
-    if '_t_aboveground_biomass_ha_2000.tif' in tile_name:
-        tile_id = tile_name[:8]
-
-    # For getting tile id of all other tiles
-    else:
-        tile_short_name = tile_name.replace('.tif', '')
-        tile_id = tile_short_name[-8:]
+    tile_id = re.search("[0-9]{2}[A-Z][_][0-9]{3}[A-Z]", tile_name).group()
 
     return tile_id
 
