@@ -67,10 +67,15 @@ def create_tile_statistics(tile):
     stats[0] = tile_id
     stats[1] = tile
     stats[2] = tile_array_flat_mask.size
+    print stats[2]
     stats[3] = np.mean(tile_array_flat_mask, dtype=np.float64)
+    print stats[3]
     stats[4] = np.median(tile_array_flat_mask)
+    print stats[4]
     stats[5] = np.percentile(tile_array_flat_mask, 10)
+    print stats[5]
     stats[6] = np.percentile(tile_array_flat_mask, 25)
+    print stats[6]
     stats[7] = np.percentile(tile_array_flat_mask, 75)
     stats[8] = np.percentile(tile_array_flat_mask, 90)
     stats[9] = np.amin(tile_array_flat_mask)
