@@ -68,21 +68,20 @@ for input in download_list:
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
     tile_list = universal_util.tile_list_spot_machine(".")
-    tile_list = ['00N_140W_carbon.tif', '10N_080E_carbon.tif']
     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
     tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
     # tile_list = ['00N_000E_biomass.tif']
     # tile_list = download_tile_list
     print tile_list
 
-    # # For multiprocessor use
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=4)
-    # pool.map(tile_statistics.create_tile_statistics, tile_list)
+    # For multiprocessor use
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=4)
+    pool.map(tile_statistics.create_tile_statistics, tile_list)
 
-    # For single processor use
-    for tile in tile_list:
-        tile_statistics.create_tile_statistics(tile)
+    # # For single processor use
+    # for tile in tile_list:
+    #     tile_statistics.create_tile_statistics(tile)
 
     # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
     print "Deleting tiles..."
