@@ -14,7 +14,7 @@ def read_biomass_tile_list():
     with open('{}{}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list), 'r') as tiles:
         for tile in tiles:
             file_list.append(tile)
-            
+
     return file_list
 
 # Lists the tiles in a folder in s3
