@@ -19,10 +19,10 @@ def create_1x1_tiles(tile_id):
 
         print i
 
-        xmin_1x1 = str(xmin) + i
-        ymin_1x1 = str(ymin) + i
-        xmax_1x1 = str(xmax) + i + 1
-        ymax_1x1 = str(ymax) + i + 1
+        xmin_1x1 = int(xmin) + i
+        ymin_1x1 = int(ymin) + i
+        xmax_1x1 = int(xmax) + i + 1
+        ymax_1x1 = int(ymax) + i + 1
 
         print "  ymax_1x1:", ymax_1x1, "; ymin_1x1:", ymin_1x1, "; xmax_1x1", xmax_1x1, "; xmin_1x1:", xmin_1x1
 
