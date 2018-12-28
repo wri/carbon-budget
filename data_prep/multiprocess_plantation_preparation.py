@@ -46,6 +46,8 @@ import universal_util
 total_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
 # total_tile_list = ['10N_070E', '10S_080W']
 
+print total_tile_list
+
 # Empty list to store 1x1 degree tiles
 list_1x1 = []
 
