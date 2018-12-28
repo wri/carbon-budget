@@ -58,6 +58,7 @@ for tile in total_tile_list:
     plantation_preparation.create_1x1_tiles(tile, list_1x1)
 
 print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
+print len(list_1x1)
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
