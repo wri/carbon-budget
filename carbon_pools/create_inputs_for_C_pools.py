@@ -8,7 +8,7 @@ import constants_and_names
 def create_input_files(tile_id):
 
     print "Getting extent of", tile_id
-    ymax, xmin, ymin, xmax = universal_util.coords(tile_id)
+    xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
 
     # # Soil tiles are already processed, so there's no need to include them here.
     # # Below is the old code for tile-izing the histosole soil raster.

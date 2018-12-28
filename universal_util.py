@@ -223,7 +223,7 @@ def coords(tile_id):
     ymin = str(int(ymax) - 10)
     xmax = str(int(xmin) + 10)
 
-    return ymax, xmin, ymin, xmax
+    return xmin, ymin, xmax, ymax
 
 
 def s3_folder_download(source, dest):

@@ -23,19 +23,18 @@ import universal_util
 # utilities.build_vrt(utilities.mangrove_vrt)
 
 # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
-biomass_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
+total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
 # biomass_tile_list = ['00N_000E', '20S_120W', '00N_120E'] # test tile
-# biomass_tile_list = biomass_tile_list[62:]
-print biomass_tile_list
+print total_tile_list
 
 # For multiprocessor use
 # This script didn't work with count/4; perhaps that was using too many processors.
 # It did work with count/5, though.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/5)
-pool.map(mangrove_processing.create_mangrove_tiles, biomass_tile_list)
+pool.map(mangrove_processing.create_mangrove_tiles, total_tile_list)
 
 # # For single processor use, for testing purposes
-# for tile in biomass_tile_list:
+# for tile in total_tile_list:
 #
 #     mangrove_processing.create_mangrove_tiles(tile)
