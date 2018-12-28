@@ -13,18 +13,22 @@ def create_1x1_tiles(tile_id):
     xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_size = abs(int(xmin) - int(xmax))
+    x_size = abs(int(xmin) - int(xmax))
+    y_size = abs(int(ymin) - int(ymax))
 
-    for i in range(tile_size):
+    for x in range(x_size):
 
-        print i
+        print x
+        xmin_1x1 = int(xmin) + x
+        xmax_1x1 = int(xmax) + x + 1
 
-        xmin_1x1 = int(xmin) + i
-        ymin_1x1 = int(ymin) + i
-        xmax_1x1 = int(xmax) + i + 1
-        ymax_1x1 = int(ymax) + i + 1
+            for y in range(y_size):
 
-        print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
+                print y
+                ymin_1x1 = int(ymin) + y
+                ymax_1x1 = int(ymax) + y + 1
+
+                print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
 
 
