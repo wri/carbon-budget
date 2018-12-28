@@ -20,6 +20,8 @@ m2_per_ha = 100 * 100
 above_to_below_natrl_forest = 0.26
 above_to_below_mangrove = 0.608
 
+Hansen_res = 0.00025
+
 
 ########                  ########
 ### File names and directories ###
