@@ -1,5 +1,4 @@
 
-import utilities
 import subprocess
 from osgeo import gdal
 import sys
