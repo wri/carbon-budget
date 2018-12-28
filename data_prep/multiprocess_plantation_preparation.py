@@ -43,8 +43,8 @@ import constants_and_names
 import universal_util
 
 # Creates a list of all 10x10 degree Hansen tiles on a continent (not just WHRC biomass tiles)
-# total_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
-total_tile_list = ['10N_070E', '10S_080W']
+total_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
+# total_tile_list = ['10N_070E', '10S_080W']
 
 # Empty list to store 1x1 degree tiles
 list_1x1 = []

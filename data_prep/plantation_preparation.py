@@ -28,7 +28,7 @@ def create_1x1_tiles(tile_id, list_1x1):
             ymin_1x1 = int(ymin) + y
             ymax_1x1 = int(ymin) + y + 1
 
-            print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
+            # print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
             tile_1x1 = '{0}_{1}'.format(ymax_1x1, xmin_1x1)
 
