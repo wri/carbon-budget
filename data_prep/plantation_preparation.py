@@ -11,7 +11,7 @@ def create_1x1_tiles(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
     xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
-    print "  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
+    print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
     tile_size = abs(int(xmin) - int(xmax))
 
@@ -24,7 +24,7 @@ def create_1x1_tiles(tile_id):
         xmax_1x1 = int(xmax) + i + 1
         ymax_1x1 = int(ymax) + i + 1
 
-        print "  ymax_1x1:", ymax_1x1, "; ymin_1x1:", ymin_1x1, "; xmax_1x1", xmax_1x1, "; xmin_1x1:", xmin_1x1
+        print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
 
 
