@@ -35,6 +35,8 @@ def create_1x1_tiles(tile_id, list_1x1):
             # Adds the new 1x1 degree tile to the list of 1x1 degree tiles
             list_1x1.append(tile_1x1)
 
+            return list_1x1
+
             # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
 
             # cmd = ['gdal_rasterize', '-tr', constants_and_names.Hansen_res, constants_and_names.Hansen_res, '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', '{0}_{1}_plant.tif'.format(ymax_1x1, xmax_1x1), '-te', xmin_1x1, ymin_1x1, xmax_1x1, ymax_1x1, '-a', 'growth', '-a_nodata,' '0']
