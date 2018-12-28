@@ -19,14 +19,14 @@ def create_1x1_tiles(tile_id):
     for x in range(x_size):
 
         xmin_1x1 = int(xmin) + x
-        xmax_1x1 = int(xmax) + x + 1
+        xmax_1x1 = int(xmin) + x + 1
 
         for y in range(y_size):
 
-            print "x:", x, "y:", y
             ymin_1x1 = int(ymin) + y
-            ymax_1x1 = int(ymax) + y + 1
+            ymax_1x1 = int(ymin) + y + 1
 
+            print "x:", x, "y:", y
             print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
 
