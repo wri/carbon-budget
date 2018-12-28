@@ -8,7 +8,7 @@
 #
 # ## Getting geodatabase into a single PostGIS table
 # # Copy zipped plantation gdb with growth rate field in tables
-# aws s3 cp s3://gfw-files/plantations/final/global/plantations_final_attributes.gdb.zip
+# aws s3 cp s3://gfw-files/plantations/final/global/plantations_final_attributes.gdb.zip .
 #
 # # Unzip the zipped plantation gdb
 # unzip plantations_final_attributes.gdb.zip
@@ -27,7 +27,7 @@
 # more out.txt
 #
 # # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
-# while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_final_attributes.gdb -nln all_plant -progress -append -sql "SELECT * FROM $p"; done < out.txt
+# while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_final_attributes.gdb -nln all_plant -progress -append -sql "SELECT growth FROM $p"; done < out.txt
 #
 # # To check how many rows are in the table of all plantations
 # SELECT COUNT(*) FROM all_plant;
@@ -35,33 +35,11 @@
 # # To convert the PostGIS table to a geojson
 # ogr2ogr -f GeoJSON plantations.geojson PG:"dbname=ubuntu" -sql "SELECT * FROM all_plant"
 
-
-
-# Charlie used Pandas on the spot machine to remove the unnecessary columns from the growth table. I don’t have steps for that. Saved the csv with just final_id and growth to filtered.csv
-#
-# # Export growth rate table from Pandas to Postgres
-# >>> import pandas as pd
-# >>> df = pd.read_csv('filtered.csv')
-# >>> from sqlalchemy import create_engine
-# >>> engine = create_engine('postgresql://ubuntu@localhost')
-# >>> df.to_sql('filtered', engine)
-#
-# # I’m not sure this is actually the right join to use because of the column issues when I tried doing this before.
-# # Need to look up various other SQL joins and check the results of this and others using psql \d+ growth;
-# CREATE TABLE growth AS SELECT all_plant.wkb_geometry, filtered.final_id, filtered.growth FROM all_plant LEFT OUTER JOIN filtered ON all_plant.final_id = filtered.final_id;
-#
-# # Check that join is correct
-# psql \d+ growth;
-# SELECT COUNT(*) FROM growth;   # Should be the same number of rows as in all_plant
-#
-# ### General code tip: Reading a table from Postgres into Pandas
-# >>> from sqlalchemy import create_engine                                                                                                                              │·····················
-# >>> engine = create_engine('postgresql://ubuntu@localhost')                                                                                                           │·····················
-# >>> all_plant = pd.read_sql(con=engine, 'SELECT final_id FROM all_plant')
-# growth = pd.read_sql('SELECT final_id FROM growth', con=engine)
-
+# https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
+# gdal_rasterize -tr 0.00025 0.00025 -co COMPRESS = LZW PG:"dbname=ubuntu" -l all_plant col_plant_gdalrasterize.tif -te -80 0 -70 10 -a growth
 
 ##### Getting plantation tiles from plantation GeoJSON
+
 
 # Copy GeoJSON to s3
 # aws s3 cp s3://gfw-files/plantations/final/global/geojson/final_plantations.geojson .
@@ -73,3 +51,4 @@
 # gdal_rasterize -tr 0.00025 0.00025 -co COMPRESS=LZW final_plantations.geojson test.tif -te -60 -30 -57 -27 -a growth
 
 # ogr2ogr -f GeoJSON subset.geojson final_plantations.geojson -sql "SELECT growth FROM OGRGeoJSON WHERE growth>15"
+

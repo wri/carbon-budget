@@ -39,26 +39,27 @@ f.close()
 # For downloading all tiles in selected folders
 download_list = [
                  # 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
-                 # ,constants_and_names.natrl_forest_biomass_2000_dir
-                 # ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
-                 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
-                 , constants_and_names.annual_gain_combo_dir
-                 , constants_and_names.cumul_gain_AGC_natrl_forest_dir
-                 , constants_and_names.cumul_gain_AGC_mangrove_dir
-                 , constants_and_names.cumul_gain_BGC_natrl_forest_dir
-                 , constants_and_names.cumul_gain_BGC_mangrove_dir
-                 , constants_and_names.cumul_gain_combo_dir
+                 # , constants_and_names.natrl_forest_biomass_2000_dir
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
+                 # , constants_and_names.annual_gain_combo_dir
+                 # , constants_and_names.cumul_gain_AGC_natrl_forest_dir
+                 # , constants_and_names.cumul_gain_AGC_mangrove_dir
+                 # , constants_and_names.cumul_gain_BGC_natrl_forest_dir      # Not doing this one
+                 # , constants_and_names.cumul_gain_BGC_mangrove_dir          # Not doing this one
+                 constants_and_names.cumul_gain_combo_dir
                  , constants_and_names.net_flux_dir
-                 ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
-                 ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/litter/'
-                 ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/soil/'
-                 ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/total_carbon/'
-                 ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'
-                 ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
-                 ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/forestry_model/'
-                 ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/shiftingag_model/'
-                 ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/urbanization_model/'
-                 ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/wildfire_model/'
+                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'
+                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
+                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/forestry_model/'
+                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/shiftingag_model/'
+                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/urbanization_model/'
+                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/wildfire_model/'
+                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
+                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/litter/'
+                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/soil/'
+                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/total_carbon/'
+
 
 ]
 
@@ -80,6 +81,9 @@ for input in download_list:
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=5)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
+    # Added these in response to error12: Cannot allocate memory error.
+    # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+    # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
     pool.close()
     pool.join()
 
