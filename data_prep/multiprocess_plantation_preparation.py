@@ -42,17 +42,20 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
-# total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
+# Creates a list of all 10x10 degree Hansen tiles on a continent (not just WHRC biomass tiles)
+# total_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
 total_tile_list = ['10N_070E', '10S_080W']
 
+# Empty list to store 1x1 degree tiles
 list_1x1 = []
 
+# Iterates through all possible 10x10 degree Hansen tiles
 for tile in total_tile_list:
 
+    # Calls the function that creates all the 1x1 degree tiles
     plantation_preparation.create_1x1_tiles(tile, list_1x1)
 
-print list_1x1
+print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
