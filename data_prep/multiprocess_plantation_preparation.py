@@ -46,16 +46,16 @@ import universal_util
 # total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
 total_tile_list = ['10N_070E']
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
-pool.map(plantation_preparation.create_1x1_tiles, total_tile_list)
-pool.close()
-pool.join()
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/3)
+# pool.map(plantation_preparation.create_1x1_tiles, total_tile_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use, for testing purposes
-# for tile in total_tile_list:
-#
-#     plantation_preparation.create_1x1_tiles(tile)
+# For single processor use, for testing purposes
+for tile in total_tile_list:
+
+    plantation_preparation.create_1x1_tiles(tile)
 
 
