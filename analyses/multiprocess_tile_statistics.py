@@ -41,14 +41,14 @@ download_list = [
                  # 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
                  # ,constants_and_names.natrl_forest_biomass_2000_dir
                  # ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
-                 constants_and_names.annual_gain_combo_dir
+                 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
+                 , constants_and_names.annual_gain_combo_dir
                  , constants_and_names.cumul_gain_AGC_natrl_forest_dir
                  , constants_and_names.cumul_gain_AGC_mangrove_dir
                  , constants_and_names.cumul_gain_BGC_natrl_forest_dir
                  , constants_and_names.cumul_gain_BGC_mangrove_dir
                  , constants_and_names.cumul_gain_combo_dir
                  , constants_and_names.net_flux_dir
-                 ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/litter/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/soil/'
