@@ -44,7 +44,7 @@ import universal_util
 
 # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
 # total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
-total_tile_list = ['10N_070E', '20S_110W']
+total_tile_list = ['10N_070E', '10S_080W']
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
