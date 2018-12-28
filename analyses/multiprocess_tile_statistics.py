@@ -40,7 +40,14 @@ f.close()
 download_list = [
                  # 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
                  # ,constants_and_names.natrl_forest_biomass_2000_dir
-                 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
+                 # ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
+                 constants_and_names.annual_gain_combo_dir
+                 , constants_and_names.cumul_gain_AGC_natrl_forest_dir
+                 , constants_and_names.cumul_gain_AGC_mangrove_dir
+                 , constants_and_names.cumul_gain_BGC_natrl_forest_dir
+                 , constants_and_names.cumul_gain_BGC_mangrove_dir
+                 , constants_and_names.cumul_gain_combo_dir
+                 , constants_and_names.net_flux_dir
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
                  ,'s3://gfw2-data/climate/carbon_model/carbon_pools/20180815/litter/'
@@ -52,13 +59,7 @@ download_list = [
                  ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/shiftingag_model/'
                  ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/urbanization_model/'
                  ,'s3://gfw2-data/climate/carbon_model/output_emissions/20180828/wildfire_model/'
-                 ,constants_and_names.annual_gain_combo_dir
-                 ,constants_and_names.cumul_gain_AGC_natrl_forest_dir
-                 ,constants_and_names.cumul_gain_AGC_mangrove_dir
-                 ,constants_and_names.cumul_gain_BGC_natrl_forest_dir
-                 ,constants_and_names.cumul_gain_BGC_mangrove_dir
-                 ,constants_and_names.cumul_gain_combo_dir
-                 ,constants_and_names.net_flux_dir
+
 ]
 
 # Iterates through each set of tiles and gets statistics of it
@@ -74,10 +75,13 @@ for input in download_list:
     # tile_list = download_tile_list
     print tile_list
 
-    # For multiprocessor use
+    # For multiprocessor use.
+    # This runs out of memory with 8 processors.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=5)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile in tile_list:
