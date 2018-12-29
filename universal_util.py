@@ -104,13 +104,8 @@ def tile_list_spot_machine(source, pattern):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            print tile_name
-            print pattern
-
             # Only files with the specified pattern will be in the tile list
             if pattern in tile_name:
-
-                print tile_name
 
                 file_list.append(tile_name)
 
