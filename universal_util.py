@@ -109,6 +109,8 @@ def tile_list_spot_machine(source, pattern):
             # Only files with the specified pattern will be in the tile list
             if pattern in tile_name:
 
+                print tile_name
+
                 file_list.append(tile_name)
 
     return file_list
