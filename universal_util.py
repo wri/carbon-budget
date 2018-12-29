@@ -108,7 +108,7 @@ def tile_list_spot_machine(source, pattern):
             print pattern
 
             # Only files with the specified pattern will be in the tile list
-            if '*.tif' in tile_name:
+            if pattern in tile_name:
 
                 print tile_name
 

@@ -61,7 +61,7 @@ pool.close()
 pool.join()
 
 # List of all 1x1 degree tiles created
-list_1x1 = universal_util.tile_list_spot_machine(".", "*GADM.tif")
+list_1x1 = universal_util.tile_list_spot_machine(".", "GADM.tif")
 print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
 print len(list_1x1)
 
