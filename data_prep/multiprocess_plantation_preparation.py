@@ -36,29 +36,42 @@ import multiprocessing
 import plantation_preparation
 import subprocess
 import os
-import glob
 import sys
 sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# Creates a list of all 10x10 degree Hansen tiles on a continent (not just WHRC biomass tiles)
-total_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
-# total_tile_list = ['10N_070E', '10S_080W']
+# Creates a list of all 10x10 degree Hansen tiles on continents (not just WHRC biomass tiles)
+# fao_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
+fao_tile_list = ['10N_070E', '10S_080W']
+print fao_tile_list
 
-print total_tile_list
+# Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
+universal_util.s3_file_download(constants_and_names.gadm_path, '.')
+cmd = ['unzip', constants_and_names.gadm_zip]
+subprocess.check_call(cmd)
 
-# Empty list to store 1x1 degree tiles
-list_1x1 = []
+###### ONLY RASTERIZE GADM FEATURES FOR THE COUNTRIES THAT HAVE PLANTATIONS-- USE OUT.TXT FOR THAT
 
-# Iterates through all possible 10x10 degree Hansen tiles
-for tile in total_tile_list:
+# For multiprocessor use
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count/3)
+pool.map(plantation_preparation.rasterize_gadm_1x1, fao_tile_list)
+pool.close()
+pool.join()
 
-    # Calls the function that creates all the 1x1 degree tiles
-    plantation_preparation.create_1x1_tiles(tile, list_1x1)
-
+# List of all 1x1 degree tiles created
+list_1x1 = universal_util.tile_list_spot_machine(".", "*GADM.tif")
 print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
 print len(list_1x1)
+
+# Iterates through all possible 10x10 degree Hansen tiles
+for tile in list_1x1:
+
+    # Calls the function that creates all the 1x1 degree tiles
+    plantation_preparation.create_1x1_tiles(tile)
+
+
 
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
@@ -66,3 +79,4 @@ print len(list_1x1)
 # pool.map(plantation_preparation.create_1x1_tiles, total_tile_list)
 # pool.close()
 # pool.join()
+

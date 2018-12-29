@@ -25,12 +25,7 @@ def create_mangrove_tiles(tile_id):
     print "  Tile created"
 
     print "Checking if {} contains any data...".format(tile_id)
-    # Source: http://gis.stackexchange.com/questions/90726
-    # Opens raster and chooses band to find min, max
-    gtif = gdal.Open(out_tile)
-    srcband = gtif.GetRasterBand(1)
-    stats = srcband.GetStatistics(True, True)
-    print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
+    stats = universal_util.check_for_data(out_tile)
 
     if stats[0] > 0:
 

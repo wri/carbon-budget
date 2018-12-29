@@ -4,6 +4,7 @@ import datetime
 import os
 import re
 import pandas as pd
+from osgeo import gdal
 
 # Prints the date as YYYYmmdd
 d = datetime.datetime.today()
@@ -83,7 +84,7 @@ def tile_list(source):
 
 
 # Lists the tiles on the spot machine
-def tile_list_spot_machine(source):
+def tile_list_spot_machine(source, pattern):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -103,8 +104,8 @@ def tile_list_spot_machine(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            # Only tifs will be in the tile list
-            if '.tif' in tile_name:
+            # Only files with the specified pattern will be in the tile list
+            if pattern in tile_name:
 
                 file_list.append(tile_name)
 
@@ -251,3 +252,15 @@ def upload_final(upload_dir, tile_id, pattern):
         subprocess.check_call(cmd)
     except:
         print "Error uploading output tile"
+
+
+def check_for_data(out_tile):
+
+    # Source: http://gis.stackexchange.com/questions/90726
+    # Opens raster and chooses band to find min, max
+    gtif = gdal.Open(out_tile)
+    srcband = gtif.GetRasterBand(1)
+    stats = srcband.GetStatistics(True, True)
+    print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
+
+    return stats
