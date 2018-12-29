@@ -33,8 +33,8 @@ f.close()
 #     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
 
 
-# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-universal_util.s3_folder_download(constants_and_names.pixel_area_dir, '.')
+# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+# universal_util.s3_folder_download(constants_and_names.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
@@ -76,16 +76,16 @@ for input in download_list:
     # tile_list = download_tile_list
     print tile_list
 
-    # For multiprocessor use.
-    # This runs out of memory with 8 processors.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=5)
-    pool.map(tile_statistics.create_tile_statistics, tile_list)
-    # Added these in response to error12: Cannot allocate memory error.
-    # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    pool.close()
-    pool.join()
+    # # For multiprocessor use.
+    # # This runs out of memory with 8 processors.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=5)
+    # pool.map(tile_statistics.create_tile_statistics, tile_list)
+    # # Added these in response to error12: Cannot allocate memory error.
+    # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+    # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+    # pool.close()
+    # pool.join()
 
     # # For single processor use
     # for tile in tile_list:
