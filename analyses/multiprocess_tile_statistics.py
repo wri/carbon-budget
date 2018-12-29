@@ -65,7 +65,7 @@ download_list = [
 
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
-    universal_util.s3_folder_download(input, '.')
+    # universal_util.s3_folder_download(input, '.')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
