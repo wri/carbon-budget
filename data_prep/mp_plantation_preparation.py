@@ -49,7 +49,7 @@ import universal_util
 # Iterates through all possible tiles (not just WHRC biomass tiles)
 total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
 print total_tile_list
-planted_lat_tile_list = [tile for tile in total_tile_list if '80N' not in tile]
+planted_lat_tile_list = [tile for tile in total_tile_list if ['80N', '70N'] not in tile]
 print planted_lat_tile_list
 #
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
