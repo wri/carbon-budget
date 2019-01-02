@@ -71,17 +71,17 @@ print planted_lat_tile_list
 # print "Creating shapefile of countries with planted forests..."
 # os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(constants_and_names.plantation_countries)[1:-1], constants_and_names.gadm_iso))
 
-# # For multiprocessor use
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/3)
-# pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-# pool.close()
-# pool.join()
+# For multiprocessor use
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count/3)
+pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
+pool.close()
+pool.join()
 
-# For single processor use
-for tile in planted_lat_tile_list:
-
-    plantation_preparation.rasterize_gadm_1x1(tile)
+# # For single processor use
+# for tile in planted_lat_tile_list:
+#
+#     plantation_preparation.rasterize_gadm_1x1(tile)
 
 # # List of all 1x1 degree tiles created
 # list_1x1 = universal_util.tile_list_spot_machine(".", "GADM.tif")
