@@ -113,7 +113,7 @@ pool.join()
 #     plantation_preparation.create_1x1_plantation(tile)
 
 # Creates a mosaic of all the 1x1 plantation growth rate tiles
-cmd = ['gdalbuildvrt', 'plant_1x1.vrt', 'plant_*.tif']
+cmd = ['gdalbuildvrt', 'plant_1x1.vrt', './plant_*.tif']
 subprocess.check_call(cmd)
 
 # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
