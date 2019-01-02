@@ -39,11 +39,12 @@ import multiprocessing
 import plantation_preparation
 import subprocess
 import os
+from osgeo import gdal
 import sys
 sys.path.append('../')
 import constants_and_names
 import universal_util
-import geopandas as gpd
+
 
 # # Iterates through all possible tiles (not just WHRC biomass tiles)
 # total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
@@ -54,8 +55,7 @@ import geopandas as gpd
 # cmd = ['unzip', constants_and_names.gadm_zip]
 # subprocess.check_call(cmd)
 
-dataSrc = gpd.read_file(constants_and_names.gadm_shp)
-dataSrc[dataSrc['iso'].isin(constants_and_names.plantation_countries)].to_file(constants_and_names.gadm_iso)
+os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ('PAK', 'MWI')" outfile2.shp gadm_3_6_adm2_final.shp''')
 
 ###### ONLY RASTERIZE GADM FEATURES FOR THE COUNTRIES THAT HAVE PLANTATIONS-- USE OUT.TXT FOR THAT
 
