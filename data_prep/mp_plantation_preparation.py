@@ -80,8 +80,8 @@ print planted_lat_tile_list
 
 # # Creates 1x1 degree tiles of GADM countries with planted forests in them
 # # For multiprocessor use
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/2)
+# num_of_processes = 3
+# pool = Pool(num_of_processes)
 # pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
 # pool.close()
 # pool.join()
@@ -101,8 +101,8 @@ list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.t
 
 # Creates 1x1 degree tiles of plantation growth wherever there are plantations
 # For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=3)
+num_of_processes = 3
+pool = Pool(num_of_processes)
 pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
 pool.close()
 pool.join()
