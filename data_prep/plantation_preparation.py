@@ -31,7 +31,7 @@ def rasterize_gadm_1x1(tile_id):
 
             print "  xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
-            tile_1x1 = '{0}_{1}_GADM.tif'.format(ymax_1x1, xmin_1x1)
+            tile_1x1 = 'GADM_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1)
             print "Rasterizing", tile_1x1
             cmd = ['gdal_rasterize', '-tr', '{}'.format(str(constants_and_names.Hansen_res)), '{}'.format(str(constants_and_names.Hansen_res)),
                    '-co', 'COMPRESS=LZW', '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
