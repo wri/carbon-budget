@@ -229,7 +229,7 @@ hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 gadm_dir = 's3://gfw2-data/alerts-tsv/gis_source/'
 gadm_zip = 'gadm_3_6_adm2_final.zip'
 gadm_shp = 'gadm_3_6_adm2_final.shp'
-gadm_iso = 'gadm_3_6_with_planted_forest_izo.shp'
+gadm_iso = 'gadm_3_6_with_planted_forest_iso.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
 
 # Countries with planted forests in them according to the planted forest geodatabase
