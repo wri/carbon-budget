@@ -59,7 +59,9 @@ lat_without_plantations = ['90N', '80N', '50S', '60S', '70S', '80S']
 # planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 # planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
 
-planted_lat_tile_list = [tile for tile in total_tile_list if lat_without_plantations not in tile]
+planted_lat_tile_list = [tile for tile in total_tile_list if tile not in lat_without_plantations]
+
+# [x for x in l1 if x not in l2]
 
 print planted_lat_tile_list
 #
