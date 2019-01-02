@@ -82,7 +82,7 @@ def create_1x1_plantation(tile_1x1):
         print "There are plantations in", tile_1x1, ". Converting to raster..."
 
         # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
-        cmd = ['gdal_rasterize', '-tr', '{}'.format(constants_and_names.Hansen_res), '{}'.format(constants_and_names.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', '{0}_{1}_plant.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+        cmd = ['gdal_rasterize', '-tr', '{}'.format(constants_and_names.Hansen_res), '{}'.format(constants_and_names.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
         subprocess.check_call(cmd)
 
     else:
