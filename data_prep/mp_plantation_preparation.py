@@ -103,6 +103,6 @@ list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.t
 # Creates 1x1 degree tiles of plantation growth
 # For single processor use
 for tile in list_1x1:
-    
+
     plantation_preparation.create_1x1_plantation(tile)
 
