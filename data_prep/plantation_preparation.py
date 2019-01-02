@@ -33,8 +33,9 @@ def rasterize_gadm_1x1(tile_id):
 
             tile_1x1 = '{0}_{1}_GADM.tif'.format(ymax_1x1, xmin_1x1)
             print "Rasterizing", tile_1x1
-            cmd = ['gdal_rasterize', '-tr', constants_and_names.Hansen_res, constants_and_names.Hansen_res, '-co', 'COMPRESS=LZW',
-                   '-te', xmin_1x1, ymin_1x1, xmax_1x1, ymax_1x1, '-burn', '1', '-a_nodata,' '0', constants_and_names.gadm_iso, tile_1x1]
+            cmd = ['gdal_rasterize', '-tr', '{}'.format(constants_and_names.Hansen_res), '{}'.format(constants_and_names.Hansen_res),
+                   '-co', 'COMPRESS=LZW', '-te', xmin_1x1, ymin_1x1, xmax_1x1, ymax_1x1,
+                   '-burn', '1', '-a_nodata,' '0', constants_and_names.gadm_iso, tile_1x1]
             subprocess.check_call(cmd)
 
             print "Checking if {} contains any data...".format(tile_1x1)
