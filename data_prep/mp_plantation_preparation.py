@@ -55,7 +55,7 @@ import universal_util
 # cmd = ['unzip', constants_and_names.gadm_zip]
 # subprocess.check_call(cmd)
 
-os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({})" outfile3.shp gadm_3_6_adm2_final.shp''').join(constants_and_names.plantation_countries)
+os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(constants_and_names.plantation_countries)[1:-1], constants_and_names.gadm_iso))
 
 ###### ONLY RASTERIZE GADM FEATURES FOR THE COUNTRIES THAT HAVE PLANTATIONS-- USE OUT.TXT FOR THAT
 
