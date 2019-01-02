@@ -43,15 +43,19 @@ import sys
 sys.path.append('../')
 import constants_and_names
 import universal_util
+import geopandas as gpd
 
-# Iterates through all possible tiles (not just WHRC biomass tiles)
-total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
-print total_tile_list
+# # Iterates through all possible tiles (not just WHRC biomass tiles)
+# total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
+# print total_tile_list
+#
+# # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
+# universal_util.s3_file_download(constants_and_names.gadm_path, '.')
+# cmd = ['unzip', constants_and_names.gadm_zip]
+# subprocess.check_call(cmd)
 
-# Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-universal_util.s3_file_download(constants_and_names.gadm_path, '.')
-cmd = ['unzip', constants_and_names.gadm_zip]
-subprocess.check_call(cmd)
+dataSrc = gpd.read_file(constants_and_names.gadm_shp)
+dataSrc[dataSrc['iso'].isin(constants_and_names.plantation_countries)].to_file(constants_and_names.gadm_iso)
 
 ###### ONLY RASTERIZE GADM FEATURES FOR THE COUNTRIES THAT HAVE PLANTATIONS-- USE OUT.TXT FOR THAT
 

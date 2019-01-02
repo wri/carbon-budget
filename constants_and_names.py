@@ -229,17 +229,18 @@ hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 gadm_dir = 's3://gfw2-data/alerts-tsv/gis_source/'
 gadm_zip = 'gadm_3_6_adm2_final.zip'
 gadm_shp = 'gadm_3_6_adm2_final.shp'
+gadm_iso = 'gadm_3_6_with_planted_forest_izo.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
 
 # Countries with planted forests in them according to the planted forest geodatabase
 plantation_countries = [
                         # non-EU countries
-                        'arg, vnm', 'ven', 'tha', 'rwa', 'png', 'phl', 'pan', 'nic', 'ind', 'hnd', 'cri', 'cod', 'col', 'ecu',
-                        'gab', 'gha', 'gtm', 'idn', 'ken', 'khm', 'prk', 'kor', 'lbr', 'lka', 'mex', 'mmr', 'mwi', 'nga',
-                        'npl', 'nzl', 'pak', 'per', 'slb', 'ury', 'usa', 'zaf', 'aus', 'bra', 'chl', 'chn', 'civ', 'cmr',
-                        'jpn', 'mys',
+                        'ARG', 'VNM', 'VEN', 'THA', 'RWA', 'PNG', 'PHL', 'PAN', 'NIC', 'IND', 'HND', 'CRI', 'COD', 'COL', 'ECU',
+                        'GAB', 'GHA', 'GTM', 'IDN', 'KEN', 'KHM', 'PRK', 'KOR', 'LBR', 'LKA', 'MEX', 'MMR', 'MWI', 'MGA',
+                        'NPL', 'NZL', 'PAK', 'PER', 'SLB', 'URY', 'USA', 'ZAF', 'AUS', 'BRA', 'CHL', 'CHN', 'CIV', 'CMR',
+                        'JPN', 'MYS',
                         # EU countries
-                        'aut', 'bel', 'bgr', 'hrv', 'cyp', 'cze', 'dnk', 'est', 'fin', 'fra', 'deu', 'grc', 'hun', 'irl',
-                        'ita', 'lva', 'ltu', 'lux', 'mlt', 'nld', 'pol', 'prt', 'rou', 'svk', 'svn', 'esp', 'swe', 'gbr'
+                        'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
+                        'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR'
                         ]
 
