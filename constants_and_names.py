@@ -226,9 +226,9 @@ hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
 hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
 hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 
-gadm_dir = 's3://gfw2-data/alerts-tsv/'
-gadm_zip = 'gis_source/gadm_3_6_adm2_final.zip'
-gadm_shp = 'gis_source/gadm_3_6_adm2_final.shp'
+gadm_dir = 's3://gfw2-data/alerts-tsv/gis_source/'
+gadm_zip = 'gadm_3_6_adm2_final.zip'
+gadm_shp = 'gadm_3_6_adm2_final.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
 
 # Countries with planted forests in them according to the planted forest geodatabase
