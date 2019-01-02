@@ -57,6 +57,7 @@ planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in 
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
+planted_lat_tile_list = ['00N_080W']
 print planted_lat_tile_list
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
@@ -71,13 +72,13 @@ print planted_lat_tile_list
 # print "Creating shapefile of countries with planted forests..."
 # os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(constants_and_names.plantation_countries)[1:-1], constants_and_names.gadm_iso))
 
-# Creates 1x1 degree tiles of GADM countries with planted forests in them
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/2)
-pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-pool.close()
-pool.join()
+# # Creates 1x1 degree tiles of GADM countries with planted forests in them
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/2)
+# pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
+# pool.close()
+# pool.join()
 
 # # Creates 1x1 degree tiles of GADM countries with planted forests in them
 # # For single processor use
@@ -85,23 +86,23 @@ pool.join()
 #
 #     plantation_preparation.rasterize_gadm_1x1(tile)
 
+
 # # List of all 1x1 degree tiles created
-# list_1x1 = universal_util.tile_list_spot_machine(".", "GADM.tif")
-# print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
+# list_1x1 = universal_util.tile_list_spot_machine(".", "GADM_*.tif")
+# print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
 # print len(list_1x1)
-#
-# # Iterates through all possible 10x10 degree Hansen tiles
-# for tile in list_1x1:
-#
-#     # Calls the function that creates all the 1x1 degree tiles
-#     plantation_preparation.create_1x1_tiles(tile)
-#
-#
-#
-# # # For multiprocessor use
-# # count = multiprocessing.cpu_count()
-# # pool = multiprocessing.Pool(processes=count/3)
-# # pool.map(plantation_preparation.create_1x1_tiles, total_tile_list)
-# # pool.close()
-# # pool.join()
+list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
+
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/3)
+# pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
+# pool.close()
+# pool.join()
+
+# Creates 1x1 degree tiles of plantation growth
+# For single processor use
+for tile in list_1x1:
+    
+    plantation_preparation.create_1x1_plantation(tile)
 
