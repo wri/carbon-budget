@@ -89,7 +89,7 @@ def create_1x1_plantation(tile_1x1):
         print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
 
-def create_10x10_plantation(tile_id, vrt_1x1):
+def create_10x10_plantation(tile_id, plant_1x1_vrt):
 
     print "Getting bounding coordinates for tile", tile_id
     xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
@@ -99,7 +99,7 @@ def create_10x10_plantation(tile_id, vrt_1x1):
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(constants_and_names.Hansen_res)), '{}'.format(str(constants_and_names.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', vrt_1x1, tile_10x10]
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', plant_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)
