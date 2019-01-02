@@ -55,11 +55,10 @@ def create_1x1_plantation(tile_1x1):
     # Gets the bounding coordinates for the tile
     coords = tile_1x1.split("_")
     print coords
-    xmin_1x1 = str(coords[2])[:-4]
-    print xmin_1x1
-    xmax_1x1 = coords[2] + 1
-    ymin_1x1 = coords[1] - 1
-    ymax_1x1 = coords[1]
+    xmin_1x1 = int(str(coords[2])[:-4])
+    xmax_1x1 = int(coords[2]) + 1
+    ymin_1x1 = int(coords[1]) - 1
+    ymax_1x1 = int(coords[1])
 
     print "For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
