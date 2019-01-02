@@ -40,8 +40,9 @@ psql
 CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
 """
 
-import multiprocessing
 import plantation_preparation
+from multiprocessing.pool import Pool
+from functools import partial
 import subprocess
 import os
 from osgeo import gdal
@@ -112,14 +113,23 @@ pool.join()
 #
 #     plantation_preparation.create_1x1_plantation(tile)
 
+plant_1x1_vrt = 'plant_1x1.vrt'
+
 # Creates a mosaic of all the 1x1 plantation growth rate tiles
 print "Creating vrt of 1x1 plantation growth rate tiles"
-os.system('gdalbuildvrt plant_1x1.vrt plant_*.tif')
+os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
 
 # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
 # For multiprocessor use
-pool = multiprocessing.Pool(processes=3)
-pool.map(plantation_preparation.create_10x10_plantation, planted_lat_tile_list)
+
+# pool = multiprocessing.Pool(processes=3)
+# pool.map(plantation_preparation.create_10x10_plantation, planted_lat_tile_list)
+# pool.close()
+# pool.join()
+
+num_of_processes = 3
+pool = Pool(num_of_processes)
+pool.map(partial(plantation_preparation.create_10x10_plantation, vrt=plant_1x1_vrt), planted_lat_tile_list)
 pool.close()
 pool.join()
 
