@@ -56,7 +56,7 @@ def create_1x1_plantation(tile_1x1):
     coords = tile_1x1.split("_")
     print coords
     xmin_1x1 = str(coords[2])[:-4]
-    xmax_1x1 = xmin_1x1 + 1
+    xmax_1x1 = int(xmin_1x1) + 1
     ymax_1x1 = int(coords[1])
     ymin_1x1 = ymax_1x1 - 1
 
