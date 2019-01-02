@@ -52,7 +52,7 @@ def rasterize_gadm_1x1(tile_id):
 # Creates a list of 1x1 degree tiles, with the defining coordinate in the northwest corner
 def create_1x1_plantation(tile_1x1):
 
-    # Gets the bounding coordinates for the tile
+    # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
     print coords
     xmin_1x1 = str(coords[2])[:-4]
@@ -60,16 +60,19 @@ def create_1x1_plantation(tile_1x1):
     ymax_1x1 = int(coords[1])
     ymin_1x1 = ymax_1x1 - 1
 
-
     print "For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
 
+    # Connects Python to PostGIS using psycopg2. The credentials work on spot machines as they are currently configured
+    # and are based on this: https://github.com/wri/gfw-annual-loss-processing/blob/master/1b_Summary-AOIs-to-TSV/utilities/postgis_util.py
     creds = {'host': 'localhost', 'user': 'ubuntu', 'dbname': 'ubuntu'}
     conn = psycopg2.connect(**creds)
     cursor = conn.cursor()
+
+    #
     cursor.execute("DROP TABLE IF EXISTS test_1x1")
     # cursor.execute("SELECT * INTO test_table FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON((-80 0,-79 0,-79 -1,-80 -1,-80 0))'))")
-    cursor.execute("SELECT * INTO test_1x1 FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
-    cursor.execute("SELECT * FROM test_1x1")
+    cursor.execute("SELECT growth INTO test_1x1 FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
+    cursor.execute("SELECT growth FROM test_1x1")
     features = cursor.fetchall()
     cursor.close()
     print features
