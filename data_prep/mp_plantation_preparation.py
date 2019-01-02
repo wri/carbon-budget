@@ -96,7 +96,7 @@ list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.t
 # Creates 1x1 degree tiles of plantation growth wherever there are plantations
 # For multiprocessor use
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=2)
+pool = multiprocessing.Pool(processes=3)
 pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
 pool.close()
 pool.join()
