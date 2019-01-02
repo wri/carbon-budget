@@ -129,7 +129,7 @@ os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
 
 num_of_processes = 3
 pool = Pool(num_of_processes)
-pool.map(partial(plantation_preparation.create_10x10_plantation, vrt_arg=plant_1x1_vrt), planted_lat_tile_list)
+pool.map(partial(plantation_preparation.create_10x10_plantation, plant_1x1_vrt=plant_1x1_vrt), planted_lat_tile_list)
 pool.close()
 pool.join()
 
