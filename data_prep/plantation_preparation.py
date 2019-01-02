@@ -79,14 +79,14 @@ def create_1x1_plantation(tile_1x1):
 
     if len(features) > 0:
 
-        print "There are plantations in", tile_1x1, ". Converting to raster..."
+        print "There are plantations in {}. Converting to raster...".format(tile_1x1)
 
         # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
         cmd = ['gdal_rasterize', '-tr', '{}'.format(constants_and_names.Hansen_res), '{}'.format(constants_and_names.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
         subprocess.check_call(cmd)
 
     else:
-        print "There are no plantations in", tile_1x1, ". Not converting to raster."
+        print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
 
 

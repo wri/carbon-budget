@@ -93,16 +93,17 @@ print planted_lat_tile_list
 # print len(list_1x1)
 list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
 
-# # For multiprocessor use
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/3)
-# pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
-# pool.close()
-# pool.join()
+# Creates 1x1 degree tiles of plantation growth wherever there are plantations
+# For multiprocessor use
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=2)
+pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
+pool.close()
+pool.join()
 
-# Creates 1x1 degree tiles of plantation growth
-# For single processor use
-for tile in list_1x1:
-
-    plantation_preparation.create_1x1_plantation(tile)
+# # Creates 1x1 degree tiles of plantation growth wherever there are plantations
+# # For single processor use
+# for tile in list_1x1:
+#
+#     plantation_preparation.create_1x1_plantation(tile)
 
