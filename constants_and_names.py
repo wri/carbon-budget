@@ -231,3 +231,15 @@ gadm_zip = 'gis_source/gadm_3_6_adm2_final.zip'
 gadm_shp = 'gis_source/gadm_3_6_adm2_final.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
 
+# Countries with planted forests in them according to the planted forest geodatabase
+plantation_countries = [
+                        # non-EU countries
+                        'arg, vnm', 'ven', 'tha', 'rwa', 'png', 'phl', 'pan', 'nic', 'ind', 'hnd', 'cri', 'cod', 'col', 'ecu',
+                        'gab', 'gha', 'gtm', 'idn', 'ken', 'khm', 'prk', 'kor', 'lbr', 'lka', 'mex', 'mmr', 'mwi', 'nga',
+                        'npl', 'nzl', 'pak', 'per', 'slb', 'ury', 'usa', 'zaf', 'aus', 'bra', 'chl', 'chn', 'civ', 'cmr',
+                        'jpn', 'mys',
+                        # EU countries
+                        'aut', 'bel', 'bgr', 'hrv', 'cyp', 'cze', 'dnk', 'est', 'fin', 'fra', 'deu', 'grc', 'hun', 'irl',
+                        'ita', 'lva', 'ltu', 'lux', 'mlt', 'nld', 'pol', 'prt', 'rou', 'svk', 'svn', 'esp', 'swe', 'gbr'
+                        ]
+

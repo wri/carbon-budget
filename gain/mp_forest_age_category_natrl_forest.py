@@ -35,15 +35,15 @@ download_list = [constants_and_names.loss_dir, constants_and_names.gain_dir, con
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), '.')                                # loss tiles
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_dir, constants_and_names.pattern_gain, tile), '.')            # gain tiles
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), '.')    # tcd 2000
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.ifl_dir, tile, constants_and_names.pattern_ifl), '.')                    # ifl 2000
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.natrl_forest_biomass_2000_dir, tile, constants_and_names.pattern_natrl_forest_biomass_2000), '.')                     # biomass 2000
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, tile, constants_and_names.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
+# # For copying individual tiles to spot machine for testing
+# for tile in biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}.tif'.format(constants_and_names.loss_dir, tile), '.')                                # loss tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gain_dir, constants_and_names.pattern_gain, tile), '.')            # gain tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.tcd_dir, constants_and_names.pattern_tcd, tile), '.')    # tcd 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.ifl_dir, tile, constants_and_names.pattern_ifl), '.')                    # ifl 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.natrl_forest_biomass_2000_dir, tile, constants_and_names.pattern_natrl_forest_biomass_2000), '.')                     # biomass 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, tile, constants_and_names.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(constants_and_names.gain_spreadsheet), '.']

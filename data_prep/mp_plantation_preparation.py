@@ -22,8 +22,11 @@ ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_final_attributes.gdb -progr
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql \d+ all_plant;
 
-# Get a list of all feature classes in the geodatabase and save it as a txt
-ogrinfo plantations_final_attributes.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v cmr | grep -v Open | sed -e 's/ //g' > out.txt
+# Delete all rows from the table so that it is now empty
+DELETE FROM all_plant;
+
+# Get a list of all feature classes (countries) in the geodatabase and save it as a txt
+ogrinfo plantations_final_attributes.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
 # Make sure all the country tables are listed in the txt
 more out.txt
@@ -41,10 +44,9 @@ sys.path.append('../')
 import constants_and_names
 import universal_util
 
-# Creates a list of all 10x10 degree Hansen tiles on continents (not just WHRC biomass tiles)
-# fao_tile_list = universal_util.tile_list(constants_and_names.fao_ecozone_processed_dir)
-fao_tile_list = ['10N_070E', '10S_080W']
-print fao_tile_list
+# Iterates through all possible tiles (not just WHRC biomass tiles)
+total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
+print total_tile_list
 
 # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
 universal_util.s3_file_download(constants_and_names.gadm_path, '.')
@@ -53,30 +55,30 @@ subprocess.check_call(cmd)
 
 ###### ONLY RASTERIZE GADM FEATURES FOR THE COUNTRIES THAT HAVE PLANTATIONS-- USE OUT.TXT FOR THAT
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
-pool.map(plantation_preparation.rasterize_gadm_1x1, fao_tile_list)
-pool.close()
-pool.join()
-
-# List of all 1x1 degree tiles created
-list_1x1 = universal_util.tile_list_spot_machine(".", "GADM.tif")
-print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
-print len(list_1x1)
-
-# Iterates through all possible 10x10 degree Hansen tiles
-for tile in list_1x1:
-
-    # Calls the function that creates all the 1x1 degree tiles
-    plantation_preparation.create_1x1_tiles(tile)
-
-
-
 # # For multiprocessor use
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count/3)
-# pool.map(plantation_preparation.create_1x1_tiles, total_tile_list)
+# pool.map(plantation_preparation.rasterize_gadm_1x1, fao_tile_list)
 # pool.close()
 # pool.join()
+#
+# # List of all 1x1 degree tiles created
+# list_1x1 = universal_util.tile_list_spot_machine(".", "GADM.tif")
+# print "List of 1x1 degree tiles, with defining coordinate in the northwest corner:", list_1x1
+# print len(list_1x1)
+#
+# # Iterates through all possible 10x10 degree Hansen tiles
+# for tile in list_1x1:
+#
+#     # Calls the function that creates all the 1x1 degree tiles
+#     plantation_preparation.create_1x1_tiles(tile)
+#
+#
+#
+# # # For multiprocessor use
+# # count = multiprocessing.cpu_count()
+# # pool = multiprocessing.Pool(processes=count/3)
+# # pool.map(plantation_preparation.create_1x1_tiles, total_tile_list)
+# # pool.close()
+# # pool.join()
 
