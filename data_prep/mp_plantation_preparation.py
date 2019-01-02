@@ -20,7 +20,8 @@ unzip plantations_final_attributes.gdb.zip
 ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_final_attributes.gdb -progress -nln all_plant -sql "SELECT growth FROM cmr_plant"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
-psql \d+ all_plant;
+psql
+\d+ all_plant;
 
 # Delete all rows from the table so that it is now empty
 DELETE FROM all_plant;
@@ -33,6 +34,10 @@ more out.txt
 
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
 while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_final_attributes.gdb -nln all_plant -progress -append -sql "SELECT growth FROM $p"; done < out.txt
+
+# Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
+psql
+CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
 """
 
 import multiprocessing
@@ -57,7 +62,7 @@ planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in 
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-# planted_lat_tile_list = ['00N_080W']
+planted_lat_tile_list = ['00N_080W']
 print planted_lat_tile_list
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
@@ -107,3 +112,19 @@ pool.join()
 #
 #     plantation_preparation.create_1x1_plantation(tile)
 
+# Creates a mosaic of all the 1x1 plantation growth rate tiles
+cmd = ['gdalbuildvrt', 'plant_1x1.vrt', 'plant_*.tif']
+subprocess.check_call(cmd)
+
+# Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
+# For multiprocessor use
+pool = multiprocessing.Pool(processes=3)
+pool.map(plantation_preparation.create_10x10_plantation, planted_lat_tile_list)
+pool.close()
+pool.join()
+
+# # Creates 1x1 degree tiles of plantation growth wherever there are plantations
+# # For single processor use
+# for tile in list_1x1:
+#
+#     plantation_preparation.create_10x10_plantation(tile)

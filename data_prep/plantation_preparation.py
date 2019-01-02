@@ -69,6 +69,9 @@ def create_1x1_plantation(tile_1x1):
     cursor = conn.cursor()
 
     # Intersects the plantations with the 1x1 tile, then saves any growth rates in that tile as a list
+    # https://gis.stackexchange.com/questions/30267/how-to-create-a-valid-global-polygon-grid-in-postgis
+    # https://stackoverflow.com/questions/48978616/best-way-to-run-st-intersects-on-features-inside-one-table
+    # https://postgis.net/docs/ST_Intersects.html
     cursor.execute("SELECT growth FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(
             xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
     features = cursor.fetchall()
@@ -86,10 +89,29 @@ def create_1x1_plantation(tile_1x1):
         print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
 
+def create_10x10_plantation(tile_id):
 
-    # gdal_rasterize -tr 0.00025 0.00025 -co COMPRESS=LZW PG:"dbname=ubuntu" -l all_plant col_plant_gdalrasterize.tif -te -80 0 -70 10 -a growth -a_nodata 0
+    print "Getting bounding coordinates for tile", tile_id
+    xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
+    print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    # https://gis.stackexchange.com/questions/30267/how-to-create-a-valid-global-polygon-grid-in-postgis
-    # https://stackoverflow.com/questions/48978616/best-way-to-run-st-intersects-on-features-inside-one-table
-    # https://postgis.net/docs/ST_Intersects.html
-    # SELECT * INTO test_table FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON((-80 0,-79 0,-79 -1,-80 -1,-80 0))'));
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_annual_gain_AGB_planted_forest)
+    print "Rasterizing", tile_10x10
+    cmd = ['gdal_rasterize', '-tr', '{}'.format(str(constants_and_names.Hansen_res)), '{}'.format(str(constants_and_names.Hansen_res)),
+           '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-burn', '1', '-a_nodata', '0', 'plant_1x1.vrt', tile_10x10]
+    subprocess.check_call(cmd)
+
+    print "Checking if {} contains any data...".format(tile_id)
+    stats = universal_util.check_for_data(tile_10x10)
+
+    if stats[0] > 0:
+
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        universal_util.upload_final(constants_and_names.annual_gain_AGB_planted_forest_dir, tile_id, constants_and_names.pattern_annual_gain_AGB_planted_forest)
+        print "    Tile copied to s3"
+
+    else:
+
+        print "  No data found. Not copying {}.".format(tile_id)
+
