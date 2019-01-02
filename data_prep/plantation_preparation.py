@@ -2,6 +2,7 @@
 import subprocess
 import os
 import psycopg2
+import re
 from osgeo import gdal
 import sys
 sys.path.append('../')
@@ -54,7 +55,7 @@ def create_1x1_plantation(tile_1x1):
     # Gets the bounding coordinates for the tile
     coords = tile_1x1.split("_")
     print coords
-    xmin_1x1 = coords[2]
+    xmin_1x1 = coords[2][:-4]
     xmax_1x1 = coords[2] + 1
     ymin_1x1 = coords[1] - 1
     ymax_1x1 = coords[1]
