@@ -68,14 +68,18 @@ def create_1x1_plantation(tile_1x1):
     conn = psycopg2.connect(**creds)
     cursor = conn.cursor()
 
-    #
+    # Deletes the table that is used to check if there are any plantations in the 1x1 tile
     cursor.execute("DROP TABLE IF EXISTS test_1x1")
-    # cursor.execute("SELECT * INTO test_table FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON((-80 0,-79 0,-79 -1,-80 -1,-80 0))'))")
-    cursor.execute("SELECT growth INTO test_1x1 FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
-    cursor.execute("SELECT growth FROM test_1x1")
+
+    # Intersects the plantations with the 1x1 tile
+    # cursor.execute("SELECT growth INTO test_1x1 FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
+    cursor.execute(
+        "SELECT growth FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(
+            xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
+    # cursor.execute("SELECT growth FROM test_1x1")
     features = cursor.fetchall()
-    cursor.close()
     print features
+    cursor.close()
 
     if len(features) > 0:
 
