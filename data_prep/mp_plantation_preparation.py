@@ -80,7 +80,7 @@ print planted_lat_tile_list
 
 # Creates 1x1 degree tiles of GADM countries with planted forests in them
 # For multiprocessor use
-num_of_processes = 45
+num_of_processes = 50
 pool = Pool(num_of_processes)
 pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
 pool.close()
