@@ -12,7 +12,7 @@ import datetime
 import os
 import sys
 sys.path.append('../')
-import constants_and_names
+import constants_and_names as cn
 
 def create_gain_year_count(tile_id):
 
@@ -23,8 +23,8 @@ def create_gain_year_count(tile_id):
 
     # Names of the loss, gain, and tree cover density tiles
     loss = '{0}.tif'.format(tile_id)
-    gain = '{0}_{1}.tif'.format(constants_and_names.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(constants_and_names.pattern_tcd, tile_id)
+    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
@@ -32,15 +32,15 @@ def create_gain_year_count(tile_id):
 
     # The calculations for tiles with and without mangroves anywhere in them are different.
     # For tiles with mangroves somewhere in them.
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)):
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         print "  {} has mangroves.".format(tile_id)
 
         # Name of mangrove tile
-        mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
+        mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
         # Mangrove tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
+        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
@@ -145,17 +145,17 @@ def create_gain_year_count(tile_id):
 
     # Regardless of whether the tile had mangroves, all four components are merged together to the final output raster
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = '{}_{}.tif'.format(tile_id, constants_and_names.pattern_gain_year_count_natrl_forest)
+    age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_only")
-    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_gain_only")
-    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_no_change")
-    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_and_gain")
+    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_only")
+    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_gain_only")
+    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_no_change")
+    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_and_gain")
 
     # This is the final output used later in the model
-    utilities.upload_final(constants_and_names.gain_year_count_natrl_forest_dir, tile_id, constants_and_names.pattern_gain_year_count_natrl_forest)
+    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, cn.pattern_gain_year_count_natrl_forest)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

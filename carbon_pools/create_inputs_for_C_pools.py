@@ -1,14 +1,14 @@
 import util
 import sys
 sys.path.append('../')
-import universal_util
-import constants_and_names
+import universal_util as uu
+import constants_and_names as cn
 
 
 def create_input_files(tile_id):
 
     print "Getting extent of", tile_id
-    xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # # Soil tiles are already processed, so there's no need to include them here.
     # # Below is the old code for tile-izing the histosole soil raster.
@@ -22,7 +22,7 @@ def create_input_files(tile_id):
     # subprocess.check_call(cmd)
     #
     # print "uploading soil tile to s3"
-    # util.upload(clip_soil_tile, constants_and_names.soil_C_processed_dir)
+    # util.upload(clip_soil_tile, cn.soil_C_processed_dir)
 
     print "Rasterizing ecozone"
     rasterized_eco_zone_tile = util.rasterize('fao_ecozones_bor_tem_tro.shp',
@@ -30,25 +30,25 @@ def create_input_files(tile_id):
                                               xmin, ymin, xmax, ymax, '.008', 'Byte', 'recode', '0')
 
     print "Resampling eco zone"
-    resampled_ecozone = util.resample(rasterized_eco_zone_tile, "{0}_{1}.tif".format(tile_id, constants_and_names.pattern_fao_ecozone_processed))
+    resampled_ecozone = util.resample(rasterized_eco_zone_tile, "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed))
 
     print "Uploading processed ecozone"
-    util.upload(resampled_ecozone, constants_and_names.fao_ecozone_processed_dir)
+    util.upload(resampled_ecozone, cn.fao_ecozone_processed_dir)
 
     print "Clipping srtm"
     tile_srtm = util.clip('srtm.vrt', '{}_srtm.tif'.format(tile_id), xmin, ymin, xmax, ymax)
 
     print "Resampling srtm"
-    tile_res_srtm = util.resample(tile_srtm, '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_srtm))
+    tile_res_srtm = util.resample(tile_srtm, '{0}_{1}.tif'.format(tile_id, cn.pattern_srtm))
 
     print "Uploading processed srtm"
-    util.upload(tile_res_srtm, constants_and_names.srtm_processed_dir)
+    util.upload(tile_res_srtm, cn.srtm_processed_dir)
 
     print "Clipping precipitation"
     clipped_precip_tile = util.clip('add_30s_precip.tif', '{}_clip_precip.tif'.format(tile_id), xmin, ymin, xmax, ymax)
 
     print "Resampling precipitation"
-    resample_precip_tile = util.resample(clipped_precip_tile, '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_precip))
+    resample_precip_tile = util.resample(clipped_precip_tile, '{0}_{1}.tif'.format(tile_id, cn.pattern_precip))
 
     print "Uploading processed precipitation"
-    util.upload(resample_precip_tile, constants_and_names.precip_processed_dir)
+    util.upload(resample_precip_tile, cn.precip_processed_dir)

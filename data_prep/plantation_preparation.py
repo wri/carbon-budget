@@ -6,13 +6,13 @@ import re
 from osgeo import gdal
 import sys
 sys.path.append('../')
-import constants_and_names
-import universal_util
+import constants_and_names as cn
+import universal_util as uu
 
 def rasterize_gadm_1x1(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
-    xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
     # Degrees of tile in x and y dimensions
@@ -34,13 +34,13 @@ def rasterize_gadm_1x1(tile_id):
 
             tile_1x1 = 'GADM_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1)
             print "Rasterizing", tile_1x1
-            cmd = ['gdal_rasterize', '-tr', '{}'.format(str(constants_and_names.Hansen_res)), '{}'.format(str(constants_and_names.Hansen_res)),
+            cmd = ['gdal_rasterize', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
                    '-co', 'COMPRESS=LZW', '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
-                   '-burn', '1', '-a_nodata', '0', constants_and_names.gadm_iso, tile_1x1]
+                   '-burn', '1', '-a_nodata', '0', cn.gadm_iso, tile_1x1]
             subprocess.check_call(cmd)
 
             print "Checking if {} contains any data...".format(tile_1x1)
-            stats = universal_util.check_for_data(tile_1x1)
+            stats = uu.check_for_data(tile_1x1)
 
             if stats[1] > 0:
                 print "  Data found in {}. Keeping tile".format(tile_1x1)
@@ -82,7 +82,7 @@ def create_1x1_plantation(tile_1x1):
         print "There are plantations in {}. Converting to raster...".format(tile_1x1)
 
         # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
-        cmd = ['gdal_rasterize', '-tr', '{}'.format(constants_and_names.Hansen_res), '{}'.format(constants_and_names.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+        cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
         subprocess.check_call(cmd)
 
     else:
@@ -92,23 +92,23 @@ def create_1x1_plantation(tile_1x1):
 def create_10x10_plantation(tile_id, plant_1x1_vrt):
 
     print "Getting bounding coordinates for tile", tile_id
-    xmin, ymin, xmax, ymax = universal_util.coords(tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_annual_gain_AGB_planted_forest)
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest)
     print "Rasterizing", tile_10x10
-    cmd = ['gdalwarp', '-tr', '{}'.format(str(constants_and_names.Hansen_res)), '{}'.format(str(constants_and_names.Hansen_res)),
+    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-dstnodata', '0', '-t_srs', 'EPSG:4326', plant_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = universal_util.check_for_data(tile_10x10)
+    stats = uu.check_for_data(tile_10x10)
 
     if stats[0] > 0:
 
         print "  Data found in {}. Copying tile to s3...".format(tile_id)
-        universal_util.upload_final(constants_and_names.annual_gain_AGB_planted_forest_dir, tile_id, constants_and_names.pattern_annual_gain_AGB_planted_forest)
+        uu.upload_final(cn.annual_gain_AGB_planted_forest_dir, tile_id, cn.pattern_annual_gain_AGB_planted_forest)
         print "    Tile copied to s3"
 
     else:

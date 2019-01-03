@@ -6,8 +6,8 @@ import os
 import subprocess
 import glob
 sys.path.append('../')
-import constants_and_names
-import universal_util
+import constants_and_names as cn
+import universal_util as uu
 
 def create_emitted_biomass(tile_id):
 
@@ -15,12 +15,12 @@ def create_emitted_biomass(tile_id):
 
 
     # Names of the input tiles
-    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_natrl_forest_biomass_2000)
-    mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
-    natrl_forest_gain = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cumul_gain_AGC_natrl_forest)
-    mangrove_gain = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cumul_gain_AGC_mangrove)
-    natrl_forest_emitted = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_natrl_forest_biomass_2000)
-    mangrove_emitted = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed)
+    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
+    mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    natrl_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
+    mangrove_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_mangrove)
+    natrl_forest_emitted = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
+    mangrove_emitted = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
     print "  Reading input files and evaluating conditions"
 
@@ -57,7 +57,7 @@ def create_emitted_biomass(tile_id):
                             )
 
                             # Opens the output tile, giving it the arguments of the input tiles
-                            with rasterio.open('{0}{1}.tif'.format(tile_id, constants_and_names.pattern_age_cat_natrl_forest), 'w', **kwargs) as dst:
+                            with rasterio.open('{0}{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest), 'w', **kwargs) as dst:
 
                                 # Iterates across the windows (1 pixel strips) of the input tile
                                 for idx, window in windows:
@@ -116,13 +116,13 @@ def create_emitted_biomass(tile_id):
 
 
     print 'Uploading tiles to s3'
-    for type in constants_and_names.pool_types:
+    for type in cn.pool_types:
 
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.agc_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_agc, type))
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.bgc_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_bgc, type))
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.deadwood_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_deadwood, type))
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.litter_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_litter, type))
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.soil_C_pool_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_soil_pool, type))
-        universal_util.upload_final('{0}/{1}/'.format(constants_and_names.total_C_dir, type), tile_id, '{0}_{1}'.format(constants_and_names.pattern_total_C, type))
+        uu.upload_final('{0}/{1}/'.format(cn.agc_dir, type), tile_id, '{0}_{1}'.format(cn.pattern_agc, type))
+        uu.upload_final('{0}/{1}/'.format(cn.bgc_dir, type), tile_id, '{0}_{1}'.format(cn.pattern_bgc, type))
+        uu.upload_final('{0}/{1}/'.format(cn.deadwood_dir, type), tile_id, '{0}_{1}'.format(cn.pattern_deadwood, type))
+        uu.upload_final('{0}/{1}/'.format(cn.litter_dir, type), tile_id, '{0}_{1}'.format(cn.pattern_litter, type))
+        uu.upload_final('{0}/{1}/'.format(cn.soil_C_pool_dir, type), tile_id, '{0}_{1}'.format(cn.pattern_soil_pool, type))
+        uu.upload_final('{0}/{1}/'.format(cn.total_C_dir, type), tile_id, '{0}_{1}'.format(cn.pattern_total_C, type))
 
     print "Elapsed time: {}".format(datetime.datetime.now() - start)

@@ -12,7 +12,7 @@ import subprocess
 import datetime
 import sys
 sys.path.append('../')
-import constants_and_names
+import constants_and_names as cn
 
 def create_gain_year_count(tile_id):
 
@@ -23,8 +23,8 @@ def create_gain_year_count(tile_id):
 
     # Names of the loss, gain and tree cover density tiles
     loss = '{0}.tif'.format(tile_id)
-    gain = '{0}_{1}.tif'.format(constants_and_names.pattern_gain, tile_id)
-    mangrove = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_mangrove_biomass_2000)
+    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
     # Number of years covered by loss and gain input rasters. If the input rasters are changed, these must be changed, too.
     loss_years = 15  # currently, loss raster for carbon model is 2001-2015
@@ -72,17 +72,17 @@ def create_gain_year_count(tile_id):
     subprocess.check_call(cmd)
 
     print "  Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = '{}_{}.tif'.format(tile_id, constants_and_names.pattern_gain_year_count_mangrove)
+    age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(constants_and_names.gain_year_count_mangrove_dir, tile_id, "growth_years_loss_only")
-    utilities.upload_final(constants_and_names.gain_year_count_mangrove_dir, tile_id, "growth_years_gain_only")
-    utilities.upload_final(constants_and_names.gain_year_count_mangrove_dir, tile_id, "growth_years_no_change")
-    utilities.upload_final(constants_and_names.gain_year_count_mangrove_dir, tile_id, "growth_years_loss_and_gain")
+    utilities.upload_final(cn.gain_year_count_mangrove_dir, tile_id, "growth_years_loss_only")
+    utilities.upload_final(cn.gain_year_count_mangrove_dir, tile_id, "growth_years_gain_only")
+    utilities.upload_final(cn.gain_year_count_mangrove_dir, tile_id, "growth_years_no_change")
+    utilities.upload_final(cn.gain_year_count_mangrove_dir, tile_id, "growth_years_loss_and_gain")
 
     # This is the final output used later in the model
-    utilities.upload_final(constants_and_names.gain_year_count_mangrove_dir, tile_id, constants_and_names.pattern_gain_year_count_mangrove)
+    utilities.upload_final(cn.gain_year_count_mangrove_dir, tile_id, cn.pattern_gain_year_count_mangrove)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

@@ -5,19 +5,19 @@ import utilities
 import net_emissions
 import sys
 sys.path.append('../')
-import constants_and_names
+import constants_and_names as cn
 
 ### Need to update and install some packages on spot machine before running
 ### sudo pip install rasterio --upgrade
 
-biomass_tile_list = utilities.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
-print constants_and_names.natrl_forest_biomass_2000_dir
+biomass_tile_list = utilities.tile_list(cn.natrl_forest_biomass_2000_dir)
+print cn.natrl_forest_biomass_2000_dir
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 # biomass_tile_list = ['40N_120E'] # test tiles
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
-download_list = [constants_and_names.cumul_gain_combo_dir, constants_and_names.gross_emissions_dir]
+download_list = [cn.cumul_gain_combo_dir, cn.gross_emissions_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -25,8 +25,8 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cumul_gain_combo_dir, constants_and_names.pattern_cumul_gain_combo, tile), '.')  # cumulative aboveand belowground carbon gain for all forest types
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.gross_emissions_dir, tile, constants_and_names.pattern_gross_emissions), '.')  # emissions from all drivers
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, cn.pattern_cumul_gain_combo, tile), '.')  # cumulative aboveand belowground carbon gain for all forest types
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emissions_dir, tile, cn.pattern_gross_emissions), '.')  # emissions from all drivers
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 6)

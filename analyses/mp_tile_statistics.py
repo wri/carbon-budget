@@ -8,8 +8,8 @@ import os
 import glob
 import sys
 sys.path.append('../')
-import constants_and_names
-import universal_util
+import constants_and_names as cn
+import universal_util as uu
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
@@ -18,7 +18,7 @@ headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile1
 header_no_brackets = ', '.join(headers)
 
 # Creates the output text file with the column names
-with open(constants_and_names.tile_stats, 'w+') as f:
+with open(cn.tile_stats, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
 f.close()
 
@@ -28,27 +28,27 @@ f.close()
 #
 # # For copying individual tiles to spot machine for testing
 # for tile in download_tile_list:
-#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_2000_dir, constants_and_names.pattern_mangrove_biomass_2000, tile), '.')
-#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.natrl_forest_biomass_2000_dir, tile, constants_and_names.pattern_natrl_forest_biomass_2000), '.')
-#     universal_util.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.pixel_area_dir, constants_and_names.pattern_pixel_area, tile), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, tile), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.natrl_forest_biomass_2000_dir, tile, cn.pattern_natrl_forest_biomass_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
 
 
 # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-# universal_util.s3_folder_download(constants_and_names.pixel_area_dir, '.')
+# uu.s3_folder_download(cn.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
                  's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
-                 , constants_and_names.natrl_forest_biomass_2000_dir
+                 , cn.natrl_forest_biomass_2000_dir
                  , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
                  , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
-                 , constants_and_names.annual_gain_combo_dir
-                 , constants_and_names.cumul_gain_AGC_natrl_forest_dir
-                 , constants_and_names.cumul_gain_AGC_mangrove_dir
-                 , constants_and_names.cumul_gain_BGC_natrl_forest_dir      # Not doing this one
-                 , constants_and_names.cumul_gain_BGC_mangrove_dir          # Not doing this one
-                 , constants_and_names.cumul_gain_combo_dir
-                 , constants_and_names.net_flux_dir
+                 , cn.annual_gain_combo_dir
+                 , cn.cumul_gain_AGC_natrl_forest_dir
+                 , cn.cumul_gain_AGC_mangrove_dir
+                 , cn.cumul_gain_BGC_natrl_forest_dir      # Not doing this one
+                 , cn.cumul_gain_BGC_mangrove_dir          # Not doing this one
+                 , cn.cumul_gain_combo_dir
+                 , cn.net_flux_dir
                  , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'
                  , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
                  , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/forestry_model/'
@@ -65,11 +65,11 @@ download_list = [
 
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
-    universal_util.s3_folder_download(input, '.')
+    uu.s3_folder_download(input, '.')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
-    tile_list = universal_util.tile_list_spot_machine(".", ".tif")
+    tile_list = uu.tile_list_spot_machine(".", ".tif")
     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
     tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
     # tile_list = ['00N_000E_biomass.tif']
@@ -101,5 +101,5 @@ for input in download_list:
         print "  Tiles deleted"
 
     # Copies the text file to the location on s3 that the tiles are from
-    cmd = ['aws', 's3', 'cp', constants_and_names.tile_stats, constants_and_names.tile_stats_dir]
+    cmd = ['aws', 's3', 'cp', cn.tile_stats, cn.tile_stats_dir]
     subprocess.check_call(cmd)

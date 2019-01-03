@@ -13,7 +13,7 @@ import numpy as np
 import rasterio
 import sys
 sys.path.append('../')
-import constants_and_names
+import constants_and_names as cn
 
 def forest_age_category(tile_id, gain_table_dict):
 
@@ -38,11 +38,11 @@ def forest_age_category(tile_id, gain_table_dict):
 
     # Names of the input tiles
     loss = '{}.tif'.format(tile_id)
-    gain = '{0}_{1}.tif'.format(constants_and_names.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(constants_and_names.pattern_tcd, tile_id)
-    ifl = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_ifl)
-    biomass = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_natrl_forest_biomass_2000)
-    cont_eco = '{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed)
+    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
+    ifl = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
+    biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
+    cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
     print "  Reading input files and evaluating conditions"
 
@@ -79,7 +79,7 @@ def forest_age_category(tile_id, gain_table_dict):
                             )
 
                             # Opens the output tile, giving it the arguments of the input tiles
-                            with rasterio.open('{0}{1}.tif'.format(tile_id, constants_and_names.pattern_age_cat_natrl_forest), 'w', **kwargs) as dst:
+                            with rasterio.open('{0}{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest), 'w', **kwargs) as dst:
 
                                 # Iterates across the windows (1 pixel strips) of the input tile
                                 for idx, window in windows:
@@ -127,7 +127,7 @@ def forest_age_category(tile_id, gain_table_dict):
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
 
-    utilities.upload_final(constants_and_names.age_cat_natrl_forest_dir, tile_id, constants_and_names.pattern_age_cat_natrl_forest)
+    utilities.upload_final(cn.age_cat_natrl_forest_dir, tile_id, cn.pattern_age_cat_natrl_forest)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

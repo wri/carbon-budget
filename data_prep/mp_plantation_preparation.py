@@ -48,12 +48,12 @@ import os
 from osgeo import gdal
 import sys
 sys.path.append('../')
-import constants_and_names
-import universal_util
+import constants_and_names as cn
+import universal_util as uu
 
 
 # Iterates through all possible 10x10 tiles except for those at extreme latitudes (not just WHRC biomass tiles)
-total_tile_list = universal_util.tile_list(constants_and_names.pixel_area_dir)
+total_tile_list = uu.tile_list(cn.pixel_area_dir)
 
 # Removes the 10x10 tiles that don't have any planted forests in them according to Liz Goldman
 # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed.
@@ -63,28 +63,28 @@ planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in 
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-planted_lat_tile_list = ['00N_080W']
+# planted_lat_tile_list = ['00N_080W']
 print planted_lat_tile_list
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-# universal_util.s3_file_download(constants_and_names.gadm_path, '.')
-# cmd = ['unzip', constants_and_names.gadm_zip]
+# uu.s3_file_download(cn.gadm_path, '.')
+# cmd = ['unzip', cn.gadm_zip]
 # subprocess.check_call(cmd)
 
 # # Creates a new shapefile with just the countries that have planted forests in them.
 # # This focuses rasterization on the countries that have planted forests, not all land.
 # # NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
-# # in constants_and_names.py must be updated, too.
+# # in cn.py must be updated, too.
 # print "Creating shapefile of countries with planted forests..."
-# os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(constants_and_names.plantation_countries)[1:-1], constants_and_names.gadm_iso))
+# os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
 
-# # Creates 1x1 degree tiles of GADM countries with planted forests in them
-# # For multiprocessor use
-# num_of_processes = 3
-# pool = Pool(num_of_processes)
-# pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-# pool.close()
-# pool.join()
+# Creates 1x1 degree tiles of GADM countries with planted forests in them
+# For multiprocessor use
+num_of_processes = 3
+pool = Pool(num_of_processes)
+pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
+pool.close()
+pool.join()
 
 # # Creates 1x1 degree tiles of GADM countries with planted forests in them
 # # For single processor use
@@ -94,14 +94,14 @@ print planted_lat_tile_list
 
 
 # # List of all 1x1 degree tiles created
-# list_1x1 = universal_util.tile_list_spot_machine(".", "GADM_*.tif")
+# list_1x1 = uu.tile_list_spot_machine(".", "GADM_*.tif")
 # print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
 # print len(list_1x1)
 list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
 
 # Creates 1x1 degree tiles of plantation growth wherever there are plantations
 # For multiprocessor use
-num_of_processes = 3
+num_of_processes = 20
 pool = Pool(num_of_processes)
 pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
 pool.close()
@@ -121,20 +121,14 @@ os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
 
 # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
 # For multiprocessor use
-
-# pool = multiprocessing.Pool(processes=3)
-# pool.map(plantation_preparation.create_10x10_plantation, planted_lat_tile_list)
-# pool.close()
-# pool.join()
-
-num_of_processes = 3
+num_of_processes = 20
 pool = Pool(num_of_processes)
 pool.map(partial(plantation_preparation.create_10x10_plantation, plant_1x1_vrt=plant_1x1_vrt), planted_lat_tile_list)
 pool.close()
 pool.join()
 
-# # Creates 1x1 degree tiles of plantation growth wherever there are plantations
+# # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
 # # For single processor use
-# for tile in list_1x1:
+# for tile in planted_lat_tile_list:
 #
-#     plantation_preparation.create_10x10_plantation(tile)
+#     plantation_preparation.create_10x10_plantation(tile, plant_1x1_vrt)

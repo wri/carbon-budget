@@ -1,5 +1,5 @@
 import subprocess
-import constants_and_names
+import constants_and_names as cn
 import datetime
 import os
 import re
@@ -25,7 +25,7 @@ def read_biomass_tile_list():
 
     file_list = []
 
-    with open('{}{}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list), 'r') as tiles:
+    with open('{}{}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list), 'r') as tiles:
         for tile in tiles:
             file_list.append(tile)
 
@@ -59,23 +59,23 @@ def tile_list(source):
                 file_list.append(tile_id)
 
                 # # For stripping down standard tree biomass tiles to the tile id
-                # if '{}.tif'.format(constants_and_names.pattern_natrl_forest_biomass_2000) in tile_name:
+                # if '{}.tif'.format(cn.pattern_natrl_forest_biomass_2000) in tile_name:
                 #
-                #     tile_short_name = tile_name.replace('_{}.tif'.format(constants_and_names.pattern_natrl_forest_biomass_2000), '')
+                #     tile_short_name = tile_name.replace('_{}.tif'.format(cn.pattern_natrl_forest_biomass_2000), '')
                 #     file_list.append(tile_short_name)
                 #
                 # # For stripping down mangrove biomass tiles to the tile id
-                # if constants_and_names.pattern_mangrove_biomass_2000 in tile_name:
+                # if cn.pattern_mangrove_biomass_2000 in tile_name:
                 #
-                #     tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_mangrove_biomass_2000), '')
+                #     tile_short_name = tile_name.replace('{}_'.format(cn.pattern_mangrove_biomass_2000), '')
                 #     tile_short_name = tile_short_name.replace('.tif', '')
                 #     file_list.append(tile_short_name)
                 #     file_list = file_list[0:]
                 #
                 # # For stripping down pixel area tiles to the tile id
-                # if constants_and_names.pattern_pixel_area in tile_name:
+                # if cn.pattern_pixel_area in tile_name:
                 #
-                #     tile_short_name = tile_name.replace('{}_'.format(constants_and_names.pattern_pixel_area), '')
+                #     tile_short_name = tile_name.replace('{}_'.format(cn.pattern_pixel_area), '')
                 #     tile_short_name = tile_short_name.replace('.tif', '')
                 #     file_list.append(tile_short_name)
                 #     file_list = file_list[0:]
@@ -176,12 +176,12 @@ def create_combined_biomass_tile_list(WHRC, mangrove):
     unique_tiles_ordered_list = df.tile_id.tolist()
 
     # Writes the biomass tile list to a txt
-    with open(constants_and_names.pattern_biomass_tile_list, 'w') as f:
+    with open(cn.pattern_biomass_tile_list, 'w') as f:
         for item in unique_tiles_ordered_list:
             f.write("%s, " % item)
 
     # Copies that list to s3
-    cmd = ['aws', 's3', 'cp', constants_and_names.pattern_biomass_tile_list, '{0}{1}'.format(constants_and_names.biomass_tile_list_dir, constants_and_names.pattern_biomass_tile_list)]
+    cmd = ['aws', 's3', 'cp', cn.pattern_biomass_tile_list, '{0}{1}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list)]
     subprocess.check_call(cmd)
 
     os.remove("natrl_forest_biomass_tiles.txt")

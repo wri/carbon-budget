@@ -21,7 +21,7 @@ import numpy as np
 from scipy import stats
 import sys
 sys.path.append('../')
-import constants_and_names
+import constants_and_names as cn
 
 def create_continent_ecozone_tiles(tile_id):
 
@@ -33,7 +33,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Rasterizing ecozone to extent of biomass tile"
 
-    cont_eco_raw = "{0}_{1}".format(tile_id, constants_and_names.pattern_cont_eco_raw)
+    cont_eco_raw = "{0}_{1}".format(tile_id, cn.pattern_cont_eco_raw)
 
     # This makes rasters that are made of 1024 x 1024 pixel windows instead of 40000 x 1 pixel windows
     # to improve assigning pixels without continent-ecozone codes to a continent-ecozone code.
@@ -44,7 +44,7 @@ def create_continent_ecozone_tiles(tile_id):
 
     # Uploads the continent-ecozone tile to s3 before the codes are expanded to tiles without codes.
     # These are not used for the model. They are for reference and completeness.
-    utilities.upload_final(constants_and_names.cont_eco_raw_dir, tile_id, constants_and_names.pattern_cont_eco_raw)
+    utilities.upload_final(cn.cont_eco_raw_dir, tile_id, cn.pattern_cont_eco_raw)
 
     # Opens continent-ecozone tile.
     # Everything from here down is used to assign pixels without continent ecozone codes to a continent-ecozone.
@@ -66,7 +66,7 @@ def create_continent_ecozone_tiles(tile_id):
         )
 
         # Opens the output tile, giving it the arguments of the input tiles
-        with rasterio.open('{0}_{1}.tif'.format(tile_id, constants_and_names.pattern_cont_eco_processed), 'w', **kwargs) as dst:
+        with rasterio.open('{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed), 'w', **kwargs) as dst:
 
             # Iterates across the windows (1024 x 1024 pixel boxes) of the input tile.
             for idx, window in windows:
@@ -105,7 +105,7 @@ def create_continent_ecozone_tiles(tile_id):
                 dst.write_band(1, cont_eco_processed, window=window)
 
     # This is the output used for the rest of the model
-    utilities.upload_final(constants_and_names.cont_eco_dir, tile_id, constants_and_names.pattern_cont_eco_processed)
+    utilities.upload_final(cn.cont_eco_dir, tile_id, cn.pattern_cont_eco_processed)
 
 
 

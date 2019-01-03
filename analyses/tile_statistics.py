@@ -3,14 +3,14 @@ import numpy as np
 import subprocess
 import sys
 sys.path.append('../')
-import constants_and_names
-import universal_util
+import constants_and_names as cn
+import universal_util as uu
 
 # Calculates a range of tile statistics
 def create_tile_statistics(tile):
 
     # Extracts the tile id from the full tile name
-    tile_id = universal_util.get_tile_id(tile)
+    tile_id = uu.get_tile_id(tile)
 
     print "Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id)
 
@@ -29,7 +29,7 @@ def create_tile_statistics(tile):
 
     ### For converting value/hectare to value/pixel
     # Tile with the area of each pixel in m2
-    area_tile = '{0}_{1}.tif'.format(constants_and_names.pattern_pixel_area, tile_id)
+    area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
 
     # Output file name
     tile_short = tile[:-4]
@@ -37,7 +37,7 @@ def create_tile_statistics(tile):
 
     # Equation argument for converting emissions from per hectare to per pixel.
     # First, multiplies the per hectare emissions by the area of the pixel in m2, then divides by the number of m2 in a hectare.
-    calc = '--calc=A*B/{}'.format(constants_and_names.m2_per_ha)
+    calc = '--calc=A*B/{}'.format(cn.m2_per_ha)
 
     # Argument for outputting file
     out = '--outfile={}'.format(outname)
@@ -100,6 +100,6 @@ def create_tile_statistics(tile):
     print stats_no_brackets
 
     # Adds the tile's statistics to the txt file
-    with open(constants_and_names.tile_stats, 'a+') as f:
+    with open(cn.tile_stats, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()

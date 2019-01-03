@@ -16,7 +16,7 @@ import pandas as pd
 import subprocess
 import sys
 sys.path.append('../')
-import constants_and_names
+import constants_and_names as cn
 
 pd.options.mode.chained_assignment = None
 
@@ -25,13 +25,13 @@ pd.options.mode.chained_assignment = None
 ### sudo pip install pandas --upgrade
 ### sudo pip install xlrd
 
-biomass_tile_list = utilities.tile_list(constants_and_names.natrl_forest_biomass_2000_dir)
+biomass_tile_list = utilities.tile_list(cn.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['10N_080W', '00N_070W'] # test tiles
 print biomass_tile_list
 
 # For downloading all tiles in the input folders
-download_list = [constants_and_names.age_cat_natrl_forest_dir, constants_and_names.cont_eco_dir, constants_and_names.mangrove_biomass_2000_dir]
+download_list = [cn.age_cat_natrl_forest_dir, cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
@@ -39,16 +39,16 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.age_cat_natrl_forest_dir, tile, constants_and_names.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.cont_eco_dir, tile, constants_and_names.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(constants_and_names.mangrove_biomass_2000_dir, tile, constants_and_names.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.age_cat_natrl_forest_dir, tile, cn.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
 
 # Table with IPCC Table 4.9 default gain rates
-cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(constants_and_names.gain_spreadsheet), '.']
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(cn.gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
-gain_table = pd.read_excel("{}".format(constants_and_names.gain_spreadsheet),
+gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                            sheet_name = "natrl fores gain, for model")
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
