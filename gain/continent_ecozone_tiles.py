@@ -42,12 +42,8 @@ def create_continent_ecozone_tiles(tile_id):
     utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
                                               cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
 
-    # Uploads the continent-ecozone tile to s3 before the codes are expanded to tiles without codes.
-    # These are not used for the model. They are for reference and completeness.
-    utilities.upload_final(cn.cont_eco_raw_dir, tile_id, cn.pattern_cont_eco_raw)
-
     # Opens continent-ecozone tile.
-    # Everything from here down is used to assign pixels without continent ecozone codes to a continent-ecozone.
+    # Everything from here down is used to assign pixels without continent ecozone codes to a continent-ecozone in the 1024x1024 windows.
     with rasterio.open('{}.tif'.format(cont_eco_raw)) as cont_eco_raw_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize

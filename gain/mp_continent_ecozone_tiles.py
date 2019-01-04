@@ -61,5 +61,9 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 #
 #     continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
 
-# Uploads all tiles at the end
+# Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
+# These are not used for the model. They are for reference and completeness.
+uu.upload_final_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
+
+# Uploads all processed tiles at the end
 uu.upload_final_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
