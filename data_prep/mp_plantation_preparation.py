@@ -56,7 +56,7 @@ import universal_util as uu
 total_tile_list = uu.tile_list(cn.pixel_area_dir)
 
 # Removes the 10x10 tiles that don't have any planted forests in them according to Liz Goldman
-# NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed.
+# NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
 planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
@@ -80,6 +80,7 @@ print planted_lat_tile_list
 
 # Creates 1x1 degree tiles of GADM countries with planted forests in them
 # For multiprocessor use
+# I think this can handle using 50 processors because it's not trying to upload files to s3
 num_of_processes = 50
 pool = Pool(num_of_processes)
 pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)

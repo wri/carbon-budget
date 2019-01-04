@@ -11,6 +11,12 @@ d = datetime.datetime.today()
 date = d.strftime('%Y%m%d')
 
 
+def chunks(l, n):
+    # Yield successive n-sized chunks from l
+    for i in xrange(0, len(l), n):
+        yield l[i:i + n]
+
+
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
 
