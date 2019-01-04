@@ -176,7 +176,7 @@ def create_combined_biomass_tile_list(WHRC, mangrove):
     # Converts the set to a pandas dataframe to put the tiles in the correct order
     df = pd.DataFrame(unique_tiles, columns=['tile_id'])
     df = df.sort_values(by=['tile_id'])
-    print "Tile list is:", df
+    # print "Tile list is:", df
 
     # Converts the pandas dataframe to a Python list so that it can be written to a txt
     unique_tiles_ordered_list = df.tile_id.tolist()
