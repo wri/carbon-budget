@@ -49,7 +49,7 @@ tiles_in_chunk = count / 5
 
 for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
-    print "Chunk is ", str(chunk), "tiles."
+    print "Chunk is:", str(chunk)
 
     # For multiprocessor use
     pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
@@ -60,3 +60,6 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 # for tile in biomass_tile_list:
 #
 #     continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
+
+# Uploads all tiles at the end
+uu.upload_final_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)

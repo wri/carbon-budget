@@ -247,6 +247,17 @@ def s3_file_download(source, dest):
     subprocess.check_call(cmd)
 
 # Uploads tile to specified location
+def upload_final_set(upload_dir, pattern):
+
+    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '{}'.format(pattern), '--recursive']
+
+    try:
+        subprocess.check_call(cmd)
+    except:
+        print "Error uploading output tile"
+
+
+# Uploads tile to specified location
 def upload_final(upload_dir, tile_id, pattern):
 
     file = '{}_{}.tif'.format(tile_id, pattern)

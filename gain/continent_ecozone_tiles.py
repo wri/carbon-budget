@@ -104,9 +104,6 @@ def create_continent_ecozone_tiles(tile_id):
                 # so they should work fine with all the other tiles.
                 dst.write_band(1, cont_eco_processed, window=window)
 
-    # This is the output used for the rest of the model
-    utilities.upload_final(cn.cont_eco_dir, tile_id, cn.pattern_cont_eco_processed)
-
 
 
 
