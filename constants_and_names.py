@@ -236,6 +236,8 @@ gadm_zip = 'gadm_3_6_adm2_final.zip'
 gadm_shp = 'gadm_3_6_adm2_final.shp'
 gadm_iso = 'gadm_3_6_with_planted_forest_iso.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
+gadm_1x1_index_dir = 's3://gfw2-data/climate/carbon_model/gadm_1x1_tile_index/'
+pattern_gadm_1x1_index = 'index_1x1'
 
 # Countries with planted forests in them according to the planted forest geodatabase
 plantation_countries = [

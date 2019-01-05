@@ -52,19 +52,19 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-# Iterates through all possible 10x10 tiles except for those at extreme latitudes (not just WHRC biomass tiles)
-total_tile_list = uu.tile_list(cn.pixel_area_dir)
+# # Iterates through all possible 10x10 tiles except for those at extreme latitudes (not just WHRC biomass tiles)
+# total_tile_list = uu.tile_list(cn.pixel_area_dir)
 
-# Removes the 10x10 tiles that don't have any planted forests in them according to Liz Goldman
-# NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
-planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-# planted_lat_tile_list = ['00N_080W']
-print planted_lat_tile_list
+# # Removes the 10x10 tiles that don't have any planted forests in them according to Liz Goldman
+# # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
+# planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
+# # planted_lat_tile_list = ['00N_080W']
+# print planted_lat_tile_list
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
 # uu.s3_file_download(cn.gadm_path, '.')
@@ -78,14 +78,14 @@ print planted_lat_tile_list
 # print "Creating shapefile of countries with planted forests..."
 # os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
 
-# Creates 1x1 degree tiles of GADM countries with planted forests in them
-# For multiprocessor use
-# I think this can handle using 50 processors because it's not trying to upload files to s3
-num_of_processes = 50
-pool = Pool(num_of_processes)
-pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-pool.close()
-pool.join()
+# # Creates 1x1 degree tiles of GADM countries with planted forests in them
+# # For multiprocessor use
+# # I think this can handle using 50 processors because it's not trying to upload files to s3
+# num_of_processes = 50
+# pool = Pool(num_of_processes)
+# pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
+# pool.close()
+# pool.join()
 
 # # Creates 1x1 degree tiles of GADM countries with planted forests in them
 # # For single processor use
@@ -93,9 +93,11 @@ pool.join()
 #
 #     plantation_preparation.rasterize_gadm_1x1(tile)
 
-os.system('''gdaltindex index_1x1.shp GADM_*.tif''')
-cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
+os.system('''gdaltindex {}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index))
+cmd = ['aws', 's3', 'cp', '.', cn.gadm_1x1_index_dir, '--exclude', '*', '--include', '{}'.format(cn.pattern_gadm_1x1_index)]
 subprocess.check_call(cmd)
+# cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
+# subprocess.check_call(cmd)
 
 # # List of all 1x1 degree tiles created
 # list_1x1 = uu.tile_list_spot_machine(".", "GADM_*.tif")
