@@ -100,7 +100,7 @@ total_tile_list = uu.tile_list(cn.pixel_area_dir)
 # subprocess.check_call(cmd)
 
 # List of all 1x1 degree tiles created
-list_1x1 = uu.tile_list_spot_machine(".", "GADM_*.tif")
+list_1x1 = uu.tile_list_spot_machine(".", "GADM_.tif")
 print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
 print len(list_1x1)
 # list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
