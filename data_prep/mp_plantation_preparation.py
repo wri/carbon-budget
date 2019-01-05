@@ -64,7 +64,7 @@ total_tile_list = uu.tile_list(cn.pixel_area_dir)
 # planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
 # # planted_lat_tile_list = ['00N_080W']
 planted_lat_tile_list = [tile for tile in total_tile_list if '50S' in tile]
-# print planted_lat_tile_list
+print planted_lat_tile_list
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
 # uu.s3_file_download(cn.gadm_path, '.')
