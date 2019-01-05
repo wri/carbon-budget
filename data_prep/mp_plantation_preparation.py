@@ -99,10 +99,10 @@ subprocess.check_call(cmd)
 # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
 # subprocess.check_call(cmd)
 
-# # List of all 1x1 degree tiles created
-# list_1x1 = uu.tile_list_spot_machine(".", "GADM_*.tif")
-# print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
-# print len(list_1x1)
+# List of all 1x1 degree tiles created
+list_1x1 = uu.tile_list_spot_machine(".", "GADM_*.tif")
+print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
+print len(list_1x1)
 # list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
 
 # # Creates 1x1 degree tiles of plantation growth wherever there are plantations
