@@ -93,8 +93,8 @@ import universal_util as uu
 #
 #     plantation_preparation.rasterize_gadm_1x1(tile)
 
-os.system('''gdaltindex {}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index))
-cmd = ['aws', 's3', 'cp', '.', cn.gadm_1x1_index_dir, '--exclude', '*', '--include', '{}'.format(cn.pattern_gadm_1x1_index)]
+# os.system('''gdaltindex {}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index))
+cmd = ['aws', 's3', 'cp', '.', cn.gadm_1x1_index_dir, '--exclude', '*', '--include', '{}'.format(cn.pattern_gadm_1x1_index), '--recursive']
 subprocess.check_call(cmd)
 # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
 # subprocess.check_call(cmd)
