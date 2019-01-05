@@ -72,6 +72,7 @@ def create_1x1_plantation(tile_1x1):
     # https://gis.stackexchange.com/questions/30267/how-to-create-a-valid-global-polygon-grid-in-postgis
     # https://stackoverflow.com/questions/48978616/best-way-to-run-st-intersects-on-features-inside-one-table
     # https://postgis.net/docs/ST_Intersects.html
+    print "Checking if {} has plantations in it".format(tile_1x1)
     cursor.execute("SELECT growth FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(
             xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
     features = cursor.fetchall()
