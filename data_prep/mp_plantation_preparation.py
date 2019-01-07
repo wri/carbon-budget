@@ -93,7 +93,7 @@ total_tile_list = uu.tile_list(cn.pixel_area_dir)
 #
 #     plantation_preparation.rasterize_gadm_1x1(tile)
 
-# os.system('''gdaltindex {}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index))
+# os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date))
 # cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
 # subprocess.check_call(cmd)
 # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
@@ -122,7 +122,7 @@ total_tile_list = uu.tile_list(cn.pixel_area_dir)
 #
 #     plantation_preparation.create_1x1_plantation(tile)
 
-os.system('''gdaltindex {}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index))
+os.system('''gdaltindex {0}_{1}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date))
 cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
 subprocess.check_call(cmd)
 
