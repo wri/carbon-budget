@@ -54,20 +54,21 @@ import universal_util as uu
 
 # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
 total_tile_list = uu.tile_list(cn.pixel_area_dir)
+print len(total_tile_list)
 
-# Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
-# i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
-# This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
-# NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
-planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
-planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-
-print planted_lat_tile_list
-print len(planted_lat_tile_list)
+# # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
+# # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
+# # This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
+# # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
+# planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
+# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
+#
+# print planted_lat_tile_list
+# print len(planted_lat_tile_list)
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
 # uu.s3_file_download(cn.gadm_path, '.')
