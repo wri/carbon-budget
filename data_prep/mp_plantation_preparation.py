@@ -65,35 +65,31 @@ planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in 
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-planted_lat_tile_list = [
-'10N_000E', '10N_010E', '20N_000E', '20N_010E', '20N_110E', '30N_040E', '40N_010E', '40N_020E', '40N_030E',
-'40N_040E', '50N_000E', '50N_010E', '50N_020E', '50N_030E', '50N_040E', '50N_050E', '60N_000E', '60N_010E',
-'60N_020E', '60N_030E', '70N_000E', '70N_010E', '70N_020E', '70N_020W', '70N_030E', '70N_030W'
-]
 
 print planted_lat_tile_list
+print len(planted_lat_tile_list)
 
-# Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-uu.s3_file_download(cn.gadm_path, '.')
-cmd = ['unzip', cn.gadm_zip]
-subprocess.check_call(cmd)
+# # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
+# uu.s3_file_download(cn.gadm_path, '.')
+# cmd = ['unzip', cn.gadm_zip]
+# subprocess.check_call(cmd)
 
-# Creates a new GADM shapefile with just the countries that have planted forests in them.
-# This focuses creating 1x1 rasters of land area on the countries that have planted forests rather than on all countries.
-# NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
-# in constants_and_names.py must be updated, too.
-print "Creating shapefile of countries with planted forests..."
-os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
+# # Creates a new GADM shapefile with just the countries that have planted forests in them.
+# # This focuses creating 1x1 rasters of land area on the countries that have planted forests rather than on all countries.
+# # NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
+# # in constants_and_names.py must be updated, too.
+# print "Creating shapefile of countries with planted forests..."
+# os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
 
-# Creates 1x1 degree tiles of GADM countries that have planted forests in them.
-# I think this can handle using 50 processors because it's not trying to upload files to s3.
-# This takes several days to run because it iterates through at least 250 10x10 tiles.
-# For multiprocessor use.
-num_of_processes = 50
-pool = Pool(num_of_processes)
-pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-pool.close()
-pool.join()
+# # Creates 1x1 degree tiles of GADM countries that have planted forests in them.
+# # I think this can handle using 50 processors because it's not trying to upload files to s3.
+# # This takes several days to run because it iterates through at least 250 10x10 tiles.
+# # For multiprocessor use.
+# num_of_processes = 50
+# pool = Pool(num_of_processes)
+# pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
+# pool.close()
+# pool.join()
 
 # # Creates 1x1 degree tiles of GADM countries that have planted forests in them.
 # # For single processor use.
