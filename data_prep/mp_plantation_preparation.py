@@ -96,41 +96,41 @@ pool.join()
 #
 #     plantation_preparation.rasterize_gadm_1x1(tile)
 
-# Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
-os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date))
-cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
-subprocess.check_call(cmd)
+# # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
+# os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date))
+# cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
+# subprocess.check_call(cmd)
+#
+# # Saves the 1x1 GADM tiles to s3
+# cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
+# subprocess.check_call(cmd)
+#
+# # To delete the aux.xml files
+# os.system('''rm *.tif.*''')
+#
+# # List of all 1x1 degree GADM tiles created
+# list_1x1 = uu.tile_list_spot_machine(".", ".tif")
+# print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
+# print len(list_1x1)
+# # list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
 
-# Saves the 1x1 GADM tiles to s3
-cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
-subprocess.check_call(cmd)
+# # Creates 1x1 degree tiles of plantation growth wherever there are plantations
+# # For multiprocessor use
+# num_of_processes = 25
+# pool = Pool(num_of_processes)
+# pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
+# pool.close()
+# pool.join()
+#
+# # Creates 1x1 degree tiles of plantation growth wherever there are plantations
+# # For single processor use
+# for tile in list_1x1:
+#
+#     plantation_preparation.create_1x1_plantation(tile)
 
-# To delete the aux.xml files
-os.system('''rm *.tif.*''')
-
-# List of all 1x1 degree GADM tiles created
-list_1x1 = uu.tile_list_spot_machine(".", ".tif")
-print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
-print len(list_1x1)
-# list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
-
-# Creates 1x1 degree tiles of plantation growth wherever there are plantations
-# For multiprocessor use
-num_of_processes = 25
-pool = Pool(num_of_processes)
-pool.map(plantation_preparation.create_1x1_plantation, list_1x1)
-pool.close()
-pool.join()
-
-# Creates 1x1 degree tiles of plantation growth wherever there are plantations
-# For single processor use
-for tile in list_1x1:
-
-    plantation_preparation.create_1x1_plantation(tile)
-
-os.system('''gdaltindex {0}_{1}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date))
-cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
-subprocess.check_call(cmd)
+# os.system('''gdaltindex {0}_{1}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date))
+# cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
+# subprocess.check_call(cmd)
 
 
 # plant_1x1_vrt = 'plant_1x1.vrt'
