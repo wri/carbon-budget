@@ -94,7 +94,7 @@ def tile_list_spot_machine(source, pattern):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = subprocess.Popen(['ls', pattern], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
