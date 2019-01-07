@@ -65,7 +65,12 @@ planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in 
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-# planted_lat_tile_list = ['00N_080W']
+planted_lat_tile_list = [
+'10N_000E', '10N_010E', '20N_000E', '20N_010E', '20N_110E', '30N_040E', '40N_010E', '40N_020E', '40N_030E',
+'40N_040E', '50N_000E', '50N_010E', '50N_020E', '50N_030E', '50N_040E', '50N_050E', '60N_000E', '60N_010E',
+'60N_020E', '60N_030E', '70N_000E', '70N_010E', '70N_020E', '70N_020W', '70N_030E', '70N_030W'
+]
+
 print planted_lat_tile_list
 
 # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas

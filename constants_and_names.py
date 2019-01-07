@@ -250,7 +250,7 @@ plantation_countries = [
                         # # EU countries
                         # 'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
                         # 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR'
-                        'NGA', 'ALA', 'ALB', 'ARM', 'AZE', 'BIH', 'BLR', 'CHE', 'GEO', 'IRQ', 'ISL', 'MDA', 'MKD', 'MNE',
-                        'NOR', 'RUS', 'SRB', 'SYR', 'TUR', 'UKR', 'XKO', 'XPI'
+                        'ALA', 'ALB', 'ARM', 'AZE', 'BIH', 'BLR', 'CHE', 'GEO', 'IRQ', 'ISL', 'MDA', 'MKD', 'MNE',
+                        'NGA', 'NOR', 'SRB', 'SYR', 'TUR', 'UKR', 'XKO', 'XPI'
                         ]
 
