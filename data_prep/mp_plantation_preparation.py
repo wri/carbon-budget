@@ -52,9 +52,9 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-# List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
-total_tile_list = uu.tile_list(cn.pixel_area_dir)
-print len(total_tile_list)
+# # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
+# total_tile_list = uu.tile_list(cn.pixel_area_dir)
+# print len(total_tile_list)
 
 # # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
 # # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
@@ -107,14 +107,14 @@ print len(total_tile_list)
 # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
 # subprocess.check_call(cmd)
 #
-# # To delete the aux.xml files
-# os.system('''rm *.tif.*''')
-#
-# # List of all 1x1 degree GADM tiles created
-# list_1x1 = uu.tile_list_spot_machine(".", ".tif")
-# print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
-# print len(list_1x1)
-# # list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
+# To delete the aux.xml files
+os.system('''rm GADM*.tif.*''')
+
+# List of all 1x1 degree GADM tiles created
+list_1x1 = uu.tile_list_spot_machine(".", ".tif")
+print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
+print len(list_1x1)
+# list_1x1 = ['GADM_0_-80.tif', 'GADM_0_-79.tif', 'GADM_0_-78.tif', 'GADM_-1_-80.tif', 'GADM_-1_-79.tif', 'GADM_-1_-78.tif']
 
 # # Creates 1x1 degree tiles of plantation growth wherever there are plantations
 # # For multiprocessor use
