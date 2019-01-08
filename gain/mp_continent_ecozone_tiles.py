@@ -42,7 +42,7 @@ print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 3)
+pool = multiprocessing.Pool(processes=count / 2)
 
 # How many tiles the spot machine will process at one time
 tiles_in_chunk = count / 4
