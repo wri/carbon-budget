@@ -99,8 +99,8 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest)
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
-           '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', plant_1x1_vrt, tile_10x10]
+           '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', plant_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)

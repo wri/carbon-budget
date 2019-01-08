@@ -66,6 +66,7 @@ planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in 
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
 planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
+planted_lat_tile_list = ['10N_080W']
 
 print planted_lat_tile_list
 print len(planted_lat_tile_list)
