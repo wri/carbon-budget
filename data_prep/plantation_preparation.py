@@ -2,13 +2,13 @@
 import subprocess
 import os
 import psycopg2
-import re
-from osgeo import gdal
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+# Creates 1x1 tiles of where select countries are in select latitude bands, with the defining coordinates in the
+# northwest corner
 def rasterize_gadm_1x1(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
@@ -39,6 +39,8 @@ def rasterize_gadm_1x1(tile_id):
                    '-burn', '1', '-a_nodata', '0', cn.gadm_iso, tile_1x1]
             subprocess.check_call(cmd)
 
+            # Only keeps 1x1 GADM tiles if they actually include a country; many 1x1 tiles created out of 10x10 tiles
+            # don't actually include a country.
             print "Checking if {} contains any data...".format(tile_1x1)
             stats = uu.check_for_data(tile_1x1)
 
@@ -68,16 +70,23 @@ def create_1x1_plantation(tile_1x1):
     conn = psycopg2.connect(**creds)
     cursor = conn.cursor()
 
-    # Intersects the plantations with the 1x1 tile, then saves any growth rates in that tile as a list
+    # Intersects the plantations PostGIS table with the 1x1 tile, then saves any growth rates in that tile as a 1x1 tile
     # https://gis.stackexchange.com/questions/30267/how-to-create-a-valid-global-polygon-grid-in-postgis
     # https://stackoverflow.com/questions/48978616/best-way-to-run-st-intersects-on-features-inside-one-table
     # https://postgis.net/docs/ST_Intersects.html
     print "Checking if {} has plantations in it".format(tile_1x1)
+
+    # Does the intersect of the PostGIS table and the 1x1 GADM tile
     cursor.execute("SELECT growth FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(
             xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
+
+    # A Python list of the output of the intersection, which in this case is a list of features that were successfully intersected.
+    # This is what I use to determine if any PostGIS features were intersected.
     features = cursor.fetchall()
     cursor.close()
 
+    # If any features in the PostGIS table were intersected with the 1x1 GADM tile, then the features in this 1x1 tile
+    # are converted to a planted forest growth rate tile
     if len(features) > 0:
 
         print "There are plantations in {}. Converting to raster...".format(tile_1x1)
@@ -86,6 +95,7 @@ def create_1x1_plantation(tile_1x1):
         cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
         subprocess.check_call(cmd)
 
+    # If no features in the PostGIS table were intersected with the 1x1 GADM tile, nothing happens.
     else:
         print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
