@@ -52,23 +52,23 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-# # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
-# total_tile_list = uu.tile_list(cn.pixel_area_dir)
-# print len(total_tile_list)
+# List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
+total_tile_list = uu.tile_list(cn.pixel_area_dir)
+print len(total_tile_list)
 
-# # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
-# # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
-# # This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
-# # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
-# planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
-# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
-# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
-# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
-# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
-# planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-#
-# print planted_lat_tile_list
-# print len(planted_lat_tile_list)
+# Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
+# i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
+# This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
+# NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
+planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
+planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
+planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
+planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
+planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
+planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
+
+print planted_lat_tile_list
+print len(planted_lat_tile_list)
 
 # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
 # uu.s3_file_download(cn.gadm_path, '.')
@@ -98,10 +98,10 @@ import universal_util as uu
 #
 #     plantation_preparation.rasterize_gadm_1x1(tile)
 
-# Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
-os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date))
-cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
-subprocess.check_call(cmd)
+# # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
+# os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date))
+# cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
+# subprocess.check_call(cmd)
 #
 # # Saves the 1x1 GADM tiles to s3
 # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
@@ -130,24 +130,24 @@ subprocess.check_call(cmd)
 #
 #     plantation_preparation.create_1x1_plantation(tile)
 
-os.system('''gdaltindex {0}_{1}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date))
-cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
-subprocess.check_call(cmd)
+# os.system('''gdaltindex {0}_{1}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date))
+# cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
+# subprocess.check_call(cmd)
 
 
-# plant_1x1_vrt = 'plant_1x1.vrt'
-#
-# # Creates a mosaic of all the 1x1 plantation growth rate tiles
-# print "Creating vrt of 1x1 plantation growth rate tiles"
-# os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
-#
-# # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
-# # For multiprocessor use
-# num_of_processes = 20
-# pool = Pool(num_of_processes)
-# pool.map(partial(plantation_preparation.create_10x10_plantation, plant_1x1_vrt=plant_1x1_vrt), planted_lat_tile_list)
-# pool.close()
-# pool.join()
+plant_1x1_vrt = 'plant_1x1.vrt'
+
+# Creates a mosaic of all the 1x1 plantation growth rate tiles
+print "Creating vrt of 1x1 plantation growth rate tiles"
+os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
+
+# Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
+# For multiprocessor use
+num_of_processes = 20
+pool = Pool(num_of_processes)
+pool.map(partial(plantation_preparation.create_10x10_plantation, plant_1x1_vrt=plant_1x1_vrt), planted_lat_tile_list)
+pool.close()
+pool.join()
 
 # # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
 # # For single processor use
