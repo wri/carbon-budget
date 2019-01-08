@@ -100,7 +100,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', plant_1x1_vrt, tile_10x10]
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)
