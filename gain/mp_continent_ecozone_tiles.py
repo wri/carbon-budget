@@ -20,13 +20,14 @@ import multiprocessing
 import utilities
 import continent_ecozone_tiles
 import subprocess
+import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-### sudo pip install rasterio --upgrade
-### sudo pip install scipy
+# Folder that stores the completed output tiles that have already been copied to s3
+os.mkdir("already_copied")
 
 # Downloads ecozone shapefile
 utilities.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
@@ -42,10 +43,11 @@ print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 2)
+cores = count / 3
+pool = multiprocessing.Pool(processes=cores)
 
 # How many tiles the spot machine will process at one time
-tiles_in_chunk = count / 4
+tiles_in_chunk = cores
 
 for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
@@ -56,14 +58,20 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
     pool.close()
     pool.join()
 
+    # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
+    # These are not used for the model. They are for reference and completeness.
+    uu.upload_chunk_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
+
+    # Uploads all processed tiles at the end
+    uu.upload_chunk_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
+
+    # Moves the completed tiles that have been saved to s3 out of the folder
+    os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_raw))
+    os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_processed))
+
+
+
 # # For single processor use
 # for tile in biomass_tile_list:
 #
 #     continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
-
-# Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
-# These are not used for the model. They are for reference and completeness.
-uu.upload_final_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
-
-# Uploads all processed tiles at the end
-uu.upload_final_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
