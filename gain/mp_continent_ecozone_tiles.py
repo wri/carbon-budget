@@ -53,21 +53,21 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
     print "Chunk is:", str(chunk)
 
-    # # For multiprocessor use
-    # pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
-    # # These are not used for the model. They are for reference and completeness.
-    # uu.upload_chunk_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
-    #
-    # # Uploads all processed tiles at the end
-    # uu.upload_chunk_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
-    #
-    # # Moves the completed tiles that have been saved to s3 out of the folder
-    # os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_raw))
-    # os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_processed))
+    # For multiprocessor use
+    pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, chunk)
+    pool.close()
+    pool.join()
+
+    # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
+    # These are not used for the model. They are for reference and completeness.
+    uu.upload_chunk_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
+
+    # Uploads all processed tiles at the end
+    uu.upload_chunk_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
+
+    # Moves the completed tiles that have been saved to s3 out of the folder
+    os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_raw))
+    os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_processed))
 
 
 
