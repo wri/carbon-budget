@@ -11,6 +11,17 @@ d = datetime.datetime.today()
 date = d.strftime('%Y%m%d')
 
 
+# Makes a folder for tiles that have already been copied to s3
+def make_local_output_folder():
+
+    if not os.path.exists("./{}".format(cn.already_copied)):
+        # Folder that stores the completed output tiles that have already been copied to s3
+        os.mkdir("{}".format(cn.already_copied))
+
+    else:
+        print "Local output folder for tiles that have been copied to s3already exists"
+
+# Creates chunks of tiles for processing
 def chunks(l, n):
     # Yield successive n-sized chunks from l
     for i in xrange(0, len(l), n):
@@ -246,7 +257,8 @@ def s3_file_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest]
     subprocess.check_call(cmd)
 
-# Uploads tiles to specified location on s3
+
+# Uploads a set of tiles that have been created in a chunk to a specified location on s3
 def upload_chunk_set(upload_dir, pattern):
 
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '{}'.format(pattern), '--recursive']
@@ -255,8 +267,8 @@ def upload_chunk_set(upload_dir, pattern):
         # Copies the tiles to s3
         subprocess.check_call(cmd)
 
-        # Moves the copied tiles to a folder of already copied tiles on spot machine
-        os.system('''mv *_{0}.tif {1}/'''.format(cn.pattern_cont_eco_raw, cn.already_copied))
+        # # Moves the copied tiles to a folder of already copied tiles on spot machine
+        # os.system('''mv *_{0}.tif {1}/'''.format(pattern, cn.already_copied))
 
     except:
         print "Error uploading output tile"
@@ -286,14 +298,3 @@ def check_for_data(out_tile):
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
     return stats
-
-
-# Makes a folder for tiles that have already been copied to s3
-def make_local_output_folder():
-
-    if not os.path.exists("./{}".format(cn.already_copied)):
-        # Folder that stores the completed output tiles that have already been copied to s3
-        os.mkdir("{}".format(cn.already_copied))
-
-    else:
-        print "Local output folder for tiles that have been copied to s3already exists"
