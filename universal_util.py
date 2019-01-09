@@ -246,13 +246,18 @@ def s3_file_download(source, dest):
     cmd = ['aws', 's3', 'cp', source, dest]
     subprocess.check_call(cmd)
 
-# Uploads tile to specified location
+# Uploads tiles to specified location on s3
 def upload_chunk_set(upload_dir, pattern):
 
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '{}'.format(pattern), '--recursive']
 
     try:
+        # Copies the tiles to s3
         subprocess.check_call(cmd)
+
+        # Moves the copied tiles to a folder of already copied tiles on spot machine
+        os.system('''mv *_{0}.tif {1}/'''.format(cn.pattern_cont_eco_raw, cn.already_copied))
+
     except:
         print "Error uploading output tile"
 
@@ -282,8 +287,13 @@ def check_for_data(out_tile):
 
     return stats
 
+
+# Makes a folder for tiles that have already been copied to s3
 def make_local_output_folder():
 
-    if not os.path.exists("./already_copied"):
+    if not os.path.exists("./{}".format(cn.already_copied)):
         # Folder that stores the completed output tiles that have already been copied to s3
-        os.mkdir("already_copied")
+        os.mkdir("{}".format(cn.already_copied))
+
+    else:
+        print "Local output folder for tiles that have been copied to s3already exists"

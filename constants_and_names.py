@@ -28,6 +28,10 @@ Hansen_res = 0.00025
 ### File names and directories ###
 ########                  ########
 
+### Folder on s3 spot machine where tiles are moved to after they have been copied to s3
+already_copied = "already_copied"
+
+
 ### Biomass tile list (WHRC/natural forests and mangroves)
 pattern_biomass_tile_list = 'biomass_tile_list.txt'
 biomass_tile_list_dir = 's3://gfw2-data/climate/carbon_model/biomass_tile_list/'

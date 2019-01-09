@@ -68,10 +68,6 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
     # Uploads all processed tiles at the end
     uu.upload_chunk_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
 
-    # Moves the completed tiles that have been saved to s3 out of the folder
-    os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_raw))
-    os.system('''mv *_{}.tif'''.format(cn.pattern_cont_eco_processed))
-
 
 
 # # For single processor use
