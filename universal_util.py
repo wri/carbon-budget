@@ -263,15 +263,11 @@ def upload_chunk_set(upload_dir, pattern):
 
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '{}'.format(pattern), '--recursive']
 
-    try:
-        # Copies the tiles to s3
-        subprocess.check_call(cmd)
+    # Copies the tiles to s3
+    subprocess.check_call(cmd)
 
-        # # Moves the copied tiles to a folder of already copied tiles on spot machine
-        # os.system('''mv *_{0}.tif {1}/'''.format(pattern, cn.already_copied))
-
-    except:
-        print "Error uploading output tile"
+    # # Moves the copied tiles to a folder of already copied tiles on spot machine
+    # os.system('''mv *_{0}.tif {1}/'''.format(pattern, cn.already_copied))
 
 
 # Uploads tile to specified location
