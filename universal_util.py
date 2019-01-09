@@ -281,3 +281,9 @@ def check_for_data(out_tile):
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
     return stats
+
+def make_local_output_folder():
+
+    if not os.path.exists("./already_copied"):
+        # Folder that stores the completed output tiles that have already been copied to s3
+        os.mkdir("already_copied")

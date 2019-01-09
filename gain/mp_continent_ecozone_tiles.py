@@ -26,8 +26,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Folder that stores the completed output tiles that have already been copied to s3
-os.mkdir("already_copied")
+# Makes a folder for output tiles that have already been copied to s3
+uu.make_local_output_folder()
 
 # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
 if not os.path.exists(cn.cont_eco_zip):
