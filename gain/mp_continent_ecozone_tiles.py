@@ -29,12 +29,15 @@ import universal_util as uu
 # Folder that stores the completed output tiles that have already been copied to s3
 os.mkdir("already_copied")
 
-# Downloads ecozone shapefile
-utilities.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
+# if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
+if not os.path.exists(cn.cont_eco_zip):
 
-# Unzips ecozone shapefile
-cmd = ['unzip', cn.cont_eco_zip]
-subprocess.check_call(cmd)
+    # Downloads ecozone shapefile
+    utilities.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
+
+    # Unzips ecozone shapefile
+    cmd = ['unzip', cn.cont_eco_zip]
+    subprocess.check_call(cmd)
 
 biomass_tile_list = uu.create_combined_biomass_tile_list(cn.natrl_forest_biomass_2000_dir, cn.mangrove_biomass_2000_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
