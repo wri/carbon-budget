@@ -27,11 +27,10 @@ def create_continent_ecozone_tiles(tile_id):
 
     print "Processing:", tile_id
 
-    print "Getting extent of biomass tile"
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
-    print "ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
+    print "Extent of", tile_id, "-- ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
-    print "Rasterizing ecozone to extent of biomass tile"
+    print "Rasterizing ecozone to extent of biomass tile {}".format(tile_id)
 
     cont_eco_raw = "{0}_{1}".format(tile_id, cn.pattern_cont_eco_raw)
 
