@@ -28,7 +28,7 @@ def net_calc(tile_id):
     subprocess.check_call(cmd)
 
     # Output net emissions file
-    net_emis = '{0}_{1}.tif'.format(cn.pattern_net_flux, tile_id)
+    net_emis = '{0}_{1}.tif'.format(tile_id, cn.pattern_net_flux)
 
     # Opens cumulative gain input tile
     with rasterio.open(gain_in) as gain_src:
