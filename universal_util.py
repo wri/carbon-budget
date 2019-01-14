@@ -51,6 +51,8 @@ def read_biomass_tile_list():
 # Lists the tiles in a folder in s3
 def tile_list(source):
 
+    print "Creating list of biomass tiles..."
+
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
