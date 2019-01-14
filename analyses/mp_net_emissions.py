@@ -32,11 +32,11 @@ download_list = [cn.cumul_gain_combo_dir, cn.gross_emissions_dir]
 
 
 count = multiprocessing.cpu_count()
-cores = count / 4
+cores = count / 2
 pool = multiprocessing.Pool(processes=cores)
 
 # How many tiles the spot machine will process at one time
-tiles_in_chunk = cores
+tiles_in_chunk = cores / 2
 
 for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
