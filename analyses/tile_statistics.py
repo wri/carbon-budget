@@ -18,22 +18,19 @@ def create_tile_statistics(tile):
     # Opens raster we're getting statistics on
     focus_tile = gdal.Open(tile)
 
+    # Extracts the NoData value for the tile so it can be ignored
+    srcband = focus_tile.GetRasterBand(1)
+    nodata = srcband.GetNoDataValue()
+    print "NoData value =", nodata
+
     # Turns the raster into a numpy array
     tile_array = np.array(focus_tile.GetRasterBand(1).ReadAsArray())
 
     # Flattens the numpy array to a single dimension
     tile_array_flat = tile_array.flatten()
 
-    # Net flux pixels can be negative by several hundred tons, so this won't exclude them from the analysis.
-    # It will only exclude
-    if cn.pattern_net_flux in tile:
-
-        tile_array_flat_mask = tile_array_flat[tile_array_flat > -8000]
-
-    else:
-
-        # Removes NoData values from the array. NoData are generally either 0 or -9999.
-        tile_array_flat_mask = tile_array_flat[tile_array_flat > 0]
+    # Removes NoData values from the array. NoData are generally either 0 or -9999.
+    tile_array_flat_mask = tile_array_flat[tile_array_flat != nodata]
 
     ### For converting value/hectare to value/pixel
     # Tile with the area of each pixel in m2

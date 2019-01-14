@@ -32,7 +32,7 @@ for input in download_list:
 
 
 count = multiprocessing.cpu_count()
-cores = count / 2
+cores = count / 3
 pool = multiprocessing.Pool(processes=cores)
 
 # How many tiles the spot machine will process at one time

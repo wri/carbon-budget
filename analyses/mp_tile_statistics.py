@@ -38,27 +38,27 @@ f.close()
 
 # For downloading all tiles in selected folders
 download_list = [
-                 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
-                 , cn.natrl_forest_biomass_2000_dir
-                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
-                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
-                 , cn.annual_gain_combo_dir
-                 , cn.cumul_gain_AGC_natrl_forest_dir
-                 , cn.cumul_gain_AGC_mangrove_dir
-                 , cn.cumul_gain_BGC_natrl_forest_dir      # Not doing this one
-                 , cn.cumul_gain_BGC_mangrove_dir          # Not doing this one
-                 , cn.cumul_gain_combo_dir
+                 # 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181019/'
+                 # , cn.natrl_forest_biomass_2000_dir
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'
+                 # , cn.annual_gain_combo_dir
+                 # , cn.cumul_gain_AGC_natrl_forest_dir
+                 # , cn.cumul_gain_AGC_mangrove_dir
+                 # , cn.cumul_gain_BGC_natrl_forest_dir      # Not doing this one
+                 # , cn.cumul_gain_BGC_mangrove_dir          # Not doing this one
+                 cn.cumul_gain_combo_dir
                  , cn.net_flux_dir
-                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'
-                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
-                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/forestry_model/'
-                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/shiftingag_model/'
-                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/urbanization_model/'
-                 , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/wildfire_model/'
-                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
-                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/litter/'
-                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/soil/'
-                 , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/total_carbon/'
+                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'
+                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
+                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/forestry_model/'
+                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/shiftingag_model/'
+                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/urbanization_model/'
+                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/wildfire_model/'
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/deadwood/'
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/litter/'
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/soil/'
+                 # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/total_carbon/'
 
 
 ]
