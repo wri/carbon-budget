@@ -14,11 +14,6 @@ import constants_and_names as cn
 
 pd.options.mode.chained_assignment = None
 
-### Need to update and install some packages on spot machine before running
-### sudo pip install rasterio --upgrade
-### sudo pip install pandas --upgrade
-### sudo pip install xlrd
-
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
 # there are many fewer mangrove biomass tiles (88 vs 315)
 mangrove_biomass_tile_list = utilities.tile_list(cn.mangrove_biomass_2000_dir)
@@ -32,11 +27,11 @@ download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 for input in download_list:
     utilities.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in mangrove_biomass_tile_list:
-
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
+# # For copying individual tiles to spot machine for testing
+# for tile in mangrove_biomass_tile_list:
+#
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
 cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(cn.gain_spreadsheet), '.']

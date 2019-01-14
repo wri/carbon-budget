@@ -45,7 +45,7 @@ def net_calc(tile_id):
                 driver='GTiff',
                 count=1,
                 compress='lzw',
-                nodata=0
+                nodata=-9999
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
@@ -62,8 +62,6 @@ def net_calc(tile_id):
                     dst_data = loss - gain*cn.c_to_co2
 
                     dst.write_band(1, dst_data, window=window)
-
-    utilities.upload_final(cn.pattern_net_flux, cn.net_flux_dir, tile_id)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

@@ -24,8 +24,16 @@ def create_tile_statistics(tile):
     # Flattens the numpy array to a single dimension
     tile_array_flat = tile_array.flatten()
 
-    # Removes NoData values from the array. NoData are generally either 0 or -9999.
-    tile_array_flat_mask = tile_array_flat[tile_array_flat > 0]
+    # Net flux pixels can be negative by several hundred tons, so this won't exclude them from the analysis.
+    # It will only exclude
+    if cn.pattern_net_flux in tile:
+
+        tile_array_flat_mask = tile_array_flat[tile_array_flat > -8000]
+
+    else:
+
+        # Removes NoData values from the array. NoData are generally either 0 or -9999.
+        tile_array_flat_mask = tile_array_flat[tile_array_flat > 0]
 
     ### For converting value/hectare to value/pixel
     # Tile with the area of each pixel in m2

@@ -20,10 +20,10 @@ biomass_tile_list = utilities.tile_list(cn.natrl_forest_biomass_2000_dir)
 print biomass_tile_list
 
 # For downloading all tiles in the folders
-utilities.s3_folder_download('{}'.format(cn.loss_dir), '.')
-utilities.s3_folder_download('{}'.format(cn.gain_dir), '.')
-utilities.s3_folder_download('{}'.format(cn.tcd_dir), '.')
-utilities.s3_folder_download('{}'.format(cn.mangrove_biomass_2000_dir), '.')
+download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.mangrove_biomass_2000_dir]
+
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in biomass_tile_list:

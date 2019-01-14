@@ -20,11 +20,6 @@ import constants_and_names as cn
 
 pd.options.mode.chained_assignment = None
 
-### Need to update and install some packages on spot machine before running
-### sudo pip install rasterio --upgrade
-### sudo pip install pandas --upgrade
-### sudo pip install xlrd
-
 biomass_tile_list = utilities.tile_list(cn.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['10N_080W', '00N_070W'] # test tiles
