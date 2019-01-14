@@ -23,7 +23,7 @@ def net_calc(tile_id):
     # Emissions nodata values are currently -9999, which messes up the net calculation. This converts the
     # emissions nodata values to nothing so that they aren't part of the net calculation.
     print "Removing nodata values in emissions tile", tile_id
-    loss_reclass = '{0}_reclass_{1}.tif'.format(tile_id, cn.pattern_gross_emissions)
+    loss_nodata = '{0}_{1}_without_nodata.tif'.format(tile_id, cn.pattern_gross_emissions)
     cmd = ['gdalwarp', '-srcnodata', '-9999', '-dstnodata', 'none', '-overwrite', loss_in, loss_reclass]
     subprocess.check_call(cmd)
 
@@ -40,7 +40,7 @@ def net_calc(tile_id):
         windows = gain_src.block_windows(1)
 
         # Opens loss tile
-        with rasterio.open(loss_reclass) as loss_src:
+        with rasterio.open(loss_nodata) as loss_src:
             kwargs.update(
                 driver='GTiff',
                 count=1,
@@ -66,7 +66,7 @@ def net_calc(tile_id):
     end = datetime.datetime.now()
     elapsed_time = end-start
 
-    os.remove(loss_reclass)
-    os.remove(net_emis)
+    # os.remove(loss_nodata)
+    # os.remove(net_emis)
 
     print "  Processing time for tile", tile_id, ":", elapsed_time
