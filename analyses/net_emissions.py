@@ -24,7 +24,7 @@ def net_calc(tile_id):
     # emissions nodata values to nothing so that they aren't part of the net calculation.
     print "Removing nodata values in emissions tile", tile_id
     loss_nodata = '{0}_{1}_without_nodata.tif'.format(tile_id, cn.pattern_gross_emissions)
-    cmd = ['gdalwarp', '-srcnodata', '-9999', '-dstnodata', 'none', '-overwrite', loss_in, loss_reclass]
+    cmd = ['gdalwarp', '-srcnodata', '-9999', '-dstnodata', 'none', '-overwrite', loss_in, loss_nodata]
     subprocess.check_call(cmd)
 
     # Output net emissions file
