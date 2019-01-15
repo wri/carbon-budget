@@ -263,6 +263,8 @@ def s3_file_download(source, dest):
 # Uploads a set of tiles that have been created in a chunk to a specified location on s3
 def upload_chunk_set(upload_dir, pattern):
 
+    print "Uploading chunk of tiles..."
+
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*'.format(pattern),
            '--exclude', '*/*' '--recursive']
 
