@@ -130,7 +130,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
         out = '--outfile={}'.format(tile_10x10_biomass)
 
         print "Converting {} from carbon to biomass...".format(tile_10x10_carbon)
-        cmd = ['gdal_calc.py', '-A', tile_10x10_carbon, calc, out, '--NoDataValue=-9999', '--co', 'COMPRESS=LZW',
+        cmd = ['gdal_calc.py', '-A', tile_10x10_carbon, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
                '--overwrite']
         subprocess.check_call(cmd)
 
