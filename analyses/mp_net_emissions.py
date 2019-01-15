@@ -6,7 +6,7 @@ import net_emissions
 import sys
 sys.path.append('../')
 import constants_and_names as cn
-import universal_util as uu 
+import universal_util as uu
 
 biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
@@ -17,8 +17,8 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # For downloading all tiles in the input folders
 download_list = [cn.cumul_gain_combo_dir, cn.gross_emissions_dir]
 
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
