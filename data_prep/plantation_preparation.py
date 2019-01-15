@@ -107,7 +107,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_10x10_carbon = '{0}_{1}_carbon.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest)
+    tile_10x10_carbon = '{0}_{1}_carbon.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_full_extent)
     print "Rasterizing", tile_10x10_carbon
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
@@ -121,7 +121,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
 
         print "  Data found in {}. Converting carbon tile to biomass and copying tile to s3...".format(tile_id)
 
-        tile_10x10_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest)
+        tile_10x10_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_full_extent)
 
         # Equation argument for converting planted forest growth from carbon to biomass.
         calc = '--calc=A/{}'.format(cn.biomass_to_c)
@@ -134,7 +134,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
                '--overwrite']
         subprocess.check_call(cmd)
 
-        uu.upload_final(cn.annual_gain_AGB_planted_forest_dir, tile_id, cn.pattern_annual_gain_AGB_planted_forest)
+        uu.upload_final(cn.annual_gain_AGB_planted_forest_dir, tile_id, cn.pattern_annual_gain_AGB_planted_forest_full_extent)
         print "    Tile converted and copied to s3"
 
     else:

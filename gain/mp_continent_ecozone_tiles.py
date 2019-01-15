@@ -58,8 +58,6 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
     # For multiprocessor use
     pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, chunk)
-    pool.close()
-    pool.join()
 
     print "Pool processed. Uploading tiles to s3..."
 

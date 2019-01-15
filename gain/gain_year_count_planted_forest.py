@@ -57,7 +57,7 @@ def create_gain_year_count(tile_id):
         # Then merges the rasters.
         # In all rasters, 0 is NoData value.
 
-        # Pixels with loss only and not in mangroves
+        # Pixels with loss only and in mangrove tile
         print "Creating raster of growth years for loss-only pixels"
         loss_calc = '--calc=(A>0)*(B==0)*(C==0)*(A-1)'
         loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
@@ -66,7 +66,7 @@ def create_gain_year_count(tile_id):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
-        # Pixels with gain only and not in mangroves
+        # Pixels with gain only and in mangrove tile
         print "Creating raster of growth years for gain-only pixels"
         gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(gain_years)
         gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
@@ -75,7 +75,7 @@ def create_gain_year_count(tile_id):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
-        # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves
+        # Pixels with neither loss nor gain but in areas with tree cover density >0 and in mangrove tile
         print "Creating raster of growth years for no change pixels"
         no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(loss_years)
         no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
@@ -84,7 +84,7 @@ def create_gain_year_count(tile_id):
                no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
-        # Pixels with both loss and gain and not in mangroves
+        # Pixels with both loss and gain and in mangrove tile
         print "Creating raster of growth years for loss and gain pixels"
         loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(loss_years)
         loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
@@ -161,7 +161,3 @@ def create_gain_year_count(tile_id):
     elapsed_time = end-start
 
     print "Processing time for tile", tile_id, ":", elapsed_time
-
-
-
-
