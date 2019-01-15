@@ -20,8 +20,8 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # For downloading all tiles in the input folders
 download_list = [cn.cumul_gain_combo_dir, cn.gross_emissions_dir]
 
-for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+# for input in download_list:
+#     utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -39,14 +39,14 @@ tiles_in_chunk = cores / 2
 
 for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
-    print "Chunk is:", str(chunk)
-
-    # For multiprocessor use
-    pool.map(net_emissions.net_calc, chunk)
-    pool.close()
-    pool.join()
-
-    print "Pool processed. Uploading tiles to s3..."
+    # print "Chunk is:", str(chunk)
+    #
+    # # For multiprocessor use
+    # pool.map(net_emissions.net_calc, chunk)
+    # pool.close()
+    # pool.join()
+    #
+    # print "Pool processed. Uploading tiles to s3..."
 
     # Uploads all processed tiles at the end
     uu.upload_chunk_set(cn.net_flux_dir, cn.pattern_net_flux)
