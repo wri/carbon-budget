@@ -13,7 +13,7 @@ uu.make_local_output_folder()
 
 biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
-# biomass_tile_list = ['00N_000E'] # test tiles
+biomass_tile_list = ['00N_000E'] # test tiles
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
