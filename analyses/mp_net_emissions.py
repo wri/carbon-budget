@@ -42,8 +42,8 @@ for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
     # For multiprocessor use
     pool.map(net_emissions.net_calc, chunk)
-    pool.close()
-    pool.join()
+    # pool.close()
+    # pool.join()
 
     print "Pool processed. Uploading tiles to s3..."
 
