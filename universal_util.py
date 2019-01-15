@@ -19,7 +19,7 @@ def make_local_output_folder():
         os.mkdir("{}".format(cn.already_copied))
 
     else:
-        print "Local output folder for tiles that have been copied to s3already exists"
+        print "Local output folder for tiles that have been copied to s3 already exists"
 
 # Creates chunks of tiles for processing
 def chunks(l, n):
@@ -263,13 +263,14 @@ def s3_file_download(source, dest):
 # Uploads a set of tiles that have been created in a chunk to a specified location on s3
 def upload_chunk_set(upload_dir, pattern):
 
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', './*{}*'.format(pattern), '--recursive']
+    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*'.format(pattern),
+           '--exclude', '*/*' '--recursive']
 
     # Copies the tiles to s3
     subprocess.check_call(cmd)
 
-    # Moves the copied tiles to a folder of already copied tiles on spot machine
-    os.system('''mv *_{0}.tif {1}/'''.format(pattern, cn.already_copied))
+    # # Moves the copied tiles to a folder of already copied tiles on spot machine
+    # os.system('''mv *_{0}.tif {1}/'''.format(pattern, cn.already_copied))
 
 
 # # Uploads all tiles of a pattern to specified location
