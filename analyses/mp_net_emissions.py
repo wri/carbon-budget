@@ -34,7 +34,7 @@ count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count)
 
 # How many tiles the spot machine will process at one time
-tiles_in_chunk = count / 3
+tiles_in_chunk = count / 4
 
 for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
