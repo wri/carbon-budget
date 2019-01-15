@@ -266,10 +266,7 @@ def upload_chunk_set(upload_dir, pattern):
     print "Uploading chunk of tiles..."
 
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*'.format(pattern),
-           '--exclude', '*/*' '--recursive']
-
-    print pattern
-    print cmd
+           '--exclude', '*/*', '--recursive']
 
     # Copies the tiles to s3
     subprocess.check_call(cmd)
