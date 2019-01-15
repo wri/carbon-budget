@@ -21,6 +21,7 @@ def make_local_output_folder():
     else:
         print "Local output folder for tiles that have been copied to s3 already exists"
 
+
 # Creates chunks of tiles for processing
 def chunks(l, n):
     # Yield successive n-sized chunks from l
@@ -51,7 +52,7 @@ def read_biomass_tile_list():
 # Lists the tiles in a folder in s3
 def tile_list(source):
 
-    print "Creating list of biomass tiles..."
+    print "Creating list of tiles..."
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
