@@ -20,8 +20,8 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # For downloading all tiles in the input folders
 download_list = [cn.cumul_gain_combo_dir, cn.gross_emissions_dir]
 
-# for input in download_list:
-#     utilities.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    utilities.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -34,7 +34,7 @@ count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count)
 
 # How many tiles the spot machine will process at one time
-tiles_in_chunk = count / 2
+tiles_in_chunk = count / 3
 
 for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
 
