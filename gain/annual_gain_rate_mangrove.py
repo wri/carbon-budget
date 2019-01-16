@@ -89,7 +89,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         # Writes the output window to the output
                         dst_above.write_band(1, dst_above_data, window=window)
 
-                        # print dst_above_data
+                        # print aboveground
 
 
                         belowground = cont_eco
@@ -102,7 +102,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
                         dst_below.write_band(1, dst_below_data, window=window)
 
-                        print dst_below_data
+                        print belowground
 
                         sys.quit()
 
