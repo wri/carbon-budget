@@ -22,7 +22,7 @@ def cumulative_gain(tile_id):
     gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
 
     print "  Reading input files and calculating cumulative aboveground gain for natural forest tile {}".format(tile_id)
-    accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c)
+    accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c_natrl_forest)
     accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
     accum_outfilearg = '--outfile={}'.format(accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
@@ -31,7 +31,7 @@ def cumulative_gain(tile_id):
     utilities.upload_final(cn.cumul_gain_AGC_natrl_forest_dir, tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
 
     print "  Reading input files and calculating cumulative belowground gain for natural forest tile {}".format(tile_id)
-    accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c)
+    accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c_natrl_forest)
     accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
     accum_outfilearg = '--outfile={}'.format(accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']

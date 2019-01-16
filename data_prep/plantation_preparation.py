@@ -124,7 +124,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
         tile_10x10_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_full_extent)
 
         # Equation argument for converting planted forest growth from carbon to biomass.
-        calc = '--calc=A/{}'.format(cn.biomass_to_c)
+        calc = '--calc=A/{}'.format(cn.biomass_to_c_natrl_forest)
 
         # Argument for outputting file
         out = '--outfile={}'.format(tile_10x10_biomass)

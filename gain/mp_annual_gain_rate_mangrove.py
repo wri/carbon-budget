@@ -4,37 +4,39 @@
 
 from multiprocessing.pool import Pool
 from functools import partial
-import utilities
 import annual_gain_rate_mangrove
 import pandas as pd
 import subprocess
+import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 pd.options.mode.chained_assignment = None
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
 # there are many fewer mangrove biomass tiles (88 vs 315)
-mangrove_biomass_tile_list = utilities.tile_list(cn.mangrove_biomass_2000_dir)
+mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 # mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
+print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 
 for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+    uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in mangrove_biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(cn.gain_spreadsheet), '.']
+cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
@@ -43,6 +45,12 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2':cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang}
+print type_ratio_dict
+
+gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['forestType'].map(type_ratio_dict)
+print gain_table_simplified.head(5)
 
 # Converts the continent-ecozone codes and corresponding gain rates to a dictionary
 gain_table_dict = pd.Series(gain_table_simplified.gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
@@ -58,7 +66,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 # This script didn't work calling 16 processors on an m4.16xlarge because when it tried uploading the output tiles to s3
 # simultaneously (the first set of tiles finished simultaneously) it couldn't upload them, perhaps because the upload channel got clogged.
 # So I tried using 8 processors instead, which works. I don't know what the highest number of processors would be.
-num_of_processes = 8
+num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_table_dict=gain_table_dict), mangrove_biomass_tile_list)
 pool.close()
@@ -68,4 +76,7 @@ pool.join()
 # for tile in mangrove_biomass_tile_list:
 #
 #     annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
+
+uu.upload_final_set(cn.annual_gain_AGB_mangrove_dir, cn.pattern_annual_gain_AGB_mangrove)
+uu.upload_final_set(cn.annual_gain_BGB_mangrove_dir, cn.pattern_annual_gain_BGB_mangrove)
 

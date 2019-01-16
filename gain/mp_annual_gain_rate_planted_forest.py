@@ -14,7 +14,6 @@ import utilities
 import annual_gain_rate_natrl_forest
 import pandas as pd
 import subprocess
-import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -40,7 +39,7 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
 
 # Table with IPCC Table 4.9 default gain rates
-cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(cn.gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates

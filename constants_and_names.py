@@ -8,19 +8,22 @@ import os
 # Number of biomass tiles
 biomass_tile_count = 280
 
-# Biomass to carbon ratio
-biomass_to_c = 0.5
+# Biomass to carbon ratio for non-mangrove, non-planted forests
+biomass_to_c_natrl_forest = 0.5
 
 # Carbon to CO2 ratio
-c_to_co2 = 3.67
+c_to_co2 = 44/12
 
 # m2 per hectare
 m2_per_ha = 100 * 100
 
 # Aboveground to belowground biomass ratios
-above_to_below_natrl_forest = 0.26
-above_to_below_mangrove = 0.608
+below_to_above_natrl_forest = 0.26
+below_to_above_trop_wet_mang = 0.49
+below_to_above_trop_dry_mang = 0.29
+below_to_above_subtrop_mang = 0.96
 
+# The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
 
@@ -126,7 +129,8 @@ gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/2018
 
 
 # Spreadsheet with annual gain rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20181227.xlsx'
+gain_spreadsheet_dir = 's3://gfw2-data/climate/carbon_model/'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190116.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
@@ -151,8 +155,8 @@ pattern_cont_eco_raw = 'fao_ecozones_continents_raw'
 pattern_cont_eco_processed = 'fao_ecozones_continents_processed'
 cont_eco_s3_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
 cont_eco_zip = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
-cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw_non_batch/'
-cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed_non_batch/'
+cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw/'
+cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed/'
 
 # Number of gain years for non-mangrove natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'
