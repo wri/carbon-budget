@@ -14,7 +14,7 @@ import constants_and_names as cn
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
 
-def annual_gain_rate(tile_id, gain_table_dict):
+def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
     print "Processing:", tile_id
 
@@ -73,7 +73,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
                         # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
                         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
-                        for key, value in gain_table_dict.iteritems():
+                        for key, value in gain_above_dict.iteritems():
                             cont_eco[cont_eco == key] = value
 
                         # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels
@@ -89,7 +89,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate for {}".format(tile_id)
-    above_to_below_calc = '--calc=(A>0)*A*{}'.format(cn.above_to_below_mangrove)
+    above_to_below_calc = '--calc=(A>0)*A*{}'.format(cn.below_to_above_mangrove)
     below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
