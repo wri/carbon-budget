@@ -22,6 +22,7 @@ from scipy import stats
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 def create_continent_ecozone_tiles(tile_id):
 
@@ -98,6 +99,9 @@ def create_continent_ecozone_tiles(tile_id):
                 # the windows for these output files are 40000 x 1 pixels, like all the other tiles in this model,
                 # so they should work fine with all the other tiles.
                 dst.write_band(1, cont_eco_processed, window=window)
+
+    # Displays the number of tiles that have been completed
+    uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
 
 
 

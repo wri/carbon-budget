@@ -108,3 +108,6 @@ def create_tile_statistics(tile):
     with open(cn.tile_stats, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()
+
+    # Displays the number of tiles that have been completed
+    uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
