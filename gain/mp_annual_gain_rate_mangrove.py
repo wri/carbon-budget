@@ -18,7 +18,7 @@ pd.options.mode.chained_assignment = None
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
 # there are many fewer mangrove biomass tiles (88 vs 315)
 mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
-mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
+mangrove_biomass_tile_list = ['10N_080W', '00N_110E'] # test tiles
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
 print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
