@@ -49,7 +49,7 @@ gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='fi
 type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2':cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang}
 type_ratio_dict = {int(k):float(v) for k,v in type_ratio_dict.items()}
 
-gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['forestType'].map(type_ratio_dict)
+gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict)
 
 gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
 
