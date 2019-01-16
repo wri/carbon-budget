@@ -1,4 +1,5 @@
 import subprocess
+import glob
 import constants_and_names as cn
 import datetime
 import os
@@ -316,5 +317,8 @@ def check_for_data(out_tile):
 # Prints the number of tiles that have been processed so far
 def count_completed_tiles(pattern):
 
-    completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
+    completed = len(glob.glob1('.', '{}'.format(pattern)))
+
+
+    # completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
     print "Number of completed tiles:", completed
