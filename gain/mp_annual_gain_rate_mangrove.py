@@ -46,15 +46,20 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
+# Creates belowground:aboveground biomass ratios for the three mangrove types, where the keys correspond to
+# the "mangType" field in the gain rate spreadsheet.
+# If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
+# keys in this dictionary would need to change accordingly.
 type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2':cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang}
 type_ratio_dict = {int(k):float(v) for k,v in type_ratio_dict.items()}
 
+# Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual gain rates to get
+# a column of belowground annual gain rates for mangroves by mangrove type
 gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict)
-
-gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
+gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.AGB_gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
 
 # Converts the continent-ecozone codes and corresponding gain rates to a dictionary
-gain_above_dict = pd.Series(gain_table_simplified.gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
+gain_above_dict = pd.Series(gain_table_simplified.AGB_gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
 gain_below_dict = pd.Series(gain_table_simplified.BGB_annual_rate.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
@@ -81,6 +86,8 @@ pool.join()
 # for tile in mangrove_biomass_tile_list:
 #
 #     annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
+
+print "Tiles processed. Uploading to s3 now..."
 
 uu.upload_final_set(cn.annual_gain_AGB_mangrove_dir, cn.pattern_annual_gain_AGB_mangrove)
 uu.upload_final_set(cn.annual_gain_BGB_mangrove_dir, cn.pattern_annual_gain_BGB_mangrove)
