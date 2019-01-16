@@ -90,6 +90,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                             aboveground[aboveground == key] = value
 
                         print cont_eco[-1][-1]
+                        print aboveground[-1][-1]
 
                         # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
                         dst_above_data = aboveground * mangrove_AGB
