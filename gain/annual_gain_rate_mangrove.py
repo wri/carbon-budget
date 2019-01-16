@@ -102,7 +102,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
                         dst_below.write_band(1, dst_below_data, window=window)
 
-                        print dst_below_data
+                        # print dst_below_data
 
                         sys.quit()
 
