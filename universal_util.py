@@ -317,7 +317,8 @@ def check_for_data(out_tile):
 # Prints the number of tiles that have been processed so far
 def count_completed_tiles(pattern):
 
-    completed = len(glob.glob1('.', '{}'.format(pattern)))
+    mypath = os.getcwd()
+    completed = len(glob.glob1(mypath, '{}'.format(pattern)))
 
 
     # completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
