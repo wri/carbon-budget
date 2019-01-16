@@ -110,7 +110,8 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         for key, value in gain_below_dict.iteritems():
                             belowground[belowground == key] = value
 
-
+                        print belowground[-1][-1]
+                        print cont_eco2[-1][-1]
 
                         dst_below_data = belowground * mangrove_AGB
 
