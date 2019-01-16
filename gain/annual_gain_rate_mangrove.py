@@ -76,20 +76,6 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         mangrove_AGB[mangrove_AGB > 0] = 1
 
 
-                        belowground = cont_eco
-
-                        for key, value in gain_below_dict.iteritems():
-                            belowground[belowground == key] = value
-
-                        dst_below_data = belowground * mangrove_AGB
-                        # dst_below_data = 34
-
-                        dst_below.write_band(1, dst_below_data, window=window)
-
-                        print belowground
-
-
-
                         aboveground = cont_eco
 
                         # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
@@ -103,10 +89,20 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         # Writes the output window to the output
                         dst_above.write_band(1, dst_above_data, window=window)
 
-                        print aboveground
+                        print aboveground[:39955]
 
 
+                        belowground = cont_eco
 
+                        for key, value in gain_below_dict.iteritems():
+                            belowground[belowground == key] = value
+
+                        dst_below_data = belowground * mangrove_AGB
+                        # dst_below_data = 34
+
+                        dst_below.write_band(1, dst_below_data, window=window)
+
+                        print belowground[:39955]
 
                         sys.quit()
 
