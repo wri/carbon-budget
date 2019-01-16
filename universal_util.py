@@ -211,7 +211,7 @@ def create_combined_biomass_tile_list(WHRC, mangrove):
 
 
 # Counts the number of tiles in a folder in s3
-def count_tiles(source):
+def count_tiles_s3(source):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -311,3 +311,9 @@ def check_for_data(out_tile):
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
     return stats
+
+
+# Prints the number of tiles that have been processed so far
+def count_completed_tiles(pattern):
+
+    print "Number of completed tiles", str(os.system('''ls -l *{}*.tif'''.format(pattern)))

@@ -8,6 +8,7 @@ import rasterio
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
@@ -101,6 +102,8 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
     elapsed_time = end-start
 
     print "  Processing time for tile", tile_id, ":", elapsed_time
+
+    uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
 
 
 

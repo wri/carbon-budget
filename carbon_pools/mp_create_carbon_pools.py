@@ -41,7 +41,7 @@ for tile in tile_list:
 tile_count = []
 for i, input in enumerate(input_files):
 
-    tile_count[i] = uu.count_tiles(input)
+    tile_count[i] = uu.count_tiles_s3(input)
 
 print "The number of tiles for each input to the carbon pools is", tile_count
 
