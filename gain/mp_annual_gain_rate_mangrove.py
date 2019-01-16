@@ -27,7 +27,7 @@ print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)
 download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 
 for input in download_list:
-    uu.s3_folder_download('{}'.format(input), '.')
+    uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in mangrove_biomass_tile_list:

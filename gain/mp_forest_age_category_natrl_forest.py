@@ -33,7 +33,7 @@ print biomass_tile_list
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.natrl_forest_biomass_2000_dir, cn.cont_eco_dir]
 
 for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:

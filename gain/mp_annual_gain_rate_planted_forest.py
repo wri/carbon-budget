@@ -29,7 +29,7 @@ print biomass_tile_list
 download_list = [cn.age_cat_natrl_forest_dir, cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 
 for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:

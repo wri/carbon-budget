@@ -20,7 +20,7 @@ print mangrove_biomass_tile_list
 download_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir, cn.gain_year_count_mangrove_dir]
 
 for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in mangrove_biomass_tile_list:

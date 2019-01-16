@@ -18,7 +18,7 @@ print tile_list
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.mangrove_biomass_2000_dir]
 
 for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), '.')
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in biomass_tile_list:
@@ -30,7 +30,7 @@ for input in download_list:
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/10)
-pool.map(gain_year_count_natrl_forest.create_gain_year_count, biomass_tile_list)
+pool.map(gain_year_count_natrl_forest.create_gain_year_count, tile_list)
 
 # # For single processor use
 # for tile in biomass_tile_list:
