@@ -46,12 +46,13 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-type_ratio_dict = {'1.0': cn.below_to_above_trop_dry_mang, '2.0':cn.below_to_above_trop_wet_mang, '3.0': cn.below_to_above_subtrop_mang}
+type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2':cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang}
+type_ratio_dict = {int(k):float(v) for k,v in type_ratio_dict.items()}
 
 gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['forestType'].map(type_ratio_dict)
 print gain_table_simplified.head(5)
 
-gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.gain_ton_yr * gain_table_simplified.BGB_AGB_ratio
+gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
 
 # Converts the continent-ecozone codes and corresponding gain rates to a dictionary
 gain_above_dict = pd.Series(gain_table_simplified.gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
