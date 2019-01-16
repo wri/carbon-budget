@@ -2,11 +2,9 @@
 ### Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC
 ### gain rate table.
 
-import utilities
 import datetime
 import numpy as np
 import rasterio
-import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names as cn

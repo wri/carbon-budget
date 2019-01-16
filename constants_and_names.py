@@ -17,7 +17,7 @@ c_to_co2 = 44/12
 # m2 per hectare
 m2_per_ha = 100 * 100
 
-# Aboveground to belowground biomass ratios
+# Aboveground to belowground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement
 below_to_above_natrl_forest = 0.26
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
