@@ -96,6 +96,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         belowground = cont_eco
 
                         print belowground[-1][-1]
+                        print cont_eco[-1][-1]
 
                         for key, value in gain_below_dict.iteritems():
                             belowground[belowground == key] = value
