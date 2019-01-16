@@ -89,6 +89,8 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         # Writes the output window to the output
                         dst_above.write_band(1, dst_above_data, window=window)
 
+                        print dst_above_data
+
 
                         belowground = cont_eco
 
@@ -99,6 +101,10 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         # dst_below_data = 34
 
                         dst_below.write_band(1, dst_below_data, window=window)
+
+                        print dst_below_data
+
+                        sys.quit()
 
     # # Calculates belowground biomass rate from aboveground biomass rate
     # print "  Creating belowground biomass gain rate for {}".format(tile_id)
