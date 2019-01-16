@@ -45,41 +45,41 @@ biomass_tile_list = uu.create_combined_biomass_tile_list(cn.natrl_forest_biomass
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count)
-
-# How many tiles the spot machine will process at one time
-tiles_in_chunk = count / 4
-
-for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
-
-    print "Chunk is:", str(chunk)
-
-    # For multiprocessor use
-    pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, chunk)
-
-    print "Pool processed. Uploading tiles to s3..."
-
-    # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
-    # These are not used for the model. They are for reference and completeness.
-    uu.upload_chunk_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
-
-    # Uploads all processed tiles at the end
-    uu.upload_chunk_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count)
+#
+# # How many tiles the spot machine will process at one time
+# tiles_in_chunk = count / 4
+#
+# for chunk in uu.chunks(biomass_tile_list, tiles_in_chunk):
+#
+#     print "Chunk is:", str(chunk)
+#
+#     # For multiprocessor use
+#     pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, chunk)
+#
+#     print "Pool processed. Uploading tiles to s3..."
+#
+#     # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
+#     # These are not used for the model. They are for reference and completeness.
+#     uu.upload_chunk_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
+#
+#     # Uploads all processed tiles at the end
+#     uu.upload_chunk_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
 
 # # For single processor use
 # for tile in biomass_tile_list:
 #
 #     continent_ecozone_tiles.create_continent_ecozone_tiles(tile)
 
-# # For multiprocessor use
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/4)
-# pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
-#
-# # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
-# # These are not used for the model. They are for reference and completeness.
-# uu.upload_final_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
-#
-# # Uploads all processed tiles at the end
-# uu.upload_final_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
+# For multiprocessor use
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count/4)
+pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
+
+# Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
+# These are not used for the model. They are for reference and completeness.
+uu.upload_final_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
+
+# Uploads all processed tiles at the end
+uu.upload_final_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)

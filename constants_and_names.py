@@ -151,8 +151,8 @@ pattern_cont_eco_raw = 'fao_ecozones_continents_raw'
 pattern_cont_eco_processed = 'fao_ecozones_continents_processed'
 cont_eco_s3_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
 cont_eco_zip = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
-cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw/'
-cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed/'
+cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw_non_batch/'
+cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed_non_batch/'
 
 # Number of gain years for non-mangrove natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'
