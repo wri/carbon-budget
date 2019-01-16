@@ -103,6 +103,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
     print "  Processing time for tile", tile_id, ":", elapsed_time
 
+    # Displays the number of tiles that have been completed
     uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
 
 
