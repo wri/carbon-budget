@@ -177,7 +177,7 @@ annual_gain_AGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_g
 
 # Annual aboveground biomass gain rate for mangroves
 pattern_annual_gain_AGB_mangrove = 'annual_gain_rate_AGB_t_ha_mangrove'
-annual_gain_AGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_mangrove/20181102/'
+annual_gain_AGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_mangrove/20190116/'
 
 # Annual belowground biomass gain rate for non-mangrove natural forests
 pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest'
@@ -185,7 +185,7 @@ annual_gain_BGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_g
 
 # Annual belowground biomass gain rate for mangroves
 pattern_annual_gain_BGB_mangrove = 'annual_gain_rate_BGB_t_ha_mangrove'
-annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_mangrove/20181102/'
+annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_mangrove/20190116/'
 
 # Annual aboveground biomass gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
 pattern_annual_gain_AGB_planted_forest_full_extent = 'annual_gain_rate_AGB_t_ha_planted_forest_full_extent'
@@ -193,7 +193,7 @@ annual_gain_AGB_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/annual
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
-annual_gain_AGB_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest/non_mangrove/20190115/'
+annual_gain_AGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest/non_mangrove/20190115/'
 
 # Cumulative aboveground gain for natural forests
 pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_2001_15'
