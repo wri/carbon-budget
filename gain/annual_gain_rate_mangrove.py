@@ -76,20 +76,20 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         mangrove_AGB[mangrove_AGB > 0] = 1
 
 
-                        aboveground = cont_eco
-
-                        # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
-                        # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
-                        for key, value in gain_above_dict.iteritems():
-                            aboveground[aboveground == key] = value
-
-                        # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
-                        dst_above_data = aboveground * mangrove_AGB
-
-                        # Writes the output window to the output
-                        dst_above.write_band(1, dst_above_data, window=window)
-
-                        # print aboveground
+                        # aboveground = cont_eco
+                        #
+                        # # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
+                        # # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+                        # for key, value in gain_above_dict.iteritems():
+                        #     aboveground[aboveground == key] = value
+                        #
+                        # # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
+                        # dst_above_data = aboveground * mangrove_AGB
+                        #
+                        # # Writes the output window to the output
+                        # dst_above.write_band(1, dst_above_data, window=window)
+                        #
+                        # # print aboveground
 
 
                         belowground = cont_eco
