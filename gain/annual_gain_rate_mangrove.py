@@ -66,30 +66,32 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                     for idx, window in windows:
 
                         # Creates windows for each input raster
-                        cont_eco = cont_eco_src.read(1, window=window)
+                        cont_eco1 = cont_eco_src.read(1, window=window)
+                        cont_eco2 = cont_eco_src.read(1, window=window)
                         mangrove_AGB = mangrove_AGB_src.read(1, window=window)
 
                         # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
-                        cont_eco = cont_eco.astype('float32')
+                        cont_eco1 = cont_eco1.astype('float32')
+                        cont_eco2 = cont_eco2.astype('float32')
 
                         # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels
                         mangrove_AGB[mangrove_AGB > 0] = 1
 
 
 
-                        print cont_eco[-1][-1]
+                        print cont_eco1[-1][-1]
 
 
-                        aboveground = cont_eco
+                        aboveground = cont_eco1
 
-                        print cont_eco[-1][-1]
+                        print cont_eco1[-1][-1]
 
                         # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
                         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
                         for key, value in gain_above_dict.iteritems():
                             aboveground[aboveground == key] = value
 
-                        print cont_eco[-1][-1]
+                        print cont_eco1[-1][-1]
                         print aboveground[-1][-1]
 
                         # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
@@ -100,10 +102,10 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
 
 
-                        belowground = cont_eco
+                        belowground = cont_eco2
 
                         print belowground[-1][-1]
-                        print cont_eco[-1][-1]
+                        print cont_eco2[-1][-1]
 
                         for key, value in gain_below_dict.iteritems():
                             belowground[belowground == key] = value
