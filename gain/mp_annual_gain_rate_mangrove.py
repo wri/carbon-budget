@@ -58,14 +58,9 @@ type_ratio_dict = {int(k):float(v) for k,v in type_ratio_dict.items()}
 gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict)
 gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.AGB_gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
 
-print gain_table_simplified.head(40)
-
 # Converts the continent-ecozone codes and corresponding gain rates to dictionaries for aboveground and belowground gain rates
 gain_above_dict = pd.Series(gain_table_simplified.AGB_gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
 gain_below_dict = pd.Series(gain_table_simplified.BGB_annual_rate.values,index=gain_table_simplified.gainEcoCon).to_dict()
-
-print gain_above_dict
-print gain_below_dict
 
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_above_dict[0] = 0

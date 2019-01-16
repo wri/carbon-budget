@@ -14,6 +14,9 @@ np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
+    print gain_above_dict
+    print gain_below_dict
+
     print "Processing:", tile_id
 
     # Start time
