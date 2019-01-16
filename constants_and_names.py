@@ -218,7 +218,7 @@ cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2_ha_all_forest_types_all_drivers_2001_15'
-net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20190115/'
+net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20190116/'
 
 # Tile summary spreadsheets
 tile_stats = 'tile_stats_{}.txt'.format(uu.date)
