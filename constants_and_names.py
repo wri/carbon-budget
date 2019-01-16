@@ -51,7 +51,7 @@ mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass
 mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_WRI.zip'
 
 # Processed mangrove aboveground biomass in the year 2000
-pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha2000'
+pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
 mangrove_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181226/'
 
 ## Biomass in the year of emission
