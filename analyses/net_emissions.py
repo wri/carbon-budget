@@ -67,7 +67,7 @@ def net_calc(tile_id):
     elapsed_time = end-start
 
     # Need to include these or the spot machine will run out of memory otherwise
-    os.remove(loss_nodata)
-    os.remove(net_emis)
+    os.remove(gain_in)
+    os.remove(loss_in)
 
     print "  Processing time for tile", tile_id, ":", elapsed_time
