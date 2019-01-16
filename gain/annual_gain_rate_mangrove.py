@@ -14,9 +14,6 @@ np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
-    print gain_above_dict
-    print gain_below_dict
-
     print "Processing:", tile_id
 
     # Start time
@@ -69,46 +66,36 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
                         cont_eco = cont_eco_src.read(1, window=window)
                         mangrove_AGB = mangrove_AGB_src.read(1, window=window)
 
-                        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
-                        cont_eco1 = cont_eco.astype('float32')
-                        cont_eco2 = cont_eco.astype('float32')
+                        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates.
+                        # Creates two copies: one for aboveground gain and one for belowground gain.
+                        # Creating only one copy of the cont_eco raster made it so that belowground gain rates weren't being
+                        # written correctly for some reason.
+                        cont_eco_above = cont_eco.astype('float32')
+                        cont_eco_below = cont_eco.astype('float32')
 
-                        # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels
+                        # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
+                        # Ultimately, only these pixels (ones with mangrove biomass) will get values.
                         mangrove_AGB[mangrove_AGB > 0] = 1
 
-
-                        aboveground = cont_eco1
-
-                        # Applies the dictionary of continent-ecozone gain rates to the continent-ecozone array to
-                        # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+                        # Applies the dictionary of continent-ecozone aboveground gain rates to the continent-ecozone array to
+                        # get annual aboveground gain rates (metric tons aboveground biomass/yr) for each pixel
                         for key, value in gain_above_dict.iteritems():
-                            aboveground[aboveground == key] = value
+                            cont_eco_above[cont_eco_above == key] = value
 
                         # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
-                        dst_above_data = aboveground * mangrove_AGB
+                        dst_above_data = cont_eco_above * mangrove_AGB
 
                         # Writes the output window to the output
                         dst_above.write_band(1, dst_above_data, window=window)
 
 
-
-                        belowground = cont_eco2
-
+                        # Same as above but for belowground gain rates
                         for key, value in gain_below_dict.iteritems():
-                            belowground[belowground == key] = value
+                            cont_eco_below[cont_eco_below == key] = value
 
-                        dst_below_data = belowground * mangrove_AGB
+                        dst_below_data = cont_eco_below * mangrove_AGB
 
                         dst_below.write_band(1, dst_below_data, window=window)
-
-    # # Calculates belowground biomass rate from aboveground biomass rate
-    # print "  Creating belowground biomass gain rate for {}".format(tile_id)
-    # above_to_below_calc = '--calc=(A>0)*A*{}'.format(cn.below_to_above_mangrove)
-    # below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
-    # below_outfilearg = '--outfile={}'.format(below_outfilename)
-    # cmd = ['gdal_calc.py', '-A', AGB_gain_rate, above_to_below_calc, below_outfilearg,
-    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    # subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

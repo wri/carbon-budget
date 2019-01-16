@@ -17,17 +17,17 @@ pd.options.mode.chained_assignment = None
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
 # there are many fewer mangrove biomass tiles (88 vs 315)
-# mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
+mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 # mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-mangrove_biomass_tile_list = ['10N_080W'] # test tiles
+# mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
 print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 
-# for input in download_list:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in mangrove_biomass_tile_list:
