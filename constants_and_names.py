@@ -186,11 +186,11 @@ annual_gain_AGC_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/annual
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
-annual_gain_AGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest/non_mangrove/20190124/'
+annual_gain_AGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest_non_mangrove/20190124/'
 
 # Annual belowground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_BGB_planted_forest_non_mangrove = 'annual_gain_rate_BGB_t_ha_planted_forest_non_mangrove'
-annual_gain_BGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_planted_forest/non_mangrove/20190124/'
+annual_gain_BGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_planted_forest_non_mangrove/20190124/'
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest'
@@ -260,14 +260,12 @@ pattern_plant_1x1_index = 'plantation_index_1x1'
 
 # Countries with planted forests in them according to the planted forest geodatabase
 plantation_countries = [
-                        # # non-EU countries
-                        # 'ARG', 'VNM', 'VEN', 'THA', 'RWA', 'PNG', 'PHL', 'PAN', 'NIC', 'IND', 'HND', 'CRI', 'COD', 'COL', 'ECU',
-                        # 'GAB', 'GHA', 'GTM', 'IDN', 'KEN', 'KHM', 'PRK', 'KOR', 'LBR', 'LKA', 'MEX', 'MMR', 'MWI', 'MGA',
-                        # 'NPL', 'NZL', 'PAK', 'PER', 'SLB', 'URY', 'USA', 'ZAF', 'AUS', 'BRA', 'CHL', 'CHN', 'CIV', 'CMR',
-                        # 'JPN', 'MYS',
-                        # # EU countries
-                        # 'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
-                        # 'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR'
+                        'ARG', 'VNM', 'VEN', 'THA', 'RWA', 'PNG', 'PHL', 'PAN', 'NIC', 'IND', 'HND', 'CRI', 'COD', 'COL',
+                        'GAB', 'GHA', 'GTM', 'IDN', 'KEN', 'KHM', 'PRK', 'KOR', 'LBR', 'LKA', 'MEX', 'MMR', 'MWI', 'MGA',
+                        'NPL', 'NZL', 'PAK', 'PER', 'SLB', 'URY', 'USA', 'ZAF', 'AUS', 'BRA', 'CHL', 'CHN', 'CIV', 'CMR',
+                        'JPN', 'MYS', 'ECU',
+                        'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
+                        'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR',
                         'ALA', 'ALB', 'ARM', 'AZE', 'BIH', 'BLR', 'CHE', 'GEO', 'IRQ', 'ISL', 'MDA', 'MKD', 'MNE',
                         'NGA', 'NOR', 'SRB', 'SYR', 'TUR', 'UKR', 'XKO'
                         ]

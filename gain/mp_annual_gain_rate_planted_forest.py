@@ -14,7 +14,7 @@ import universal_util as uu
 pd.options.mode.chained_assignment = None
 
 # tile_list = uu.tile_list(cn.annual_gain_AGC_planted_forest_dir)
-tile_list = ['00N_010E', '00N_030E'] # test tiles. These have both mangroved and planted forest in them.
+tile_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles. These have both mangroved and planted forest in them.
 print tile_list
 
 # # For downloading all tiles in the input folders
