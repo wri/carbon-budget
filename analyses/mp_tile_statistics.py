@@ -13,7 +13,7 @@ import universal_util as uu
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
-headers = ['tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
+headers = ['tile_type', 'tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max', 'sum']
 header_no_brackets = ', '.join(headers)
 
@@ -33,8 +33,8 @@ f.close()
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
 
 
-# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-# uu.s3_folder_download(cn.pixel_area_dir, '.')
+# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+uu.s3_folder_download(cn.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [

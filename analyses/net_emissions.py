@@ -40,12 +40,13 @@ def net_calc(tile_id):
         windows = gain_src.block_windows(1)
 
         # Opens loss tile
+        ######## Making nodata = -9999 outputs the wrong results
         with rasterio.open(loss_nodata) as loss_src:
             kwargs.update(
                 driver='GTiff',
                 count=1,
                 compress='lzw',
-                nodata=-9999
+                nodata=0
             )
 
             # Opens the output tile, giving it the arguments of the input tiles

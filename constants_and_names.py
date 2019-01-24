@@ -187,13 +187,13 @@ annual_gain_BGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_g
 pattern_annual_gain_BGB_mangrove = 'annual_gain_rate_BGB_t_ha_mangrove'
 annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_mangrove/20190116/'
 
-# Annual aboveground biomass gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
-pattern_annual_gain_AGB_planted_forest_full_extent = 'annual_gain_rate_AGB_t_ha_planted_forest_full_extent'
-annual_gain_AGB_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest/full_extent/20190115/'
+# Annual aboveground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
+pattern_annual_gain_AGC_planted_forest_full_extent = 'annual_gain_rate_AGC_t_ha_planted_forest_full_extent'
+annual_gain_AGC_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGC_planted_forest/full_extent/20190115/'
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves
-pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
-annual_gain_AGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest/non_mangrove/20190115/'
+pattern_annual_gain_AGC_planted_forest_non_mangrove = 'annual_gain_rate_AGC_t_ha_planted_forest_non_mangrove'
+annual_gain_AGC_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGC_planted_forest/non_mangrove/20190115/'
 
 # Cumulative aboveground gain for natural forests
 pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_2001_15'
@@ -222,10 +222,10 @@ cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2_ha_all_forest_types_all_drivers_2001_15'
-net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20190116/'
+net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
 
 # Tile summary spreadsheets
-tile_stats = 'tile_stats_{}.txt'.format(uu.date)
+tile_stats = 'tile_stats_{}.csv'.format(uu.date)
 tile_stats_dir = 's3://gfw2-data/climate/carbon_model/tile_stats/'
 
 # The area of each pixel in m^2
