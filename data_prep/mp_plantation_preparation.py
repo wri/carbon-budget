@@ -151,10 +151,6 @@ plant_1x1_vrt = 'plant_1x1.vrt'
 print "Creating vrt of 1x1 plantation growth rate tiles"
 os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
 
-# Downloads mangrove biomass 2000 tiles for masking out mangroves from planted forest gain.
-# In other words, where there are both mangroves and planted forests, mangroves get precedence.
-uu.s3_folder_download(cn.mangrove_biomass_2000_dir, '.')
-
 # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
 # For multiprocessor use
 num_of_processes = 20

@@ -99,6 +99,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
                     # Writes the output window to the output
                     dst_above.write_band(1, gain_rate_AGB , window=window)
 
+    # Checks if the tile has mangrove pixels and masks them out if there are any
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         # Aboveground mangrove biomass tile
