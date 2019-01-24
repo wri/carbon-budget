@@ -14,8 +14,7 @@ import universal_util as uu
 pd.options.mode.chained_assignment = None
 
 # tile_list = uu.tile_list(cn.annual_gain_AGC_planted_forest_dir)
-# tile_list = ['20S_110E', '30S_110E'] # test tiles
-tile_list = ['10N_080W', '00N_070W'] # test tiles
+tile_list = ['00N_010E', '00N_030E'] # test tiles. These have both mangroved and planted forest in them.
 print tile_list
 
 # # For downloading all tiles in the input folders
@@ -37,7 +36,7 @@ pool = Pool(num_of_processes)
 pool.map(annual_gain_rate_planted_forest.annual_gain_rate, tile_list)
 pool.close()
 pool.join()
- 
+
 # # For single processor use
 # for tile in biomass_tile_list:
 #
