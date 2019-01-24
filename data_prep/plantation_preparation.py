@@ -100,40 +100,26 @@ def create_1x1_plantation(tile_1x1):
         print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
 
-# Combines the 1x1 plantation tiles into 10x10 plantation tiles, the final output of this process
+# Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
 def create_10x10_plantation(tile_id, plant_1x1_vrt):
 
     print "Getting bounding coordinates for tile", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_10x10_carbon = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
-    print "Rasterizing", tile_10x10_carbon
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
+    print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_1x1_vrt, tile_10x10_carbon]
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = uu.check_for_data(tile_10x10_carbon)
+    stats = uu.check_for_data(tile_10x10)
 
     if stats[0] > 0:
 
-        print "  Data found in {}. Converting carbon tile to biomass and copying tile to s3...".format(tile_id)
-
-        tile_10x10_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
-
-        # Equation argument for converting planted forest growth from carbon to biomass.
-        calc = '--calc=A/{}'.format(cn.biomass_to_c_natrl_forest)
-
-        # Argument for outputting file
-        out = '--outfile={}'.format(tile_10x10_biomass)
-
-        print "Converting {} from carbon to biomass...".format(tile_10x10_carbon)
-        cmd = ['gdal_calc.py', '-A', tile_10x10_carbon, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-               '--overwrite']
-        subprocess.check_call(cmd)
-
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
         uu.upload_final(cn.annual_gain_AGC_planted_forest_dir, tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
         print "    Tile converted and copied to s3"
 
