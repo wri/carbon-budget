@@ -98,19 +98,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
         cont_eco = cont_eco_src.read(1, window=window)
         age_cat = age_cat_src.read(1, window=window)
 
-        # print cont_eco[0][:20]
-        # print age_cat[0][:20]
-
         # Recodes the input forest age category array with 10 different values into the 3 actual age categories
         age_recode = np.vectorize(age_dict.get)(age_cat)
 
-        # print age_recode[0][:20]
-
         # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
         cont_eco_age = cont_eco + age_recode
-
-        # print cont_eco_age[0][:20]
-
 
         # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates.
         # Creates two copies: one for aboveground gain and one for belowground gain.
@@ -118,19 +110,13 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # written correctly for some reason.
         gain_rate_AGB = cont_eco_age.astype('float32')
 
-        # print gain_rate_AGB[0][:20]
-
         # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
         for key, value in gain_table_dict.iteritems():
             gain_rate_AGB[gain_rate_AGB == key] = value
 
-        # print gain_rate_AGB[0][:20]
-
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
-
-        # print "Calculating belowground"
 
         gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
 
@@ -257,14 +243,14 @@ def annual_gain_rate(tile_id, gain_table_dict):
     #
     #     os.rename(AGB_natrl_forest_gain_rate_unmasked, AGB_natrl_forest_gain_rate_masked)
 
-    # Calculates belowground biomass rate from aboveground biomass rate
-    print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
-    above_to_below_calc = '--calc=(A>0)*A*{}'.format(cn.below_to_above_natrl_forest)
-    below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
-    below_outfilearg = '--outfile={}'.format(below_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_natrl_forest_gain_rate_unmasked, above_to_below_calc, below_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    subprocess.check_call(cmd)
+    # # Calculates belowground biomass rate from aboveground biomass rate
+    # print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
+    # above_to_below_calc = '--calc=(A>0)*A*{}'.format(cn.below_to_above_natrl_forest)
+    # below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
+    # below_outfilearg = '--outfile={}'.format(below_outfilename)
+    # cmd = ['gdal_calc.py', '-A', AGB_natrl_forest_gain_rate_unmasked, above_to_below_calc, below_outfilearg,
+    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    # subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
