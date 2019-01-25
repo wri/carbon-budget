@@ -99,6 +99,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Recodes the input forest age category array with 10 different values into the 3 actual age categories
         age_recode = np.vectorize(age_dict.get)(age_cat)
 
+        print age_recode[0][:20]
+
         # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
         cont_eco_age = cont_eco + age_recode
 
