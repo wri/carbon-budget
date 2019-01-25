@@ -39,12 +39,9 @@ def annual_gain_rate(tile_id, gain_table_dict):
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
     # Name of the output natural forest gain rate tile, before mangroves are masked out
-    AGB_natrl_forest_gain_rate_unmasked = '{0}_unmasked_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
 
-    # Name of the output natural forest gain rate tile, before mangroves are masked out
-    AGB_natrl_forest_gain_rate_masked = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
-
-    BGB_natrl_forest_gain_rate_masked = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
+    BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
 
     # Aboveground mangrove biomass tile
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
@@ -86,9 +83,9 @@ def annual_gain_rate(tile_id, gain_table_dict):
         dtype='float32'
     )
 
-    dst_above = rasterio.open(AGB_natrl_forest_gain_rate_unmasked, 'w', **kwargs)
+    dst_above = rasterio.open(AGB_natrl_forest_gain_rate, 'w', **kwargs)
 
-    dst_below = rasterio.open(BGB_natrl_forest_gain_rate_masked, 'w', **kwargs)
+    dst_below = rasterio.open(BGB_natrl_forest_gain_rate, 'w', **kwargs)
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
@@ -140,8 +137,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         # Writes the output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
-
-        # sys.exit()
 
 
     # # Opens continent-ecozone tile
