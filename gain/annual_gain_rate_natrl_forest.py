@@ -111,10 +111,14 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # written correctly for some reason.
         gain_rate_AGB = cont_eco_age.astype('float32')
 
+        print gain_rate_AGB[0][:20]
+
         # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
         for key, value in gain_table_dict.iteritems():
             gain_rate_AGB[gain_rate_AGB == key] = value
+
+        print gain_rate_AGB[0][:20]
 
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
