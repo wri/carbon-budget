@@ -102,6 +102,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
         cont_eco_age = cont_eco + age_recode
 
+        print cont_eco_age[[1]][[1]]
+
 
         # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates.
         # Creates two copies: one for aboveground gain and one for belowground gain.
