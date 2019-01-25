@@ -65,6 +65,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     age_cat_src = rasterio.open(age_cat)
 
+    print age_cat_src
+
     try:
         mangrove_src = rasterio.open(mangrove_biomass)
     except:
