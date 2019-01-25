@@ -109,32 +109,32 @@ def annual_gain_rate(tile_id, gain_table_dict):
         for key, value in gain_table_dict.iteritems():
             gain_rate_AGB[gain_rate_AGB == key] = value
 
-        # if os.path.exists(mangrove_biomass):
-        #
-        #     mangrove_AGB = mangrove_src.read(1, window=window)
-        #
-        #     nodata = uu.get_raster_nodata_value(mangrove_biomass)
-        #
-        #     # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
-        #     # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-        #     mangrove_AGB[mangrove_AGB > 0] = 0
-        #     mangrove_AGB[mangrove_AGB == 0] = 1
-        #
-        #     gain_rate_AGB = gain_rate_AGB * mangrove_AGB
-        #
-        #
-        # if os.path.exists(planted_forest_gain):
-        #
-        #     planted_forest = planted_forest_src.read(1, window=window)
-        #
-        #     nodata = uu.get_raster_nodata_value(planted_forest_gain)
-        #
-        #     # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
-        #     # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-        #     planted_forest[planted_forest > 0] = 0
-        #     planted_forest[planted_forest == 0] = 1
-        #
-        #     gain_rate_AGB = gain_rate_AGB * planted_forest
+        if os.path.exists(mangrove_biomass):
+
+            mangrove_AGB = mangrove_src.read(1, window=window)
+
+            nodata = uu.get_raster_nodata_value(mangrove_biomass)
+
+            # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
+            # Ultimately, only these pixels (ones with mangrove biomass) will get values.
+            mangrove_AGB[mangrove_AGB > 0] = 0
+            mangrove_AGB[mangrove_AGB == 0] = 1
+
+            gain_rate_AGB = gain_rate_AGB * mangrove_AGB
+
+
+        if os.path.exists(planted_forest_gain):
+
+            planted_forest = planted_forest_src.read(1, window=window)
+
+            nodata = uu.get_raster_nodata_value(planted_forest_gain)
+
+            # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
+            # Ultimately, only these pixels (ones with mangrove biomass) will get values.
+            planted_forest[planted_forest > 0] = 0
+            planted_forest[planted_forest == 0] = 1
+
+            gain_rate_AGB = gain_rate_AGB * planted_forest
 
 
         # Writes the output window to the output file
