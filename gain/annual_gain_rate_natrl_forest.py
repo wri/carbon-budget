@@ -49,7 +49,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Planted forest gain rate tile
     planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
 
-    print "  Reading input files and creating aboveground biomass gain rate for {}".format(tile_id)
+    print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
 
 
     cont_eco_src = rasterio.open(cont_eco)
@@ -111,20 +111,23 @@ def annual_gain_rate(tile_id, gain_table_dict):
         if os.path.exists(mangrove_biomass):
 
             mangrove_AGB = mangrove_src.read(1, window=window)
+            nodata = mangrove_AGB.GetNoDataValue()
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-            mangrove_AGB[mangrove_AGB > 0] = 1
+            mangrove_AGB[mangrove_AGB == nodata] = 1
 
             gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
 
         if os.path.exists(planted_forest_gain):
+
             planted_forest = planted_forest_src.read(1, window=window)
+            nodata = planted_forest.GetNoDataValue()
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-            planted_forest[planted_forest > 0] = 1
+            planted_forest[planted_forest == nodata] = 1
 
             gain_rate_AGB = gain_rate_AGB * planted_forest
 

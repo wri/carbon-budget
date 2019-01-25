@@ -24,7 +24,7 @@ pd.options.mode.chained_assignment = None
 
 # biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
 biomass_tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-# biomass_tile_list = ['80N_020E']
+biomass_tile_list = ['00N_000E']
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
@@ -41,8 +41,8 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 #
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.age_cat_natrl_forest_dir, tile, cn.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
