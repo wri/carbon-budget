@@ -8,6 +8,7 @@
 ### The forest age category tiles are inputs for assigning gain rates to pixels.
 ### Unlike other multiprocessing scripts, this one passes two arguments to the main script: the tile list
 ### and the dictionary of gain rates for different continent-ecozone combinations (needed for one node in the decision tree).
+### Uses an r4.16xlarge spot machine.
 
 from multiprocessing.pool import Pool
 from functools import partial
@@ -63,7 +64,7 @@ gain_table_dict[0] = 0
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 20
+num_of_processes = 20    # This works on an r4.16xlarge spot machine (not m4)
 pool = Pool(num_of_processes)
 pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()
