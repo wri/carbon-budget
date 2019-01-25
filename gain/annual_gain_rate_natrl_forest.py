@@ -130,7 +130,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
 
-        print "Calculating belowground"
+        # print "Calculating belowground"
 
         gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
 
