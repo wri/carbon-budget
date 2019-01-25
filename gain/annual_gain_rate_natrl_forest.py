@@ -96,6 +96,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         cont_eco = cont_eco_src.read(1, window=window)
         age_cat = age_cat_src.read(1, window=window)
 
+        print cont_eco[0][:20]
         print age_cat[0][:20]
 
         # Recodes the input forest age category array with 10 different values into the 3 actual age categories
