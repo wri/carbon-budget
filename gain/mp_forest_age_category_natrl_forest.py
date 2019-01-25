@@ -30,8 +30,8 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # For downloading all tiles in the folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.natrl_forest_biomass_2000_dir, cn.cont_eco_dir]
 
-for input in download_list:
-    utilities.s3_folder_download(input, '.')
+# for input in download_list:
+#     utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:

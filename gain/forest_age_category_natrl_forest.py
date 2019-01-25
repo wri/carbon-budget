@@ -21,7 +21,7 @@ def forest_age_category(tile_id, gain_table_dict):
     print "Processing:", tile_id
 
     # Gets the bounding coordinates of each tile. Needed to determine if the tile is in the tropics (within 30 deg of the equator)
-    ymax, xmin, ymin, xmax = uu.coords(tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  ymax:", ymax
 
     # Default value is that the tile is not in the tropics
