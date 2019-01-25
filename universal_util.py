@@ -323,3 +323,16 @@ def count_completed_tiles(pattern):
 
     # completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
     print "Number of completed tiles:", completed
+
+# Returns the NoData value of a raster
+def get_raster_nodata_value(tile):
+
+    # Source: http://gis.stackexchange.com/questions/90726
+    # Opens raster we're getting statistics on
+    focus_tile = gdal.Open(tile)
+
+    # Extracts the NoData value for the tile so it can be ignored
+    srcband = focus_tile.GetRasterBand(1)
+    nodata = srcband.GetNoDataValue()
+
+    return nodata

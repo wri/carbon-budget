@@ -18,9 +18,7 @@ def create_tile_statistics(tile):
     # Opens raster we're getting statistics on
     focus_tile = gdal.Open(tile)
 
-    # Extracts the NoData value for the tile so it can be ignored
-    srcband = focus_tile.GetRasterBand(1)
-    nodata = srcband.GetNoDataValue()
+    nodata = uu.get_raster_nodata_value(tile)
     print "NoData value =", nodata
 
     # Turns the raster into a numpy array

@@ -16,6 +16,7 @@ import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
@@ -111,7 +112,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         if os.path.exists(mangrove_biomass):
 
             mangrove_AGB = mangrove_src.read(1, window=window)
-            nodata = mangrove_AGB.GetNoDataValue()
+
+            nodata = uu.get_raster_nodata_value(mangrove_biomass)
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
@@ -123,7 +125,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         if os.path.exists(planted_forest_gain):
 
             planted_forest = planted_forest_src.read(1, window=window)
-            nodata = planted_forest.GetNoDataValue()
+
+            nodata = uu.get_raster_nodata_value(planted_forest_gain)
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
