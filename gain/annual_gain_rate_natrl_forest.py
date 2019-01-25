@@ -44,6 +44,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Name of the output natural forest gain rate tile, before mangroves are masked out
     AGB_natrl_forest_gain_rate_masked = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
 
+    BGB_natrl_forest_gain_rate_masked = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
+
     # Aboveground mangrove biomass tile
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
@@ -85,6 +87,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     dst_above = rasterio.open(AGB_natrl_forest_gain_rate_unmasked, 'w', **kwargs)
 
+    dst_below = rasterio.open(BGB_natrl_forest_gain_rate_masked, 'w', **kwargs)
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 
@@ -98,19 +102,29 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
         cont_eco_age = cont_eco + age_recode
 
-        # Converts the continent-ecozone-age array to float so that the values can be replaced with fractional gain rates
-        cont_eco_age = cont_eco_age.astype('float32')
 
-        # Creates a new array which will have the annual aboveground gain rates
-        gain_rate_AGB = cont_eco_age
+        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates.
+        # Creates two copies: one for aboveground gain and one for belowground gain.
+        # Creating only one copy of the cont_eco raster made it so that belowground gain rates weren't being
+        # written correctly for some reason.
+        gain_rate_AGB = cont_eco_age.astype('float32')
 
         # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
         # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
         for key, value in gain_table_dict.iteritems():
             gain_rate_AGB[gain_rate_AGB == key] = value
 
-        # Writes the output window to the output
+        # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
+
+        print "Calculating belowground"
+
+        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
+
+        # Writes the output window to the output file
+        dst_below.write_band(1, gain_rate_BGB, window=window)
+        
+        sys.quit()
 
 
     # # Opens continent-ecozone tile
@@ -235,7 +249,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
     above_to_below_calc = '--calc=(A>0)*A*{}'.format(cn.below_to_above_natrl_forest)
     below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
-    cmd = ['gdal_calc.py', '-A', AGB_natrl_forest_gain_rate_masked, above_to_below_calc, below_outfilearg,
+    cmd = ['gdal_calc.py', '-A', AGB_natrl_forest_gain_rate_unmasked, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
