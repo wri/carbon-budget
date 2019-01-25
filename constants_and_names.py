@@ -168,7 +168,7 @@ gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_co
 
 # Forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20180921/'
+age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20190125/'
 
 
 ### Annual gain rates

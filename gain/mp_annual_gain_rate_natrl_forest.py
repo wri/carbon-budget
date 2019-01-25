@@ -25,6 +25,7 @@ pd.options.mode.chained_assignment = None
 # biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
 biomass_tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print biomass_tile_list
+print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # # For downloading all tiles in the input folders.
 # # Mangrove biomass and non-mangrove planted forests are used to mask out mangrove and planted forests from the natural forests.

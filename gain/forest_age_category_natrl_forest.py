@@ -14,13 +14,14 @@ import rasterio
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 def forest_age_category(tile_id, gain_table_dict):
 
     print "Processing:", tile_id
 
     # Gets the bounding coordinates of each tile. Needed to determine if the tile is in the tropics (within 30 deg of the equator)
-    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    ymax, xmin, ymin, xmax = uu.coords(tile_id)
     print "  ymax:", ymax
 
     # Default value is that the tile is not in the tropics
@@ -126,8 +127,6 @@ def forest_age_category(tile_id, gain_table_dict):
 
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
-
-    utilities.upload_final(cn.age_cat_natrl_forest_dir, tile_id, cn.pattern_age_cat_natrl_forest)
 
     end = datetime.datetime.now()
     elapsed_time = end-start

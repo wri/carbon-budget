@@ -15,19 +15,17 @@ import utilities
 import forest_age_category_natrl_forest
 import pandas as pd
 import subprocess
+import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
-### Need to update and install some packages on spot machine before running
-### sudo pip install rasterio --upgrade
-### sudo pip install pandas --upgrade
-### sudo pip install xlrd
-
-biomass_tile_list = utilities.tile_list(cn.natrl_forest_biomass_2000_dir)
+biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
+print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # For downloading all tiles in the folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.natrl_forest_biomass_2000_dir, cn.cont_eco_dir]
@@ -46,7 +44,7 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
-cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/{}'.format(cn.gain_spreadsheet), '.']
+cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
 subprocess.check_call(cmd)
 
 # Imports the table with the ecozone-continent codes and the carbon gain rates
@@ -76,3 +74,5 @@ pool.join()
 #
 #     forest_age_category_natrl_forest.forest_age_category(tile, gain_table_dict)
 
+print "Tiles processed. Uploading to s3 now..."
+uu.upload_final_set(cn.age_cat_natrl_forest_dir, cn.pattern_age_cat_natrl_forest)
