@@ -1,5 +1,6 @@
 ### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
-### biomass/ha/yr)) to non-mangrove planted forest pixels.
+### biomass/ha/yr)) to non-mangrove planted forest pixels. It masks mangrove pixels from the planted forest carbon gain
+### rate tiles so that different forest types are non-overlapping. These are then used in the next step of the carbon model.
 
 
 from multiprocessing.pool import Pool
@@ -31,7 +32,7 @@ for tile in tile_list:
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 8
+num_of_processes = 32
 pool = Pool(num_of_processes)
 pool.map(annual_gain_rate_planted_forest.annual_gain_rate, tile_list)
 pool.close()

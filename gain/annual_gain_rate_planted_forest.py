@@ -1,4 +1,6 @@
-###
+### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
+### biomass/ha/yr)) to non-mangrove planted forest pixels. It masks mangrove pixels from the planted forest carbon gain
+### rate tiles so that different forest types are non-overlapping. These are then used in the next step of the carbon model.
 
 import datetime
 import subprocess
