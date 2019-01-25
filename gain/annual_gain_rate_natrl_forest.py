@@ -113,6 +113,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
             mangrove_AGB = mangrove_src.read(1, window=window)
 
+            print mangrove_AGB[0][:20]
+
             nodata = uu.get_raster_nodata_value(mangrove_biomass)
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
