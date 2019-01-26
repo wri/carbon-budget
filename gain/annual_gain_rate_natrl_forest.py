@@ -113,7 +113,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
             mangrove_AGB = mangrove_src.read(1, window=window)
 
-            print mangrove_AGB[0][:20]
+            # print mangrove_AGB[0][:20]
 
             nodata = uu.get_raster_nodata_value(mangrove_biomass)
 
@@ -121,11 +121,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
             mangrove_AGB[mangrove_AGB == 0] = 1
 
-            print mangrove_AGB[0][:20]
+            # print mangrove_AGB[0][:20]
 
             mangrove_AGB[mangrove_AGB > 0] = 0
 
-            print mangrove_AGB[0][:20]
+            # print mangrove_AGB[0][:20]
 
             gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
@@ -153,7 +153,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Writes the output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
 
-        sys.exit()
+        # sys.exit()
 
 
     # # Opens continent-ecozone tile
