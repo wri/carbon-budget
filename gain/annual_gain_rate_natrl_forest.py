@@ -124,11 +124,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
             # print mangrove_AGB[0][:20]
 
-            mangrove_AGB[mangrove_AGB > 0] = 0
+            # mangrove_AGB[mangrove_AGB > 0] = 0
 
             # print mangrove_AGB[0][:20]
 
-            gain_rate_AGB = gain_rate_AGB * mangrove_AGB
+            # gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
 
         if os.path.exists(planted_forest_gain):
