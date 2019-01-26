@@ -11,7 +11,6 @@
 import datetime
 import numpy as np
 import rasterio
-import subprocess
 import os
 import sys
 sys.path.append('../')
@@ -156,7 +155,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Writes the output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
 
-        # sys.exit()
+        sys.exit()
 
 
     # # Opens continent-ecozone tile
