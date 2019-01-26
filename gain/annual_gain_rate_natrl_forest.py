@@ -119,7 +119,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-            mangrove_AGB[mangrove_AGB == 0] = 1
+            gain_rate_AGB[mangrove_AGB == 0] = gain_rate_AGB
+            # mangrove_AGB[mangrove_AGB == 0] = 1
 
             # print mangrove_AGB[0][:20]
 
@@ -138,8 +139,9 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
             # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-            planted_forest[planted_forest == 0] = 1
-            planted_forest[planted_forest > 0] = 0
+            gain_rate_AGB[planted_forest == 0] = gain_rate_AGB
+            # planted_forest[planted_forest == 0] = 1
+            # planted_forest[planted_forest > 0] = 0
 
             gain_rate_AGB = gain_rate_AGB * planted_forest
 
