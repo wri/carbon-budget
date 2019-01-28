@@ -87,72 +87,70 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     dst_below = rasterio.open(BGB_natrl_forest_gain_rate, 'w', **kwargs)
 
-    # # Iterates across the windows (1 pixel strips) of the input tile
-    # for idx, window in windows:
+    # Iterates across the windows (1 pixel strips) of the input tile
+    for idx, window in windows:
 
-    window = rasterio.windows.Window(col_off=38380, row_off=0, width=20, height=1)
+        # Creates windows for each input raster
+        cont_eco = cont_eco_src.read(1, window=window)
+        age_cat = age_cat_src.read(1, window=window)
 
-    # Creates windows for each input raster
-    cont_eco = cont_eco_src.read(1, window=window)
-    age_cat = age_cat_src.read(1, window=window)
+        # Recodes the input forest age category array with 10 different values into the 3 actual age categories
+        age_recode = np.vectorize(age_dict.get)(age_cat)
 
-    # Recodes the input forest age category array with 10 different values into the 3 actual age categories
-    age_recode = np.vectorize(age_dict.get)(age_cat)
+        # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
+        cont_eco_age = cont_eco + age_recode
 
-    # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
-    cont_eco_age = cont_eco + age_recode
+        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
+        gain_rate_AGB = cont_eco_age.astype('float32')
 
-    # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
-    gain_rate_AGB = cont_eco_age.astype('float32')
+        # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
+        # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+        for key, value in gain_table_dict.iteritems():
+            gain_rate_AGB[gain_rate_AGB == key] = value
 
-    # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
-    # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
-    for key, value in gain_table_dict.iteritems():
-        gain_rate_AGB[gain_rate_AGB == key] = value
+        if os.path.exists(mangrove_biomass):
 
-    if os.path.exists(mangrove_biomass):
+            mangrove_AGB = mangrove_src.read(1, window=window)
 
-        mangrove_AGB = mangrove_src.read(1, window=window)
+            nodata = uu.get_raster_nodata_value(mangrove_biomass)
 
-        nodata = uu.get_raster_nodata_value(mangrove_biomass)
+            # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
+            # Ultimately, only these pixels (ones with mangrove biomass) will get values.
+            mangrove_AGB[mangrove_AGB > nodata] = 99
 
-        # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
-        # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-        mangrove_AGB[mangrove_AGB > nodata] = 99
+            mangrove_AGB[mangrove_AGB == nodata] = 1
 
-        mangrove_AGB[mangrove_AGB == nodata] = 1
+            mangrove_AGB[mangrove_AGB == 99] = nodata
 
-        mangrove_AGB[mangrove_AGB == 99] = nodata
-
-        gain_rate_AGB = gain_rate_AGB * mangrove_AGB
+            gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
 
-    if os.path.exists(planted_forest_gain):
+        if os.path.exists(planted_forest_gain):
 
-        planted_forest = planted_forest_src.read(1, window=window)
+            planted_forest = planted_forest_src.read(1, window=window)
 
-        nodata = uu.get_raster_nodata_value(planted_forest_gain)
+            nodata = uu.get_raster_nodata_value(planted_forest_gain)
 
-        # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
-        # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-        planted_forest[planted_forest > nodata] = 99
+            # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
+            # Ultimately, only these pixels (ones with mangrove biomass) will get values.
+            planted_forest[planted_forest > nodata] = 99
 
-        planted_forest[planted_forest == nodata] = 1
+            planted_forest[planted_forest == nodata] = 1
 
-        planted_forest[planted_forest == 99] = nodata
+            planted_forest[planted_forest == 99] = nodata
 
-        gain_rate_AGB = gain_rate_AGB * planted_forest
+            gain_rate_AGB = gain_rate_AGB * planted_forest
 
-    # Writes the output window to the output file
-    dst_above.write_band(1, gain_rate_AGB, window=window)
+        # Writes the output window to the output file
+        dst_above.write_band(1, gain_rate_AGB, window=window)
 
 
-    gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
+        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
 
-    # Writes the output window to the output file
-    dst_below.write_band(1, gain_rate_BGB, window=window)
+        # Writes the output window to the output file
+        dst_below.write_band(1, gain_rate_BGB, window=window)
 
-    # sys.exit()
+        # sys.exit()
 
 
     # # Opens continent-ecozone tile
