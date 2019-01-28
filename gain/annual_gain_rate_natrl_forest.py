@@ -110,8 +110,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
     for key, value in gain_table_dict.iteritems():
         gain_rate_AGB[gain_rate_AGB == key] = value
 
-    # print gain_rate_AGB
-
     if os.path.exists(mangrove_biomass):
 
         mangrove_AGB = mangrove_src.read(1, window=window)
@@ -120,9 +118,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
         # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-
-        # gain_rate_AGB = np.ma.masked_where(mangrove_AGB > 0, gain_rate_AGB)
-
         mangrove_AGB[mangrove_AGB > nodata] = 99
 
         mangrove_AGB[mangrove_AGB == nodata] = 1
@@ -140,13 +135,13 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
         # Ultimately, only these pixels (ones with mangrove biomass) will get values.
-        planted_forest[planted_forest == 0] = 1
-        planted_forest[planted_forest > 0] = 0
+        planted_forest[planted_forest > nodata] = 99
+
+        planted_forest[planted_forest == nodata] = 1
+
+        planted_forest[planted_forest == 99] = nodata
 
         gain_rate_AGB = gain_rate_AGB * planted_forest
-
-
-    print gain_rate_AGB
 
     # Writes the output window to the output file
     dst_above.write_band(1, gain_rate_AGB, window=window)
