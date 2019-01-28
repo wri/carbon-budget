@@ -116,10 +116,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         mangrove_AGB = mangrove_src.read(1, window=window)
 
-        # print mangrove_AGB
-
-        # print mangrove_AGB[0][:20]
-
         nodata = uu.get_raster_nodata_value(mangrove_biomass)
 
         # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
@@ -127,19 +123,13 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         # gain_rate_AGB = np.ma.masked_where(mangrove_AGB > 0, gain_rate_AGB)
 
-        mangrove_AGB[mangrove_AGB > 0] = 99
+        mangrove_AGB[mangrove_AGB > nodata] = 99
 
-        print mangrove_AGB
+        mangrove_AGB[mangrove_AGB == nodata] = 1
 
-        mangrove_AGB[mangrove_AGB == 0] = 1
-
-        print mangrove_AGB
-
-        mangrove_AGB[mangrove_AGB == 99] = 0
+        mangrove_AGB[mangrove_AGB == 99] = nodata
 
         gain_rate_AGB = gain_rate_AGB * mangrove_AGB
-
-        print gain_rate_AGB
 
 
     if os.path.exists(planted_forest_gain):
