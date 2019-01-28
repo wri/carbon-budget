@@ -13,14 +13,15 @@ import gain_year_count_mangrove
 import sys
 sys.path.append('../')
 import constants_and_names as cn
-
+import universal_util as uu
 
 # Lists the mangrove biomass tiles instead of the general tree biomass tiles because
-# there are many fewer mangrove biomass tiles (88 vs 315)
+# there are many fewer mangrove biomass tiles (86 vs 280)
 mangrove_biomass_tile_list = utilities.tile_list(cn.mangrove_biomass_2000_dir)
 # mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
+print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
@@ -36,10 +37,21 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(4)
+pool = multiprocessing.Pool(count/4)
 pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
+pool.close()
+pool.join()
 
 # # For single processor use
 # for tile in mangrove_biomass_tile_list:
 #
 #     gain_year_count_mangrove.create_gain_year_count(tile)
+
+# Intermediate output tiles for checking outputs
+uu.upload_final_set(cn.gain_year_count_mangrove_dir, "growth_years_loss_only")
+uu.upload_final_set(cn.gain_year_count_mangrove_dir, "growth_years_gain_only")
+uu.upload_final_set(cn.gain_year_count_mangrove_dir, "growth_years_no_change")
+uu.upload_final_set(cn.gain_year_count_mangrove_dir, "growth_years_loss_and_gain")
+
+# This is the final output used later in the model
+uu.upload_final_set(cn.gain_year_count_mangrove_dir, cn.pattern_gain_year_count_mangrove)

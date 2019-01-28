@@ -79,14 +79,14 @@ def annual_gain_rate(tile_id, gain_table_dict):
         dtype='float32'
     )
 
-    # The output files
+    # The output files, aboveground and belowground biomass gain rates
     dst_above = rasterio.open(AGB_natrl_forest_gain_rate, 'w', **kwargs)
     dst_below = rasterio.open(BGB_natrl_forest_gain_rate, 'w', **kwargs)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
-        # Creates windows for each input raster
+        # Creates a processing window for each input raster
         cont_eco = cont_eco_src.read(1, window=window)
         age_cat = age_cat_src.read(1, window=window)
 
@@ -104,35 +104,36 @@ def annual_gain_rate(tile_id, gain_table_dict):
         for key, value in gain_table_dict.iteritems():
             gain_rate_AGB[gain_rate_AGB == key] = value
 
+        # If there is a mangrove tile, this masks the mangrove biomass pixels so that only non-mangrove pixels are output
         if os.path.exists(mangrove_biomass):
 
+            # Reads in the mangrove tile's window
             mangrove_AGB = mangrove_src.read(1, window=window)
 
+            # Gets the NoData value of the mangrove biomass tile
             nodata = uu.get_raster_nodata_value(mangrove_biomass)
 
             # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
-            # Ultimately, only these pixels (ones with mangrove biomass) will get values.
+            # Ultimately, only these pixels (ones without mangrove biomass) will get values.
+            # I couldn't figure out how to do this without first converting the NoData values to an intermediate value (99)
             mangrove_AGB[mangrove_AGB > nodata] = 99
-
             mangrove_AGB[mangrove_AGB == nodata] = 1
-
             mangrove_AGB[mangrove_AGB == 99] = nodata
 
+            # Applies the mask
             gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
-
+        # If there is a planted forest tile, this masks the planted forest pixels so that only non-planted forest pixels
+        # are output.
+        # Process is same as for mangroves-- non-planted forest pixels are the only ones output
         if os.path.exists(planted_forest_gain):
 
             planted_forest = planted_forest_src.read(1, window=window)
 
             nodata = uu.get_raster_nodata_value(planted_forest_gain)
 
-            # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
-            # Ultimately, only these pixels (ones with mangrove biomass) will get values.
             planted_forest[planted_forest > nodata] = 99
-
             planted_forest[planted_forest == nodata] = 1
-
             planted_forest[planted_forest == 99] = nodata
 
             gain_rate_AGB = gain_rate_AGB * planted_forest
@@ -140,10 +141,10 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
 
-
+        # Calculates the belowground biomass gain rate
         gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
 
-        # Writes the output window to the output file
+        # Writes the belowground gain rate output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
 
 

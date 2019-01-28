@@ -5,6 +5,12 @@ import os
 ### Constants ###
 ######     ######
 
+# Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.
+loss_years = 15
+
+# Number of years in tree cover gain. If input gain raster is changed, this must be changed, too.
+gain_years = 12
+
 # Number of biomass tiles
 biomass_tile_count = 280
 
@@ -164,7 +170,7 @@ gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_yea
 
 # Number of gain years for mangroves
 pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
-gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20181031/'
+gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20190128/'
 
 # Forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'

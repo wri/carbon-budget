@@ -68,7 +68,7 @@ def create_gain_year_count(tile_id):
 
         # Pixels with gain only and in mangrove tile
         print "Creating raster of growth years for gain-only pixels"
-        gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(gain_years)
+        gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(cn.gain_years)
         gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
         gain_outfilearg = '--outfile={}'.format(gain_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg,
@@ -77,7 +77,7 @@ def create_gain_year_count(tile_id):
 
         # Pixels with neither loss nor gain but in areas with tree cover density >0 and in mangrove tile
         print "Creating raster of growth years for no change pixels"
-        no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(loss_years)
+        no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(cn.loss_years)
         no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
         no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, '-D', tcd, no_change_calc,
@@ -86,7 +86,7 @@ def create_gain_year_count(tile_id):
 
         # Pixels with both loss and gain and in mangrove tile
         print "Creating raster of growth years for loss and gain pixels"
-        loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(loss_years)
+        loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
         loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
         loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc,
@@ -117,7 +117,7 @@ def create_gain_year_count(tile_id):
 
         # Pixels with gain only and not in mangroves
         print "Creating raster of growth years for gain-only pixels"
-        gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(gain_years)
+        gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(cn.gain_years)
         gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
         gain_outfilearg = '--outfile={}'.format(gain_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfilearg,
@@ -126,7 +126,7 @@ def create_gain_year_count(tile_id):
 
         # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves
         print "Creating raster of growth years for no change pixels"
-        no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(loss_years)
+        no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
         no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
         no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, no_change_calc,
@@ -135,7 +135,7 @@ def create_gain_year_count(tile_id):
 
         # Pixels with both loss and gain and not in mangroves
         print "Creating raster of growth years for loss and gain pixels"
-        loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(loss_years)
+        loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
         loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
         loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
