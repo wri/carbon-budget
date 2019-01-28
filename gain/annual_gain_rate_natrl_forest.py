@@ -156,6 +156,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         gain_rate_AGB = gain_rate_AGB * planted_forest
 
 
+    print gain_rate_AGB
+
     # Writes the output window to the output file
     dst_above.write_band(1, gain_rate_AGB, window=window)
 
