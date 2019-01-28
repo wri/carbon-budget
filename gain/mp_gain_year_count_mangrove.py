@@ -23,11 +23,11 @@ mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 print mangrove_biomass_tile_list
 print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
 
-# # For downloading all tiles in the input folders
-# download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
-#
-# for input in download_list:
-#     utilities.s3_folder_download(input, '.')
+# For downloading all tiles in the input folders
+download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
+
+for input in download_list:
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in mangrove_biomass_tile_list:
