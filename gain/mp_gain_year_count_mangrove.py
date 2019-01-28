@@ -1,11 +1,13 @@
 ### Creates tiles in which each mangrove pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
 ### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
 ### First it calculates rasters of gain years for mangrove pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
-### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.
+### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor commands.
+### More gdalcalc commands can be run at the same time than gdalmerge so that's why the number of processors being used is higher
+### for the first four processing steps (which use gdalcalc).
 ### At this point, those rules are the same as for non-mangrove natural forests, except that no change pixels don't use tcd as a factor.
 ### Then it combines those four rasters into a single gain year raster for each tile.
 ### This is one of the mangrove inputs for the carbon gain model.
-### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_mangrove.py must be changed.
+### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the year count constants in constants_and_names.py must be changed.
 
 import multiprocessing
 import utilities
@@ -36,24 +38,29 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
+# Creates gain year count tiles using only pixels that had only loss
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
+pool = multiprocessing.Pool(count/3)
 pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
+# Creates gain year count tiles using only pixels that had only gain
 pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
+# Creates gain year count tiles using only pixels that had neither loss nor gain pixels
 pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
+# Creates gain year count tiles using only pixels that had both loss and gain pixels
 pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
+# Merges the four above gain year count tiles for each Hansen tile into a single output tile
 pool = multiprocessing.Pool(count/6)
 pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_biomass_tile_list)
 pool.close()
