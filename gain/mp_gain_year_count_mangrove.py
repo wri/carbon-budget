@@ -37,7 +37,7 @@ print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/4)
+pool = multiprocessing.Pool(count/5)
 pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
