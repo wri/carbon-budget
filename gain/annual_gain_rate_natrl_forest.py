@@ -92,22 +92,15 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
     window = rasterio.windows.Window(col_off=38380, row_off=0, width=20, height=1)
 
-    print window
-
     # Creates windows for each input raster
     cont_eco = cont_eco_src.read(1, window=window)
     age_cat = age_cat_src.read(1, window=window)
-
-    print cont_eco
-    print age_cat
 
     # Recodes the input forest age category array with 10 different values into the 3 actual age categories
     age_recode = np.vectorize(age_dict.get)(age_cat)
 
     # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
     cont_eco_age = cont_eco + age_recode
-
-    print cont_eco_age
 
     # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
     gain_rate_AGB = cont_eco_age.astype('float32')
@@ -135,6 +128,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Ultimately, only these pixels (ones with mangrove biomass) will get values.
 
         gain_rate_AGB = np.ma.masked_where(mangrove_AGB > 0, gain_rate_AGB)
+
+        print gain_rate_AGB
 
         # mangrove_AGB[mangrove_AGB == 0] = 1
 
