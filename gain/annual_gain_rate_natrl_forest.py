@@ -34,44 +34,40 @@ def annual_gain_rate(tile_id, gain_table_dict):
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the forest age category, continent-ecozone, and mangrove biomass tiles
+    # Names of the forest age category, continent-ecozone, mangrove biomass, and planted forest tiles
     age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest)
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
-
-    # Name of the output natural forest gain rate tile, before mangroves are masked out
-    AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
-
-    BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
-
-    # Aboveground mangrove biomass tile
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-
-    # Planted forest gain rate tile
     planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
+
+    # Names of the output natural forest gain rate tiles (above and belowground)
+    AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
 
     print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
 
-
+    # Opens the continent-ecozone and natural forest age category tiles
     cont_eco_src = rasterio.open(cont_eco)
+    age_cat_src = rasterio.open(age_cat)
 
-    # Grabs metadata about the tif, like its location/projection/cellsize
+    # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
     kwargs = cont_eco_src.meta
 
     # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
     windows = cont_eco_src.block_windows(1)
 
-    age_cat_src = rasterio.open(age_cat)
-
-
+    # Checks whether there are mangrove or planted forest tiles. If so, they are opened.
     try:
         mangrove_src = rasterio.open(mangrove_biomass)
+        print "  Mangrove tile found for {}".format(tile_id)
     except:
-        print "No mangrove tile for {}".format(tile_id)
+        print "  No mangrove tile for {}".format(tile_id)
 
     try:
         planted_forest_src = rasterio.open(planted_forest_gain)
+        print "  Planted forest tile found for {}".format(tile_id)
     except:
-        print "No planted forest tile for {}".format(tile_id)
+        print "  No planted forest tile for {}".format(tile_id)
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional gain rates
@@ -83,11 +79,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
         dtype='float32'
     )
 
+    # The output files
     dst_above = rasterio.open(AGB_natrl_forest_gain_rate, 'w', **kwargs)
-
     dst_below = rasterio.open(BGB_natrl_forest_gain_rate, 'w', **kwargs)
 
-    # Iterates across the windows (1 pixel strips) of the input tile
+    # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
         # Creates windows for each input raster
@@ -149,8 +145,6 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         # Writes the output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
-
-        # sys.exit()
 
 
     # # Opens continent-ecozone tile
