@@ -127,11 +127,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         # gain_rate_AGB = np.ma.masked_where(mangrove_AGB > 0, gain_rate_AGB)
 
-        mangrove_AGB[mangrove_AGB == 0] = 1
+        mangrove_AGB[mangrove_AGB > 0] = 0
 
         print mangrove_AGB
 
-        mangrove_AGB[mangrove_AGB > 0] = 0
+        mangrove_AGB[mangrove_AGB == 0] = 1
 
         print mangrove_AGB
 
