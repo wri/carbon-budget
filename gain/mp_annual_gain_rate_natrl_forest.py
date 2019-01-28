@@ -97,18 +97,18 @@ for key, value in age_dict.iteritems():
 gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
 
-# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# num_of_processes = 8
-# pool = Pool(num_of_processes)
-# pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
-# pool.close()
-# pool.join()
+# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+num_of_processes = 8
+pool = Pool(num_of_processes)
+pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
+pool.close()
+pool.join()
 
-# For single processor use
-for tile in biomass_tile_list:
-
-    annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
+# # For single processor use
+# for tile in biomass_tile_list:
+#
+#     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
 
 print "Tiles processed. Uploading to s3 now..."
 uu.upload_final_set(cn.annual_gain_AGB_natrl_forest_dir, cn.pattern_annual_gain_AGB_natrl_forest)
