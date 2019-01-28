@@ -24,7 +24,7 @@ pd.options.mode.chained_assignment = None
 
 # biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
 biomass_tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-biomass_tile_list = ['00N_000E']
+# biomass_tile_list = ['00N_000E']
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
@@ -41,14 +41,8 @@ for tile in biomass_tile_list:
 
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.age_cat_natrl_forest_dir, tile, cn.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
-    except:
-        print "No mangrove tile here"
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')
-    except:
-        print "No planted forest tile here"
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')  # planted forest extent (not masked by mangroves)
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
@@ -97,19 +91,19 @@ for key, value in age_dict.iteritems():
 gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
 
-# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 8
-pool = Pool(num_of_processes)
-pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
-pool.close()
-pool.join()
-
-# # For single processor use
-# for tile in biomass_tile_list:
+# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# num_of_processes = 8
+# pool = Pool(num_of_processes)
+# pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
+# pool.close()
+# pool.join()
 #
-#     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
-
-print "Tiles processed. Uploading to s3 now..."
-uu.upload_final_set(cn.annual_gain_AGB_natrl_forest_dir, cn.pattern_annual_gain_AGB_natrl_forest)
-uu.upload_final_set(cn.annual_gain_BGB_natrl_forest_dir, cn.pattern_annual_gain_BGB_natrl_forest)
+# # # For single processor use
+# # for tile in biomass_tile_list:
+# #
+# #     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
+#
+# print "Tiles processed. Uploading to s3 now..."
+# uu.upload_final_set(cn.annual_gain_AGB_natrl_forest_dir, cn.pattern_annual_gain_AGB_natrl_forest)
+# uu.upload_final_set(cn.annual_gain_BGB_natrl_forest_dir, cn.pattern_annual_gain_BGB_natrl_forest)
