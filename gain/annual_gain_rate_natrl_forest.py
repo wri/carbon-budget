@@ -135,6 +135,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
 
         print mangrove_AGB
 
+        mangrove_AGB[mangrove_AGB == 5] = 0
+
         gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
         print gain_rate_AGB
