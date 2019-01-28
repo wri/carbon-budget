@@ -37,15 +37,46 @@ print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/5)
-pool.map(gain_year_count_mangrove.create_gain_year_count, mangrove_biomass_tile_list)
+pool = multiprocessing.Pool(count/2)
+pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
+pool.close()
+pool.join()
+
+pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_biomass_tile_list)
+pool.close()
+pool.join()
+
+pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_biomass_tile_list)
+pool.close()
+pool.join()
+
+pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
+pool.close()
+pool.join()
+
+pool = multiprocessing.Pool(count/6)
+pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
 # # For single processor use
 # for tile in mangrove_biomass_tile_list:
 #
-#     gain_year_count_mangrove.create_gain_year_count(tile)
+#     gain_year_count_mangrove.create_gain_year_count_loss_only(tile)
+#
+# for tile in mangrove_biomass_tile_list:
+#
+#     gain_year_count_mangrove.create_gain_year_count_gain_only(tile)
+#
+# for tile in mangrove_biomass_tile_list:
+#
+#     gain_year_count_mangrove.create_gain_year_count_no_change(tile)
+#
+# for tile in mangrove_biomass_tile_list:
+#     gain_year_count_mangrove.create_gain_year_count_loss_and_gain(tile)
+#
+# for tile in mangrove_biomass_tile_list:
+#     gain_year_count_mangrove.create_gain_year_count_merge(tile)
 
 # Intermediate output tiles for checking outputs
 uu.upload_final_set(cn.gain_year_count_mangrove_dir, "growth_years_loss_only")
