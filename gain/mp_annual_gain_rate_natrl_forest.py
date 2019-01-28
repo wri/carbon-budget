@@ -36,13 +36,13 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # for input in download_list:
 #     uu.s3_folder_download(input, '.')
 
-# # For copying individual tiles to spot machine for testing
-# for tile in biomass_tile_list:
-#
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.age_cat_natrl_forest_dir, tile, cn.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')
+# For copying individual tiles to spot machine for testing
+for tile in biomass_tile_list:
+
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.age_cat_natrl_forest_dir, tile, cn.pattern_age_cat_natrl_forest), '.')   # forest age category tiles
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')        # continents and FAO ecozones 2000
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')  # mangrove aboveground biomass
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
