@@ -127,19 +127,19 @@ def annual_gain_rate(tile_id, gain_table_dict):
         # Reclassifies mangrove biomass to 1 or 0 to make a mask of mangrove pixels.
         # Ultimately, only these pixels (ones with mangrove biomass) will get values.
 
-        gain_rate_AGB = np.ma.masked_where(mangrove_AGB > 0, gain_rate_AGB)
+        # gain_rate_AGB = np.ma.masked_where(mangrove_AGB > 0, gain_rate_AGB)
+
+        mangrove_AGB[mangrove_AGB == 0] = 1
+
+        print mangrove_AGB
+
+        mangrove_AGB[mangrove_AGB > 0] = 0
+
+        print mangrove_AGB
+
+        gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
         print gain_rate_AGB
-
-        # mangrove_AGB[mangrove_AGB == 0] = 1
-
-        # print mangrove_AGB[0][:20]
-
-        # mangrove_AGB[mangrove_AGB > 0] = 0
-
-        # print mangrove_AGB[0][:20]
-
-        # gain_rate_AGB = gain_rate_AGB * mangrove_AGB
 
 
     if os.path.exists(planted_forest_gain):
