@@ -42,23 +42,15 @@ for input in download_list:
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
 pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
-pool.close()
-pool.join()
 
 # Creates gain year count tiles using only pixels that had only gain
 pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_biomass_tile_list)
-pool.close()
-pool.join()
 
 # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
 pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_biomass_tile_list)
-pool.close()
-pool.join()
 
 # Creates gain year count tiles using only pixels that had both loss and gain pixels
 pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
-pool.close()
-pool.join()
 
 # Merges the four above gain year count tiles for each Hansen tile into a single output tile
 pool = multiprocessing.Pool(count/6)
