@@ -24,11 +24,11 @@ mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 print mangrove_biomass_tile_list
 print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
 
-# For downloading all tiles in the input folders
-download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
-
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# # For downloading all tiles in the input folders
+# download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
+#
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in mangrove_biomass_tile_list:
@@ -37,21 +37,22 @@ for input in download_list:
 #     u.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
-# Creates gain year count tiles using only pixels that had only loss
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
-pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
-
-# Creates gain year count tiles using only pixels that had only gain
-pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_biomass_tile_list)
-
-# Creates gain year count tiles using only pixels that had neither loss nor gain pixels
-pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_biomass_tile_list)
-
-# Creates gain year count tiles using only pixels that had both loss and gain pixels
-pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
+# # Creates gain year count tiles using only pixels that had only loss
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/3)
+# pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
+#
+# # Creates gain year count tiles using only pixels that had only gain
+# pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_biomass_tile_list)
+#
+# # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
+# pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_biomass_tile_list)
+#
+# # Creates gain year count tiles using only pixels that had both loss and gain pixels
+# pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
 
 # Merges the four above gain year count tiles for each Hansen tile into a single output tile
+count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/4)
 pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_biomass_tile_list)
 pool.close()
