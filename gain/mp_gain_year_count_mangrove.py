@@ -53,7 +53,7 @@ print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)
 
 # Merges the four above gain year count tiles for each Hansen tile into a single output tile
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/6)
+pool = multiprocessing.Pool(count/4)
 pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
