@@ -10,7 +10,6 @@
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the year count constants in constants_and_names.py must be changed.
 
 import multiprocessing
-import utilities
 import gain_year_count_mangrove
 import sys
 sys.path.append('../')
@@ -29,14 +28,14 @@ print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)
 download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
 
 for input in download_list:
-    utilities.s3_folder_download(input, '.')
+    uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in mangrove_biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
+#     u.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
 # Creates gain year count tiles using only pixels that had only loss
 count = multiprocessing.cpu_count()
@@ -53,22 +52,19 @@ pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_bio
 pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
 
 # Merges the four above gain year count tiles for each Hansen tile into a single output tile
-pool = multiprocessing.Pool(count/6)
+pool = multiprocessing.Pool(count/4)
 pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
 # # For single processor use
 # for tile in mangrove_biomass_tile_list:
-#
 #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile)
 #
 # for tile in mangrove_biomass_tile_list:
-#
 #     gain_year_count_mangrove.create_gain_year_count_gain_only(tile)
 #
 # for tile in mangrove_biomass_tile_list:
-#
 #     gain_year_count_mangrove.create_gain_year_count_no_change(tile)
 #
 # for tile in mangrove_biomass_tile_list:

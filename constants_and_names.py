@@ -164,13 +164,17 @@ cont_eco_zip = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_201809
 cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw/'
 cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed/'
 
+# Number of gain years for mangroves
+pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
+gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20190129/'
+
 # Number of gain years for non-mangrove natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'
 gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20181031/'
 
-# Number of gain years for mangroves
-pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
-gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20190128/'
+# Number of gain years for non-mangrove planted forests
+pattern_gain_year_count_planted_forest = 'gain_year_count_planted_forest'
+gain_year_count_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_planted_forest/20190129/'
 
 # Forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'

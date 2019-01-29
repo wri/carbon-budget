@@ -158,7 +158,7 @@ def create_gain_year_count_merge(tile_id):
 
     print "  Merging loss, gain, no change, and loss/gain pixels into single raster"
     age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove)
-    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
+    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'int16']
     subprocess.check_call(cmd)
 
     end = datetime.datetime.now()

@@ -280,7 +280,7 @@ def upload_chunk_set(upload_dir, pattern):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*'.format(pattern), '--recursive']
+    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern), '--recursive']
 
     try:
         subprocess.check_call(cmd)
