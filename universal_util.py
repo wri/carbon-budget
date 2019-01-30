@@ -12,17 +12,6 @@ d = datetime.datetime.today()
 date = d.strftime('%Y%m%d')
 
 
-# Makes a folder for tiles that have already been copied to s3
-def make_local_output_folder():
-
-    if not os.path.exists("./{}".format(cn.already_copied)):
-        # Folder that stores the completed output tiles that have already been copied to s3
-        os.mkdir("{}".format(cn.already_copied))
-
-    else:
-        print "Local output folder for tiles that have been copied to s3 already exists"
-
-
 # Creates chunks of tiles for processing
 def chunks(l, n):
     # Yield successive n-sized chunks from l

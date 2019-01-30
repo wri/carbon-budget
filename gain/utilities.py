@@ -102,6 +102,7 @@ def upload_final(upload_dir, tile_id, pattern):
 
 
 
+
 ##### Not currently using the below functions
 
 
@@ -139,3 +140,5 @@ def resample_00025(input_tif, resampled_tif):
     # resample to .00025
     cmd = ['gdal_translate', input_tif, resampled_tif, '-tr', '.00025', '.00025', '-co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
+
+

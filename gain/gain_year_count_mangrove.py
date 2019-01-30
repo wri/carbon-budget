@@ -44,7 +44,8 @@ def create_gain_year_count_loss_only(tile_id):
     loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
     loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
@@ -73,7 +74,8 @@ def create_gain_year_count_gain_only(tile_id):
     gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({}/2)'.format(cn.gain_years)
     gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg, '--NoDataValue=0',
+           '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
@@ -102,7 +104,8 @@ def create_gain_year_count_no_change(tile_id):
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, no_change_calc, no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, no_change_calc, no_change_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
@@ -131,7 +134,8 @@ def create_gain_year_count_loss_and_gain(tile_id):
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc, loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc, loss_and_gain_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
@@ -147,10 +151,7 @@ def create_gain_year_count_merge(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
-    # Then merges the rasters.
-    # In all rasters, 0 is NoData value.
-
+    # The four rasters from above that are to be merged
     loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
     gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
@@ -158,7 +159,8 @@ def create_gain_year_count_merge(tile_id):
 
     print "  Merging loss, gain, no change, and loss/gain pixels into single raster"
     age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove)
-    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'int16']
+    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
+           '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'int16']
     subprocess.check_call(cmd)
 
     end = datetime.datetime.now()
