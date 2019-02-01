@@ -84,6 +84,7 @@ def mask_biomass(tile_id):
                 mangrove_AGB[mangrove_AGB == nodata] = 1
                 mangrove_AGB[mangrove_AGB == 99] = nodata
 
+                # Casts the mangrove biomass mask array into int16 so that it can be combined with the WHRC int array
                 mangrove_AGB = mangrove_AGB.astype('int16')
 
                 # Applies the mask
@@ -113,8 +114,9 @@ def mask_biomass(tile_id):
     # s3 with the rest of the outputs.
     else:
 
-        os.rename(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
+        print "No mangrove or planted forest tile found for {}. Renaming tile to output pattern..."
 
+        os.rename(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
