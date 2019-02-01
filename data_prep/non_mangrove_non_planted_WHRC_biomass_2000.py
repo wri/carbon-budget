@@ -65,10 +65,7 @@ def mask_biomass(tile_id):
     for idx, window in windows:
 
         # Creates a processing window for each input raster
-        WHRC = WHRC_src.read(1, window=window)
-
-        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
-        WHRC_masked = WHRC.astype('float32')
+        WHRC_masked = WHRC_src.read(1, window=window)
 
         # If there is a mangrove tile, this masks the mangrove biomass pixels so that only non-mangrove pixels are output
         if os.path.exists(mangrove_biomass):
