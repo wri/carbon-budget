@@ -3,6 +3,7 @@
 import datetime
 import rasterio
 import os
+from shutil import copyfile
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -114,9 +115,9 @@ def mask_biomass(tile_id):
     # s3 with the rest of the outputs.
     else:
 
-        print "No mangrove or planted forest tile found for {}. Renaming tile to output pattern...".format(tile_id)
+        print "  No mangrove or planted forest tile found for {}. Renaming tile to output pattern...".format(tile_id)
 
-        os.rename(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
+        copyfile(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
 
     end = datetime.datetime.now()
     elapsed_time = end-start
