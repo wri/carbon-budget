@@ -18,7 +18,7 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # For downloading all tiles in the input folders.
 # Mangrove biomass and full-extent planted forests are used to mask out mangrove and planted forests from the natural forests.
-download_list = [cn.mangrove_biomass_2000_dir, cn.pattern_annual_gain_AGC_planted_forest_full_extent, cn.pattern_WHRC_biomass_2000]
+download_list = [cn.mangrove_biomass_2000_dir, cn.annual_gain_AGC_planted_forest_full_extent_dir, cn.WHRC_biomass_2000_full_extent_dir]
 
 for input in download_list:
     uu.s3_folder_download(input, '.')
