@@ -31,7 +31,7 @@ download_list = [cn.mangrove_biomass_2000_dir, cn.annual_gain_AGC_planted_forest
 
 # For multiprocessing
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
+pool = multiprocessing.Pool(count/2)
 pool.map(non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass, biomass_tile_list)
 pool.close()
 pool.join()
