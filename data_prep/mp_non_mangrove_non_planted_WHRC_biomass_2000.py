@@ -30,17 +30,17 @@ download_list = [cn.mangrove_biomass_2000_dir, cn.annual_gain_AGC_planted_forest
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_full_extent), '.')  # planted forest extent (not masked by mangroves)
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_dir, tile, cn.pattern_WHRC_biomass_2000), '.')  # planted forest extent (not masked by mangroves)
 
-# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
-pool.map(non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass, biomass_tile_list)
-pool.close()
-pool.join()
+# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/3)
+# pool.map(non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass, biomass_tile_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use
-# for tile in biomass_tile_list:
-#     non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass(tile)
+# For single processor use
+for tile in biomass_tile_list:
+    non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass(tile)
 
 print "Tiles processed. Uploading to s3 now..."
 uu.upload_final_set(cn.non_mang_non_planted_biomass_2000_dir, cn.pattern_non_mang_non_planted_biomass_2000)
