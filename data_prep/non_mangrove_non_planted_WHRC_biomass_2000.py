@@ -58,6 +58,7 @@ def mask_biomass(tile_id):
         kwargs.update(
             driver='GTiff',
             compress='lzw',
+            bits=10
         )
 
         # The output file, biomass masked by mangroves and planted forests
