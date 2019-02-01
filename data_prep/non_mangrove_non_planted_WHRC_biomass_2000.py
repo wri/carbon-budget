@@ -111,6 +111,8 @@ def mask_biomass(tile_id):
             # Writes the output window to the output file
             dst_WHRC.write_band(1, WHRC_masked, window=window)
 
+            sys.exit()
+
     # If no mangrove or planted forest tile was found, the original biomass tile is simply renamed so it can be copied to
     # s3 with the rest of the outputs.
     else:
