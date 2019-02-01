@@ -114,7 +114,7 @@ def mask_biomass(tile_id):
     # s3 with the rest of the outputs.
     else:
 
-        print "No mangrove or planted forest tile found for {}. Renaming tile to output pattern..."
+        print "No mangrove or planted forest tile found for {}. Renaming tile to output pattern...".format(tile_id)
 
         os.rename(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
 
