@@ -69,11 +69,15 @@ def mask_biomass(tile_id):
             # Creates a processing window the WHRC raster
             WHRC_masked = WHRC_src.read(1, window=window)
 
+            print WHRC_masked[0][:20]
+
             # If there is a mangrove tile, this masks the mangrove biomass pixels so that only non-mangrove pixels are output
             if os.path.exists(mangrove_biomass):
 
                 # Reads in the mangrove tile's window
                 mangrove_AGB = mangrove_src.read(1, window=window)
+
+                print mangrove_AGB[0][:20]
 
                 # Gets the NoData value of the mangrove biomass tile
                 nodata = uu.get_raster_nodata_value(mangrove_biomass)
@@ -85,11 +89,17 @@ def mask_biomass(tile_id):
                 mangrove_AGB[mangrove_AGB == nodata] = 1
                 mangrove_AGB[mangrove_AGB == 99] = nodata
 
+                print mangrove_AGB[0][:20]
+
                 # Casts the mangrove biomass mask array into int16 so that it can be combined with the WHRC int array
                 mangrove_AGB = mangrove_AGB.astype('byte')
 
+                print mangrove_AGB[0][:20]
+
                 # Applies the mask
                 WHRC_masked = WHRC_masked * mangrove_AGB
+
+                print WHRC_masked[0][:20]
 
             # If there is a planted forest tile, this masks the planted forest pixels so that only non-planted forest pixels
             # are output.
