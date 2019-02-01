@@ -22,11 +22,14 @@ def mask_biomass(tile_id):
     planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_unmasked)
 
     # Name of the output file
-    biomass_non_mang_non_planted = '{0}_{1}.tif'.format(tile_id, cn.pattern_non_mang_non_planted_biomass_2000)
+    WHRC_biomass_non_mang_non_planted = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
 
+    print "Checking if there are mangrove or planted forest tiles for", tile_id
+
+    # Doing this avoids unnecessarily processing biomass tiles
     if os.path.exists(mangrove_biomass) or os.path.exists(planted_forest_gain):
 
-        print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
+        print "  Mangrove or planted forest tiles found for {}. Masking WHRC biomass using them...".format(tile_id)
 
         # Opens the unmasked WHRC biomass 2000
         WHRC_src = rasterio.open(WHRC_biomass)
@@ -40,24 +43,24 @@ def mask_biomass(tile_id):
         # Checks whether there are mangrove or planted forest tiles. If so, they are opened.
         try:
             mangrove_src = rasterio.open(mangrove_biomass)
-            print "  Mangrove tile found for {}".format(tile_id)
+            print "    Mangrove tile found for {}".format(tile_id)
         except:
-            print "  No mangrove tile for {}".format(tile_id)
+            print "    No mangrove tile for {}".format(tile_id)
 
         try:
             planted_forest_src = rasterio.open(planted_forest_gain)
-            print "  Planted forest tile found for {}".format(tile_id)
+            print "    Planted forest tile found for {}".format(tile_id)
         except:
-            print "  No planted forest tile for {}".format(tile_id)
+            print "    No planted forest tile for {}".format(tile_id)
 
-        # Updates kwargs for the output dataset.
+        # Updates kwargs for the output dataset
         kwargs.update(
             driver='GTiff',
             compress='lzw',
         )
 
         # The output file, biomass masked by mangroves and planted forests
-        dst_WHRC = rasterio.open(biomass_non_mang_non_planted, 'w', **kwargs)
+        dst_WHRC = rasterio.open(WHRC_biomass_non_mang_non_planted, 'w', **kwargs)
 
         # Iterates across the windows (1 pixel strips) of the input tiles
         for idx, window in windows:
@@ -105,6 +108,13 @@ def mask_biomass(tile_id):
 
             # Writes the output window to the output file
             dst_WHRC.write_band(1, WHRC_masked, window=window)
+
+    # If no mangrove or planted forest tile was found, the original biomass tile is simply renamed so it can be copied to
+    # s3 with the rest of the outputs.
+    else:
+
+        os.rename(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
+
 
     end = datetime.datetime.now()
     elapsed_time = end-start

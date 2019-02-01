@@ -47,8 +47,8 @@ pattern_WHRC_biomass_2000_unmasked = "t_aboveground_biomass_ha_2000"
 WHRC_biomass_2000_unmasked_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Woods Hole aboveground biomass 2000 version 4 tiles without mangrove or planted forest pixels
-pattern_non_mang_non_planted_biomass_2000 = "t_aboveground_biomass_ha_2000_non_mangrove_non_planted"
-non_mang_non_planted_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/biomass_non_mangrove_non_planted'
+pattern_WHRC_biomass_2000_non_mang_non_planted = "t_aboveground_biomass_ha_2000_non_mangrove_non_planted"
+WHRC_biomass_2000_non_mang_non_planted_dir = 's3://gfw2-data/climate/carbon_model/biomass_non_mangrove_non_planted'
 
 # Raw Lola Fatoyinbo aboveground mangrove biomass in the year 2000 rasters
 mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'

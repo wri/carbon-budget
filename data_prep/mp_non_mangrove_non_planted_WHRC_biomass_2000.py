@@ -40,4 +40,4 @@ for tile in biomass_tile_list:
     non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass(tile)
 
 print "Tiles processed. Uploading to s3 now..."
-uu.upload_final_set(cn.non_mang_non_planted_biomass_2000_dir, cn.pattern_non_mang_non_planted_biomass_2000)
+uu.upload_final_set(cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
