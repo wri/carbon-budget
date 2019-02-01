@@ -83,6 +83,8 @@ def mask_biomass(tile_id):
             mangrove_AGB[mangrove_AGB == nodata] = 1
             mangrove_AGB[mangrove_AGB == 99] = nodata
 
+            mangrove_AGB = mangrove_AGB.astype('int16')
+
             # Applies the mask
             WHRC_masked = WHRC_masked * mangrove_AGB
 
@@ -98,6 +100,8 @@ def mask_biomass(tile_id):
             planted_forest[planted_forest > nodata] = 99
             planted_forest[planted_forest == nodata] = 1
             planted_forest[planted_forest == 99] = nodata
+
+            planted_forest = planted_forest.astype('int16')
 
             WHRC_masked = WHRC_masked * planted_forest
 
