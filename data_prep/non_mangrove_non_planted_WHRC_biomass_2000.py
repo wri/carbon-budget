@@ -86,7 +86,7 @@ def mask_biomass(tile_id):
                 mangrove_AGB[mangrove_AGB == 99] = nodata
 
                 # Casts the mangrove biomass mask array into int16 so that it can be combined with the WHRC int array
-                mangrove_AGB = mangrove_AGB.astype('int16')
+                mangrove_AGB = mangrove_AGB.astype('byte')
 
                 # Applies the mask
                 WHRC_masked = WHRC_masked * mangrove_AGB
