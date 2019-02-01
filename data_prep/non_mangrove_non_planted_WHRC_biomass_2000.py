@@ -123,11 +123,11 @@ def mask_biomass(tile_id):
 
             # sys.exit()
 
-    # If no mangrove or planted forest tile was found, the original biomass tile is simply renamed so it can be copied to
-    # s3 with the rest of the outputs.
+    # If no mangrove or planted forest tile was found, the original biomass tile is simply copied with a new name
+    # so it can be copied to s3 with the rest of the outputs.
     else:
 
-        print "  No mangrove or planted forest tile found for {}. Renaming tile to output pattern...".format(tile_id)
+        print "  No mangrove or planted forest tile found for {}. Copying tile with output pattern...".format(tile_id)
 
         copyfile(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
 
