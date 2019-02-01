@@ -18,7 +18,7 @@ def mask_biomass(tile_id):
     start = datetime.datetime.now()
 
     # Names of the forest age category, continent-ecozone, mangrove biomass, and planted forest tiles
-    WHRC_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000)
+    WHRC_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_full_extent)
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
 
