@@ -43,8 +43,8 @@ Hansen_res = 0.00025
 
 ## Biomass in 2000
 # Woods Hole aboveground biomass 2000 version 4 tiles
-pattern_WHRC_biomass_2000_full_extent = "t_aboveground_biomass_ha_2000"
-WHRC_biomass_2000_full_extent_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
+pattern_WHRC_biomass_2000_unmasked = "t_aboveground_biomass_ha_2000"
+WHRC_biomass_2000_unmasked_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Processed/'
 
 # Woods Hole aboveground biomass 2000 version 4 tiles without mangrove or planted forest pixels
 pattern_non_mang_non_planted_biomass_2000 = "t_aboveground_biomass_ha_2000_non_mangrove_non_planted"
@@ -144,8 +144,8 @@ pattern_annual_gain_BGB_mangrove = 'annual_gain_rate_BGB_t_ha_mangrove'
 annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_mangrove/20190116/'
 
 # Annual aboveground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
-pattern_annual_gain_AGC_planted_forest_full_extent = 'annual_gain_rate_AGC_t_ha_planted_forest_full_extent'
-annual_gain_AGC_planted_forest_full_extent_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGC_planted_forest_full_extent/20190124/'
+pattern_annual_gain_AGC_planted_forest_unmasked = 'annual_gain_rate_AGC_t_ha_planted_forest_unmasked'
+annual_gain_AGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGC_planted_forest_unmasked/20190124/'
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
