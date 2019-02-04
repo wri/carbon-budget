@@ -52,7 +52,7 @@ CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry)
 import plantation_preparation
 from multiprocessing.pool import Pool
 from functools import partial
-from glob import glob
+import glob
 import subprocess
 import argparse
 import os
@@ -153,7 +153,7 @@ def main ():
 
         gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))
         print gadm
-        
+
         dbf = Dbf5(gadm)
         df = dbf.to_dataframe()
 
