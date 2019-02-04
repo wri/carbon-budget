@@ -67,14 +67,16 @@ def main ():
 
     parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
     parser.add_argument('--gadm-tile-index', '-gi',
-                        help='shapefile of 1x1 degree tiles of GADM country boundaries that contain planted forests')
+                        help='directory with shapefile of 1x1 degree tiles of GADM country boundaries that contain planted forests')
     parser.add_argument('--planted-tile-index', '-pi',
-                        help='shapefile of 1x1 degree tiles of that contain planted forests')
+                        help='directory with shapefile of 1x1 degree tiles of that contain planted forests')
     args = parser.parse_args()
 
     list_1x1 = []
 
     if args.gadm_tile_index is None:
+
+        print "No GADM 1x1 tile index shapefile provided. Creating 1x1 GADM tiles from scratch..."
 
         # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
         total_tile_list = uu.tile_list(cn.pixel_area_dir)
@@ -143,10 +145,12 @@ def main ():
 
     else:
 
+        print "GADM 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles..."
+
         cmd = ['aws', 's3', 'cp', args.gadm_tile_index, '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
         subprocess.check_call(cmd)
 
-        dbf = Dbf5('{}.dbf'.format(cn.pattern_gadm_1x1_index))
+        dbf = Dbf5('{}*.dbf'.format(cn.pattern_gadm_1x1_index))
         df = dbf.to_dataframe()
 
         list_1x1 = df['location'].tolist()
