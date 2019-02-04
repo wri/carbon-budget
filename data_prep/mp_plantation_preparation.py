@@ -151,7 +151,7 @@ def main ():
         cmd = ['aws', 's3', 'cp', args.gadm_tile_index, '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
         subprocess.check_call(cmd)
 
-        gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))
+        gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
         print gadm
 
         dbf = Dbf5(gadm)
