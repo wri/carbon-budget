@@ -160,6 +160,7 @@ def main ():
         print df.head()
 
         list_1x1 = df['location'].tolist()
+        list_1x1 = [str(y) for y in list_1x1]
         print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
         print len(list_1x1)
 
