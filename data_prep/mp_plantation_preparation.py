@@ -152,17 +152,14 @@ def main ():
         subprocess.check_call(cmd)
 
         gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
-        print gadm
 
         dbf = Dbf5(gadm)
         df = dbf.to_dataframe()
 
-        print df.head()
-
         list_1x1 = df['location'].tolist()
         list_1x1 = [str(y) for y in list_1x1]
         print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
-        print len(list_1x1)
+        print "There are", len(list_1x1), "1x1 GADM tiles to iterate through."
 
     # Creates 1x1 degree tiles of plantation growth wherever there are plantations
     # For multiprocessor use
