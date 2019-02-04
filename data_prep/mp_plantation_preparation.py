@@ -156,8 +156,9 @@ def main ():
 
         dbf = Dbf5(gadm)
         df = dbf.to_dataframe()
+        df2 = [str(y) for y in df]
 
-        print df.head()
+        print df2.head()
 
         list_1x1 = df['location'].tolist()
         print "List of 1x1 degree tiles in GADM countries that have planted forests, with defining coordinate in the northwest corner:", list_1x1
