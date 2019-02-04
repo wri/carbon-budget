@@ -52,6 +52,7 @@ CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry)
 import plantation_preparation
 from multiprocessing.pool import Pool
 from functools import partial
+from glob import glob
 import subprocess
 import argparse
 import os
@@ -150,7 +151,10 @@ def main ():
         cmd = ['aws', 's3', 'cp', args.gadm_tile_index, '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
         subprocess.check_call(cmd)
 
-        dbf = Dbf5('{}*.dbf'.format(cn.pattern_gadm_1x1_index))
+        gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))
+        print gadm
+        
+        dbf = Dbf5(gadm)
         df = dbf.to_dataframe()
 
         list_1x1 = df['location'].tolist()
