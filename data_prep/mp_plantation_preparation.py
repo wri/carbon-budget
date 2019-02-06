@@ -109,22 +109,12 @@ def main ():
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
-    print gadm_index_path
-    print gadm_index_shp
-    print planted_index_path
-    print planted_index_shp
-
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
-
         raise Exception('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
-
-    else:
-
-        print "Arguments acceptable"
 
     # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
     total_tile_list = uu.tile_list(cn.pixel_area_dir)
-    print len(total_tile_list)
+    print "Number of possible 10x10 tiles to evaluate:", len(total_tile_list)
 
     # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
     # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
@@ -139,7 +129,7 @@ def main ():
     # planted_lat_tile_list = ['10N_080W']
 
     print planted_lat_tile_list
-    print len(planted_lat_tile_list)
+    print "Number of 10x10 tiles to evaluate after extreme latitudes have been removed:", len(planted_lat_tile_list)
 
     if 'None' in args.planted_tile_index:
 
