@@ -190,6 +190,9 @@ def main ():
 
             print "GADM 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles..."
 
+            print gadm_index_path
+            print gadm_index_shp
+
             cmd = ['aws', 's3', 'cp', gadm_index_path, '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp), '--recursive']
             subprocess.check_call(cmd)
 
