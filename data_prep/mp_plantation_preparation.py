@@ -94,16 +94,16 @@ def main ():
 
     parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
     parser.add_argument('--gadm-tile-index', '-gi', required=True,
-                        help='shapefile of 1x1 degree tiles of GADM country boundaries that contain planted forests. If no shapefile, write None.')
+                        help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
     parser.add_argument('--planted-tile-index', '-pi', required=True,
-                        help='shapefile of 1x1 degree tiles of that contain planted forests. If no shapefile, write None.')
+                        help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
     args = parser.parse_args()
 
+    # Creates the directory and shapefiles names for the two arguments (index shapefiles)
     gadm_index = os.path.split(args.gadm_tile_index)
     gadm_index_path = gadm_index[0]
     gadm_index_shp = gadm_index[1]
     gadm_index_shp = gadm_index_shp[:-4]
-
     planted_index = os.path.split(args.planted_tile_index)
     planted_index_path = planted_index[0]
     planted_index_shp = planted_index[1]
@@ -212,7 +212,7 @@ def main ():
 
         # Creates 1x1 degree tiles of plantation growth wherever there are plantations
         # For multiprocessor use
-        num_of_processes = 25
+        num_of_processes = 30
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
         pool.close()
@@ -249,7 +249,7 @@ def main ():
 
         #
         # For multiprocessor use
-        num_of_processes = 25
+        num_of_processes = 30
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_planted, planted_list_1x1)
         pool.close()
