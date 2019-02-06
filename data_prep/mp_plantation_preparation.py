@@ -67,6 +67,9 @@ while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
 CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
+
+# Install a Python package that is needed for certain processing routes below
+sudo pip install simpledbf
 """
 
 import plantation_preparation
@@ -102,6 +105,8 @@ def main ():
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
+    print gadm_index
+    print planted_index
     print gadm_index_path
     print gadm_index_shp
     print planted_index_path
