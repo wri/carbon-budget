@@ -7,8 +7,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Creates 1x1 tiles of where select countries are in select latitude bands, with the defining coordinates in the
-# northwest corner
+# Creates 1x1 tiles of the extent of select countries are in select latitude bands, with the defining coordinates of each tile
+# in the northwest corner
 def rasterize_gadm_1x1(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
@@ -19,7 +19,7 @@ def rasterize_gadm_1x1(tile_id):
     x_size = abs(int(xmin) - int(xmax))
     y_size = abs(int(ymin) - int(ymax))
 
-    # Iterates through tile by 1x1 degree
+    # Iterates through input 10x10 tile by 1x1 degree
     for x in range(x_size):
 
         xmin_1x1 = int(xmin) + x
@@ -52,7 +52,11 @@ def rasterize_gadm_1x1(tile_id):
                 os.remove(tile_1x1)
 
 
-# Creates a list of 1x1 degree tiles, with the defining coordinate in the northwest corner
+# Creates 1x1 degree tiles for the entire extent of planted forest using the supplied growth rates
+# (defining coordinate in the northwest corner of the tile).
+# Because this iterates through all 1x1 tiles in countries with planted forests, it first checks
+# whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
+# 1x1 country extent tile.
 def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
     # Gets the bounding coordinates for the 1x1 degree tile
@@ -101,7 +105,11 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
         print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
 
-# Creates a list of 1x1 degree tiles, with the defining coordinate in the northwest corner
+# Creates 1x1 degree tiles for the entire extent of planted forest using the supplied growth rates
+# (defining coordinate in the northwest corner of the tile).
+# Because this iterates through only 1x1 tiles that are known to have planted forests (from a previous run
+# of this script), it does not need to check whether there are planted forests in this tile. It goes directly
+# to intersecting the planted forest table with the 1x1 tile.
 def create_1x1_plantation_from_1x1_planted(tile_1x1):
 
     # Gets the bounding coordinates for the 1x1 degree tile
@@ -128,7 +136,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_unmasked)
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
@@ -141,7 +149,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     if stats[0] > 0:
 
         print "  Data found in {}. Copying tile to s3...".format(tile_id)
-        uu.upload_final(cn.annual_gain_AGC_planted_forest_unmasked_dir, tile_id, cn.pattern_annual_gain_AGC_planted_forest_unmasked)
+        uu.upload_final(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
         print "    Tile converted and copied to s3"
 
     else:
