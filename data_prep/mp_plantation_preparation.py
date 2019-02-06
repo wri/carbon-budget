@@ -55,11 +55,15 @@ psql
 # Delete all rows from the table so that it is now empty
 DELETE FROM all_plant;
 
+# Exit the PostGIS shell
+\q
+
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
 ogrinfo plantations_v1_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
-# Make sure all the country tables are listed in the txt
+# Make sure all the country tables are listed in the txt, then exit it
 more out.txt
+q
 
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
 while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v1_1.gdb -nln all_plant -progress -append -sql "SELECT growth FROM $p"; done < out.txt
@@ -105,12 +109,14 @@ def main ():
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
-    print gadm_index
-    print planted_index
     print gadm_index_path
     print gadm_index_shp
     print planted_index_path
     print planted_index_shp
+
+    if gadm_index_path not in cn.gadm_plant_1x1_index_dir & planted_index_path not in cn.gadm_plant_1x1_index_dir:
+
+        raise Exception('Invalid inputs. Please provide None or shapefile locations on s3 for each argument.')
 
     # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
     total_tile_list = uu.tile_list(cn.pixel_area_dir)
