@@ -51,8 +51,9 @@ def rasterize_gadm_1x1(tile_id):
                 print "  No data found in {}. Deleting.".format(tile_1x1)
                 os.remove(tile_1x1)
 
+
 # Creates a list of 1x1 degree tiles, with the defining coordinate in the northwest corner
-def create_1x1_plantation(tile_1x1):
+def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
     # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
@@ -100,6 +101,26 @@ def create_1x1_plantation(tile_1x1):
         print "There are no plantations in {}. Not converting to raster.".format(tile_1x1)
 
 
+# Creates a list of 1x1 degree tiles, with the defining coordinate in the northwest corner
+def create_1x1_plantation_from_1x1_planted(tile_1x1):
+
+    # Gets the bounding coordinates for the 1x1 degree tile
+    coords = tile_1x1.split("_")
+    print coords
+    xmin_1x1 = str(coords[2])[:-4]
+    xmax_1x1 = int(xmin_1x1) + 1
+    ymax_1x1 = int(coords[1])
+    ymin_1x1 = ymax_1x1 - 1
+
+    print "For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
+
+    print "There are plantations in {}. Converting to raster...".format(tile_1x1)
+
+    # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
+    cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+    subprocess.check_call(cmd)
+
+
 # Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
 def create_10x10_plantation(tile_id, plant_1x1_vrt):
 
@@ -107,7 +128,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_unmasked)
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
@@ -120,7 +141,7 @@ def create_10x10_plantation(tile_id, plant_1x1_vrt):
     if stats[0] > 0:
 
         print "  Data found in {}. Copying tile to s3...".format(tile_id)
-        uu.upload_final(cn.annual_gain_AGC_planted_forest_dir, tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
+        uu.upload_final(cn.annual_gain_AGC_planted_forest_unmasked_dir, tile_id, cn.pattern_annual_gain_AGC_planted_forest_unmasked)
         print "    Tile converted and copied to s3"
 
     else:
