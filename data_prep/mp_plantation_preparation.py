@@ -114,7 +114,8 @@ def main ():
     print planted_index_path
     print planted_index_shp
 
-    if gadm_index_path not in cn.gadm_plant_1x1_index_dir & planted_index_path not in cn.gadm_plant_1x1_index_dir:
+    if gadm_index_path not in cn.gadm_plant_1x1_index_dir:
+    # if gadm_index_path not in cn.gadm_plant_1x1_index_dir & planted_index_path not in cn.gadm_plant_1x1_index_dir:
 
         raise Exception('Invalid inputs. Please provide None or shapefile locations on s3 for each argument.')
 
