@@ -115,9 +115,12 @@ def main ():
     print planted_index_shp
 
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir and planted_index_path not in cn.gadm_plant_1x1_index_dir):
-    # if gadm_index_path not in cn.gadm_plant_1x1_index_dir & planted_index_path not in cn.gadm_plant_1x1_index_dir:
 
-        raise Exception('Invalid inputs. Please provide None or shapefile locations on s3 for each argument.')
+        raise Exception('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
+
+    else:
+
+        print "Arguments acceptable"
 
     # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
     total_tile_list = uu.tile_list(cn.pixel_area_dir)
