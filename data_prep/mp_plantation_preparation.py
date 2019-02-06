@@ -193,7 +193,7 @@ def main ():
             print gadm_index_path
             print gadm_index_shp
 
-            cmd = ['aws', 's3', 'cp', gadm_index_path, '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp), '--recursive']
+            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp), '--recursive']
             subprocess.check_call(cmd)
 
             gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
@@ -233,7 +233,7 @@ def main ():
 
         print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth tiles..."
 
-        cmd = ['aws', 's3', 'cp', planted_index_path, '.', '--recursive', '--exclude', '*', '--include',
+        cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), '.', '--recursive', '--exclude', '*', '--include',
                '{}*'.format(planted_index_shp), '--recursive']
         subprocess.check_call(cmd)
 
