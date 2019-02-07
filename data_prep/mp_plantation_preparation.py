@@ -31,7 +31,8 @@
 # All entry points conclude with creating 10x10 degree tiles of planted forest growth rates from 1x1 tiles of planted
 # forest growth rates. This entry point is accessed by providing the s3 location of the index shapefile of the 1x1
 # planted forest extent tiles,
-# e.g., mp_plantation_preparation.py None s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+# e.g., python mp_plantation_preparation.py None s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+# e.g., python mp_plantation_preparation.py --gadm-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp --planted-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
 
 """
 ### Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
@@ -75,6 +76,7 @@ while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
 CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
+\q
 
 # Install a Python package that is needed for certain processing routes below
 sudo pip install simpledbf
@@ -269,7 +271,7 @@ def main ():
         planted_list_1x1 = df['location'].tolist()
         planted_list_1x1 = [str(y) for y in planted_list_1x1]
         print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1
-        print "There are", len(planted_list_1x1), "1x1 GADM tiles to iterate through."
+        print "There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through."
 
         # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
         # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
@@ -277,7 +279,7 @@ def main ():
         # to intersecting the planted forest table with the 1x1 tile.
         # For multiprocessor use
         # This works with 30 processors on an r4.16xlarge.
-        num_of_processes = 30
+        num_of_processes = 40
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_planted, planted_list_1x1)
         pool.close()
