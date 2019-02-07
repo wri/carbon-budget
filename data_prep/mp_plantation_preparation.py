@@ -279,7 +279,7 @@ def main ():
         # to intersecting the planted forest table with the 1x1 tile.
         # For multiprocessor use
         # This works with 30 processors on an r4.16xlarge.
-        num_of_processes = 40
+        num_of_processes = 50
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_planted, planted_list_1x1)
         pool.close()
