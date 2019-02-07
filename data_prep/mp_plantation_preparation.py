@@ -180,7 +180,7 @@ def main ():
             cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
             subprocess.check_call(cmd)
 
-            # # Saves the 1x1 GADM tiles to s3
+            # # Saves the 1x1 country extent tiles to s3
             # # Only use if the entire process can't run in one go on the spot machine
             # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
             # subprocess.check_call(cmd)
@@ -276,6 +276,7 @@ def main ():
         # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
         # to intersecting the planted forest table with the 1x1 tile.
         # For multiprocessor use
+        # This works with 30 processors on an r4.16xlarge.
         num_of_processes = 30
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_planted, planted_list_1x1)
