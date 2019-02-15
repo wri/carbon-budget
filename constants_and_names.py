@@ -51,12 +51,12 @@ pattern_WHRC_biomass_2000_non_mang_non_planted = "t_aboveground_biomass_ha_2000_
 WHRC_biomass_2000_non_mang_non_planted_dir = 's3://gfw2-data/climate/carbon_model/biomass_non_mangrove_non_planted/20190201/'
 
 # Raw Lola Fatoyinbo aboveground mangrove biomass in the year 2000 rasters
-mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Lola_Fatoyinbo_20180911/'
-mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_WRI.zip'
+mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Nathan_Thomas_20190214/'
+mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2.zip'
 
 # Processed mangrove aboveground biomass in the year 2000
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
-mangrove_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20181226/'
+mangrove_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20190214/'
 
 ## Biomass in the year of emission
 base_biomass_emitted_dir = 's3://gfw2-data/climate/carbon_model/emitted_biomass/20181226/'
