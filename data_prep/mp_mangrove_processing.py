@@ -34,7 +34,7 @@ print total_tile_list
 # This script didn't work with count/4; perhaps that was using too many processors.
 # It did work with count/5, though.
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/5)
+pool = multiprocessing.Pool(processes=count/4)
 pool.map(mangrove_processing.create_mangrove_tiles, total_tile_list)
 
 # # For single processor use, for testing purposes
