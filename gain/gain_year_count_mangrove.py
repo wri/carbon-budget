@@ -12,6 +12,7 @@ import datetime
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 # Gets the names of the input tiles
 def tile_names(tile_id):
@@ -50,8 +51,8 @@ def create_gain_year_count_loss_only(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
     print "Processing time for tile", tile_id, ":", elapsed_time
+    uu.count_completed_tiles('growth_years_loss_only')
 
 
 # Creates gain year count tiles for pixels that only had gain
@@ -80,8 +81,8 @@ def create_gain_year_count_gain_only(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
     print "Processing time for tile", tile_id, ":", elapsed_time
+    uu.count_completed_tiles('growth_years_gain_only')
 
 # Creates gain year count tiles for pixels that had neither loss not gain
 def create_gain_year_count_no_change(tile_id):
@@ -110,8 +111,8 @@ def create_gain_year_count_no_change(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
     print "Processing time for tile", tile_id, ":", elapsed_time
+    uu.count_completed_tiles('growth_years_no_change')
 
 
 # Creates gain year count tiles for pixels that had both loss and gain
@@ -140,8 +141,8 @@ def create_gain_year_count_loss_and_gain(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
     print "Processing time for tile", tile_id, ":", elapsed_time
+    uu.count_completed_tiles('growth_years_loss_and_gain')
 
 # Merges the four gain year count tiles above to create a single gain year count tile
 def create_gain_year_count_merge(tile_id):
@@ -165,5 +166,5 @@ def create_gain_year_count_merge(tile_id):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
     print "Processing time for tile", tile_id, ":", elapsed_time
+    uu.count_completed_tiles(cn.pattern_gain_year_count_mangrove)
