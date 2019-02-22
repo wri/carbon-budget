@@ -15,13 +15,15 @@ import universal_util as uu
 
 pd.options.mode.chained_assignment = None
 
-# Lists the mangrove biomass tiles instead of the general tree biomass tiles because
-# there are many fewer mangrove biomass tiles (88 vs 315)
+# Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
+# calculating mangrove gain
 mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
-# mangrove_biomass_tile_list = ['10N_080W', '00N_110E'] # test tiles
-# mangrove_biomass_tile_list = ['10N_080W'] # test tiles
-print mangrove_biomass_tile_list
-print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
+ecozone_tile_list = uu.tile_list(cn.fao_ecozone_processed_dir)
+mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
+# mangrove_ecozone_list = ['10N_080W', '00N_110E'] # test tiles
+# mangrove_ecozone_list = ['10N_080W'] # test tiles
+print mangrove_ecozone_list
+print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
@@ -30,7 +32,7 @@ for input in download_list:
     uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
@@ -78,12 +80,12 @@ gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems
 # So I tried using 8 processors instead, which works. I don't know what the highest number of processors would be.
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_biomass_tile_list)
+pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_ecozone_list)
 pool.close()
 pool.join()
 
 # # For single processor use
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #
 #     annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
 

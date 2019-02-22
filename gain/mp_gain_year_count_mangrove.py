@@ -16,13 +16,15 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Lists the mangrove biomass tiles instead of the general tree biomass tiles because
-# there are many fewer mangrove biomass tiles (86 vs 280)
+# Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
+# calculating mangrove gain
 mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
-# mangrove_biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-# mangrove_biomass_tile_list = ['10N_080W'] # test tiles
-print mangrove_biomass_tile_list
-print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
+ecozone_tile_list = uu.tile_list(cn.fao_ecozone_processed_dir)
+mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
+# mangrove_ecozone_list = ['20S_110E', '30S_110E'] # test tiles
+# mangrove_ecozone_list = ['10N_080W'] # test tiles
+print mangrove_ecozone_list
+print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
@@ -31,7 +33,7 @@ for input in download_list:
     uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to s3 for testing
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
@@ -40,40 +42,40 @@ for input in download_list:
 # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
-pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
+pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_ecozone_list)
 
 # Creates gain year count tiles using only pixels that had only gain
-pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_biomass_tile_list)
+pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only, mangrove_ecozone_list)
 
 # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
-pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_biomass_tile_list)
+pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_ecozone_list)
 
 # Creates gain year count tiles using only pixels that had both loss and gain pixels
-pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_biomass_tile_list)
+pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain, mangrove_ecozone_list)
 
 # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
 # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
 # (e.g., about 450 GB out of 480 GB).
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/6)
-pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_biomass_tile_list)
+pool.map(gain_year_count_mangrove.create_gain_year_count_merge, mangrove_ecozone_list)
 pool.close()
 pool.join()
 
 # # For single processor use
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile)
 #
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #     gain_year_count_mangrove.create_gain_year_count_gain_only(tile)
 #
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #     gain_year_count_mangrove.create_gain_year_count_no_change(tile)
 #
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #     gain_year_count_mangrove.create_gain_year_count_loss_and_gain(tile)
 #
-# for tile in mangrove_biomass_tile_list:
+# for tile in mangrove_ecozone_list:
 #     gain_year_count_mangrove.create_gain_year_count_merge(tile)
 
 # Intermediate output tiles for checking outputs
