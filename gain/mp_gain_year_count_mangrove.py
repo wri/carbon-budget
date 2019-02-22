@@ -37,7 +37,7 @@ for input in download_list:
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
-# Creates gain year count tiles using only pixels that had only loss
+# Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
 pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_biomass_tile_list)
