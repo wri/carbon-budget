@@ -76,7 +76,7 @@ gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems
 # This script didn't work calling 16 processors on an m4.16xlarge because when it tried uploading the output tiles to s3
 # simultaneously (the first set of tiles finished simultaneously) it couldn't upload them, perhaps because the upload channel got clogged.
 # So I tried using 8 processors instead, which works. I don't know what the highest number of processors would be.
-num_of_processes = 16
+num_of_processes = 20
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_biomass_tile_list)
 pool.close()
