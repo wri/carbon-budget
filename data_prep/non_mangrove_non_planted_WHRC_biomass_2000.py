@@ -20,7 +20,7 @@ def mask_biomass(tile_id):
     # Names of the input files
     WHRC_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_unmasked)
+    planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
 
     # Name of the output file
     WHRC_biomass_non_mang_non_planted = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
