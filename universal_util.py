@@ -122,30 +122,30 @@ def tile_list_spot_machine(source, pattern):
     return file_list
 
 # Creates a list of all biomass 2000 tiles-- those from WHRC and those only in the mangrove set
-def create_combined_biomass_tile_list(WHRC, mangrove):
+def create_combined_tile_list(set1, set2):
 
     print "Making a combined biomass tile list..."
 
-    out = subprocess.Popen(['aws', 's3', 'ls', WHRC], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['aws', 's3', 'ls', set1], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
     # Writes the output string to a text file for easier interpretation
-    biomass_tiles = open("natrl_forest_biomass_tiles.txt", "w")
-    biomass_tiles.write(stdout)
-    biomass_tiles.close()
+    set1_tiles = open("set1.txt", "w")
+    set1_tiles.write(stdout)
+    set1_tiles.close()
 
-    out = subprocess.Popen(['aws', 's3', 'ls', mangrove], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['aws', 's3', 'ls', set2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout2, stderr2 = out.communicate()
     # Writes the output string to a text file for easier interpretation
-    biomass_tiles = open("mangrove_biomass_tiles.txt", "w")
-    biomass_tiles.write(stdout2)
-    biomass_tiles.close()
+    set2_tiles = open("set2.txt", "w")
+    set2_tiles.write(stdout2)
+    set2_tiles.close()
 
     # Empty lists for filling with biomass tile ids
-    file_list_natrl = []
-    file_list_mangrove = []
+    file_list_set1 = []
+    file_list_set2 = []
 
     # Iterates through the Woods Hole biomass text file to get the names of the tiles and appends them to list
-    with open("natrl_forest_biomass_tiles.txt", 'r') as tile:
+    with open("set1.txt", 'r') as tile:
 
         for line in tile:
             num = len(line.strip('\n').split(" "))
@@ -155,10 +155,10 @@ def create_combined_biomass_tile_list(WHRC, mangrove):
             if '.tif' in tile_name:
 
                 tile_id = get_tile_id(tile_name)
-                file_list_natrl.append(tile_id)
+                file_list_set1.append(tile_id)
 
     # Iterates through the mangrove biomass text file to get the names of the tiles and appends them to list
-    with open("mangrove_biomass_tiles.txt", 'r') as tile:
+    with open("set2.txt", 'r') as tile:
 
         for line in tile:
             num = len(line.strip('\n').split(" "))
@@ -168,10 +168,10 @@ def create_combined_biomass_tile_list(WHRC, mangrove):
             if '.tif' in tile_name:
 
                 tile_id = get_tile_id(tile_name)
-                file_list_natrl.append(tile_id)
+                file_list_set2.append(tile_id)
 
     # Combines Woods Hole and mangrove biomass tile lists
-    all_tiles = file_list_natrl + file_list_mangrove
+    all_tiles = file_list_set1 + file_list_set2
 
     # Tile list with tiles found in both lists removed, so only the unique tiles remain
     unique_tiles = list(set(all_tiles))
@@ -185,14 +185,14 @@ def create_combined_biomass_tile_list(WHRC, mangrove):
     # Converts the pandas dataframe to a Python list so that it can be written to a txt
     unique_tiles_ordered_list = df.tile_id.tolist()
 
-    # Writes the biomass tile list to a txt
-    with open(cn.pattern_biomass_tile_list, 'w') as f:
-        for item in unique_tiles_ordered_list:
-            f.write("%s, " % item)
-
-    # Copies that list to s3
-    cmd = ['aws', 's3', 'cp', cn.pattern_biomass_tile_list, '{0}{1}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list)]
-    subprocess.check_call(cmd)
+    # # Writes the biomass tile list to a txt
+    # with open(cn.pattern_biomass_tile_list, 'w') as f:
+    #     for item in unique_tiles_ordered_list:
+    #         f.write("%s, " % item)
+    #
+    # # Copies that list to s3
+    # cmd = ['aws', 's3', 'cp', cn.pattern_biomass_tile_list, '{0}{1}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list)]
+    # subprocess.check_call(cmd)
 
     os.remove("natrl_forest_biomass_tiles.txt")
     os.remove("mangrove_biomass_tiles.txt")
