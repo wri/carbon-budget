@@ -29,7 +29,7 @@ for input in download_list:
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_planted_forest_unmasked), '.')  # planted forest extent (not masked by mangroves)
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.')   # WHRC biomass 2000 not masked by anything
 
-# For multiprocessing. Works with 27 processors on a r4.16xlarge machine.
+# For multiprocessing. count/3 works on an r4.16xlarge machine
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
 pool.map(non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass, biomass_tile_list)
