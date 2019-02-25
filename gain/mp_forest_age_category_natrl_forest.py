@@ -1,4 +1,4 @@
-### This script creates tiles of natural non-mangrove forest age category according to a decision tree.
+### This script creates tiles of non-planted, non-mangrove forest age category according to a decision tree.
 ### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
 ### The decision tree uses several input tiles, including IFL status, gain, and loss.
 ### Downloading all of these tiles can take awhile.
@@ -28,11 +28,11 @@ biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
-# For downloading all tiles in the folders
-download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
-
-for input in download_list:
-    utilities.s3_folder_download(input, '.')
+# # For downloading all tiles in the folders
+# download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
+#
+# for input in download_list:
+#     utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
