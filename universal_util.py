@@ -170,7 +170,7 @@ def create_combined_tile_list(set1, set2):
                 tile_id = get_tile_id(tile_name)
                 file_list_set2.append(tile_id)
 
-    # Combines Woods Hole and mangrove biomass tile lists
+    # Combines both tile lists
     all_tiles = file_list_set1 + file_list_set2
 
     # Tile list with tiles found in both lists removed, so only the unique tiles remain
@@ -194,8 +194,8 @@ def create_combined_tile_list(set1, set2):
     # cmd = ['aws', 's3', 'cp', cn.pattern_biomass_tile_list, '{0}{1}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list)]
     # subprocess.check_call(cmd)
 
-    os.remove("natrl_forest_biomass_tiles.txt")
-    os.remove("mangrove_biomass_tiles.txt")
+    os.remove("set1.txt")
+    os.remove("set2.txt")
 
     return unique_tiles_ordered_list
 
