@@ -1,4 +1,5 @@
-###
+### Masks out mangrove and planted forest pixels from WHRC biomass 2000 raster so that
+### only non-mangrove, non-planted forest pixels are left of the WHRC biomass 2000 raster
 
 import datetime
 import rasterio
