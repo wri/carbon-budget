@@ -19,7 +19,7 @@ import universal_util as uu
 # Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
 # calculating mangrove gain
 mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
-ecozone_tile_list = uu.tile_list(cn.fao_ecozone_processed_dir)
+ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
 mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 # mangrove_ecozone_list = ['20S_110E', '30S_110E'] # test tiles
 # mangrove_ecozone_list = ['10N_080W'] # test tiles
