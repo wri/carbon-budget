@@ -22,14 +22,14 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
+biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # For downloading all tiles in the folders
-download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.natrl_forest_biomass_2000_dir, cn.cont_eco_dir]
+download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
 
 # for input in download_list:
 #     utilities.s3_folder_download(input, '.')

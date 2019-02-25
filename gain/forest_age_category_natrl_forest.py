@@ -42,7 +42,7 @@ def forest_age_category(tile_id, gain_table_dict):
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     ifl = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
-    biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
+    biomass = '{0}_{1}.tif'.format(tile_id, cn.WHRC_biomass_2000_non_mang_non_planted_dir)
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
     print "  Reading input files and evaluating conditions"
@@ -130,8 +130,8 @@ def forest_age_category(tile_id, gain_table_dict):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
-
     print "Processing time for tile", tile_id, ":", elapsed_time
+    uu.count_completed_tiles(cn.pattern_age_cat_natrl_forest)
 
 
 

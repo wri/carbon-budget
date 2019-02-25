@@ -8,8 +8,9 @@ import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
-def annual_gain_rate(tile_id):
+def mask_mangroves(tile_id):
 
     print "Processing:", tile_id
 
@@ -17,7 +18,7 @@ def annual_gain_rate(tile_id):
     start = datetime.datetime.now()
 
     # Names of the forest age category, continent-ecozone, and mangrove biomass tiles
-    planted_forest_full_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_planted_forest_full_extent)
+    planted_forest_full_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
     # Name of the output planted forest gain rate tile, with mangroves masked out
@@ -48,6 +49,15 @@ def annual_gain_rate(tile_id):
     else:
 
         os.rename(planted_forest_full_extent, planted_forest_no_mangrove)
+
+
+def create_AGB_rate(tile_id):
+
+    # Calculates aboveground biomass gain rate from aboveground carbon gain rate
+    print "  Creating aboveground biomass gain rate for tile {}".format(tile_id)
+
+
+def create_BGB_rate(tile_id):
 
     # Calculates belowground biomass rate from aboveground biomass rate
     print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
