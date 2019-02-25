@@ -109,21 +109,21 @@ def forest_age_category(tile_id, gain_table_dict):
 
                                     if tropics == 1:
 
-                                        dst_data[np.where((biomass > 0) &(tcd > 0) & (gain == 0) & (loss == 0) & (ifl != 1))] = 2
-                                        dst_data[np.where((biomass > 0) &(tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 1))] = 3
+                                        dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl != 1))] = 2
+                                        dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 1))] = 3
 
                                     # Loss-only pixels
-                                    dst_data[np.where((biomass > 0) &(gain == 0) & (loss > 0) & (ifl != 1) & (biomass <= gain_20_years))] = 4
-                                    dst_data[np.where((biomass > 0) &(gain == 0) & (loss > 0) & (ifl != 1) & (biomass > gain_20_years))] = 5
-                                    dst_data[np.where((biomass > 0) &(gain == 0) & (loss > 0) & (ifl ==1))] = 6
+                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl != 1) & (biomass <= gain_20_years))] = 4
+                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl != 1) & (biomass > gain_20_years))] = 5
+                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl ==1))] = 6
 
                                     # Gain-only pixels
-                                    dst_data[np.where((biomass > 0) &(gain == 1) & (loss == 0))] = 7
+                                    dst_data[np.where((biomass > 0) & (gain == 1) & (loss == 0))] = 7
 
                                     # Pixels with loss and gain
-                                    dst_data[np.where((biomass > 0) &(gain == 1) & (loss >= 13))] = 8
-                                    dst_data[np.where((biomass > 0) &(gain == 1) & (loss > 0) & (loss <= 6))] = 9
-                                    dst_data[np.where((biomass > 0) &(gain == 1) & (loss > 6) & (loss < 13))] = 10
+                                    dst_data[np.where((biomass > 0) & (gain == 1) & (loss >= 13))] = 8
+                                    dst_data[np.where((biomass > 0) & (gain == 1) & (loss > 0) & (loss <= 6))] = 9
+                                    dst_data[np.where((biomass > 0) & (gain == 1) & (loss > 6) & (loss < 13))] = 10
 
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
