@@ -16,7 +16,7 @@ pd.options.mode.chained_assignment = None
 
 # tile_list = uu.tile_list(cn.annual_gain_AGC_planted_forest_dir)
 # tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-tile_list = ['00N_020E', '00N_110E'] # test tiles: planted forest only, mangrove and planted forest
+tile_list = ['00N_110E'] # test tiles: mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
