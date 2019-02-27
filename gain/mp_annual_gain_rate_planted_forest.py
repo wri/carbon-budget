@@ -37,7 +37,7 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
-# For multiprocessing
+# For multiprocessing. count/3 worked on an r4.16xlarge machine.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
 # Masks mangroves out of planted forests where they overlap

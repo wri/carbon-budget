@@ -62,7 +62,7 @@ def mask_mangroves(tile_id):
         os.rename(planted_forest_full_extent, planted_forest_no_mangrove)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, planted_forest_no_mangrove)
+    uu.end_of_fx_summary(start, tile_id, 'no_mang_AGC_BGC')
 
 
 # Converts the combined annual aboveground carbon and belowground carbon gain rates into aboveground biomass rates.
@@ -87,7 +87,7 @@ def create_AGB_rate(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, AGB_outfilename)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
 
 
 # Converts the annual aboveground biomass gain rate into belowground biomass gain rate.
@@ -112,7 +112,7 @@ def create_BGB_rate(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, below_outfilename)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
 
 # Deletes any tiles that don't have data planted forest data in them after the mangroves are masked out.
 # That way, empty tiles aren't copied to s3.

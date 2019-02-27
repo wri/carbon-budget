@@ -10,14 +10,12 @@
 ### This is one of the planted forest inputs for the carbon gain model.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the year count constants in constants_and_names.py must be changed.
 
-import utilities
 import subprocess
 import datetime
-import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
-
+import universal_util as uu
 
 # Gets the names of the input tiles
 def tile_names(tile_id):
@@ -33,7 +31,7 @@ def tile_names(tile_id):
 
 def create_gain_year_count_loss_only(tile_id):
 
-    print "Processing:", tile_id
+    print "Gain year count for loss only pixels:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, ifl, planted_forest = tile_names(tile_id)
@@ -41,7 +39,7 @@ def create_gain_year_count_loss_only(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with loss only and in mangrove tile
+    # Pixels with loss only
     print "Creating raster of growth years for loss-only pixels"
     loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
     loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
@@ -50,14 +48,12 @@ def create_gain_year_count_loss_only(tile_id):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
 
 def create_gain_year_count_gain_only(tile_id):
 
-    print "Processing:", tile_id
+    print "Gain year count for gain only pixels:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, ifl, planted_forest = tile_names(tile_id)
@@ -65,7 +61,7 @@ def create_gain_year_count_gain_only(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with gain only and in mangrove tile
+    # Pixels with gain only
     print "Creating raster of growth years for gain-only pixels"
     gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({}/2)'.format(cn.gain_years)
     gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
@@ -74,14 +70,12 @@ def create_gain_year_count_gain_only(tile_id):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
 
 def create_gain_year_count_no_change(tile_id):
 
-    print "Processing:", tile_id
+    print "Gain year count for pixels with neither loss nor gain:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, ifl, planted_forest = tile_names(tile_id)
@@ -89,7 +83,7 @@ def create_gain_year_count_no_change(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with neither loss nor gain but in areas with tree cover density >0 and in mangrove tile
+    # Pixels with neither loss nor gain
     print "Creating raster of growth years for no change pixels"
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
@@ -98,14 +92,12 @@ def create_gain_year_count_no_change(tile_id):
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
 
 def create_gain_year_count_loss_and_gain(tile_id):
 
-    print "Processing:", tile_id
+    print "Gain year count for pixels with loss and gain:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, ifl, planted_forest = tile_names(tile_id)
@@ -113,7 +105,7 @@ def create_gain_year_count_loss_and_gain(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with both loss and gain and in mangrove tile
+    # Pixels with both loss and gain
     print "Creating raster of growth years for loss and gain pixels"
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
@@ -122,10 +114,8 @@ def create_gain_year_count_loss_and_gain(tile_id):
            loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
 
 def create_gain_year_count_merge(tile_id):
 
@@ -140,14 +130,12 @@ def create_gain_year_count_merge(tile_id):
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
     loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
 
-     # Regardless of whether the tile had mangroves, all four components are merged together to the final output raster
+    # All four components are merged together to the final output raster
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
     age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_natrl_forest)

@@ -29,7 +29,7 @@ def cumulative_gain_AGC(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, AGC_accum_outfilename)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_AGC_mangrove)
 
 
 # Calculates cumulative belowground carbon gain in mangroves
@@ -52,4 +52,4 @@ def cumulative_gain_BGC(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, BGC_accum_outfilename)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_BGC_mangrove)
