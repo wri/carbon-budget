@@ -23,10 +23,9 @@ def tile_names(tile_id):
     # Names of the loss, gain, tree cover density, intact forest landscape, mangrove biomass and planted forest tiles
     loss = '{0}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    ifl = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
     planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
 
-    return loss, gain, ifl, planted_forest
+    return loss, gain, planted_forest
 
 
 def create_gain_year_count_loss_only(tile_id):
@@ -34,7 +33,7 @@ def create_gain_year_count_loss_only(tile_id):
     print "Gain year count for loss only pixels:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, ifl, planted_forest = tile_names(tile_id)
+    loss, gain, planted_forest = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -56,7 +55,7 @@ def create_gain_year_count_gain_only(tile_id):
     print "Gain year count for gain only pixels:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, ifl, planted_forest = tile_names(tile_id)
+    loss, gain, planted_forest = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -78,7 +77,7 @@ def create_gain_year_count_no_change(tile_id):
     print "Gain year count for pixels with neither loss nor gain:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, ifl, planted_forest = tile_names(tile_id)
+    loss, gain, planted_forest = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -100,7 +99,7 @@ def create_gain_year_count_loss_and_gain(tile_id):
     print "Gain year count for pixels with loss and gain:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, ifl, planted_forest = tile_names(tile_id)
+    loss, gain, planted_forest = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
