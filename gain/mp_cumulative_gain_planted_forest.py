@@ -19,15 +19,15 @@ download_list = [cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
                  cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
                  cn.gain_year_count_planted_forest_non_mangrove_dir]
 
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.')      # annual AGB gain rate tiles
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove), '.')      # annual AGB gain rate tiles
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_planted_forest_non_mangrove_dir, tile, cn.pattern_gain_year_count_planted_forest_non_mangrove), '.')      # number of years with gain tiles
+# # For copying individual tiles to spot machine for testing
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.')      # annual AGB gain rate tiles
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove), '.')      # annual AGB gain rate tiles
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_planted_forest_non_mangrove_dir, tile, cn.pattern_gain_year_count_planted_forest_non_mangrove), '.')      # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 3)
