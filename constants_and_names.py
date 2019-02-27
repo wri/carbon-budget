@@ -123,8 +123,8 @@ pattern_gain_year_count_planted_forest_non_mangrove = 'gain_year_count_planted_f
 gain_year_count_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_planted_forest_non_mangrove/20190227/'
 
 # Number of gain years for non-mangrove, non-planted natural forests
-pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest'
-gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20181031/'
+pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest_non_mangrove_non_planted'
+gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20190227/'
 
 
 ### Forest age category

@@ -13,6 +13,19 @@ import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
+
+# Gets the names of the input tiles
+def tile_names(tile_id):
+
+    # Names of the loss, gain, tree cover density, intact forest landscape, mangrove biomass and planted forest tiles
+    loss = '{0}.tif'.format(tile_id)
+    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    tcd = '{0}_{1}.tif'.format(cn.tcd, tile_id)
+    ifl = []
+    planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+
+    return loss, gain, planted_forest
 
 def create_gain_year_count(tile_id):
 
@@ -26,117 +39,51 @@ def create_gain_year_count(tile_id):
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
 
-    # The calculations for tiles with and without mangroves anywhere in them are different.
-    # For tiles with mangroves somewhere in them.
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
+    print "  {} does not have mangroves.".format(tile_id)
 
-        print "  {} has mangroves.".format(tile_id)
+    print 'Loss tile is', loss
+    print 'Gain tile is', gain
+    print 'tcd tile is', tcd
 
-        # Name of mangrove tile
-        mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
+    # Then merges the rasters.
+    # In all rasters, 0 is NoData value.
 
-        # Mangrove tiles that have the nodata pixels removed
-        mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    # Pixels with loss only and not in mangroves
+    print "Creating raster of growth years for loss-only pixels"
+    loss_calc = '--calc=(A>0)*(B==0)*(A-1)'
+    loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
+    loss_outfilearg = '--outfile={}'.format(loss_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_calc, loss_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
 
-        # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
-        # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-        print "Removing nodata values in mangrove biomass raster"
-        cmd = ['gdal_translate', '-a_nodata', 'none', mangrove, mangrove_reclass]
-        subprocess.check_call(cmd)
+    # Pixels with gain only and not in mangroves
+    print "Creating raster of growth years for gain-only pixels"
+    gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(cn.gain_years)
+    gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
+    gain_outfilearg = '--outfile={}'.format(gain_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
 
-        print 'Loss tile is', loss
-        print 'Gain tile is', gain
-        print 'tcd tile is', tcd
-        print 'Mangrove biomass tile is', mangrove
+    # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves
+    print "Creating raster of growth years for no change pixels"
+    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
+    no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
+    no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, no_change_calc,
+           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
 
-        # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
-        # Then merges the rasters.
-        # In all rasters, 0 is NoData value.
-
-        # Pixels with loss only and in mangrove tile
-        print "Creating raster of growth years for loss-only pixels"
-        loss_calc = '--calc=(A>0)*(B==0)*(C==0)*(A-1)'
-        loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
-        loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-        # Pixels with gain only and in mangrove tile
-        print "Creating raster of growth years for gain-only pixels"
-        gain_calc = '--calc=(A==0)*(B==1)*(C==0)*({}/2)'.format(cn.gain_years)
-        gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
-        gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-        # Pixels with neither loss nor gain but in areas with tree cover density >0 and in mangrove tile
-        print "Creating raster of growth years for no change pixels"
-        no_change_calc = '--calc=(A==0)*(B==0)*(C==0)*(D>0)*{}'.format(loss_years)
-        no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
-        no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, '-D', tcd, no_change_calc,
-               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-        # Pixels with both loss and gain and in mangrove tile
-        print "Creating raster of growth years for loss and gain pixels"
-        loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==0)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
-        loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
-        loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc,
-               loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-    # For tiles without mangroves anywhere in them
-    else:
-
-        print "  {} does not have mangroves.".format(tile_id)
-
-        print 'Loss tile is', loss
-        print 'Gain tile is', gain
-        print 'tcd tile is', tcd
-
-        # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
-        # Then merges the rasters.
-        # In all rasters, 0 is NoData value.
-
-        # Pixels with loss only and not in mangroves
-        print "Creating raster of growth years for loss-only pixels"
-        loss_calc = '--calc=(A>0)*(B==0)*(A-1)'
-        loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
-        loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_calc, loss_outfilearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-        # Pixels with gain only and not in mangroves
-        print "Creating raster of growth years for gain-only pixels"
-        gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(cn.gain_years)
-        gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
-        gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfilearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-        # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves
-        print "Creating raster of growth years for no change pixels"
-        no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
-        no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
-        no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, no_change_calc,
-               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
-
-        # Pixels with both loss and gain and not in mangroves
-        print "Creating raster of growth years for loss and gain pixels"
-        loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
-        loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
-        loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
-               loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-        subprocess.check_call(cmd)
+    # Pixels with both loss and gain and not in mangroves
+    print "Creating raster of growth years for loss and gain pixels"
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
+    loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
+    loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
+           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
 
 
     # Regardless of whether the tile had mangroves, all four components are merged together to the final output raster

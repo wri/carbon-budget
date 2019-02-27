@@ -130,10 +130,10 @@ def create_gain_year_count_merge(tile_id):
 
     # All four components are merged together to the final output raster
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
-    age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
+    age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'int16']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_natrl_forest)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove)

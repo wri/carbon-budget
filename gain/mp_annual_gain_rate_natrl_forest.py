@@ -1,13 +1,11 @@
-### This script assigns annual above and belowground biomass gain rates (in the units of IPCC Table 4.9 (currently tonnes
-### biomass/ha/yr)) to non-mangrove natural forest pixels.
+### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
+### (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to non-mangrove natural forest pixels.
 ### It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
 ### to every pixel in every tile.
 ### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 ### processed IPCC table.
 ### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate, again according to IPCC tables.
-### At the end, mangrove forests and non-mangrove, non-planted forests are masked from the natural forests so that all
-### three forest types are non-overlapping.
 
 from multiprocessing.pool import Pool
 from functools import partial
