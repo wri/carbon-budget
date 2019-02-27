@@ -13,6 +13,7 @@ mangrove_biomass_tile_list = utilities.tile_list(cn.mangrove_biomass_2000_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
+print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir, cn.gain_year_count_mangrove_dir]
