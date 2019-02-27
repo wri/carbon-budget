@@ -37,8 +37,7 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
-# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# For multiprocessing
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
 pool.map(annual_gain_rate_planted_forest.mask_mangroves, tile_list)

@@ -18,7 +18,7 @@ import universal_util as uu
 
 def mask_mangroves(tile_id):
 
-    print "  Evaluating whether to mask mangroves from planted forests for {}".format(tile_id)
+    print "Evaluating whether to mask mangroves from planted forests for {}".format(tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -33,19 +33,19 @@ def mask_mangroves(tile_id):
     # If there is a mangrove tile, mangrove pixels are masked from the planted forest raster
     if os.path.exists(mangrove_biomass):
 
-        print "    Mangrove found for {}. Masking out mangrove...".format(tile_id)
+        print "  Mangrove found for {}. Masking out mangrove...".format(tile_id)
 
         # Name for mangrove biomass tiles that have the nodata pixels removed
         mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-        print "      Removing nodata values in mangrove biomass raster {}".format(tile_id)
+        print "    Removing nodata values in mangrove biomass raster {}".format(tile_id)
         cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
         subprocess.check_call(cmd)
 
         # Masks out the mangrove biomass from the planted forest gain rate
-        print "      Masking mangroves from aboveground gain rate for planted forest tile {} and converting from carbon to biomass".format(tile_id)
+        print "    Masking mangroves from aboveground gain rate for planted forest tile {} and converting from carbon to biomass".format(tile_id)
         mangrove_mask_calc = '--calc=A*(B==0)'
         mask_outfilename = planted_forest_no_mangrove
         mask_outfilearg = '--outfile={}'.format(mask_outfilename)
@@ -57,7 +57,7 @@ def mask_mangroves(tile_id):
     # the masking option
     else:
 
-        print "    No mangrove found for {}. Renaming file.".format(tile_id)
+        print "  No mangrove found for {}. Renaming file.".format(tile_id)
 
         os.rename(planted_forest_full_extent, planted_forest_no_mangrove)
 
@@ -70,12 +70,10 @@ def mask_mangroves(tile_id):
 # planted forest types.
 def create_AGB_rate(tile_id):
 
-    print "Processing:", tile_id
+    print "Creating aboveground biomass gain rate for tile {}".format(tile_id)
 
     # Start time
     start = datetime.datetime.now()
-
-    print "  Creating aboveground biomass gain rate for tile {}".format(tile_id)
 
     # The name of the tile that comes out of the masking function above
     planted_forest_no_mangrove = '{0}_no_mang_AGC_BGC.tif'.format(tile_id)
@@ -97,7 +95,7 @@ def create_AGB_rate(tile_id):
 # planted forest types.
 def create_BGB_rate(tile_id):
 
-    print "Processing:", tile_id
+    print "Creating belowground biomass gain rate for tile {}".format(tile_id)
 
     # Start time
     start = datetime.datetime.now()
