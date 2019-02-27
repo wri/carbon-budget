@@ -16,7 +16,7 @@ pd.options.mode.chained_assignment = None
 
 # tile_list = uu.tile_list(cn.annual_gain_AGC_planted_forest_dir)
 # tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-tile_list = ['00N_110E'] # test tiles: mangrove and planted forest
+tile_list = ['00N_020E', '00N_110E'] # test tiles: mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
@@ -26,11 +26,11 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # for input in download_list:
 #     utilities.s3_folder_download(input, '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
-
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
-    utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+# # For copying individual tiles to spot machine for testing
+# for tile in tile_list:
+#
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
 # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html

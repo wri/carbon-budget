@@ -98,13 +98,8 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
                         dst_below.write_band(1, dst_below_data, window=window)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "  Processing time for tile", tile_id, ":", elapsed_time
-
-    # Displays the number of tiles that have been completed
-    uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_AGB_mangrove)
 
 
 

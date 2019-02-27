@@ -49,10 +49,8 @@ def create_gain_year_count_loss_only(tile_id):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-    print "Processing time for tile", tile_id, ":", elapsed_time
-    uu.count_completed_tiles('growth_years_loss_only')
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
 
 
 # Creates gain year count tiles for pixels that only had gain
@@ -79,10 +77,9 @@ def create_gain_year_count_gain_only(tile_id):
            '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-    print "Processing time for tile", tile_id, ":", elapsed_time
-    uu.count_completed_tiles('growth_years_gain_only')
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
+
 
 # Creates gain year count tiles for pixels that had neither loss not gain
 def create_gain_year_count_no_change(tile_id):
@@ -109,10 +106,8 @@ def create_gain_year_count_no_change(tile_id):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-    print "Processing time for tile", tile_id, ":", elapsed_time
-    uu.count_completed_tiles('growth_years_no_change')
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
 
 
 # Creates gain year count tiles for pixels that had both loss and gain
@@ -139,10 +134,9 @@ def create_gain_year_count_loss_and_gain(tile_id):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-    print "Processing time for tile", tile_id, ":", elapsed_time
-    uu.count_completed_tiles('growth_years_loss_and_gain')
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
+
 
 # Merges the four gain year count tiles above to create a single gain year count tile
 def create_gain_year_count_merge(tile_id):
@@ -164,7 +158,5 @@ def create_gain_year_count_merge(tile_id):
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'int16']
     subprocess.check_call(cmd)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-    print "Processing time for tile", tile_id, ":", elapsed_time
-    uu.count_completed_tiles(cn.pattern_gain_year_count_mangrove)
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_mangrove)

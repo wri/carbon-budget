@@ -18,6 +18,7 @@
 import utilities
 import rasterio
 import numpy as np
+import datetime
 from scipy import stats
 import sys
 sys.path.append('../')
@@ -27,6 +28,9 @@ import universal_util as uu
 def create_continent_ecozone_tiles(tile_id):
 
     print "Processing:", tile_id
+
+    # Start time
+    start = datetime.datetime.now()
 
     ymax, xmin, ymin, xmax = utilities.coords(tile_id)
     print "Extent of", tile_id, "-- ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
@@ -100,8 +104,9 @@ def create_continent_ecozone_tiles(tile_id):
                 # so they should work fine with all the other tiles.
                 dst.write_band(1, cont_eco_processed, window=window)
 
-    # Displays the number of tiles that have been completed
-    uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_AGB_mangrove)
+
 
 
 

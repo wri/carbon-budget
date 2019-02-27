@@ -28,17 +28,19 @@ def mask_mangroves(tile_id):
 
     if os.path.exists(mangrove_biomass):
 
+        print "    Mangrove found for {}. Masking out mangrove...".format(tile_id)
+
         # Name for mangrove biomass tiles that have the nodata pixels removed
         mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-        print "  Removing nodata values in mangrove biomass raster {}".format(tile_id)
+        print "      Removing nodata values in mangrove biomass raster {}".format(tile_id)
         cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
         subprocess.check_call(cmd)
 
         # Masks out the mangrove biomass from the planted forest gain rate
-        print "  Masking mangroves from aboveground gain rate for planted forest tile {} and converting from carbon to biomass".format(tile_id)
+        print "      Masking mangroves from aboveground gain rate for planted forest tile {} and converting from carbon to biomass".format(tile_id)
         mangrove_mask_calc = '--calc=A*(B==0)'
         mask_outfilename = planted_forest_no_mangrove
         mask_outfilearg = '--outfile={}'.format(mask_outfilename)
@@ -47,6 +49,8 @@ def mask_mangroves(tile_id):
         subprocess.check_call(cmd)
 
     else:
+
+        print "    No mangrove found for {}. Renaming file.".format(tile_id)
 
         os.rename(planted_forest_full_extent, planted_forest_no_mangrove)
 
