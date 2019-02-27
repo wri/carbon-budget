@@ -1,5 +1,5 @@
 ### Creates tiles in which each non-mangrove planted forest pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
-### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
+### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data.
 ### First it separately calculates rasters of gain years for non-mangrove planted forest pixels that had loss only,
 ### gain only, neither loss nor gain, and both loss and gain.
 ### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor commands.
@@ -7,7 +7,6 @@
 ### for the first four processing steps (which use gdalcalc).
 ### At this point, those rules are the same as for mangrove forests.
 ### Then it combines those four rasters into a single gain year raster for each tile using gdalmerge.
-### This is one of the planted forest inputs for the carbon gain model.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the year count constants in constants_and_names.py must be changed.
 
 import subprocess
