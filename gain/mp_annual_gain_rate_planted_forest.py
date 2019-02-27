@@ -40,11 +40,18 @@ for input in download_list:
 # For multiprocessing
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
+# Masks mangroves out of planted forests where they overlap
 pool.map(annual_gain_rate_planted_forest.mask_mangroves, tile_list)
 
+# Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
 pool.map(annual_gain_rate_planted_forest.create_AGB_rate, tile_list)
 
+# Calculates belowground biomass gain rates from aboveground biomass gain rates
 pool.map(annual_gain_rate_planted_forest.create_BGB_rate, tile_list)
+
+# Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
+# This keep them from unnecessarily being stored on s3.
+pool.map(annual_gain_rate_planted_forest.check_for_planted_forest, tile_list)
 pool.close()
 pool.join()
 

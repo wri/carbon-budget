@@ -113,3 +113,26 @@ def create_BGB_rate(tile_id):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_age_cat_natrl_forest)
+
+# Deletes any tiles that don't have data planted forest data in them after the mangroves are masked out.
+# That way, empty tiles aren't copied to s3.
+# Ideally, this would be part of the initial masking function but deleting tiles that later functions expect to
+# iterate through would mess things up, so this is going as a final pre-upload check, not as a way to prevent
+# unnecessary processing.
+def check_for_planted_forest(tile_id):
+
+    print "Checking whether there is planted forest after masking out mangroves..."
+
+    print "Checking if {} contains any data...".format(tile_id)
+    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove))
+
+    if stats[0] > 0:
+
+        print "  Data found in {}. Keeping tile to copy...".format(tile_id)
+
+    else:
+
+        print "  No data found. Deleting aboveground and belowground biomass gain rates...".format(tile_id)
+
+        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove))
+        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove))
