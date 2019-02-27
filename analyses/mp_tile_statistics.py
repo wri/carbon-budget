@@ -82,20 +82,20 @@ for input in download_list:
     # tile_list = download_tile_list
     print tile_list
 
-    # For multiprocessor use.
-    # This runs out of memory with 8 processors.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=7)
-    pool.map(tile_statistics.create_tile_statistics, tile_list)
-    # Added these in response to error12: Cannot allocate memory error.
-    # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    pool.close()
-    pool.join()
+    # # For multiprocessor use.
+    # # This runs out of memory with 8 processors.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=7)
+    # pool.map(tile_statistics.create_tile_statistics, tile_list)
+    # # Added these in response to error12: Cannot allocate memory error.
+    # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+    # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile in tile_list:
-    #     tile_statistics.create_tile_statistics(tile)
+    # For single processor use
+    for tile in tile_list:
+        tile_statistics.create_tile_statistics(tile)
 
     # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
     print "Deleting tiles..."
