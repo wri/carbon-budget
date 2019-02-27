@@ -1,9 +1,9 @@
-### Creates tiles in which each natural non-mangrove forest pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
+### Creates tiles in which each natural non-mangrove non-planted forest biomass pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
 ### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
-### First it calculates rasters of gain years for natural forest pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
+### First it calculates rasters of gain years for non-mangrove non-planted forest biomass pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
 ### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.
 ### Then it combines those four rasters into a single gain year raster for each tile.
-### This is one of the natural forest inputs for the carbon gain model.
+### Only the merged raster is used later in the model; the 4 intermediates are saved just for checking.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_natrl_forest.py must be changed.
 
 import multiprocessing
@@ -21,7 +21,7 @@ biomass_tile_list = utilities.tile_list(cn.WHRC_biomass_2000_non_mang_non_plante
 print biomass_tile_list
 
 # For downloading all tiles in the folders
-download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir]
+download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir]
 
 for input in download_list:
     uu.s3_folder_download(input, '.')

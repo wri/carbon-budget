@@ -1,9 +1,9 @@
-### Creates tiles in which each natural non-mangrove forest pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
+### Creates tiles in which each natural non-mangrove non-planted forest biomass pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
 ### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
-### First it calculates rasters of gain years for natural forest pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
+### First it calculates rasters of gain years for non-mangrove non-planted forest biomass pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
 ### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.
 ### Then it combines those four rasters into a single gain year raster for each tile.
-### This is one of the natural forest inputs for the carbon gain model.
+### Only the merged raster is used later in the model; the 4 intermediates are saved just for checking.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_natrl_forest.py must be changed.
 
 import utilities
@@ -18,14 +18,13 @@ import universal_util as uu
 # Gets the names of the input tiles
 def tile_names(tile_id):
 
-    # Names of the loss, gain, tree cover density, intact forest landscape, mangrove biomass and planted forest tiles
+    # Names of the input files
     loss = '{0}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    ifl = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
     biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
 
-    return loss, gain, tcd, ifl, biomass
+    return loss, gain, tcd, biomass
 
 
 # Creates gain year count tiles for pixels that only had loss
@@ -34,7 +33,7 @@ def create_gain_year_count_loss_only(tile_id):
     print "Loss pixel-only processing:", tile_id
 
     # Names of the input tiles
-    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+    loss, gain, tcd, biomass = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -61,7 +60,7 @@ def create_gain_year_count_gain_only(tile_id):
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+    loss, gain, tcd, biomass = tile_names(tile_id)
 
     # Pixels with gain only and not in mangroves or planted forests
     print "Creating raster of growth years for gain-only pixels"
@@ -85,7 +84,7 @@ def create_gain_year_count_no_change(tile_id):
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+    loss, gain, tcd, biomass = tile_names(tile_id)
 
     # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves or planted forests
     print "Creating raster of growth years for no change pixels"
@@ -109,7 +108,7 @@ def create_gain_year_count_loss_and_gain(tile_id):
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+    loss, gain, tcd, biomass = tile_names(tile_id)
 
     # Pixels with both loss and gain and not in mangroves or planted forests
     print "Creating raster of growth years for loss and gain pixels"
@@ -146,6 +145,3 @@ def create_gain_year_count_merge(tile_id):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_mangrove)
-
-
-

@@ -1,6 +1,7 @@
 from osgeo import gdal
 import numpy as np
 import subprocess
+import datetime
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -13,6 +14,9 @@ def create_tile_statistics(tile):
     tile_id = uu.get_tile_id(tile)
 
     print "Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id)
+
+    # start time
+    start = datetime.datetime.now()
 
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster we're getting statistics on
@@ -108,5 +112,5 @@ def create_tile_statistics(tile):
         f.write(stats_no_brackets + '\r\n')
     f.close()
 
-    # Displays the number of tiles that have been completed
-    uu.count_completed_tiles(cn.pattern_annual_gain_AGB_mangrove)
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, stats[0])
