@@ -21,90 +21,131 @@ def tile_names(tile_id):
     # Names of the loss, gain, tree cover density, intact forest landscape, mangrove biomass and planted forest tiles
     loss = '{0}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(cn.tcd, tile_id)
-    ifl = []
-    planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
+    ifl = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
+    biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
 
-    return loss, gain, planted_forest
+    return loss, gain, tcd, ifl, biomass
 
-def create_gain_year_count(tile_id):
 
-    print "Processing:", tile_id
+# Creates gain year count tiles for pixels that only had loss
+def create_gain_year_count_loss_only(tile_id):
+
+    print "Loss pixel-only processing:", tile_id
+
+    # Names of the input tiles
+    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
 
-    # Names of the loss, gain, and tree cover density tiles
-    loss = '{0}.tif'.format(tile_id)
-    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-
-    print "  {} does not have mangroves.".format(tile_id)
-
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'tcd tile is', tcd
-
-    # Creates four separate rasters for the four tree cover loss/gain combinations for pixels in pixels without mangroves.
-    # Then merges the rasters.
-    # In all rasters, 0 is NoData value.
-
-    # Pixels with loss only and not in mangroves
+    # Pixels with loss only and not in mangroves or planted forests
     print "Creating raster of growth years for loss-only pixels"
-    loss_calc = '--calc=(A>0)*(B==0)*(A-1)'
+    loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
     loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_calc, loss_outfilearg,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', biomass, loss_calc, loss_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    # Pixels with gain only and not in mangroves
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
+
+
+# Creates gain year count tiles for pixels that only had gain
+def create_gain_year_count_gain_only(tile_id):
+
+    print "Gain pixel-only processing:", tile_id
+
+    # start time
+    start = datetime.datetime.now()
+
+    # Names of the loss, gain and tree cover density tiles
+    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+
+    # Pixels with gain only and not in mangroves or planted forests
     print "Creating raster of growth years for gain-only pixels"
-    gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(cn.gain_years)
+    gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({}/2)'.format(cn.gain_years)
     gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfilearg,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', '-C', biomass, gain, gain_calc, gain_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
+
+
+# Creates gain year count tiles for pixels that had neither loss not gain
+def create_gain_year_count_no_change(tile_id):
+
+    print "No change pixel processing:", tile_id
+
+    # start time
+    start = datetime.datetime.now()
+
+    # Names of the loss, gain and tree cover density tiles
+    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+
+    # Pixels with neither loss nor gain but in areas with tree cover density >0 and not in mangroves or planted forests
     print "Creating raster of growth years for no change pixels"
-    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
+    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*(D>0)*{}'.format(cn.loss_years)
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, no_change_calc,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, '-D', biomass, no_change_calc,
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
-    # Pixels with both loss and gain and not in mangroves
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
+
+
+# Creates gain year count tiles for pixels that had both loss and gain
+def create_gain_year_count_loss_and_gain(tile_id):
+
+    print "Loss and gain pixel processing:", tile_id
+
+    # start time
+    start = datetime.datetime.now()
+
+    # Names of the loss, gain and tree cover density tiles
+    loss, gain, tcd, ifl, biomass = tile_names(tile_id)
+
+    # Pixels with both loss and gain and not in mangroves or planted forests
     print "Creating raster of growth years for loss and gain pixels"
-    loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', biomass, loss_and_gain_calc,
            loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
 
-    # Regardless of whether the tile had mangroves, all four components are merged together to the final output raster
+
+# Merges the four gain year count tiles above to create a single gain year count tile
+def create_gain_year_count_merge(tile_id):
+
+    print "Merging:", tile_id
+
+    # start time
+    start = datetime.datetime.now()
+
+    # The four rasters from above that are to be merged
+    loss_outfilename = 'growth_years_loss_only_{}.tif'.format(tile_id)
+    gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
+    no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
+    loss_and_gain_outfilename = 'growth_years_loss_and_gain_{}.tif'.format(tile_id)
+
+    # All four components are merged together to the final output raster
     print "Merging loss, gain, no change, and loss/gain pixels into single raster"
     age_outfile = '{}_{}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename, '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     subprocess.check_call(cmd)
 
-    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_only")
-    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_gain_only")
-    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_no_change")
-    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, "growth_years_loss_and_gain")
-
-    # This is the final output used later in the model
-    utilities.upload_final(cn.gain_year_count_natrl_forest_dir, tile_id, cn.pattern_gain_year_count_natrl_forest)
-
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "Processing time for tile", tile_id, ":", elapsed_time
-
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_mangrove)
 
 
 
