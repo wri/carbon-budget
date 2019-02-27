@@ -33,8 +33,8 @@ f.close()
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
 
 
-# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-uu.s3_folder_download(cn.pixel_area_dir, '.')
+# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+# uu.s3_folder_download(cn.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
@@ -72,7 +72,7 @@ download_list = [
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
 
-    uu.s3_folder_download(input, '.')
+    # uu.s3_folder_download(input, '.')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
