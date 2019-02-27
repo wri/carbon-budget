@@ -42,7 +42,7 @@ count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
 # Masks mangroves out of planted forests where they overlap
 pool.map(annual_gain_rate_planted_forest.mask_mangroves, tile_list)
-
+ 
 # Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
 pool.map(annual_gain_rate_planted_forest.create_AGB_rate, tile_list)
 
