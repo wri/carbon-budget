@@ -9,7 +9,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-mangrove_biomass_tile_list = utilities.tile_list(cn.mangrove_biomass_2000_dir)
+mangrove_biomass_tile_list = utilities.tile_list(cn.annual_gain_AGB_mangrove_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # mangrove_biomass_tile_list = ['10N_080W'] # test tiles
 print mangrove_biomass_tile_list
