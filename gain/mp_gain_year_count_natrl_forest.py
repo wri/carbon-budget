@@ -20,11 +20,11 @@ biomass_tile_list = utilities.tile_list(cn.WHRC_biomass_2000_non_mang_non_plante
 # biomass_tile_list = ['10N_080W'] # test tile
 print biomass_tile_list
 
-# For downloading all tiles in the folders
-download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir]
-
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# # For downloading all tiles in the folders
+# download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir]
+#
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to s3 for testing
 # for tile in biomass_tile_list:
