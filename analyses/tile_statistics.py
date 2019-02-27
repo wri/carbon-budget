@@ -68,7 +68,7 @@ def create_tile_statistics(tile):
     print "Converted {} to numpy array".format(tile)
 
     # Empty statistics list
-    stats = [None] * 12
+    stats = [None] * 13
 
     # Calculates basic tile info
     stats[0] = tile[8:-4]
