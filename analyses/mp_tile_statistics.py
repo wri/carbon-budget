@@ -71,7 +71,7 @@ download_list = [
 
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
-    uu.s3_folder_download(input, '.')
+    # uu.s3_folder_download(input, '.')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
@@ -85,7 +85,7 @@ for input in download_list:
     # For multiprocessor use.
     # This runs out of memory with 8 processors.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=10)
+    pool = multiprocessing.Pool(processes=7)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
     # Added these in response to error12: Cannot allocate memory error.
     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
