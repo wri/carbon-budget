@@ -14,8 +14,11 @@ gain_years = 12
 # Number of biomass tiles
 biomass_tile_count = 280
 
-# Biomass to carbon ratio for non-mangrove, non-planted forests
+# Biomass to carbon ratio for non-mangrove, non-planted forests and for planted forests
 biomass_to_c_natrl_forest = 0.5
+
+# Biomass to carbon ratio for mangroves (IPCC wetlands supplement table 4.2)
+biomass_to_c_mangrove = 0.45
 
 # Carbon to CO2 ratio
 c_to_co2 = 44/12
@@ -181,15 +184,15 @@ cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulativ
 
 # Cumulative aboveground gain for mangroves
 pattern_cumul_gain_AGC_mangrove = 'cumul_gain_AGC_t_ha_mangrove_2001_15'
-cumul_gain_AGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_mangrove/20181102/'
+cumul_gain_AGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_mangrove/20190227/'
 
-# Cumulative aboveground gain for natural forests
+# Cumulative belowground gain for natural forests
 pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_2001_15'
 cumul_gain_BGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_natural_forest/20181104/'
 
-# Cumulative aboveground gain for mangroves
+# Cumulative belowground gain for mangroves
 pattern_cumul_gain_BGC_mangrove = 'cumul_gain_BGC_t_ha_mangrove_2001_15'
-cumul_gain_BGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_mangrove/20181102/'
+cumul_gain_BGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_mangrove/20190227/'
 
 
 ### Non-biomass inputs to carbon pools

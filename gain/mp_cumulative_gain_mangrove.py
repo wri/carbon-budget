@@ -7,9 +7,7 @@ import cumulative_gain_mangrove
 import sys
 sys.path.append('../')
 import constants_and_names as cn
-
-### Need to update and install some packages on spot machine before running
-### sudo pip install rasterio --upgrade
+import universal_util as uu
 
 mangrove_biomass_tile_list = utilities.tile_list(cn.mangrove_biomass_2000_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
@@ -30,11 +28,23 @@ for input in download_list:
 #     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_mangrove_dir, tile, cn.pattern_gain_year_count_mangrove), '.')      # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 4)
-pool.map(cumulative_gain_mangrove.cumulative_gain, mangrove_biomass_tile_list)
+pool = multiprocessing.Pool(count / 2)
+# Calculates cumulative aboveground carbon gain in mangroves
+pool.map(cumulative_gain_mangrove.cumulative_gain_AGC, mangrove_biomass_tile_list)
+
+# Calculates cumulative belowground carbon gain in mangroves
+pool.map(cumulative_gain_mangrove.cumulative_gain_BGC, mangrove_biomass_tile_list)
+pool.close()
+pool.join()
 
 # # For single processor use
 # for tile in mangrove_biomass_tile_list:
 #
-#     cumulative_gain_mangrove.cumulative_gain(tile)
+#     cumulative_gain_mangrove.cumulative_gain_AGC(tile)
+#
+# for tile in mangrove_biomass_tile_list:
+#
+#     cumulative_gain_mangrove.cumulative_gain_BGC(tile)
 
+uu.upload_final_set(cn.cumul_gain_AGC_mangrove_dir, cn.pattern_cumul_gain_AGC_mangrove)
+uu.upload_final_set(cn.cumul_gain_BGC_mangrove_dir, cn.pattern_cumul_gain_BGC_mangrove)
