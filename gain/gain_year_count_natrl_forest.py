@@ -67,7 +67,7 @@ def create_gain_year_count_gain_only(tile_id):
     gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({}/2)'.format(cn.gain_years)
     gain_outfilename = 'growth_years_gain_only_{}.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', '-C', biomass, gain, gain_calc, gain_outfilearg,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', biomass, gain_calc, gain_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
