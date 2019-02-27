@@ -128,11 +128,5 @@ def forest_age_category(tile_id, gain_table_dict):
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-    print "Processing time for tile", tile_id, ":", elapsed_time
-    uu.count_completed_tiles(cn.pattern_age_cat_natrl_forest)
-
-
-
-
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_age_cat_natrl_forest)

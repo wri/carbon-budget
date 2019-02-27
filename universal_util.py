@@ -325,3 +325,11 @@ def get_raster_nodata_value(tile):
     nodata = srcband.GetNoDataValue()
 
     return nodata
+
+# Prints information about the tile that was just processed: how long it took and how many tiles have been completed
+def end_of_fx_summary(start, tile_id, pattern):
+
+    end = datetime.datetime.now()
+    elapsed_time = end-start
+    print "Processing time for tile", tile_id, ":", elapsed_time
+    count_completed_tiles(pattern)
