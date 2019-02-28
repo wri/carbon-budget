@@ -195,12 +195,12 @@ pattern_cumul_gain_BGC_planted_forest = 'cumul_gain_BGC_t_ha_planted_forest_non_
 cumul_gain_BGC_planted_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_planted_forest_non_mangrove/20190227/'
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
-pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_2001_15'
-cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_natural_forest/20181104/'
+pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
+cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_natural_forest/20190228/'
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
-pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_2001_15'
-cumul_gain_BGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_natural_forest/20181104/'
+pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
+cumul_gain_BGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_natural_forest/20190228/'
 
 
 ### Non-biomass inputs to carbon pools
