@@ -9,7 +9,7 @@ from osgeo import gdal
 
 # Prints the date as YYYYmmdd
 d = datetime.datetime.today()
-date = d.strftime('%Y%m%d')
+date = d.strftime('%Y%m%d_%h%m%s')
 
 
 # Creates chunks of tiles for processing
