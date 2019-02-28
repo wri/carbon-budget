@@ -168,11 +168,7 @@ annual_gain_BGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_g
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_combo = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_all_forest_types/20181105/'
-
-# Cumulative gain for all forest types
-pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
-cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_forest_types/20181105/'
+annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_all_forest_types/20190228/'
 
 
 ### Cumulative carbon gain rates
@@ -201,6 +197,10 @@ cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulativ
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
 cumul_gain_BGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_natural_forest/20190228/'
+
+# Cumulative gain for all forest types
+pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
+cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_forest_types/20190228/'
 
 
 ### Non-biomass inputs to carbon pools

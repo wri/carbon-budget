@@ -56,3 +56,5 @@ for tile in tile_list:
 
     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile)
 
+
+uu.upload_final_set(cn.annual_gain_combo_dir, cn.pattern_annual_gain_combo)
