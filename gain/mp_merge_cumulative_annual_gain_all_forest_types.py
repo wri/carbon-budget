@@ -27,8 +27,8 @@ download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrov
                  cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, cn.cumul_gain_BGC_planted_forest_non_mangrove_dir
                  ]
 
-# for input in download_list:
-#     utilities.s3_folder_download(input, '.')
+for input in download_list:
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -48,7 +48,7 @@ download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrov
 
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 3)
+pool = multiprocessing.Pool(count / 4)
 pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
 
 # # For single processor use

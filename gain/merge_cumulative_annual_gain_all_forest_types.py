@@ -38,7 +38,7 @@ def gain_merge(tile_id):
     annual_gain_BGB_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
     cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
 
-    # If there are mangroves in the tile, they are read into rasterio.
+    # If there is a mangrove tile, it is read into rasterio.
     # Uses the annual AGB gain rate as a proxy for the other three tiles; if there's an annual AGB tile, there will
     # definitely be an annual BGB tile and there will almost certainly be cumulative AGC and BGC tiles.
     # (The only reason there wouldn't be cumulative AGC and BGC tiles is if all the annual AGB/BGB pixels in the tile
@@ -51,10 +51,13 @@ def gain_merge(tile_id):
         gain_AGC_mangrove_src = rasterio.open(cumul_gain_AGC_mangrove)
         gain_BGC_mangrove_src = rasterio.open(cumul_gain_BGC_mangrove)
 
-        # Creates windows and
+        # Creates windows and and keyword args out of the mangrove tile.
+        # It does this in case the mangrove tile is the only input tile and this is the only source of
+        # window and kwarg info for the output.
         windows = gain_AGB_mangrove_src.block_windows(1)
         kwargs = gain_AGB_mangrove_src.meta
 
+    # Same as above but for non-mangrove planted forests
     if os.path.exists(annual_gain_AGB_planted_forest):
         print "{} has non-mangrove planted forest.".format(tile_id)
 
@@ -66,6 +69,7 @@ def gain_merge(tile_id):
         windows = gain_AGB_planted_forest_src.block_windows(1)
         kwargs = gain_AGB_planted_forest_src.meta
 
+    # Same as above except for non-mangrove non-planted forests
     if os.path.exists(annual_gain_AGB_natrl_forest):
         print "{} has non-mangrove, non-planted forest.".format(tile_id)
 
@@ -78,7 +82,6 @@ def gain_merge(tile_id):
         kwargs = gain_AGB_natrl_forest_src.meta
 
     # Updates kwargs for the output dataset.
-    # Need to update data type to float 32 so that it can handle fractional gain rates
     kwargs.update(
         driver='GTiff',
         count=1,
@@ -87,26 +90,36 @@ def gain_merge(tile_id):
         dtype='float32'
     )
 
+    # Creates the output data: annual AGB+BGB gain for all forest types and
+    # cumulative AGC and BGC gain for all forest types
     annual_out = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_combo)
     dst_annual = rasterio.open(annual_out, 'w', **kwargs)
 
     cumul_out = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)
     dst_cumul = rasterio.open(cumul_out, 'w', **kwargs)
 
+    # Iterates through the windows created above
     for idx, window in windows:
 
+        # Populates the output rasters' windows with 0s so that pixels without
+        # any of the forest types will have 0s
         dst_annual_window = np.zeros((window.height, window.width), dtype='float32')
         dst_cumul_window = np.zeros((window.height, window.width), dtype='float32')
 
+        # If there is a mangrove tile, this reates a numpy array for the four mangrove inputs
         if os.path.exists(annual_gain_AGB_mangrove):
             gain_AGB_mangrove = gain_AGB_mangrove_src.read(1, window=window)
             gain_BGB_mangrove = gain_BGB_mangrove_src.read(1, window=window)
             gain_AGC_mangrove = gain_AGC_mangrove_src.read(1, window=window)
             gain_BGC_mangrove = gain_BGC_mangrove_src.read(1, window=window)
 
+            # Adds the AGB and BGB mangrove arrays to the base array.
+            # Likewise with the cumulative carbon arrays.
             dst_annual_window = gain_AGB_mangrove + gain_BGB_mangrove
             dst_cumul_window = gain_AGC_mangrove + gain_BGC_mangrove
 
+        # Same as above but for non-mangrove planted forests, except that the planted
+        # forest values are added to the mangrove values, if there are any
         if os.path.exists(annual_gain_AGB_planted_forest):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
             gain_BGB_planted = gain_BGB_planted_forest_src.read(1, window=window)
@@ -116,6 +129,9 @@ def gain_merge(tile_id):
             dst_annual_window = dst_annual_window + gain_AGB_planted + gain_BGB_planted
             dst_cumul_window = dst_cumul_window + gain_AGC_planted + gain_BGC_planted
 
+        # Same as above except for non-mangrove non-planted forests, except that the
+        # natural forest values are added to the planted forest and/or mangrove values,
+        # if there are any
         if os.path.exists(annual_gain_AGB_natrl_forest):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
             gain_BGB_natrl = gain_BGB_natrl_forest_src.read(1, window=window)
@@ -126,6 +142,7 @@ def gain_merge(tile_id):
             dst_cumul_window = dst_cumul_window + gain_AGC_natrl + gain_BGC_natrl
 
 
+        # Writes the two output arrays to the output rasters
         dst_annual.write_band(1, dst_annual_window, window=window)
         dst_cumul.write_band(1, dst_cumul_window, window=window)
 
