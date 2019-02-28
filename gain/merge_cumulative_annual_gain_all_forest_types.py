@@ -52,7 +52,7 @@ def gain_merge(tile_id):
         gain_BGC_mangrove_src = rasterio.open(cumul_gain_BGC_mangrove)
 
         # Creates windows and
-        windows = gain_AGB_mangrove_src.block_windows(100)
+        windows = gain_AGB_mangrove_src.block_windows(1)
         kwargs = gain_AGB_mangrove_src.meta
 
     if os.path.exists(annual_gain_AGB_planted_forest):
@@ -63,7 +63,7 @@ def gain_merge(tile_id):
         gain_AGC_planted_forest_src = rasterio.open(cumul_gain_AGC_planted_forest)
         gain_BGC_planted_forest_src = rasterio.open(cumul_gain_BGC_planted_forest)
 
-        windows = gain_AGB_planted_forest_src.block_windows(100)
+        windows = gain_AGB_planted_forest_src.block_windows(1)
         kwargs = gain_AGB_planted_forest_src.meta
 
     if os.path.exists(annual_gain_AGB_natrl_forest):
@@ -74,7 +74,7 @@ def gain_merge(tile_id):
         gain_AGC_natrl_forest_src = rasterio.open(cumul_gain_AGC_natrl_forest)
         gain_BGC_natrl_forest_src = rasterio.open(cumul_gain_BGC_natrl_forest)
 
-        windows = gain_AGB_natrl_forest_src.block_windows(100)
+        windows = gain_AGB_natrl_forest_src.block_windows(1)
         kwargs = gain_AGB_natrl_forest_src.meta
 
     # Updates kwargs for the output dataset.

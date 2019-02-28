@@ -48,7 +48,7 @@ download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrov
 
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 10)
+pool = multiprocessing.Pool(count / 3)
 pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
 
 # # For single processor use
