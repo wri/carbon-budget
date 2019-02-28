@@ -152,11 +152,11 @@ def create_combined_tile_list(set1, set2, set3=None):
 
         print "Third set of tiles input. Adding to first two sets of tiles..."
 
-        out = subprocess.Popen(['aws', 's3', 'ls', set2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        stdout2, stderr2 = out.communicate()
+        out = subprocess.Popen(['aws', 's3', 'ls', set3], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout3, stderr3 = out.communicate()
         # Writes the output string to a text file for easier interpretation
         set3_tiles = open("set3.txt", "w")
-        set3_tiles.write(stdout2)
+        set3_tiles.write(stdout3)
         set3_tiles.close()
 
         file_list_set3 = []
