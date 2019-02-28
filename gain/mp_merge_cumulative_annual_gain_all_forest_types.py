@@ -59,3 +59,4 @@ pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
 
 
 uu.upload_final_set(cn.annual_gain_combo_dir, cn.pattern_annual_gain_combo)
+uu.upload_final_set(cn.cumul_gain_combo_dir, cn.pattern_cumul_gain_combo)
