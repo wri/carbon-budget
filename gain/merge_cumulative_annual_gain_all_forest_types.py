@@ -109,6 +109,8 @@ def gain_merge(tile_id):
 
         print dst_annual
 
+        dst_annual.write_band(1, dst_annual, window=window)
+
         os.quit()
 
         # dst_annual.write_band(1, gain_rate_AGB, window=window)
