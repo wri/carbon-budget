@@ -71,7 +71,7 @@ def create_tile_statistics(tile):
     stats = [None] * 13
 
     # Calculates basic tile info
-    stats[0] = tile[8:-4]
+    stats[0] = tile[9:-4]
     stats[1] = tile_id
     stats[2] = tile
     stats[3] = tile_array_flat_mask.size

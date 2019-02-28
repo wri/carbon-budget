@@ -48,5 +48,5 @@ pool.join()
 #
 #     cumulative_gain_planted_forest.cumulative_gain_BGC(tile)
 
-uu.upload_final_set(cn.cumul_gain_AGC_planted_forest_dir, cn.pattern_cumul_gain_AGC_planted_forest)
-uu.upload_final_set(cn.cumul_gain_BGC_planted_forest_dir, cn.pattern_cumul_gain_BGC_planted_forest)
+uu.upload_final_set(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove)
+uu.upload_final_set(cn.cumul_gain_BGC_planted_forest_non_mangrove_dir, cn.pattern_cumul_gain_BGC_planted_forest_non_mangrove)

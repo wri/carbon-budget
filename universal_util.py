@@ -68,28 +68,6 @@ def tile_list(source):
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
-                # # For stripping down standard tree biomass tiles to the tile id
-                # if '{}.tif'.format(cn.pattern_natrl_forest_biomass_2000) in tile_name:
-                #
-                #     tile_short_name = tile_name.replace('_{}.tif'.format(cn.pattern_natrl_forest_biomass_2000), '')
-                #     file_list.append(tile_short_name)
-                #
-                # # For stripping down mangrove biomass tiles to the tile id
-                # if cn.pattern_mangrove_biomass_2000 in tile_name:
-                #
-                #     tile_short_name = tile_name.replace('{}_'.format(cn.pattern_mangrove_biomass_2000), '')
-                #     tile_short_name = tile_short_name.replace('.tif', '')
-                #     file_list.append(tile_short_name)
-                #     file_list = file_list[0:]
-                #
-                # # For stripping down pixel area tiles to the tile id
-                # if cn.pattern_pixel_area in tile_name:
-                #
-                #     tile_short_name = tile_name.replace('{}_'.format(cn.pattern_pixel_area), '')
-                #     tile_short_name = tile_short_name.replace('.tif', '')
-                #     file_list.append(tile_short_name)
-                #     file_list = file_list[0:]
-
     return file_list
 
 
@@ -122,9 +100,13 @@ def tile_list_spot_machine(source, pattern):
     return file_list
 
 # Creates a list of all biomass 2000 tiles-- those from WHRC and those only in the mangrove set
-def create_combined_tile_list(set1, set2):
+def create_combined_tile_list(set1, set2, set3=None):
 
-    print "Making a combined biomass tile list..."
+    print "Making a combined tile list..."
+
+    print set1
+    print set2
+    print set3
 
     out = subprocess.Popen(['aws', 's3', 'ls', set1], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
@@ -170,8 +152,35 @@ def create_combined_tile_list(set1, set2):
                 tile_id = get_tile_id(tile_name)
                 file_list_set2.append(tile_id)
 
+    if set3 != None:
+        out = subprocess.Popen(['aws', 's3', 'ls', set2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout2, stderr2 = out.communicate()
+        # Writes the output string to a text file for easier interpretation
+        set3_tiles = open("set3.txt", "w")
+        set3_tiles.write(stdout2)
+        set3_tiles.close()
+
+        file_list_set3 = []
+
+        # Iterates through the mangrove biomass text file to get the names of the tiles and appends them to list
+        with open("set3.txt", 'r') as tile:
+
+            for line in tile:
+                num = len(line.strip('\n').split(" "))
+                tile_name = line.strip('\n').split(" ")[num - 1]
+
+                # Only tifs will be in the tile list
+                if '.tif' in tile_name:
+                    tile_id = get_tile_id(tile_name)
+                    file_list_set2.append(tile_id)
+
+
     # Combines both tile lists
     all_tiles = file_list_set1 + file_list_set2
+
+    if set3 != None:
+
+        all_tiles =+ file_list_set3
 
     # Tile list with tiles found in both lists removed, so only the unique tiles remain
     unique_tiles = list(set(all_tiles))
