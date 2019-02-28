@@ -104,10 +104,6 @@ def create_combined_tile_list(set1, set2, set3=None):
 
     print "Making a combined tile list..."
 
-    print set1
-    print set2
-    print set3
-
     out = subprocess.Popen(['aws', 's3', 'ls', set1], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
     # Writes the output string to a text file for easier interpretation
@@ -154,7 +150,7 @@ def create_combined_tile_list(set1, set2, set3=None):
 
     if set3 != None:
 
-        print "Third set of tiles input"
+        print "Third set of tiles input. Adding to first two sets of tiles..."
 
         out = subprocess.Popen(['aws', 's3', 'ls', set2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout2, stderr2 = out.communicate()
@@ -177,15 +173,19 @@ def create_combined_tile_list(set1, set2, set3=None):
                     tile_id = get_tile_id(tile_name)
                     file_list_set3.append(tile_id)
 
-        print file_list_set3
-
-
     # Combines both tile lists
     all_tiles = file_list_set1 + file_list_set2
 
+    print len(file_list_set1)
+    print len(file_list_set2)
+    print len(file_list_set3)
+    print len(all_tiles)
+
     if set3 != None:
 
-        all_tiles =+ file_list_set3
+        all_tiles = all_tiles + file_list_set3
+
+    print len(all_tiles)
 
     # Tile list with tiles found in both lists removed, so only the unique tiles remain
     unique_tiles = list(set(all_tiles))
