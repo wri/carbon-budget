@@ -12,6 +12,7 @@ biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
 # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['20S_110E'] # test tiles
 print biomass_tile_list
+print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.annual_gain_AGB_natrl_forest_dir,
