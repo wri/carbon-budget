@@ -209,15 +209,7 @@ def create_combined_tile_list(set1, set2, set3=None):
     print set_txt
 
     for i in set_txt:
-
         os.remove(i)
-
-    # os.remove("set1.txt")
-    # os.remove("set2.txt")
-    #
-    # if set3 != None:
-    #
-    #     os.remove("set3.txt")
 
     return unique_tiles_ordered_list
 
