@@ -8,6 +8,7 @@ import sys
 import numpy as np
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 def gain_merge(tile_id):
 
@@ -91,7 +92,7 @@ def gain_merge(tile_id):
 
             dst_data = gain_AGB_mangrove + gain_BGB_mangrove
 
-            print dst_data
+            # print dst_data
 
         if os.path.exists(annual_gain_AGB_planted_forest):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
@@ -99,7 +100,7 @@ def gain_merge(tile_id):
 
             dst_data = gain_AGB_planted + gain_BGB_planted
 
-            print dst_data
+            # print dst_data
 
         if os.path.exists(annual_gain_AGB_natrl_forest):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
@@ -107,16 +108,11 @@ def gain_merge(tile_id):
 
             dst_data = gain_AGB_natrl + gain_BGB_natrl
 
-            print dst_data
+            # print dst_data
 
-        print dst_data
+        # print dst_data
 
         dst_annual.write_band(1, dst_data, window=window)
-
-        os.quit()
-
-        # dst_annual.write_band(1, gain_rate_AGB, window=window)
-
 
 
     # # Levels are the annual gain rate and cumulative gain
@@ -208,7 +204,5 @@ def gain_merge(tile_id):
     # utilities.upload_final(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo)
     # utilities.upload_final(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "  Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_combo)
