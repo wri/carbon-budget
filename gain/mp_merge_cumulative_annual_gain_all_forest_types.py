@@ -14,7 +14,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_plant
                                          set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
                                          )
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
-# biomass_tile_list = ['40N_120E'] # test tiles
+tile_list = ['00N_110E'] # test tiles
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
@@ -27,8 +27,8 @@ download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrov
                  cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, cn.cumul_gain_BGC_planted_forest_non_mangrove_dir
                  ]
 
-for input in download_list:
-    utilities.s3_folder_download(input, '.')
+# for input in download_list:
+#     utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -51,8 +51,8 @@ for input in download_list:
 # pool = multiprocessing.Pool(count / 4)
 # pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile)
+# For single processor use
+for tile in tile_list:
+
+    merge_cumulative_annual_gain_all_forest_types.gain_merge(tile)
 
