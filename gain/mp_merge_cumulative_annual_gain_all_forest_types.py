@@ -13,9 +13,8 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_plant
                                          cn.annual_gain_AGB_mangrove_dir,
                                          set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
                                          )
-# biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 # tile_list = ['00N_110E'] # test tiles
-tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+# tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
