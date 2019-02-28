@@ -89,17 +89,25 @@ def gain_merge(tile_id):
 
             dst_annual = gain_AGB_mangrove + gain_BGB_mangrove
 
+            print dst_annual
+
         if os.path.exists(annual_gain_AGB_planted_forest):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
             gain_BGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
 
             dst_annual = gain_AGB_planted + gain_BGB_planted
 
+            print dst_annual
+
         if os.path.exists(annual_gain_AGB_natrl_forest):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
             gain_BGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
 
             dst_annual = gain_AGB_natrl + gain_BGB_natrl
+
+            print dst_annual
+
+        os.exit()
 
         # dst_annual.write_band(1, gain_rate_AGB, window=window)
 
