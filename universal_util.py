@@ -99,7 +99,7 @@ def tile_list_spot_machine(source, pattern):
 
     return file_list
 
-# Creates a list of all biomass 2000 tiles-- those from WHRC and those only in the mangrove set
+# Creates a list of all tiles found in either two or three s3 folders and removes duplicates from the list
 def create_combined_tile_list(set1, set2, set3=None):
 
     print "Making a combined tile list..."
@@ -122,7 +122,7 @@ def create_combined_tile_list(set1, set2, set3=None):
     file_list_set1 = []
     file_list_set2 = []
 
-    # Iterates through the Woods Hole biomass text file to get the names of the tiles and appends them to list
+    # Iterates through the first text file to get the names of the tiles and appends them to list
     with open("set1.txt", 'r') as tile:
 
         for line in tile:
@@ -135,7 +135,7 @@ def create_combined_tile_list(set1, set2, set3=None):
                 tile_id = get_tile_id(tile_name)
                 file_list_set1.append(tile_id)
 
-    # Iterates through the mangrove biomass text file to get the names of the tiles and appends them to list
+    # Iterates through the second text file to get the names of the tiles and appends them to list
     with open("set2.txt", 'r') as tile:
 
         for line in tile:
@@ -151,6 +151,7 @@ def create_combined_tile_list(set1, set2, set3=None):
     print "There are {} tiles in {}".format(len(file_list_set1), set1)
     print "There are {} tiles in {}".format(len(file_list_set2), set2)
 
+    # If there's a third folder supplied, iterates through that
     if set3 != None:
 
         print "Third set of tiles input. Adding to first two sets of tiles..."
@@ -164,7 +165,7 @@ def create_combined_tile_list(set1, set2, set3=None):
 
         file_list_set3 = []
 
-        # Iterates through the mangrove biomass text file to get the names of the tiles and appends them to list
+        # Iterates through the text file to get the names of the tiles and appends them to list
         with open("set3.txt", 'r') as tile:
 
             for line in tile:
@@ -181,33 +182,23 @@ def create_combined_tile_list(set1, set2, set3=None):
     # Combines both tile lists
     all_tiles = file_list_set1 + file_list_set2
 
+    # If a third directory is supplied, the tiles from that list are added to the list from the first two
     if set3 != None:
 
         all_tiles = all_tiles + file_list_set3
 
-    # Tile list with tiles found in both lists removed, so only the unique tiles remain
+    # Tile list with tiles found in multiple lists removed, so now duplicates are gone
     unique_tiles = list(set(all_tiles))
 
     # Converts the set to a pandas dataframe to put the tiles in the correct order
     df = pd.DataFrame(unique_tiles, columns=['tile_id'])
     df = df.sort_values(by=['tile_id'])
-    # print "Tile list is:", df
 
-    # Converts the pandas dataframe to a Python list so that it can be written to a txt
+    # Converts the pandas dataframe to a Python list
     unique_tiles_ordered_list = df.tile_id.tolist()
 
-    # # Writes the biomass tile list to a txt
-    # with open(cn.pattern_biomass_tile_list, 'w') as f:
-    #     for item in unique_tiles_ordered_list:
-    #         f.write("%s, " % item)
-    #
-    # # Copies that list to s3
-    # cmd = ['aws', 's3', 'cp', cn.pattern_biomass_tile_list, '{0}{1}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list)]
-    # subprocess.check_call(cmd)
-
+    # Removes the text files with the lists of tiles
     set_txt = glob.glob("set*.txt")
-    print set_txt
-
     for i in set_txt:
         os.remove(i)
 
