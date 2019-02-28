@@ -153,6 +153,9 @@ def create_combined_tile_list(set1, set2, set3=None):
                 file_list_set2.append(tile_id)
 
     if set3 != None:
+
+        print "Third set of tiles input"
+
         out = subprocess.Popen(['aws', 's3', 'ls', set2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout2, stderr2 = out.communicate()
         # Writes the output string to a text file for easier interpretation
@@ -172,7 +175,9 @@ def create_combined_tile_list(set1, set2, set3=None):
                 # Only tifs will be in the tile list
                 if '.tif' in tile_name:
                     tile_id = get_tile_id(tile_name)
-                    file_list_set2.append(tile_id)
+                    file_list_set3.append(tile_id)
+
+        print file_list_set3
 
 
     # Combines both tile lists
