@@ -55,7 +55,7 @@ def gain_merge(tile_id):
         kwargs = gain_AGB_planted_forest_src.meta
 
     if os.path.exists(annual_gain_AGB_natrl_forest):
-        print "{} has non-mangrove non-planted forest.".format(tile_id)
+        print "{} has non-mangrove, non-planted forest.".format(tile_id)
 
         gain_AGB_natrl_forest_src = rasterio.open(annual_gain_AGB_natrl_forest)
         gain_BGB_natrl_forest_src = rasterio.open(annual_gain_BGB_natrl_forest)
@@ -92,7 +92,7 @@ def gain_merge(tile_id):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
             gain_BGB_planted = gain_BGB_planted_forest_src.read(1, window=window)
 
-            dst_data = gain_AGB_planted + gain_BGB_planted
+            dst_data = dst_data + gain_AGB_planted + gain_BGB_planted
 
             # print dst_data
 
@@ -100,7 +100,7 @@ def gain_merge(tile_id):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
             gain_BGB_natrl = gain_BGB_natrl_forest_src.read(1, window=window)
 
-            dst_data = gain_AGB_natrl + gain_BGB_natrl
+            dst_data = dst_data + gain_AGB_natrl + gain_BGB_natrl
 
             # print dst_data
 
