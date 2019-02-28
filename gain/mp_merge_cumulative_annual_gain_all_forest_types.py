@@ -10,26 +10,25 @@ import constants_and_names as cn
 import universal_util as uu
 
 tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
-                                         cn.annual_gain_AGB_mangrove_dir
-                                         # set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
+                                         cn.annual_gain_AGB_mangrove_dir,
+                                         set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
                                          )
-# biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 # biomass_tile_list = ['40N_120E'] # test tiles
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
-# # For downloading all tiles in the input folders
-# download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrove_dir,
-#                  cn.cumul_gain_AGC_natrl_forest_dir, cn.cumul_gain_AGC_mangrove_dir,
-#                  cn.annual_gain_BGB_natrl_forest_dir, cn.annual_gain_BGB_mangrove_dir,
-#                  cn.cumul_gain_BGC_natrl_forest_dir, cn.cumul_gain_BGC_mangrove_dir,
-#                  cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
-#                  cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, cn.cumul_gain_BGC_planted_forest_non_mangrove_dir
-#                  ]
-#
-# for input in download_list:
-#     utilities.s3_folder_download(input, '.')
+# For downloading all tiles in the input folders
+download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrove_dir,
+                 cn.cumul_gain_AGC_natrl_forest_dir, cn.cumul_gain_AGC_mangrove_dir,
+                 cn.annual_gain_BGB_natrl_forest_dir, cn.annual_gain_BGB_mangrove_dir,
+                 cn.cumul_gain_BGC_natrl_forest_dir, cn.cumul_gain_BGC_mangrove_dir,
+                 cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
+                 cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, cn.cumul_gain_BGC_planted_forest_non_mangrove_dir
+                 ]
+
+for input in download_list:
+    utilities.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:

@@ -16,18 +16,24 @@ def gain_merge(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the annual gain rate and cumulative gain tiles for non-mangrove natural forests
-    annual_gain_AGB_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
-    cumul_gain_AGC_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
-    annual_gain_BGB_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
-    cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
-
     # Names of the annual gain rate and cumulative gain tiles for mangroves.
     # These names are created even if the tile doesn't have any mangroves.
     annual_gain_AGB_mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
     cumul_gain_AGC_mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_mangrove)
     annual_gain_BGB_mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
     cumul_gain_BGC_mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_mangrove)
+
+    # Names of the annual gain rate and cumulative gain tiles for non-mangrove planted forests
+    annual_gain_AGB_planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    cumul_gain_AGC_planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove)
+    annual_gain_BGB_planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+    cumul_gain_BGC_planted_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_planted_forest_non_mangrove)
+
+    # Names of the annual gain rate and cumulative gain tiles for non-mangrove non-planted forests
+    annual_gain_AGB_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    cumul_gain_AGC_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
+    annual_gain_BGB_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
+    cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
 
     # These tiles need to be listed in this particular order because of how they are iterated through below.
     in_tiles = [annual_gain_AGB_natrl_forest, cumul_gain_AGC_natrl_forest, annual_gain_AGB_mangrove,  cumul_gain_AGC_mangrove,
