@@ -36,12 +36,6 @@ def gain_merge(tile_id):
     annual_gain_BGB_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
     cumul_gain_BGC_natrl_forest = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
 
-    # These tiles need to be listed in this particular order because of how they are iterated through below.
-    in_tiles = [annual_gain_AGB_natrl_forest, cumul_gain_AGC_natrl_forest, annual_gain_AGB_mangrove,  cumul_gain_AGC_mangrove,
-                annual_gain_BGB_natrl_forest, cumul_gain_BGC_natrl_forest, annual_gain_BGB_mangrove,  cumul_gain_BGC_mangrove]
-
-    out_tiles = ['{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_combo), '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)]
-
     if os.path.exists(annual_gain_AGB_mangrove):
         print "{} has mangroves.".format(tile_id)
 
@@ -96,7 +90,7 @@ def gain_merge(tile_id):
 
         if os.path.exists(annual_gain_AGB_planted_forest):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
-            gain_BGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
+            gain_BGB_planted = gain_BGB_planted_forest_src.read(1, window=window)
 
             dst_data = gain_AGB_planted + gain_BGB_planted
 
@@ -104,7 +98,7 @@ def gain_merge(tile_id):
 
         if os.path.exists(annual_gain_AGB_natrl_forest):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
-            gain_BGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
+            gain_BGB_natrl = gain_BGB_natrl_forest_src.read(1, window=window)
 
             dst_data = gain_AGB_natrl + gain_BGB_natrl
 
@@ -114,7 +108,13 @@ def gain_merge(tile_id):
 
         dst_annual.write_band(1, dst_data, window=window)
 
-
+    # # These tiles need to be listed in this particular order because of how they are iterated through below.
+    # in_tiles = [annual_gain_AGB_natrl_forest, cumul_gain_AGC_natrl_forest, annual_gain_AGB_mangrove,  cumul_gain_AGC_mangrove,
+    #             annual_gain_BGB_natrl_forest, cumul_gain_BGC_natrl_forest, annual_gain_BGB_mangrove,  cumul_gain_BGC_mangrove]
+    #
+    # out_tiles = ['{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_combo), '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)]
+    #
+    #
     # # Levels are the annual gain rate and cumulative gain
     # for level in range(0, 2):
     #
