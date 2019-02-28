@@ -41,6 +41,8 @@ def gain_merge(tile_id):
 
         gain_AGB_mangrove_src = rasterio.open(annual_gain_AGB_mangrove)
         gain_BGB_mangrove_src = rasterio.open(annual_gain_BGB_mangrove)
+        gain_AGC_mangrove_src = rasterio.open(cumul_gain_AGC_mangrove)
+        gain_BGC_mangrove_src = rasterio.open(cumul_gain_BGC_mangrove)
 
         windows = gain_AGB_mangrove_src.block_windows(1)
         kwargs = gain_AGB_mangrove_src.meta
@@ -50,6 +52,8 @@ def gain_merge(tile_id):
 
         gain_AGB_planted_forest_src = rasterio.open(annual_gain_AGB_planted_forest)
         gain_BGB_planted_forest_src = rasterio.open(annual_gain_BGB_planted_forest)
+        gain_AGC_planted_forest_src = rasterio.open(cumul_gain_AGC_planted_forest)
+        gain_BGC_planted_forest_src = rasterio.open(cumul_gain_BGC_planted_forest)
 
         windows = gain_AGB_planted_forest_src.block_windows(1)
         kwargs = gain_AGB_planted_forest_src.meta
@@ -59,6 +63,8 @@ def gain_merge(tile_id):
 
         gain_AGB_natrl_forest_src = rasterio.open(annual_gain_AGB_natrl_forest)
         gain_BGB_natrl_forest_src = rasterio.open(annual_gain_BGB_natrl_forest)
+        gain_AGC_natrl_forest_src = rasterio.open(cumul_gain_AGC_natrl_forest)
+        gain_BGC_natrl_forest_src = rasterio.open(cumul_gain_BGC_natrl_forest)
 
         windows = gain_AGB_natrl_forest_src.block_windows(1)
         kwargs = gain_AGB_natrl_forest_src.meta
@@ -76,37 +82,44 @@ def gain_merge(tile_id):
     annual_out = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_combo)
     dst_annual = rasterio.open(annual_out, 'w', **kwargs)
 
+    cumul_out = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)
+    dst_cumul = rasterio.open(cumul_out, 'w', **kwargs)
+
     for idx, window in windows:
 
-        dst_data = np.zeros((window.height, window.width), dtype='float32')
+        dst_annual_window = np.zeros((window.height, window.width), dtype='float32')
+        dst_cumul_window = np.zeros((window.height, window.width), dtype='float32')
 
         if os.path.exists(annual_gain_AGB_mangrove):
             gain_AGB_mangrove = gain_AGB_mangrove_src.read(1, window=window)
             gain_BGB_mangrove = gain_BGB_mangrove_src.read(1, window=window)
+            gain_AGC_mangrove = gain_AGC_mangrove_src.read(1, window=window)
+            gain_BGC_mangrove = gain_BGC_mangrove_src.read(1, window=window)
 
-            dst_data = gain_AGB_mangrove + gain_BGB_mangrove
-
-            # print dst_data
+            dst_annual_window = gain_AGB_mangrove + gain_BGB_mangrove
+            dst_cumul_window = gain_AGC_mangrove + gain_BGC_mangrove
 
         if os.path.exists(annual_gain_AGB_planted_forest):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
             gain_BGB_planted = gain_BGB_planted_forest_src.read(1, window=window)
+            gain_AGC_planted = gain_AGC_planted_forest_src.read(1, window=window)
+            gain_BGC_planted = gain_BGC_planted_forest_src.read(1, window=window)
 
-            dst_data = dst_data + gain_AGB_planted + gain_BGB_planted
-
-            # print dst_data
+            dst_annual_window = dst_annual_window + gain_AGB_planted + gain_BGB_planted
+            dst_cumul_window = dst_cumul_window + gain_AGC_planted + gain_BGC_planted
 
         if os.path.exists(annual_gain_AGB_natrl_forest):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
             gain_BGB_natrl = gain_BGB_natrl_forest_src.read(1, window=window)
+            gain_AGC_natrl = gain_AGC_natrl_forest_src.read(1, window=window)
+            gain_BGC_natrl = gain_BGC_natrl_forest_src.read(1, window=window)
 
-            dst_data = dst_data + gain_AGB_natrl + gain_BGB_natrl
+            dst_annual_window = dst_annual_window + gain_AGB_natrl + gain_BGB_natrl
+            dst_cumul_window = dst_cumul_window + gain_AGC_natrl + gain_BGC_natrl
 
-            # print dst_data
 
-        # print dst_data
-
-        dst_annual.write_band(1, dst_data, window=window)
+        dst_annual.write_band(1, dst_annual_window, window=window)
+        dst_cumul.write_band(1, dst_cumul_window, window=window)
 
     # # These tiles need to be listed in this particular order because of how they are iterated through below.
     # in_tiles = [annual_gain_AGB_natrl_forest, cumul_gain_AGC_natrl_forest, annual_gain_AGB_mangrove,  cumul_gain_AGC_mangrove,
