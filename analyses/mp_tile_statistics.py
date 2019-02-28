@@ -38,16 +38,25 @@ uu.s3_folder_download(cn.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
-                cn.WHRC_biomass_2000_unmasked_dir,
-                cn.mangrove_biomass_2000_dir,
-                cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
-                cn.cont_eco_dir,
-                cn.WHRC_biomass_2000_non_mang_non_planted_dir,
-                cn.annual_gain_AGB_mangrove_dir,
-                cn.annual_gain_AGB_mangrove_dir,
-                cn.gain_year_count_mangrove_dir,
-                cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
-                cn.annual_gain_BGB_planted_forest_non_mangrove_dir
+                # cn.WHRC_biomass_2000_unmasked_dir,
+                # cn.mangrove_biomass_2000_dir,
+                # cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
+                # cn.cont_eco_dir,
+                # cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+                # cn.annual_gain_AGB_mangrove_dir,
+                # cn.annual_gain_AGB_mangrove_dir,
+                # cn.gain_year_count_mangrove_dir,
+                # cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
+                # cn.annual_gain_BGB_planted_forest_non_mangrove_dir
+                cn.age_cat_natrl_forest_dir,
+                cn.gain_year_count_natrl_forest_dir,
+                cn.gain_year_count_planted_forest_non_mangrove_dir,
+                cn.annual_gain_AGB_natrl_forest_dir,
+                cn.annual_gain_BGB_natrl_forest_dir,
+                cn.cumul_gain_AGC_mangrove_dir,
+                cn.cumul_gain_BGC_mangrove_dir,
+                cn.cumul_gain_AGC_planted_forest_dir,
+                cn.cumul_gain_BGC_planted_forest_dir
                  # , cn.natrl_forest_biomass_2000_dir
                  # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
                  # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/bgc/'

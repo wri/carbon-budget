@@ -19,8 +19,8 @@ download_list = [cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
                  cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
                  cn.gain_year_count_planted_forest_non_mangrove_dir]
 
-# for input in download_list:
-#     uu.s3_folder_download(input, '.')
+for input in download_list:
+    uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
