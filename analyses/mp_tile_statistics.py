@@ -60,6 +60,10 @@ download_list = [
                 # cn.cumul_gain_BGC_planted_forest_dir
 
                 cn.annual_gain_BGB_mangrove_dir,
+                cn.cumul_gain_AGC_natrl_forest_dir,
+                cn.cumul_gain_BGC_natrl_forest_dir,
+                cn.annual_gain_combo_dir,
+                cn.cumul_gain_combo_dir
 
                  # , cn.natrl_forest_biomass_2000_dir
                  # , 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/carbon/'
