@@ -1,11 +1,11 @@
 ### This script combines the annual gain rate tiles from different forest types (non-mangrove natural forests, mangroves,
 ### plantations, into combined tiles. It does the same for cumulative gain over the study period.
 
-import utilities
 import datetime
 import os
 import rasterio
 import sys
+import numpy as np
 sys.path.append('../')
 import constants_and_names as cn
 
@@ -83,33 +83,35 @@ def gain_merge(tile_id):
 
     for idx, window in windows:
 
+        dst_data = np.zeros((window.height, window.width), dtype='float32')
+
         if os.path.exists(annual_gain_AGB_mangrove):
             gain_AGB_mangrove = gain_AGB_mangrove_src.read(1, window=window)
             gain_BGB_mangrove = gain_BGB_mangrove_src.read(1, window=window)
 
-            dst_annual = gain_AGB_mangrove + gain_BGB_mangrove
+            dst_data = gain_AGB_mangrove + gain_BGB_mangrove
 
-            print dst_annual
+            print dst_data
 
         if os.path.exists(annual_gain_AGB_planted_forest):
             gain_AGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
             gain_BGB_planted = gain_AGB_planted_forest_src.read(1, window=window)
 
-            dst_annual = gain_AGB_planted + gain_BGB_planted
+            dst_data = gain_AGB_planted + gain_BGB_planted
 
-            print dst_annual
+            print dst_data
 
         if os.path.exists(annual_gain_AGB_natrl_forest):
             gain_AGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
             gain_BGB_natrl = gain_AGB_natrl_forest_src.read(1, window=window)
 
-            dst_annual = gain_AGB_natrl + gain_BGB_natrl
+            dst_data = gain_AGB_natrl + gain_BGB_natrl
 
-            print dst_annual
+            print dst_data
 
-        print dst_annual
+        print dst_data
 
-        dst_annual.write_band(1, dst_annual, window=window)
+        dst_annual.write_band(1, dst_data, window=window)
 
         os.quit()
 
