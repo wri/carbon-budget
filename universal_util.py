@@ -208,9 +208,9 @@ def create_combined_tile_list(set1, set2, set3=None):
     set_txt = glob.glob("set*.txt")
     print set_txt
 
-    for set in set_txt:
+    for i in set_txt:
 
-        os.remove(set)
+        os.remove(i)
 
     # os.remove("set1.txt")
     # os.remove("set2.txt")
