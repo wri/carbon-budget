@@ -16,7 +16,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_plant
 # biomass_tile_list = ['10N_080W', '40N_120E'] # test tiles
 # biomass_tile_list = ['40N_120E'] # test tiles
 print tile_list
-print "There are {} tiles to process".format(str(len(tile_list)))
+print "There are {} unique tiles to process".format(str(len(tile_list)))
 
 # # For downloading all tiles in the input folders
 # download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrove_dir,

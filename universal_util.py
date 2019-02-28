@@ -148,6 +148,9 @@ def create_combined_tile_list(set1, set2, set3=None):
                 tile_id = get_tile_id(tile_name)
                 file_list_set2.append(tile_id)
 
+    print "There are {} tiles in {}".format(len(file_list_set1), set1)
+    print "There are {} tiles in {}".format(len(file_list_set2), set2)
+
     if set3 != None:
 
         print "Third set of tiles input. Adding to first two sets of tiles..."
@@ -173,23 +176,17 @@ def create_combined_tile_list(set1, set2, set3=None):
                     tile_id = get_tile_id(tile_name)
                     file_list_set3.append(tile_id)
 
+        print "There are {} tiles in {}".format(len(file_list_set3), set3)
+
     # Combines both tile lists
     all_tiles = file_list_set1 + file_list_set2
-
-    print len(file_list_set1)
-    print len(file_list_set2)
-    print len(file_list_set3)
-    print len(all_tiles)
 
     if set3 != None:
 
         all_tiles = all_tiles + file_list_set3
 
-    print len(all_tiles)
-
     # Tile list with tiles found in both lists removed, so only the unique tiles remain
     unique_tiles = list(set(all_tiles))
-    print "  There are {} unique tiles with biomass.".format(len(unique_tiles))
 
     # Converts the set to a pandas dataframe to put the tiles in the correct order
     df = pd.DataFrame(unique_tiles, columns=['tile_id'])
@@ -208,8 +205,19 @@ def create_combined_tile_list(set1, set2, set3=None):
     # cmd = ['aws', 's3', 'cp', cn.pattern_biomass_tile_list, '{0}{1}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list)]
     # subprocess.check_call(cmd)
 
-    os.remove("set1.txt")
-    os.remove("set2.txt")
+    set_txt = glob.glob("set*.txt")
+    print set_txt
+
+    for set in set_txt:
+
+        os.remove(set)
+
+    # os.remove("set1.txt")
+    # os.remove("set2.txt")
+    #
+    # if set3 != None:
+    #
+    #     os.remove("set3.txt")
 
     return unique_tiles_ordered_list
 
