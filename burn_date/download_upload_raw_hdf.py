@@ -13,7 +13,7 @@ def download_ba(hv_tile):
 
     # use wget to download the burned area tiles from ftp site
     file_name = "*.hdf"
-    cmd = ['wget', '-r', '--ftp-user=fire', '--ftp-password=burnt', '-A', file_name]
+    cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name]
     cmd += ['--no-directories', '--no-parent', ftp_path, '-P', outfolder]
     
     subprocess.check_call(cmd)
