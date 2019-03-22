@@ -7,7 +7,7 @@ import shutil
 
 def stack_ba_hv(hv_tile):
 
-    for year in range(2000, 2018):
+    for year in range(2000, 2019):
 
         # download hdf files
         output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))
@@ -36,7 +36,7 @@ def stack_ba_hv(hv_tile):
                                                             year_folder)
 
             # upload to somewhere on s3
-            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/']
+            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/20190322/']
             subprocess.check_call(cmd)
 
             # remove files
