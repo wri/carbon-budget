@@ -13,7 +13,7 @@ for year in range(2014, 2018):
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
     modis_burnyear_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/'
-    Hansen_loss_dir = 's3://gfw2-data/forest_change/hansen_2018'
+    Hansen_loss_dir = 's3://gfw2-data/forest_change/hansen_2018/'
 
     # download all hv tifs for this year
     include = '{0}_*.tif'.format(year)
