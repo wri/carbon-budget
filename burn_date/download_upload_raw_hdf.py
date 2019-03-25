@@ -7,7 +7,7 @@ def download_ba(hv_tile):
     # burned area files (MCD64A1.A2004245.h00v08.006.2017016101006.hdf) then moves them to s3
 
     ftp_path = 'ftp://ba1.geog.umd.edu/Collection6/HDF/2017/182/'.format(hv_tile)
-    outfolder = "ba_{0}/".format(hv_tile)
+    outfolder = "ba_h00v08/".format(hv_tile)
     if not os.path.exists(outfolder):
         os.makedirs(outfolder)
 
