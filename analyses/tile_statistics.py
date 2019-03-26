@@ -10,6 +10,8 @@ import universal_util as uu
 # Calculates a range of tile statistics
 def create_tile_statistics(tile):
 
+    tile_stats = '{}_{}'.format(uu.date_today, cn.tile_stats_pattern)
+
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)
 
@@ -108,7 +110,7 @@ def create_tile_statistics(tile):
     print stats_no_brackets
 
     # Adds the tile's statistics to the txt file
-    with open(cn.tile_stats, 'a+') as f:
+    with open(tile_stats, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()
 

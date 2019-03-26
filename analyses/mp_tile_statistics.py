@@ -17,6 +17,8 @@ headers = ['tile_type', 'tile_id', 'tile_name', 'pixel_count', 'mean', 'median',
            'percentile75', 'percentile90', 'min', 'max', 'sum']
 header_no_brackets = ', '.join(headers)
 
+tile_stats = '{}_{}'.format(uu.date_today, cn.tile_stats_pattern)
+
 # Creates the output text file with the column names
 with open(cn.tile_stats, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
@@ -125,5 +127,5 @@ for input in download_list:
         print "  Tiles deleted"
 
     # Copies the text file to the location on s3 that the tiles are from
-    cmd = ['aws', 's3', 'cp', cn.tile_stats, cn.tile_stats_dir]
+    cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
     subprocess.check_call(cmd)
