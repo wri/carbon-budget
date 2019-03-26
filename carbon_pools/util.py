@@ -1,6 +1,10 @@
 import subprocess
 import gdal
 from gdalconst import GA_ReadOnly
+import sys
+sys.path.append('../')
+import universal_util as uu
+import constants_and_names as cn
 
 
 def download(source):
@@ -26,7 +30,7 @@ def get_extent(tif):
 
 
 def resample(in_file, out_file):
-    resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', '.00025', '.00025', in_file, out_file]
+    resample = ['gdal_translate', '-co', 'COMPRESS=LZW', '-tr', cn.Hansen_res, cn.Hansen_res, in_file, out_file]
     subprocess.check_call(resample)
 
     return out_file

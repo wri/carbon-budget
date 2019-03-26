@@ -46,7 +46,8 @@ for input in download_list:
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_BGC_planted_forest_non_mangrove), '.')    # cumulative belowground gain tiles for non-mangrove planted forests
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_BGC_planted_forest_non_mangrove), '.')    # cumulative belowground gain tiles for non-mangrove planted forests
 
-
+# For multiprocessing
+# This works on an r4.16xlarge. count/3 does not work.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 4)
 pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
