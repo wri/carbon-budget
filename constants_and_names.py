@@ -210,17 +210,17 @@ cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_
 pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
 fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
 pattern_fao_ecozone_processed = 'res_fao_ecozones_bor_tem_tro'
-fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190325/'
+fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190326/'
 
 # Precipitation
 precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
 pattern_precip = 'precip'
-precip_processed_dir = 's3://gfw2-data/gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190325/'
+precip_processed_dir = 's3://gfw2-data/gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190326/'
 
 # Elevation
 srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
 pattern_elevation = 'elevation'
-elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190325/'
+elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190326/'
 
 # Soil C
 soil_C_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
