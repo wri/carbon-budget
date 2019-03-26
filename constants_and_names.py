@@ -199,7 +199,7 @@ fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carb
 
 # Precipitation
 precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
-pattern_precip = 'precip'
+pattern_precip = 'precip_annual'
 precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190326/'
 
 # Elevation
