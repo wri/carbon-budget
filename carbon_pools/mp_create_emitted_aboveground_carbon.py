@@ -39,7 +39,7 @@ for tile in tile_list:
                                                             cn.pattern_cumul_gain_AGC_natrl_forest), '.')
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
 
-print "Creating tiles of emitted aboveground carbon (biomass 2000 + biomass accumulation, then converted to carbon)"
+print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count/3)

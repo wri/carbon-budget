@@ -67,6 +67,8 @@ def create_emitted_AGC(tile_id):
         loss_year_window = loss_year_src.read(1, window=window)
 
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
+        print mangrove_C_final[[1]]
+
         planted_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + planted_forest_cumil_AGC_gain_window
         natural_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + natrl_forest_cumul_AGC_gain_window
         natural_forest_C_final = natural_forest_C_final[planted_forest_C_final == 0]
@@ -75,6 +77,8 @@ def create_emitted_AGC(tile_id):
 
         # Writes the output window to the output file
         dst_AGC_emis_year.write_band(1, all_forest_types_C_final, window=window)
+
+        sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year)
