@@ -11,9 +11,9 @@ def create_input_files(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    # print "Getting extent of", tile_id
-    # xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    #
+    print "Getting extent of", tile_id
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
     # print "Rasterizing ecozone for", tile_id
     # util.rasterize('fao_ecozones_bor_tem_tro.shp',
     #                                           "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
