@@ -68,14 +68,19 @@ def create_emitted_AGC(tile_id):
 
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
         print mangrove_C_final[[0]]
+
         planted_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + planted_forest_cumil_AGC_gain_window
         print planted_forest_C_final[[0]]
-        natural_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + natrl_forest_cumul_AGC_gain_window
+
+        natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + natrl_forest_cumul_AGC_gain_window
         print natural_forest_C_final[[0]]
-        natural_forest_C_final = natural_forest_C_final[planted_forest_C_final == 0]
+        
+        natural_forest_C_final = natural_forest_C[planted_forest_C_final == 0]
         print natural_forest_C_final[[0]]
+
         all_forest_types_C_final = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
         print all_forest_types_C_final[[0]]
+
         all_forest_types_C_final = all_forest_types_C_final[loss_year_window > 0]
         print all_forest_types_C_final[[0]]
 
