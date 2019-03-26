@@ -17,7 +17,7 @@ def create_input_files(tile_id):
     print "Rasterizing ecozone"
     util.rasterize('fao_ecozones_bor_tem_tro.shp',
                                               "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
-                                              xmin, ymin, xmax, ymax, cn.Hansen_res, 'Int16', '0')
+                                              str(xmin), str(ymin), str(xmax), str(ymax), cn.Hansen_res, 'Int16', '0')
 
     # print "Resampling eco zone"
     # resampled_ecozone = util.resample(rasterized_eco_zone_tile, "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed))
