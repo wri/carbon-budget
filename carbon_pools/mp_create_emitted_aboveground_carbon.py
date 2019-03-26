@@ -31,12 +31,12 @@ for tile in tile_list:
                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
                                                             cn.pattern_mangrove_biomass_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir,
-                                                            cn.pattern_cumul_gain_AGC_mangrove, tile), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir,
-                                                            cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove, tile), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir,
-                                                            cn.pattern_cumul_gain_AGC_natrl_forest, tile), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile,
+                                                            cn.pattern_cumul_gain_AGC_mangrove), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, tile,
+                                                            cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile,
+                                                            cn.pattern_cumul_gain_AGC_natrl_forest), '.')
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
 
 print "Creating tiles of emitted aboveground carbon (biomass 2000 + biomass accumulation, then converted to carbon)"
