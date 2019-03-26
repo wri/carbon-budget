@@ -56,7 +56,7 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr, ot, anodata, recode
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', str(tr), str(tr), '-ot', ot, '-a_nodata',
            anodata, '-a', recode,
-           in_shape, '{}.tif'.format(out_tif)]
+           in_shape, out_tif]
 
     subprocess.check_call(cmd)
 

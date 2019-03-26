@@ -61,21 +61,6 @@ mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2_Tiff.zip'
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
 mangrove_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20190220/'
 
-## Biomass in the year of emission
-base_biomass_emitted_dir = 's3://gfw2-data/climate/carbon_model/emitted_biomass/20181226/'
-
-# Woods Hole aboveground biomass in the year of emission
-pattern_natrl_forest_biomass_emitted = "t_aboveground_biomass_ha_emitted"
-natrl_forest_biomass_emitted_dir = '{0}/natural_forest/'.format(base_biomass_emitted_dir)
-
-# Mangrove aboveground biomass in the year of emission
-pattern_mangrove_biomass_emitted = 'mangrove_agb_t_ha_emitted'
-mangrove_biomass_emitted_dir = '{0}/mangrove/'.format(base_biomass_emitted_dir)
-
-# Biomass tile list (WHRC/natural forests and mangroves)
-pattern_biomass_tile_list = 'biomass_tile_list.txt'
-biomass_tile_list_dir = 's3://gfw2-data/climate/carbon_model/biomass_tile_list/'
-
 
 ### Miscellaneous inputs
 ######
@@ -215,17 +200,12 @@ fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carb
 # Precipitation
 precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
 pattern_precip = 'precip'
-precip_processed_dir = 's3://gfw2-data/gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190326/'
+precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190326/'
 
 # Elevation
 srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
 pattern_elevation = 'elevation'
 elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190326/'
-
-# Soil C
-soil_C_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/hwsd_oc_final.tif'
-pattern_soil_C = 'soil_t_C_ha'
-soil_C_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/soil/'
 
 
 ### Carbon pools
@@ -233,34 +213,42 @@ soil_C_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_po
 ######
 
 # Base directory for all carbon pools
-base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815/'
+base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/'
+
+# Aboveground carbon in the year of emission for all forest types
+pattern_AGC_emis_year = "t_AGC_ha_emis_year"
+AGC_emis_year_dir = '{0}/AGC/20190326/'.format(base_carbon_pool_dir)
+
+# # Biomass tile list (WHRC/natural forests and mangroves)
+# pattern_biomass_tile_list = 'biomass_tile_list.txt'
+# biomass_tile_list_dir = 's3://gfw2-data/climate/carbon_model/biomass_tile_list/'
 
 # NOTE: These must match the word before .tif in the outnames of calc_carbon_pools.cpp, e.g., "string outname_litter_total = tile_id + "_t_litter_C_ha_total.tif";"
 pool_types = ['natrl', 'mangrove', 'total']
 
 # Aboveground carbon
-pattern_agc = 't_AGC_ha'
-agc_dir = '{}/aboveground_C/'.format(base_carbon_pool_dir)
+pattern_agc = 't_AGC_ha_emis_year'
+agc_dir = '{}/aboveground_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Belowground carbon
-pattern_bgc = 't_BGC_ha'
-bgc_dir = '{}/belowground_C/'.format(base_carbon_pool_dir)
+pattern_bgc = 't_BGC_ha_emis_year'
+bgc_dir = '{}/belowground_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Deadwood
-pattern_deadwood = 't_deadwood_C_ha'
-deadwood_dir = '{}/deadwood_C/'.format(base_carbon_pool_dir)
+pattern_deadwood = 't_deadwood_C_ha_emis_year'
+deadwood_dir = '{}/deadwood_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Litter
-pattern_litter = 't_litter_C_ha'
-litter_dir = '{}/litter_C/'.format(base_carbon_pool_dir)
+pattern_litter = 't_litter_C_ha_emis_year'
+litter_dir = '{}/litter_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Soil
-pattern_soil_pool = 't_soil_C_ha'
-soil_C_pool_dir = '{}/soil_C/'.format(base_carbon_pool_dir)
+pattern_soil_pool = 't_soil_C_ha_2000'
+soil_C_pool_dir = '{}/soil_carbon/20181228/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
-pattern_total_C = 't_total_C_ha'
-total_C_dir = '{}/total_carbon/'.format(base_carbon_pool_dir)
+pattern_total_C = 't_total_C_ha_emis_year'
+total_C_dir = '{}/total_carbon/20190326/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions

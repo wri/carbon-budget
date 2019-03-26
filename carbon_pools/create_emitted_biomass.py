@@ -13,14 +13,16 @@ def create_emitted_biomass(tile_id):
 
     start = datetime.datetime.now()
 
-
     # Names of the input tiles
-    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
+    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    natrl_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
     mangrove_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_mangrove)
-    natrl_forest_emitted = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
-    mangrove_emitted = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
+    planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove)
+    natrl_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
+    mangrove_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
+    planted_forest_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
+    natrl_forest_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_natrl_forest_biomass_2000)
+
 
     print "  Reading input files and evaluating conditions"
 
