@@ -31,9 +31,9 @@ print tile_list
 # print "Making elevation (srtm) vrt"
 # subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 3)
-pool.map(create_inputs_for_C_pools.create_input_files, tile_list)
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count / 3)
+# pool.map(create_inputs_for_C_pools.create_input_files, tile_list)
 
 # For single processor use
 for tile in tile_list:
