@@ -23,7 +23,7 @@ def create_emitted_AGC(tile_id):
     loss_year = '{0}.tif'.format(tile_id)
 
     # Name of output tile
-    all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.AGC_emis_year_dir, cn.pattern_AGC_emis_year)
+    all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
 
 
     print "  Reading input files and creating aboveground carbon in the year of loss for for {}".format(tile_id)
