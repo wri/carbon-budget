@@ -7,9 +7,9 @@ import re
 import pandas as pd
 from osgeo import gdal
 
-# Prints the date as YYYYmmdd
+# Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
-date = d.strftime('%Y%m%d_%h%m%s')
+date_today = d.strftime('%Y%m%d_%h%m%s')
 
 
 # Creates chunks of tiles for processing
