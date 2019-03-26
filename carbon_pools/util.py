@@ -48,13 +48,18 @@ def clip(in_file, out_file,  xmin, ymin, xmax, ymax, extra_param=None):
 
 
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, recode=None, anodata=None):
-    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-tr', tr, tr, '-ot', ot, '-a', recode, '-a_nodata',
-           anodata, in_shape, out_tif]
+    # cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+    #        '-tr', tr, tr, '-ot', ot, '-a', recode, '-a_nodata',
+    #        anodata, in_shape, out_tif]
+
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-tr', tr, tr, '-ot', ot, '-a_nodata',
+           anodata, in_shape, '{}.tif'.format(out_tif)]
 
     subprocess.check_call(cmd)
 
-    return out_tif
+    # return out_tif
 
 
 # Lists the tiles in a folder in s3
