@@ -59,11 +59,11 @@ def create_emitted_AGC(tile_id):
 
         # Creates a processing window for each input raster
         mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-        # print mangrove_biomass_2000_window[0][30020:30035]
+        print mangrove_biomass_2000_window[0][30020:30035]
         natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-        # print natrl_forest_biomass_2000_window[0][1270:1275]
+        print natrl_forest_biomass_2000_window[0][30020:30035]
         mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
-        # print mangrove_cumul_AGC_gain_window[0][30020:30035]
+        print mangrove_cumul_AGC_gain_window[0][30020:30035]
         planted_forest_cumul_AGC_gain_window = planted_forest_cumul_AGC_gain_src.read(1, window=window)
         # print planted_forest_cumul_AGC_gain_window[0][1270:1275]
         natrl_forest_cumul_AGC_gain_window = natrl_forest_cumul_AGC_gain_src.read(1, window=window)
@@ -73,7 +73,7 @@ def create_emitted_AGC(tile_id):
 
         # Calculates the aboveground C density in mangrove pixels
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
-        # print mangrove_C_final[0][30020:30035]
+        print mangrove_C_final[0][30020:30035]
 
         # Calculates the aboveground C density in non-mangrove planted forest pixels. The masking command makes sure that
         # only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
@@ -97,12 +97,12 @@ def create_emitted_AGC(tile_id):
 
         # Adds the carbon sums for all forest types together
         all_forest_types_C_combined = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
-        # print all_forest_types_C_combined[0][1270:1275]
+        print all_forest_types_C_combined[0][30020:30035]
 
         # Removes AGC pixels that do not have a loss year
         all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_C_combined)
         all_forest_types_C_final = all_forest_types_C_final.filled(0)
-        # print all_forest_types_C_final[0][1270:1275]
+        print all_forest_types_C_final[0][30020:30035]
 
         # Converts the output to float32 since float64 is an unnecessary level of precision
         all_forest_types_C_final = all_forest_types_C_final.astype('float32')
