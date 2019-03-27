@@ -60,25 +60,25 @@ def create_emitted_AGC(tile_id):
 
         # Creates a processing window for each input raster
         mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-        print mangrove_biomass_2000_window[[0]]
+        # print mangrove_biomass_2000_window[[0]]
         natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-        print natrl_forest_biomass_2000_window[[0]]
+        # print natrl_forest_biomass_2000_window[[0]]
         mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
-        print mangrove_cumul_AGC_gain_window[[0]]
+        # print mangrove_cumul_AGC_gain_window[[0]]
         planted_forest_cumul_AGC_gain_window = planted_forest_cumil_AGC_gain_src.read(1, window=window)
-        print planted_forest_cumul_AGC_gain_window[[0]]
+        # print planted_forest_cumul_AGC_gain_window[[0]]
         natrl_forest_cumul_AGC_gain_window = natrl_forest_cumul_AGC_gain_src.read(1, window=window)
-        print natrl_forest_cumul_AGC_gain_window[[0]]
+        # print natrl_forest_cumul_AGC_gain_window[[0]]
         loss_year_window = loss_year_src.read(1, window=window)
-        print loss_year_window[[0]]
+        # print loss_year_window[[0]]
 
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
         print mangrove_C_final[[0]]
 
-        planted_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + planted_forest_cumul_AGC_gain_window
+        planted_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
         print planted_forest_C_final[[0]]
 
-        natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_mangrove) + natrl_forest_cumul_AGC_gain_window
+        natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
         print natural_forest_C[[0]]
 
         natural_forest_C_final = np.ma.masked_where(planted_forest_C_final==0, natural_forest_C)
