@@ -62,9 +62,9 @@ def create_emitted_AGC(tile_id):
         mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
         # print mangrove_biomass_2000_window[[0]]
         natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-        # print natrl_forest_biomass_2000_window[[0]]
+        print natrl_forest_biomass_2000_window[0][1265:1285]
         mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
-        print mangrove_cumul_AGC_gain_window[[0]]
+        # print mangrove_cumul_AGC_gain_window[[0]]
         planted_forest_cumul_AGC_gain_window = planted_forest_cumul_AGC_gain_src.read(1, window=window)
         print planted_forest_cumul_AGC_gain_window[0][1265:1285]
         natrl_forest_cumul_AGC_gain_window = natrl_forest_cumul_AGC_gain_src.read(1, window=window)
