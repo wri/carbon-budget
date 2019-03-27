@@ -101,7 +101,10 @@ def create_emitted_AGC(tile_id):
         print all_forest_types_C_combined[0][1270:1275]
 
         all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_C_combined)
+        all_forest_types_C_final = all_forest_types_C_final.filled(0)
         print all_forest_types_C_final[0][1270:1275]
+
+        all_forest_types_C_final = all_forest_types_C_final.astype('float32')
 
         # Writes the output window to the output file
         dst_AGC_emis_year.write_band(1, all_forest_types_C_final, window=window)
