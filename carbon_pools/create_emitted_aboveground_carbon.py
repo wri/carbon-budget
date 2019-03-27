@@ -62,54 +62,44 @@ def create_emitted_AGC(tile_id):
         mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
         # print mangrove_biomass_2000_window[0][30020:30035]
         natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-        print natrl_forest_biomass_2000_window[0][1270:1275]
+        # print natrl_forest_biomass_2000_window[0][1270:1275]
         mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
         # print mangrove_cumul_AGC_gain_window[0][30020:30035]
         planted_forest_cumul_AGC_gain_window = planted_forest_cumul_AGC_gain_src.read(1, window=window)
-        print planted_forest_cumul_AGC_gain_window[0][1270:1275]
+        # print planted_forest_cumul_AGC_gain_window[0][1270:1275]
         natrl_forest_cumul_AGC_gain_window = natrl_forest_cumul_AGC_gain_src.read(1, window=window)
-        print natrl_forest_cumul_AGC_gain_window[0][1270:1275]
+        # print natrl_forest_cumul_AGC_gain_window[0][1270:1275]
         loss_year_window = loss_year_src.read(1, window=window)
         # print loss_year_window[[0]]
 
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
         # print mangrove_C_final[0][30020:30035]
 
-        # m = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, natrl_forest_biomass_2000_window)
-        # planted_forest = np.ma.masked_where(np.ma.getmask(m), planted_forest_cumul_AGC_gain_window)
-        # print m
-        # print planted_forest
-        # print planted_forest.shape
-
         planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
-        print planted_forest_C[0][1270:1275]
+        # print planted_forest_C[0][1270:1275]
         planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, planted_forest_C)
         planted_forest_C_final = planted_forest_C_final.filled(0)
-        print planted_forest_C_final[0][1270:1275]
+        # print planted_forest_C_final[0][1270:1275]
 
         natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
-        print natural_forest_C[0][1270:1275]
+        # print natural_forest_C[0][1270:1275]
         natural_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
         natural_forest_C_final = natural_forest_C_final.filled(0)
-        print natural_forest_C_final[0][1270:1275]
-
-        # natural_forest_C_final = np.ma.masked_where(planted_forest_C_final==0, natural_forest_C)
-        # # natural_forest_C_final = natural_forest_C[planted_forest_C_final == 0]
-        # # print natural_forest_C_final[[0]]
+        # print natural_forest_C_final[0][1270:1275]
 
         all_forest_types_C_combined = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
-        print all_forest_types_C_combined[0][1270:1275]
+        # print all_forest_types_C_combined[0][1270:1275]
 
         all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_C_combined)
         all_forest_types_C_final = all_forest_types_C_final.filled(0)
-        print all_forest_types_C_final[0][1270:1275]
+        # print all_forest_types_C_final[0][1270:1275]
 
         all_forest_types_C_final = all_forest_types_C_final.astype('float32')
 
         # Writes the output window to the output file
         dst_AGC_emis_year.write_band(1, all_forest_types_C_final, window=window)
 
-        sys.quit()
+        # sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year)
