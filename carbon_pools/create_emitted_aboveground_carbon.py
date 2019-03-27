@@ -96,7 +96,7 @@ def create_emitted_AGC(tile_id):
         # # print natural_forest_C_final[[0]]
 
         all_forest_types_C_final = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
-        # print all_forest_types_C_final[[0]]
+        print all_forest_types_C_final[0][1270:1275]
 
         all_forest_types_C_final = all_forest_types_C_final[loss_year_window > 0]
         # print all_forest_types_C_final[[0]]
