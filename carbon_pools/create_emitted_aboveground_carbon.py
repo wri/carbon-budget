@@ -78,6 +78,7 @@ def create_emitted_AGC(tile_id):
 
         m = np.ma.masked_where(planted_forest_cumul_AGC_gain_window != 0, natrl_forest_biomass_2000_window)
         planted_forest = np.ma.masked_where(np.ma.getmask(m), planted_forest_cumul_AGC_gain_window)
+        print m
         print planted_forest
         print planted_forest.shape
 
