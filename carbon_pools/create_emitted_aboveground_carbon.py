@@ -60,7 +60,7 @@ def create_emitted_AGC(tile_id):
 
         # Creates a processing window for each input raster
         mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-        print mangrove_biomass_2000_window[0][30000:30400]
+        print mangrove_biomass_2000_window[0][30010:30030]
         natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
         # print natrl_forest_biomass_2000_window[0][1265:1285]
         mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
