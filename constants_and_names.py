@@ -217,7 +217,7 @@ base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/'
 
 # Aboveground carbon in the year of emission for all forest types
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
-AGC_emis_year_dir = '{0}/AGC/20190326/'.format(base_carbon_pool_dir)
+AGC_emis_year_dir = '{0}AGC/20190326/'.format(base_carbon_pool_dir)
 
 # # Biomass tile list (WHRC/natural forests and mangroves)
 # pattern_biomass_tile_list = 'biomass_tile_list.txt'

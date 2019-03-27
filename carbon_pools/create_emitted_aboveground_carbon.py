@@ -25,7 +25,6 @@ def create_emitted_AGC(tile_id):
     # Name of output tile
     all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
 
-
     print "  Reading input files and creating aboveground carbon in the year of loss for for {}".format(tile_id)
 
     # Opens the input tiles
@@ -36,7 +35,7 @@ def create_emitted_AGC(tile_id):
     natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
     loss_year_src = rasterio.open(loss_year)
 
-    # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
+    # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = natrl_forest_biomass_2000_src.meta
 
     # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
@@ -52,7 +51,7 @@ def create_emitted_AGC(tile_id):
         dtype='float32'
     )
 
-    # The output file: aboveground carbon density in the year of emission
+    # The output file: aboveground carbon density in the year of emission for pixels with tree cover loss
     dst_AGC_emis_year = rasterio.open(all_forests_AGC_emis_year, 'w', **kwargs)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
@@ -72,28 +71,40 @@ def create_emitted_AGC(tile_id):
         loss_year_window = loss_year_src.read(1, window=window)
         # print loss_year_window[[0]]
 
+        # Calculates the aboveground C density in mangrove pixels
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
         # print mangrove_C_final[0][30020:30035]
 
+        # Calculates the aboveground C density in non-mangrove planted forest pixels. The masking command makes sure that
+        # only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
+        # (Otherwise, all WHRC biomass pixels would be included in the planted forest calculation, not just the pixels
+        # at planted forests.)
         planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
         # print planted_forest_C[0][1270:1275]
         planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, planted_forest_C)
         planted_forest_C_final = planted_forest_C_final.filled(0)
         # print planted_forest_C_final[0][1270:1275]
 
+        # Calculates the aboveground C density in non-mangrove non-planted forest pixels. The masking command makes sure that
+        # only WHRC biomass pixels that correspond with non-mangrove non-planted forest pixels are included.
+        # (Otherwise, all WHRC biomass pixels would be included in the non-mang non-planted forest calculation, not just
+        # the pixels at non-mang non-planted forests.)
         natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
         # print natural_forest_C[0][1270:1275]
         natural_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
         natural_forest_C_final = natural_forest_C_final.filled(0)
         # print natural_forest_C_final[0][1270:1275]
 
+        # Adds the carbon sums for all forest types together
         all_forest_types_C_combined = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
         # print all_forest_types_C_combined[0][1270:1275]
 
+        # Removes AGC pixels that do not have a loss year
         all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_C_combined)
         all_forest_types_C_final = all_forest_types_C_final.filled(0)
         # print all_forest_types_C_final[0][1270:1275]
 
+        # Converts the output to float32 since float64 is an unnecessary level of precision
         all_forest_types_C_final = all_forest_types_C_final.astype('float32')
 
         # Writes the output window to the output file
