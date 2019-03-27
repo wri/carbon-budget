@@ -2,9 +2,6 @@ import datetime
 import sys
 import numpy as np
 import rasterio
-import os
-import subprocess
-import glob
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -85,10 +82,10 @@ def create_emitted_AGC(tile_id):
         planted_forest_C_final = planted_forest_C_final.filled(0)
         # print planted_forest_C_final[0][1270:1275]
 
-        # Calculates the aboveground C density in non-mangrove non-planted forest pixels. The masking command makes sure that
+        # Calculates the aboveground C density in non-mangrove non-planted forest pixels. The masking commands make sure that
         # only WHRC biomass pixels that correspond with non-mangrove non-planted forest pixels are included.
         # (Otherwise, all WHRC biomass pixels would be included in the non-mang non-planted forest calculation, not just
-        # the pixels at non-mang non-planted forests.)
+        # the pixels in non-mang non-planted forests.)
         natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
         # print natural_forest_C[0][1270:1275]
         natural_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
