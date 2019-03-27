@@ -92,7 +92,7 @@ def create_emitted_AGC(tile_id):
         natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
         # print natural_forest_C[0][1270:1275]
         natural_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
-        natural_forest_C_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, natural_forest_C_final)
+        natural_forest_C_final = np.ma.masked_where(mangrove_biomass_2000_window > 0, natural_forest_C_final)
         natural_forest_C_final = natural_forest_C_final.filled(0)
         print natural_forest_C_final[0][30020:30035]
 
