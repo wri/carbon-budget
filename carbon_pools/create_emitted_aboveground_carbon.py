@@ -81,7 +81,9 @@ def create_emitted_AGC(tile_id):
         # print planted_forest
         # print planted_forest.shape
 
-        planted_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
+        planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
+        print planted_forest_C[0][1265:1285]
+        planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, planted_forest_C)
         print planted_forest_C_final[0][1265:1285]
 
         natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
