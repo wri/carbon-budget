@@ -110,7 +110,7 @@ def create_emitted_AGC(tile_id):
         # Writes the output window to the output file
         dst_AGC_emis_year.write_band(1, all_forest_types_C_final, window=window)
 
-        # sys.quit()
+        sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year)
