@@ -18,7 +18,7 @@ def create_emitted_AGC(tile_id):
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     mangrove_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_mangrove)
-    planted_forest_cumil_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove)
+    planted_forest_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove)
     natrl_forest_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
     loss_year = '{0}.tif'.format(tile_id)
 
@@ -32,7 +32,7 @@ def create_emitted_AGC(tile_id):
     mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
     natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
     mangrove_cumul_AGC_gain_src = rasterio.open(mangrove_cumul_AGC_gain)
-    planted_forest_cumil_AGC_gain_src = rasterio.open(planted_forest_cumil_AGC_gain)
+    planted_forest_cumul_AGC_gain_src = rasterio.open(planted_forest_cumul_AGC_gain)
     natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
     loss_year_src = rasterio.open(loss_year)
 
@@ -65,7 +65,7 @@ def create_emitted_AGC(tile_id):
         # print natrl_forest_biomass_2000_window[[0]]
         mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
         # print mangrove_cumul_AGC_gain_window[[0]]
-        planted_forest_cumul_AGC_gain_window = planted_forest_cumil_AGC_gain_src.read(1, window=window)
+        planted_forest_cumul_AGC_gain_window = planted_forest_cumul_AGC_gain_src.read(1, window=window)
         # print planted_forest_cumul_AGC_gain_window[[0]]
         natrl_forest_cumul_AGC_gain_window = natrl_forest_cumul_AGC_gain_src.read(1, window=window)
         # print natrl_forest_cumul_AGC_gain_window[[0]]
@@ -74,6 +74,9 @@ def create_emitted_AGC(tile_id):
 
         mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
         print mangrove_C_final[[0]]
+
+        planted_forest = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, natrl_forest_biomass_2000_window)
+        print planted_forest
 
         planted_forest_C_final = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
         print planted_forest_C_final[[0]]
