@@ -1,5 +1,6 @@
 import datetime
 import sys
+import os
 import numpy as np
 import rasterio
 sys.path.append('../')
@@ -8,10 +9,18 @@ import universal_util as uu
 
 def create_emitted_AGC(tile_id):
 
+    # Only calls the function if there is a loss tile. Without a loss tile, there will be no output, so there's
+    # no reason to call the function.
+    if os.path.exists('{}.tif'.format(tile_id)):
+        print "Loss tile found for {}. Processing.".format(tile_id)
+    else:
+        print "No loss tile for {}. Not processing.".format(tile_id)
+        return
+
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the input tiles
+    # Names of the input tiles. Creates the names even if the files don't exist.
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     mangrove_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_mangrove)
@@ -24,11 +33,20 @@ def create_emitted_AGC(tile_id):
 
     print "  Reading input files and creating aboveground carbon in the year of loss for for {}".format(tile_id)
 
-    # Opens the input tiles
-    mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
+    # Opens the input tiles if they exist
+    try:
+        mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
+    except:
+        print "No mangrove biomass for", tile_id
     natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-    mangrove_cumul_AGC_gain_src = rasterio.open(mangrove_cumul_AGC_gain)
-    planted_forest_cumul_AGC_gain_src = rasterio.open(planted_forest_cumul_AGC_gain)
+    try:
+        mangrove_cumul_AGC_gain_src = rasterio.open(mangrove_cumul_AGC_gain)
+    except:
+        print "No mangrove carbon accumulation for", tile_id
+    try:
+        planted_forest_cumul_AGC_gain_src = rasterio.open(planted_forest_cumul_AGC_gain)
+    except:
+        print "No planted forests for", tile_id
     natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
     loss_year_src = rasterio.open(loss_year)
 
