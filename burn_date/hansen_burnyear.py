@@ -10,8 +10,8 @@ def hansen_burnyear(tile_id):
     tile_id = tile_id[0:8]
     print "Processing", tile_id
 
-    input_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year_10x10_clip/'
-    output_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/'
+    input_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year_10x10_clip/'
+    output_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year_with_Hansen_loss/'
 
     # download the 10x10 deg burn year tiles- 1 for each year- in WGS proj, stack and evaluate
     # to return burn year values on hansen loss pixels within 1 year of loss date
@@ -62,7 +62,7 @@ def hansen_burnyear(tile_id):
     os.remove('{}.tif'.format(tile_id))
 
 
-tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
+tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')
 tile_list = tile_list[1:]
 print "Tile list: ", tile_list
 

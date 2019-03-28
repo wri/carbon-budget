@@ -43,7 +43,7 @@ def clip_year_tiles(tile_year_list):
 
     # upload file
     cmd = ['aws', 's3', 'mv', recoded_output,
-           's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year_10x10_clip/']
+           's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year_10x10_clip/']
 
     subprocess.check_call(cmd)
 

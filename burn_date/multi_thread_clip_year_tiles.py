@@ -8,12 +8,12 @@ import utilities
 
 # creates a 10x10 degree wgs 84 tile of .00025 res burned year. Download all modis hv tile from s3,
 # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
-for year in range(2014, 2018):
+for year in range(2018, 2019):
 
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
-    modis_burnyear_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/'
-    Hansen_loss_dir = 's3://gfw2-data/forest_change/hansen_2017'
+    modis_burnyear_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year/'
+    Hansen_loss_dir = 's3://gfw2-data/forest_change/hansen_2018/'
 
     # download all hv tifs for this year
     include = '{0}_*.tif'.format(year)
@@ -43,7 +43,7 @@ for year in range(2014, 2018):
     subprocess.check_call(cmd)
 
     # clip vrt to hansen tile extent
-    tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2017/')
+    tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')
     tile_list = tile_list[1:]
     print tile_list
     # create a list of lists, with year and tile id to send to multi processor
@@ -53,7 +53,7 @@ for year in range(2014, 2018):
 
     if __name__ == '__main__':
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=40)
+        pool = multiprocessing.Pool(processes=20)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
     print "Multiprocessing for year done. Moving to next year."
