@@ -36,6 +36,7 @@ def create_emitted_AGC(tile_id):
     # Opens the input tiles if they exist
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
+        print "Mangrove biomass found for", tile_id
     except:
         print "No mangrove biomass for", tile_id
     natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)

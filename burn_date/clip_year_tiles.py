@@ -4,7 +4,6 @@ import sys
 
 import utilities
 sys.path.append('../')
-import constants_and_names as cn
 import universal_util as uu
 
 currentdir = os.path.dirname(os.path.abspath(__file__))

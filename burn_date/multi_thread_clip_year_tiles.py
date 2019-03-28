@@ -54,6 +54,7 @@ for year in range(2018, 2019):
     tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')
     tile_list = tile_list[1:]
     print tile_list
+    print "There are {} Hansen tiles to process".format(str(len(tile_list)))
     # create a list of lists, with year and tile id to send to multi processor
     tile_year_list = []
     for tile_id in tile_list:
