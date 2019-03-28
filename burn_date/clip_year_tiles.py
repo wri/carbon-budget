@@ -3,6 +3,9 @@ import subprocess
 import sys
 
 import utilities
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -21,11 +24,13 @@ def clip_year_tiles(tile_year_list):
     vrt_name = "global_vrt_{}_wgs84.vrt".format(year)
 
     # get coords of hansen tile
-    hansen_tile = utilities.wgetloss(tile_id)
-    xmin, ymin, xmax, ymax = utilities.get_extent(tile_id)
+    print "Getting coordinates of", tile_id
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
+
+    print "Clipping burn year vrt to", tile_id
 
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     cmd += [vrt_name, clipped_raster, '-tr', '.00025', '.00025']
@@ -49,7 +54,7 @@ def clip_year_tiles(tile_year_list):
 
     # remove files
     print "Removing files"
-    files_to_remove = [clipped_raster, hansen_tile, recoded_output]
+    files_to_remove = [clipped_raster, recoded_output]
     utilities.remove_list_files(files_to_remove)
 
     print "Done removing individual files"

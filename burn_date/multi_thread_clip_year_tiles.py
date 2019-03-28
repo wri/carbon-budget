@@ -10,6 +10,8 @@ import utilities
 # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
 for year in range(2018, 2019):
 
+    print "Processing", year
+
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
     modis_burnyear_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year/'
@@ -20,9 +22,13 @@ for year in range(2018, 2019):
     year_tifs_folder = "{}_year_tifs".format(year)
     utilities.makedir(year_tifs_folder)
 
+    print "Downloading MODIS burn date files from s3..."
+
     cmd = ['aws', 's3', 'cp', modis_burnyear_dir, year_tifs_folder]
     cmd += ['--recursive', '--exclude', "*", '--include', include]
     subprocess.check_call(cmd)
+
+    print "Creating vrt of MODIS files..."
 
     # build list of vrt files (command wont take folder/*.tif)
     vrt_name = "global_vrt_{}.vrt".format(year)
@@ -36,6 +42,8 @@ for year in range(2018, 2019):
     # create vrt with wgs84 modis tiles
     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
     subprocess.check_call(cmd)
+
+    print "Reprojecting vrt..."
 
     # # build new vrt and virtually project it
     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
@@ -53,7 +61,7 @@ for year in range(2018, 2019):
 
     if __name__ == '__main__':
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=20)
+        pool = multiprocessing.Pool(processes=40)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
     print "Multiprocessing for year done. Moving to next year."
