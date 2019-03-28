@@ -12,7 +12,7 @@ def create_emitted_AGC(tile_id):
     # Only calls the function if there is a loss tile. Without a loss tile, there will be no output, so there's
     # no reason to call the function.
     if os.path.exists('{}.tif'.format(tile_id)):
-        print "Loss tile found for {}. Processing.".format(tile_id)
+        print "Loss tile found for {}. Processing...".format(tile_id)
     else:
         print "No loss tile for {}. Not processing.".format(tile_id)
         return
@@ -31,28 +31,44 @@ def create_emitted_AGC(tile_id):
     # Name of output tile
     all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
 
-    print "  Reading input files and creating aboveground carbon in the year of loss for for {}".format(tile_id)
+    print "  Reading input files and creating aboveground carbon in the year of loss for for {}...".format(tile_id)
 
     # Opens the input tiles if they exist
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
+
+        # Grabs metadata for one of the input tiles, like its location/projection/cellsize
+        kwargs = mangrove_biomass_2000_src.meta
         print "Mangrove biomass found for", tile_id
     except:
         print "No mangrove biomass for", tile_id
-    natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
+
+    try:
+        natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
+
+        # Grabs metadata for one of the input tiles, like its location/projection/cellsize
+        kwargs = natrl_forest_biomass_2000_src.meta
+        print "WHRC biomass found for", tile_id
+    except:
+        print "No WHRC biomass found for", tile_id
+
     try:
         mangrove_cumul_AGC_gain_src = rasterio.open(mangrove_cumul_AGC_gain)
+        print "Mangrove carbon accumulation found for", tile_id
     except:
         print "No mangrove carbon accumulation for", tile_id
+
     try:
         planted_forest_cumul_AGC_gain_src = rasterio.open(planted_forest_cumul_AGC_gain)
     except:
         print "No planted forests for", tile_id
-    natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
-    loss_year_src = rasterio.open(loss_year)
 
-    # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = natrl_forest_biomass_2000_src.meta
+    try:
+        natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
+    except:
+        print "No non-mangrove non-planted forest carbon gain for", tile_id
+
+    loss_year_src = rasterio.open(loss_year)
 
     # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
     windows = natrl_forest_biomass_2000_src.block_windows(1)

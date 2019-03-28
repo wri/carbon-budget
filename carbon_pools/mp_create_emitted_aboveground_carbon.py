@@ -29,27 +29,30 @@ input_files = [
 for tile in tile_list:
 
     try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
-                                                            cn.pattern_mangrove_biomass_2000), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
     except:
         print "No mangrove biomass in", tile
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
-                                                            cn.pattern_WHRC_biomass_2000_unmasked), '.')
+
     try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile,
-                                                            cn.pattern_cumul_gain_AGC_mangrove), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.')
+    except:
+        print "No WHRC biomass in", tile
+
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_mangrove), '.')
     except:
         print "No mangrove carbon accumulation in", tile
+
     try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, tile,
-                                                            cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove), '.')
     except:
         print "No planted forests in", tile
+
     try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile,
-                                                            cn.pattern_cumul_gain_AGC_natrl_forest), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGC_natrl_forest), '.')
     except:
         print "No non-mangrove non-planted forests in", tile
+
     try:
         uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
     except:
