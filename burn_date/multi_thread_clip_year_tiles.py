@@ -53,7 +53,7 @@ for year in range(2018, 2019):
 
     if __name__ == '__main__':
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=40)
+        pool = multiprocessing.Pool(processes=20)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
     print "Multiprocessing for year done. Moving to next year."
