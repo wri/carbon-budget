@@ -25,7 +25,7 @@ def wgetloss(tile_id):
     hansen_tile = '{}_loss.tif'.format(tile_id)
     # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
     #       '-O', hansen_tile]
-    cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}.tif'.format(tile_id)]
+    cmd = ['wget', r'https://glad.umd.edu/Potapov/GFW_2018/forest_loss_2018/{}.tif'.format(tile_id)]
 
     subprocess.check_call(cmd)    
     return hansen_tile
@@ -138,7 +138,7 @@ def makedir(dir):
 
 def download_df(year, hv_tile, output_dir):
         include = '*A{0}*{1}*'.format(year, hv_tile)
-        cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/raw_hdf/', output_dir, '--recursive', '--exclude',
+        cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/raw_hdf/', output_dir, '--recursive', '--exclude',
                "*", '--include', include]
         subprocess.check_call(cmd)
 
