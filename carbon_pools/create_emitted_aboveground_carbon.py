@@ -89,6 +89,10 @@ def create_emitted_AGC(tile_id):
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
+        # Populates the output rasters' windows with 0s so that pixels without
+        # any of the forest types will have 0s
+        all_forest_types_C_combined = np.zeros((window.height, window.width), dtype='float32')
+
         # Creates a processing window for each input raster
         if os.path.exists(mangrove_biomass_2000):
 
@@ -100,6 +104,9 @@ def create_emitted_AGC(tile_id):
             # Calculates the aboveground C density in mangrove pixels
             mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
             # print mangrove_C_final[0][30020:30035]
+
+            all_forest_types_C_combined = all_forest_types_C_combined + mangrove_C_final
+            # print all_forest_types_C_combined[0][30020:30035]
 
         if os.path.exists(planted_forest_cumul_AGC_gain):
 
@@ -117,6 +124,9 @@ def create_emitted_AGC(tile_id):
             planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, planted_forest_C)
             planted_forest_C_final = planted_forest_C_final.filled(0)
             # print planted_forest_C_final[0][1270:1275]
+
+            all_forest_types_C_combined = all_forest_types_C_combined + planted_forest_C_final
+            # print all_forest_types_C_combined[0][30020:30035]
 
         if os.path.exists(natrl_forest_cumul_AGC_gain):
 
@@ -136,12 +146,15 @@ def create_emitted_AGC(tile_id):
             natural_forest_C_final = natural_forest_C_final.filled(0)
             # print natural_forest_C_final[0][30020:30035]
 
+            all_forest_types_C_combined = all_forest_types_C_combined + natural_forest_C_final
+            # print all_forest_types_C_combined[0][30020:30035]
+
         loss_year_window = loss_year_src.read(1, window=window)
         # print loss_year_window[[0]]
 
-        # Adds the carbon sums for all forest types together
-        all_forest_types_C_combined = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
-        # print all_forest_types_C_combined[0][30020:30035]
+        # # Adds the carbon sums for all forest types together
+        # all_forest_types_C_combined = mangrove_C_final + planted_forest_C_final + natural_forest_C_final
+        # # print all_forest_types_C_combined[0][30020:30035]
 
         # Removes AGC pixels that do not have a loss year
         all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_C_combined)
