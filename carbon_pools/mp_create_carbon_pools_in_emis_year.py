@@ -42,9 +42,13 @@ for tile in tile_list:
 
 print "Creating carbon pools..."
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
-pool.map(create_carbon_pools_in_emis_year.create_BGC, tile_list)
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/3)
+# pool.map(create_carbon_pools_in_emis_year.create_BGC, tile_list)
+
+# For single processor use
+for tile in tile_list:
+    create_carbon_pools_in_emis_year.create_BGC(tile)
 
 print "Uploading output to s3..."
 
