@@ -24,21 +24,21 @@ input_files = [
 # for input in input_files:
 #     uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
-                                                            cn.pattern_AGC_emis_year), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
-                                                            cn.pattern_mangrove_biomass_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
-                                                            cn.pattern_cont_eco_processed), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
-    #                                                         cn.pattern_precip), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_2000_dir, tile,
-    #                                                         cn.pattern_soil_C_2000), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
-    #                                                         cn.pattern_elevation), '.')
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
+#                                                             cn.pattern_AGC_emis_year), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
+#                                                             cn.pattern_mangrove_biomass_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
+#                                                             cn.pattern_cont_eco_processed), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
+#     #                                                         cn.pattern_precip), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_2000_dir, tile,
+#     #                                                         cn.pattern_soil_C_2000), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
+#     #                                                         cn.pattern_elevation), '.')
 
 print "Creating carbon pools..."
 

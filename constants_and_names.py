@@ -236,7 +236,7 @@ pool_types = ['natrl', 'mangrove', 'total']
 
 # Belowground carbon
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
-BGC_emis_year_dir = '{}/belowground_carbon/20190326/'.format(base_carbon_pool_dir)
+BGC_emis_year_dir = '{}belowground_carbon/20190329/'.format(base_carbon_pool_dir)
 
 # Deadwood
 pattern_deadwood_emis_year = 't_deadwood_C_ha_emis_year'
