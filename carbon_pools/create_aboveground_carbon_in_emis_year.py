@@ -150,9 +150,14 @@ def create_emitted_AGC(tile_id):
             # the pixels in non-mang non-planted forests.)
             natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
             # print natural_forest_C[0][1270:1275]
-            natural_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
-            natural_forest_C_final = np.ma.masked_where(mangrove_biomass_2000_window > 0, natural_forest_C_final)
-            natural_forest_C_final = natural_forest_C_final.filled(0)
+
+            if os.path.exists(planted_forest_cumul_AGC_gain):
+                natural_forest_C = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
+
+            if os.path.exists(mangrove_biomass_2000):
+                natural_forest_C = np.ma.masked_where(mangrove_biomass_2000_window > 0, natural_forest_C)
+
+            natural_forest_C_final = natural_forest_C.filled(0)
             # print natural_forest_C_final[0][30020:30035]
 
             all_forest_types_C_combined = all_forest_types_C_combined + natural_forest_C_final
