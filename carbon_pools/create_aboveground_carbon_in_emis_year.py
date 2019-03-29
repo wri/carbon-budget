@@ -153,12 +153,13 @@ def create_emitted_AGC(tile_id):
 
             if os.path.exists(planted_forest_cumul_AGC_gain):
                 natural_forest_C = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
+                natural_forest_C_final = natural_forest_C.filled(0)
+                # print natural_forest_C_final[0][30020:30035]
 
             if os.path.exists(mangrove_biomass_2000):
                 natural_forest_C = np.ma.masked_where(mangrove_biomass_2000_window > 0, natural_forest_C)
-
-            natural_forest_C_final = natural_forest_C.filled(0)
-            # print natural_forest_C_final[0][30020:30035]
+                natural_forest_C_final = natural_forest_C.filled(0)
+                # print natural_forest_C_final[0][30020:30035]
 
             all_forest_types_C_combined = all_forest_types_C_combined + natural_forest_C_final
             # print all_forest_types_C_combined[0][30020:30035]
