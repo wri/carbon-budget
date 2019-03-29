@@ -25,10 +25,10 @@ if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 string tile_id =argv[1];
 string agb_natrl_name = tile_id + "_t_aboveground_biomass_ha_2000.tif";   //Aboveground biomass of natural, non-mangrove forests
 string agb_mangrove_name =  tile_id + "_mangrove_agb_t_ha.tif"
-string biome_name = tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
-string elevation_name = tile_id + "_res_srtm.tif";
-string precip_name = tile_id + "_res_precip.tif";
-string soil_name =  tile_id + "_soil_t_C_ha.tif";
+string biome_name = tile_id + "_fao_ecozones_bor_tem_tro.tif";
+string elevation_name = tile_id + "_elevation.tif";
+string precip_name = tile_id + "_precip_mm_annual.tif";
+string soil_name =  tile_id + "_t_soil_C_ha_2000.tif";
 
 
 //output carbon pool tif names for non-mangrove forests

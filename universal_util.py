@@ -316,7 +316,7 @@ def count_completed_tiles(pattern):
 
 
     # completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
-    print "Number of completed tiles:", completed
+    print "Number of completed or in progress tiles:", completed
 
 # Returns the NoData value of a raster
 def get_raster_nodata_value(tile):

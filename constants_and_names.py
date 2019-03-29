@@ -32,6 +32,14 @@ below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96
 
+# Creates belowground:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
+# the "mangType" field in the gain rate spreadsheet.
+# If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
+# keys in this dictionary would need to change accordingly.
+# Key 4 is water, so there shouldn't be any mangrove values there.
+type_ratio_dict = {'1': below_to_above_trop_dry_mang, '2':below_to_above_trop_wet_mang, '3': below_to_above_subtrop_mang, '4': '100'}
+type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
+
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
@@ -226,29 +234,25 @@ AGC_emis_year_dir = '{0}AGC/20190329/'.format(base_carbon_pool_dir)
 # NOTE: These must match the word before .tif in the outnames of calc_carbon_pools.cpp, e.g., "string outname_litter_total = tile_id + "_t_litter_C_ha_total.tif";"
 pool_types = ['natrl', 'mangrove', 'total']
 
-# Aboveground carbon
-pattern_agc = 't_AGC_ha_emis_year'
-agc_dir = '{}/aboveground_carbon/20190326/'.format(base_carbon_pool_dir)
-
 # Belowground carbon
-pattern_bgc = 't_BGC_ha_emis_year'
-bgc_dir = '{}/belowground_carbon/20190326/'.format(base_carbon_pool_dir)
+pattern_BGC_emis_year = 't_BGC_ha_emis_year'
+BGC_emis_year_dir = '{}/belowground_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Deadwood
-pattern_deadwood = 't_deadwood_C_ha_emis_year'
-deadwood_dir = '{}/deadwood_carbon/20190326/'.format(base_carbon_pool_dir)
+pattern_deadwood_emis_year = 't_deadwood_C_ha_emis_year'
+deadwood_emis_year_dir = '{}/deadwood_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Litter
-pattern_litter = 't_litter_C_ha_emis_year'
-litter_dir = '{}/litter_carbon/20190326/'.format(base_carbon_pool_dir)
+pattern_litter_emis_year = 't_litter_C_ha_emis_year'
+litter_emis_year_dir = '{}/litter_carbon/20190326/'.format(base_carbon_pool_dir)
 
 # Soil
-pattern_soil_pool = 't_soil_C_ha_2000'
-soil_C_pool_dir = '{}/soil_carbon/20181228/'.format(base_carbon_pool_dir)
+pattern_soil_C_2000 = 't_soil_C_ha_2000'
+soil_C_2000_dir = '{}/soil_carbon/20181228/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
-pattern_total_C = 't_total_C_ha_emis_year'
-total_C_dir = '{}/total_carbon/20190326/'.format(base_carbon_pool_dir)
+pattern_total_C_emis_year = 't_total_C_ha_emis_year'
+total_C_emis_year_dir = '{}/total_carbon/20190326/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions
