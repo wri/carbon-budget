@@ -9,7 +9,7 @@ import universal_util as uu
 
 def create_emitted_AGC(tile_id):
 
-    # Only calls the function if there is a loss tile. Without a loss tile, there will be no output, so there's
+    # Only proceeds with running the function if there is a loss tile. Without a loss tile, there will be no output, so there's
     # no reason to call the function.
     if os.path.exists('{}.tif'.format(tile_id)):
         print "Loss tile found for {}. Processing...".format(tile_id)
@@ -33,11 +33,15 @@ def create_emitted_AGC(tile_id):
 
     print "  Reading input files for {}...".format(tile_id)
 
-    # Opens the input tiles if they exist
+    # Opens the input tiles if they exist. Any of these could not exist for a given Hansen tile.
+    # Either mangrove biomass or WHRC biomass should exist for each tile, though. Thus, kwargs should ce
+    # created based on one of those input tiles.
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
         kwargs = mangrove_biomass_2000_src.meta
+        # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
+        windows = mangrove_biomass_2000_src.block_windows(1)
         print "Mangrove biomass found for", tile_id
     except:
         print "No mangrove biomass for", tile_id
@@ -46,6 +50,8 @@ def create_emitted_AGC(tile_id):
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
         kwargs = natrl_forest_biomass_2000_src.meta
+        # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
+        windows = natrl_forest_biomass_2000_src.block_windows(1)
         print "WHRC biomass found for", tile_id
     except:
         print "No WHRC biomass found for", tile_id
@@ -68,9 +74,6 @@ def create_emitted_AGC(tile_id):
 
     loss_year_src = rasterio.open(loss_year)
 
-    # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
-    windows = natrl_forest_biomass_2000_src.block_windows(1)
-
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional gain rates
     kwargs.update(
@@ -81,7 +84,7 @@ def create_emitted_AGC(tile_id):
         dtype='float32'
     )
 
-    # The output file: aboveground carbon density in the year of emission for pixels with tree cover loss
+    # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_AGC_emis_year = rasterio.open(all_forests_AGC_emis_year, 'w', **kwargs)
 
     print "  Creating aboveground carbon in the year of loss for {}...".format(tile_id)
@@ -93,7 +96,9 @@ def create_emitted_AGC(tile_id):
         # any of the forest types will have 0s
         all_forest_types_C_combined = np.zeros((window.height, window.width), dtype='float32')
 
-        # Creates a processing window for each input raster
+        # Creates a processing window for each forest type and calculates AGC density as biomass in 2000 + carbon accumulation
+
+        # Does mangrove calculation if there is a mangrove biomass tile
         if os.path.exists(mangrove_biomass_2000):
 
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
@@ -108,6 +113,7 @@ def create_emitted_AGC(tile_id):
             all_forest_types_C_combined = all_forest_types_C_combined + mangrove_C_final
             # print all_forest_types_C_combined[0][30020:30035]
 
+        # Does non-mangrove planted forest calculation if there is a planted forest C accumulation tile
         if os.path.exists(planted_forest_cumul_AGC_gain):
 
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
@@ -128,6 +134,7 @@ def create_emitted_AGC(tile_id):
             all_forest_types_C_combined = all_forest_types_C_combined + planted_forest_C_final
             # print all_forest_types_C_combined[0][30020:30035]
 
+        # Does the non-mangrove non-planted forest calculation if there is a corresponding C accumulation tile
         if os.path.exists(natrl_forest_cumul_AGC_gain):
 
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
