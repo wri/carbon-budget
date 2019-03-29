@@ -65,7 +65,9 @@ def create_BGC(tile_id):
         # Initialy does this for all pixles (not just loss pixels)-- loss mask is applied at the very end of the window processing.
 
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
+        print AGC_emis_year_window[0][30020:30035]
         fao_ecozone_window = fao_ecozone_src.read(1, window=window)
+        print fao_ecozone_window[0][30020:30035]
 
 
         # Mangrove calculation if there is a mangrove biomass tile
@@ -73,17 +75,29 @@ def create_BGC(tile_id):
 
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
 
+            print mangrove_biomass_2000_window[0][30020:30035]
+
             for key, value in cn.type_ratio_dict_final.iteritems():
                 fao_ecozone_window[fao_ecozone_window == key] = value
 
+            print fao_ecozone_window[0][30020:30035]
+
             mangrove_C_final = AGC_emis_year_window * fao_ecozone_window
+
+            print mangrove_C_final[0][30020:30035]
 
             mangrove_C_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, mangrove_C_final)
 
+            print mangrove_C_final[0][30020:30035]
+
             BGC_output = BGC_output + mangrove_C_final
 
+            print BGC_output[0][30020:30035]
 
-        BGC_output = BGC_output * cn.below_to_above_natrl_forest
+            sys.quit()
+
+
+        # BGC_output = BGC_output * cn.below_to_above_natrl_forest
 
     # Writes the output window to the output file
     dst_BGC_emis_year.write_band(1, BGC_output, window=window)
