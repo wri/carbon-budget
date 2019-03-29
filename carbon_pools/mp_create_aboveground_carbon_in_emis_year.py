@@ -60,12 +60,12 @@ input_files = [
 
 print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/3)
-# pool.map(create_aboveground_carbon_in_emis_year.create_emitted_AGC, tile_list)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count/3)
+pool.map(create_aboveground_carbon_in_emis_year.create_emitted_AGC, tile_list)
 
-# For single processor use
-for tile in tile_list:
-    create_aboveground_carbon_in_emis_year.create_emitted_AGC(tile)
+# # For single processor use
+# for tile in tile_list:
+#     create_aboveground_carbon_in_emis_year.create_emitted_AGC(tile)
 
 uu.upload_final_set(cn.AGC_emis_year_dir, cn.pattern_AGC_emis_year)
