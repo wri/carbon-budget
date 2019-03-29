@@ -64,11 +64,13 @@ def create_emitted_AGC(tile_id):
 
     try:
         planted_forest_cumul_AGC_gain_src = rasterio.open(planted_forest_cumul_AGC_gain)
+        print "Non-mangrove carbon accumulation found for", tile_id
     except:
         print "No planted forests for", tile_id
 
     try:
         natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
+        print "Non-mangrove non-planted forest carbon accumulation found for", tile_id
     except:
         print "No non-mangrove non-planted forest carbon gain for", tile_id
 
