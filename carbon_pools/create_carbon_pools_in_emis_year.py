@@ -94,6 +94,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
             # BGC_output = BGC_output + mangrove_C_final
 
+            print mangrove_C_final[0][29930:29950]
             print AGC_emis_year_window[0][29930:29950]
             print BGC_output[0][29930:29950]
 
