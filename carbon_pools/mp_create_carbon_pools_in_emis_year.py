@@ -75,10 +75,8 @@ mang_BGB_AGB_ratio = pd.Series(gain_table_simplified.BGB_AGB_ratio.values,index=
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 mang_BGB_AGB_ratio[0] = 0
 
-# Converts all the keys (continent-ecozone codes) to float type
+# Converts all the keys (continent-ecozone codes) to float type. Important for matching the raster's values.
 mang_BGB_AGB_ratio = {float(key): value for key, value in mang_BGB_AGB_ratio.iteritems()}
-
-print mang_BGB_AGB_ratio
 
 print "Creating carbon pools..."
 

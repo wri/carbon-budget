@@ -49,7 +49,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         dtype='float32'
     )
 
-    # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
+    # The output file: belowground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
 
     print "  Creating belowground carbon density in the year of loss for {}...".format(tile_id)
@@ -95,10 +95,13 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
             # print BGC_output[0][30020:30035]
 
+            non_mang_output = AGC_emis_year_window * cn.below_to_above_natrl_forest
+            non_mang_output_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, non_mang_output)
+
+            BGC_output = BGC_output + non_mang_output_final
+
             # sys.quit()
 
-
-        # BGC_output = BGC_output * cn.below_to_above_natrl_forest
 
         # Writes the output window to the output file
         dst_BGC_emis_year.write_band(1, BGC_output, window=window)
