@@ -65,10 +65,10 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         # Initialy does this for all pixles (not just loss pixels)-- loss mask is applied at the very end of the window processing.
 
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
-        print AGC_emis_year_window[0][30020:30035]
+        # print AGC_emis_year_window[0][30020:30035]
         fao_ecozone_window = fao_ecozone_src.read(1, window=window)
         fao_ecozone_window = fao_ecozone_window.astype('float32')
-        print fao_ecozone_window[0][30020:30035]
+        # print fao_ecozone_window[0][30020:30035]
 
 
         # Mangrove calculation if there is a mangrove biomass tile
@@ -95,13 +95,13 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
             print BGC_output[0][30020:30035]
 
-            sys.quit()
+            # sys.quit()
 
 
         # BGC_output = BGC_output * cn.below_to_above_natrl_forest
 
-    # Writes the output window to the output file
-    dst_BGC_emis_year.write_band(1, BGC_output, window=window)
+        # Writes the output window to the output file
+        dst_BGC_emis_year.write_band(1, BGC_output, window=window)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
