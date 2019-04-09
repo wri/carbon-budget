@@ -94,17 +94,17 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
             BGC_output = BGC_output + mangrove_C_final
 
-            print AGC_emis_year_window[0][29920:29940]
-            print BGC_output[0][29920:29940]
+            print AGC_emis_year_window[0][29930:29950]
+            print BGC_output[0][29930:29950]
 
             non_mang_output = AGC_emis_year_window * cn.below_to_above_natrl_forest
-            print non_mang_output[0][29920:29940]
+            print non_mang_output[0][29930:29950]
 
             non_mang_output_final = np.ma.masked_where(mangrove_biomass_2000_window != 0, non_mang_output)
-            print non_mang_output_final[0][29920:29940]
+            print non_mang_output_final[0][29930:29950]
 
             BGC_output = BGC_output + non_mang_output_final
-            print BGC_output[0][29920:29940]
+            print BGC_output[0][29930:29950]
 
             sys.quit()
 
