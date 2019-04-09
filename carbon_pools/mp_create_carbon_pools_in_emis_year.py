@@ -1,6 +1,7 @@
 import create_carbon_pools_in_emis_year
 import multiprocessing
 import subprocess
+import os
 import pandas as pd
 import sys
 sys.path.append('../')
