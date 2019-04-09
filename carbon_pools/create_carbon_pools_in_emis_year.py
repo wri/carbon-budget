@@ -10,8 +10,6 @@ import universal_util as uu
 
 def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
-    print mang_BGB_AGB_ratio
-
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
@@ -69,6 +67,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
         print AGC_emis_year_window[0][30020:30035]
         fao_ecozone_window = fao_ecozone_src.read(1, window=window)
+        fao_ecozone_window = fao_ecozone_window.astype('float32')
         print fao_ecozone_window[0][30020:30035]
 
 
