@@ -10,6 +10,8 @@ import universal_util as uu
 
 def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
+    print mang_BGB_AGB_ratio
+
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
