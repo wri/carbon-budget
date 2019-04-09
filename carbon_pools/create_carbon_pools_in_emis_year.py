@@ -94,6 +94,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
             BGC_output = BGC_output + mangrove_C_final
 
+            print AGC_emis_year_window[0][29920:29940]
             print BGC_output[0][29920:29940]
 
             non_mang_output = AGC_emis_year_window * cn.below_to_above_natrl_forest
