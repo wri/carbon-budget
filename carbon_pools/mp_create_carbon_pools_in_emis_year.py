@@ -78,10 +78,6 @@ mang_BGB_AGB_ratio[0] = 0
 # Converts all the keys (continent-ecozone codes) to float type
 mang_BGB_AGB_ratio = {float(key): value for key, value in mang_BGB_AGB_ratio.iteritems()}
 
-print mang_BGB_AGB_ratio
-
-
-
 print "Creating carbon pools..."
 
 # count = multiprocessing.cpu_count()
@@ -90,7 +86,7 @@ print "Creating carbon pools..."
 
 # For single processor use
 for tile in tile_list:
-    create_carbon_pools_in_emis_year.create_BGC(tile)
+    create_carbon_pools_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
 
 print "Uploading output to s3..."
 

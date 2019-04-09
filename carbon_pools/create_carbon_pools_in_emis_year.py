@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def create_BGC(tile_id):
+def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
     start = datetime.datetime.now()
 
@@ -77,7 +77,7 @@ def create_BGC(tile_id):
 
             print mangrove_biomass_2000_window[0][30020:30035]
 
-            for key, value in type_ratio_dict_final.iteritems():
+            for key, value in mang_BGB_AGB_ratio.iteritems():
                 fao_ecozone_window[fao_ecozone_window == key] = value
 
             print fao_ecozone_window[0][30020:30035]
