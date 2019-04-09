@@ -76,24 +76,24 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
 
-            print mangrove_biomass_2000_window[0][30020:30035]
+            # print mangrove_biomass_2000_window[0][30020:30035]
 
             for key, value in mang_BGB_AGB_ratio.iteritems():
                 fao_ecozone_window[fao_ecozone_window == key] = value
 
-            print fao_ecozone_window[0][30020:30035]
+            # print fao_ecozone_window[0][30020:30035]
 
             mangrove_C_final = AGC_emis_year_window * fao_ecozone_window
 
-            print mangrove_C_final[0][30020:30035]
+            # print mangrove_C_final[0][30020:30035]
 
             mangrove_C_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, mangrove_C_final)
 
-            print mangrove_C_final[0][30020:30035]
+            # print mangrove_C_final[0][30020:30035]
 
             BGC_output = BGC_output + mangrove_C_final
 
-            print BGC_output[0][30020:30035]
+            # print BGC_output[0][30020:30035]
 
             # sys.quit()
 
