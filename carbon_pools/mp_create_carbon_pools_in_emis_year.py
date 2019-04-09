@@ -8,6 +8,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+pd.options.mode.chained_assignment = None
+
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
 tile_list = ['00N_110E'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '00N_000E', '00N_110E'] # test tiles
@@ -63,23 +65,15 @@ gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='fi
 type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang, '4': '100'}
 type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
 
-print type_ratio_dict_final
-
 # Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
 # a column of belowground annual gain rates by mangrove type
 gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
 
-print gain_table_simplified.head()
-
 # Converts the continent-ecozone codes and corresponding gain rates to dictionaries for aboveground and belowground gain rates
 mang_BGB_AGB_ratio = pd.Series(gain_table_simplified.BGB_AGB_ratio.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
-print mang_BGB_AGB_ratio
-
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 mang_BGB_AGB_ratio[0] = 0
-
-print mang_BGB_AGB_ratio
 
 # Converts all the keys (continent-ecozone codes) to float type
 mang_BGB_AGB_ratio = {float(key): value for key, value in mang_BGB_AGB_ratio.iteritems()}
