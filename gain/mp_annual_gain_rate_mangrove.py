@@ -48,9 +48,17 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
+# Creates belowground:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
+# the "mangType" field in the gain rate spreadsheet.
+# If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
+# keys in this dictionary would need to change accordingly.
+# Key 4 is water, so there shouldn't be any mangrove values there.
+type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang, '4': '100'}
+type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
+
 # Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
 # a column of belowground annual gain rates by mangrove type
-gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(cn.type_ratio_dict_final)
+gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
 gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.AGB_gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
 
 # Converts the continent-ecozone codes and corresponding gain rates to dictionaries for aboveground and belowground gain rates

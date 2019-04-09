@@ -77,7 +77,7 @@ def create_BGC(tile_id):
 
             print mangrove_biomass_2000_window[0][30020:30035]
 
-            for key, value in cn.type_ratio_dict_final.iteritems():
+            for key, value in type_ratio_dict_final.iteritems():
                 fao_ecozone_window[fao_ecozone_window == key] = value
 
             print fao_ecozone_window[0][30020:30035]

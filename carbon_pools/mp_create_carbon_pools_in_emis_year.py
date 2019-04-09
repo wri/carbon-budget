@@ -1,5 +1,7 @@
 import create_carbon_pools_in_emis_year
 import multiprocessing
+import subprocess
+import pandas as pd
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -39,6 +41,51 @@ for tile in tile_list:
     #                                                         cn.pattern_soil_C_2000), '.')
     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
     #                                                         cn.pattern_elevation), '.')
+
+
+# Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+subprocess.check_call(cmd)
+
+# Imports the table with the ecozone-continent codes and the carbon gain rates
+gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                           sheet_name = "mangrove gain, for model")
+
+# Removes rows with duplicate codes (N. and S. America for the same ecozone)
+gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+# Creates belowground:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
+# the "mangType" field in the gain rate spreadsheet.
+# If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
+# keys in this dictionary would need to change accordingly.
+# Key 4 is water, so there shouldn't be any mangrove values there.
+type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang, '4': '100'}
+type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
+
+print type_ratio_dict_final
+
+# Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
+# a column of belowground annual gain rates by mangrove type
+gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
+
+print gain_table_simplified.head()
+
+# Converts the continent-ecozone codes and corresponding gain rates to dictionaries for aboveground and belowground gain rates
+mang_BGB_AGB_ratio = pd.Series(gain_table_simplified.BGB_AGB_ratio.values,index=gain_table_simplified.gainEcoCon).to_dict()
+
+print mang_BGB_AGB_ratio
+
+# Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
+mang_BGB_AGB_ratio[0] = 0
+
+print mang_BGB_AGB_ratio
+
+# Converts all the keys (continent-ecozone codes) to float type
+mang_BGB_AGB_ratio = {float(key): value for key, value in mang_BGB_AGB_ratio.iteritems()}
+
+print mang_BGB_AGB_ratio
+
+
 
 print "Creating carbon pools..."
 

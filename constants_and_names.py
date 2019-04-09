@@ -32,14 +32,6 @@ below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96
 
-# Creates belowground:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
-# the "mangType" field in the gain rate spreadsheet.
-# If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
-# keys in this dictionary would need to change accordingly.
-# Key 4 is water, so there shouldn't be any mangrove values there.
-type_ratio_dict = {'1': below_to_above_trop_dry_mang, '2':below_to_above_trop_wet_mang, '3': below_to_above_subtrop_mang, '4': '100'}
-type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
-
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
