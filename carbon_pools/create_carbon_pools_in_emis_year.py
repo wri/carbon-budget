@@ -14,6 +14,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
     # Names of the input tiles. Creates the names even if the files don't exist.
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    WHRC_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
     fao_ecozone = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
@@ -96,7 +97,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
             # print BGC_output[0][30020:30035]
 
             non_mang_output = AGC_emis_year_window * cn.below_to_above_natrl_forest
-            non_mang_output_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, non_mang_output)
+            non_mang_output_final = np.ma.masked_where(mangrove_biomass_2000_window != 0, non_mang_output)
 
             BGC_output = BGC_output + non_mang_output_final
 
