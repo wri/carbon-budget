@@ -89,6 +89,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
             # print mangrove_C_final[0][30020:30035]
 
             mangrove_C_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, mangrove_C_final)
+            mangrove_C_final = mangrove_C_final.filled(0)
 
             # print mangrove_C_final[0][30020:30035]
 
