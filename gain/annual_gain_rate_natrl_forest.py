@@ -92,7 +92,7 @@ def annual_gain_rate(tile_id, gain_table_dict):
         dst_above.write_band(1, gain_rate_AGB, window=window)
 
         # Calculates the belowground biomass gain rate
-        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_natrl_forest
+        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_non_mang
 
         # Writes the belowground gain rate output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)

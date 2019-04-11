@@ -1,5 +1,6 @@
 import create_carbon_pools_in_emis_year
-import multiprocessing
+from multiprocessing.pool import Pool
+from functools import partial
 import subprocess
 import os
 import pandas as pd
@@ -19,7 +20,9 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # For downloading all tiles in the input folders.
 input_files = [
     cn.AGC_emis_year_dir,
+    cn.WHRC_biomass_2000_unmasked_dir,
     cn.mangrove_biomass_2000_dir,
+    cn.cont_eco_dir,
     cn.fao_ecozone_processed_dir,
     cn.precip_processed_dir,
     cn.soil_C_2000_dir,
@@ -29,21 +32,25 @@ input_files = [
 # for input in input_files:
 #     uu.s3_folder_download('{}'.format(input), '.')
 
-# # For copying individual tiles to spot machine for testing.
-# for tile in tile_list:
-#
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
-#                                                             cn.pattern_AGC_emis_year), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
-#                                                             cn.pattern_mangrove_biomass_2000), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
-#                                                             cn.pattern_cont_eco_processed), '.')
-#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
-#     #                                                         cn.pattern_precip), '.')
-#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_2000_dir, tile,
-#     #                                                         cn.pattern_soil_C_2000), '.')
-#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
-#     #                                                         cn.pattern_elevation), '.')
+# For copying individual tiles to spot machine for testing.
+for tile in tile_list:
+
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
+                                                            cn.pattern_AGC_emis_year), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
+                                                            cn.pattern_WHRC_biomass_2000_unmasked), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
+                                                            cn.pattern_mangrove_biomass_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
+                                                            cn.pattern_cont_eco_processed), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.fao_ecozone_processed_dir, tile,
+                                                            cn.pattern_fao_ecozone_processed), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
+                                                            cn.pattern_precip), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_2000_dir, tile,
+                                                            cn.pattern_soil_C_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
+                                                            cn.pattern_elevation), '.')
 
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
@@ -65,11 +72,11 @@ gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='fi
 type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang, '4': '100'}
 type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
 
-# Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
-# a column of belowground annual gain rates by mangrove type
+# Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to
+# create a column of BGB:AGB
 gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
 
-# Converts the continent-ecozone codes and corresponding gain rates to dictionaries for aboveground and belowground gain rates
+# Converts the continent-ecozone codes and corresponding BGB:AGB to a dictionary
 mang_BGB_AGB_ratio = pd.Series(gain_table_simplified.BGB_AGB_ratio.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
@@ -80,13 +87,16 @@ mang_BGB_AGB_ratio = {float(key): value for key, value in mang_BGB_AGB_ratio.ite
 
 print "Creating carbon pools..."
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count/3)
-# pool.map(create_carbon_pools_in_emis_year.create_BGC, tile_list)
+# num_of_processes = 16
+# pool = Pool(num_of_processes)
+# pool.map(partial(create_carbon_pools_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+# pool.close()
+# pool.join()
 
 # For single processor use
 for tile in tile_list:
     create_carbon_pools_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
+    create_carbon_pools_in_emis_year.create_deadwood(tile)
 
 print "Uploading output to s3..."
 

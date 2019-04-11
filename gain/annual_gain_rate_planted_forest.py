@@ -79,7 +79,7 @@ def create_AGB_rate(tile_id):
     planted_forest_no_mangrove = '{0}_no_mang_AGC_BGC.tif'.format(tile_id)
 
     # Equation converts above+below to just above and carbon to biomass
-    AGB_calc = '--calc=A/(1+{})*(1/{})'.format(cn.below_to_above_natrl_forest, cn.biomass_to_c_natrl_forest)
+    AGB_calc = '--calc=A/(1+{})*(1/{})'.format(cn.below_to_above_non_mang, cn.biomass_to_c_natrl_forest)
     AGB_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
     AGB_outfilearg = '--outfile={}'.format(AGB_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_no_mangrove, AGB_calc, AGB_outfilearg,
@@ -104,7 +104,7 @@ def create_BGB_rate(tile_id):
 
     # Calculates belowground biomass gain rate from aboveground biomass gain rate
     print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
-    above_to_below_calc = '--calc=A*{}'.format(cn.below_to_above_natrl_forest)
+    above_to_below_calc = '--calc=A*{}'.format(cn.below_to_above_non_mang)
     below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_AGB_rate, above_to_below_calc, below_outfilearg,

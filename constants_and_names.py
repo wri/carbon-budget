@@ -26,8 +26,9 @@ c_to_co2 = 44/12
 # m2 per hectare
 m2_per_ha = 100 * 100
 
-# Aboveground to belowground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement
-below_to_above_natrl_forest = 0.26
+# Aboveground to belowground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
+# Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
+below_to_above_non_mang = 0.26
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96
@@ -231,12 +232,12 @@ pattern_BGC_emis_year = 't_BGC_ha_emis_year'
 BGC_emis_year_dir = '{}belowground_carbon/20190409/'.format(base_carbon_pool_dir)
 
 # Deadwood
-pattern_deadwood_emis_year = 't_deadwood_C_ha_emis_year'
-deadwood_emis_year_dir = '{}/deadwood_carbon/20190326/'.format(base_carbon_pool_dir)
+pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
+deadwood_emis_year_2000_dir = '{}/deadwood_carbon/20190410/'.format(base_carbon_pool_dir)
 
 # Litter
-pattern_litter_emis_year = 't_litter_C_ha_emis_year'
-litter_emis_year_dir = '{}/litter_carbon/20190326/'.format(base_carbon_pool_dir)
+pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
+litter_emis_year_2000_dir = '{}/litter_carbon/20190410/'.format(base_carbon_pool_dir)
 
 # Soil
 pattern_soil_C_2000 = 't_soil_C_ha_2000'
