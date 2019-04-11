@@ -162,7 +162,7 @@ def create_emitted_AGC(tile_id):
         # Reads the loss year window
         loss_year_window = loss_year_src.read(1, window=window)
 
-        # Removes AGC pixels that do not have a loss year and fills with with 0s
+        # Removes AGC pixels that do not have a loss year and fills with 0s
         all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_AGC_combined)
         all_forest_types_C_final = all_forest_types_C_final.filled(0)
 
