@@ -226,7 +226,7 @@ def create_deadwood(tile_id):
         condition_mask = elev_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
-        deadwood_output = deadwood_output + deadwood_masked
+        deadwood_output = deadwood_output + deadwood_masked.filled(0)
         print deadwood_masked[0][0:10]
         print deadwood_output[0][0:10]
 
@@ -236,7 +236,7 @@ def create_deadwood(tile_id):
         condition_mask = elev_mask & precip_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.02 * cn.biomass_to_c_natrl_forest
-        deadwood_output = deadwood_output + deadwood_masked
+        deadwood_output = deadwood_output + deadwood_masked.filled(0)
         print deadwood_masked[0][0:10]
         print deadwood_output[0][0:10]
 
@@ -246,7 +246,7 @@ def create_deadwood(tile_id):
         condition_mask = elev_mask & precip_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.01 * cn.biomass_to_c_natrl_forest
-        deadwood_output = deadwood_output + deadwood_masked
+        deadwood_output = deadwood_output + deadwood_masked.filled(0)
         print deadwood_masked[0][0:10]
         print deadwood_output[0][0:10]
 
@@ -256,7 +256,7 @@ def create_deadwood(tile_id):
         condition_mask = elev_mask & precip_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.06 * cn.biomass_to_c_natrl_forest
-        deadwood_output = deadwood_output + deadwood_masked
+        deadwood_output = deadwood_output + deadwood_masked.filled(0)
         print deadwood_masked[0][0:10]
         print deadwood_output[0][0:10]
 
@@ -265,7 +265,7 @@ def create_deadwood(tile_id):
         condition_mask = elev_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.07 * cn.biomass_to_c_natrl_forest
-        deadwood_output = deadwood_output + deadwood_masked
+        deadwood_output = deadwood_output + deadwood_masked.filled(0)
         print deadwood_masked[0][0:10]
         print deadwood_output[0][0:10]
 
@@ -273,7 +273,7 @@ def create_deadwood(tile_id):
         condition_mask = ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
-        deadwood_output = deadwood_output + deadwood_masked
+        deadwood_output = deadwood_output + deadwood_masked.filled(0)
         print deadwood_masked[0][0:10]
         print deadwood_output[0][0:10]
 
