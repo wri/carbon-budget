@@ -233,19 +233,19 @@ BGC_emis_year_dir = '{}belowground_carbon/20190409/'.format(base_carbon_pool_dir
 
 # Deadwood
 pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = '{}/deadwood_carbon/20190410/'.format(base_carbon_pool_dir)
+deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190410/'.format(base_carbon_pool_dir)
 
 # Litter
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
-litter_emis_year_2000_dir = '{}/litter_carbon/20190410/'.format(base_carbon_pool_dir)
+litter_emis_year_2000_dir = '{}litter_carbon/20190410/'.format(base_carbon_pool_dir)
 
 # Soil
 pattern_soil_C_2000 = 't_soil_C_ha_2000'
-soil_C_2000_dir = '{}/soil_carbon/20181228/'.format(base_carbon_pool_dir)
+soil_C_2000_dir = '{}soil_carbon/20181228/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
 pattern_total_C_emis_year = 't_total_C_ha_emis_year'
-total_C_emis_year_dir = '{}/total_carbon/20190326/'.format(base_carbon_pool_dir)
+total_C_emis_year_dir = '{}total_carbon/20190326/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions
