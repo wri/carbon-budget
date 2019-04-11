@@ -219,6 +219,7 @@ def create_deadwood(tile_id):
         #     BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
         #     # print BGC_output[0][29930:29950]
 
+        # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
 
         elev_mask = elevation_window < -9999
         ecozone_mask = ecozone_window == 2
@@ -263,6 +264,8 @@ def create_deadwood(tile_id):
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked
+
+        deadwood_output = deadwood_output.astype('float32')
 
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
