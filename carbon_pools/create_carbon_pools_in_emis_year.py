@@ -232,8 +232,8 @@ def create_deadwood(tile_id):
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        print deadwood_masked[0][0:10]
-        print deadwood_output[0][0:10]
+        # print deadwood_masked[0][0:10]
+        # print deadwood_output[0][0:10]
 
         elev_mask = elevation_window < 2000
         precip_mask = precip_window < 1000
@@ -242,8 +242,8 @@ def create_deadwood(tile_id):
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.02 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        print deadwood_masked[0][0:10]
-        print deadwood_output[0][0:10]
+        # print deadwood_masked[0][0:10]
+        # print deadwood_output[0][0:10]
 
         elev_mask = elevation_window < 2000
         precip_mask = (precip_window > 1000) & (precip_window < 1600)
@@ -252,8 +252,8 @@ def create_deadwood(tile_id):
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.01 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        print deadwood_masked[0][0:10]
-        print deadwood_output[0][0:10]
+        # print deadwood_masked[0][0:10]
+        # print deadwood_output[0][0:10]
 
         elev_mask = elevation_window < 2000
         precip_mask = precip_window > 1600
@@ -262,8 +262,8 @@ def create_deadwood(tile_id):
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.06 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        print deadwood_masked[0][0:10]
-        print deadwood_output[0][0:10]
+        # print deadwood_masked[0][0:10]
+        # print deadwood_output[0][0:10]
 
         elev_mask = elevation_window > 2000
         ecozone_mask = ecozone_window == 1
@@ -271,27 +271,27 @@ def create_deadwood(tile_id):
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.07 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        print deadwood_masked[0][0:10]
-        print deadwood_output[0][0:10]
+        # print deadwood_masked[0][0:10]
+        # print deadwood_output[0][0:10]
 
         ecozone_mask = ecozone_window != 1
         condition_mask = ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
         deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        print deadwood_masked[0][0:10]
-        print deadwood_output[0][0:10]
+        # print deadwood_masked[0][0:10]
+        # print deadwood_output[0][0:10]
 
         # deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
         # deadwood_output = deadwood_output.filled(0)
 
         deadwood_output = deadwood_output.astype('float32')
-        print deadwood_output[0][0:10]
+        # print deadwood_output[0][0:10]
 
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
 
-        sys.quit()
+        # sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
