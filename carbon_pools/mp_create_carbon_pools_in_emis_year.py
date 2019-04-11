@@ -102,7 +102,7 @@ print "Uploading output to s3..."
 
 # uu.upload_final_set('{0}/{1}/'.format(cn.AGC_dir, type), '{0}_{1}'.format(cn.pattern_AGC, type))
 uu.upload_final_set(cn.BGC_emis_year_dir,cn.pattern_BGC_emis_year)
-# uu.upload_final_set('{0}/{1}/'.format(cn.deadwood_dir, type), '{0}_{1}'.format(cn.pattern_deadwood, type))
+uu.upload_final_set('{0}/{1}/'.format(cn.deadwood_emis_year_2000_dir, type), '{0}_{1}'.format(cn.pattern_deadwood_emis_year_2000, type))
 # uu.upload_final_set('{0}/{1}/'.format(cn.litter_dir, type), '{0}_{1}'.format(cn.pattern_litter, type))
 # uu.upload_final_set('{0}/{1}/'.format(cn.soil_C_pool_dir, type), '{0}_{1}'.format(cn.pattern_soil_pool, type))
 # uu.upload_final_set('{0}/{1}/'.format(cn.total_C_dir, type), '{0}_{1}'.format(cn.pattern_total_C, type))
