@@ -95,7 +95,7 @@ print "Creating carbon pools..."
 
 # For single processor use
 for tile in tile_list:
-    create_carbon_pools_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
+    # create_carbon_pools_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
     create_carbon_pools_in_emis_year.create_deadwood(tile)
 
 print "Uploading output to s3..."
