@@ -303,7 +303,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
 
-        # sys.quit()
+        sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
