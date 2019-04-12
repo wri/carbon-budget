@@ -12,13 +12,6 @@ d = datetime.datetime.today()
 date_today = d.strftime('%Y%m%d_%h%m%s')
 
 
-# Creates chunks of tiles for processing
-def chunks(l, n):
-    # Yield successive n-sized chunks from l
-    for i in xrange(0, len(l), n):
-        yield l[i:i + n]
-
-
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
 
@@ -256,21 +249,6 @@ def s3_file_download(source, dest):
     subprocess.check_call(cmd)
 
 
-# Uploads a set of tiles that have been created in a chunk to a specified location on s3
-def upload_chunk_set(upload_dir, pattern):
-
-    print "Uploading chunk of tiles..."
-
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*'.format(pattern),
-           '--exclude', '*/*', '--recursive']
-
-    # Copies the tiles to s3
-    subprocess.check_call(cmd)
-
-    # Moves the copied tiles to a folder of already copied tiles on spot machine
-    os.system('''mv *_{0}.tif {1}/'''.format(pattern, cn.already_copied))
-
-
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
@@ -318,6 +296,7 @@ def count_completed_tiles(pattern):
     # completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
     print "Number of completed or in progress tiles:", completed
 
+
 # Returns the NoData value of a raster
 def get_raster_nodata_value(tile):
 
@@ -345,3 +324,18 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax):
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', in_file, out_file]
     subprocess.check_call(cmd)
+
+
+# Rasterizes the shapefile within the bounding coordinates of a tile
+def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksize, tr, ot, gainEcoCon=None, anodata=None):
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+
+           # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksize), '-co', 'BLOCKYSIZE={}'.format(blocksize),
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
+           anodata, in_shape, '{}.tif'.format(out_tif)]
+
+    subprocess.check_call(cmd)
+
+    return out_tif

@@ -48,10 +48,6 @@ def clip(in_file, out_file,  xmin, ymin, xmax, ymax, extra_param=None):
 
 
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr, ot, anodata, recode):
-    # cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-    #        '-tr', tr, tr, '-ot', ot, '-a', recode, '-a_nodata',
-    #        anodata, in_shape, out_tif]
-
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', str(tr), str(tr), '-ot', ot, '-a_nodata',
