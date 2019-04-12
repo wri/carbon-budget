@@ -17,7 +17,7 @@ def create_input_files(tile_id):
     print "Rasterizing ecozone for", tile_id
     uu.rasterize('fao_ecozones_bor_tem_tro.shp',
                                               "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
-                                              xmin, ymin, xmax, ymax, '1024', cn.Hansen_res, 'Int16', '0', 'recode')
+                                              xmin, ymin, xmax, ymax, 1024, cn.Hansen_res, 'Int16', '0', 'recode')
 
     print "Clipping srtm for", tile_id
     uu.warp_to_Hansen('srtm.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_elevation), xmin, ymin, xmax, ymax)
