@@ -175,9 +175,9 @@ def create_deadwood(tile_id):
 
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
 
-        # if np.amax(AGC_emis_year_window) == 0:
-        #
-        #     continue
+        if np.amax(AGC_emis_year_window) == 0:
+
+            continue
 
         # Reads in the windows of each input file that definitely exist
         WHRC_biomass_window = WHRC_biomass_2000_src.read(1, window=window)
@@ -288,8 +288,8 @@ def create_deadwood(tile_id):
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        # deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
-        # deadwood_output = deadwood_output.filled(0)
+        deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
+        deadwood_output = deadwood_output.filled(0)
 
         deadwood_output = deadwood_output.astype('float32')
         # print deadwood_output[0][0:10]
