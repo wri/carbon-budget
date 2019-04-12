@@ -276,10 +276,10 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
             print mangrove_biomass_2000_window[0][30020:30035]
 
             # Applies the mangrove deadwood:AGB ratios (2 different ratios) to the ecozone raster to create a raster of deadwood:AGB ratios
-            print bor_tem_trop_window[0][30020:30035]
+            print cont_ecozone_window[0][30020:30035]
             for key, value in mang_deadwood_AGB_ratio.iteritems():
-                bor_tem_trop_window[bor_tem_trop_window == key] = value
-            print bor_tem_trop_window[0][30020:30035]
+                cont_ecozone_window[cont_ecozone_window == key] = value
+            print cont_ecozone_window[0][30020:30035]
 
             # Multiplies the AGC in the loss year by the correct mangrove BGB:AGB ratio to get an array of BGC in the loss year
             mangrove_C_final = mangrove_biomass_2000_window * cont_ecozone_window * cn.biomass_to_c_mangrove
