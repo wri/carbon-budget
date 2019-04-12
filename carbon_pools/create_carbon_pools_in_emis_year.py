@@ -260,6 +260,7 @@ def create_deadwood(tile_id):
         precip_mask = precip_window > 1600
         print precip_mask[0][0:10]
         ecozone_mask = ecozone_window == 1
+        print ecozone_window[0][0:10]
         print ecozone_mask[0][0:10]
         condition_mask = elev_mask & precip_mask & ecozone_mask
         print condition_mask[0][0:10]
