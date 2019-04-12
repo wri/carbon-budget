@@ -217,12 +217,12 @@ def create_deadwood(tile_id):
         #
         #     # sys.quit()
         #
-        # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
-        # BGB:AGB ratio
-        if not os.path.exists(mangrove_biomass_2000):
-
-            BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
-            # print BGC_output[0][29930:29950]
+        # # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
+        # # BGB:AGB ratio
+        # if not os.path.exists(mangrove_biomass_2000):
+        #
+        #     BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
+        #     # print BGC_output[0][29930:29950]
 
         # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
 
