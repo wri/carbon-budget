@@ -187,54 +187,7 @@ def create_deadwood(tile_id):
         elevation_window = elevation_src.read(1, window=window)
         # print fao_ecozone_window[0][30020:30035]
 
-        # # Mangrove calculation if there is a mangrove biomass tile
-        # if os.path.exists(mangrove_biomass_2000):
-        #
-        #     # Reads in the window for mangrove biomass if it exists
-        #     mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-        #     # print mangrove_biomass_2000_window[0][30020:30035]
-        #
-        #     # Multiplies the AGC in the loss year by the correct mangrove BGB:AGB ratio to get an array of BGC in the loss year
-        #     mangrove_C_final = AGC_emis_year_window * ecozone_window
-        #     # print mangrove_C_final[0][30020:30035]
-        #
-        #     # Masks out non-mangrove pixels and fills the masked values with 0s
-        #     mangrove_C_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, mangrove_C_final)
-        #     mangrove_C_final = mangrove_C_final.filled(0)
-        #     # print mangrove_C_final[0][30020:30035]
-        #
-        #     # Applies the non-mangrove BGB:AGB ratio to all AGC in emissions year pixels
-        #     non_mang_output = AGC_emis_year_window * cn.below_to_above_non_mang
-        #     # print non_mang_output[0][29930:29950]
-        #
-        #     # Masks out mangrove pixels so that only non-mangrove pixels use the non-mangrove BGB:AGB ratio
-        #     non_mang_output_final = np.ma.masked_where(mangrove_biomass_2000_window != 0, non_mang_output)
-        #     # print non_mang_output_final[0][29930:29950]
-        #
-        #     # Combines the mangrove and non-mangrove BGC arrays into a single array
-        #     BGC_output = mangrove_C_final + non_mang_output_final
-        #     # print BGC_output[0][29930:29950]
-        #
-        #     # sys.quit()
-        #
-        # # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
-        # # BGB:AGB ratio
-        # if not os.path.exists(mangrove_biomass_2000):
-        #
-        #     BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
-        #     # print BGC_output[0][29930:29950]
-
         # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
-
-        # elev_mask = elevation_window < -9999
-        # ecozone_mask = ecozone_window == 2
-        # condition_mask = elev_mask & ecozone_mask
-        # agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
-        # deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
-        # deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        # # print deadwood_masked[0][0:10]
-        # # print deadwood_output[0][0:10]
-
         elev_mask = elevation_window <= 2000
         precip_mask = precip_window <= 1000
         ecozone_mask = ecozone_window == 1
@@ -287,6 +240,34 @@ def create_deadwood(tile_id):
 
         deadwood_output = deadwood_output.astype('float32')
         # print deadwood_output[0][0:10]
+
+        # Mangrove calculation if there is a mangrove biomass tile
+        if os.path.exists(mangrove_biomass_2000):
+
+            # Reads in the window for mangrove biomass if it exists
+            mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
+            # print mangrove_biomass_2000_window[0][30020:30035]
+
+            # Multiplies the AGC in the loss year by the correct mangrove BGB:AGB ratio to get an array of BGC in the loss year
+            mangrove_C_final = AGC_emis_year_window * ecozone_window
+            # print mangrove_C_final[0][30020:30035]
+
+            # Masks out non-mangrove pixels and fills the masked values with 0s
+            mangrove_C_final = np.ma.masked_where(mangrove_biomass_2000_window == 0, mangrove_C_final)
+            mangrove_C_final = mangrove_C_final.filled(0)
+            # print mangrove_C_final[0][30020:30035]
+
+            # Applies the non-mangrove BGB:AGB ratio to all AGC in emissions year pixels
+            non_mang_output = AGC_emis_year_window * cn.below_to_above_non_mang
+            # print non_mang_output[0][29930:29950]
+
+            # Masks out mangrove pixels so that only non-mangrove pixels use the non-mangrove BGB:AGB ratio
+            non_mang_output_final = np.ma.masked_where(mangrove_biomass_2000_window != 0, non_mang_output)
+            # print non_mang_output_final[0][29930:29950]
+
+            # Combines the mangrove and non-mangrove BGC arrays into a single array
+            BGC_output = mangrove_C_final + non_mang_output_final
+            # print BGC_output[0][29930:29950]
 
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
