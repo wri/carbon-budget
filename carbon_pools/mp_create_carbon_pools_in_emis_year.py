@@ -64,26 +64,20 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-# Creates belowground:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
-# the "mangType" field in the gain rate spreadsheet.
-# If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
-# keys in this dictionary would need to change accordingly.
-# Key 4 is water, so there shouldn't be any mangrove values there.
-type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang, '4': '100'}
-type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
+mang_BGB_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                           cn.below_to_above_trop_dry_mang,
+                                                                           cn.below_to_above_trop_wet_mang,
+                                                                           cn.below_to_above_subtrop_mang)
 
-# Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to
-# create a column of BGB:AGB
-gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
+mang_deadwood_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                           cn.deadwood_to_above_trop_dry_mang,
+                                                                           cn.deadwood_to_above_trop_wet_mang,
+                                                                           cn.deadwood_to_above_subtrop_mang)
 
-# Converts the continent-ecozone codes and corresponding BGB:AGB to a dictionary
-mang_BGB_AGB_ratio = pd.Series(gain_table_simplified.BGB_AGB_ratio.values,index=gain_table_simplified.gainEcoCon).to_dict()
-
-# Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
-mang_BGB_AGB_ratio[0] = 0
-
-# Converts all the keys (continent-ecozone codes) to float type. Important for matching the raster's values.
-mang_BGB_AGB_ratio = {float(key): value for key, value in mang_BGB_AGB_ratio.iteritems()}
+mang_litter_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                           cn.litter_to_above_trop_dry_mang,
+                                                                           cn.litter_to_above_trop_wet_mang,
+                                                                           cn.litter_to_above_subtrop_mang)
 
 print "Creating carbon pools..."
 
@@ -96,7 +90,7 @@ print "Creating carbon pools..."
 # For single processor use
 for tile in tile_list:
     # create_carbon_pools_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
-    create_carbon_pools_in_emis_year.create_deadwood(tile)
+    create_carbon_pools_in_emis_year.create_deadwood(tile, mang_deadwood_AGB_ratio)
 
 print "Uploading output to s3..."
 

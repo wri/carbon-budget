@@ -55,29 +55,29 @@ def create_input_files(tile_id):
     # Iterates across the windows (1024 x 1024 pixel boxes) of the input tile.
     for idx, window in windows:
 
-        # Creates windows for each input raster
+        # Creates window for input raster
         bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
 
         # Turns the 2D array into a 1D array that is n x n long.
-        # This makes to easier to remove 0s and find the mode of the remaining continent-ecozone codes
+        # This makes to easier to remove 0s and find the mode of the remaining bor-tem-tropi codes
         bor_tem_trop_flat = bor_tem_trop_window.flatten()
 
-        # Removes all zeros from the array, leaving just pixels with continent-ecozone codes
+        # Removes all zeros from the array, leaving just pixels with bor-tem-trop codes
         non_zeros = np.delete(bor_tem_trop_flat, np.where(bor_tem_trop_flat == 0))
 
-        # If there were only pixels without continent-ecozone codes in the array, the mode is assigned 0
+        # If there were only pixels without bor-tem-trop codes in the array, the mode is assigned 0
         if non_zeros.size < 1:
 
             # print "  Window is all 0s"
             mode = 0
 
-        # If there were pixels with continent-ecozone codes, the mode is the most common code among those in the window
+        # If there were pixels with bor-tem-trop codes, the mode is the most common code among those in the window
         else:
 
             mode = stats.mode(non_zeros)[0]
             # print "  Window is not all 0s. Mode is", mode
 
-        # Assigns all pixels without a continent-ecozone code in that window to that most common code
+        # Assigns all pixels without a bor-tem-trop code in that window to that most common code
         bor_tem_trop_window[bor_tem_trop_window == 0] = mode
 
         # Writes the output window to the output.

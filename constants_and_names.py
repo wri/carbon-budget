@@ -29,12 +29,24 @@ c_to_co2 = 44/12
 # m2 per hectare
 m2_per_ha = 100 * 100
 
-# Aboveground to belowground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
+# Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
 # Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
 below_to_above_non_mang = 0.26
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96
+
+# Litter to aboveground biomass ratios for mangroves. Calculated from IPCC Wetland Supplement Tables 4.2, 4.3, and 4.7
+# but elaborated on here: https://3.basecamp.com/3656819/buckets/7989024/todos/1235627617
+litter_to_above_trop_wet_mang = 0.008
+litter_to_above_trop_dry_mang = 0.0169
+litter_to_above_subtrop_mang = 0.0169
+
+# Deadwood to aboveground biomass ratios for mangroves. Calculated from IPCC Wetland Supplement Tables 4.2, 4.3, and 4.7
+# but elaborated on here: https://3.basecamp.com/3656819/buckets/7989024/todos/1235627617
+deadwood_to_above_trop_wet_mang = 0.123
+deadwood_to_above_trop_dry_mang = 0.258
+deadwood_to_above_subtrop_mang = 0.258
 
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
