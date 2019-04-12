@@ -235,8 +235,8 @@ def create_deadwood(tile_id):
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        elev_mask = elevation_window < 2000
-        precip_mask = precip_window < 1000
+        elev_mask = elevation_window <= 2000
+        precip_mask = precip_window <= 1000
         ecozone_mask = ecozone_window == 1
         condition_mask = elev_mask & precip_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
@@ -245,8 +245,8 @@ def create_deadwood(tile_id):
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        elev_mask = elevation_window < 2000
-        precip_mask = (precip_window > 1000) & (precip_window < 1600)
+        elev_mask = elevation_window <= 2000
+        precip_mask = (precip_window > 1000) & (precip_window <= 1600)
         ecozone_mask = ecozone_window == 1
         condition_mask = elev_mask & precip_mask & ecozone_mask
         agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
@@ -255,7 +255,7 @@ def create_deadwood(tile_id):
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        elev_mask = elevation_window < 2000
+        elev_mask = elevation_window <= 2000
         # print elev_mask[0][0:10]
         precip_mask = precip_window > 1600
         # print precip_mask[0][0:10]

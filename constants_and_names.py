@@ -14,8 +14,11 @@ gain_years = 12
 # Number of biomass tiles
 biomass_tile_count = 280
 
-# Biomass to carbon ratio for non-mangrove, non-planted forests and for planted forests
+# Biomass to carbon ratio for aboveground, belowground, and deadwood in non-mangrove forests (planted and non-planted)
 biomass_to_c_natrl_forest = 0.5
+
+# Biomass to carbon ratio for litter in non-mangrove forests (planted and non-planted)
+biomass_to_c_natrl_forest_litter = 0.37
 
 # Biomass to carbon ratio for mangroves (IPCC wetlands supplement table 4.2)
 biomass_to_c_mangrove = 0.45
