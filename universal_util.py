@@ -324,18 +324,3 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax):
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', in_file, out_file]
     subprocess.check_call(cmd)
-
-
-# Rasterizes the shapefile within the bounding coordinates of a tile
-def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr, ot, gainEcoCon=None, anodata=None):
-    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
-
-           # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
-           anodata, in_shape, '{}.tif'.format(out_tif)]
-
-    subprocess.check_call(cmd)
-
-    return out_tif

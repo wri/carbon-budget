@@ -46,17 +46,31 @@ def clip(in_file, out_file,  xmin, ymin, xmax, ymax, extra_param=None):
 
     return out_file
 
+#
+# def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr, ot, anodata, recode):
+#     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+#            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+#            '-tr', str(tr), str(tr), '-ot', ot, '-a_nodata',
+#            anodata, '-a', recode,
+#            in_shape, out_tif]
+# 
+#     subprocess.check_call(cmd)
+# 
+#     # return out_tif
 
-def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr, ot, anodata, recode):
+# Rasterizes the shapefile within the bounding coordinates of a tile
+def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainEcoCon=None, anodata=None):
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+
+           # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-tr', str(tr), str(tr), '-ot', ot, '-a_nodata',
-           anodata, '-a', recode,
-           in_shape, out_tif]
+           '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
+           anodata, in_shape, '{}.tif'.format(out_tif)]
 
     subprocess.check_call(cmd)
 
-    # return out_tif
+    return out_tif
 
 
 # Lists the tiles in a folder in s3

@@ -15,9 +15,13 @@ def create_input_files(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     print "Rasterizing ecozone for", tile_id
-    uu.rasterize('fao_ecozones_bor_tem_tro.shp',
-                                              "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
-                                              xmin, ymin, xmax, ymax, cn.Hansen_res, 'Int16', 'recode', '0')
+    # uu.rasterize('fao_ecozones_bor_tem_tro.shp',
+    #                                           "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
+    #                                           xmin, ymin, xmax, ymax, cn.Hansen_res, 'Int16', 'recode', '0')
+
+    util.rasterize('fao_ecozones_bor_tem_tro.shp',
+                   "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
+                   xmin, ymin, xmax, ymax, '.00025', 'Int16', 'recode', '0')
 
     print "Clipping srtm for", tile_id
     uu.warp_to_Hansen('srtm.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_elevation), xmin, ymin, xmax, ymax)
