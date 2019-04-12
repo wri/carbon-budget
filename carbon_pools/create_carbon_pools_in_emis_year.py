@@ -123,7 +123,7 @@ def create_deadwood(tile_id):
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     WHRC_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
-    fao_ecozone = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
+    fao_ecozone = '{0}_{1}.tif'.format(tile_id, cn.pattern_fao_ecozone_processed)
     precip = '{0}_{1}.tif'.format(tile_id, cn.pattern_precip)
     elevation = '{0}_{1}.tif'.format(tile_id, cn.pattern_elevation)
 
