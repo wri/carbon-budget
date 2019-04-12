@@ -78,7 +78,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         dtype='float32'
     )
 
-    # The output file: belowground carbon density in the year of tree cover loss for pixels with tree cover loss
+    # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
     dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
 
     print "  Creating belowground carbon density in the year of loss for {}...".format(tile_id)
@@ -216,6 +216,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         # print AGC_emis_year_window[0][30020:30035]
         bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
         cont_ecozone_window = cont_ecozone_src.read(1, window=window)
+        cont_ecozone_window = cont_ecozone_window.astype('float32')
         precip_window = precip_src.read(1, window=window)
         elevation_window = elevation_src.read(1, window=window)
         # print fao_ecozone_window[0][30020:30035]
