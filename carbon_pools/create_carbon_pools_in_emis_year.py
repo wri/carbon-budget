@@ -175,9 +175,9 @@ def create_deadwood(tile_id):
 
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
 
-        # if np.amax(AGC_emis_year_window) == 0:
-        #
-        #     continue
+        if np.amax(AGC_emis_year_window) == 0:
+
+            continue
 
         # Reads in the windows of each input file that definitely exist
         WHRC_biomass_window = WHRC_biomass_2000_src.read(1, window=window)
@@ -217,12 +217,12 @@ def create_deadwood(tile_id):
         #
         #     # sys.quit()
         #
-        # # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
-        # # BGB:AGB ratio
-        # if not os.path.exists(mangrove_biomass_2000):
-        #
-        #     BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
-        #     # print BGC_output[0][29930:29950]
+        # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
+        # BGB:AGB ratio
+        if not os.path.exists(mangrove_biomass_2000):
+
+            BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
+            # print BGC_output[0][29930:29950]
 
         # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
 
@@ -282,8 +282,8 @@ def create_deadwood(tile_id):
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        # deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
-        # deadwood_output = deadwood_output.filled(0)
+        deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
+        deadwood_output = deadwood_output.filled(0)
 
         deadwood_output = deadwood_output.astype('float32')
         # print deadwood_output[0][0:10]
