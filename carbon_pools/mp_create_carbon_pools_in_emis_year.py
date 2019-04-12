@@ -39,8 +39,6 @@ for tile in tile_list:
                                                             cn.pattern_AGC_emis_year), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile,
-                                                            cn.pattern_mangrove_biomass_2000), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
                                                             cn.pattern_cont_eco_processed), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.fao_ecozone_processed_dir, tile,
@@ -51,6 +49,10 @@ for tile in tile_list:
                                                             cn.pattern_soil_C_2000), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
                                                             cn.pattern_elevation), '.')
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+    except:
+        print "No mangrove biomass in", tile
 
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
@@ -97,6 +99,6 @@ print "Uploading output to s3..."
 # uu.upload_final_set('{0}/{1}/'.format(cn.AGC_dir, type), '{0}_{1}'.format(cn.pattern_AGC, type))
 uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
 uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
-uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
+# uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
 # uu.upload_final_set('{0}/{1}/'.format(cn.soil_C_pool_dir, type), '{0}_{1}'.format(cn.pattern_soil_pool, type))
 # uu.upload_final_set('{0}/{1}/'.format(cn.total_C_dir, type), '{0}_{1}'.format(cn.pattern_total_C, type))
