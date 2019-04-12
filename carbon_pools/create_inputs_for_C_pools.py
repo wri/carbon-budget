@@ -23,15 +23,14 @@ def create_input_files(tile_id):
     # print "Clipping precipitation for", tile_id
     # uu.warp_to_Hansen('add_30s_precip.tif', '{0}_{1}.tif'.format(tile_id, cn.pattern_precip), xmin, ymin, xmax, ymax)
 
-    print "Rasterizing ecozone for", tile_id
-
+    print "Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id
     util.rasterize('fao_ecozones_bor_tem_tro.shp',
-                   "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed),
+                   "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_intermediate),
                    xmin, ymin, xmax, ymax, '.00025', 'Int16', 'recode', '0')
 
     # Opens boreal/temperate/tropical ecozone tile.
-    # Everything from here down is used to assign pixels without continent ecozone codes to a continent-ecozone in the 1024x1024 windows.
-    bor_tem_trop_src = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_processed))
+    # Everything from here down is used to assign pixels without boreal-tem-tropical codes to a bor-tem-trop in the 1024x1024 windows.
+    bor_tem_trop_src = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_intermediate))
 
     # Grabs metadata about the tif, like its location/projection/cellsize
     kwargs = bor_tem_trop_src.meta

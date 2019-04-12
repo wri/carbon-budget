@@ -198,7 +198,7 @@ cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_
 # FAO ecozones as boreal/temperate/tropical
 pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
 fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
-pattern_fao_ecozone_intermediate = 'fao_ecozones_bor_tem_tro'
+pattern_fao_ecozone_intermediate = 'fao_ecozones_bor_tem_tro_intermediate'
 pattern_fao_ecozone_processed = 'fao_ecozones_bor_tem_tro_processed'
 fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190412/'
 
