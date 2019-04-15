@@ -274,26 +274,24 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
 
             # Reads in the window for mangrove biomass if it exists
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-            print mangrove_biomass_2000_window[0][30020:30035]
 
             # Applies the mangrove deadwood:AGB ratios (2 different ratios) to the ecozone raster to create a raster of deadwood:AGB ratios
-            print cont_ecozone_window[0][30020:30035]
             for key, value in mang_deadwood_AGB_ratio.iteritems():
                 cont_ecozone_window[cont_ecozone_window == key] = value
-            print cont_ecozone_window[0][30020:30035]
+            # print cont_ecozone_window[0][30020:30035]
 
             # Multiplies the AGC in the loss year by the correct mangrove BGB:AGB ratio to get an array of BGC in the loss year
             mangrove_C_final = mangrove_biomass_2000_window * cont_ecozone_window * cn.biomass_to_c_mangrove
-            print mangrove_C_final[0][30020:30035]
+            # print mangrove_C_final[0][30020:30035]
 
-            # Masks out non-mangrove pixels and fills the masked values with 0s
-            mangrove_C_final = np.ma.masked_where(AGC_emis_year_window == 0, mangrove_C_final)
-            mangrove_C_final = mangrove_C_final.filled(0)
-            print mangrove_C_final[0][30020:30035]
+            # # Masks out non-mangrove pixels and fills the masked values with 0s
+            # mangrove_C_final = np.ma.masked_where(AGC_emis_year_window == 0, mangrove_C_final)
+            # mangrove_C_final = mangrove_C_final.filled(0)
+            # print mangrove_C_final[0][30020:30035]
 
             # Combines the mangrove and non-mangrove BGC arrays into a single array
             deadwood_output = mangrove_C_final + deadwood_output
-            print deadwood_output[0][29930:29950]
+            # print deadwood_output[0][29930:29950]
 
         deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
         deadwood_output = deadwood_output.filled(0)
@@ -304,7 +302,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
 
-        sys.quit()
+        # sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)

@@ -99,7 +99,7 @@ for tile in tile_list:
 print "Uploading output to s3..."
 
 # uu.upload_final_set('{0}/{1}/'.format(cn.AGC_dir, type), '{0}_{1}'.format(cn.pattern_AGC, type))
-uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
+# uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
 uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
 # uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
 # uu.upload_final_set('{0}/{1}/'.format(cn.soil_C_pool_dir, type), '{0}_{1}'.format(cn.pattern_soil_pool, type))

@@ -249,7 +249,7 @@ BGC_emis_year_dir = '{}belowground_carbon/20190409/'.format(base_carbon_pool_dir
 
 # Deadwood
 pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190411/'.format(base_carbon_pool_dir)
+deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190415/'.format(base_carbon_pool_dir)
 
 # Litter
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
