@@ -9,7 +9,7 @@ from osgeo import gdal
 
 # Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
-#date_today = d.strftime('%Y%m%d_%h%m%s')
+# date_today = d.strftime('%Y%m%d_%h%m%s')
 
 
 # Gets the tile id from the full tile name using a regular expression

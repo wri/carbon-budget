@@ -1,7 +1,6 @@
 import datetime
 import sys
 import pandas as pd
-import subprocess
 import os
 import numpy as np
 import rasterio
@@ -36,7 +35,6 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
     mang_x_pool_AGB_ratio = {float(key): value for key, value in mang_x_pool_AGB_ratio.iteritems()}
 
     return mang_x_pool_AGB_ratio
-
 
 def create_BGC(tile_id, mang_BGB_AGB_ratio):
 
@@ -205,23 +203,28 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         # any of the forest types will have 0s
         deadwood_output = np.zeros((window.height, window.width), dtype='float32')
 
+        # Reads in the window of the AGC emissions in loss year in order to determine if there was any loss in thw window
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
 
+        # If there was no loss in the window, the window is skipped
         if np.amax(AGC_emis_year_window) == 0:
-
             continue
 
         # Reads in the windows of each input file that definitely exist
         WHRC_biomass_window = WHRC_biomass_2000_src.read(1, window=window)
-        # print AGC_emis_year_window[0][30020:30035]
         bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
         cont_ecozone_window = cont_ecozone_src.read(1, window=window)
         cont_ecozone_window = cont_ecozone_window.astype('float32')
         precip_window = precip_src.read(1, window=window)
         elevation_window = elevation_src.read(1, window=window)
-        # print fao_ecozone_window[0][30020:30035]
 
         # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
+        # They depend on the elevation, precipitation, and broad biome category (boreal/temperate/tropical).
+        # For some reason, the masks need to be named different variables for each equation.
+        # If they all have the same name (e.g., elev_mask and condition_mask are reused), then at least the condition_mask_4
+        # equation won't work properly.)
+
+        # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
         elev_mask_1 = elevation_window <= 2000
         precip_mask_1 = precip_window <= 1000
         ecozone_mask_1 = bor_tem_trop_window == 1
@@ -229,9 +232,8 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         agb_masked_1 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_1))
         deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        # print deadwood_masked[0][0:10]
-        # print deadwood_output[0][0:10]
 
+        # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
         elev_mask_2 = elevation_window <= 2000
         precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
         ecozone_mask_2 = bor_tem_trop_window == 1
@@ -239,9 +241,8 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         agb_masked_2 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_2))
         deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        # print deadwood_masked[0][0:10]
-        # print deadwood_output[0][0:10]
 
+        # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
         elev_mask_3 = elevation_window <= 2000
         precip_mask_3 = precip_window > 1600
         ecozone_mask_3 = bor_tem_trop_window == 1
@@ -249,54 +250,23 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
         deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        # print deadwood_masked[0][0:10]
-        # print deadwood_output[0][0:10]
 
+        # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
         elev_mask_4 = elevation_window > 2000
         ecozone_mask_4 = bor_tem_trop_window == 1
         condition_mask_4 = elev_mask_4 & ecozone_mask_4
         agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
-
-        mymask = condition_mask_4
-        find_row = np.extract(mymask, elevation_window)
-        # if find_row.size > 0:
-        #     True
-        #
-        # find_row = np.extract(mymask, bor_tem_trop_window)
-        # if find_row.size > 0:
-        #     True
-        #
-        # find_row = np.extract(mymask, deadwood_output)
-        # if find_row.size > 0:
-        #     True
-
         deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
-        # find_row = np.extract(mymask, agb_masked_4)
-        # if find_row.size > 0:
-        #     True
-        #
-        # find_row = np.extract(mymask, deadwood_output)
-        # if find_row.size > 0:
-        #     True
-        # print deadwood_masked[0][0:10]
-        # print deadwood_output[0][0:10]
-
+        # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
         ecozone_mask_5 = bor_tem_trop_window != 1
         condition_mask_5 = ecozone_mask_5
         agb_masked_5 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_5))
         deadwood_masked = agb_masked_5 * 0.08 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
-        # print deadwood_masked[0][0:10]
-        # print deadwood_output[0][0:10]
-        # print deadwood_output[0][30020:30035]
 
-        # find_row = np.extract(mymask, deadwood_output)
-        # if find_row.size > 0:
-        #     True
-
-        # Mangrove calculation if there is a mangrove biomass tile
+        # Replaces non-mangrove deadwood with special mangrove deadwood values if there is mangrove
         if os.path.exists(mangrove_biomass_2000):
 
             # Reads in the window for mangrove biomass if it exists
@@ -305,44 +275,21 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
             # Applies the mangrove deadwood:AGB ratios (2 different ratios) to the ecozone raster to create a raster of deadwood:AGB ratios
             for key, value in mang_deadwood_AGB_ratio.iteritems():
                 cont_ecozone_window[cont_ecozone_window == key] = value
-            # print cont_ecozone_window[0][30020:30035]
 
             # Multiplies the AGC in the loss year by the correct mangrove BGB:AGB ratio to get an array of BGC in the loss year
             mangrove_C_final = mangrove_biomass_2000_window * cont_ecozone_window * cn.biomass_to_c_mangrove
-            # print mangrove_C_final[0][30020:30035]
-
-            # # Masks out non-mangrove pixels and fills the masked values with 0s
-            # mangrove_C_final = np.ma.masked_where(AGC_emis_year_window == 0, mangrove_C_final)
-            # mangrove_C_final = mangrove_C_final.filled(0)
-            # print mangrove_C_final[0][30020:30035]
 
             deadwood_output = np.ma.masked_where(mangrove_biomass_2000_window > 0, deadwood_output)
             deadwood_output = deadwood_output.filled(0)
-            # print deadwood_output[0][30020:30035]
 
             # Combines the mangrove and non-mangrove BGC arrays into a single array
             deadwood_output = mangrove_C_final + deadwood_output
-            # print deadwood_output[0][30020:30035]
-
-        # find_row = np.extract(mymask, deadwood_output)
-        # if find_row.size > 0:
-        #     True
 
         deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
         deadwood_output = deadwood_output.filled(0)
-        # print deadwood_output[0][30020:30035]
-
-        # find_row = np.extract(mymask, deadwood_output)
-        # if find_row.size > 0:
-        #     True
 
         deadwood_output = deadwood_output.astype('float32')
-        # print deadwood_output[0][30020:30035]
-        # print deadwood_output[0][0:10]
 
-        # find_row = np.extract(mymask, deadwood_output)
-        # if find_row.size > 0:
-        #     True
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
 
