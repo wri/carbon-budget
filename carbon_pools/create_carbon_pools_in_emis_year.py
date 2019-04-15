@@ -289,6 +289,9 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
             # mangrove_C_final = mangrove_C_final.filled(0)
             # print mangrove_C_final[0][30020:30035]
 
+            deadwood_output = np.ma.masked_where(mangrove_biomass_2000_window == 0, deadwood_output)
+            deadwood_output = deadwood_output.filled(0)
+
             # Combines the mangrove and non-mangrove BGC arrays into a single array
             deadwood_output = mangrove_C_final + deadwood_output
             # print deadwood_output[0][29930:29950]

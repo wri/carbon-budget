@@ -217,12 +217,12 @@ fao_ecozone_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carb
 # Precipitation
 precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
 pattern_precip = 'precip_mm_annual'
-precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190415/'
+precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190412/'
 
 # Elevation
 srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
 pattern_elevation = 'elevation'
-elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190415/'
+elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190412/'
 
 
 ### Carbon pools
