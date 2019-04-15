@@ -242,22 +242,22 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         # deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_natrl_forest
         # deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
-        # # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
-        # elev_mask_3 = elevation_window <= 2000
-        # precip_mask_3 = precip_window > 1600
-        # ecozone_mask_3 = bor_tem_trop_window == 1
-        # condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
-        # agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
-        # deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_natrl_forest
-        # deadwood_output = deadwood_output + deadwood_masked.filled(0)
-
-        # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
-        elev_mask_4 = elevation_window > 2000
-        ecozone_mask_4 = bor_tem_trop_window == 1
-        condition_mask_4 = elev_mask_4 & ecozone_mask_4
-        agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
-        deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_natrl_forest
+        # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
+        elev_mask_3 = elevation_window <= 2000
+        precip_mask_3 = precip_window > 1600
+        ecozone_mask_3 = bor_tem_trop_window == 1
+        condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
+        agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
+        deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
+
+        # # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
+        # elev_mask_4 = elevation_window > 2000
+        # ecozone_mask_4 = bor_tem_trop_window == 1
+        # condition_mask_4 = elev_mask_4 & ecozone_mask_4
+        # agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
+        # deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_natrl_forest
+        # deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
         # # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
         # ecozone_mask_5 = bor_tem_trop_window != 1
