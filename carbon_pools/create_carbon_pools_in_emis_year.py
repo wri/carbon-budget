@@ -222,54 +222,79 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         # print fao_ecozone_window[0][30020:30035]
 
         # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
-        elev_mask = elevation_window <= 2000
-        precip_mask = precip_window <= 1000
-        ecozone_mask = bor_tem_trop_window == 1
-        condition_mask = elev_mask & precip_mask & ecozone_mask
-        agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
-        deadwood_masked = agb_masked * 0.02 * cn.biomass_to_c_natrl_forest
+        elev_mask_1 = elevation_window <= 2000
+        precip_mask_1 = precip_window <= 1000
+        ecozone_mask_1 = bor_tem_trop_window == 1
+        condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
+        agb_masked_1 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_1))
+        deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        elev_mask = elevation_window <= 2000
-        precip_mask = (precip_window > 1000) & (precip_window <= 1600)
-        ecozone_mask = bor_tem_trop_window == 1
-        condition_mask = elev_mask & precip_mask & ecozone_mask
-        agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
-        deadwood_masked = agb_masked * 0.01 * cn.biomass_to_c_natrl_forest
+        elev_mask_2 = elevation_window <= 2000
+        precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
+        ecozone_mask_2 = bor_tem_trop_window == 1
+        condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
+        agb_masked_2 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_2))
+        deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        elev_mask = elevation_window <= 2000
-        precip_mask = precip_window > 1600
-        ecozone_mask = bor_tem_trop_window == 1
-        condition_mask = elev_mask & precip_mask & ecozone_mask
-        agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
-        deadwood_masked = agb_masked * 0.06 * cn.biomass_to_c_natrl_forest
+        elev_mask_3 = elevation_window <= 2000
+        precip_mask_3 = precip_window > 1600
+        ecozone_mask_3 = bor_tem_trop_window == 1
+        condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
+        agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
+        deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        elev_mask = elevation_window > 2000
-        precip_mask = precip_window > -9999
-        ecozone_mask = bor_tem_trop_window == 1
-        condition_mask = elev_mask & precip_mask & ecozone_mask
-        agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
-        deadwood_masked = agb_masked * 0.07 * cn.biomass_to_c_natrl_forest
+        elev_mask_4 = elevation_window > 2000
+        ecozone_mask_4 = bor_tem_trop_window == 1
+        condition_mask_4 = elev_mask_4 & ecozone_mask_4
+        agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
+
+        mymask = condition_mask_4
+        find_row = np.extract(mymask, elevation_window)
+        # if find_row.size > 0:
+        #     True
+        #
+        # find_row = np.extract(mymask, bor_tem_trop_window)
+        # if find_row.size > 0:
+        #     True
+        #
+        # find_row = np.extract(mymask, deadwood_output)
+        # if find_row.size > 0:
+        #     True
+
+        deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
+
+        # find_row = np.extract(mymask, agb_masked_4)
+        # if find_row.size > 0:
+        #     True
+        #
+        # find_row = np.extract(mymask, deadwood_output)
+        # if find_row.size > 0:
+        #     True
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
 
-        ecozone_mask = bor_tem_trop_window != 1
-        condition_mask = ecozone_mask
-        agb_masked = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask))
-        deadwood_masked = agb_masked * 0.08 * cn.biomass_to_c_natrl_forest
+        ecozone_mask_5 = bor_tem_trop_window != 1
+        condition_mask_5 = ecozone_mask_5
+        agb_masked_5 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_5))
+        deadwood_masked = agb_masked_5 * 0.08 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
         # print deadwood_masked[0][0:10]
         # print deadwood_output[0][0:10]
         # print deadwood_output[0][30020:30035]
+
+        # find_row = np.extract(mymask, deadwood_output)
+        # if find_row.size > 0:
+        #     True
 
         # Mangrove calculation if there is a mangrove biomass tile
         if os.path.exists(mangrove_biomass_2000):
@@ -299,14 +324,25 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
             deadwood_output = mangrove_C_final + deadwood_output
             # print deadwood_output[0][30020:30035]
 
+        # find_row = np.extract(mymask, deadwood_output)
+        # if find_row.size > 0:
+        #     True
+
         deadwood_output = np.ma.masked_where(AGC_emis_year_window == 0, deadwood_output)
         deadwood_output = deadwood_output.filled(0)
         # print deadwood_output[0][30020:30035]
+
+        # find_row = np.extract(mymask, deadwood_output)
+        # if find_row.size > 0:
+        #     True
 
         deadwood_output = deadwood_output.astype('float32')
         # print deadwood_output[0][30020:30035]
         # print deadwood_output[0][0:10]
 
+        # find_row = np.extract(mymask, deadwood_output)
+        # if find_row.size > 0:
+        #     True
         # Writes the output window to the output file
         dst_deadwood_2000.write_band(1, deadwood_output, window=window)
 
