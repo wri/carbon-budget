@@ -81,8 +81,6 @@ mang_litter_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dic
                                                                            cn.litter_to_above_trop_wet_mang,
                                                                            cn.litter_to_above_subtrop_mang)
 
-print mang_deadwood_AGB_ratio
-
 print "Creating carbon pools..."
 
 # num_of_processes = 16
