@@ -259,32 +259,32 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_natrl_forest
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
-        condn = np.extract(condition_mask_4, condition_mask_4)
-
-        # if idx[0]==11148:
-        # if condn.size > 0:
-        if idx[0]==2510:
-
-            print idx
-            print condn
-            print condn.size
-
-            print np.where(elevation_window > 2000)
-            print np.amax(elevation_window)
-            print np.amax(precip_window)
-            print np.amax(bor_tem_trop_window)
-            # print condition_mask_4.size
-            # print agb_masked_4
-            # print agb_masked_4.size
-            # print np.where(agb_masked_4 > 0)
-            # print np.where(agb_masked_4 > 0)[1]
-            # print np.where(agb_masked_4 > 0)[1].size
-            # print np.extract(condition_mask_4, agb_masked_4)
-            # print np.extract(condition_mask_4, agb_masked_4).size
-            # print np.extract(condition_mask_4, deadwood_masked)
-            # print np.extract(condition_mask_4, deadwood_output)
-
-            break
+        # condn = np.extract(condition_mask_4, condition_mask_4)
+        #
+        # # if idx[0]==11148:
+        # # if condn.size > 0:
+        # if idx[0]==2510:
+        #
+        #     print idx
+        #     print condn
+        #     print condn.size
+        #
+        #     print np.where(elevation_window > 2000)
+        #     print np.amax(elevation_window)
+        #     print np.amax(precip_window)
+        #     print np.amax(bor_tem_trop_window)
+        #     # print condition_mask_4.size
+        #     # print agb_masked_4
+        #     # print agb_masked_4.size
+        #     # print np.where(agb_masked_4 > 0)
+        #     # print np.where(agb_masked_4 > 0)[1]
+        #     # print np.where(agb_masked_4 > 0)[1].size
+        #     # print np.extract(condition_mask_4, agb_masked_4)
+        #     # print np.extract(condition_mask_4, agb_masked_4).size
+        #     # print np.extract(condition_mask_4, deadwood_masked)
+        #     # print np.extract(condition_mask_4, deadwood_output)
+        #
+        #     break
 
 
 
