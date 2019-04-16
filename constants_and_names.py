@@ -236,24 +236,20 @@ base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/'
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
 AGC_emis_year_dir = '{0}aboveground_carbon/20190329/'.format(base_carbon_pool_dir)
 
-# # Biomass tile list (WHRC/natural forests and mangroves)
-# pattern_biomass_tile_list = 'biomass_tile_list.txt'
-# biomass_tile_list_dir = 's3://gfw2-data/climate/carbon_model/biomass_tile_list/'
-
 # NOTE: These must match the word before .tif in the outnames of calc_carbon_pools.cpp, e.g., "string outname_litter_total = tile_id + "_t_litter_C_ha_total.tif";"
 pool_types = ['natrl', 'mangrove', 'total']
 
 # Belowground carbon
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
-BGC_emis_year_dir = '{}belowground_carbon/20190409/'.format(base_carbon_pool_dir)
+BGC_emis_year_dir = '{}belowground_carbon/20190416/'.format(base_carbon_pool_dir)
 
 # Deadwood
 pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190415/'.format(base_carbon_pool_dir)
+deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190416/'.format(base_carbon_pool_dir)
 
 # Litter
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
-litter_emis_year_2000_dir = '{}litter_carbon/20190410/'.format(base_carbon_pool_dir)
+litter_emis_year_2000_dir = '{}litter_carbon/20190416/'.format(base_carbon_pool_dir)
 
 # Soil
 pattern_soil_C_2000 = 't_soil_C_ha_2000'
