@@ -41,8 +41,8 @@ for tile in tile_list:
                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
                                                             cn.pattern_cont_eco_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.fao_ecozone_processed_dir, tile,
-                                                            cn.pattern_fao_ecozone_processed), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
+                                                            cn.pattern_bor_tem_trop_processed), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
                                                             cn.pattern_precip), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_2000_dir, tile,
