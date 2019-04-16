@@ -94,4 +94,6 @@ config/hot_export_token.txt
 .DS_Store
 
 *.ipynb
+*.xlsx
+debug.py
 

@@ -5,7 +5,7 @@ import datetime
 import os
 import re
 import pandas as pd
-from osgeo import gdal
+# from osgeo import gdal
 
 # Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
