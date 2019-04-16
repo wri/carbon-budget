@@ -25,12 +25,12 @@ def create_input_files(tile_id):
 
     print "Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id
     util.rasterize('fao_ecozones_bor_tem_tro.shp',
-                   "{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_intermediate),
+                   "{0}_{1}.tif".format(tile_id, cn.pattern_bor_tem_trop_intermediate),
                    xmin, ymin, xmax, ymax, '.00025', 'Int16', 'recode', '0')
 
     # Opens boreal/temperate/tropical ecozone tile.
     # Everything from here down is used to assign pixels without boreal-tem-tropical codes to a bor-tem-trop in the 1024x1024 windows.
-    bor_tem_trop_src = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_fao_ecozone_intermediate))
+    bor_tem_trop_src = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_bor_tem_trop_intermediate))
 
     # Grabs metadata about the tif, like its location/projection/cellsize
     kwargs = bor_tem_trop_src.meta
@@ -47,7 +47,7 @@ def create_input_files(tile_id):
         nodata=0
     )
 
-    bor_tem_trop_processed = '{0}_{1}.tif'.format(tile_id, cn.pattern_fao_ecozone_processed)
+    bor_tem_trop_processed = '{0}_{1}.tif'.format(tile_id, cn.pattern_bor_tem_trop_processed)
 
     # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_bor_tem_trop = rasterio.open(bor_tem_trop_processed, 'w', **kwargs)

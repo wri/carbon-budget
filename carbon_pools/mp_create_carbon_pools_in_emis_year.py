@@ -23,7 +23,7 @@ input_files = [
     cn.WHRC_biomass_2000_unmasked_dir,
     cn.mangrove_biomass_2000_dir,
     cn.cont_eco_dir,
-    cn.fao_ecozone_processed_dir,
+    cn.bor_tem_trop_processed_dir,
     cn.precip_processed_dir,
     cn.soil_C_2000_dir,
     cn.elevation_processed_dir

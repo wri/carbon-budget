@@ -151,7 +151,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     WHRC_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
-    bor_tem_trop = '{0}_{1}.tif'.format(tile_id, cn.pattern_fao_ecozone_processed)
+    bor_tem_trop = '{0}_{1}.tif'.format(tile_id, cn.pattern_bor_tem_trop_processed)
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
     precip = '{0}_{1}.tif'.format(tile_id, cn.pattern_precip)
     elevation = '{0}_{1}.tif'.format(tile_id, cn.pattern_elevation)
@@ -285,8 +285,6 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         #     # print np.extract(condition_mask_4, deadwood_output)
         #
         #     break
-
-
 
         # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
         ecozone_mask_5 = bor_tem_trop_window != 1
