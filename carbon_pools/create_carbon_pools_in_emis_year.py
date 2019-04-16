@@ -271,6 +271,8 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
 
             print np.where(elevation_window > 2000)
             print np.amax(elevation_window)
+            print np.amax(precip_window)
+            print np.amax(bor_tem_trop_window)
             # print condition_mask_4.size
             # print agb_masked_4
             # print agb_masked_4.size
