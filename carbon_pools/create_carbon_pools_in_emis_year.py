@@ -261,9 +261,13 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
 
         condn = np.extract(condition_mask_4, condition_mask_4)
 
-        if condn.size > 0:
+        if idx==11148:
 
+            print idx
             print condn
+            print np.extract(condition_mask_4, agb_masked_4)
+            print np.extract(condition_mask_4, deadwood_masked)
+            print np.extract(condition_mask_4, deadwood_output)
             sys.quit
 
 
