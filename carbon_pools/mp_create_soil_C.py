@@ -21,13 +21,15 @@ print tile_list
 # for input in input_files:
 #     uu.s3_file_download('{}'.format(input), '.')
 
+print "Downloading mangrove soil C images"
 cmd = ['wget', cn.link_mangrove_soil_C, '-O', cn.mangrove_soil_C_zip]
 subprocess.check_call(cmd)
 
-cmd = ['wget', cn.link_mineral_soil_C, '-O', cn.mineral_soil_C_name]
-subprocess.check_call(cmd)
+# print "Downloading soil grids 250 raster"
+# cmd = ['wget', cn.link_mineral_soil_C, '-O', cn.mineral_soil_C_name]
+# subprocess.check_call(cmd)
 
-print "Unzipping FAO ecozones"
+print "Unzipping mangrove soil C images"
 unzip_zones = ['unzip', cn.mangrove_soil_C_zip, '-d', '.', '-j']
 subprocess.check_call(unzip_zones)
 
