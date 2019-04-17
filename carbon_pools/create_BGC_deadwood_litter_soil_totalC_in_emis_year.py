@@ -301,7 +301,6 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_emis_year_2000)
 
-
 def create_litter(tile_id, mang_litter_AGB_ratio):
 
     start = datetime.datetime.now()
@@ -459,3 +458,132 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_litter_emis_year_2000)
+
+def create_soil(tile_id):
+
+    start = datetime.datetime.now()
+
+    # Names of the input tiles. Creates the names even if the files don't exist.
+    soil_full_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
+    AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
+
+    # Name of output tile
+    soil_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_emis_year_2000)
+
+    print "  Reading input files for {}...".format(tile_id)
+
+    # Both of these tiles should exist and thus be able to be opened
+    soil_full_extent_src = rasterio.open(soil_full_extent)
+    AGC_emis_year_src = rasterio.open(AGC_emis_year)
+
+    # Grabs metadata for one of the input tiles, like its location/projection/cellsize
+    kwargs = AGC_emis_year_src.meta
+    # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
+    windows = AGC_emis_year_src.block_windows(1)
+
+    # Updates kwargs for the output dataset.
+    # Need to update data type to float 32 so that it can handle fractional carbon pools
+    kwargs.update(
+        driver='GTiff',
+        count=1,
+        compress='lzw',
+        nodata=0,
+        dtype='float32'
+    )
+
+    # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
+    dst_soil_emis_year = rasterio.open(soil_emis_year, 'w', **kwargs)
+
+    print "  Creating soil carbon density in the year of loss for loss pixels in {}...".format(tile_id)
+
+    # Iterates across the windows (1 pixel strips) of the input tiles
+    for idx, window in windows:
+
+        # Populates the output raster's windows with 0s so that pixels without
+        # any of the forest types will have 0s
+        soil_output = np.zeros((window.height, window.width), dtype='float32')
+
+        # Reads in the windows of each input file that definitely exist
+        AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
+        soil_full_extent_window = soil_full_extent_src.read(1, window=window)
+
+        # Removes AGC pixels that do not have a loss year and fills with 0s
+        soil_output = np.ma.masked_where(AGC_emis_year_window == 0, soil_full_extent_window)
+        soil_output = soil_output.filled(0)
+
+        # Converts the output to float32 since float64 is an unnecessary level of precision
+        soil_output = soil_output.astype('float32')
+
+        # Writes the output window to the output file
+        dst_soil_emis_year.write_band(1, soil_output, window=window)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
+
+def create_total_C(tile_id):
+
+    start = datetime.datetime.now()
+
+    # Names of the input tiles. Creates the names even if the files don't exist.
+    AGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
+    BGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_emis_year)
+    deadwood = '{0}_{1}.tif'.format(tile_id, cn.pattern_deadwood_emis_year_2000)
+    litter = '{0}_{1}.tif'.format(tile_id, cn.pattern_litter_emis_year_2000)
+    soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_emis_year_2000)
+
+    # Name of output tile
+    total_C_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_total_C_emis_year)
+
+    print "  Reading input files for {}...".format(tile_id)
+
+    # Both of these tiles should exist and thus be able to be opened
+    AGC_src = rasterio.open(AGC)
+    BGC_src = rasterio.open(BGC)
+    deadwood_src = rasterio.open(deadwood)
+    litter_src = rasterio.open(litter)
+    soil_src = rasterio.open(soil)
+
+    # Grabs metadata for one of the input tiles, like its location/projection/cellsize
+    kwargs = AGC_src.meta
+    # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
+    windows = AGC_src.block_windows(1)
+
+    # Updates kwargs for the output dataset.
+    # Need to update data type to float 32 so that it can handle fractional carbon pools
+    kwargs.update(
+        driver='GTiff',
+        count=1,
+        compress='lzw',
+        nodata=0,
+        dtype='float32'
+    )
+
+    # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
+    dst_total_C = rasterio.open(total_C_emis_year, 'w', **kwargs)
+
+    print "  Creating total carbon density in the year of loss for loss pixels in {}...".format(tile_id)
+
+    # Iterates across the windows (1 pixel strips) of the input tiles
+    for idx, window in windows:
+
+        # Populates the output raster's windows with 0s so that pixels without
+        # any of the forest types will have 0s
+        total_C_output = np.zeros((window.height, window.width), dtype='float32')
+
+        # Reads in the windows of each input file that definitely exist
+        AGC_window = AGC_src.read(1, window=window)
+        BGC_window = BGC_src.read(1, window=window)
+        deadwood_window = deadwood_src.read(1, window=window)
+        litter_window = litter_src.read(1, window=window)
+        soil_window = soil_src.read(1, window=window)
+
+        total_C_output = AGC_window + BGC_window + deadwood_window + litter_window + soil_window
+
+        # Converts the output to float32 since float64 is an unnecessary level of precision
+        total_C_output = total_C_output.astype('float32')
+
+        # Writes the output window to the output file
+        dst_total_C.write_band(1, total_C_output, window=window)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)

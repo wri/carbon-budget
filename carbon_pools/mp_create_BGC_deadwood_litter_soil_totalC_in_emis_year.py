@@ -1,4 +1,4 @@
-import create_BGC_deadwood_litter_totalC_in_emis_year
+import create_BGC_deadwood_litter_soil_totalC_in_emis_year
 from multiprocessing.pool import Pool
 from functools import partial
 import subprocess
@@ -25,7 +25,7 @@ input_files = [
     cn.cont_eco_dir,
     cn.bor_tem_trop_processed_dir,
     cn.precip_processed_dir,
-    cn.soil_C_2000_dir,
+    cn.soil_C_full_extent_2000_dir,
     cn.elevation_processed_dir
     ]
 
@@ -45,8 +45,8 @@ for tile in tile_list:
                                                             cn.pattern_bor_tem_trop_processed), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
                                                             cn.pattern_precip), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_2000_dir, tile,
-    #                                                         cn.pattern_soil_C_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
+                                                            cn.pattern_soil_C_full_extent_2000), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
                                                             cn.pattern_elevation), '.')
     try:
@@ -66,17 +66,17 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-mang_BGB_AGB_ratio = create_BGC_deadwood_litter_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.below_to_above_trop_dry_mang,
                                                                            cn.below_to_above_trop_wet_mang,
                                                                            cn.below_to_above_subtrop_mang)
 
-mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.deadwood_to_above_trop_dry_mang,
                                                                            cn.deadwood_to_above_trop_wet_mang,
                                                                            cn.deadwood_to_above_subtrop_mang)
 
-mang_litter_AGB_ratio = create_BGC_deadwood_litter_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.litter_to_above_trop_dry_mang,
                                                                            cn.litter_to_above_trop_wet_mang,
                                                                            cn.litter_to_above_subtrop_mang)
@@ -85,33 +85,46 @@ print "Creating carbon pools..."
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
 pool.close()
 pool.join()
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_totalC_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
 pool.close()
 pool.join()
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
+pool.close()
+pool.join()
+
+num_of_processes = 16
+pool = Pool(num_of_processes)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil), tile_list)
+pool.close()
+pool.join()
+
+num_of_processes = 40
+pool = Pool(num_of_processes)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C()), tile_list)
 pool.close()
 pool.join()
 
 # # For single processor use
 # for tile in tile_list:
-#     create_carbon_pools_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
-#     create_carbon_pools_in_emis_year.create_deadwood(tile, mang_deadwood_AGB_ratio)
-#     create_carbon_pools_in_emis_year.create_litter(tile, mang_litter_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood(tile, mang_deadwood_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter(tile, mang_litter_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil(tile)
+#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C(tile)
 
 print "Uploading output to s3..."
 
-# uu.upload_final_set('{0}/{1}/'.format(cn.AGC_dir, type), '{0}_{1}'.format(cn.pattern_AGC, type))
 uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
 uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
 uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
-# uu.upload_final_set('{0}/{1}/'.format(cn.soil_C_pool_dir, type), '{0}_{1}'.format(cn.pattern_soil_pool, type))
-# uu.upload_final_set('{0}/{1}/'.format(cn.total_C_dir, type), '{0}_{1}'.format(cn.pattern_total_C, type))
+uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
+uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)

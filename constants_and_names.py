@@ -257,12 +257,16 @@ link_mineral_soil_C = 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30
 mineral_soil_C_name = 'OCSTHA_M_30cm_250m_ll.tif'
 
 # Soil
-pattern_soil_C_2000 = 't_soil_C_ha_2000'
-soil_C_2000_dir = '{}soil_carbon/20190417/'.format(base_carbon_pool_dir)
+pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
+soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190417/'.format(base_carbon_pool_dir)
+
+# Soil
+pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'
+soil_C_emis_year_2000_dir = '{}soil_carbon/processed_emis_extent/20190417/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
 pattern_total_C_emis_year = 't_total_C_ha_emis_year'
-total_C_emis_year_dir = '{}total_carbon/20190326/'.format(base_carbon_pool_dir)
+total_C_emis_year_dir = '{}total_carbon/20190417/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions

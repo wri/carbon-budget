@@ -13,15 +13,6 @@ tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 
-# # Downloads two of the raw input files for creating carbon pools
-# input_files = [
-#     cn.fao_ecozone_raw_dir,
-#     cn.precip_raw_dir
-#     ]
-#
-# for input in input_files:
-#     uu.s3_file_download('{}'.format(input), '.')
-
 print "Downloading mangrove soil C images"
 uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
 
@@ -48,4 +39,4 @@ for tile in tile_list:
 print "Done creating soil C tiles"
 
 print "Uploading output files"
-uu.upload_final_set(cn.soil_C_2000_dir, cn.pattern_soil_C_2000)
+uu.upload_final_set(cn.soil_C_full_extent_2000_dir, cn.pattern_soil_C_full_extent_2000)
