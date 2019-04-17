@@ -9,8 +9,8 @@ import universal_util as uu
 
 # tile_list = uu.create_combined_tile_list(cn.mangrove_biomass_2000_dir,
 #                                          cn.WHRC_biomass_2000_unmasked_dir)
-tile_list = ['30N_080W'] # test tiles
-# tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
+# tile_list = ['30N_080W'] # test tiles
+tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 
 # print "Downloading mangrove soil C images"
