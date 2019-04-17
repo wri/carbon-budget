@@ -27,14 +27,14 @@ print tile_list
 print "Making combined soil C vrt"
 subprocess.check_call('gdalbuildvrt soil_C.vrt {} *dSOCS*.tif'.format(cn.mineral_soil_C_name), shell=True)
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count / 3)
-# pool.map(create_soil_C.create_soil_C, tile_list)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=count / 3)
+pool.map(create_soil_C.create_soil_C, tile_list)
 
-# For single processor use
-for tile in tile_list:
-
-    create_soil_C.create_soil_C(tile)
+# # For single processor use
+# for tile in tile_list:
+#
+#     create_soil_C.create_soil_C(tile)
 
 print "Done creating soil C tiles"
 
