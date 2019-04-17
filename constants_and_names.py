@@ -11,23 +11,18 @@ loss_years = 15
 # Number of years in tree cover gain. If input gain raster is changed, this must be changed, too.
 gain_years = 12
 
-# Number of biomass tiles
-biomass_tile_count = 280
-
 # Biomass to carbon ratio for aboveground, belowground, and deadwood in non-mangrove forests (planted and non-planted)
-biomass_to_c_natrl_forest = 0.5
+biomass_to_c_non_mangrove = 0.5
 
-# Biomass to carbon ratio for litter in non-mangrove forests (planted and non-planted)
-biomass_to_c_natrl_forest_litter = 0.37
+# Biomass to carbon ratio for litter in non-mangrove forests (planted and non-planted).
+# From IPCC guidelines chapter 2, pdf page 23.
+biomass_to_c_non_mangrove_litter = 0.37
 
 # Biomass to carbon ratio for mangroves (IPCC wetlands supplement table 4.2)
 biomass_to_c_mangrove = 0.45
 
 # Carbon to CO2 ratio
 c_to_co2 = 44/12
-
-# m2 per hectare
-m2_per_ha = 100 * 100
 
 # Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
 # Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
@@ -50,6 +45,9 @@ deadwood_to_above_subtrop_mang = 0.258
 
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
+
+# m2 per hectare
+m2_per_ha = 100 * 100
 
 
 ##########                  ##########
@@ -250,6 +248,13 @@ deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190416/'.format(base_carbon_p
 # Litter
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
 litter_emis_year_2000_dir = '{}litter_carbon/20190416/'.format(base_carbon_pool_dir)
+
+# Raw mangrove soil C
+link_mangrove_soil_C = 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0'
+mangrove_soil_C_zip = 'Mangroves_SOCS_0_100cm_30m.zip'
+# Raw mineral soil C
+link_mineral_soil_C = 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif'
+mineral_soil_C_name = 'OCSTHA_M_30cm_250m_ll.tif'
 
 # Soil
 pattern_soil_C_2000 = 't_soil_C_ha_2000'

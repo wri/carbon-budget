@@ -79,7 +79,7 @@ def create_AGB_rate(tile_id):
     planted_forest_no_mangrove = '{0}_no_mang_AGC_BGC.tif'.format(tile_id)
 
     # Equation converts above+below to just above and carbon to biomass
-    AGB_calc = '--calc=A/(1+{})*(1/{})'.format(cn.below_to_above_non_mang, cn.biomass_to_c_natrl_forest)
+    AGB_calc = '--calc=A/(1+{})*(1/{})'.format(cn.below_to_above_non_mang, cn.biomass_to_c_non_mangrove)
     AGB_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
     AGB_outfilearg = '--outfile={}'.format(AGB_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_no_mangrove, AGB_calc, AGB_outfilearg,

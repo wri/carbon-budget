@@ -1,4 +1,4 @@
-import create_carbon_pools_in_emis_year
+import create_BGC_deadwood_litter_totalC_in_emis_year
 from multiprocessing.pool import Pool
 from functools import partial
 import subprocess
@@ -13,7 +13,7 @@ pd.options.mode.chained_assignment = None
 
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
 # tile_list = ['00N_110E'] # test tiles
-tile_list = ['80N_020E', '00N_020E', '00N_000E', '00N_110E'] # test tiles
+tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
@@ -66,17 +66,17 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-mang_BGB_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_BGB_AGB_ratio = create_BGC_deadwood_litter_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.below_to_above_trop_dry_mang,
                                                                            cn.below_to_above_trop_wet_mang,
                                                                            cn.below_to_above_subtrop_mang)
 
-mang_deadwood_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.deadwood_to_above_trop_dry_mang,
                                                                            cn.deadwood_to_above_trop_wet_mang,
                                                                            cn.deadwood_to_above_subtrop_mang)
 
-mang_litter_AGB_ratio = create_carbon_pools_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_litter_AGB_ratio = create_BGC_deadwood_litter_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.litter_to_above_trop_dry_mang,
                                                                            cn.litter_to_above_trop_wet_mang,
                                                                            cn.litter_to_above_subtrop_mang)
@@ -85,19 +85,19 @@ print "Creating carbon pools..."
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_carbon_pools_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
 pool.close()
 pool.join()
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_carbon_pools_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_totalC_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
 pool.close()
 pool.join()
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_carbon_pools_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
 pool.close()
 pool.join()
 

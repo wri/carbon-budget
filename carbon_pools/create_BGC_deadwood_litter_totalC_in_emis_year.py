@@ -230,7 +230,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         ecozone_mask_1 = bor_tem_trop_window == 1
         condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
         agb_masked_1 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_1))
-        deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_natrl_forest
+        deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_non_mangrove
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
         # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
@@ -239,7 +239,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         ecozone_mask_2 = bor_tem_trop_window == 1
         condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
         agb_masked_2 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_2))
-        deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_natrl_forest
+        deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_non_mangrove
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
         # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
@@ -248,7 +248,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         ecozone_mask_3 = bor_tem_trop_window == 1
         condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
         agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
-        deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_natrl_forest
+        deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_non_mangrove
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
         # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
@@ -256,14 +256,14 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
         ecozone_mask_4 = bor_tem_trop_window == 1
         condition_mask_4 = elev_mask_4 & ecozone_mask_4
         agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
-        deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_natrl_forest
+        deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_non_mangrove
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
         # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
         ecozone_mask_5 = bor_tem_trop_window != 1
         condition_mask_5 = ecozone_mask_5
         agb_masked_5 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_5))
-        deadwood_masked = agb_masked_5 * 0.08 * cn.biomass_to_c_natrl_forest
+        deadwood_masked = agb_masked_5 * 0.08 * cn.biomass_to_c_non_mangrove
         deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
         # Replaces non-mangrove deadwood with special mangrove deadwood values if there is mangrove
@@ -389,7 +389,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
         ecozone_mask_1 = bor_tem_trop_window == 1
         condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
         agb_masked_1 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_1))
-        litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_natrl_forest_litter
+        litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
         litter_output = litter_output + litter_masked.filled(0)
 
         # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
@@ -398,7 +398,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
         ecozone_mask_2 = bor_tem_trop_window == 1
         condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
         agb_masked_2 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_2))
-        litter_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_natrl_forest_litter
+        litter_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_non_mangrove_litter
         litter_output = litter_output + litter_masked.filled(0)
 
         # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
@@ -407,7 +407,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
         ecozone_mask_3 = bor_tem_trop_window == 1
         condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
         agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
-        litter_masked = agb_masked_3 * 0.01 * cn.biomass_to_c_natrl_forest_litter
+        litter_masked = agb_masked_3 * 0.01 * cn.biomass_to_c_non_mangrove_litter
         litter_output = litter_output + litter_masked.filled(0)
 
         # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
@@ -415,14 +415,14 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
         ecozone_mask_4 = bor_tem_trop_window == 1
         condition_mask_4 = elev_mask_4 & ecozone_mask_4
         agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
-        litter_masked = agb_masked_4 * 0.01 * cn.biomass_to_c_natrl_forest_litter
+        litter_masked = agb_masked_4 * 0.01 * cn.biomass_to_c_non_mangrove_litter
         litter_output = litter_output + litter_masked.filled(0)
 
         # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
         ecozone_mask_5 = bor_tem_trop_window != 1
         condition_mask_5 = ecozone_mask_5
         agb_masked_5 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_5))
-        litter_masked = agb_masked_5 * 0.04 * cn.biomass_to_c_natrl_forest_litter
+        litter_masked = agb_masked_5 * 0.04 * cn.biomass_to_c_non_mangrove_litter
         litter_output = litter_output + litter_masked.filled(0)
 
         # Replaces non-mangrove litter with special mangrove litter values if there is mangrove

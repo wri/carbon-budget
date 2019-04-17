@@ -124,7 +124,7 @@ def create_emitted_AGC(tile_id):
             # he masking command makes sure that only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
             # (Otherwise, all WHRC biomass pixels would be included in the planted forest calculation, not just the pixels
             # at planted forests.)
-            planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + planted_forest_cumul_AGC_gain_window
+            planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + planted_forest_cumul_AGC_gain_window
             planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, planted_forest_C)
             # Fills the masked pixels (WHRC biomass that isn't in non-mangrove planted forests) with 0s
             planted_forest_C_final = planted_forest_C_final.filled(0)
@@ -143,7 +143,7 @@ def create_emitted_AGC(tile_id):
             # only WHRC biomass pixels that correspond with non-mangrove non-planted forest pixels are included.
             # (Otherwise, all WHRC biomass pixels would be included in the non-mang non-planted forest calculation, not just
             # the pixels in non-mang non-planted forests.)
-            natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_natrl_forest) + natrl_forest_cumul_AGC_gain_window
+            natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + natrl_forest_cumul_AGC_gain_window
 
             # Masks WHRC biomass where there is non-mangrove planted forest. If masked, the masked values are filled with 0s.
             if os.path.exists(planted_forest_cumul_AGC_gain):
