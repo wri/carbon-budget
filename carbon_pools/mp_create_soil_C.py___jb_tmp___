@@ -14,6 +14,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_plant
 # tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
+print "There are {} unique tiles to process".format(str(len(tile_list)))
 
 print "Downloading mangrove soil C rasters"
 uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
