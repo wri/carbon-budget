@@ -253,8 +253,8 @@ litter_emis_year_2000_dir = '{}litter_carbon/20190416/'.format(base_carbon_pool_
 mangrove_soil_C_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/raw/'
 pattern_mangrove_soil_C = 'Mangroves_SOCS_0_100cm_30m.zip'
 # Raw mineral soil C
-link_mineral_soil_C = 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif'
-mineral_soil_C_name = 'OCSTHA_M_30cm_250m_ll.tif'
+mineral_soil_C_dir = 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif'
+pattern_mineral_soil_C = 'OCSTHA_M_30cm_250m_ll.tif'
 
 # Soil
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'

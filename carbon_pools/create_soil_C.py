@@ -21,4 +21,4 @@ def create_soil_C(tile_id):
     uu.warp_to_Hansen('soil_C.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000), xmin, ymin, xmax, ymax)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_precip)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
