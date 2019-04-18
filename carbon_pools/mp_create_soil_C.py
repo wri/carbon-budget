@@ -1,7 +1,8 @@
 '''
 This script creates tiles of soil carbon density, one of the carbon pools.
 At this time, mineral soil carbon is for the top 30 cm of soil.
-Mangrove soil carbon gets precedence over mineral soil carbon.
+Mangrove soil carbon gets precedence over mineral soil carbon where there is mangrove biomass.
+Where there is no mangrove biomass, mineral soil C is used.
 Peatland carbon is not recognized or involved in any way.
 '''
 

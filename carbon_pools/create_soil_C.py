@@ -1,3 +1,11 @@
+'''
+This script creates tiles of soil carbon density, one of the carbon pools.
+At this time, mineral soil carbon is for the top 30 cm of soil.
+Mangrove soil carbon gets precedence over mineral soil carbon where there is mangrove biomass.
+Where there is no mangrove biomass, mineral soil C is used.
+Peatland carbon is not recognized or involved in any way.
+'''
+
 import datetime
 import subprocess
 import sys
@@ -13,7 +21,7 @@ def create_mangrove_soil_C(tile_id):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "Clipping mangrove soil C for", tile_id
+    print "Clipping mangrove soil C from mangrove soil vrt for", tile_id
     uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove.tif'.format(tile_id), xmin, ymin, xmax, ymax)
 
     mangrove_soil = '{0}_mangrove.tif'.format(tile_id)
@@ -24,7 +32,7 @@ def create_mangrove_soil_C(tile_id):
 
     print "Masking mangrove soil to mangrove biomass for", tile_id
     cmd = ['gdal_calc.py', '-A', mangrove_soil, '-B', mangrove_biomass,
-           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--overwrite']
+           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--overwrite', 'type=Int16']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
