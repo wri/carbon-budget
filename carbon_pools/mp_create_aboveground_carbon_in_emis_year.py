@@ -6,11 +6,15 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# tile_list = uu.create_combined_tile_list(cn.mangrove_biomass_2000_dir,
-#                                          cn.WHRC_biomass_2000_unmasked_dir)
+tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+                                         cn.annual_gain_AGB_mangrove_dir,
+                                         set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
+                                         )
 # tile_list = ['30N_080W'] # test tiles
-tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
+# tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
+print "There are {} unique tiles to process".format(str(len(tile_list)))
+
 
 # For downloading all tiles in the input folders.
 input_files = [
@@ -22,41 +26,41 @@ input_files = [
     cn.loss_dir
     ]
 
-# for input in input_files:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in input_files:
+    uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    except:
-        print "No mangrove biomass in", tile
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.')
-    except:
-        print "No WHRC biomass in", tile
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_mangrove), '.')
-    except:
-        print "No mangrove carbon accumulation in", tile
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove), '.')
-    except:
-        print "No planted forests in", tile
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGC_natrl_forest), '.')
-    except:
-        print "No non-mangrove non-planted forests in", tile
-
-    try:
-        uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
-    except:
-        print "No loss in", tile
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     except:
+#         print "No mangrove biomass in", tile
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.')
+#     except:
+#         print "No WHRC biomass in", tile
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_mangrove), '.')
+#     except:
+#         print "No mangrove carbon accumulation in", tile
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove), '.')
+#     except:
+#         print "No planted forests in", tile
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGC_natrl_forest), '.')
+#     except:
+#         print "No non-mangrove non-planted forests in", tile
+#
+#     try:
+#         uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
+#     except:
+#         print "No loss in", tile
 
 print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
 
