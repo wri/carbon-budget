@@ -1,3 +1,8 @@
+'''
+This script creates the three inputs used for creating the carbon pools besides aboveground carbon.
+It takes several hours to run.
+'''
+
 import util
 import datetime
 import rasterio

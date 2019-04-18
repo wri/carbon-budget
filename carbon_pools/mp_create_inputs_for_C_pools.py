@@ -1,3 +1,8 @@
+'''
+This script creates the three inputs used for creating the carbon pools besides aboveground carbon.
+It takes several hours to run.
+'''
+
 import subprocess
 import create_inputs_for_C_pools
 import multiprocessing
@@ -23,7 +28,7 @@ input_files = [
 for input in input_files:
     uu.s3_file_download('{}'.format(input), '.')
 
-print "Unzipping FAO ecozones"
+print "Unzipping boreal/temperate/tropical file (from FAO ecozones)"
 unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', '.']
 subprocess.check_call(unzip_zones)
 
