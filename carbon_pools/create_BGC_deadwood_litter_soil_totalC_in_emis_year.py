@@ -488,7 +488,7 @@ def create_soil(tile_id):
         count=1,
         compress='lzw',
         nodata=0,
-        dtype='float32'
+        dtype='uint16'
     )
 
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
@@ -499,10 +499,6 @@ def create_soil(tile_id):
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
-        # Populates the output raster's windows with 0s so that pixels without
-        # any of the forest types will have 0s
-        soil_output = np.zeros((window.height, window.width), dtype='float32')
-
         # Reads in the windows of each input file that definitely exist
         AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
         soil_full_extent_window = soil_full_extent_src.read(1, window=window)
@@ -512,7 +508,7 @@ def create_soil(tile_id):
         soil_output = soil_output.filled(0)
 
         # Converts the output to float32 since float64 is an unnecessary level of precision
-        soil_output = soil_output.astype('float32')
+        soil_output = soil_output.astype('uint16')
 
         # Writes the output window to the output file
         dst_soil_emis_year.write_band(1, soil_output, window=window)
@@ -565,10 +561,6 @@ def create_total_C(tile_id):
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
-
-        # Populates the output raster's windows with 0s so that pixels without
-        # any of the forest types will have 0s
-        total_C_output = np.zeros((window.height, window.width), dtype='float32')
 
         # Reads in the windows of each input file that definitely exist
         AGC_window = AGC_src.read(1, window=window)

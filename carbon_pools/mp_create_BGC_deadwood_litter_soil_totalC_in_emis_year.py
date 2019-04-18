@@ -56,36 +56,36 @@ input_files = [
 #         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 #     except:
 #         print "No mangrove biomass in", tile
-#
-#
-# # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-# cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
-# subprocess.check_call(cmd)
-#
-# # Imports the table with the ecozone-continent codes and the carbon gain rates
-# gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-#                            sheet_name = "mangrove gain, for model")
-#
-# # Removes rows with duplicate codes (N. and S. America for the same ecozone)
-# gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
-#
-# mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
-#                                                                            cn.below_to_above_trop_dry_mang,
-#                                                                            cn.below_to_above_trop_wet_mang,
-#                                                                            cn.below_to_above_subtrop_mang)
-#
-# mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
-#                                                                            cn.deadwood_to_above_trop_dry_mang,
-#                                                                            cn.deadwood_to_above_trop_wet_mang,
-#                                                                            cn.deadwood_to_above_subtrop_mang)
-#
-# mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
-#                                                                            cn.litter_to_above_trop_dry_mang,
-#                                                                            cn.litter_to_above_trop_wet_mang,
-#                                                                            cn.litter_to_above_subtrop_mang)
-#
-# print "Creating carbon pools..."
-#
+
+
+# Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+subprocess.check_call(cmd)
+
+# Imports the table with the ecozone-continent codes and the carbon gain rates
+gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                           sheet_name = "mangrove gain, for model")
+
+# Removes rows with duplicate codes (N. and S. America for the same ecozone)
+gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                           cn.below_to_above_trop_dry_mang,
+                                                                           cn.below_to_above_trop_wet_mang,
+                                                                           cn.below_to_above_subtrop_mang)
+
+mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                           cn.deadwood_to_above_trop_dry_mang,
+                                                                           cn.deadwood_to_above_trop_wet_mang,
+                                                                           cn.deadwood_to_above_subtrop_mang)
+
+mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                           cn.litter_to_above_trop_dry_mang,
+                                                                           cn.litter_to_above_trop_wet_mang,
+                                                                           cn.litter_to_above_subtrop_mang)
+
+print "Creating carbon pools..."
+
 # num_of_processes = 16
 # pool = Pool(num_of_processes)
 # pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
@@ -103,18 +103,18 @@ input_files = [
 # pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
 # pool.close()
 # pool.join()
-#
-# num_of_processes = 16
-# pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil), tile_list)
-# pool.close()
-# pool.join()
 
-num_of_processes = 40
+num_of_processes = 16
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil), tile_list)
 pool.close()
 pool.join()
+
+# num_of_processes = 40
+# pool = Pool(num_of_processes)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
+# pool.close()
+# pool.join()
 
 # # For single processor use
 # for tile in tile_list:
