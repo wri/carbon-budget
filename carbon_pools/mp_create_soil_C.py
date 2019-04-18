@@ -83,7 +83,7 @@ subprocess.check_call('gdalbuildvrt combined_soil_C.vrt {} *mangrove_intermediat
 
 # # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 # count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(processes=count / 2)
+# pool = multiprocessing.Pool(processes=count - 15)
 # pool.map(create_soil_C.create_combined_soil_C, tile_list)
 
 # For single processor use
