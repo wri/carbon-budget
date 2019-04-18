@@ -15,10 +15,9 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
-#                                          cn.annual_gain_AGB_mangrove_dir,
-#                                          set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
-#                                          )
+tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+                                         cn.annual_gain_AGB_mangrove_dir
+                                         )
 tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
@@ -79,7 +78,7 @@ print "Done making mangrove soil C tiles"
 
 # Mangrove soil receives precedence over mineral soil
 print "Making combined soil C vrt"
-subprocess.check_call('gdalbuildvrt combined_soil_C.vrt {} *mangrove_intermediate*.tif'.format(cn.pattern_mineral_soil_C), shell=True)
+subprocess.check_call('gdalbuildvrt combined_soil_C.vrt {} *mangrove_intermediate.tif'.format(cn.pattern_mineral_soil_C), shell=True)
 
 # # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 # count = multiprocessing.cpu_count()
