@@ -210,17 +210,17 @@ pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
 fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
 pattern_bor_tem_trop_intermediate = 'fao_ecozones_bor_tem_tro_intermediate'
 pattern_bor_tem_trop_processed = 'fao_ecozones_bor_tem_tro_processed'
-bor_tem_trop_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190416/'
+bor_tem_trop_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190418/'
 
 # Precipitation
 precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
 pattern_precip = 'precip_mm_annual'
-precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190416/'
+precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190418/'
 
 # Elevation
 srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
 pattern_elevation = 'elevation'
-elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190416/'
+elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190418/'
 
 
 ### Carbon pools
@@ -239,15 +239,15 @@ pool_types = ['natrl', 'mangrove', 'total']
 
 # Belowground carbon
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
-BGC_emis_year_dir = '{}belowground_carbon/20190416/'.format(base_carbon_pool_dir)
+BGC_emis_year_dir = '{}belowground_carbon/20190418/'.format(base_carbon_pool_dir)
 
 # Deadwood
 pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190416/'.format(base_carbon_pool_dir)
+deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190418/'.format(base_carbon_pool_dir)
 
 # Litter
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
-litter_emis_year_2000_dir = '{}litter_carbon/20190416/'.format(base_carbon_pool_dir)
+litter_emis_year_2000_dir = '{}litter_carbon/20190418/'.format(base_carbon_pool_dir)
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/raw/'
@@ -262,11 +262,11 @@ soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190417/'
 
 # Soil
 pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'
-soil_C_emis_year_2000_dir = '{}soil_carbon/processed_emis_extent/20190417/'.format(base_carbon_pool_dir)
+soil_C_emis_year_2000_dir = '{}soil_carbon/processed_emis_extent/20190418/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
 pattern_total_C_emis_year = 't_total_C_ha_emis_year'
-total_C_emis_year_dir = '{}total_carbon/20190417/'.format(base_carbon_pool_dir)
+total_C_emis_year_dir = '{}total_carbon/20190418/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions
