@@ -232,7 +232,7 @@ base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/'
 
 # Aboveground carbon in the year of emission for all forest types
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
-AGC_emis_year_dir = '{0}aboveground_carbon/20190329/'.format(base_carbon_pool_dir)
+AGC_emis_year_dir = '{0}aboveground_carbon/20190418/'.format(base_carbon_pool_dir)
 
 # NOTE: These must match the word before .tif in the outnames of calc_carbon_pools.cpp, e.g., "string outname_litter_total = tile_id + "_t_litter_C_ha_total.tif";"
 pool_types = ['natrl', 'mangrove', 'total']
