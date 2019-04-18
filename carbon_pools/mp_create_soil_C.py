@@ -78,7 +78,7 @@ print "Done making mangrove soil C tiles"
 
 # Mangrove soil receives precedence over mineral soil
 print "Making combined soil C vrt"
-subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt {} *mangrove_intermediate*.tif'.format(cn.pattern_mineral_soil_C), shell=True)
+subprocess.check_call('gdalbuildvrt combined_soil_C.vrt {} *mangrove_intermediate*.tif'.format(cn.pattern_mineral_soil_C), shell=True)
 
 # # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 # count = multiprocessing.cpu_count()
