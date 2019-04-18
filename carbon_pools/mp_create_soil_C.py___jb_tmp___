@@ -39,6 +39,7 @@ subprocess.check_call(unzip_zones)
 print "Making combined soil C vrt"
 subprocess.check_call('gdalbuildvrt soil_C.vrt {} *dSOCS*.tif'.format(cn.pattern_mineral_soil_C), shell=True)
 
+# count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count / 2)
 pool.map(create_soil_C.create_soil_C, tile_list)
