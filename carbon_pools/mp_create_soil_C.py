@@ -62,7 +62,7 @@ subprocess.check_call(unzip_zones)
 
 # Mangrove soil receives precedence over mineral soil
 print "Making mangrove soil C vrt"
-subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *dSOCS*.tif')
+subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *year2000*.tif')
 
 # # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 # count = multiprocessing.cpu_count()
