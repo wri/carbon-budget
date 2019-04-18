@@ -47,15 +47,15 @@ for tile in tile_list:
         print "No mangrove biomass in", tile
 
 
-# For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
-# zip file if it is downloaded using wget but it does work if it comes from s3.
-print "Downloading soil grids 250 raster"
-cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
-subprocess.check_call(cmd)
-
-print "Downloading mangrove soil C raster"
-cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
-subprocess.check_call(cmd)
+# # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
+# # zip file if it is downloaded using wget but it does work if it comes from s3.
+# print "Downloading soil grids 250 raster"
+# cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
+# subprocess.check_call(cmd)
+#
+# print "Downloading mangrove soil C raster"
+# cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
+# subprocess.check_call(cmd)
 
 print "Unzipping mangrove soil C images"
 unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', '.']
