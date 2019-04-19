@@ -16,6 +16,7 @@ sys.path.append('../')
 import universal_util as uu
 import constants_and_names as cn
 
+# Creates 10x10 mangrove soil C tiles
 def create_mangrove_soil_C(tile_id):
 
     # Start time
@@ -51,6 +52,7 @@ def create_mangrove_soil_C(tile_id):
     uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
 
 
+# Creates 10x10 mineral soil C tiles
 def create_mineral_soil_C(tile_id):
 
     # Start time
@@ -66,19 +68,20 @@ def create_mineral_soil_C(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
 
 
+# Overlays the mangrove soil C tiles with the mineral soil C tiles, giving precedence to the mangrove soil C
 def create_combined_soil_C(tile_id):
 
     # Start time
     start = datetime.datetime.now()
 
+    mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
+    mineral_soil = '{0}_mineral_soil.tif'.format(tile_id)
+
+    combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
+
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         print "Mangrove aboveground biomass tile found for", tile_id
-
-        mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
-        mineral_soil = '{0}_mineral_soil.tif'.format(tile_id)
-
-        combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
 
         mangrove_soil_src = rasterio.open(mangrove_soil)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
@@ -100,6 +103,8 @@ def create_combined_soil_C(tile_id):
         # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
         dst_combined_soil = rasterio.open(combined_soil, 'w', **kwargs)
 
+        print "Replacing mineral soil C pixels with mangrove soil C pixels for", tile_id
+
         # Iterates across the windows (1 pixel strips) of the input tiles
         for idx, window in windows:
 
@@ -113,6 +118,8 @@ def create_combined_soil_C(tile_id):
     else:
 
         print "No mangrove aboveground biomass tile for", tile_id
+
+        os.rename('{0}_{1}.tif'.format(tile_id, 'mineral_soil'), combined_soil)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
