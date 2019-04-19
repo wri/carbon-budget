@@ -22,43 +22,43 @@ tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
-#
-# print "Downloading mangrove soil C rasters"
-# uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
-#
-# print "Downloading mineral soil C raster"
-# uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), '.')
-#
-# # # For downloading all tiles in the input folders.
-# # input_files = [
-# #     cn.mangrove_biomass_2000_dir
-# #     ]
 # #
-# # for input in input_files:
-# #     uu.s3_folder_download('{}'.format(input), '.')
-
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    except:
-        print "No mangrove biomass in", tile
-
-
-# # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
-# # zip file if it is downloaded using wget but it does work if it comes from s3.
-# print "Downloading soil grids 250 raster"
-# cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
-# subprocess.check_call(cmd)
+# # print "Downloading mangrove soil C rasters"
+# # uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
+# #
+# # print "Downloading mineral soil C raster"
+# # uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), '.')
+# #
+# # # # For downloading all tiles in the input folders.
+# # # input_files = [
+# # #     cn.mangrove_biomass_2000_dir
+# # #     ]
+# # #
+# # # for input in input_files:
+# # #     uu.s3_folder_download('{}'.format(input), '.')
 #
-# print "Downloading mangrove soil C raster"
-# cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
-# subprocess.check_call(cmd)
-
-print "Unzipping mangrove soil C images..."
-unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', '.']
-subprocess.check_call(unzip_zones)
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     except:
+#         print "No mangrove biomass in", tile
+#
+#
+# # # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
+# # # zip file if it is downloaded using wget but it does work if it comes from s3.
+# # print "Downloading soil grids 250 raster"
+# # cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
+# # subprocess.check_call(cmd)
+# #
+# # print "Downloading mangrove soil C raster"
+# # cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
+# # subprocess.check_call(cmd)
+#
+# print "Unzipping mangrove soil C images..."
+# unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', '.']
+# subprocess.check_call(unzip_zones)
 
 # Mangrove soil receives precedence over mineral soil
 print "Making mangrove soil C vrt..."
