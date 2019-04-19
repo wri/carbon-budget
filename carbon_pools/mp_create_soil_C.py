@@ -18,8 +18,8 @@ import universal_util as uu
 # tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
 #                                          cn.annual_gain_AGB_mangrove_dir
 #                                          )
-tile_list = ['30N_080W'] # test tiles
-# tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
+# tile_list = ['30N_080W'] # test tiles
+tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 # #
@@ -80,7 +80,7 @@ for tile in tile_list:
 print "Done making mangrove soil C tiles"
 
 print "Uploading mangrove output soil"
-uu.upload_final_set('s3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/intermediate_full_extent/20190419/', 'mangrove_masked_to_mangrove')
+# uu.upload_final_set('s3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/intermediate_full_extent/20190419/', 'mangrove_masked_to_mangrove')
 
 # Mangrove soil receives precedence over mineral soil
 print "Making mineral soil C vrt..."
