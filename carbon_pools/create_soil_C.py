@@ -22,22 +22,22 @@ def create_mangrove_soil_C(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     print "Clipping mangrove soil C from mangrove soil vrt for", tile_id
-    uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove.tif'.format(tile_id), xmin, ymin, xmax, ymax)
+    uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove_full_extent.tif'.format(tile_id), xmin, ymin, xmax, ymax)
 
-    mangrove_soil = '{0}_mangrove.tif'.format(tile_id)
+    mangrove_soil = '{0}_mangrove_full_extent.tif'.format(tile_id)
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    outname = '{0}_mangrove_intermediate.tif'.format(tile_id)
+    outname = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
     out = '--outfile={}'.format(outname)
     calc = '--calc=A*(B>0)'
     datatype = '--type={}'.format('Int16')
 
     print "Masking mangrove soil to mangrove biomass for", tile_id
     cmd = ['gdal_calc.py', '-A', mangrove_soil, '-B', mangrove_biomass,
-           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--overwrite', datatype]
+           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype]
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'mangrove_intermediate')
+    uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
 
 
 
