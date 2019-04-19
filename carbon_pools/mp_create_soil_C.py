@@ -86,14 +86,28 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(processes=count - 15)
+# pool.map(create_soil_C.create_mineral_soil_C, tile_list)
+
+# For single processor use
+for tile in tile_list:
+
+    create_soil_C.create_mineral_soil_C(tile)
+
+print "Done creating mineral soil C tiles"
+
+# Mangrove soil receives precedence over mineral soil
+print "Making combined soil C vrt"
+subprocess.check_call('gdalbuildvrt combined_soil_C.vrt *mineral_soil* *mangrove_masked_to_mangrove*', shell=True)
+
+# # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count - 15)
 # pool.map(create_soil_C.create_combined_soil_C, tile_list)
 
 # For single processor use
 for tile in tile_list:
 
     create_soil_C.create_combined_soil_C(tile)
-
-print "Done creating soil C tiles"
 
 print "Uploading output files"
 uu.upload_final_set(cn.soil_C_full_extent_2000_dir, cn.pattern_soil_C_full_extent_2000)

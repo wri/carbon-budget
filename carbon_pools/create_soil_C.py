@@ -50,7 +50,7 @@ def create_mangrove_soil_C(tile_id):
 
 
 
-def create_combined_soil_C(tile_id):
+def create_mineral_soil_C(tile_id):
 
     # Start time
     start = datetime.datetime.now()
@@ -59,12 +59,34 @@ def create_combined_soil_C(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # Mangrove soil receives precedence over mineral soil
-    print "Making combined soil C vrt"
-    subprocess.check_call('gdalbuildvrt combined_soil_C.vrt -te {0} {1} {2} {3} {4} 30N_080W_mangrove_masked_to_mangrove.tif'.format(xmin, ymin, xmax, ymax,
-        cn.pattern_mineral_soil_C), shell=True)
+    print "Making mineral soil C vrt"
+    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {} 30N_080W_mangrove_masked_to_mangrove.tif'.format(cn.pattern_mineral_soil_C), shell=True)
 
-    print "Clipping combined soil C for", tile_id
-    uu.warp_to_Hansen('combined_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000), xmin, ymin, xmax, ymax)
+    print "Clipping mineral soil C for", tile_id
+    uu.warp_to_Hansen('mineral_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, 'mineral_soil'), xmin, ymin, xmax, ymax)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
+
+
+def create_combined_soil_C(tile_id):
+
+    # Start time
+    start = datetime.datetime.now()
+
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
+
+        print "Mangrove aboveground biomass tile found for", tile_id
+
+        print "Getting extent of", tile_id
+        xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
+        print "Clipping combined soil C for", tile_id
+        uu.warp_to_Hansen('combined_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000), xmin, ymin, xmax, ymax)
+
+    else:
+
+        print "No mangrove aboveground biomass tile for", tile_id
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
