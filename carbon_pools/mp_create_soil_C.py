@@ -101,11 +101,6 @@ for tile in tile_list:
 
 print "Done making mineral soil C tiles"
 
-# # Mangrove soil receives precedence over mineral soil
-# print "Making combined soil C vrt..."
-# subprocess.check_call('gdalbuildvrt combined_soil_C.vrt *mineral_soil* *mangrove_masked_to_mangrove*', shell=True)
-# print "Done making combined soil C vrt"
-
 print "Making combined soil C tiles..."
 
 # # count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine

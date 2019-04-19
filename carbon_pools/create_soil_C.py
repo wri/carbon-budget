@@ -8,6 +8,8 @@ Peatland carbon is not recognized or involved in any way.
 
 import datetime
 import subprocess
+import numpy as np
+import rasterio
 import os
 import sys
 sys.path.append('../')
@@ -49,7 +51,6 @@ def create_mangrove_soil_C(tile_id):
     uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
 
 
-
 def create_mineral_soil_C(tile_id):
 
     # Start time
@@ -77,10 +78,37 @@ def create_combined_soil_C(tile_id):
         mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
         mineral_soil = '{0}_mineral_soil.tif'.format(tile_id)
 
-        print "Merging mangrove and mineral soil C for", tile_id
-        cmd = ['gdal_merge.py', '-o', '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000),
-               mineral_soil, mangrove_soil]
-        subprocess.check_call(cmd)
+        combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
+
+        mangrove_soil_src = rasterio.open(mangrove_soil)
+        # Grabs metadata for one of the input tiles, like its location/projection/cellsize
+        kwargs = mangrove_soil_src.meta
+        # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
+        windows = mangrove_soil_src.block_windows(1)
+
+        mineral_soil_src = rasterio.open(mineral_soil)
+
+        # Updates kwargs for the output dataset.
+        # Need to update data type to float 32 so that it can handle fractional gain rates
+        kwargs.update(
+            driver='GTiff',
+            count=1,
+            compress='lzw',
+            nodata=0
+        )
+
+        # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
+        dst_combined_soil = rasterio.open(combined_soil, 'w', **kwargs)
+
+        # Iterates across the windows (1 pixel strips) of the input tiles
+        for idx, window in windows:
+
+            mangrove_soil_window = mangrove_soil_src.read(1, window=window)
+            mineral_soil_window = mineral_soil_src.read(1, window=window)
+
+            combined_soil_window = np.where(mangrove_soil_window>0, mangrove_soil_window, mineral_soil_window)
+
+            dst_combined_soil.write_band(1, combined_soil_window, window=window)
 
     else:
 
