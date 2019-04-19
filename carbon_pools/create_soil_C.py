@@ -19,7 +19,7 @@ def create_mangrove_soil_C(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    if os.path.exists('{0}_{1}.tif').format(tile_id, cn.pattern_mangrove_biomass_2000):
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         print "Mangrove aboveground biomass tile found for", tile_id
 
