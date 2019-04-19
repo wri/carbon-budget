@@ -2,6 +2,7 @@
 This script creates tiles of soil carbon density, one of the carbon pools.
 At this time, mineral soil carbon is for the top 30 cm of soil.
 Mangrove soil carbon gets precedence over mineral soil carbon where there is mangrove biomass.
+Mangrove soil C is limited to where mangrove AGB is.
 Where there is no mangrove biomass, mineral soil C is used.
 Peatland carbon is not recognized or involved in any way.
 This is a convoluted way of doing this processing. Originally, I tried making mangrove soil tiles masked to
@@ -73,9 +74,8 @@ print "Done making mangrove soil C vrt"
 
 print "Making mangrove soil C tiles..."
 
-# count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 2)
+pool = multiprocessing.Pool(processes=count/3)
 pool.map(create_soil_C.create_mangrove_soil_C, tile_list)
 
 # # For single processor use
@@ -94,9 +94,8 @@ print "Done making mineral soil C vrt"
 
 print "Making mineral soil C tiles..."
 
-# count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count - 15)
+pool = multiprocessing.Pool(processes=count/2)
 pool.map(create_soil_C.create_mineral_soil_C, tile_list)
 
 # # For single processor use
@@ -108,9 +107,8 @@ print "Done making mineral soil C tiles"
 
 print "Making combined soil C tiles..."
 
-# count/2 works on a r4.16xlarge spot machine. It is even overkill; a machine with about 200 GB of memory would be fine
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count - 15)
+pool = multiprocessing.Pool(processes=count/2)
 pool.map(create_soil_C.create_combined_soil_C, tile_list)
 
 # # For single processor use

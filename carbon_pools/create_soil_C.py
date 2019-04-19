@@ -29,6 +29,7 @@ def create_mangrove_soil_C(tile_id):
     # Start time
     start = datetime.datetime.now()
 
+    # Checks if mangrove biomass exists. If not, it won't create a mangrove soil C tile.
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         print "Mangrove aboveground biomass tile found for", tile_id
@@ -81,11 +82,14 @@ def create_combined_soil_C(tile_id):
     # Start time
     start = datetime.datetime.now()
 
+    # Input files
     mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
     mineral_soil = '{0}_mineral_soil.tif'.format(tile_id)
 
+    # Output file
     combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
 
+    # Checks if mangrove aAGB tile exists. If not, mangrove soil C is not combined with mineral soil C.
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         print "Mangrove aboveground biomass tile found for", tile_id
@@ -107,7 +111,7 @@ def create_combined_soil_C(tile_id):
             nodata=0
         )
 
-        # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
+        # The output file: soil C with mangrove soil C taking precedence over mineral soil C
         dst_combined_soil = rasterio.open(combined_soil, 'w', **kwargs)
 
         print "Replacing mineral soil C pixels with mangrove soil C pixels for", tile_id
@@ -126,6 +130,8 @@ def create_combined_soil_C(tile_id):
 
         print "No mangrove aboveground biomass tile for", tile_id
 
+        # If there is no mangrove soil C tile, the final output of the mineral soil function needs to receive the
+        # correct final name.
         os.rename('{0}_{1}.tif'.format(tile_id, 'mineral_soil'), combined_soil)
 
     # Prints information about the tile that was just processed
