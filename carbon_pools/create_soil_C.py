@@ -4,6 +4,13 @@ At this time, mineral soil carbon is for the top 30 cm of soil.
 Mangrove soil carbon gets precedence over mineral soil carbon where there is mangrove biomass.
 Where there is no mangrove biomass, mineral soil C is used.
 Peatland carbon is not recognized or involved in any way.
+This is a convoluted way of doing this processing. Originally, I tried making mangrove soil tiles masked to
+mangrove AGB tiles, then making a vrt of all those mangrove soil C tiles and the mineral soil raster, and then
+using gdal_warp on that to get combined tiles.
+However, for reasons I couldn't figure out, the gdalbuildvrt step in which I combined the mangrove 10x10 tiles
+and the mineral soil raster never actually combined the mangrove tiles with the mineral soil raste; I just kept
+getting mineral soil C values out.
+So, I switched to this somewhat more convoluted method that uses both gdal and rasterio/numpy.
 '''
 
 import datetime
