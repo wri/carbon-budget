@@ -74,11 +74,13 @@ def create_combined_soil_C(tile_id):
 
         print "Mangrove aboveground biomass tile found for", tile_id
 
-        print "Getting extent of", tile_id
-        xmin, ymin, xmax, ymax = uu.coords(tile_id)
+        mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
+        mineral_soil = '{0}_mineral_soil.tif'.format(tile_id)
 
-        print "Clipping combined soil C for", tile_id
-        uu.warp_to_Hansen('combined_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000), xmin, ymin, xmax, ymax)
+        print "Merging mangrove and mineral soil C for", tile_id
+        cmd = ['gdal_merge.py', '-o', '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000),
+               mineral_soil, mangrove_soil]
+        subprocess.check_call(cmd)
 
     else:
 

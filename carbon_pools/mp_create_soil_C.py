@@ -36,16 +36,16 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # # #
 # # # for input in input_files:
 # # #     uu.s3_folder_download('{}'.format(input), '.')
-#
-# # For copying individual tiles to spot machine for testing.
-# for tile in tile_list:
-#
-#     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-#     except:
-#         print "No mangrove biomass in", tile
-#
-#
+
+# For copying individual tiles to spot machine for testing.
+for tile in tile_list:
+
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+    except:
+        print "No mangrove biomass in", tile
+
+
 # # # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
 # # # zip file if it is downloaded using wget but it does work if it comes from s3.
 # # print "Downloading soil grids 250 raster"
@@ -101,10 +101,10 @@ for tile in tile_list:
 
 print "Done making mineral soil C tiles"
 
-# Mangrove soil receives precedence over mineral soil
-print "Making combined soil C vrt..."
-subprocess.check_call('gdalbuildvrt combined_soil_C.vrt *mineral_soil* *mangrove_masked_to_mangrove*', shell=True)
-print "Done making combined soil C vrt"
+# # Mangrove soil receives precedence over mineral soil
+# print "Making combined soil C vrt..."
+# subprocess.check_call('gdalbuildvrt combined_soil_C.vrt *mineral_soil* *mangrove_masked_to_mangrove*', shell=True)
+# print "Done making combined soil C vrt"
 
 print "Making combined soil C tiles..."
 
