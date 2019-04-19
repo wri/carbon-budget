@@ -58,10 +58,6 @@ def create_mineral_soil_C(tile_id):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    # Mangrove soil receives precedence over mineral soil
-    print "Making mineral soil C vrt"
-    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {} 30N_080W_mangrove_masked_to_mangrove.tif'.format(cn.pattern_mineral_soil_C), shell=True)
-
     print "Clipping mineral soil C for", tile_id
     uu.warp_to_Hansen('mineral_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, 'mineral_soil'), xmin, ymin, xmax, ymax)
 
