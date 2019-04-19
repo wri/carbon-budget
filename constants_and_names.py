@@ -258,7 +258,7 @@ pattern_mineral_soil_C = 'OCSTHA_M_30cm_250m_ll.tif'
 
 # Soil
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
-soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190418/'.format(base_carbon_pool_dir)
+soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190419/'.format(base_carbon_pool_dir)
 
 # Soil
 pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'

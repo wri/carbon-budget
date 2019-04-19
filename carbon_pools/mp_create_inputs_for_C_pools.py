@@ -38,8 +38,9 @@ uu.s3_folder_download(cn.srtm_raw_dir, './srtm')
 print "Making elevation (srtm) vrt"
 subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
+# Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 3)
+pool = multiprocessing.Pool(processes=count / 2)
 pool.map(create_inputs_for_C_pools.create_input_files, tile_list)
 
 # # For single processor use
