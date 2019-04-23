@@ -84,14 +84,10 @@ while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v
 psql
 CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
 
-# Adds a new column to the table which will store the plantation type reclassified as palm (1), wood fiber (2), or other (3)
-ALTER TABLE all_plant ADD COLUMN type_reclass VARCHAR;
-UPDATE all_plant SET type_reclass = species_simp;
-# Based on Grace's answer on https://stackoverflow.com/questions/38567366/mapping-values-in-sql-select
-SELECT growth, species_simp, CASE type_reclass WHEN 'Oil Palm ' then '1' when 'Oil Palm Mix ' then '1' when 'Oil Palm ' then '1' when 'Oil Palm Mix' then 1 when 'Wood fiber / timber' then 2 when 'Wood fiber / timber ' then 2 ELSE '3' END FROM all_plant;
-
-# ALTER TABLE all_plant ADD COLUMN reclass_int VARCHAR;
-# UPDATE all_plant SET reclass_int = type_reclass;
+# Adds a new column to the table and stores the plantation type reclassified as 1 (palm), 2 (wood fiber), or 3 (other)
+ALTER TABLE all_plant ADD COLUMN type_reclass SMALLINT;
+# Based on https://stackoverflow.com/questions/15766102/i-want-to-use-case-statement-to-update-some-records-in-sql-server-2005
+UPDATE all_plant SET type_reclass = ( CASE WHEN species_simp = 'Oil Palm ' then '1' when species_simp = 'Oil Palm Mix ' then '1' when species_simp = 'Oil Palm ' then '1' when species_simp = 'Oil Palm Mix' then 1 when species_simp = 'Wood fiber / timber' then 2 when species_simp = 'Wood fiber / timber ' then 2 ELSE '3' END );
 
 # Exit Postgres shell
 \q
@@ -293,10 +289,11 @@ def main ():
         print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1
         print "There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through."
 
-        # # Creates 1x1 degree tiles of plantation growth and type wherever there are plantations.
-        # # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
-        # # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
-        # # to intersecting the planted forest table with the 1x1 tile.
+        # Creates 1x1 degree tiles of plantation growth and type wherever there are plantations.
+        # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
+        # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
+        # to intersecting the planted forest table with the 1x1 tile.
+
         # # For multiprocessor use
         # # This works with 30 processors on an r4.16xlarge.
         # num_of_processes = 50
