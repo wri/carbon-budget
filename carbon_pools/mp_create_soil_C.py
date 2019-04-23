@@ -74,6 +74,7 @@ print "Done making mangrove soil C vrt"
 
 print "Making mangrove soil C tiles..."
 
+# count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/3)
 pool.map(create_soil_C.create_mangrove_soil_C, tile_list)
@@ -107,6 +108,7 @@ print "Done making mineral soil C tiles"
 
 print "Making combined soil C tiles..."
 
+# With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/2)
 pool.map(create_soil_C.create_combined_soil_C, tile_list)

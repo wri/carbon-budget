@@ -1,38 +1,45 @@
-# Code for creating 10x10 degree tiles of aboveground+belowground carbon accumulation rate out of the plantation geodatabase.
-# Its output is the full extent of planted forest features (not masked by mangrove or non-mangrove natural forest).
-# Unlike other carbon model scripts, this one requires prep work done outside of the script (the large, commented chunk
-# below this).
-# Once that prep work of converting the gdb to a PostGIS table has been done, there are a few entry points to this script,
-# unlike other carbon model scripts.
-# Which entry point is chosen depends on what has changed in the plantation data since it was last processed.
-### NOTE: The entry point for the script is indicated by supplying two arguments following the python call.
-# The entry points rely on two shapefiles of the indexes (outlines) of 1x1 tiles created during plantation processing:
-# 1. 1x1 tiles of the countries with planted forests (basically, countries with planted forests rasterized to 1x1 deg),
-# 2. 1x1 tiles of planted forest extent (basically, planted forest extent rasterized to 1x1 deg).
-# These shapefiles should have been created during the previous run of the processing script and be on s3.
+'''
+Code for creating 10x10 degree tiles of aboveground+belowground carbon accumulation rate
+and plantation category out of the plantation geodatabase.
+Its outputs are two sets of tiles at the full extent of planted forest features (not masked by mangrove or
+non-mangrove natural forest): above+belowground carbon accumulation rate, and plantation type (oil palm, wood fiber,
+other).
+Unlike other carbon model scripts, this one requires prep work done outside of the script (the large, commented chunk
+below this).
+Once that prep work of converting the gdb to a PostGIS table has been done, there are a few entry points to this script,
+unlike other carbon model scripts.
+Which entry point is chosen depends on what has changed in the plantation data since it was last processed.
+## NOTE: The entry point for the script is indicated by supplying two arguments following the python call.
+The entry points rely on two shapefiles of the indexes (outlines) of 1x1 tiles created during plantation processing:
+1. Shapefile of 1x1 tiles of the countries with planted forests (basically, countries with planted forests rasterized to 1x1 deg),
+2. Shapefile of 1x1 tiles of planted forest extent (basically, planted forest extent rasterized to 1x1 deg).
+These shapefiles should have been created during the previous run of the processing script and be on s3.
 
-# First entry point: Script runs from the beginning. Do this if the planted forest database now includes countries
-# that were not in it during the previous planted forest growth rate processing. It will take several days to run.
-### NOTE: This also requires updating the list of countries with planted forests in constants_and_names.plantation_countries.
-# This entry point is accessed by supplying None to both arguments, i.e. mp_plantation_preparation.py None None
+First entry point: Script runs from the beginning. Do this if the planted forest database now includes countries
+that were not in it during the previous planted forest growth rate processing. It will take several days to run.
+## NOTE: This also requires updating the list of countries with planted forests in constants_and_names.plantation_countries.
+This entry point is accessed by supplying None to both arguments, i.e. mp_plantation_preparation.py None None
 
-# Second entry point: Script uses existing index shapefile of 1x1 tiles of countries with planted forests. Use this entry point
-# if no countries have been added to the planted forest database but some other spatial aspect of the data has changed
-# since the last processing, e.g., newly added planted forests in countries already in the database or the boundaries
-# of existing features have been altered. This entry point will use the supplied index shapefile of the 1x1 tiles of
-# countries with planted forests to create new 1x1 planted forest growth rate tiles. This entry point is accessed by
-# providing the s3 location of the index shapefile of the 1x1 country tiles,
-# e.g., mp_plantation_preparation.py s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/GADM_index_1x1_20190108.shp None
+Second entry point: Script uses existing index shapefile of 1x1 tiles of countries with planted forests. Use this entry point
+if no countries have been added to the planted forest database but some other spatial aspect of the data has changed
+since the last processing, e.g., newly added planted forests in countries already in the database or the boundaries
+of existing features have been altered. This entry point will use the supplied index shapefile of the 1x1 tiles of
+countries with planted forests to create new 1x1 planted forest growth rate tiles. This entry point is accessed by
+providing the s3 location of the index shapefile of the 1x1 country tiles,
+e.g., mp_plantation_preparation.py s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/GADM_index_1x1_20190108.shp None
 
-# Third entry point: Script uses existing index shapefile of 1x1 tiles of planted forest extent to create new 1x1 tiles
-# of planted forest growth rates. Use this entry point if the spatial properties of the database haven't changed but
-# the growth rates have. This route will iterate through only the 1x1 tiles that had planted forests previously and
-# create new planted forest growth rate tiles for them. This entry point is accessed by supplying
-# All entry points conclude with creating 10x10 degree tiles of planted forest growth rates from 1x1 tiles of planted
-# forest growth rates. This entry point is accessed by providing the s3 location of the index shapefile of the 1x1
-# planted forest extent tiles,
-# e.g., python mp_plantation_preparation.py None s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
-# e.g., python mp_plantation_preparation.py --gadm-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp --planted-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+Third entry point: Script uses existing index shapefile of 1x1 tiles of planted forest extent to create new 1x1 tiles
+of planted forest growth rates. Use this entry point if the spatial properties of the database haven't changed but
+the growth rates or forest type have. This route will iterate through only the 1x1 tiles that had planted forests previously and
+create new planted forest growth rate tiles for them.
+This entry point is accessed by providing the s3 location of the index shapefile of the 1x1
+planted forest extent tiles,
+e.g., python mp_plantation_preparation.py None s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+e.g., python mp_plantation_preparation.py --gadm-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp --planted-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+
+All entry points conclude with creating 10x10 degree tiles of planted forest carbon accumulation rates and
+planted forest type from 1x1 tiles of planted forest extent.
+'''
 
 """
 ### Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
@@ -41,17 +48,17 @@
 ### each country's feature class's attribute table has a growth rate column named "growth".
 
 # Start a r.16xlarge spot machine
-spotutil new r4.16xlarge
+spotutil new r4.16xlarge dgibbs_wri
 
 # Copy zipped plantation gdb with growth rate field in tables
-aws s3 cp s3://gfw-files/plantations/final/global/plantations_v1_1.gdb.zip .
+aws s3 cp s3://gfw-files/plantations/final/global/plantations_v1_3.gdb.zip .
 
 # Unzip the zipped plantation gdb. This can take several minutes.
-unzip plantations_v1_1.gdb.zip
+unzip plantations_v1_3.gdb.zip
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
-ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v1_1.gdb -progress -nln all_plant -sql "SELECT growth FROM cmr_plant"
+ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v1_3.gdb -progress -nln all_plant -sql "SELECT growth, species_simp FROM cmr_plant"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
@@ -64,22 +71,34 @@ DELETE FROM all_plant;
 \q
 
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
-ogrinfo plantations_v1_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
+ogrinfo plantations_v1_3.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
 # Make sure all the country tables are listed in the txt, then exit it
 more out.txt
 q
 
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
-while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v1_1.gdb -nln all_plant -progress -append -sql "SELECT growth FROM $p"; done < out.txt
+while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v1_3.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
 CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
+
+# Adds a new column to the table which will store the plantation type reclassified as palm (1), wood fiber (2), or other (3)
+ALTER TABLE all_plant ADD COLUMN type_reclass VARCHAR;
+UPDATE all_plant SET type_reclass = species_simp;
+# Based on Grace's answer on https://stackoverflow.com/questions/38567366/mapping-values-in-sql-select
+SELECT growth, species_simp, CASE type_reclass WHEN 'Oil Palm ' then '1' when 'Oil Palm Mix ' then '1' when 'Oil Palm ' then '1' when 'Oil Palm Mix' then 1 when 'Wood fiber / timber' then 2 when 'Wood fiber / timber ' then 2 ELSE '3' END FROM all_plant;
+
+# ALTER TABLE all_plant ADD COLUMN reclass_int VARCHAR;
+# UPDATE all_plant SET reclass_int = type_reclass;
+
+# Exit Postgres shell
 \q
 
 # Install a Python package that is needed for certain processing routes below
 sudo pip install simpledbf
+
 """
 
 import plantation_preparation
@@ -162,7 +181,7 @@ def main ():
             os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
 
             # Creates 1x1 degree tiles of countries that have planted forests in them.
-            # I assume this can handle using 50 processors because it's not trying to upload files to s3 and the tiles are small.
+            # I think this can handle using 50 processors because it's not trying to upload files to s3 and the tiles are small.
             # This takes several days to run because it iterates through at least 250 10x10 tiles.
             # For multiprocessor use.
             num_of_processes = 50
@@ -250,10 +269,11 @@ def main ():
         subprocess.check_call(cmd)
 
     ### Entry point 3
-    # If a shapefile of the extents of 1x1 planted forest tiles is provided
+    # If a shapefile of the extents of 1x1 planted forest tiles is provided.
+    # This is the part that actually creates the sequestration rate and forest type tiles.
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
-        print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth tiles..."
+        print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
 
         # Copies the shapefile of 1x1 tiles of extent of planted forests
         cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), '.', '--recursive', '--exclude', '*', '--include',
@@ -273,40 +293,77 @@ def main ():
         print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1
         print "There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through."
 
-        # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
-        # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
-        # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
-        # to intersecting the planted forest table with the 1x1 tile.
-        # For multiprocessor use
-        # This works with 30 processors on an r4.16xlarge.
+        # # Creates 1x1 degree tiles of plantation growth and type wherever there are plantations.
+        # # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
+        # # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
+        # # to intersecting the planted forest table with the 1x1 tile.
+        # # For multiprocessor use
+        # # This works with 30 processors on an r4.16xlarge.
+        # num_of_processes = 50
+        # pool = Pool(num_of_processes)
+        # pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
+        # pool.close()
+        # pool.join()
+
         num_of_processes = 50
         pool = Pool(num_of_processes)
-        pool.map(plantation_preparation.create_1x1_plantation_from_1x1_planted, planted_list_1x1)
+        pool.map(plantation_preparation.create_1x1_plantation_type_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
 
-    ### All entry points meet here: creation of 10x10 degree planted forest tiles from 1x1 degree planted forest tiles
 
-    # Name of the vrt of 1x1 planted forest tiles
-    plant_1x1_vrt = 'plant_1x1.vrt'
 
-    # Creates a mosaic of all the 1x1 plantation growth rate tiles
-    print "Creating vrt of 1x1 plantation growth rate tiles"
-    os.system('gdalbuildvrt {} plant_*.tif'.format(plant_1x1_vrt))
+    ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
+    ### from 1x1 degree planted forest gain rate and type tiles
 
-    # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
+    # Name of the vrt of 1x1 planted forest gain rate tiles
+    plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
+
+    # Creates a mosaic of all the 1x1 plantation gain rate tiles
+    print "Creating vrt of 1x1 plantation gain rate tiles"
+    os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
+
+    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
     num_of_processes = 20
     pool = Pool(num_of_processes)
-    pool.map(partial(plantation_preparation.create_10x10_plantation, plant_1x1_vrt=plant_1x1_vrt), planted_lat_tile_list)
+    pool.map(partial(plantation_preparation.create_10x10_plantation_gain, plant_gain_1x1_vrt=plant_gain_1x1_vrt), planted_lat_tile_list)
     pool.close()
     pool.join()
 
-    # # Creates 10x10 degree tiles of plantation growth by iterating over the pixel area tiles that are in latitudes with planted forests
+    # # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
     # # For single processor use
     # for tile in planted_lat_tile_list:
     #
-    #     plantation_preparation.create_10x10_plantation(tile, plant_1x1_vrt)
+    #     plantation_preparation.create_10x10_plantation_gain(tile, plant_gain_1x1_vrt)
+
+
+    # Name of the vrt of 1x1 planted forest type tiles
+    plant_type_1x1_vrt = 'plant_type_1x1.vrt'
+
+    # Creates a mosaic of all the 1x1 plantation type tiles
+    print "Creating vrt of 1x1 plantation type tiles"
+    os.system('gdalbuildvrt {} plant_type_*.tif'.format(plant_type_1x1_vrt))
+
+    # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
+    # For multiprocessor use
+    num_of_processes = 20
+    pool = Pool(num_of_processes)
+    pool.map(partial(plantation_preparation.create_10x10_plantation_type, plant_type_1x1_vrt=plant_type_1x1_vrt),
+             planted_lat_tile_list)
+    pool.close()
+    pool.join()
+
+    # # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
+    # # For single processor use
+    # for tile in planted_lat_tile_list:
+    #
+    #     plantation_preparation.create_10x10_plantation_type(tile, plant_type_1x1_vrt)
+
 
 
 if __name__ == '__main__':

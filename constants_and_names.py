@@ -1,4 +1,3 @@
-import universal_util as uu
 import os
 
 ########     ########
@@ -109,6 +108,35 @@ cont_eco_zip = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_201809
 cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw/'
 cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed/'
 
+# Plantation type: palm oil (code=1), wood fiber (code=2), and other (code=3)
+pattern_planted_forest_type_unmasked = 'plantation_type_oilpalm_woodfiber_other_unmasked'
+planted_forest_type_unmasked_dir = 's3://gfw-data/climate/carbon/model/other_emissions_inputs/plantation_type/20190422/'
+
+
+### Plantation processing
+######
+
+gadm_dir = 's3://gfw2-data/alerts-tsv/gis_source/'
+gadm_zip = 'gadm_3_6_adm2_final.zip'
+gadm_shp = 'gadm_3_6_adm2_final.shp'
+gadm_iso = 'gadm_3_6_with_planted_forest_iso.shp'
+gadm_path = os.path.join(gadm_dir, gadm_zip)
+gadm_plant_1x1_index_dir = 's3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/'
+pattern_gadm_1x1_index = 'gadm_index_1x1'
+pattern_plant_1x1_index = 'plantation_index_1x1'
+
+# Countries with planted forests in them according to the planted forest geodatabase
+plantation_countries = [
+                        'ARG', 'VNM', 'VEN', 'THA', 'RWA', 'PNG', 'PHL', 'PAN', 'NIC', 'IND', 'HND', 'CRI', 'COD', 'COL',
+                        'GAB', 'GHA', 'GTM', 'IDN', 'KEN', 'KHM', 'PRK', 'KOR', 'LBR', 'LKA', 'MEX', 'MMR', 'MWI', 'MGA',
+                        'NPL', 'NZL', 'PAK', 'PER', 'SLB', 'URY', 'USA', 'ZAF', 'AUS', 'BRA', 'CHL', 'CHN', 'CIV', 'CMR',
+                        'JPN', 'MYS', 'ECU',
+                        'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
+                        'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR',
+                        'ALA', 'ALB', 'ARM', 'AZE', 'BIH', 'BLR', 'CHE', 'GEO', 'IRQ', 'ISL', 'MDA', 'MKD', 'MNE',
+                        'NGA', 'NOR', 'SRB', 'SYR', 'TUR', 'UKR', 'XKO'
+                        ]
+
 
 ### Number of gain years (gain year count)
 ######
@@ -218,34 +246,30 @@ pattern_precip = 'precip_mm_annual'
 precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190416/'
 
 # Elevation
-srtm_raw_dir = 's3://gfw2-data/analyses/srtm/'
+srtm_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/elevation/'
 pattern_elevation = 'elevation'
 elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190416/'
 
 
 ### Carbon pools
-### NOTE: the patterns for the carbon pools must be set separately in carbon_pools/calc_carbon_pools.cpp
 ######
 
 # Base directory for all carbon pools
 base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/'
 
-# Aboveground carbon in the year of emission for all forest types
+# Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
 AGC_emis_year_dir = '{0}aboveground_carbon/20190418/'.format(base_carbon_pool_dir)
 
-# NOTE: These must match the word before .tif in the outnames of calc_carbon_pools.cpp, e.g., "string outname_litter_total = tile_id + "_t_litter_C_ha_total.tif";"
-pool_types = ['natrl', 'mangrove', 'total']
-
-# Belowground carbon
+# Belowground carbon in loss pixels
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
 BGC_emis_year_dir = '{}belowground_carbon/20190418/'.format(base_carbon_pool_dir)
 
-# Deadwood
+# Deadwood in loss pixels
 pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
 deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190418/'.format(base_carbon_pool_dir)
 
-# Litter
+# Litter in loss pixels
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
 litter_emis_year_2000_dir = '{}litter_carbon/20190418/'.format(base_carbon_pool_dir)
 
@@ -256,11 +280,11 @@ pattern_mangrove_soil_C = 'Mangroves_SOCS_0_100cm_30m.zip'
 mineral_soil_C_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/raw/'
 pattern_mineral_soil_C = 'OCSTHA_M_30cm_250m_ll.tif'
 
-# Soil
+# Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
 soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190419/'.format(base_carbon_pool_dir)
 
-# Soil
+# Soil C in loss pixels
 pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'
 soil_C_emis_year_2000_dir = '{}soil_carbon/processed_emis_extent/20190418/'.format(base_carbon_pool_dir)
 
@@ -276,9 +300,16 @@ pattern_gross_emissions = 'disturbance_model_noData_reclass'
 gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
 
 
+### Net emissions
+######
+
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2_ha_all_forest_types_all_drivers_2001_15'
 net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
+
+
+
+
 
 # Tile summary spreadsheets
 tile_stats_pattern = 'tile_stats.csv'
@@ -297,25 +328,4 @@ hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
 # Location of processed (cumsummed) Hadoop output
 hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
 hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
-
-gadm_dir = 's3://gfw2-data/alerts-tsv/gis_source/'
-gadm_zip = 'gadm_3_6_adm2_final.zip'
-gadm_shp = 'gadm_3_6_adm2_final.shp'
-gadm_iso = 'gadm_3_6_with_planted_forest_iso.shp'
-gadm_path = os.path.join(gadm_dir, gadm_zip)
-gadm_plant_1x1_index_dir = 's3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/'
-pattern_gadm_1x1_index = 'gadm_index_1x1'
-pattern_plant_1x1_index = 'plantation_index_1x1'
-
-# Countries with planted forests in them according to the planted forest geodatabase
-plantation_countries = [
-                        'ARG', 'VNM', 'VEN', 'THA', 'RWA', 'PNG', 'PHL', 'PAN', 'NIC', 'IND', 'HND', 'CRI', 'COD', 'COL',
-                        'GAB', 'GHA', 'GTM', 'IDN', 'KEN', 'KHM', 'PRK', 'KOR', 'LBR', 'LKA', 'MEX', 'MMR', 'MWI', 'MGA',
-                        'NPL', 'NZL', 'PAK', 'PER', 'SLB', 'URY', 'USA', 'ZAF', 'AUS', 'BRA', 'CHL', 'CHN', 'CIV', 'CMR',
-                        'JPN', 'MYS', 'ECU',
-                        'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
-                        'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR',
-                        'ALA', 'ALB', 'ARM', 'AZE', 'BIH', 'BLR', 'CHE', 'GEO', 'IRQ', 'ISL', 'MDA', 'MKD', 'MNE',
-                        'NGA', 'NOR', 'SRB', 'SYR', 'TUR', 'UKR', 'XKO'
-                        ]
 

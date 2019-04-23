@@ -35,16 +35,17 @@ string infolder = "cpp_util/";
 
 // all these starting with "string" are naming variables
 // these are all the input files
-string forestmodel_name = infolder + tile_id + "_tsc_model.tif";
-string bgc_name = infolder + tile_id + "_bgc.tif";
-string agc_name = infolder + tile_id + "_carbon.tif";
-string loss_name = infolder + tile_id + "_loss.tif";
+string agc_name = infolder + tile_id + "_t_AGC_ha_emis_year.tif";
+string bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year.tif";
+string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
+string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
+string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
+string loss_name = infolder + tile_id + ".tif";
 string burn_name = infolder + tile_id + "_burnyear.tif";
-string ecozone_name = infolder + tile_id + "_res_fao_ecozones_bor_tem_tro.tif";
+string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_res_climate_zone.tif";
-string dead_name = infolder + tile_id + "_deadwood.tif";
-string litter_name = infolder + tile_id + "_litter.tif";
-string soil_name = infolder + tile_id + "_soil.tif";
+
+string forestmodel_name = infolder + tile_id + "_tsc_model.tif";
 string peat_name = infolder + tile_id + "_peat.tif";
 string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
 string plant_name = infolder + tile_id + "_res_gfw_plantations.tif";
