@@ -302,6 +302,7 @@ def main ():
         # pool.close()
         # pool.join()
 
+        # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
         num_of_processes = 50
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_type_from_1x1_planted, planted_list_1x1)
