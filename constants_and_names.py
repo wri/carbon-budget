@@ -110,7 +110,7 @@ cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_contine
 
 # Plantation type: palm oil (code=1), wood fiber (code=2), and other (code=3)
 pattern_planted_forest_type_unmasked = 'plantation_type_oilpalm_woodfiber_other_unmasked'
-planted_forest_type_unmasked_dir = 's3://gfw2-data/climate/carbon/model/other_emissions_inputs/plantation_type/20190424/'
+planted_forest_type_unmasked_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/plantation_type/20190424/'
 
 
 ### Plantation processing
