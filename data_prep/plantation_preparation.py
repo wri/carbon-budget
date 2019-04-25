@@ -195,7 +195,7 @@ def create_10x10_plantation_type(tile_id, plant_type_1x1_vrt):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_planted_forest_type_unmasked)
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
