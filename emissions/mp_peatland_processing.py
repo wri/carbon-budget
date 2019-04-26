@@ -33,16 +33,16 @@ subprocess.check_call(cmd)
 
 os.system('gdalbuildvrt -r maximum tropic_peat.vrt {0} {1}'.format(jukka_tif, cn.cifor_peat_file))
 
-# For multiprocessor use
-# This script worked with count/4 on an r3.16xlarge machine.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
-pool.map(peatland_processing.create_peat_mask_tiles, tile_list)
+# # For multiprocessor use
+# # This script worked with count/4 on an r3.16xlarge machine.
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(processes=count/4)
+# pool.map(peatland_processing.create_peat_mask_tiles, tile_list)
 
-# # For single processor use, for testing purposes
-# for tile in tile_list:
-#
-#     peatland_processing.create_peat_mask_tiles(tile)
+# For single processor use, for testing purposes
+for tile in tile_list:
+
+    peatland_processing.create_peat_mask_tiles(tile)
 
 
 print "Uploading output files"
