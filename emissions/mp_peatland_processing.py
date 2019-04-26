@@ -26,7 +26,7 @@ print tile_list
 
 jukka_tif = 'jukka_peat.tif'
 
-cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', cn.Hansen_res, cn.Hansen_res,
+cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
       '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
 
 subprocess.check_call(cmd)
