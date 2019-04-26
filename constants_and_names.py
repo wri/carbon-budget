@@ -53,6 +53,8 @@ m2_per_ha = 100 * 100
 ##### File names and directories #####
 ##########                  ##########
 
+# Directory for the climate model files
+base_dir = 's3://gfw2-data/climate/carbon_model/'
 
 ### Biomass tiles
 ######
@@ -64,22 +66,22 @@ WHRC_biomass_2000_unmasked_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Pr
 
 # Woods Hole aboveground biomass 2000 version 4 tiles without mangrove or planted forest pixels
 pattern_WHRC_biomass_2000_non_mang_non_planted = "t_aboveground_biomass_ha_2000_non_mangrove_non_planted"
-WHRC_biomass_2000_non_mang_non_planted_dir = 's3://gfw2-data/climate/carbon_model/biomass_non_mangrove_non_planted/20190225/'
+WHRC_biomass_2000_non_mang_non_planted_dir = os.path.join(base_dir, 'biomass_non_mangrove_non_planted/20190225/')
 
 # Raw Lola Fatoyinbo aboveground mangrove biomass in the year 2000 rasters
-mangrove_biomass_raw_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/raw_from_Nathan_Thomas_20190215/'
+mangrove_biomass_raw_dir = os.path.join(base_dir, 'mangrove_biomass/raw_from_Nathan_Thomas_20190215/')
 mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2_Tiff.zip'
 
 # Processed mangrove aboveground biomass in the year 2000
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
-mangrove_biomass_2000_dir = 's3://gfw2-data/climate/carbon_model/mangrove_biomass/processed/20190220/'
+mangrove_biomass_2000_dir = os.path.join(base_dir, 'mangrove_biomass/processed/20190220/')
 
 
 ### Miscellaneous inputs
 ######
 
 # Spreadsheet with annual gain rates
-gain_spreadsheet_dir = 's3://gfw2-data/climate/carbon_model/'
+gain_spreadsheet_dir = os.path.join(base_dir)
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190116.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
@@ -95,7 +97,7 @@ tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
 
 # Intact forest landscape 2000 tiles
 pattern_ifl = 'res_ifl_2000'
-ifl_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/ifl_2000/'
+ifl_dir = os.path.join(base_dir, 'other_emissions_inputs/ifl_2000/')
 
 # Processed FAO ecozone shapefile
 cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
@@ -103,14 +105,22 @@ cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20
 # Directory and names for the continent-ecozone tiles, raw and processed
 pattern_cont_eco_raw = 'fao_ecozones_continents_raw'
 pattern_cont_eco_processed = 'fao_ecozones_continents_processed'
-cont_eco_s3_zip = 's3://gfw2-data/climate/carbon_model/fao_ecozones/fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
+cont_eco_s3_zip = os.path.join(base_dir, 'fao_ecozones/fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip')
 cont_eco_zip = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
-cont_eco_raw_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/raw/'
-cont_eco_dir = 's3://gfw2-data/climate/carbon_model/fao_ecozones/ecozone_continent/20190116/processed/'
+cont_eco_raw_dir = os.path.join(base_dir, 'fao_ecozones/ecozone_continent/20190116/raw/')
+cont_eco_dir = os.path.join(base_dir, 'fao_ecozones/ecozone_continent/20190116/processed/')
 
 # Plantation type: palm oil (code=1), wood fiber (code=2), and other (code=3)
 pattern_planted_forest_type_unmasked = 'plantation_type_oilpalm_woodfiber_other_unmasked'
-planted_forest_type_unmasked_dir = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/plantation_type/20190424/'
+planted_forest_type_unmasked_dir = os.path.join(base_dir, 'other_emissions_inputs/plantation_type/20190424/')
+
+peat_unprocessed_dir = os.path.join(base_dir, 'other_emissions_inputs/peatlands/raw/')
+cifor_peat_file = 'cifor_peat_mask.tif'
+jukka_peat_zip = 'Jukka_peatland.zip'
+jukka_peat_shp = 'peatland_drainage_proj.shp'
+soilgrids250_peat_file = 'HISTPR_250m_ll.tif'   #From https://files.isric.org/soilgrids/data/recent/HISTPR_250m_ll.tif, metadata: https://files.isric.org/soilgrids/data/recent/HISTPR_250m_ll.xml
+pattern_peat_mask = 'peat_mask'
+peat_mask_dir = os.path.join(base_dir, 'other_emissions_inputs/peat_mask/20190429/')
 
 
 ### Plantation processing
@@ -121,7 +131,7 @@ gadm_zip = 'gadm_3_6_adm2_final.zip'
 gadm_shp = 'gadm_3_6_adm2_final.shp'
 gadm_iso = 'gadm_3_6_with_planted_forest_iso.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
-gadm_plant_1x1_index_dir = 's3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/'
+gadm_plant_1x1_index_dir = os.path.join(base_dir, 'gadm_plantation_1x1_tile_index/')
 pattern_gadm_1x1_index = 'gadm_index_1x1'
 pattern_plant_1x1_index = 'plantation_index_1x1'
 
@@ -143,15 +153,15 @@ plantation_countries = [
 
 # Number of gain years for mangroves
 pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
-gain_year_count_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_mangrove/20190225/'
+gain_year_count_mangrove_dir = os.path.join(base_dir, 'gain_year_count_mangrove/20190225/')
 
 # Number of gain years for non-mangrove planted forests
 pattern_gain_year_count_planted_forest_non_mangrove = 'gain_year_count_planted_forest_non_mangrove'
-gain_year_count_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_planted_forest_non_mangrove/20190227/'
+gain_year_count_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'gain_year_count_planted_forest_non_mangrove/20190227/')
 
 # Number of gain years for non-mangrove, non-planted natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest_non_mangrove_non_planted'
-gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_year_count_natural_forest/20190227/'
+gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/20190227/')
 
 
 ### Forest age category
@@ -159,7 +169,7 @@ gain_year_count_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/gain_yea
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_category_natural_forest/20190225/'
+age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/20190225/')
 
 
 ### Annual biomass gain rates
@@ -167,35 +177,35 @@ age_cat_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/forest_age_categ
 
 # Annual aboveground biomass gain rate for mangroves
 pattern_annual_gain_AGB_mangrove = 'annual_gain_rate_AGB_t_ha_mangrove'
-annual_gain_AGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_mangrove/20190225/'
+annual_gain_AGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_mangrove/20190225/')
 
 # Annual belowground biomass gain rate for mangroves
 pattern_annual_gain_BGB_mangrove = 'annual_gain_rate_BGB_t_ha_mangrove'
-annual_gain_BGB_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_mangrove/20190225/'
+annual_gain_BGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_mangrove/20190225/')
 
 # Annual aboveground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
 pattern_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_AGC_BGC_t_ha_planted_forest_unmasked'
-annual_gain_AGC_BGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGC_BGC_planted_forest_unmasked/20190207/'
+annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(base_dir, 'annual_gain_rate_AGC_BGC_planted_forest_unmasked/20190207/')
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
-annual_gain_AGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_planted_forest_non_mangrove/20190227/'
+annual_gain_AGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_planted_forest_non_mangrove/20190227/')
 
 # Annual belowground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_BGB_planted_forest_non_mangrove = 'annual_gain_rate_BGB_t_ha_planted_forest_non_mangrove'
-annual_gain_BGB_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_planted_forest_non_mangrove/20190227/'
+annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_planted_forest_non_mangrove/20190227/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_AGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_AGB_natural_forest/20190227/'
+annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/20190227/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_BGB_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_BGB_natural_forest/20190227/'
+annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/20190227/')
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_combo = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_all_forest_types/20190228/'
+annual_gain_combo_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/20190228/')
 
 
 ### Cumulative carbon gain rates
@@ -203,31 +213,31 @@ annual_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/annual_gain_rate_al
 
 # Cumulative aboveground gain for mangroves
 pattern_cumul_gain_AGC_mangrove = 'cumul_gain_AGC_t_ha_mangrove_2001_15'
-cumul_gain_AGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_mangrove/20190227/'
+cumul_gain_AGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_mangrove/20190227/')
 
 # Cumulative belowground gain for mangroves
 pattern_cumul_gain_BGC_mangrove = 'cumul_gain_BGC_t_ha_mangrove_2001_15'
-cumul_gain_BGC_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_mangrove/20190227/'
+cumul_gain_BGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_mangrove/20190227/')
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
 pattern_cumul_gain_AGC_planted_forest_non_mangrove = 'cumul_gain_AGC_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_AGC_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_planted_forest_non_mangrove/20190227/'
+cumul_gain_AGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_planted_forest_non_mangrove/20190227/')
 
 # Cumulative belowground gain for non-mangrove planted natural forests
 pattern_cumul_gain_BGC_planted_forest_non_mangrove = 'cumul_gain_BGC_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_BGC_planted_forest_non_mangrove_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_planted_forest_non_mangrove/20190227/'
+cumul_gain_BGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_planted_forest_non_mangrove/20190227/')
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_AGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_AGC_natural_forest/20190228/'
+cumul_gain_AGC_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGC_natural_forest/20190228/')
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_BGC_natrl_forest_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_BGC_natural_forest/20190228/'
+cumul_gain_BGC_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGC_natural_forest/20190228/')
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
-cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_forest_types/20190228/'
+cumul_gain_combo_dir = os.path.join(base_dir, 'cumulative_gain_all_forest_types/20190228/')
 
 
 ### Non-biomass inputs to carbon pools
@@ -235,27 +245,27 @@ cumul_gain_combo_dir = 's3://gfw2-data/climate/carbon_model/cumulative_gain_all_
 
 # FAO ecozones as boreal/temperate/tropical
 pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
-fao_ecozone_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw)
+fao_ecozone_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw))
 pattern_bor_tem_trop_intermediate = 'fao_ecozones_bor_tem_tro_intermediate'
 pattern_bor_tem_trop_processed = 'fao_ecozones_bor_tem_tro_processed'
-bor_tem_trop_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190416/'
+bor_tem_trop_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190416/')
 
 # Precipitation
-precip_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/add_30s_precip.tif'
+precip_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/add_30s_precip.tif')
 pattern_precip = 'precip_mm_annual'
-precip_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/precip/20190416/'
+precip_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/precip/20190416/')
 
 # Elevation
-srtm_raw_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/raw/elevation/'
+srtm_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/elevation/')
 pattern_elevation = 'elevation'
-elevation_processed_dir = 's3://gfw2-data/climate/carbon_model/inputs_for_carbon_pools/processed/elevation/20190416/'
+elevation_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/elevation/20190416/')
 
 
 ### Carbon pools
 ######
 
 # Base directory for all carbon pools
-base_carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/'
+base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
@@ -274,10 +284,10 @@ pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
 litter_emis_year_2000_dir = '{}litter_carbon/20190418/'.format(base_carbon_pool_dir)
 
 # Raw mangrove soil C
-mangrove_soil_C_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/raw/'
+mangrove_soil_C_dir = os.path.join(base_dir, 'carbon_pools/soil_carbon/raw/')
 pattern_mangrove_soil_C = 'Mangroves_SOCS_0_100cm_30m.zip'
 # Raw mineral soil C
-mineral_soil_C_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/soil_carbon/raw/'
+mineral_soil_C_dir = os.path.join(base_dir, 'carbon_pools/soil_carbon/raw/')
 pattern_mineral_soil_C = 'OCSTHA_M_30cm_250m_ll.tif'
 
 # Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
@@ -297,7 +307,7 @@ total_C_emis_year_dir = '{}total_carbon/20190418/'.format(base_carbon_pool_dir)
 ######
 
 pattern_gross_emissions = 'disturbance_model_noData_reclass'
-gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
+gross_emissions_dir = os.path.join(base_dir, 'output_emissions/20180828/disturbance_model_noData_removed/')
 
 
 ### Net emissions
@@ -305,7 +315,7 @@ gross_emissions_dir = 's3://gfw2-data/climate/carbon_model/output_emissions/2018
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2_ha_all_forest_types_all_drivers_2001_15'
-net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_types_all_drivers/20181107/'
+net_flux_dir = os.path.join(base_dir, 'net_emissions_all_forest_types_all_drivers/20181107/')
 
 
 
@@ -313,14 +323,14 @@ net_flux_dir = 's3://gfw2-data/climate/carbon_model/net_emissions_all_forest_typ
 
 # Tile summary spreadsheets
 tile_stats_pattern = 'tile_stats.csv'
-tile_stats_dir = 's3://gfw2-data/climate/carbon_model/tile_stats/'
+tile_stats_dir = os.path.join(base_dir, 'tile_stats/')
 
 # The area of each pixel in m^2
 pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Locations of tsvs from model output
-tsv_output_dir = 's3://gfw2-data/climate/carbon_model/model_output_tsv/20181119/'
+tsv_output_dir = os.path.join(base_dir, 'model_output_tsv/20181119/')
 
 # Location of raw Hadoop output
 hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
