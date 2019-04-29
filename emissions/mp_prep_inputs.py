@@ -14,8 +14,8 @@ print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
 uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
-uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, cn.pattern_plant_pre_2000_raw), '.')
-uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), '.')
+uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
+uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
 
 cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 subprocess.check_call(cmd)
