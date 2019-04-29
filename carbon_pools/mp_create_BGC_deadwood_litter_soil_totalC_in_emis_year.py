@@ -86,7 +86,7 @@ mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mang
 
 print "Creating carbon pools..."
 
-num_of_processes = 16
+num_of_processes = 18
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
 pool.close()

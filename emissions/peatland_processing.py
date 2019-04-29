@@ -48,8 +48,12 @@ def create_peat_mask_tiles(tile_id):
         print "{} is inside CIFOR band. Using CIFOR/Jukka combination...".format(tile_id)
 
         out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-        cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '0.00025', '0.00025', '-tap', '-te',
-                str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', 'tropic_peat.vrt', out_tile]
+        cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+               '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+               '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile]
+
+        # gdalwarp -tr 0.00025 0.00025 -overwrite -tap -dstnodata 0 -co COMPRESS=LZW -te 110 -10 120 0 -t_srs EPSG:4326 cifor_peat_mask.tif jukka_peat.tif test.tif
+
         subprocess.check_call(cmd)
         print "{} created.".format(tile_id)
 
