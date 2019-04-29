@@ -122,6 +122,21 @@ soilgrids250_peat_file = 'TAXNWRB_250m_ll.tif'   #Keys 61 to 65 from https://fil
 pattern_peat_mask = 'peat_mask_processed'
 peat_mask_dir = os.path.join(base_dir, 'other_emissions_inputs/peatlands/processed/20190429/')
 
+climate_zone_raw_dir = os.path.join(base_dir, 'other_emissions_inputs/climate_zone/raw/')
+climate_zone_raw = 'climate_zone.tif'
+pattern_climate_zone = 'climate_zone_processed'
+climate_zone_processed_dir = os.path.join(base_dir, 'other_emissions_inputs/climate_zone/processed/20190429/')
+
+plant_pre_2000_raw_dir = os.path.join(base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/raw/')
+pattern_plant_pre_2000_raw = 'plant_est_2000_or_earlier'
+pattern_plant_pre_2000 = 'plantation_2000_or_earlier_processed'
+plant_pre_2000_processed_dir = os.path.join(base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20190429/')
+
+drivers_raw_dir = os.path.join(base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
+pattern_drivers_raw = 'Goode_FinalClassification_19_05pcnt_prj'
+pattern_drivers = 'tree_cover_loss_driver_processed'
+drivers_processed_dir = os.path.join(base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/20190429/')
+
 
 ### Plantation processing
 ######

@@ -319,8 +319,8 @@ def end_of_fx_summary(start, tile_id, pattern):
     count_completed_tiles(pattern)
 
 
-def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax):
+def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
-            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', in_file, out_file]
+            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
     subprocess.check_call(cmd)

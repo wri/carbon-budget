@@ -38,7 +38,7 @@ def create_mangrove_soil_C(tile_id):
         xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
         print "Clipping mangrove soil C from mangrove soil vrt for", tile_id
-        uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove_full_extent.tif'.format(tile_id), xmin, ymin, xmax, ymax)
+        uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove_full_extent.tif'.format(tile_id), xmin, ymin, xmax, ymax, 'Int16')
 
         mangrove_soil = '{0}_mangrove_full_extent.tif'.format(tile_id)
         mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
@@ -70,7 +70,7 @@ def create_mineral_soil_C(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     print "Clipping mineral soil C for", tile_id
-    uu.warp_to_Hansen('mineral_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, 'mineral_soil'), xmin, ymin, xmax, ymax)
+    uu.warp_to_Hansen('mineral_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, 'mineral_soil'), xmin, ymin, xmax, ymax, 'Int16')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)

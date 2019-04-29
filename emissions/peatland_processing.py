@@ -32,7 +32,7 @@ def create_peat_mask_tiles(tile_id):
         out_intermediate = '{0}_intermediate.tif'.format(tile_id, cn.pattern_peat_mask)
 
         # Cuts the SoilGrids250m global raster to the focal tile
-        uu.warp_to_Hansen(cn.soilgrids250_peat_file, out_intermediate, xmin, ymin, xmax, ymax)
+        uu.warp_to_Hansen(cn.soilgrids250_peat_file, out_intermediate, xmin, ymin, xmax, ymax, 'Byte')
 
         # Removes all non-histosol sub-groups from the SoilGrids raster.
         # Ideally, this would be done once on the entire SoilGrids raster in the main function but I didn't think of that.

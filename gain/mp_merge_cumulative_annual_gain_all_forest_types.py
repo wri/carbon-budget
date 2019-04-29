@@ -28,7 +28,7 @@ download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrov
                  ]
 
 for input in download_list:
-    utilities.s3_folder_download(input, '.')
+    uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
