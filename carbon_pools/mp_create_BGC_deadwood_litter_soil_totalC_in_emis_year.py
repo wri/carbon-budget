@@ -23,10 +23,10 @@ input_files = [
     # cn.WHRC_biomass_2000_unmasked_dir,
     # cn.mangrove_biomass_2000_dir,
     # cn.cont_eco_dir,
-    cn.bor_tem_trop_processed_dir
-    # cn.precip_processed_dir,
+    cn.bor_tem_trop_processed_dir,
+    cn.precip_processed_dir,
     # cn.soil_C_full_extent_2000_dir,
-    # cn.elevation_processed_dir
+    cn.elevation_processed_dir
     ]
 
 for input in input_files:

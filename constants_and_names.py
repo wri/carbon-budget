@@ -253,12 +253,12 @@ bor_tem_trop_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/pro
 # Precipitation
 precip_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/add_30s_precip.tif')
 pattern_precip = 'precip_mm_annual'
-precip_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/precip/20190416/')
+precip_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/precip/20190418/')
 
 # Elevation
 srtm_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/elevation/')
 pattern_elevation = 'elevation'
-elevation_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/elevation/20190416/')
+elevation_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/elevation/20190418/')
 
 
 ### Carbon pools
