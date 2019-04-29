@@ -30,7 +30,7 @@ def create_peat_mask_tiles(tile_id):
 
         print "{} is outside CIFOR band. Using SoilGrids250m organic soil mask...".format(tile_id)
 
-        out_intermediate = '{0}_{1}_intermediate.tif'.format(tile_id, cn.pattern_peat_mask)
+        out_intermediate = '{0}_intermediate.tif'.format(tile_id, cn.pattern_peat_mask)
 
         uu.warp_to_Hansen(cn.soilgrids250_peat_file, out_intermediate, xmin, ymin, xmax, ymax)
 
