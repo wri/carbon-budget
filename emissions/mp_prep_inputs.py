@@ -27,6 +27,7 @@ subprocess.check_call(cmd)
 cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
       '-tap', '-ot', 'Byte', '-a_nodata', '0',
       '{}.shp'.format(cn.pattern_plant_pre_2000_raw), '{}.tif'.format(cn.pattern_plant_pre_2000_raw)]
+subprocess.check_call(cmd)
 
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(count/3)
