@@ -118,9 +118,9 @@ peat_unprocessed_dir = os.path.join(base_dir, 'other_emissions_inputs/peatlands/
 cifor_peat_file = 'cifor_peat_mask.tif'
 jukka_peat_zip = 'Jukka_peatland.zip'
 jukka_peat_shp = 'peatland_drainage_proj.shp'
-soilgrids250_peat_file = 'HISTPR_250m_ll.tif'   #From https://files.isric.org/soilgrids/data/recent/HISTPR_250m_ll.tif, metadata: https://files.isric.org/soilgrids/data/recent/HISTPR_250m_ll.xml
+soilgrids250_peat_file = 'TAXNWRB_250m_ll.tif'   #Keys 61 to 65 from https://files.isric.org/soilgrids/data/recent/TAXNWRB_250m_ll.tif, metadata: https://files.isric.org/soilgrids/data/recent/TAXNWRB_250m_ll.xml
 pattern_peat_mask = 'peat_mask'
-peat_mask_dir = os.path.join(base_dir, 'other_emissions_inputs/peat_mask/20190429/')
+peat_mask_dir = os.path.join(base_dir, 'other_emissions_inputs/peatlands/20190429/')
 
 
 ### Plantation processing

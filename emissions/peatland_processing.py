@@ -35,7 +35,7 @@ def create_peat_mask_tiles(tile_id):
         uu.warp_to_Hansen(cn.soilgrids250_peat_file, out_intermediate, xmin, ymin, xmax, ymax)
 
         # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
-        calc = '--calc=(A>{})'.format(soilgrids_cutoff)
+        calc = '--calc=(A>=61)*(A<=65)'
         AGC_accum_outfilearg = '--outfile={}'.format(out_tile)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, AGC_accum_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte']
