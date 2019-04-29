@@ -25,8 +25,8 @@ input_files = [
     cn.loss_dir
     ]
 
-for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
+# for input in input_files:
+#     uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing.
 # for tile in tile_list:
