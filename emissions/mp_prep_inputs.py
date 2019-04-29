@@ -29,7 +29,7 @@ cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(
       '{}.shp'.format(cn.pattern_plant_pre_2000_raw), '{}.tif'.format(cn.pattern_plant_pre_2000_raw)]
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
+pool = multiprocessing.Pool(1)
 pool.map(prep_inputs.data_prep, tile_list)
 
 # # For single processor use
