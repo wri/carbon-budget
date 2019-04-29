@@ -459,6 +459,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_litter_emis_year_2000)
 
+
 def create_soil(tile_id):
 
     start = datetime.datetime.now()
