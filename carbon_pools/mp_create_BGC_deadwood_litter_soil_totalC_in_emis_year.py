@@ -19,14 +19,14 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the input folders.
 input_files = [
-    cn.AGC_emis_year_dir,
-    cn.WHRC_biomass_2000_unmasked_dir,
-    cn.mangrove_biomass_2000_dir,
-    cn.cont_eco_dir,
-    cn.bor_tem_trop_processed_dir,
-    cn.precip_processed_dir,
-    cn.soil_C_full_extent_2000_dir,
-    cn.elevation_processed_dir
+    # cn.AGC_emis_year_dir,
+    # cn.WHRC_biomass_2000_unmasked_dir,
+    # cn.mangrove_biomass_2000_dir,
+    # cn.cont_eco_dir,
+    cn.bor_tem_trop_processed_dir
+    # cn.precip_processed_dir,
+    # cn.soil_C_full_extent_2000_dir,
+    # cn.elevation_processed_dir
     ]
 
 for input in input_files:
@@ -86,11 +86,11 @@ mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mang
 
 print "Creating carbon pools..."
 
-num_of_processes = 18
-pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
-pool.close()
-pool.join()
+# num_of_processes = 18
+# pool = Pool(num_of_processes)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+# pool.close()
+# pool.join()
 
 num_of_processes = 16
 pool = Pool(num_of_processes)

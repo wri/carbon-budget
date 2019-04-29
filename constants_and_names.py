@@ -248,7 +248,7 @@ pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
 fao_ecozone_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/{}'.format(pattern_fao_ecozone_raw))
 pattern_bor_tem_trop_intermediate = 'fao_ecozones_bor_tem_tro_intermediate'
 pattern_bor_tem_trop_processed = 'fao_ecozones_bor_tem_tro_processed'
-bor_tem_trop_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190416/')
+bor_tem_trop_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/processed/fao_ecozones_bor_tem_tro/20190418/')
 
 # Precipitation
 precip_raw_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/raw/add_30s_precip.tif')

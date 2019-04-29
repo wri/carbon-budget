@@ -1,10 +1,17 @@
+'''
+This script makes mask tiles of where peat pixels are. Peat is represented by 1s; non-peat is no-data.
+Between 40N and 60S, CIFOR peat and Jukka peat (IDN and MYS) are combined to map peat.
+Outside that band (>40N, since there are no tiles at >60S), SoilGrids250m is used to mask peat.
+Any pixel that is marked as most likely being a histosol subgroup is classified as peat.
+Between 40N and 60S, SoilGrids250m is not used.
+'''
+
 
 import multiprocessing
 import peatland_processing
 import sys
 import os
 import subprocess
-import utilities
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -19,23 +26,24 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # Downloads peat layers
 uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), '.')
 uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), '.')
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), '.')
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), '.') # Raster of the most likely soil group
 
-# Unzips the Jukka peat shapefile
+# Unzips the Jukka peat shapefile (IDN and MYS)
 cmd = ['unzip', '-j', cn.jukka_peat_zip]
 subprocess.check_call(cmd)
 
 jukka_tif = 'jukka_peat.tif'
 
+# Converts the Jukka peat shapefile to a raster
 cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
       '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
 
 subprocess.check_call(cmd)
 
 # For multiprocessor use
-# This script worked with count/4 on an r4.16xlarge machine.
+# This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/2)
+pool = multiprocessing.Pool(processes=count-10)
 pool.map(peatland_processing.create_peat_mask_tiles, tile_list)
 
 # # For single processor use, for testing purposes
