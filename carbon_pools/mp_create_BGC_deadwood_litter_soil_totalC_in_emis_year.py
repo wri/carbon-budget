@@ -1,3 +1,14 @@
+'''
+This script creates carbon in belowground, deadwood, litter, and soil pools at the time of tree cover loss for loss pixels.
+It also calculates total carbon for loss pixels.
+For belowground carbon (as with aboveground carbon), the pools are carbon 2000 + carbon gain until loss year.
+For deadwood, litter, and soil, the pools are based on carbon 2000.
+Total carbon is thus a mixture of stocks in 2000 and in the year of tree cover loss.
+
+NOTE: Because there are so many input files, this script needs a machine with extra storage.
+Thus, run this on an 13.16xlarge machine.
+'''
+
 import create_BGC_deadwood_litter_soil_totalC_in_emis_year
 from multiprocessing.pool import Pool
 from functools import partial
