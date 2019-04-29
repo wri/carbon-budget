@@ -124,7 +124,7 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_soil_emis_year_2000)]
+cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
 subprocess.check_call(cmd)
 
 num_of_processes = 40
@@ -134,7 +134,7 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
-cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year_2000)]
+cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
 subprocess.check_call(cmd)
 
 # # For single processor use
