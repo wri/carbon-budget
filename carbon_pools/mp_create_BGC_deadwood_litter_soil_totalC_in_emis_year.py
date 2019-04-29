@@ -19,13 +19,13 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the input folders.
 input_files = [
-    # cn.AGC_emis_year_dir,
-    # cn.WHRC_biomass_2000_unmasked_dir,
-    # cn.mangrove_biomass_2000_dir,
-    # cn.cont_eco_dir,
+    cn.AGC_emis_year_dir,
+    cn.WHRC_biomass_2000_unmasked_dir,
+    cn.mangrove_biomass_2000_dir,
+    cn.cont_eco_dir,
     cn.bor_tem_trop_processed_dir,
     cn.precip_processed_dir,
-    # cn.soil_C_full_extent_2000_dir,
+    cn.soil_C_full_extent_2000_dir,
     cn.elevation_processed_dir
     ]
 
@@ -86,11 +86,16 @@ mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mang
 
 print "Creating carbon pools..."
 
-# num_of_processes = 18
-# pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
-# pool.close()
-# pool.join()
+# 18 processors worked on r4.16xlarge
+num_of_processes = 18
+pool = Pool(num_of_processes)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+pool.close()
+pool.join()
+
+uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
+cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
+subprocess.check_call(cmd)
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
@@ -98,11 +103,19 @@ pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_dead
 pool.close()
 pool.join()
 
+uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
+cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
+subprocess.check_call(cmd)
+
 num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
 pool.close()
 pool.join()
+
+uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
+cmd = ['rm *{}*.tif'.format(cn.pattern_litter_emis_year_2000)]
+subprocess.check_call(cmd)
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
@@ -110,11 +123,19 @@ pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil
 pool.close()
 pool.join()
 
+uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
+cmd = ['rm *{}*.tif'.format(cn.pattern_soil_emis_year_2000)]
+subprocess.check_call(cmd)
+
 num_of_processes = 40
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
 pool.close()
 pool.join()
+
+uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
+cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year_2000)]
+subprocess.check_call(cmd)
 
 # # For single processor use
 # for tile in tile_list:
@@ -123,11 +144,9 @@ pool.join()
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter(tile, mang_litter_AGB_ratio)
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil(tile)
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C(tile)
-
-print "Uploading output to s3..."
-
-uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
-uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
-uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
-uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
-uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
+#
+# uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
+# uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
+# uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
+# uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
+# uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
