@@ -288,15 +288,15 @@ AGC_emis_year_dir = '{0}aboveground_carbon/20190418/'.format(base_carbon_pool_di
 
 # Belowground carbon in loss pixels
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
-BGC_emis_year_dir = '{}belowground_carbon/20190429/'.format(base_carbon_pool_dir)
+BGC_emis_year_dir = '{}belowground_carbon/20190430/'.format(base_carbon_pool_dir)
 
 # Deadwood in loss pixels
 pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190429/'.format(base_carbon_pool_dir)
+deadwood_emis_year_2000_dir = '{}deadwood_carbon/20190430/'.format(base_carbon_pool_dir)
 
 # Litter in loss pixels
 pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
-litter_emis_year_2000_dir = '{}litter_carbon/20190429/'.format(base_carbon_pool_dir)
+litter_emis_year_2000_dir = '{}litter_carbon/20190430/'.format(base_carbon_pool_dir)
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = os.path.join(base_dir, 'carbon_pools/soil_carbon/raw/')
@@ -311,11 +311,11 @@ soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190419/'
 
 # Soil C in loss pixels
 pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'
-soil_C_emis_year_2000_dir = '{}soil_carbon/processed_emis_extent/20190429/'.format(base_carbon_pool_dir)
+soil_C_emis_year_2000_dir = '{}soil_carbon/processed_emis_extent/20190430/'.format(base_carbon_pool_dir)
 
 # All carbon pools combined
 pattern_total_C_emis_year = 't_total_C_ha_emis_year'
-total_C_emis_year_dir = '{}total_carbon/20190429/'.format(base_carbon_pool_dir)
+total_C_emis_year_dir = '{}total_carbon/20190430/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions
