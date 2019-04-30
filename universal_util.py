@@ -278,9 +278,13 @@ def check_for_data(out_tile):
 
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find min, max
+    print out_tile
     gtif = gdal.Open(out_tile)
+    print gtif
     srcband = gtif.GetRasterBand(1)
+    print srcband
     stats = srcband.GetStatistics(True, True)
+    print stats
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
     return stats
