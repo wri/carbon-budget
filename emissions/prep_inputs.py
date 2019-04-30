@@ -93,24 +93,24 @@ def data_prep(tile_id):
 
 
     print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-    if stats[1] > 0:
+    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
+    if tile_stats[1] > 0:
         print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
     else:
         print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
         os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
 
     print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    if stats[1] > 0:
+    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    if tile_stats[1] > 0:
         print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
     else:
         print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
         os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
 
     print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
-    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
-    if stats[1] > 0:
+    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
+    if tile_stats[1] > 0:
         print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
     else:
         print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
