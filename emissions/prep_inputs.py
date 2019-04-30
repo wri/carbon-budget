@@ -83,10 +83,6 @@ def data_prep(tile_id):
         # so they should work fine with all the other tiles.
         dst_climate_zone.write_band(1, climate_zone_window, window=window)
 
-        print mode
-
-        sys.quit()
-
     #
     # print "Warping IDN/MYS pre-2000 plantation tile", tile_id
     # uu.warp_to_Hansen('{}.tif'.format(cn.pattern_plant_pre_2000_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
