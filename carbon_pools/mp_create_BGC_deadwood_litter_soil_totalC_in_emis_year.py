@@ -40,8 +40,8 @@ input_files = [
     cn.elevation_processed_dir
     ]
 
-for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
+# for input in input_files:
+#     uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing.
 # for tile in tile_list:
@@ -97,16 +97,16 @@ mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mang
 
 print "Creating carbon pools..."
 
-# 18 processors worked on r4.16xlarge
-num_of_processes = 18
-pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
-pool.close()
-pool.join()
-
-uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
-cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
-subprocess.check_call(cmd)
+# # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
+# num_of_processes = 18
+# pool = Pool(num_of_processes)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+# pool.close()
+# pool.join()
+#
+# uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
@@ -115,8 +115,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
@@ -125,8 +125,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_litter_emis_year_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_litter_emis_year_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
 pool = Pool(num_of_processes)
@@ -135,8 +135,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 40
 pool = Pool(num_of_processes)
@@ -145,8 +145,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
-cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
+# subprocess.check_call(cmd)
 
 # # For single processor use
 # for tile in tile_list:

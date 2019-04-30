@@ -2,57 +2,70 @@ import multiprocessing
 import calc_emissions
 import utilities
 import tile_peat_dict
+import sys
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
+
+tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+# tile_list = ['00N_110E'] # test tiles
+# tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+print tile_list
+print "There are {} unique tiles to process".format(str(len(tile_list)))
+
+# For downloading all tiles in the folders
+download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
+                 cn.peat_mask_dir, cn.ifl_dir, cn.planted_forest_type_unmasked_dir, cn.drivers_processed_dir, cn.climate_zone_processed_dir,
+                 cn.bor_tem_trop_processed_dir, cn.burn_year_dir, cn.plant_pre_2000_raw_dir,
+                 cn.loss_dir]
+
+for input in download_list:
+    uu.s3_folder_download(input, '.')
+
+# For copying individual tiles to s3 for testing
+for tile in tile_list:
 
 
-def chunks(l, n):
-    # Yield successive n-sized chunks from l
-    for i in xrange(0, len(l), n):
-        yield l[i:i + n]
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile, cn.pattern_AGC_emis_year), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.BGC_emis_year_dir, tile, cn.pattern_BGC_emis_year), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.deadwood_emis_year_2000_dir, tile, cn.pattern_deadwood_emis_year_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.drivers_processed_dir, tile, cn.pattern_drivers), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.climate_zone_processed_dir, tile, cn.pattern_climate_zone), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile, cn.pattern_bor_tem_trop_processed), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.burn_year_dir, tile, cn.pattern_burn_year), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), '.')
+    uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
 
-# Location of the carbon pools
-carbon_pool_dir = 's3://gfw2-data/climate/carbon_model/carbon_pools/20180815'
 
-carbon_tile_list = utilities.tile_list('{}/carbon/'.format(carbon_pool_dir))
-# carbon_tile_list = ['00N_000E'] # test tile
-# carbon_tile_list = ['00N_000E', '30N_080W', '30N_090W', '30N_100W', '40N_090W'] # test tile
-print 'Carbon tile list is: ' + str(carbon_tile_list)
-print 'Number of carbon tiles is: ' + str(len(carbon_tile_list))
+#if idn plant tile downloaded, mask loss with plantations because we know that idn gfw_plantations
+# were established in yr 2000.
 
+IDN_MYS_tile_list = uu.tile_list(cn.plant_pre_2000_processed_dir)
+
+print "Removing loss from plantations that existed in Indonesia and Malaysia before 2000..."
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count / 4)
+pool = multiprocessing.Pool(count-10)
+pool.map(utilities.mask_loss, IDN_MYS_tile_list)
 
-# How many tiles the spot machine will process at one time
-# Set to process half as many tiles at one time as processors it is using
-tiles_in_chunk = count / 10
+if tile_id in ['00N_090E', '00N_100E', '00N_110E', '00N_120E', '00N_130E', '00N_140E', '10N_090E', '10N_100E', '10N_110E', '10N_120E', '10N_130E', '10N_140E']:
+    print "cutting out plantations in Indonesia, Malaysia"
+    utilities.mask_loss(tile_id)
 
-for chunk in chunks(carbon_tile_list, tiles_in_chunk):
 
-    print 'Chunk is: ' + str(chunk)
+# Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count-10)
+pool.map(calc_emissions.calc_emissions, tile_list)
 
-    with open('status.txt', 'a') as textfile:
-        textfile.write(str(chunk) + "\n")
+# # For single processor use
+# for tile in tile_list:
+#
+#       calc_emissions.calc_emissions(tile)
 
-    for tile_id in chunk:
-        print '   tile_id is: ' + str(tile_id)
-
-        # download files
-
-        #### MAY NEED TO CHANGE THIS TO REFLECT THE NEW SOIL AND PEAT MASK THAT THAI CREATED
-        peat_file = tile_peat_dict.tile_peat_dict(tile_id) # based on tile id, know which peat file to download (hwsd, hist, jukka)
-
-        files = {'carbon_pool': ['bgc', 'carbon', 'deadwood', 'soil', 'litter'], 'data_prep': [peat_file, 'ifl_2000', 'gfw_plantations', 'tsc_model', 'climate_zone'],
-                 'fao_ecozone': ['fao_ecozones_bor_tem_tro'], 'burned_area': ['burn_year_with_Hansen_loss']}
-
-        print '      Downloading input tiles'
-        utilities.download(files, tile_id, carbon_pool_dir)
-
-        #download hansen tile
-        hansen_tile = utilities.wgetloss(tile_id)
-
-        #if idn plant tile downloaded, mask loss with plantations because we know that idn gfw_plantations
-        # were established in yr 2000.
-        if tile_id in ['00N_090E', '00N_100E', '00N_110E', '00N_120E', '00N_130E', '00N_140E', '10N_090E', '10N_100E', '10N_110E', '10N_120E', '10N_130E', '10N_140E']:
-            print "cutting out plantations in Indonesia, Malaysia"
-            utilities.mask_loss(tile_id)
-
-    pool.map(calc_emissions.calc_emissions, chunk)
+uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
+uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
+uu.upload_final_set(cn.drivers_processed_dir, cn.pattern_drivers)
