@@ -24,6 +24,8 @@ def data_prep(tile_id):
            cn.climate_zone_raw, '{0}_{1}.tif'.format(tile_id, "climate_zone_intermediate")]
     subprocess.check_call(cmd)
 
+    print "Re-tiling climate zone for tile", tile_id
+
     # Opens boreal/temperate/tropical ecozone tile.
     # Everything from here down is used to assign pixels without boreal-tem-tropical codes to a bor-tem-trop in the 1024x1024 windows.
     climate_zone_src = rasterio.open("{0}_{1}.tif".format(tile_id, "climate_zone_intermediate"))
@@ -81,13 +83,13 @@ def data_prep(tile_id):
             # so they should work fine with all the other tiles.
             dst_climate_zone.write_band(1, climate_zone_window, window=window)
 
-
-    print "Warping IDN/MYS pre-2000 plantation tile", tile_id
-    uu.warp_to_Hansen('{}.tif'.format(cn.pattern_plant_pre_2000_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
-                                      xmin, ymin, xmax, ymax, 'Byte')
-
-    print "Warping tree cover loss tile", tile_id
-    uu.warp_to_Hansen('{}.tif'.format(cn.pattern_drivers_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_drivers), xmin, ymin, xmax, ymax, 'Byte')
+    #
+    # print "Warping IDN/MYS pre-2000 plantation tile", tile_id
+    # uu.warp_to_Hansen('{}.tif'.format(cn.pattern_plant_pre_2000_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
+    #                                   xmin, ymin, xmax, ymax, 'Byte')
+    #
+    # print "Warping tree cover loss tile", tile_id
+    # uu.warp_to_Hansen('{}.tif'.format(cn.pattern_drivers_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_drivers), xmin, ymin, xmax, ymax, 'Byte')
 
 
 
@@ -100,21 +102,21 @@ def data_prep(tile_id):
         print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
         os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
 
-    print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    if tile_stats[1] > 0:
-        print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    else:
-        print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-
-    print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
-    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
-    if tile_stats[1] > 0:
-        print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
-    else:
-        print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
-        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
+    # print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    # tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    # if tile_stats[1] > 0:
+    #     print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    # else:
+    #     print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    #     os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    #
+    # print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
+    # tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
+    # if tile_stats[1] > 0:
+    #     print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
+    # else:
+    #     print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
+    #     os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_drivers))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
