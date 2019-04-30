@@ -13,30 +13,30 @@ tile_list = ['00N_110E'] # test tiles
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
-# uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
-# uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
-# uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
-#
-# cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
-# subprocess.check_call(cmd)
-#
-# cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_drivers_raw)]
-# subprocess.check_call(cmd)
-#
-# # Converts the Jukka peat shapefile to a raster
-# cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
-#       '-tap', '-ot', 'Byte', '-a_nodata', '0',
-#       '{}.shp'.format(cn.pattern_plant_pre_2000_raw), '{}.tif'.format(cn.pattern_plant_pre_2000_raw)]
-# subprocess.check_call(cmd)
+uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
+uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
+uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/2)
-# pool.map(prep_inputs.data_prep, tile_list)
+cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
+subprocess.check_call(cmd)
 
-# For single processor use
-for tile in tile_list:
+cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_drivers_raw)]
+subprocess.check_call(cmd)
 
-    prep_inputs.data_prep(tile)
+# Converts the Jukka peat shapefile to a raster
+cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+      '-tap', '-ot', 'Byte', '-a_nodata', '0',
+      '{}.shp'.format(cn.pattern_plant_pre_2000_raw), '{}.tif'.format(cn.pattern_plant_pre_2000_raw)]
+subprocess.check_call(cmd)
+
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count-10)
+pool.map(prep_inputs.data_prep, tile_list)
+
+# # For single processor use
+# for tile in tile_list:
+#
+#     prep_inputs.data_prep(tile)
 
 uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
