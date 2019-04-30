@@ -17,12 +17,12 @@ def data_prep(tile_id):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "Warping climate zone tile", tile_id
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
-           str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', 'Byte', '-overwrite',
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
-           cn.climate_zone_raw, '{0}_{1}.tif'.format(tile_id, "climate_zone_intermediate")]
-    subprocess.check_call(cmd)
+    # print "Warping climate zone tile", tile_id
+    # cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
+    #        str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', 'Byte', '-overwrite',
+    #        '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
+    #        cn.climate_zone_raw, '{0}_{1}.tif'.format(tile_id, "climate_zone_intermediate")]
+    # subprocess.check_call(cmd)
 
     print "Re-tiling climate zone for tile", tile_id
 
@@ -85,8 +85,6 @@ def data_prep(tile_id):
 
         print mode
 
-        sys.quit
-
     #
     # print "Warping IDN/MYS pre-2000 plantation tile", tile_id
     # uu.warp_to_Hansen('{}.tif'.format(cn.pattern_plant_pre_2000_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
@@ -98,14 +96,14 @@ def data_prep(tile_id):
 
 
 
-    print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-    if tile_stats[1] > 0:
-        print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-    else:
-        print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
-
+    # print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
+    # tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
+    # if tile_stats[1] > 0:
+    #     print "  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
+    # else:
+    #     print "  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
+    #     os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_climate_zone))
+    #
     # print "Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
     # tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
     # if tile_stats[1] > 0:
