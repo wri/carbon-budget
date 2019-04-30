@@ -39,6 +39,6 @@ for tile in tile_list:
 
       prep_other_emissions_inputs.data_prep(tile)
 
-uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
-uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
-uu.upload_final_set(cn.drivers_processed_dir, cn.pattern_drivers)
+# uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
+# uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
+# uu.upload_final_set(cn.drivers_processed_dir, cn.pattern_drivers)
