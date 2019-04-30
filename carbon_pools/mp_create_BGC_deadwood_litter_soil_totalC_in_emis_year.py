@@ -108,7 +108,7 @@ print "Creating carbon pools..."
 # cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
 # subprocess.check_call(cmd)
 
-num_of_processes = 16
+num_of_processes = 20
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
 pool.close()

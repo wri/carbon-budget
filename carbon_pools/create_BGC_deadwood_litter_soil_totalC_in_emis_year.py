@@ -397,7 +397,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio):
 
             # Reads in the windows of each input file that definitely exist
             WHRC_biomass_window = WHRC_biomass_2000_src.read(1, window=window)
-     
+
             # The litter conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
             # They depend on the elevation, precipitation, and broad biome category (boreal/temperate/tropical).
             # For some reason, the masks need to be named different variables for each equation.
