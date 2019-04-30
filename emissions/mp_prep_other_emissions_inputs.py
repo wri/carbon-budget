@@ -2,13 +2,13 @@ import multiprocessing
 import subprocess
 import sys
 import os
-import prep_inputs
+import prep_other_emissions_inputs
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-tile_list = ['00N_110E'] # test tiles
+tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+# tile_list = ['00N_110E'] # test tiles
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
@@ -31,7 +31,7 @@ subprocess.check_call(cmd)
 
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count-10)
-pool.map(prep_inputs.data_prep, tile_list)
+pool.map(prep_other_emissions_inputs.data_prep, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
