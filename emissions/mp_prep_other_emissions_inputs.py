@@ -36,8 +36,8 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 
 # For single processor use
 for tile in tile_list:
-
-    prep_inputs.data_prep(tile)
+      
+      prep_other_emissions_inputs.data_prep(tile)
 
 uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
