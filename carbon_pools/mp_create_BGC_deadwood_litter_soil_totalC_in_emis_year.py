@@ -6,7 +6,7 @@ For deadwood, litter, and soil, the pools are based on carbon 2000.
 Total carbon is thus a mixture of stocks in 2000 and in the year of tree cover loss.
 
 NOTE: Because there are so many input files, this script needs a machine with extra disk space.
-Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024.
+Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
 '''
 
 import create_BGC_deadwood_litter_soil_totalC_in_emis_year

@@ -74,14 +74,18 @@ def data_prep(tile_id):
             mode = stats.mode(non_zeros)[0]
             # print "  Window is not all 0s. Mode is", mode
 
-            # Assigns all pixels without a bor-tem-trop code in that window to that most common code
-            climate_zone_window[climate_zone_window == 0] = mode
+        # Assigns all pixels without a bor-tem-trop code in that window to that most common code
+        climate_zone_window[climate_zone_window == 0] = mode
 
-            # Writes the output window to the output.
-            # Although the windows for the input tiles are 1024 x 1024 pixels,
-            # the windows for these output files are 40000 x 1 pixels, like all the other tiles in this model,
-            # so they should work fine with all the other tiles.
-            dst_climate_zone.write_band(1, climate_zone_window, window=window)
+        # Writes the output window to the output.
+        # Although the windows for the input tiles are 1024 x 1024 pixels,
+        # the windows for these output files are 40000 x 1 pixels, like all the other tiles in this model,
+        # so they should work fine with all the other tiles.
+        dst_climate_zone.write_band(1, climate_zone_window, window=window)
+
+        print mode
+
+        sys.quit()
 
     #
     # print "Warping IDN/MYS pre-2000 plantation tile", tile_id
