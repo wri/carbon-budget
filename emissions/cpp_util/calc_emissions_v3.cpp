@@ -41,14 +41,14 @@ string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 string loss_name = infolder + tile_id + "_loss_pre_2000_plant_masked.tif";
-string burn_name = infolder + tile_id + "_burnyear.tif";
+string burn_name = infolder + tile_id + "_burn_year.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
 
 string forestmodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
 string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
 string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
-string plant_name = infolder + tile_id + "__plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
 // naming all of the output files
 string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
