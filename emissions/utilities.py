@@ -34,16 +34,17 @@ def mask_loss_pre_2000_plantation(tile_id):
 
     if os.path.exists('{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000)):
 
-        print "Pre-2000 plantation exists for {}. Cutting out loss in that area...".format(tile_id)
+        print "Pre-2000 plantation exists for {}. Cutting out loss in those plantations...".format(tile_id)
 
+        #
         cmd = ['gdal_translate', '-of', 'VRT', '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000),
                '{0}{1}_{2}.vrt'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
         subprocess.check_call(cmd)
 
         # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
         loss = '{0}{1}.tif'.format(dest_folder, tile_id)
-        loss_masked = '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000)
-        calc = '--calc=A*B'
+        loss_masked = '{0}{1}_{2}.vrt'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000)
+        calc = '--calc=A*(B==0)'
         loss_outfilename = '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)
         loss_outfilearg = '--outfile={}'.format(loss_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', loss_masked,
