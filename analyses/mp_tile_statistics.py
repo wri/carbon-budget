@@ -20,7 +20,7 @@ header_no_brackets = ', '.join(headers)
 tile_stats = '{}_{}'.format(uu.date_today, cn.tile_stats_pattern)
 
 # Creates the output text file with the column names
-with open(cn.tile_stats, 'w+') as f:
+with open(cn.tile_stats_pattern, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
 f.close()
 
