@@ -128,8 +128,6 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
             BGC_output = mangrove_C_final + non_mang_output_final
             # print BGC_output[0][29930:29950]
 
-            # sys.quit()
-
         # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
         # BGB:AGB ratio
         if not os.path.exists(mangrove_biomass_2000):
@@ -601,4 +599,4 @@ def create_total_C(tile_id):
         dst_total_C.write_band(1, total_C_output, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_emis_year)

@@ -138,6 +138,8 @@ print "Creating carbon pools..."
 # # cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
 # # subprocess.check_call(cmd)
 
+# I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
+# at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
 num_of_processes = 14
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
