@@ -138,7 +138,7 @@ pattern_drivers_raw = 'Goode_FinalClassification_19_05pcnt_prj'
 pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/20190430/')
 
-pattern_burn_year = "burn_year"
+pattern_burn_year = "burnyear"
 burn_year_dir = os.path.join(base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/')
 
 

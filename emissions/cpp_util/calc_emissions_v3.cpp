@@ -41,7 +41,7 @@ string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 string loss_name = infolder + tile_id + "_loss_pre_2000_plant_masked.tif";
-string burn_name = infolder + tile_id + "_burn_year.tif";
+string burn_name = infolder + tile_id + "_burnyear.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
 
