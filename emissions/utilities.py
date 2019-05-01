@@ -37,7 +37,7 @@ def mask_loss_pre_2000_plantation(tile_id):
         print "Pre-2000 plantation exists for {}. Cutting out loss in that area...".format(tile_id)
 
         # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
-        calc = '--calc=A*(B=0)'
+        calc = '--calc=A*(B==0)'
         loss_outfilename = '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)
         loss_outfilearg = '--outfile={}'.format(loss_outfilename)
         cmd = ['gdal_calc.py',
