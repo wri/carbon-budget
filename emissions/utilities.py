@@ -29,6 +29,7 @@ def upload_final(upload_dir, tile_id):
             print "error uploading"
 
 
+# Removes plantations that existed before 2000 from loss tile
 def mask_loss_pre_2000_plantation(tile_id):
     dest_folder = 'cpp_util/'
 
@@ -36,12 +37,14 @@ def mask_loss_pre_2000_plantation(tile_id):
 
         print "Pre-2000 plantation exists for {}. Cutting out loss in those plantations...".format(tile_id)
 
-        #
+        # In order to mask out the pre-2000 plantation pixels from the loss raster, the pre-2000 plantations need to
+        # become a vrt. I couldn't get gdal_calc to work while keeping pre-2000 plantations as a raster; it wasn't
+        # recognizing the 0s (nodata).
         cmd = ['gdal_translate', '-of', 'VRT', '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000),
                '{0}{1}_{2}.vrt'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
         subprocess.check_call(cmd)
 
-        # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
+        # Removes the pre-2000 plantation pixels from the loss tile
         loss = '{0}{1}.tif'.format(dest_folder, tile_id)
         loss_masked = '{0}{1}_{2}.vrt'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000)
         calc = '--calc=A*(B==0)'
@@ -55,14 +58,6 @@ def mask_loss_pre_2000_plantation(tile_id):
 
         print "No pre-2000 plantation exists for {}. Renaming loss tile...".format(tile_id)
         os.rename('{}.tif'.format(tile_id), '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
-
-    # # modify loss tile by erasing where plantations are
-    # idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format(dest_folder)
-    # loss_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
-    #
-    # cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
-    # print cmd
-    # subprocess.check_call(cmd)
 
 
 def download(file_dict, tile_id, carbon_pool_dir):

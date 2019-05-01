@@ -40,7 +40,7 @@ string bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year.tif";
 string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
-string loss_name = infolder + tile_id + ".tif";
+string loss_name = infolder + tile_id + "_loss_pre_2000_plant_masked.tif";
 string burn_name = infolder + tile_id + "_burnyear.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
@@ -51,13 +51,13 @@ string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
 string plant_name = infolder + tile_id + "__plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
 // naming all of the output files
-string out_name1= "outdata/" + tile_id + "_deforestation_model.tif";
-string out_name2 = "outdata/" + tile_id + "_shiftingag_model.tif";
-string out_name3 = "outdata/" + tile_id + "_forestry_model.tif";
-string out_name4 = "outdata/" + tile_id + "_wildfire_model.tif";
-string out_name5 = "outdata/" + tile_id + "_urbanization_model.tif";
-string out_name10 = "outdata/" + tile_id + "_disturbance_model.tif";
-string out_name20 = "outdata/" + tile_id + "_node_totals.tif";
+string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
+string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
+string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
+string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
+string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
+string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
+string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
 
 // setting up the variables to hold the pixel location in x/y values
 int x, y;
