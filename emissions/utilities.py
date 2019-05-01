@@ -4,6 +4,10 @@ import multiprocessing
 import pandas as pd
 import os
 import glob
+import sys
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
 
 
 def del_tiles(tile_id):
@@ -25,15 +29,35 @@ def upload_final(upload_dir, tile_id):
             print "error uploading"
 
 
-def mask_loss(tile_id):
+def mask_loss_pre_2000_plantation(tile_id):
     dest_folder = 'cpp_util/'
-    # modify loss tile by erasing where plantations are
-    idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format(dest_folder)
-    loss_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
 
-    cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
-    print cmd
-    subprocess.check_call(cmd)
+    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)):
+
+        print "Pre-2000 plantation exists for {}. Cutting out loss in that area...".format(tile_id)
+
+        # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
+        calc = '--calc=A*(B=0)'
+        loss_outfilename = '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)
+        loss_outfilearg = '--outfile={}'.format(loss_outfilename)
+        cmd = ['gdal_calc.py',
+               '-A', '{0}.tif'.format(tile_id),
+               '-B', '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
+               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+        subprocess.check_call(cmd)
+
+    else:
+
+        print "No pre-2000 plantation exists for {}. Renaming loss tile...".format(tile_id)
+        os.rename('{}.tif'.format(tile_id), '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
+
+    # # modify loss tile by erasing where plantations are
+    # idn_plant_shp = '{0}/plant_est_2000_or_earlier.shp'.format(dest_folder)
+    # loss_tile = '{0}/{1}_loss.tif'.format(dest_folder, tile_id)
+    #
+    # cmd = ['gdal_rasterize', '-b', '1', '-burn', '0', idn_plant_shp, loss_tile]
+    # print cmd
+    # subprocess.check_call(cmd)
 
 
 def download(file_dict, tile_id, carbon_pool_dir):

@@ -85,6 +85,7 @@ gain_spreadsheet_dir = os.path.join(base_dir)
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190116.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
+pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
 
 # Hansen gain tiles (2001-2012)
