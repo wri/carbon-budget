@@ -32,7 +32,7 @@ def upload_final(upload_dir, tile_id):
 def mask_loss_pre_2000_plantation(tile_id):
     dest_folder = 'cpp_util/'
 
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)):
+    if os.path.exists('{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000)):
 
         print "Pre-2000 plantation exists for {}. Cutting out loss in that area...".format(tile_id)
 
@@ -41,8 +41,8 @@ def mask_loss_pre_2000_plantation(tile_id):
         loss_outfilename = '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)
         loss_outfilearg = '--outfile={}'.format(loss_outfilename)
         cmd = ['gdal_calc.py',
-               '-A', '{0}.tif'.format(tile_id),
-               '-B', '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
+               '-A', '{0}{1}.tif'.format(dest_folder, tile_id),
+               '-B', '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000),
                calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
