@@ -35,8 +35,8 @@ f.close()
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
 
 
-# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-uu.s3_folder_download(cn.pixel_area_dir, '.')
+# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+# uu.s3_folder_download(cn.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
@@ -106,7 +106,7 @@ for input in download_list:
     # For multiprocessor use.
     # This runs out of memory with 8 processors.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=10)
+    pool = multiprocessing.Pool(processes=15)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
     # Added these in response to error12: Cannot allocate memory error.
     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
