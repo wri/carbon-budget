@@ -135,9 +135,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
- // if wanting to test a small corner of a raster, can manually set this. This starts at top left of raster
-xsize = 2500;
-ysize = 2500;
+// // if wanting to test a small corner of a raster, can manually set this. This starts at top left of raster
+//xsize = 2500;
+//ysize = 2500;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
