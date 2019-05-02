@@ -202,11 +202,11 @@ OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
 OUTBAND5->SetNoDataValue(-9999);
 
-// No driver gross emissions
-OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
-OUTBAND6 = OUTGDAL6>GetRasterBand(1);
-OUTBAND6->SetNoDataValue(-9999);
+//// No driver gross emissions
+//OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+//OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
+//OUTBAND6 = OUTGDAL6>GetRasterBand(1);
+//OUTBAND6->SetNoDataValue(-9999);
 
 // All loss combined
 OUTGDAL10 = OUTDRIVER->Create( out_name10.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
