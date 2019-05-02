@@ -243,7 +243,7 @@ float out_data2[xsize];
 float out_data4[xsize];
 float out_data1[xsize];
 float out_data5[xsize];
-//float out_data6[xsize];
+float out_data6[xsize];
 float out_data10[xsize];
 float out_data20[xsize];
 
@@ -274,7 +274,7 @@ for(x=0; x<xsize; x++)
 		float outdata3 = 0;  // forestry
 		float outdata4 = 0;  // wildfire
 		float outdata5 = 0;  // urbanization
-//		float outdata6 = 0;  // no driver
+		float outdata6 = 0;  // no driver
 		float outdata10 = 0;  // total of all drivers
 		float outdata20 = 0;  // flowchart node
 
