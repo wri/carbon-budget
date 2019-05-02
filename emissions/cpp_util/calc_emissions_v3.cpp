@@ -58,7 +58,7 @@ string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year
 string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
 string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
 string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
-string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
+//string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
 string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
 string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
 
@@ -149,7 +149,7 @@ GDALDataset *OUTGDAL2;  // Shifting ag
 GDALDataset *OUTGDAL3;  // Forestry
 GDALDataset *OUTGDAL4;  // Wildfire
 GDALDataset *OUTGDAL5;  // Urbanization
-GDALDataset *OUTGDAL6;  // No driver
+//GDALDataset *OUTGDAL6;  // No driver
 GDALDataset *OUTGDAL10; // All emissions combined
 GDALDataset *OUTGDAL20; // Decision tree node
 
@@ -158,7 +158,7 @@ GDALRasterBand *OUTBAND2;
 GDALRasterBand *OUTBAND3;
 GDALRasterBand *OUTBAND4;
 GDALRasterBand *OUTBAND5;
-GDALRasterBand *OUTBAND6;
+//GDALRasterBand *OUTBAND6;
 GDALRasterBand *OUTBAND10;
 GDALRasterBand *OUTBAND20;
 
@@ -243,7 +243,7 @@ float out_data2[xsize];
 float out_data4[xsize];
 float out_data1[xsize];
 float out_data5[xsize];
-float out_data6[xsize];
+//float out_data6[xsize];
 float out_data10[xsize];
 float out_data20[xsize];
 
@@ -274,7 +274,7 @@ for(x=0; x<xsize; x++)
 		float outdata3 = 0;  // forestry
 		float outdata4 = 0;  // wildfire
 		float outdata5 = 0;  // urbanization
-		float outdata6 = 0;  // no driver
+//		float outdata6 = 0;  // no driver
 		float outdata10 = 0;  // total of all drivers
 		float outdata20 = 0;  // flowchart node
 
@@ -669,7 +669,7 @@ OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
+//OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
 }
@@ -680,7 +680,7 @@ GDALClose((GDALDatasetH)OUTGDAL2);
 GDALClose((GDALDatasetH)OUTGDAL3);
 GDALClose((GDALDatasetH)OUTGDAL4);
 GDALClose((GDALDatasetH)OUTGDAL5);
-GDALClose((GDALDatasetH)OUTGDAL6);
+//GDALClose((GDALDatasetH)OUTGDAL6);
 GDALClose((GDALDatasetH)OUTGDAL10);
 GDALClose((GDALDatasetH)OUTGDAL20);
 return 0;
