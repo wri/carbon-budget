@@ -24,56 +24,60 @@ using namespace std;
 // to compile on MINGW: g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
-// if code is run other than <program name> <tile id> , will raise this error
+// If code is run other than <program name> <tile id> , it will raise this error.
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 
-// in files
+// Input arguments
 string agb_name=argv[1];
-string tile_id = argv[1]; // the tile id comes from the second argument. the first argument is the name of this code
+string tile_id = argv[1]; // The tile id comes from the second argument. The first argument is the name of this code.
 
 string infolder = "cpp_util/";
 
-// all these starting with "string" are naming variables
-// these are all the input files
+// Input files
+// Carbon pools
 string agc_name = infolder + tile_id + "_t_AGC_ha_emis_year.tif";
 string bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year.tif";
 string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
+
+// Other inputs
 string loss_name = infolder + tile_id + "_loss_pre_2000_plant_masked.tif";
 string burn_name = infolder + tile_id + "_burnyear.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
-
 string forestmodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
 string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
 string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
 string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
-// naming all of the output files
+// Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
+// that determines emissions
 string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
 string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
 string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
 string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
 string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
+string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
 string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
 string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
 
-// setting up the variables to hold the pixel location in x/y values
+// Setting up the variables to hold the pixel location in x/y values
 int x, y;
 int xsize, ysize;
 double GeoTransform[6]; // Fetch the affine transformation coefficients
 double ulx, uly; double pixelsize;
 
-//initialize GDAL for reading
-// each of these "INBAND" are later associated with the string variables defined above
+// Initialize GDAL for reading.
+// Each of these "INBAND" are later associated with the string variables defined above.
 GDALAllRegister();
-GDALDataset  *INGDAL; GDALRasterBand  *INBAND;
+GDALDataset  *INGDAL1; GDALRasterBand  *INBAND1;
 GDALDataset  *INGDAL2; GDALRasterBand  *INBAND2;
 GDALDataset  *INGDAL3; GDALRasterBand  *INBAND3;
 GDALDataset  *INGDAL4; GDALRasterBand  *INBAND4;
 GDALDataset  *INGDAL5; GDALRasterBand  *INBAND5;
 GDALDataset  *INGDAL6; GDALRasterBand  *INBAND6;
+GDALDataset  *INGDAL7; GDALRasterBand  *INBAND7;
 GDALDataset  *INGDAL8; GDALRasterBand  *INBAND8;
 GDALDataset  *INGDAL9; GDALRasterBand  *INBAND9;
 GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
@@ -81,11 +85,10 @@ GDALDataset  *INGDAL11; GDALRasterBand  *INBAND11;
 GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
 GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
 GDALDataset  *INGDAL14; GDALRasterBand  *INBAND14;
-GDALDataset  *INGDAL15; GDALRasterBand  *INBAND15;
 
 //open file (string variables defined above) and assign it extent and projection
-INGDAL = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly );
-INBAND = INGDAL->GetRasterBand(1);
+INGDAL1 = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly );
+INBAND1 = INGDAL1->GetRasterBand(1);
 
 INGDAL2 = (GDALDataset *) GDALOpen(bgc_name.c_str(), GA_ReadOnly );
 INBAND2 = INGDAL2->GetRasterBand(1);
@@ -102,6 +105,9 @@ INBAND5 = INGDAL5->GetRasterBand(1);
 INGDAL6 = (GDALDataset *) GDALOpen(burn_name.c_str(), GA_ReadOnly );
 INBAND6 = INGDAL6->GetRasterBand(1);
 
+INGDAL7 = (GDALDataset *) GDALOpen(ifl_name.c_str(), GA_ReadOnly );
+INBAND7 = INGDAL7->GetRasterBand(1);
+
 INGDAL8 = (GDALDataset *) GDALOpen(ecozone_name.c_str(), GA_ReadOnly );
 INBAND8 = INGDAL8->GetRasterBand(1);
 
@@ -117,13 +123,10 @@ INBAND11 = INGDAL11->GetRasterBand(1);
 INGDAL12 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
 INBAND12 = INGDAL12->GetRasterBand(1);
 
-INGDAL13 = (GDALDataset *) GDALOpen(ifl_name.c_str(), GA_ReadOnly );
+INGDAL13 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND13 = INGDAL13->GetRasterBand(1);
 
-INGDAL15 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
-INBAND15 = INGDAL15->GetRasterBand(1);
-
-// the rest of the code runs on the size of INBAND3. this can be changed
+// The rest of the code runs on the size of INBAND3. This can be changed.
 xsize=INBAND3->GetXSize();
 ysize=INBAND3->GetYSize();
 INGDAL->GetGeoTransform(GeoTransform);
@@ -132,28 +135,30 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
-// if wanting to test a small corner of a raster, can manually set this. This starts at top left of raster
+// // if wanting to test a small corner of a raster, can manually set this. This starts at top left of raster
 //xsize = 2500;
 //ysize = 2500;
 
-// print the raster size. should be 40,000 x 40,000 and pixel size 0.00025
+// Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
-//initialize GDAL for writing
+// Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
-GDALDataset *OUTGDAL3;
-GDALDataset *OUTGDAL2;
-GDALDataset *OUTGDAL4;
-GDALDataset *OUTGDAL1;
-GDALDataset *OUTGDAL5;
-GDALDataset *OUTGDAL10;
-GDALDataset *OUTGDAL20;
+GDALDataset *OUTGDAL1;  // Commodities
+GDALDataset *OUTGDAL2;  // Shifting ag
+GDALDataset *OUTGDAL3;  // Forestry
+GDALDataset *OUTGDAL4;  // Wildfire
+GDALDataset *OUTGDAL5;  // Urbanization
+GDALDataset *OUTGDAL6;  // No driver
+GDALDataset *OUTGDAL10; // All emissions combined
+GDALDataset *OUTGDAL20; // Decision tree node
 
-GDALRasterBand *OUTBAND3;
-GDALRasterBand *OUTBAND2;
-GDALRasterBand *OUTBAND4;
 GDALRasterBand *OUTBAND1;
+GDALRasterBand *OUTBAND2;
+GDALRasterBand *OUTBAND3;
+GDALRasterBand *OUTBAND4;
 GDALRasterBand *OUTBAND5;
+GDALRasterBand *OUTBAND6;
 GDALRasterBand *OUTBAND10;
 GDALRasterBand *OUTBAND20;
 
@@ -167,42 +172,56 @@ oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 
-OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
-OUTBAND3 = OUTGDAL3->GetRasterBand(1);
-OUTBAND3->SetNoDataValue(-9999);
-
-OUTGDAL2 = OUTDRIVER->Create( out_name2.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
-OUTBAND2 = OUTGDAL2->GetRasterBand(1);
-OUTBAND2->SetNoDataValue(-9999);
-
-OUTGDAL4 = OUTDRIVER->Create( out_name4.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
-OUTBAND4 = OUTGDAL4->GetRasterBand(1);
-OUTBAND4->SetNoDataValue(-9999);
-
+// Commoditiy gross emissions
 OUTGDAL1 = OUTDRIVER->Create( out_name1.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL1->SetGeoTransform(adfGeoTransform); OUTGDAL1->SetProjection(OUTPRJ);
 OUTBAND1 = OUTGDAL1->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(-9999);
 
-OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL20->SetGeoTransform(adfGeoTransform); OUTGDAL20->SetProjection(OUTPRJ);
-OUTBAND20 = OUTGDAL20->GetRasterBand(1);
-OUTBAND20->SetNoDataValue(-9999);
+// Shifting ag gross emissions
+OUTGDAL2 = OUTDRIVER->Create( out_name2.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
+OUTBAND2 = OUTGDAL2->GetRasterBand(1);
+OUTBAND2->SetNoDataValue(-9999);
 
-OUTGDAL10 = OUTDRIVER->Create( out_name10.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL10->SetGeoTransform(adfGeoTransform); OUTGDAL10->SetProjection(OUTPRJ);
-OUTBAND10 = OUTGDAL10->GetRasterBand(1);
+// Forestry gross emissions
+OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
+OUTBAND3 = OUTGDAL3->GetRasterBand(1);
+OUTBAND3->SetNoDataValue(-9999);
 
+// Wildfire gross emissions
+OUTGDAL4 = OUTDRIVER->Create( out_name4.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
+OUTBAND4 = OUTGDAL4->GetRasterBand(1);
+OUTBAND4->SetNoDataValue(-9999);
+
+// Urbanization gross emissions
 OUTGDAL5 = OUTDRIVER->Create( out_name5.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
 OUTBAND5->SetNoDataValue(-9999);
 
-//read/write data...
-//In data
+// No driver gross emissions
+OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
+OUTBAND6 = OUTGDAL6>GetRasterBand(1);
+OUTBAND6->SetNoDataValue(-9999);
+
+// All loss combined
+OUTGDAL10 = OUTDRIVER->Create( out_name10.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL10->SetGeoTransform(adfGeoTransform); OUTGDAL10->SetProjection(OUTPRJ);
+OUTBAND10 = OUTGDAL10->GetRasterBand(1);
+
+// Decision tree node
+OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL20->SetGeoTransform(adfGeoTransform); OUTGDAL20->SetProjection(OUTPRJ);
+OUTBAND20 = OUTGDAL20->GetRasterBand(1);
+OUTBAND20->SetNoDataValue(-9999);
+
+
+// Read/write data
+// Inputs
 float agb_data[xsize];
 float agc_data[xsize];
 float bgc_data[xsize];
@@ -218,51 +237,54 @@ float litter_data[xsize];
 float ifl_data[xsize];
 float plant_data[xsize];
 
-//Out data
+// Outputs
 float out_data3[xsize];
 float out_data2[xsize];
 float out_data4[xsize];
 float out_data1[xsize];
 float out_data5[xsize];
+float out_data6[xsize];
 float out_data10[xsize];
 float out_data20[xsize];
 
-// loop over the y coords, then the x coords
+// Loop over the y coordinates, then the x coordinates
 for (y=0; y<ysize; y++)
 {
 
-INBAND->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND1->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, forestmodel_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, peat_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
 INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, ifl_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND15->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0, 0);
+INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0, 0);
 
 for(x=0; x<xsize; x++)
 
 	{
 
-		float outdata4 = 0;  // wildfire
+		float outdata1 = 0;  // commodities
 		float outdata2 = 0;  // shifting ag.
-		float outdata1 = 0;  // deforestation/conversion
 		float outdata3 = 0;  // forestry
+		float outdata4 = 0;  // wildfire
 		float outdata5 = 0;  // urbanization
-		float outdata6 = 0;  // no disturbance driver
+		float outdata6 = 0;  // no driver
 		float outdata10 = 0;  // total of all drivers
 		float outdata20 = 0;  // flowchart node
 
-		// float outdata4 = -9999;
-		// float outdata2 = -9999;
 		// float outdata1 = -9999;
+		// float outdata2 = -9999;
 		// float outdata3 = -9999;
-		// float outdata20 = -9999;
+		// float outdata4 = -9999;
+		// float outdata5 = -9999;
+		// float outdata6 = -9999;
+		// float outdata10 = -9999;
 
 
 		// change nodata to 0 bc we want to add them to create total carbon
@@ -631,29 +653,34 @@ for(x=0; x<xsize; x++)
 		else // not on loss AND carbon
 		{
 
-			out_data3[x] = -9999;
-			out_data2[x] = -9999;
-			out_data4[x] = -9999;
 			out_data1[x] = -9999;
+			out_data2[x] = -9999;
+			out_data3[x] = -9999;
+			out_data4[x] = -9999;
 			out_data5[x] = -9999;
+			out_data6[x] = -9999;
 			out_data10[x] = -9999;
 			out_data20[x] = -9999;
 		}
     }
-OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
+
 OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
 }
-GDALClose(INGDAL);
-GDALClose((GDALDatasetH)OUTGDAL3);
-GDALClose((GDALDatasetH)OUTGDAL2);
-GDALClose((GDALDatasetH)OUTGDAL4);
+
+GDALClose(INGDAL1);
 GDALClose((GDALDatasetH)OUTGDAL1);
+GDALClose((GDALDatasetH)OUTGDAL2);
+GDALClose((GDALDatasetH)OUTGDAL3);
+GDALClose((GDALDatasetH)OUTGDAL4);
 GDALClose((GDALDatasetH)OUTGDAL5);
+GDALClose((GDALDatasetH)OUTGDAL6);
 GDALClose((GDALDatasetH)OUTGDAL10);
 GDALClose((GDALDatasetH)OUTGDAL20);
 return 0;

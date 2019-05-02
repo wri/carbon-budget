@@ -71,5 +71,6 @@ uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
 uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
 uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
 uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
+uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
 uu.upload_final_set(cn.gross_emis_all_drivers_dir, cn.pattern_gross_emis_all_drivers)
 
