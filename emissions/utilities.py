@@ -61,6 +61,7 @@ def mask_loss_pre_2000_plantation(tile_id):
         print "No pre-2000 plantation exists for {}. Renaming loss tile...".format(tile_id)
         os.rename('{}.tif'.format(tile_id), '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
 
+    print "Pre-2000 plantations for {} complete".format(tile_id)
 
 def download(file_dict, tile_id, carbon_pool_dir):
     carbon_pool_files = file_dict['carbon_pool']

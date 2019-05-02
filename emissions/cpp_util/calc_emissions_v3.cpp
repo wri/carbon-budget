@@ -129,7 +129,7 @@ INBAND13 = INGDAL13->GetRasterBand(1);
 // The rest of the code runs on the size of INBAND3. This can be changed.
 xsize=INBAND3->GetXSize();
 ysize=INBAND3->GetYSize();
-INGDAL->GetGeoTransform(GeoTransform);
+INGDAL1->GetGeoTransform(GeoTransform);
 
 ulx=GeoTransform[0];
 uly=GeoTransform[3];
