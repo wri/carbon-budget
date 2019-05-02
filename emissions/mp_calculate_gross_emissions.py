@@ -41,8 +41,8 @@ download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_ye
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
 
 
+# Makes an output directory if it does not already exist
 outdata_dir = 'outdata/'
-
 if not os.path.exists(outdata_dir):
     try:
         os.mkdir(outdata_dir)

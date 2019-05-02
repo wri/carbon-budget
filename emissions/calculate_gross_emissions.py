@@ -26,4 +26,4 @@ def calc_emissions(tile_id):
     # utilities.del_tiles(tile_id)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_combo)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_commod)

@@ -40,6 +40,8 @@ def mask_loss_pre_2000_plantation(tile_id):
         # In order to mask out the pre-2000 plantation pixels from the loss raster, the pre-2000 plantations need to
         # become a vrt. I couldn't get gdal_calc to work while keeping pre-2000 plantations as a raster; it wasn't
         # recognizing the 0s (nodata).
+        # Based on https://gis.stackexchange.com/questions/238397/how-to-indicate-nodata-into-gdal-calc-formula
+        # Only the pre-2000 plantation raster needed to be converted to a vrt; the loss raster did not.
         cmd = ['gdal_translate', '-of', 'VRT', '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000),
                '{0}{1}_{2}.vrt'.format(dest_folder, tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
         subprocess.check_call(cmd)
