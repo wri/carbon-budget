@@ -669,7 +669,7 @@ OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 
 OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
-//OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
 }
@@ -680,7 +680,7 @@ GDALClose((GDALDatasetH)OUTGDAL2);
 GDALClose((GDALDatasetH)OUTGDAL3);
 GDALClose((GDALDatasetH)OUTGDAL4);
 GDALClose((GDALDatasetH)OUTGDAL5);
-//GDALClose((GDALDatasetH)OUTGDAL6);
+GDALClose((GDALDatasetH)OUTGDAL6);
 GDALClose((GDALDatasetH)OUTGDAL10);
 GDALClose((GDALDatasetH)OUTGDAL20);
 return 0;
