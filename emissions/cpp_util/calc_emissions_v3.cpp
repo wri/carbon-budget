@@ -58,7 +58,7 @@ string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year
 string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
 string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
 string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
-//string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
+string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
 string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
 string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
 
@@ -149,7 +149,7 @@ GDALDataset *OUTGDAL2;  // Shifting ag
 GDALDataset *OUTGDAL3;  // Forestry
 GDALDataset *OUTGDAL4;  // Wildfire
 GDALDataset *OUTGDAL5;  // Urbanization
-//GDALDataset *OUTGDAL6;  // No driver
+GDALDataset *OUTGDAL6;  // No driver
 GDALDataset *OUTGDAL10; // All emissions combined
 GDALDataset *OUTGDAL20; // Decision tree node
 
@@ -158,7 +158,7 @@ GDALRasterBand *OUTBAND2;
 GDALRasterBand *OUTBAND3;
 GDALRasterBand *OUTBAND4;
 GDALRasterBand *OUTBAND5;
-//GDALRasterBand *OUTBAND6;
+GDALRasterBand *OUTBAND6;
 GDALRasterBand *OUTBAND10;
 GDALRasterBand *OUTBAND20;
 
@@ -202,11 +202,11 @@ OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
 OUTBAND5->SetNoDataValue(-9999);
 
-//// No driver gross emissions
-//OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
-//OUTBAND6 = OUTGDAL6>GetRasterBand(1);
-//OUTBAND6->SetNoDataValue(-9999);
+// No driver gross emissions
+OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
+OUTBAND6 = OUTGDAL6>GetRasterBand(1);
+OUTBAND6->SetNoDataValue(-9999);
 
 // All loss combined
 OUTGDAL10 = OUTDRIVER->Create( out_name10.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
