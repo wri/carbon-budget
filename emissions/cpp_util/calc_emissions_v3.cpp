@@ -591,6 +591,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 2)
 			{
@@ -599,6 +600,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = outdata2;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 3)
 			{
@@ -607,6 +609,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 4)
 			{
@@ -615,6 +618,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data4[x] = outdata4;
 				out_data5[x] = -9999;
+				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 5)
 			{
@@ -623,6 +627,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = outdata5;
+				out_data6[x] = -9999;
 			}
 
 			else // another else statement to handle if no forest model data
@@ -632,6 +637,7 @@ for(x=0; x<xsize; x++)
 				out_data2[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
+				out_data6[x] = -9999;
 			}
 				// node total raster
 				out_data20[x] = outdata20;
