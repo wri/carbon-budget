@@ -586,45 +586,45 @@ for(x=0; x<xsize; x++)
 			// write the variable to the pixel value
 			if (forestmodel_data[x] == 1)
 			{
-				out_data3[x] = -9999;
 				out_data1[x] = outdata1;
 				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 2)
 			{
-				out_data3[x] = -9999;
 				out_data1[x] = -9999;
 				out_data2[x] = outdata2;
+				out_data3[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 3)
 			{
-				out_data3[x] = outdata3;
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
+				out_data3[x] = outdata3;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 4)
 			{
-				out_data3[x] = -9999;
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 				out_data4[x] = outdata4;
 				out_data5[x] = -9999;
 				out_data6[x] = -9999;
 			}
 			else if (forestmodel_data[x] == 5)
 			{
-				out_data3[x] = -9999;
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = outdata5;
 				out_data6[x] = -9999;
@@ -632,9 +632,9 @@ for(x=0; x<xsize; x++)
 
 			else // another else statement to handle if no forest model data
 			{
-				out_data3[x] = -9999;
 				out_data1[x] = -9999;
 				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = -9999;
@@ -646,7 +646,7 @@ for(x=0; x<xsize; x++)
 
 				// add up all outputs to make merged output
 
-				outdata10 = outdata1 + outdata3 + outdata2 + outdata4 + outdata5 + outdata6;
+				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
 				if ((outdata10 == 0) || (outdata10 == -9999))
 				{
 					out_data10[x] = -9999;
