@@ -134,9 +134,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
- // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-xsize = 4300;
-ysize = 4000;
+// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+//xsize = 4300;
+//ysize = 4000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -267,8 +267,10 @@ INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0
 
 for(x=0; x<xsize; x++)
 
+    // Everything from here down analyzes one pixel at a time
 	{
 
+        // Initializes each output raster at 0 (nodata value)
 		float outdata1 = 0;  // commodities
 		float outdata2 = 0;  // shifting ag.
 		float outdata3 = 0;  // forestry
@@ -279,11 +281,11 @@ for(x=0; x<xsize; x++)
 		float outdata20 = 0;  // flowchart node
 
 
-		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
+		if (loss_data[x] > 0 && agc_data[x] > 0) // Only evaluates pixels that have loss and carbon
 		{
 			float *vars;
-			// in equations.cpp, a function called def_variables, we get back what the emissions factors should be,
-			/// based on disturbance type and climate zone. these are later used for calculating emissions
+			// From equations.cpp, a function called def_variables, we get back what the emissions factors should be,
+			/// based on several input rasters for that pixel. These are later used for calculating emissions.
 			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float cf = *(vars + 0);
@@ -293,9 +295,9 @@ for(x=0; x<xsize; x++)
 			float peatburn = *(vars + 4);
 			float peatdrain = *(vars + 5);
 
-            // define and calculate several values used later
+            // Define and calculate several values used later
 			float total_c;
-			total_c = agc_data[x] + bgc_data[x] + dead_data[x] +litter_data[x];
+			total_c = agc_data[x] + bgc_data[x] + dead_data[x] + litter_data[x];
 
 			float above_below_c;
 			above_below_c = agc_data[x] + bgc_data[x];
@@ -307,37 +309,111 @@ for(x=0; x<xsize; x++)
 			float Biomass_tCO2e_nofire;
 			float Biomass_tCO2e_yesfire;
 
-            // each disturbance type is a raster- outdata3 is forestry emissions. outdata20 is the code for each
+		    // Each driver is an output raster and has its own emissions model. outdata20 is the code for each
             // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
-			if (forestmodel_data[x] == 3) // forestry
+
+			// Emissions model for commodity-driven deforestation
+			if (forestmodel_data[x] == 1)
+			{
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				Biomass_tCO2e_nofire = total_c * 3.67;
+				flu = flu_val(climate_data[x], ecozone_data[x]);
+				minsoil = soil_data[x]-(soil_data[x] * flu);
+
+				if (peat_data[x] > 0) // Commodity, peat
+				{
+					if (burn_data[x] > 0) // Commodity, peat, burned
+					{
+						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata20 = 11;
+					}
+					else // Commodity, peat, not burned
+					{
+						outdata1 = Biomass_tCO2e_nofire + peatdrain;
+						outdata20 = 12;
+					}
+				}
+				else // Commodity, not peat
+				{
+					if (burn_data[x] > 0) // Commodity, not peat, burned
+					{
+						outdata1 = Biomass_tCO2e_yesfire + minsoil;
+						outdata20 = 13;
+					}
+					else // Commodity, not peat, not burned
+					{
+						outdata1 = Biomass_tCO2e_nofire + minsoil;
+						outdata20 = 14;
+					}
+				}
+			}
+
+			// Emissions model for shifting agriculture (only difference is flu val)
+			else if (forestmodel_data[x] == 2)
+			{
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				Biomass_tCO2e_nofire = total_c * 3.67;
+				flu = 0.72;
+				minsoil = soil_data[x]-(soil_data[x] * .72);
+
+				if (peat_data[x] > 0) // Shifting ag, peat
+				{
+					if (burn_data[x] > 0) // Shifting ag, peat, burned
+					{
+						outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata20 = 20;
+					}
+					else // Shifting ag, peat, not burned
+					{
+						outdata2 = Biomass_tCO2e_nofire + peatdrain;
+						outdata20 = 21;
+					}
+				}
+				else // Shifting ag, not peat
+				{
+					if (burn_data[x] > 0) // Shifting ag, not peat, burned
+					{
+						outdata2 = Biomass_tCO2e_yesfire + minsoil;
+						outdata20 = 22;
+					}
+					else // Shifting ag, not peat, not burned
+					{
+						outdata2 = Biomass_tCO2e_nofire + minsoil;
+						outdata20 = 23;
+					}
+				}
+			}
+
+			// Emissions model for forestry
+			else if (forestmodel_data[x] == 3)
 			{
 				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
 
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
-				if (peat_data[x] > 0) // forestry, peat
+				if (peat_data[x] > 0) // Forestry, peat
 				{
-					if (burn_data[x] > 0 ) // forestry, peat, burned
+					if (burn_data[x] > 0 ) // Forestry, peat, burned
 					{
 						outdata3 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 						outdata20 = 30;
 					}
-					else // forestry, peat, not burned
+					else // Forestry, peat, not burned
 					{
-						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))  // Forestry, peat, not burned, temperate/boreal
 						{
 							outdata3 = Biomass_tCO2e_nofire;
 							outdata20 = 31;
 						}
-						else
+						else // Forestry, peat, not burned, tropical
 						{
-							if (plant_data[x] > 0)
+							if (plant_data[x] > 0)  // Forestry, peat, not burned, tropical, plantation
 							{
 								outdata3 = Biomass_tCO2e_nofire + peatdrain;
 								outdata20 = 32;
 							}
-							else
+							else // Forestry, peat, not burned, tropical, not plantation
 							{
 								outdata3 = Biomass_tCO2e_nofire;
 								outdata20 = 33;
@@ -347,12 +423,12 @@ for(x=0; x<xsize; x++)
 				}
 				else
 				{
-					if (burn_data[x] > 0) // forestry, not peat, burned
+					if (burn_data[x] > 0) // Forestry, not peat, burned
 					{
 						outdata3 = Biomass_tCO2e_yesfire;
 						outdata20 = 34;
 					}
-					else // forestry, not peat, not burned
+					else // Forestry, not peat, not burned
 					{
 						outdata3 = Biomass_tCO2e_nofire;
 						outdata20 = 35;
@@ -360,112 +436,43 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
-			else if (forestmodel_data[x] == 1)  // deforestation/conversion
-			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
-				Biomass_tCO2e_nofire = total_c * 3.67;
-				flu = flu_val(climate_data[x], ecozone_data[x]);
-				minsoil = soil_data[x]-(soil_data[x] * flu);
-
-				if (peat_data[x] > 0) // deforestation, peat
-				{
-					if (burn_data[x] > 0) // deforestation, peat, burned
-					{
-						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
-						outdata20 = 11;
-					}
-					else // deforestation, peat, not burned
-					{
-						outdata1 = Biomass_tCO2e_nofire + peatdrain;
-						outdata20 = 12;
-					}
-				}
-				else // deforestation, not peat
-				{
-					if (burn_data[x] > 0) // deforestation, not peat, burned
-					{
-						outdata1 = Biomass_tCO2e_yesfire + minsoil;
-						outdata20 = 13;
-					}
-					else // deforestation, not peat, not burned
-					{
-						outdata1 = Biomass_tCO2e_nofire + minsoil;
-						outdata20 = 14;
-					}
-				}
-			}
-
-			else if (forestmodel_data[x] == 2) // shifting ag. only diff is flu val
-			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
-				Biomass_tCO2e_nofire = total_c * 3.67;
-				flu = 0.72;
-				minsoil = soil_data[x]-(soil_data[x] * .72);
-
-				if (peat_data[x] > 0) // deforestation, peat
-				{
-					if (burn_data[x] > 0) // deforestation, peat, burned
-					{
-						outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
-						outdata20 = 20;
-					}
-					else // deforestation, peat, not burned
-					{
-						outdata2 = Biomass_tCO2e_nofire + peatdrain;
-						outdata20 = 21;
-					}
-				}
-				else // deforestation, not peat
-				{
-					if (burn_data[x] > 0) // deforestation, not peat, burned
-					{
-						outdata2 = Biomass_tCO2e_yesfire + minsoil;
-						outdata20 = 22;
-					}
-					else // deforestation, not peat, not burned
-					{
-						outdata2 = Biomass_tCO2e_nofire + minsoil;
-						outdata20 = 23;
-					}
-				}
-			}
-
-		   else if (forestmodel_data[x] == 4) // wildfire
+		    // Emissions model for wildfires
+		    else if (forestmodel_data[x] == 4)
 			{
 				Biomass_tCO2e_yesfire = ((2 * above_below_c) * cf * c02 * pow(10, -3)) + ((2* above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = above_below_c * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
-				if (peat_data[x] > 0) // wildfire, peat
+				if (peat_data[x] > 0) // Wildfire, peat
 				{
-					if (burn_data[x] > 0) // wildfire, peat, burned
+					if (burn_data[x] > 0) // Wildfire, peat, burned
 					{
 						outdata4 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 						outdata20 = 40;
 					}
 
-					else // wildfire, peat, not burned
+					else // Wildfire, peat, not burned
 					{
-						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3)) // boreal or temperate
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3)) // Wildfire, peat, not burned, temperate/boreal
 						{
 							outdata4 = Biomass_tCO2e_nofire;
 							outdata20 = 41;
 						}
-						else // tropics
+						else // Wildfire, peat, not burned, tropical
 						{
 							outdata4 = Biomass_tCO2e_nofire + peatdrain;
 							outdata20 = 42;
 						}
 					}
 				}
-				else  // wildfire, not peat
+				else  // Wildfire, not peat
 				{
-					if (burn_data[x] > 0)  // wildfire, not peat, burned
+					if (burn_data[x] > 0)  // Wildfire, not peat, burned
 					{
 						outdata4 = Biomass_tCO2e_yesfire;
 						outdata20 = 43;
 					}
-					else  // wildfire, not peat, not burned
+					else  // Wildfire, not peat, not burned
 					{
 						outdata4 = Biomass_tCO2e_nofire;
 						outdata20 = 44;
@@ -473,34 +480,35 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
-		   else if (forestmodel_data[x] == 5)  // urbanization
+		   // Emissions model for urbanization
+		   else if (forestmodel_data[x] == 5)
 			{
 				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = 0.8;
 				minsoil = soil_data[x]-(soil_data[x] * flu);
 
-				if (peat_data[x] > 0) // urbanization, peat
+				if (peat_data[x] > 0) // Urbanization, peat
 				{
-					if (burn_data[x] > 0) // urbanization, peat, burned
+					if (burn_data[x] > 0) // Urbanization, peat, burned
 					{
 						outdata5 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 						outdata20 = 50;
 					}
-					else // urbanization, peat, not burned
+					else // Urbanization, peat, not burned
 					{
 						outdata5 = Biomass_tCO2e_nofire + peatdrain;
 						outdata20 = 51;
 					}
 				}
-				else // urbanization, not peat
+				else // Urbanization, not peat
 				{
 					if (burn_data[x] > 0) // urbanization, not peat, burned
 					{
 						outdata5 = Biomass_tCO2e_yesfire + minsoil;
 						outdata20 = 52;
 					}
-					else // urbanization, not peat, not burned
+					else // Urbanization, not peat, not burned
 					{
 						outdata5 = Biomass_tCO2e_nofire + minsoil;
 						outdata20 = 53;
@@ -508,7 +516,9 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
-		   else // no forest model data- make it no data except make disturbance model same as forestry, nancy said.
+		   // Emissions for where there is no driver model.
+		   // Nancy said to make this the same as forestry.
+		   else
 			{
 				out_data1[x] = 0;
 				out_data2[x] = 0;
@@ -521,28 +531,28 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
-				if (peat_data[x] > 0) // no class, peat
+				if (peat_data[x] > 0) // No driver, peat
 				{
-					if (burn_data[x] > 0 ) // no class, peat, burned
+					if (burn_data[x] > 0 ) // No driver, peat, burned
 					{
 						outdata6 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 						outdata20 = 60;
 					}
-					else // no class, peat, not burned
+					else // No driver, peat, not burned
 					{
-						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))  // No driver, peat, not burned, temperate/boreal
 						{
 							outdata6 = Biomass_tCO2e_nofire;
 							outdata20 = 61;
 						}
-						else
+						else // No driver, peat, not burned, tropical
 						{
-							if (plant_data[x] > 0)
+							if (plant_data[x] > 0) // No driver, peat, not burned, tropical, plantation
 							{
 								outdata6 = Biomass_tCO2e_nofire + peatdrain;
 								outdata20 = 62;
 							}
-							else
+							else // No driver, peat, not burned, tropical, no plantation
 							{
 								outdata6 = Biomass_tCO2e_nofire;
 								outdata20 = 63;
@@ -550,14 +560,14 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-				else
+				else // No driver, no peat
 				{
-					if (burn_data[x] > 0) // no class, not peat, burned
+					if (burn_data[x] > 0) // No driver, not peat, burned
 					{
 						outdata6 = Biomass_tCO2e_yesfire;
 						outdata20 = 64;
 					}
-					else // no class, not peat, not burned
+					else // No driver, not peat, not burned
 					{
 						outdata6 = Biomass_tCO2e_nofire;
 						outdata20 = 65;
@@ -565,79 +575,80 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
-			// write the variable to the pixel value
-			if (forestmodel_data[x] == 1)
+			// Write the emissions value to the correct raster
+			if (forestmodel_data[x] == 1)  // Commodities
 			{
 				out_data1[x] = outdata1;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
+//				out_data2[x] = 0;
+//				out_data3[x] = 0;
+//				out_data4[x] = 0;
+//				out_data5[x] = 0;
+//				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 2)
+			else if (forestmodel_data[x] == 2)  // Shifting ag
 			{
-				out_data1[x] = 0;
+//				out_data1[x] = 0;
 				out_data2[x] = outdata2;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
+//				out_data3[x] = 0;
+//				out_data4[x] = 0;
+//				out_data5[x] = 0;
+//				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 3)
+			else if (forestmodel_data[x] == 3)  // Forestry
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
+//				out_data1[x] = 0;
+//				out_data2[x] = 0;
 				out_data3[x] = outdata3;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
+//				out_data4[x] = 0;
+//				out_data5[x] = 0;
+//				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 4)
+			else if (forestmodel_data[x] == 4)  // Wildfires
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
+//				out_data1[x] = 0;
+//				out_data2[x] = 0;
+//				out_data3[x] = 0;
 				out_data4[x] = outdata4;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
+//				out_data5[x] = 0;
+//				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 5)
+			else if (forestmodel_data[x] == 5)  // Urbanization
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
+//				out_data1[x] = 0;
+//				out_data2[x] = 0;
+//				out_data3[x] = 0;
+//				out_data4[x] = 0;
 				out_data5[x] = outdata5;
-				out_data6[x] = 0;
+//				out_data6[x] = 0;
 			}
-			else
+			else  // No driver
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
+//				out_data1[x] = 0;
+//				out_data2[x] = 0;
+//				out_data3[x] = 0;
+//				out_data4[x] = 0;
+//				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
-				// node total raster
+				// Decision tree node raster
 				out_data20[x] = outdata20;
 
 
-
-				// add up all outputs to make merged output
-
+				// Combines each driver raster to make a total gross emissions raster.
+				// Each pixel only has one driver, of course.
 				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
-				if (outdata10 == 0)
-				{
-					out_data10[x] = 0;
-				}
-				else{
-					out_data10[x] = outdata10;
-				}
+
+//				if (outdata10 == 0)
+//				{
+//					out_data10[x] = 0;
+//				}
+//				else{
+//					out_data10[x] = outdata10;
+//				}
 		}
 
-		else // not on loss AND carbon
+        // If pixel is not on loss and carbon, all output rasters get 0
+		else
 		{
 
 			out_data1[x] = 0;
