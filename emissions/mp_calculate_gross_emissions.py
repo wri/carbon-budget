@@ -56,10 +56,10 @@ download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_ye
 # pool = multiprocessing.Pool(count-10)
 # pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#       calculate_gross_emissions.calc_emissions(tile)
+# For single processor use
+for tile in tile_list:
+
+      calculate_gross_emissions.calc_emissions(tile)
 
 uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
 uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
