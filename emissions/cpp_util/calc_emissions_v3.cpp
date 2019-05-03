@@ -53,14 +53,14 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1= tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
-string out_name2 = tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
-string out_name3 = tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
-string out_name4 = tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
-string out_name5 = tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
-string out_name6 = tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
-string out_name10 = tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
-string out_name20 = tile_id + "_decision_tree_nodes_gross_emis.tif";
+string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
+string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
+string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
+string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
+string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
+string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
+string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
+string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
@@ -137,8 +137,6 @@ pixelsize=GeoTransform[1];
 // // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
 //xsize = 4300;
 //ysize = 4300;
-xsize = 10000;
-ysize = 3000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -291,9 +289,9 @@ for(x=0; x<xsize; x++)
 			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float cf = *(vars + 0);
-			float CO2 = *(vars + 1);
-			float CH4 = *(vars + 2);
-			float N2O = *(vars + 3);
+			float c02 = *(vars + 1);
+			float ch = *(vars + 2);
+			float n20 = *(vars + 3);
 			float peatburn = *(vars + 4);
 			float peatdrain = *(vars + 5);
 
@@ -317,7 +315,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for commodity-driven deforestation
 			if (forestmodel_data[x] == 1)
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * CH4 * pow(10,-3) * 28) + ((2 * total_c) * cf * N2O * pow(10,-3) * 265);
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = soil_data[x]-(soil_data[x] * flu);
@@ -353,7 +351,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for shifting agriculture (only difference is flu val)
 			else if (forestmodel_data[x] == 2)
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * CH4 * pow(10,-3) * 28) + ((2 * total_c) * cf * N2O * pow(10,-3) * 265);
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = 0.72;
 				minsoil = soil_data[x]-(soil_data[x] * .72);
@@ -389,7 +387,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for forestry
 			else if (forestmodel_data[x] == 3)
 			{
-				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * cf * N2O * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
 
 				flu = flu_val(climate_data[x], ecozone_data[x]);
@@ -441,7 +439,7 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for wildfires
 		    else if (forestmodel_data[x] == 4)
 			{
-				Biomass_tCO2e_yesfire = ((2 * above_below_c) * cf * CO2 * pow(10, -3)) + ((2* above_below_c) * cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * cf * N2O * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = ((2 * above_below_c) * cf * c02 * pow(10, -3)) + ((2* above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = above_below_c * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
@@ -485,7 +483,7 @@ for(x=0; x<xsize; x++)
 		   // Emissions model for urbanization
 		   else if (forestmodel_data[x] == 5)
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * CH4 * pow(10,-3) * 28) + ((2 * total_c) * cf * N2O * pow(10,-3) * 265);
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = 0.8;
 				minsoil = soil_data[x]-(soil_data[x] * flu);
@@ -528,7 +526,7 @@ for(x=0; x<xsize; x++)
 				out_data4[x] = 0;
 				out_data5[x] = 0;
 
-				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * cf * N2O * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
@@ -602,12 +600,12 @@ for(x=0; x<xsize; x++)
 			{
 				out_data6[x] = outdata6;
 			}
+				// Decision tree end node value stored in its raster
+				out_data20[x] = outdata20;
 
-                // Decision tree end node value stored in its raster
-                out_data20[x] = outdata20;
 
-                // Add up all drivers for a combined raster. Each pixel only has one driver.
-                outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
+				// Add up all drivers for a combined raster. Each pixel only has one driver
+				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
 				if (outdata10 == 0)
 				{
 					out_data10[x] = 0;
@@ -617,9 +615,10 @@ for(x=0; x<xsize; x++)
 				}
 		}
 
-		// If pixel is not on loss and carbon, all output rasters are assigned 0
+		// If pixel is not on loss and carbon, all output rasters get 0
 		else
 		{
+
 			out_data1[x] = 0;
 			out_data2[x] = 0;
 			out_data3[x] = 0;
