@@ -53,14 +53,23 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
-string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
-string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
-string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
-string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
-string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
-string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
-string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
+//string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
+//string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
+//string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
+//string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
+//string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
+//string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
+//string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
+//string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
+
+string out_name1= tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
+string out_name2 = tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
+string out_name3 = tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
+string out_name4 =  tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
+string out_name5 = tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
+string out_name6 = tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
+string out_name10 = tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
+string out_name20 = tile_id + "_decision_tree_nodes_gross_emis.tif";
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
