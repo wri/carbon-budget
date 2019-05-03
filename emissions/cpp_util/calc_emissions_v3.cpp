@@ -580,7 +580,7 @@ for(x=0; x<xsize; x++)
 						outdata20 = 65;
 					}
 				}
-				cout << outdata6
+				cout << outdata6;
 			}
 
 			// write the variable to the pixel value
