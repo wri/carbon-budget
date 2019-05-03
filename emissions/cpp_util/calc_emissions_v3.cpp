@@ -216,7 +216,7 @@ OUTBAND10 = OUTGDAL10->GetRasterBand(1);
 OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_Byte, papszOptions );
 OUTGDAL20->SetGeoTransform(adfGeoTransform); OUTGDAL20->SetProjection(OUTPRJ);
 OUTBAND20 = OUTGDAL20->GetRasterBand(1);
-OUTBAND20->SetNoDataValue(-9999);
+OUTBAND20->SetNoDataValue(0);
 
 
 // Read/write data
