@@ -175,45 +175,46 @@ double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 OUTGDAL1 = OUTDRIVER->Create( out_name1.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL1->SetGeoTransform(adfGeoTransform); OUTGDAL1->SetProjection(OUTPRJ);
 OUTBAND1 = OUTGDAL1->GetRasterBand(1);
-OUTBAND1->SetNoDataValue(-9999);
+OUTBAND1->SetNoDataValue(0);
 
 // Shifting ag gross emissions
 OUTGDAL2 = OUTDRIVER->Create( out_name2.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
 OUTBAND2 = OUTGDAL2->GetRasterBand(1);
-OUTBAND2->SetNoDataValue(-9999);
+OUTBAND2->SetNoDataValue(0);
 
 // Forestry gross emissions
 OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
 OUTBAND3 = OUTGDAL3->GetRasterBand(1);
-OUTBAND3->SetNoDataValue(-9999);
+OUTBAND3->SetNoDataValue(0);
 
 // Wildfire gross emissions
 OUTGDAL4 = OUTDRIVER->Create( out_name4.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
 OUTBAND4 = OUTGDAL4->GetRasterBand(1);
-OUTBAND4->SetNoDataValue(-9999);
+OUTBAND4->SetNoDataValue(0);
 
 // Urbanization gross emissions
 OUTGDAL5 = OUTDRIVER->Create( out_name5.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
-OUTBAND5->SetNoDataValue(-9999);
+OUTBAND5->SetNoDataValue(0);
 
 // No driver gross emissions
 OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
 OUTBAND6 = OUTGDAL6->GetRasterBand(1);
-OUTBAND6->SetNoDataValue(-9999);
+OUTBAND6->SetNoDataValue(0);
 
 // All loss combined
 OUTGDAL10 = OUTDRIVER->Create( out_name10.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL10->SetGeoTransform(adfGeoTransform); OUTGDAL10->SetProjection(OUTPRJ);
 OUTBAND10 = OUTGDAL10->GetRasterBand(1);
+OUTBAND10->SetNoDataValue(0);
 
 // Decision tree node
-OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_UInt16, papszOptions );
+OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL20->SetGeoTransform(adfGeoTransform); OUTGDAL20->SetProjection(OUTPRJ);
 OUTBAND20 = OUTGDAL20->GetRasterBand(1);
 OUTBAND20->SetNoDataValue(0);
@@ -277,24 +278,6 @@ for(x=0; x<xsize; x++)
 		float outdata10 = 0;  // total of all drivers
 		float outdata20 = 0;  // flowchart node
 
-		// float outdata1 = -9999;
-		// float outdata2 = -9999;
-		// float outdata3 = -9999;
-		// float outdata4 = -9999;
-		// float outdata5 = -9999;
-		// float outdata6 = -9999;
-		// float outdata10 = -9999;
-
-
-		// change nodata to 0 bc we want to add them to create total carbon
-		if (dead_data[x] == -9999)
-		{
-			dead_data[x] = 0;
-		}
-		if (litter_data[x] == -9999)
-		{
-				litter_data[x] = 0;
-		}
 
 		if (loss_data[x] > 0 && agc_data[x] > 0) // on loss AND carbon
 		{
@@ -527,11 +510,11 @@ for(x=0; x<xsize; x++)
 
 		   else // no forest model data- make it no data except make disturbance model same as forestry, nancy said.
 			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
-				out_data4[x] = -9999;
-				out_data5[x] = -9999;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
 
 				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
 
@@ -586,55 +569,55 @@ for(x=0; x<xsize; x++)
 			if (forestmodel_data[x] == 1)
 			{
 				out_data1[x] = outdata1;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
-				out_data4[x] = -9999;
-				out_data5[x] = -9999;
-				out_data6[x] = -9999;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 2)
 			{
-				out_data1[x] = -9999;
+				out_data1[x] = 0;
 				out_data2[x] = outdata2;
-				out_data3[x] = -9999;
-				out_data4[x] = -9999;
-				out_data5[x] = -9999;
-				out_data6[x] = -9999;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 3)
 			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
 				out_data3[x] = outdata3;
-				out_data4[x] = -9999;
-				out_data5[x] = -9999;
-				out_data6[x] = -9999;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 4)
 			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
 				out_data4[x] = outdata4;
-				out_data5[x] = -9999;
-				out_data6[x] = -9999;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 5)
 			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
-				out_data4[x] = -9999;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
 				out_data5[x] = outdata5;
-				out_data6[x] = -9999;
+				out_data6[x] = 0;
 			}
 			else
 			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
-				out_data4[x] = -9999;
-				out_data5[x] = -9999;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
 				// node total raster
@@ -645,9 +628,9 @@ for(x=0; x<xsize; x++)
 				// add up all outputs to make merged output
 
 				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
-				if ((outdata10 == 0) || (outdata10 == -9999))
+				if ((outdata10 == 0)
 				{
-					out_data10[x] = -9999;
+					out_data10[x] = 0;
 				}
 				else{
 					out_data10[x] = outdata10;
@@ -657,14 +640,14 @@ for(x=0; x<xsize; x++)
 		else // not on loss AND carbon
 		{
 
-			out_data1[x] = -9999;
-			out_data2[x] = -9999;
-			out_data3[x] = -9999;
-			out_data4[x] = -9999;
-			out_data5[x] = -9999;
-			out_data6[x] = -9999;
-			out_data10[x] = -9999;
-			out_data20[x] = -9999;
+			out_data1[x] = 0;
+			out_data2[x] = 0;
+			out_data3[x] = 0;
+			out_data4[x] = 0;
+			out_data5[x] = 0;
+			out_data6[x] = 0;
+			out_data10[x] = 0;
+			out_data20[x] = 0;
 		}
     }
 
@@ -675,7 +658,7 @@ OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_UInt16, 0, 0 );
+OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
 }
 
 GDALClose(INGDAL1);
