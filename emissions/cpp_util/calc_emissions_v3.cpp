@@ -238,10 +238,10 @@ float ifl_data[xsize];
 float plant_data[xsize];
 
 // Outputs
-float out_data3[xsize];
-float out_data2[xsize];
-float out_data4[xsize];
 float out_data1[xsize];
+float out_data2[xsize];
+float out_data3[xsize];
+float out_data4[xsize];
 float out_data5[xsize];
 float out_data6[xsize];
 float out_data10[xsize];
@@ -528,9 +528,9 @@ for(x=0; x<xsize; x++)
 
 		   else // no forest model data- make it no data except make disturbance model same as forestry, nancy said.
 			{
-				out_data3[x] = -9999;
-				out_data2[x] = -9999;
 				out_data1[x] = -9999;
+				out_data2[x] = -9999;
+				out_data3[x] = -9999;
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 
@@ -638,15 +638,15 @@ for(x=0; x<xsize; x++)
 				out_data5[x] = -9999;
 				out_data6[x] = outdata6;
 			}
-			else // another else statement to handle if no forest model data
-			{
-				out_data1[x] = -9999;
-				out_data2[x] = -9999;
-				out_data3[x] = -9999;
-				out_data4[x] = -9999;
-				out_data5[x] = -9999;
-				out_data6[x] = -9999;
-			}
+//			else // another else statement to handle if no forest model data
+//			{
+//				out_data1[x] = -9999;
+//				out_data2[x] = -9999;
+//				out_data3[x] = -9999;
+//				out_data4[x] = -9999;
+//				out_data5[x] = -9999;
+//				out_data6[x] = -9999;
+//			}
 				// node total raster
 				out_data20[x] = outdata20;
 
