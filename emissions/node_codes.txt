@@ -1,21 +1,42 @@
-each of these represents a unique combination of loss driver and what it falls on. Use this to generate
-a raster used for calculating zonal stats. ex: how much loss in Ache was due to wildfire on peat in the tropics
-1	forestry, peat, burned
-2	forest, peat, not burned, boreal or temperate
-3	forest, peat, not burned,tropics, plantations
-4	forest, peat, not burned,tropics,  not plantations
-5	forest, not peat, burned
-6	forestry, not peat, not burned
-7	deforestation, peat, burned
-8	deforestation, peat, not burned
-9	deforestation, not peat, burned
-10	deforestation, not peat, not burned
-11	shifting ag, peat, burned
-12	shifting ag, peat, not burned
-13	shifting ag, not peat, burned
-14	shifting ag, not peat, not burned
-15	wildfire, peat, burned
-16	wildfire, peat, not burned, boreal or temperate
-17	wildfire, peat, not burned, tropics
-18	wildfire, not peat, burned
-19	wildfire, not peat, not burned
+Each of these represents a unique combination of loss driver and other contextual variables that determine the
+correct gross emissions equation.
+This can be used to do zonal stats on the gross or net emissions, e.g., gross emissions in commodity-driven deforestation
+in the tropics on plantations with fires.
+
+10- Commodity, peat, burned
+11- Commodity, peat, not burned
+12- Commodity, not peat, burned
+13- Commodity, not peat, not burned
+
+20- Shifting ag, peat, burned
+21- Shifting ag, peat, not burned
+22- Shifting ag, not peat, burned
+23- Shifting ag, not peat, not burned
+
+30- Forestry, peat, burned
+31- Forestry, peat, not burned, temperate/boreal
+32- Forestry, peat, not burned, tropical, plantation
+33- Forestry, peat, not burned, tropical, not plantation
+34- Forestry, not peat, burned
+35- Forestry, not peat, not burned
+
+40- Wildfire, peat, burned
+41- Wildfire, peat, not burned, temperate/boreal
+42- Wildfire, peat, not burned, tropical
+43- Wildfire, not peat, burned
+44- Wildfire, not peat, not burned
+
+50- Urbanization, peat, burned
+51- Urbanization, peat, not burned
+52- Urbanization, not peat, burned
+53- Urbanization, not peat, not burned
+
+60- No driver, peat, burned
+61- No driver, peat, not burned, temperate/boreal
+62- No driver, peat, not burned, tropical, plantation
+63- No driver, peat, not burned, tropical, no plantation
+64- No driver, not peat, burned
+65- No driver, not peat, not burned
+
+
+

@@ -134,9 +134,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
-// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 4300;
-//ysize = 4000;
+ // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+xsize = 4300;
+ysize = 4000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -575,80 +575,78 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
-			// Write the emissions value to the correct raster
-			if (forestmodel_data[x] == 1)  // Commodities
+			// Write the value to the correct raster and
+			if (forestmodel_data[x] == 1)
 			{
 				out_data1[x] = outdata1;
-//				out_data2[x] = 0;
-//				out_data3[x] = 0;
-//				out_data4[x] = 0;
-//				out_data5[x] = 0;
-//				out_data6[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 2)  // Shifting ag
+			else if (forestmodel_data[x] == 2)
 			{
-//				out_data1[x] = 0;
+				out_data1[x] = 0;
 				out_data2[x] = outdata2;
-//				out_data3[x] = 0;
-//				out_data4[x] = 0;
-//				out_data5[x] = 0;
-//				out_data6[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 3)  // Forestry
+			else if (forestmodel_data[x] == 3)
 			{
-//				out_data1[x] = 0;
-//				out_data2[x] = 0;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
 				out_data3[x] = outdata3;
-//				out_data4[x] = 0;
-//				out_data5[x] = 0;
-//				out_data6[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 4)  // Wildfires
+			else if (forestmodel_data[x] == 4)
 			{
-//				out_data1[x] = 0;
-//				out_data2[x] = 0;
-//				out_data3[x] = 0;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
 				out_data4[x] = outdata4;
-//				out_data5[x] = 0;
-//				out_data6[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
-			else if (forestmodel_data[x] == 5)  // Urbanization
+			else if (forestmodel_data[x] == 5)
 			{
-//				out_data1[x] = 0;
-//				out_data2[x] = 0;
-//				out_data3[x] = 0;
-//				out_data4[x] = 0;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
 				out_data5[x] = outdata5;
-//				out_data6[x] = 0;
+				out_data6[x] = 0;
 			}
-			else  // No driver
+			else
 			{
-//				out_data1[x] = 0;
-//				out_data2[x] = 0;
-//				out_data3[x] = 0;
-//				out_data4[x] = 0;
-//				out_data5[x] = 0;
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
-				// Decision tree node raster
+				// node total raster
 				out_data20[x] = outdata20;
 
 
-				// Combines each driver raster to make a total gross emissions raster.
-				// Each pixel only has one driver, of course.
-				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
+				// add up all outputs to make merged output
 
-//				if (outdata10 == 0)
-//				{
-//					out_data10[x] = 0;
-//				}
-//				else{
-//					out_data10[x] = outdata10;
-//				}
+				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
+				if (outdata10 == 0)
+				{
+					out_data10[x] = 0;
+				}
+				else{
+					out_data10[x] = outdata10;
+				}
 		}
 
-        // If pixel is not on loss and carbon, all output rasters get 0
-		else
+		else // not on loss AND carbon
 		{
 
 			out_data1[x] = 0;
