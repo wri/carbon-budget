@@ -2,8 +2,8 @@
 Code for creating 10x10 degree tiles of aboveground+belowground carbon accumulation rate
 and plantation category out of the plantation geodatabase.
 Its outputs are two sets of tiles at the full extent of planted forest features (not masked by mangrove or
-non-mangrove natural forest): above+belowground carbon accumulation rate, and plantation type (oil palm, wood fiber,
-other).
+non-mangrove natural forest): above+belowground carbon accumulation rate, and plantation type (1: oil palm, 2: wood fiber,
+3: other).
 Unlike other carbon model scripts, this one requires prep work done outside of the script (the large, commented chunk
 below this).
 Once that prep work of converting the gdb to a PostGIS table has been done, there are a few entry points to this script,

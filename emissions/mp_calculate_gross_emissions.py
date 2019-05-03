@@ -1,3 +1,7 @@
+'''
+This script calculates the gross emissions in tonnes CO2e/ha for every loss pixel.
+'''
+
 import multiprocessing
 import calculate_gross_emissions
 import utilities

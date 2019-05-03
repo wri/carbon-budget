@@ -289,9 +289,9 @@ for(x=0; x<xsize; x++)
 			vars = def_variables(ecozone_data[x], forestmodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float cf = *(vars + 0);
-			float c02 = *(vars + 1);
-			float ch = *(vars + 2);
-			float n20 = *(vars + 3);
+			float CO2 = *(vars + 1);
+			float CH4 = *(vars + 2);
+			float N2O = *(vars + 3);
 			float peatburn = *(vars + 4);
 			float peatdrain = *(vars + 5);
 
@@ -315,7 +315,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for commodity-driven deforestation
 			if (forestmodel_data[x] == 1)
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * CH4 * pow(10,-3) * 28) + ((2 * total_c) * cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = soil_data[x]-(soil_data[x] * flu);
@@ -351,7 +351,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for shifting agriculture (only difference is flu val)
 			else if (forestmodel_data[x] == 2)
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * CH4 * pow(10,-3) * 28) + ((2 * total_c) * cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = 0.72;
 				minsoil = soil_data[x]-(soil_data[x] * .72);
@@ -387,7 +387,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for forestry
 			else if (forestmodel_data[x] == 3)
 			{
-				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * cf * N2O * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
 
 				flu = flu_val(climate_data[x], ecozone_data[x]);
@@ -439,7 +439,7 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for wildfires
 		    else if (forestmodel_data[x] == 4)
 			{
-				Biomass_tCO2e_yesfire = ((2 * above_below_c) * cf * c02 * pow(10, -3)) + ((2* above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = ((2 * above_below_c) * cf * CO2 * pow(10, -3)) + ((2* above_below_c) * cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * cf * N2O * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = above_below_c * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
@@ -483,7 +483,7 @@ for(x=0; x<xsize; x++)
 		   // Emissions model for urbanization
 		   else if (forestmodel_data[x] == 5)
 			{
-				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * ch * pow(10,-3) * 28) + ((2 * total_c) * cf * n20 * pow(10,-3) * 265);
+				Biomass_tCO2e_yesfire = (total_c * 3.67) + ((2 * total_c) * cf * CH4 * pow(10,-3) * 28) + ((2 * total_c) * cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = total_c * 3.67;
 				flu = 0.8;
 				minsoil = soil_data[x]-(soil_data[x] * flu);
@@ -526,7 +526,7 @@ for(x=0; x<xsize; x++)
 				out_data4[x] = 0;
 				out_data5[x] = 0;
 
-				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * ch * pow(10, -3) * 28) + ((2 * above_below_c) * cf * n20 * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = (above_below_c * 3.67) + ((2 * above_below_c) * cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * cf * N2O * pow(10, -3) * 265);
 
 				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 3.67;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
@@ -608,10 +608,9 @@ for(x=0; x<xsize; x++)
 				out_data10[x] = outdata10;
 				}
 
-		// If pixel is not on loss and carbon, all output rasters get 0
+		// If pixel is not on loss and carbon, all output rasters are assigned 0
 		else
 		{
-
 			out_data1[x] = 0;
 			out_data2[x] = 0;
 			out_data3[x] = 0;

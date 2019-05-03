@@ -1,3 +1,7 @@
+'''
+This script calculates the gross emissions in tonnes CO2e/ha for every loss pixel.
+'''
+
 import subprocess
 import datetime
 import os
@@ -9,7 +13,7 @@ import universal_util as uu
 
 def calc_emissions(tile_id):
 
-    print "Processing:", tile_id
+    print "Calculating gross emissions for", tile_id
 
     start = datetime.datetime.now()
 
