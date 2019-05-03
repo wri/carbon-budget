@@ -135,8 +135,8 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
- // if wanting to test a small corner of a raster, can manually set this. This starts at top left of raster
-xsize = 4000;
+ // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+xsize = 4300;
 ysize = 4000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
@@ -637,16 +637,17 @@ for(x=0; x<xsize; x++)
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = outdata6;
+				cout << outdata6
 			}
-//			else // another else statement to handle if no forest model data
-//			{
-//				out_data1[x] = -9999;
-//				out_data2[x] = -9999;
-//				out_data3[x] = -9999;
-//				out_data4[x] = -9999;
-//				out_data5[x] = -9999;
-//				out_data6[x] = -9999;
-//			}
+			else // another else statement to handle if no forest model data
+			{
+				out_data1[x] = -9999;
+				out_data2[x] = -9999;
+				out_data3[x] = -9999;
+				out_data4[x] = -9999;
+				out_data5[x] = -9999;
+				out_data6[x] = -9999;
+			}
 				// node total raster
 				out_data20[x] = outdata20;
 
