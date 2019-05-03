@@ -601,7 +601,7 @@ for(x=0; x<xsize; x++)
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = -9999;
-//				cout << outdata2 << "  ";
+				cout << outdata2 << " : ";
 			}
 			else if (forestmodel_data[x] == 3)
 			{
