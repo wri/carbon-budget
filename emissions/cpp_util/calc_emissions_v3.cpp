@@ -580,7 +580,7 @@ for(x=0; x<xsize; x++)
 						outdata20 = 65;
 					}
 				}
-				cout << outdata6;
+				cout << outdata6 << "  ";
 			}
 
 			// write the variable to the pixel value
@@ -638,7 +638,7 @@ for(x=0; x<xsize; x++)
 				out_data4[x] = -9999;
 				out_data5[x] = -9999;
 				out_data6[x] = outdata6;
-				cout << outdata6;
+				cout << outdata6 << " ; ";
 			}
 			else // another else statement to handle if no forest model data
 			{
