@@ -134,9 +134,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
- // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-xsize = 4300;
-ysize = 4000;
+// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+//xsize = 4300;
+//ysize = 4300;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -325,12 +325,12 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // Commodity, peat, burned
 					{
 						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
-						outdata20 = 11;
+						outdata20 = 10;
 					}
 					else // Commodity, peat, not burned
 					{
 						outdata1 = Biomass_tCO2e_nofire + peatdrain;
-						outdata20 = 12;
+						outdata20 = 11;
 					}
 				}
 				else // Commodity, not peat
@@ -338,12 +338,12 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // Commodity, not peat, burned
 					{
 						outdata1 = Biomass_tCO2e_yesfire + minsoil;
-						outdata20 = 13;
+						outdata20 = 12;
 					}
 					else // Commodity, not peat, not burned
 					{
 						outdata1 = Biomass_tCO2e_nofire + minsoil;
-						outdata20 = 14;
+						outdata20 = 13;
 					}
 				}
 			}
@@ -575,67 +575,36 @@ for(x=0; x<xsize; x++)
 				}
 			}
 
-			// Write the value to the correct raster and
+			// Write the value to the correct raster
 			if (forestmodel_data[x] == 1)
 			{
 				out_data1[x] = outdata1;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 2)
 			{
-				out_data1[x] = 0;
 				out_data2[x] = outdata2;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 3)
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
 				out_data3[x] = outdata3;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 4)
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
 				out_data4[x] = outdata4;
-				out_data5[x] = 0;
-				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 5)
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
 				out_data5[x] = outdata5;
-				out_data6[x] = 0;
 			}
 			else
 			{
-				out_data1[x] = 0;
-				out_data2[x] = 0;
-				out_data3[x] = 0;
-				out_data4[x] = 0;
-				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
-				// node total raster
+				// Decision tree end node value stored in its raster
 				out_data20[x] = outdata20;
 
 
-				// add up all outputs to make merged output
-
+				// Add up all drivers for a combined raster. Each pixel only has one driver
 				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
 				if (outdata10 == 0)
 				{
@@ -646,7 +615,8 @@ for(x=0; x<xsize; x++)
 				}
 		}
 
-		else // not on loss AND carbon
+		// If pixel is not on loss and carbon, all output rasters get 0
+		else
 		{
 
 			out_data1[x] = 0;
