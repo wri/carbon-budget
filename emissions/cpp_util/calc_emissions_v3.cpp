@@ -628,7 +628,7 @@ for(x=0; x<xsize; x++)
 				// add up all outputs to make merged output
 
 				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
-				if ((outdata10 == 0)
+				if (outdata10 == 0)
 				{
 					out_data10[x] = 0;
 				}
