@@ -252,9 +252,6 @@ def s3_file_download(source, dest):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
-    print upload_dir
-    print pattern
-
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern), '--recursive']
 
     try:
