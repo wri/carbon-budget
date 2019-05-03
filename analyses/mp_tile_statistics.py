@@ -67,18 +67,20 @@ download_list = [
                 # cn.annual_gain_combo_dir,
                 # cn.cumul_gain_combo_dir
 
-                cn.elevation_processed_dir,
-                cn.precip_processed_dir,
+                # cn.elevation_processed_dir,
+                # cn.precip_processed_dir,
+                cn.planted_forest_type_unmasked_dir,
                 cn.bor_tem_trop_processed_dir,
                 cn.soil_C_full_extent_2000_dir,
                 cn.drivers_processed_dir,
-                cn.climate_zone_processed_dir,
-                cn.AGC_emis_year_dir,
-                cn.BGC_emis_year_dir,
-                cn.deadwood_emis_year_2000_dir,
-                cn.litter_emis_year_2000_dir,
-                cn.soil_C_emis_year_2000_dir,
-                cn.total_C_emis_year_dir
+                cn.climate_zone_processed_dir
+    
+                # cn.AGC_emis_year_dir,
+                # cn.BGC_emis_year_dir,
+                # cn.deadwood_emis_year_2000_dir,
+                # cn.litter_emis_year_2000_dir,
+                # cn.soil_C_emis_year_2000_dir,
+                # cn.total_C_emis_year_dir
 
                 # , cn.net_flux_dir
                 # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'

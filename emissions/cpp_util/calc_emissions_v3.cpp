@@ -629,7 +629,15 @@ for(x=0; x<xsize; x++)
 				out_data5[x] = outdata5;
 				out_data6[x] = -9999;
 			}
-
+			else if (forestmodel_data[x] == 6)
+			{
+				out_data1[x] = -9999;
+				out_data2[x] = -9999;
+				out_data3[x] = -9999;
+				out_data4[x] = -9999;
+				out_data5[x] = -9999;
+				out_data6[x] = outdata6;
+			}
 			else // another else statement to handle if no forest model data
 			{
 				out_data1[x] = -9999;
