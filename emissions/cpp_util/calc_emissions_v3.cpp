@@ -642,7 +642,7 @@ for(x=0; x<xsize; x++)
 				// Decision tree end node value stored in its raster
 				out_data20[x] = outdata20;
 
-
+ 
 				// Add up all drivers for a combined raster. Each pixel only has one driver
 				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
 				if (outdata10 == 0)
