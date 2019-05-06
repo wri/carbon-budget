@@ -1,4 +1,4 @@
- #include <iostream>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
@@ -53,10 +53,19 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
+//string out_name1= "outdata/" + tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
+//string out_name2 = "outdata/" + tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
+//string out_name3 = "outdata/" + tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
+//string out_name4 = "outdata/" + tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
+//string out_name5 = "outdata/" + tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
+//string out_name6 = "outdata/" + tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
+//string out_name10 = "outdata/" + tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
+//string out_name20 = "outdata/" + tile_id + "_decision_tree_nodes_gross_emis.tif";
+
 string out_name1= tile_id + "_commodity_t_CO2_ha_gross_emis_year.tif";
 string out_name2 = tile_id + "_shifting_ag_t_CO2_ha_gross_emis_year.tif";
 string out_name3 = tile_id + "_forestry_t_CO2_ha_gross_emis_year.tif";
-string out_name4 = tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
+string out_name4 =  tile_id + "_wildfire_t_CO2_ha_gross_emis_year.tif";
 string out_name5 = tile_id + "_urbanization_t_CO2_ha_gross_emis_year.tif";
 string out_name6 = tile_id + "_no_driver_t_CO2_ha_gross_emis_year.tif";
 string out_name10 = tile_id + "_all_drivers_t_CO2_ha_gross_emis_year.tif";
@@ -134,7 +143,7 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
- // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
 xsize = 4300;
 ysize = 4300;
 
@@ -579,25 +588,55 @@ for(x=0; x<xsize; x++)
 			if (forestmodel_data[x] == 1)
 			{
 				out_data1[x] = outdata1;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 2)
 			{
+				out_data1[x] = 0;
 				out_data2[x] = outdata2;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 3)
 			{
+				out_data1[x] = 0;
+				out_data2[x] = 0;
 				out_data3[x] = outdata3;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 4)
 			{
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
 				out_data4[x] = outdata4;
+				out_data5[x] = 0;
+				out_data6[x] = 0;
 			}
 			else if (forestmodel_data[x] == 5)
 			{
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
 				out_data5[x] = outdata5;
+				out_data6[x] = 0;
 			}
 			else
 			{
+				out_data1[x] = 0;
+				out_data2[x] = 0;
+				out_data3[x] = 0;
+				out_data4[x] = 0;
+				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
 				// Decision tree end node value stored in its raster
