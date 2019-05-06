@@ -89,9 +89,9 @@ int peat_drn_ann_calc(int forestmodel_data, int plant_data, int lossyr)
 
 float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
 {
-	// returns cf, CO2, CH4, N2O, peatburn, peatdrain, flu
+	// returns CFC, CO2, CH4, N2O, peatburn, peatdrain, flu
 	// static float def_variables[7];
-	float cf;
+	float CFC;
 	float CO2;
 	float CH4;
 	float N2O;
@@ -109,7 +109,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 		if (ecozone == 2) // Commodities/shifting ag, boreal
 		{
-			cf = 0.59;
+			CFC = 0.59;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
@@ -119,7 +119,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 		}
 		else if (ecozone == 3 )// Commodities/shifting ag, temperate
 		{
-			cf = 0.51;
+			CFC = 0.51;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
@@ -137,18 +137,18 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 			if (ifl > 0)    // Commodities/shifting ag, tropics, in IFL
 			{
-				cf = 0.36;
+				CFC = 0.36;
 			}
 			else            // Commodities/shifting ag, tropics, outside IFL
 			{
-				cf = 0.55;
+				CFC = 0.55;
 			}
 
 		}
 
 		else
 		{
-			cf = 0;
+			CFC = 0;
 		}
 	}
 
@@ -157,7 +157,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 		if (ecozone == 2) // Forestry, boreal
 		{
-			cf = 0.33;
+			CFC = 0.33;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
@@ -167,7 +167,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 		}
 		else if (ecozone == 3 )// Forestry, temperate
 		{
-			cf = 0.62;
+			CFC = 0.62;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
@@ -185,18 +185,18 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 			if (ifl > 0)
 			{
-				cf = 0.36;      // Forestry, tropics, in IFL
+				CFC = 0.36;      // Forestry, tropics, in IFL
 			}
 			else
 			{
-				cf = 0.55;      // Forestry, tropics, outside IFL
+				CFC = 0.55;      // Forestry, tropics, outside IFL
 			}
 
 		}
 
 		else
 		{
-			cf = 0;
+			CFC = 0;
 		}
 	}
 
@@ -205,7 +205,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 		if (ecozone == 2) // Wildfire, boreal
 		{
-			cf = 0.59;
+			CFC = 0.59;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
@@ -215,7 +215,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 		}
 		else if (ecozone == 3 )// Wildfire, temperate
 		{
-			cf = 0.51;
+			CFC = 0.51;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
@@ -233,21 +233,21 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 			if (ifl > 0)        // Wildfire, tropics, in IFL
 			{
-				cf = .36;
+				CFC = .36;
 			}
 			else                // Wildfire, tropics, outside IFL
 			{
-				cf = .55;
+				CFC = .55;
 			}
 
 		}
 
 		else
 		{
-			cf = 0;
+			CFC = 0;
 		}
 	}
-	static float def_variables[6] = {cf, CO2, CH4, N2O, peatburn, peat_drain};
+	static float def_variables[6] = {CFC, CO2, CH4, N2O, peatburn, peat_drain};
 
 	return def_variables;
 
