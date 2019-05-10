@@ -347,7 +347,7 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_name[x] >= 1)     // Commodity, not peat, burned, temperate, plantation
 						    {
-						        outdata1 = Biomass_tCO2e_yesfire
+						        outdata1 = Biomass_tCO2e_yesfire;
 						        outdata20 = 13;
 						    }
 						    if (plant_name[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
@@ -368,7 +368,7 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_name[x] >= 1)     // Commodity, not peat, not burned, temperate, plantation
 						    {
-						        outdata1 = Biomass_tCO2e_nofire
+						        outdata1 = Biomass_tCO2e_nofire;
 						        outdata20 = 16;
 						    }
 						    if (plant_name[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
