@@ -6,7 +6,7 @@ using namespace std;
 float flu_val(int climate_zone, int eco_zone)
 {
 	float flu_value;
-	if ((climate_zone == 2) || (climate_zone == 4) || (climate_zone == 6) || (climate_zone == 8) || (climate_zone == 12)) // dry
+	if ((climate_zone == 2) || (climate_zone == 4) || (climate_zone == 6) || (climate_zone == 8) || (climate_zone == 12)) // Dry
 	{
 		if (eco_zone == 1) // Dry, tropics
 		{

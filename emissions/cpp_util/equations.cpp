@@ -7,124 +7,125 @@ using namespace std;
 int peat_drn_ann_calc(int forestmodel_data, int plant_data, int lossyr)
 {
 	int peat_drn_ann;
-	int peat_drain;
-	// 1 = oil palm, 2 = wood fiber 3 = other, nodata = 0, gets treated like 3
+	int peat_drain_total;
 
+	// For plant_data, 1 = oil palm, 2 = wood fiber 3 = other, nodata = 0
 	if (forestmodel_data == 1 && plant_data == 1)  // Commodities, oil palm
 	{
 		peat_drn_ann = 47;
 	}
-	else if (forestmodel_data == 2 && plant_data == 1)  // Shifting ag, oil palm
-	{
-		peat_drn_ann = 47;
-	}
-	else if (forestmodel_data == 3 && plant_data == 1) // conversion, oil palm ????????? Where does 70 come from? Should this be 45?
-	{
-		peat_drn_ann = 70;
-	}
-	else if (forestmodel_data == 4 && plant_data == 1) // Wildfire, oil palm
-	{
-		peat_drn_ann = 45;
-	}
-
 	else if (forestmodel_data == 1 && plant_data == 2) // Commodities, wood fiber
 	{
 		peat_drn_ann = 80;
+	}
+	else if (forestmodel_data == 1 && plant_data == 3) // Commodities, other plantation
+	{
+		peat_drn_ann = 62;
+	}
+
+	else if (forestmodel_data == 2 && plant_data == 1)  // Shifting ag, oil palm
+	{
+		peat_drn_ann = 47;
 	}
 	else if (forestmodel_data == 2 && plant_data == 2) // Shifting ag, wood fiber
 	{
 		peat_drn_ann = 80;
 	}
+	else if (forestmodel_data == 2 && plant_data == 3) // Shifting ag, other plantation
+	{
+		peat_drn_ann = 62;
+	}
+
+	else if (forestmodel_data == 3 && plant_data == 1) // Forestry, oil palm
+	{
+		peat_drn_ann = 45;
+	}
 	else if (forestmodel_data == 3 && plant_data == 2) // Forestry, wood fiber
 	{
 		peat_drn_ann = 79;
 	}
-	else if (forestmodel_data == 4 && plant_data == 2) // Wildfire, wood fiber
-	{
-		peat_drn_ann = 79;
-	}
-
-	else if (forestmodel_data == 1 && plant_data == 3) // Commodities, other plantation
-	{
-		peat_drn_ann = 62;
-	}
-	else if (forestmodel_data == 2 && plant_data == 3) // Shifting ad, other plantation
-	{
-		peat_drn_ann = 62;
-	}
 	else if (forestmodel_data == 3 && plant_data == 3) // Forestry, other plantation
 	{
 		peat_drn_ann = 60;
+	}
+
+	else if (forestmodel_data == 4 && plant_data == 1) // Wildfire, oil palm
+	{
+		peat_drn_ann = 45;
+	}
+	else if (forestmodel_data == 4 && plant_data == 2) // Wildfire, wood fiber
+	{
+		peat_drn_ann = 79;
 	}
 	else if (forestmodel_data == 4 && plant_data == 3) // Wildfire, other plantation
 	{
 		peat_drn_ann = 60;
 	}
 
-//	else if (forestmodel_data == 1 && plant_data == 0)    // I don't think I should include these. They might assign peat_drn_ann values where there aren't plantations???
-//	{
-//		peat_drn_ann = 60;
-//	}
-//	else if (forestmodel_data == 2 && plant_data == 0)
-//	{
-//		peat_drn_ann = 62;
-//	}
-//	else if (forestmodel_data == 3 && plant_data == 0)
-//	{
-//		peat_drn_ann = 60;
-//	}
-//	else if (forestmodel_data == 4 && plant_data == 0)
-//	{
-//		peat_drn_ann = 60;
-//	}
+	else if (forestmodel_data == 5 && plant_data == 1) // Urbanization, oil palm
+	{
+		peat_drn_ann = 47;
+	}
+	else if (forestmodel_data == 5 && plant_data == 2) // Urbanization, wood fiber
+	{
+		peat_drn_ann = 80;
+	}
+	else if (forestmodel_data == 5 && plant_data == 3) // Urbanization, other plantation
+	{
+		peat_drn_ann = 62;
+	}
 
+	else if (forestmodel_data == 0 && plant_data == 1) // No driver, oil palm
+	{
+		peat_drn_ann = 45;
+	}
+	else if (forestmodel_data == 0 && plant_data == 2) // No driver, wood fiber
+	{
+		peat_drn_ann = 79;
+	}
+	else if (forestmodel_data == 0 && plant_data == 3) // No driver, other plantation
+	{
+		peat_drn_ann = 60;
+	}
 	else
 	{
 		peat_drn_ann = 0;
 	}
-	peat_drain = (15 - lossyr) * peat_drn_ann;      //     This was 16 in the original model. Should it be 15 or 16?
-    return peat_drain;
+	peat_drain_total = (15 - lossyr) * peat_drn_ann;
+    return peat_drain_total;
 }
 
 
 float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
 {
-	// returns CFC, CO2, CH4, N2O, peatburn, peatdrain, flu
-	// static float def_variables[7];
-	float CFC;
+	// returns Cf, CO2, CH4, N2O, peatburn, peat_drain_total
+	float Cf;
 	float CO2;
 	float CH4;
 	float N2O;
 	float peatburn;
-	float peat_drain;
-	// float flu_val;
-	// maybe define ecozone specific ones up here- gef numbers, flu numbers
+	float peat_drain_total;
 
-	// flu_val = flu(climate, ecozone);
-
-	if ((forestmodel_data == 1) || (forestmodel_data == 2)) // Commodities or shifting ag.-- only diff is flu val
+	if ((forestmodel_data == 1) || (forestmodel_data == 2)) // Commodities or shifting ag.
 	{
-		// flu val is independent of ecozone
-
-
 		if (ecozone == 2) // Commodities/shifting ag, boreal
 		{
-			CFC = 0.59;
+			Cf = 0.59;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
-			peatburn = 104;
-			peat_drain = (15 - lossyr) * 36;	    // This was 16 in Sam's model. Should it be 16 or 15??????
+			peatburn = 41;
+			peat_drain_total = (15 - lossyr) * 36;
 
 		}
 		else if (ecozone == 3 )// Commodities/shifting ag, temperate
 		{
-			CFC = 0.51;
+			Cf = 0.51;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
-			peatburn = 104;
-			peat_drain = (15 - lossyr) * 31;        // This was 16 in Sam's model. Should it be 16 or 15??????
+			peatburn = 41;
+			peat_drain_total = (15 - lossyr) * 31;
 
 		}
 		else if (ecozone == 1) // Commodities/shifting ag, tropics
@@ -132,23 +133,23 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			CO2 = 1580;
 			CH4 = 6.8;
 			N2O = 0.2;
-			peatburn = 355;
-			peat_drain = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
+			peatburn = 163;
+			peat_drain_total = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
 
 			if (ifl > 0)    // Commodities/shifting ag, tropics, in IFL
 			{
-				CFC = 0.36;
+				Cf = 0.36;
 			}
 			else            // Commodities/shifting ag, tropics, outside IFL
 			{
-				CFC = 0.55;
+				Cf = 0.55;
 			}
 
 		}
 
 		else
 		{
-			CFC = 0;
+			Cf = 0;
 		}
 	}
 
@@ -157,22 +158,22 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 		if (ecozone == 2) // Forestry, boreal
 		{
-			CFC = 0.33;
+			Cf = 0.33;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
-			peatburn = 104;
-			peat_drain = (15 - lossyr) * 3;             // This was 16 in Sam's model. Should it be 16 or 15??????
+			peatburn = 41;
+			peat_drain_total = (15 - lossyr) * 3;
 
 		}
 		else if (ecozone == 3 )// Forestry, temperate
 		{
-			CFC = 0.62;
+			Cf = 0.62;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
-			peatburn = 104;
-			peat_drain = (15 - lossyr) * 12;            // This was 16 in Sam's model. Should it be 16 or 15??????
+			peatburn = 41;
+			peat_drain_total = (15 - lossyr) * 12;
 
 		}
 		else if (ecozone == 1) // Forestry, tropics
@@ -180,23 +181,23 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			CO2 = 1580;
 			CH4 = 6.8;
 			N2O = 0.2;
-			peatburn = 355;
-			peat_drain = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
+			peatburn = 163;
+			peat_drain_total = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
 
 			if (ifl > 0)
 			{
-				CFC = 0.36;      // Forestry, tropics, in IFL
+				Cf = 0.36;      // Forestry, tropics, in IFL
 			}
 			else
 			{
-				CFC = 0.55;      // Forestry, tropics, outside IFL
+				Cf = 0.55;      // Forestry, tropics, outside IFL
 			}
 
 		}
 
 		else
 		{
-			CFC = 0;
+			Cf = 0;
 		}
 	}
 
@@ -205,22 +206,22 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 		if (ecozone == 2) // Wildfire, boreal
 		{
-			CFC = 0.59;
+			Cf = 0.59;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
-			peatburn = 104;
-			peat_drain = (15 - lossyr) * 3;             // This was 16 in Sam's model. Should it be 16 or 15??????
+			peatburn = 41;
+			peat_drain_total = (15 - lossyr) * 3;             // This was 16 in Sam's model. Should it be 16 or 15??????
 
 		}
 		else if (ecozone == 3 )// Wildfire, temperate
 		{
-			CFC = 0.51;
+			Cf = 0.51;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
-			peatburn = 104;
-			peat_drain = (15 - lossyr) * 12;            // This was 16 in Sam's model. Should it be 16 or 15??????
+			peatburn = 41;
+			peat_drain_total = (15 - lossyr) * 12;            // This was 16 in Sam's model. Should it be 16 or 15??????
 
 		}
 		else if (ecozone == 1) // Wildfire, tropics
@@ -228,26 +229,26 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			CO2 = 1580;
 			CH4 = 6.8;
 			N2O = 0.2;
-			peatburn = 355;
-			peat_drain = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
+			peatburn = 371;
+			peat_drain_total = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
 
 			if (ifl > 0)        // Wildfire, tropics, in IFL
 			{
-				CFC = .36;
+				Cf = 0.36;
 			}
 			else                // Wildfire, tropics, outside IFL
 			{
-				CFC = .55;
+				Cf = 0.55;
 			}
 
 		}
 
 		else
 		{
-			CFC = 0;
+			Cf = 0;
 		}
 	}
-	static float def_variables[6] = {CFC, CO2, CH4, N2O, peatburn, peat_drain};
+	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, peat_drain_total};
 
 	return def_variables;
 
