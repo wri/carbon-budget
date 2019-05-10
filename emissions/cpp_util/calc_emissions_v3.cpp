@@ -319,7 +319,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20)-(15-loss_name[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_name[x]);
 
 				if (peat_data[x] > 0) // Commodity, peat
 				{
@@ -387,7 +387,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = 0.72;
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20)-(15-loss_name[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_name[x]);
 
 				if (peat_data[x] > 0) // Shifting ag, peat
 				{
@@ -581,7 +581,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = 0.8;
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20)-(15-loss_name[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_name[x]);
 
                 if (peat_data[x] > 0) // Urbanization, peat
 				{
