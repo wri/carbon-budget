@@ -334,7 +334,7 @@ for(x=0; x<xsize; x++)
 						outdata20 = 11;
 					}
 				}
-				if // Commodity, not peat
+				if (peat_data[x] == 0)// Commodity, not peat
 				{
 					if (burn_data[x] > 0) // Commodity, not peat, burned
 					{
