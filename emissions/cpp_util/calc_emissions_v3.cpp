@@ -476,8 +476,8 @@ for(x=0; x<xsize; x++)
 			// Emissions model for forestry
 			else if (drivermodel_data[x] == 3)
 			{
-				Biomass_tCO2e_yesfire = (above_below_c * 44/12) + ((2 * above_below_c) * Cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * Cf * N2O * pow(10, -3) * 265);
-				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 44/12;
+				Biomass_tCO2e_yesfire = (agc_data[x] * 44/12) + ((2 * agc_data[x]) * Cf * CH4 * pow(10, -3) * 28) + ((2 * agc_data[x]) * Cf * N2O * pow(10, -3) * 265);
+				Biomass_tCO2e_nofire = agc_data[x] * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
 				if (peat_data[x] > 0) // Forestry, peat
@@ -527,7 +527,7 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for wildfires
 		    else if (drivermodel_data[x] == 4)
 			{
-				Biomass_tCO2e_yesfire = ((2 * above_below_c) * Cf * CO2 * pow(10, -3)) + ((2* above_below_c) * Cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * Cf * N2O * pow(10, -3) * 265);
+				Biomass_tCO2e_yesfire = (agc_data[x] * 44/12) + ((2 * agc_data[x] + dead_data[x] + litter_data[x]) * Cf * CH4 * pow(10, -3) * 28) + ((2 * agc_data[x] + dead_data[x] + litter_data[x]) * Cf * N2O * pow(10, -3) * 265);
 				Biomass_tCO2e_nofire = above_below_c * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
@@ -647,8 +647,8 @@ for(x=0; x<xsize; x++)
 		    // Nancy said to make this the same as forestry.
 		    else
 			{
-				Biomass_tCO2e_yesfire = (above_below_c * 44/12) + ((2 * above_below_c) * Cf * CH4 * pow(10, -3) * 28) + ((2 * above_below_c) * Cf * N2O * pow(10, -3) * 265);
-				Biomass_tCO2e_nofire = (agc_data[x] + bgc_data[x]) * 44/12;
+				Biomass_tCO2e_yesfire = (agc_data[x] * 44/12) + ((2 * agc_data[x]) * Cf * CH4 * pow(10, -3) * 28) + ((2 * agc_data[x]) * Cf * N2O * pow(10, -3) * 265);
+				Biomass_tCO2e_nofire = agc_data[x] * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
 				if (peat_data[x] > 0) // Forestry, peat
