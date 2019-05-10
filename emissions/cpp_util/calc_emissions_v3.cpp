@@ -283,7 +283,7 @@ for(x=0; x<xsize; x++)
 
         // Only evaluates pixels that have loss and carbon
 		if (loss_data[x] > 0 && agc_data[x] > 0)
-		{
+
 			float *vars;
 			// From equations.cpp, a function called def_variables, we get back several constants
 			/// based on several input rasters for that pixel. These are later used for calculating emissions.
@@ -319,7 +319,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
-				minsoil = soil_data[x]-(soil_data[x] * flu);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20)-(15-loss_name[x]);
 
 				if (peat_data[x] > 0) // Commodity, peat
 				{
@@ -345,12 +345,12 @@ for(x=0; x<xsize; x++)
 						}
 						if (ecozone_data[x] == 3)   // Commodity, not peat, burned, temperate
 						{
-						    if (plant_name[x] >= 1)     // Commodity, not peat, burned, temperate, plantation
+						    if (plant_data[x] >= 1)     // Commodity, not peat, burned, temperate, plantation
 						    {
 						        outdata1 = Biomass_tCO2e_yesfire;
 						        outdata20 = 13;
 						    }
-						    if (plant_name[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
 						    {
 						        outdata1 = Biomass_tCO2e_yesfire + minsoil;
 						        outdata20 = 14;
@@ -366,12 +366,12 @@ for(x=0; x<xsize; x++)
 						}
 						if (ecozone_data[x] == 3)   // Commodity, not peat, not burned, temperate
 						{
-						    if (plant_name[x] >= 1)     // Commodity, not peat, not burned, temperate, plantation
+						    if (plant_data[x] >= 1)     // Commodity, not peat, not burned, temperate, plantation
 						    {
 						        outdata1 = Biomass_tCO2e_nofire;
 						        outdata20 = 16;
 						    }
-						    if (plant_name[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
 						    {
 						        outdata1 = Biomass_tCO2e_nofire + minsoil;
 						        outdata20 = 17;
@@ -387,32 +387,88 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = 0.72;
-				minsoil = soil_data[x]-(soil_data[x] * .72);
+				minsoil = ((soil_data[x]-(soil_data[x] * 0.72))/20)-(15-loss_name[x]);
 
 				if (peat_data[x] > 0) // Shifting ag, peat
 				{
 					if (burn_data[x] > 0) // Shifting ag, peat, burned
 					{
-						outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
-						outdata20 = 20;
+						if (ecozone_data[x] == 2 || ecozone_data[x] == 3)      // Shifting ag, peat, burned, temperate/boreal
+						{
+						    outdata2 = Biomass_tCO2e_yesfire + peatburn;
+						    outdata20 = 20;
+						}
+						if (ecozone_data[x] == 1)      // Shifting ag, peat, burned, tropical
+						{
+						    outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						    outdata20 = 21;
+						}
 					}
-					else // Shifting ag, peat, not burned
+					if (burn_data[x] == 0)// Shifting ag, peat, not burned
 					{
-						outdata2 = Biomass_tCO2e_nofire + peatdrain;
-						outdata20 = 21;
+						if (ecozone_data[x] == 2 || ecozone_data[x] == 3)      // Shifting ag, peat, not burned, temperate/boreal
+						{
+						    outdata2 = Biomass_tCO2e_nofire;
+						    outdata20 = 22;
+						}
+						if (ecozone_data[x] == 1)      // Shifting ag, peat, not burned, tropical
+						{
+						    if (plant_data[x] >= 1)     // Shifting ag, peat, not burned, tropical, plantation
+						    {
+						        outdata2 = Biomass_tCO2e_nofire + peatdrain;
+						        outdata20 = 23;
+						    }
+						    if (plant_data[x] == 0)     // Shifting ag, peat, not burned, tropical, not plantation
+						    {
+						        outdata2 = Biomass_tCO2e_nofire;
+						        outdata20 = 24;
+						    }
+						}
 					}
 				}
-				else // Shifting ag, not peat
+				if (peat_data[x] == 0)// Shifting ag, not peat
 				{
 					if (burn_data[x] > 0) // Shifting ag, not peat, burned
 					{
-						outdata2 = Biomass_tCO2e_yesfire + minsoil;
-						outdata20 = 22;
+						if (ecozone_data[x] == 1 || ecozone_data[x] == 2)   // Shifting ag, not peat, burned, tropical/boreal
+						{
+                            outdata2 = Biomass_tCO2e_yesfire + minsoil;
+                            outdata20 = 25;
+						}
+						if (ecozone_data[x] == 3)   // Shifting ag, not peat, burned, temperate
+						{
+						    if (plant_data[x] >= 1)     // Shifting ag, not peat, burned, temperate, plantation
+						    {
+						        outdata2 = Biomass_tCO2e_yesfire;
+						        outdata20 = 26;
+						    }
+						    if (plant_data[x] == 0)     // Shifting ag, not peat, burned, temperate, no plantation
+						    {
+						        outdata2 = Biomass_tCO2e_yesfire + minsoil;
+						        outdata20 = 27;
+						    }
+						}
 					}
-					else // Shifting ag, not peat, not burned
+					if (burn_data[x] == 0) // Shifting ag, not peat, not burned
 					{
-						outdata2 = Biomass_tCO2e_nofire + minsoil;
-						outdata20 = 23;
+						if (ecozone_data[x] == 1 || ecozone_data[x] == 2)   // Shifting ag, not peat, not burned, tropical/boreal
+						{
+                            outdata2 = Biomass_tCO2e_nofire + minsoil;
+                            outdata20 = 28;
+						}
+						if (ecozone_data[x] == 3)   // Shifting ag, not peat, not burned, temperate
+						{
+						    if (plant_data[x] >= 1)     // Shifting ag, not peat, not burned, temperate, plantation
+						    {
+						        outdata2 = Biomass_tCO2e_nofire;
+						        outdata20 = 29;
+						    }
+						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, temperate, no plantation
+						    {
+						        outdata2 = Biomass_tCO2e_nofire + minsoil;
+						        outdata20 = 291;
+						    }
+						}
 					}
 				}
 			}
