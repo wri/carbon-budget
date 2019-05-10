@@ -328,13 +328,13 @@ for(x=0; x<xsize; x++)
 						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 						outdata20 = 10;
 					}
-					else if // Commodity, peat, not burned
+					if // Commodity, peat, not burned
 					{
 						outdata1 = Biomass_tCO2e_nofire + peatdrain;
 						outdata20 = 11;
 					}
 				}
-				else if // Commodity, not peat
+				if // Commodity, not peat
 				{
 					if (burn_data[x] > 0) // Commodity, not peat, burned
 					{
@@ -343,35 +343,35 @@ for(x=0; x<xsize; x++)
                             outdata1 = Biomass_tCO2e_yesfire + minsoil;
                             outdata20 = 12;
 						}
-						else if (ecozone_data[x] == 3)   // Commodity, not peat, burned, temperate
+						if (ecozone_data[x] == 3)   // Commodity, not peat, burned, temperate
 						{
 						    if (plant_name[x] >= 1)     // Commodity, not peat, burned, temperate, plantation
 						    {
 						        outdata1 = Biomass_tCO2e_yesfire
 						        outdata20 = 13;
 						    }
-						    else if (plant_name[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
+						    if (plant_name[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
 						    {
 						        outdata1 = Biomass_tCO2e_yesfire + minsoil;
 						        outdata20 = 14;
 						    }
 						}
 					}
-					else if (burn_data[x] == 0) // Commodity, not peat, not burned
+					if (burn_data[x] == 0) // Commodity, not peat, not burned
 					{
 						if (ecozone_data[x] == 1 || ecozone_data[x] == 2)   // Commodity, not peat, not burned, tropical/boreal
 						{
                             outdata1 = Biomass_tCO2e_nofire + minsoil;
                             outdata20 = 15;
 						}
-						else if (ecozone_data[x] == 3)   // Commodity, not peat, not burned, temperate
+						if (ecozone_data[x] == 3)   // Commodity, not peat, not burned, temperate
 						{
 						    if (plant_name[x] >= 1)     // Commodity, not peat, not burned, temperate, plantation
 						    {
 						        outdata1 = Biomass_tCO2e_nofire
 						        outdata20 = 16;
 						    }
-						    else if (plant_name[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
+						    if (plant_name[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
 						    {
 						        outdata1 = Biomass_tCO2e_nofire + minsoil;
 						        outdata20 = 17;
