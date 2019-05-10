@@ -328,7 +328,7 @@ for(x=0; x<xsize; x++)
 						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
 						outdata20 = 10;
 					}
-					if // Commodity, peat, not burned
+					if (burn_data[x] == 0)// Commodity, peat, not burned
 					{
 						outdata1 = Biomass_tCO2e_nofire + peatdrain;
 						outdata20 = 11;
