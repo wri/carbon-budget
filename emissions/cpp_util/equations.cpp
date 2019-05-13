@@ -209,7 +209,6 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn = 163;
-			peat_drain_total = peat_drn_ann_calc(forestmodel_data, plant_data, lossyr);
 
 			if (plant_data == 1) // No driver, tropics, oil palm
             {
