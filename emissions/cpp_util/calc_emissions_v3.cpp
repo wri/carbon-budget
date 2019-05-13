@@ -294,7 +294,7 @@ for(x=0; x<xsize; x++)
 			float CH4 = *(vars + 2);
 			float N2O = *(vars + 3);
 			float peatburn = *(vars + 4);
-			float peatdrain = *(vars + 5);
+			float peat_drain_total = *(vars + 5);
 
             // Define and calculate several values used later
 			float non_soil_c;
@@ -325,12 +325,12 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // Commodity, peat, burned
 					{
-						outdata1 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata1 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						outdata20 = 10;
 					}
 					if (burn_data[x] == 0)// Commodity, peat, not burned
 					{
-						outdata1 = Biomass_tCO2e_nofire + peatdrain;
+						outdata1 = Biomass_tCO2e_nofire + peat_drain_total;
 						outdata20 = 11;
 					}
 				}
@@ -379,6 +379,17 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
+				if (outdata1 < 0)
+				{
+				    cout << "New pixel:"
+				    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire
+				    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire
+				    cout << "flu: " << flu
+				    cout << "minsoil: " << minsoil
+				    cout << "soildata:"	<< soil_data[x]
+				    cout << "lossname:" << loss_name[x]
+				    cout << ""
+				}
 			}
 
 			// Emissions model for shifting agriculture (only difference is flu val)
@@ -400,7 +411,7 @@ for(x=0; x<xsize; x++)
 						}
 						if (ecozone_data[x] == 1)      // Shifting ag, peat, burned, tropical
 						{
-						    outdata2 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						    outdata2 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						    outdata20 = 21;
 						}
 					}
@@ -415,7 +426,7 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Shifting ag, peat, not burned, tropical, plantation
 						    {
-						        outdata2 = Biomass_tCO2e_nofire + peatdrain;
+						        outdata2 = Biomass_tCO2e_nofire + peat_drain_total;
 						        outdata20 = 23;
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, peat, not burned, tropical, not plantation
@@ -484,7 +495,7 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0 ) // Forestry, peat, burned
 					{
-						outdata3 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata3 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						outdata20 = 30;
 					}
 					if (burn_data[x] == 0 )  // Forestry, peat, not burned
@@ -498,7 +509,7 @@ for(x=0; x<xsize; x++)
 						{
 							if (plant_data[x] > 0)  // Forestry, peat, not burned, tropical, plantation
 							{
-								outdata3 = Biomass_tCO2e_nofire + peatdrain;
+								outdata3 = Biomass_tCO2e_nofire + peat_drain_total;
 								outdata20 = 32;
 							}
 							if (plant_data[x] == 0)  // Forestry, peat, not burned, tropical, not plantation
@@ -535,7 +546,7 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // Wildfire, peat, burned
 					{
-						outdata4 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata4 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						outdata20 = 40;
 					}
 					if (burn_data[x] == 0) // Wildfire, peat, not burned
@@ -549,7 +560,7 @@ for(x=0; x<xsize; x++)
 						{
 					        if (plant_data[x] > 0)  // Wildfire, peat, not burned, tropical, plantation
 							{
-								outdata4 = Biomass_tCO2e_nofire + peatdrain;
+								outdata4 = Biomass_tCO2e_nofire + peat_drain_total;
 								outdata20 = 42;
 							}
 							if (plant_data[x] == 0)  // Wildfire, peat, not burned, tropical, not plantation
@@ -587,12 +598,12 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // Urbanization, peat, burned
 					{
-						outdata5 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata5 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						outdata20 = 50;
 					}
 					if (burn_data[x] == 0)// Urbanization, peat, not burned
 					{
-						outdata5 = Biomass_tCO2e_nofire + peatdrain;
+						outdata5 = Biomass_tCO2e_nofire + peat_drain_total;
 						outdata20 = 51;
 					}
 				}
@@ -651,28 +662,28 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_nofire = agc_data[x] * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
-				if (peat_data[x] > 0) // Forestry, peat
+				if (peat_data[x] > 0) // No driver, peat
 				{
-					if (burn_data[x] > 0 ) // Forestry, peat, burned
+					if (burn_data[x] > 0 ) // No driver, peat, burned
 					{
-						outdata6 = Biomass_tCO2e_yesfire + peatdrain + peatburn;
+						outdata6 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						outdata20 = 60;
 					}
-					if (burn_data[x] == 0 )  // Forestry, peat, not burned
+					if (burn_data[x] == 0 )  // No driver, peat, not burned
 					{
-						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))  // Forestry, peat, not burned, temperate/boreal
+						if ((ecozone_data[x] == 2) || (ecozone_data[x] == 3))  // No driver, peat, not burned, temperate/boreal
 						{
 							outdata6 = Biomass_tCO2e_nofire;
 							outdata20 = 61;
 						}
-						if (ecozone_data[x] == 1)// Forestry, peat, not burned, tropical
+						if (ecozone_data[x] == 1)// No driver, peat, not burned, tropical
 						{
-							if (plant_data[x] > 0)  // Forestry, peat, not burned, tropical, plantation
+							if (plant_data[x] > 0)  // No driver, peat, not burned, tropical, plantation
 							{
-								outdata6 = Biomass_tCO2e_nofire + peatdrain;
+								outdata6 = Biomass_tCO2e_nofire + peat_drain_total;
 								outdata20 = 62;
 							}
-							if (plant_data[x] == 0)  // Forestry, peat, not burned, tropical, not plantation
+							if (plant_data[x] == 0)  // No driver, peat, not burned, tropical, not plantation
 							{
 								outdata6 = Biomass_tCO2e_nofire;
 								outdata20 = 63;
@@ -682,12 +693,12 @@ for(x=0; x<xsize; x++)
 				}
 				else
 				{
-					if (burn_data[x] > 0) // Forestry, not peat, burned
+					if (burn_data[x] > 0) // No driver, not peat, burned
 					{
 						outdata6 = Biomass_tCO2e_yesfire;
 						outdata20 = 64;
 					}
-					if (burn_data[x] == 0) // Forestry, not peat, not burned
+					if (burn_data[x] == 0) // No driver, not peat, not burned
 					{
 						outdata6 = Biomass_tCO2e_nofire;
 						outdata20 = 65;
