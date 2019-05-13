@@ -45,10 +45,10 @@ download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_ye
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
 #
 #
-# print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/2)
-# pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
+print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count/2)
+pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
 
 
 # # Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
