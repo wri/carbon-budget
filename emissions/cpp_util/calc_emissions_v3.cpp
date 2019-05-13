@@ -381,15 +381,15 @@ for(x=0; x<xsize; x++)
 				}
 				if (outdata1 < 0)
 				{
-				    cout << "New pixel:" << end1;
-				    cout << "outdata1:" << outdata1;
-				    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << end1;
-				    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << end1;
-				    cout << "flu: " << flu << end1;
-				    cout << "minsoil: " << minsoil << end1;
-				    cout << "soildata:"	<< soil_data[x] << end1;
-				    cout << "lossname:" << loss_name[x] << end1;
-				    cout << "" << end1;
+				    cout << "New pixel:" << endl;
+				    cout << "outdata1:" << outdata1 << endl;
+				    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+				    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
+				    cout << "flu: " << flu << endl;
+				    cout << "minsoil: " << minsoil << endl;
+				    cout << "soildata:"	<< soil_data[x] << endl;
+				    cout << "lossname:" << loss_name[x] << endl;
+				    cout << "" << endl;
 				}
 			}
 
