@@ -133,7 +133,7 @@ INGDAL1->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
- 
+
  // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
 xsize = 4300;
 ysize = 4300;
@@ -319,7 +319,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = flu_val(climate_data[x], ecozone_data[x]);
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_data[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_name[x]);
 
 				if (peat_data[x] > 0) // Commodity, peat
 				{
@@ -379,20 +379,20 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-//				if (outdata1 > 0)
-//				{
-                cout << "New pixel:" << endl;
-                cout << "outdata1:" << outdata1 << endl;
-                cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-                cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
-                cout << "flu: " << flu << endl;
-                cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
-                cout << "minsoil part 2: " << (15-loss_data[x]) << endl;
-                cout << "minsoil: " << minsoil << endl;
-                cout << "soildata: "	<< soil_data[x] << endl;
-                cout << "lossname: " << loss_data[x] << endl;
-                cout << "" << endl;
-//				}
+				if (outdata1 < 0)
+				{
+				    cout << "New pixel:" << endl;
+				    cout << "outdata1:" << outdata1 << endl;
+				    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+				    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
+				    cout << "flu: " << flu << endl;
+				    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+				    cout << "minsoil part 2: " << (15-loss_name[x]) << endl;
+				    cout << "minsoil: " << minsoil << endl;
+				    cout << "soildata: "	<< soil_data[x] << endl;
+				    cout << "lossname: " << loss_name[x] << endl;
+				    cout << "" << endl;
+				}
 			}
 
 			// Emissions model for shifting agriculture (only difference is flu val)
@@ -401,7 +401,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = 0.72;
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_data[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_name[x]);
 
 				if (peat_data[x] > 0) // Shifting ag, peat
 				{
@@ -595,7 +595,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * CH4 * pow(10,-3) * 28) + ((2 * non_soil_c) * Cf * N2O * pow(10,-3) * 265);
 				Biomass_tCO2e_nofire = non_soil_c * 44/12;
 				flu = 0.8;
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_data[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (15-loss_name[x]);
 
                 if (peat_data[x] > 0) // Urbanization, peat
 				{
