@@ -133,7 +133,7 @@ INGDAL1->GetGeoTransform(GeoTransform);
 ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
-
+ 
  // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
 xsize = 4300;
 ysize = 4300;
