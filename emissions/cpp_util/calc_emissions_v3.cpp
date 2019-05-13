@@ -386,9 +386,11 @@ for(x=0; x<xsize; x++)
 				    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
 				    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
 				    cout << "flu: " << flu << endl;
+				    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+				    cout << "minsoil part 2: " << (15-loss_name[x]) << endl;
 				    cout << "minsoil: " << minsoil << endl;
-				    cout << "soildata:"	<< soil_data[x] << endl;
-				    cout << "lossname:" << loss_name[x] << endl;
+				    cout << "soildata: "	<< soil_data[x] << endl;
+				    cout << "lossname: " << loss_name[x] << endl;
 				    cout << "" << endl;
 				}
 			}
