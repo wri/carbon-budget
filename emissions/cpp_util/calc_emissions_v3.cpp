@@ -134,9 +134,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
-// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 4300;
-//ysize = 4300;
+ // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+xsize = 4300;
+ysize = 4300;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -379,20 +379,20 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-				if (outdata1 < 0)
-				{
-				    cout << "New pixel:" << endl;
-				    cout << "outdata1:" << outdata1 << endl;
-				    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-				    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
-				    cout << "flu: " << flu << endl;
-				    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
-				    cout << "minsoil part 2: " << (15-loss_data[x]) << endl;
-				    cout << "minsoil: " << minsoil << endl;
-				    cout << "soildata: "	<< soil_data[x] << endl;
-				    cout << "lossname: " << loss_data[x] << endl;
-				    cout << "" << endl;
-				}
+//				if (outdata1 > 0)
+//				{
+                cout << "New pixel:" << endl;
+                cout << "outdata1:" << outdata1 << endl;
+                cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+                cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
+                cout << "flu: " << flu << endl;
+                cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+                cout << "minsoil part 2: " << (15-loss_data[x]) << endl;
+                cout << "minsoil: " << minsoil << endl;
+                cout << "soildata: "	<< soil_data[x] << endl;
+                cout << "lossname: " << loss_data[x] << endl;
+                cout << "" << endl;
+//				}
 			}
 
 			// Emissions model for shifting agriculture (only difference is flu val)
