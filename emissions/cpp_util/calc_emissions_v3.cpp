@@ -444,17 +444,17 @@ for(x=0; x<xsize; x++)
 				}
 //				if (outdata1 < 0)
 //				{
-                cout << "New pixel:" << endl;
-                cout << "outdata1:" << outdata1 << endl;
-                cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-                cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
-                cout << "flu: " << flu << endl;
-                cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
-                cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
-                cout << "minsoil: " << minsoil << endl;
-                cout << "soildata: "	<< soil_data[x] << endl;
-                cout << "lossname: " << loss_data[x] << endl;
-                cout << "" << endl;
+//                cout << "New pixel:" << endl;
+//                cout << "outdata1:" << outdata1 << endl;
+//                cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+//                cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
+//                cout << "flu: " << flu << endl;
+//                cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+//                cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
+//                cout << "minsoil: " << minsoil << endl;
+//                cout << "soildata: "	<< soil_data[x] << endl;
+//                cout << "lossname: " << loss_data[x] << endl;
+//                cout << "" << endl;
 //				}
 			}
 
