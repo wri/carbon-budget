@@ -5,6 +5,17 @@ using namespace std;
 
 float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
 {
+
+	int model_years;    // How many loss years are in the model
+    model_years = 15;
+
+	int tropical;       // The ecozone code for the tropics
+    tropical = 1;
+    int temperate;      // The ecozone code for the temperate zone
+    temperate = 3;
+    int boreal;         // The ecozone code for the boreal zone
+    boreal = 2;
+
 	// returns Cf, CO2, CH4, N2O, peatburn, peat_drain_total
 	float Cf;
 	float CO2;
@@ -14,29 +25,27 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 	float peat_drain_annual;
 	float peat_drain_total;
 
-	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)) // Commodities or shifting ag.
+	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)) // Commodities, shifting ag., or urbanization
 	{
-		if (ecozone == 2) // Commodities/shifting ag/urbanization, boreal
+		if (ecozone == boreal) // Commodities/shifting ag/urbanization, boreal
 		{
 			Cf = 0.59;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 36;
-
+			peat_drain_total = (model_years - lossyr) * 36;
 		}
-		else if (ecozone == 3 )// Commodities/shifting ag/urbanization, temperate
+		else if (ecozone == temperate)// Commodities/shifting ag/urbanization, temperate
 		{
 			Cf = 0.51;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 31;
-
+			peat_drain_total = (model_years - lossyr) * 31;
 		}
-		else if (ecozone == 1) // Commodities/shifting ag/urbanization, tropics
+		else if (ecozone == tropical) // Commodities/shifting ag/urbanization, tropics
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -55,7 +64,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 62;
             }
-            peat_drain_total = (15 - lossyr) * peat_drain_annual;
+            peat_drain_total = (model_years - lossyr) * peat_drain_annual;
 
 			if (ifl > 0)    // Commodities/shifting ag/urbanization, tropics, in IFL
 			{
@@ -65,34 +74,31 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;
 			}
-
 		}
 	}
 
 	else if (forestmodel_data == 3) // Forestry
 	{
 
-		if (ecozone == 2) // Forestry, boreal
+		if (ecozone == boreal) // Forestry, boreal
 		{
 			Cf = 0.33;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 3;
-
+			peat_drain_total = (model_years - lossyr) * 3;
 		}
-		else if (ecozone == 3 )// Forestry, temperate
+		else if (ecozone == temperate)// Forestry, temperate
 		{
 			Cf = 0.62;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 12;
-
+			peat_drain_total = (model_years - lossyr) * 12;
 		}
-		else if (ecozone == 1) // Forestry, tropics
+		else if (ecozone == tropical) // Forestry, tropics
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -111,7 +117,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 60;
             }
-            peat_drain_total = (15 - lossyr) * peat_drain_annual;
+            peat_drain_total = (model_years - lossyr) * peat_drain_annual;
 
 			if (ifl > 0)
 			{
@@ -121,34 +127,31 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;      // Forestry, tropics, outside IFL
 			}
-
 		}
 	}
 
 	else if (forestmodel_data == 4) // Wildfire
 	{
 
-		if (ecozone == 2) // Wildfire, boreal
+		if (ecozone == boreal) // Wildfire, boreal
 		{
 			Cf = 0.59;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 3;
-
+			peat_drain_total = (model_years - lossyr) * 3;
 		}
-		else if (ecozone == 3 )// Wildfire, temperate
+		else if (ecozone == temperate)// Wildfire, temperate
 		{
 			Cf = 0.51;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 12;
-
+			peat_drain_total = (model_years - lossyr) * 12;
 		}
-		else if (ecozone == 1) // Wildfire, tropics
+		else if (ecozone == tropical) // Wildfire, tropics
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -167,7 +170,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 60;
             }
-            peat_drain_total = (15 - lossyr) * peat_drain_annual;
+            peat_drain_total = (model_years - lossyr) * peat_drain_annual;
 
 			if (ifl > 0)        // Wildfire, tropics, in IFL
 			{
@@ -177,33 +180,30 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;
 			}
-
 		}
 	}
 
 	else  // No driver-- same as forestry
 	{
-		if (ecozone == 2) // No driver, boreal
+		if (ecozone == boreal) // No driver, boreal
 		{
 			Cf = 0.33;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 3;
-
+			peat_drain_total = (model_years - lossyr) * 3;
 		}
-		else if (ecozone == 3 )// No driver, temperate
+		else if (ecozone == temperate)// No driver, temperate
 		{
 			Cf = 0.62;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (15 - lossyr) * 12;
-
+			peat_drain_total = (model_years - lossyr) * 12;
 		}
-		else if (ecozone == 1) // No driver, tropics
+		else if (ecozone == tropical) // No driver, tropics
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -222,7 +222,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 60;
             }
-            peat_drain_total = (15 - lossyr) * peat_drain_annual;
+            peat_drain_total = (model_years - lossyr) * peat_drain_annual;
 
 			if (ifl > 0)
 			{
@@ -232,7 +232,6 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;      // No driver, tropics, outside IFL
 			}
-
 		}
 	}
 
