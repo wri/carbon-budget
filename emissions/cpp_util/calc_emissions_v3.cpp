@@ -422,7 +422,7 @@ for(x=0; x<xsize; x++)
 						        outdata20 = 161;
 						    }
 						}
-						if ((ecozone_data[x] == boreal)   // Commodity, not peat, not burned, boreal
+						if (ecozone_data[x] == boreal)   // Commodity, not peat, not burned, boreal
 						{
                             outdata1 = Biomass_tCO2e_nofire + minsoil;
                             outdata20 = 17;
@@ -463,6 +463,7 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				float shiftag_flu;
 				shiftag_flu = 0.72;
 				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20) * (model_years-loss_data[x]);
 
@@ -698,6 +699,7 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				float urb_flu;
 				urb_flu = 0.8;
 				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/20) * (model_years-loss_data[x]);
 
