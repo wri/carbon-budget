@@ -22,8 +22,8 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 	float CH4;
 	float N2O;
 	float peatburn;
-	float peat_drain_annual;
-	float peat_drain_total;
+	int peat_drain_annual;
+	int peat_drain_total;
 
 	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)) // Commodities, shifting ag., or urbanization
 	{
