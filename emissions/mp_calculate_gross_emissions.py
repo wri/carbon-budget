@@ -68,7 +68,7 @@ for tile in tile_list:
     uu.make_blank_tile(tile, cn.pattern_planted_forest_type_unmasked, 'cpp_util/')
 
 
-# Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
+# 6.68 GB for four tiles simultaenously
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/2)
 pool.map(calculate_gross_emissions.calc_emissions, tile_list)
