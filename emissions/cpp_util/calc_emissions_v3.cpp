@@ -42,7 +42,7 @@ N2O_equiv = 265;
 
 float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44/12;
-cout << C_to_CO2
+cout << C_to_CO2;
 
 int model_years;    // How many loss years are in the model
 model_years = 15;
