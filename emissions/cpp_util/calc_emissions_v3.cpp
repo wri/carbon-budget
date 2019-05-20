@@ -293,6 +293,9 @@ for(x=0; x<xsize; x++)
     // Everything from here down analyzes one pixel at a time
 	{
 
+        cout << "x: " << x << endl;
+		cout << "y: " << y << endl;
+
         // Initializes each output raster at 0 (nodata value)
 		float outdata1 = 0;  // commodities
 		float outdata2 = 0;  // shifting ag.
@@ -311,8 +314,6 @@ for(x=0; x<xsize; x++)
         // Only evaluates pixels that have loss and carbon
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
-		    cout << "x: " << x << endl;
-			cout << "y: " << y << endl;
 
 			float Cf = *(vars + 0);
 			float Gef_CO2 = *(vars + 1);
