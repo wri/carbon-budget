@@ -278,6 +278,10 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 //    cout << "plant_data end of fx: " << plant_data << endl;
 //    cout << "model_years end of fx: " << model_years << endl;
 //    cout << "loss_yr end of fx: " << lossyr << endl;
+
+    float test;
+    test = rand();
+
     cout << "cf end of fx: " << Cf << endl;
     cout << "gef_co2 end of fx: " << CO2 << endl;
     cout << "gef_Ch4 end of fx: " << CH4 << endl;
@@ -285,11 +289,10 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
     cout << "peatburn end of fx: " << peatburn << endl;
     cout << "peat_drain_annual end of fx: " << peat_drain_annual << endl;
     cout << "peat_drain_total end of fx: " << peat_drain_total << endl;
+    cout << "random_number end of fx: " << test << endl;
     cout << endl;
 
-//    peat_drain_total = rand();
-
-	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, peat_drain_total};
+	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, test};
 
 	return def_variables;
 
