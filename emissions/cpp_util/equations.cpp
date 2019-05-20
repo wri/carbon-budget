@@ -60,7 +60,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 80;
             }
-            else if (plant_data == 3) // Commodities/shifting ag/urbanization, tropics, other plantation
+            else // Commodities/shifting ag/urbanization, tropics, other plantation or no plantation
             {
                 peat_drain_annual = 62;
             }
@@ -122,7 +122,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 79;
             }
-            else if (plant_data == 3) // Forestry, tropics, other plantation
+            else // Forestry, tropics, other plantation or no plantation
             {
                 peat_drain_annual = 60;
             }
@@ -184,7 +184,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 79;
             }
-            else if (plant_data == 3) // Wildfire, tropics, other plantation
+            else // Wildfire, tropics, other plantation or no plantation
             {
                 peat_drain_annual = 60;
             }
@@ -245,7 +245,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
             {
                 peat_drain_annual = 79;
             }
-            else if (plant_data == 3) // No driver, tropics, other plantation
+            else // No driver, tropics, other plantation or no plantation
             {
                 peat_drain_annual = 60;
             }
