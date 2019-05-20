@@ -235,8 +235,8 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 		}
 	}
 
-//    cout << "model_years" << model_year << endl;
-    cout << "loss_yr" << lossyr << end1;
+    cout << "model_years" << model_year << endl;
+    cout << "loss_yr" << lossyr << endl;
 	cout << "peat_drain_annual" << peat_drain_annual << endl;
 	cout << "peat_drain_total" << peat_drain_total << endl;
 
