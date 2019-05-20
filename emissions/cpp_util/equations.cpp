@@ -74,6 +74,15 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;
 			}
+            cout << "ecozone: " << ecozone << endl;
+            cout << "forestmodel_data: " << forestmodel_data << endl;
+            cout << "ifl: " << ifl << endl;
+            cout << "climate: " << climate << endl;
+            cout << "plant_data: " << plant_data << endl;
+            cout << "model_years: " << model_years << endl;
+            cout << "loss_yr: " << lossyr << endl;
+	        cout << "peat_drain_annual: " << peat_drain_annual << endl;
+	        cout << "peat_drain_total: " << peat_drain_total << endl;
 		}
 	}
 
@@ -127,6 +136,15 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;      // Forestry, tropics, outside IFL
 			}
+            cout << "ecozone: " << ecozone << endl;
+            cout << "forestmodel_data: " << forestmodel_data << endl;
+            cout << "ifl: " << ifl << endl;
+            cout << "climate: " << climate << endl;
+            cout << "plant_data: " << plant_data << endl;
+            cout << "model_years: " << model_years << endl;
+            cout << "loss_yr: " << lossyr << endl;
+	        cout << "peat_drain_annual: " << peat_drain_annual << endl;
+	        cout << "peat_drain_total: " << peat_drain_total << endl;
 		}
 	}
 
@@ -180,6 +198,15 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;
 			}
+            cout << "ecozone: " << ecozone << endl;
+            cout << "forestmodel_data: " << forestmodel_data << endl;
+            cout << "ifl: " << ifl << endl;
+            cout << "climate: " << climate << endl;
+            cout << "plant_data: " << plant_data << endl;
+			cout << "model_years: " << model_years << endl;
+            cout << "loss_yr: " << lossyr << endl;
+	        cout << "peat_drain_annual: " << peat_drain_annual << endl;
+	        cout << "peat_drain_total: " << peat_drain_total << endl;
 		}
 	}
 
@@ -232,13 +259,17 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 			{
 				Cf = 0.55;      // No driver, tropics, outside IFL
 			}
+            cout << "ecozone: " << ecozone << endl;
+            cout << "forestmodel_data: " << forestmodel_data << endl;
+            cout << "ifl: " << ifl << endl;
+            cout << "climate: " << climate << endl;
+            cout << "plant_data: " << plant_data << endl;
+			cout << "model_years: " << model_years << endl;
+            cout << "loss_yr: " << lossyr << endl;
+	        cout << "peat_drain_annual: " << peat_drain_annual << endl;
+	        cout << "peat_drain_total: " << peat_drain_total << endl;
 		}
 	}
-
-    cout << "model_years: " << model_years << endl;
-    cout << "loss_yr: " << lossyr << endl;
-	cout << "peat_drain_annual: " << peat_drain_annual << endl;
-	cout << "peat_drain_total: " << peat_drain_total << endl;
 
 	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, peat_drain_total};
 
