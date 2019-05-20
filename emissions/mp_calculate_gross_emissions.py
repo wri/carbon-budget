@@ -78,12 +78,12 @@ for tile in tile_list:
 
       calculate_gross_emissions.calc_emissions(tile)
 
-uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
-uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
-uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
-uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
-uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
-uu.upload_final_set(cn.gross_emis_no_driver_dir, cn.pattern_gross_emis_no_driver)
-uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
-uu.upload_final_set(cn.gross_emis_all_drivers_dir, cn.pattern_gross_emis_all_drivers)
+# uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
+# uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
+# uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
+# uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
+# uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
+# uu.upload_final_set(cn.gross_emis_no_driver_dir, cn.pattern_gross_emis_no_driver)
+# uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
+# uu.upload_final_set(cn.gross_emis_all_drivers_dir, cn.pattern_gross_emis_all_drivers)
 

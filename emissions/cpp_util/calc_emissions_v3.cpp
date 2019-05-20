@@ -307,6 +307,9 @@ for(x=0; x<xsize; x++)
         // Only evaluates pixels that have loss and carbon
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
+		    cout << "x: " << x << endl;
+			cout << "y: " << y << endl;
+
 			float *vars;
 			// From equations.cpp, a function called def_variables, we get back several constants
 			/// based on several input rasters for that pixel. These are later used for calculating emissions.
@@ -319,8 +322,6 @@ for(x=0; x<xsize; x++)
 			float peatburn = *(vars + 4);
 			float peat_drain_total = *(vars + 5);
 
-			cout << "x: " << x << endl;
-			cout << "y: " << y << endl;
 			cout << "cf main script: " << Cf << endl;
 			cout << "gef_co2 main script: " << Gef_CO2 << endl;
 			cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
