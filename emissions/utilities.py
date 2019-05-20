@@ -59,7 +59,7 @@ def mask_loss_pre_2000_plantation(tile_id):
     else:
 
         print "No pre-2000 plantation exists for {}. Renaming loss tile...".format(tile_id)
-        os.rename('{}.tif'.format(tile_id), '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
+        os.rename('{0}{1}.tif'.format(dest_folder, tile_id), '{0}{1}_{2}.tif'.format(dest_folder, tile_id, cn.pattern_loss_pre_2000_plant_masked))
 
     print "Pre-2000 plantations for {} complete".format(tile_id)
 
