@@ -326,6 +326,8 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
     subprocess.check_call(cmd)
 
 
+# Creates a tile of all 0s for any tile passed to it.
+# Uses the pixel area tile for information about the tile.
 def make_blank_tile(tile_id, pattern, folder = None):
 
     file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
@@ -340,6 +342,8 @@ def make_blank_tile(tile_id, pattern, folder = None):
 
         s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
                          '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
+
+        print "Creating raster of all 0s for", file
 
         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_planted_forest_type_unmasked),

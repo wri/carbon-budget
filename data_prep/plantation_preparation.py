@@ -202,5 +202,15 @@ def create_10x10_plantation_type(tile_id, plant_type_1x1_vrt):
            '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Byte', plant_type_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
-    uu.upload_final(cn.planted_forest_type_unmasked_dir, tile_id, cn.pattern_planted_forest_type_unmasked)
-    print "    Tile converted and copied to s3"
+    print "Checking if {} contains any data...".format(tile_id)
+    stats = uu.check_for_data(tile_10x10)
+
+    if stats[0] > 0:
+
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        uu.upload_final(cn.planted_forest_type_unmasked_dir, tile_id, cn.pattern_planted_forest_type_unmasked)
+        print "    Tile converted and copied to s3"
+
+    else:
+
+        print "  No data found. Not copying {}.".format(tile_id)
