@@ -320,6 +320,7 @@ for(x=0; x<xsize; x++)
 			float peat_drain_total = *(vars + 5);
 
 			cout << "peat_drain_total main script" << peat_drain_total << endl;
+			cout << endl;
 
             // Define and calculate several values used later
 			float non_soil_c;
