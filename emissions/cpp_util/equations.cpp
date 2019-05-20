@@ -280,7 +280,8 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 //    cout << "loss_yr end of fx: " << lossyr << endl;
 
     float test;
-    test = srand(time(0));
+    srand(time(0));
+    test = rand();
 
     cout << "cf end of fx: " << Cf << endl;
     cout << "gef_co2 end of fx: " << CO2 << endl;
