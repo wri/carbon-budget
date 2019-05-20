@@ -144,12 +144,8 @@ INBAND11 = INGDAL11->GetRasterBand(1);
 INGDAL12 = (GDALDataset *) GDALOpen(soil_name.c_str(), GA_ReadOnly );
 INBAND12 = INGDAL12->GetRasterBand(1);
 
-cout << "Hello1";
-
 INGDAL13 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND13 = INGDAL13->GetRasterBand(1);
-
-cout << "Hello2";
 
 // The rest of the code runs on the size of INBAND3. This can be changed.
 xsize=INBAND3->GetXSize();

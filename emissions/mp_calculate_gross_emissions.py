@@ -65,6 +65,16 @@ download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_ye
 # # Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(count/2)
+# pool.map(uu.make_blank_tile, tile_list)
+
+# For single processor use
+for tile in tile_list:
+
+    uu.make_blank_tile(tile, cn.planted_forest_type_unmasked_dir, 'cpp_util/')
+
+# # Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
 # pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
 # For single processor use

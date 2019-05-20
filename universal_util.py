@@ -324,3 +324,21 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
     subprocess.check_call(cmd)
+
+
+def make_blank_tile(tile_id, pattern, folder = None):
+
+    file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+
+    if os.path.exists(file):
+
+        print '{} exists. Not creating a blank tile.'.format(file)
+
+    else:
+
+        print '{} does not exist. Creating a blank tile.'.format(file)
+
+        xmin, ymin, xmax, ymax = coords(tile_id)
+
+
+
