@@ -51,10 +51,10 @@ for tile in tile_list:
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
 
 
-# print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/2)
-# pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
+print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count/2)
+pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
