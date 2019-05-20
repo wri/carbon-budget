@@ -5,38 +5,74 @@ in the tropics on plantations with fires.
 
 10- Commodity, peat, burned
 11- Commodity, peat, not burned
-12- Commodity, not peat, burned
-13- Commodity, not peat, not burned
+12- Commodity, not peat, burned, tropical, IFL, plantation
+121- Commodity, not peat, burned, tropical, IFL, not plantation
+13- Commodity, not peat, burned, tropical, not IFL, plantation
+131- Commodity, not peat, burned, tropical, not IFL, not plantation
+14- Commodity, not peat, burned, boreal
+15- Commodity, not peat, burned, temperate, plantation
+151- Commodity, not peat, burned, temperate, no plantation
+16- Commodity, not peat, not burned, tropical, plantation
+161- Commodity, not peat, not burned, tropical, no plantation
+17- Commodity, not peat, not burned, boreal
+18- Commodity, not peat, not burned, temperate, plantation
+181- Commodity, not peat, not burned, temperate, no plantation
 
-20- Shifting ag, peat, burned
-21- Shifting ag, peat, not burned
-22- Shifting ag, not peat, burned
-23- Shifting ag, not peat, not burned
+20- Shifting ag, peat, burned, temperate/boreal
+21- Shifting ag, peat, burned, tropical
+22- Shifting ag, peat, not burned, temperate/boreal
+23- Shifting ag, peat, not burned, tropical, plantation
+231- Shifting ag, peat, not burned, tropical, not plantation
+24- Shifting ag, not peat, burned, tropical, IFL, plantation
+241- Shifting ag, not peat, burned, tropical, IFL, not plantation
+25- Shifting ag, not peat, burned, tropical, not IFL, plantation
+251- Shifting ag, not peat, burned, tropical, not IFL, not plantation
+26- Shifting ag, not peat, burned, boreal
+27- Shifting ag, not peat, burned, temperate, plantation
+271- Shifting ag, not peat, burned, temperate, no plantation
+28- Shifting ag, not peat, not burned, tropical, plantation
+281- Shifting ag, not peat, not burned, tropical, no plantation
+29- Shifting ag, not peat, not burned, boreal
+291- Shifting ag, not peat, not burned, temperate, plantation
+292- Shifting ag, not peat, not burned, temperate, no plantation
 
 30- Forestry, peat, burned
 31- Forestry, peat, not burned, temperate/boreal
 32- Forestry, peat, not burned, tropical, plantation
-33- Forestry, peat, not burned, tropical, not plantation
-34- Forestry, not peat, burned
-35- Forestry, not peat, not burned
+321- Forestry, peat, not burned, tropical, not plantation
+33- Forestry, not peat, burned
+34- Forestry, not peat, not burned
 
 40- Wildfire, peat, burned
 41- Wildfire, peat, not burned, temperate/boreal
-42- Wildfire, peat, not burned, tropical
+42- Wildfire, peat, not burned, tropical, plantation
+421- Wildfire, peat, not burned, tropical, not plantation
 43- Wildfire, not peat, burned
 44- Wildfire, not peat, not burned
 
 50- Urbanization, peat, burned
 51- Urbanization, peat, not burned
-52- Urbanization, not peat, burned
-53- Urbanization, not peat, not burned
+52- Urbanization, not peat, burned, tropical, IFL, plantation
+521- Urbanization, not peat, burned, tropical, IFL, not plantation
+53- Urbanization, not peat, burned, tropical, not IFL, plantation
+531- Urbanization, not peat, burned, tropical, not IFL, not plantation
+54- Urbanization, not peat, burned, boreal
+55- Urbanization, not peat, burned, temperate, plantation
+551- Urbanization, not peat, burned, temperate, no plantation
+56- Urbanization, not peat, not burned, tropical, plantation
+561- Urbanization, not peat, not burned, tropical, no plantation
+57- Urbanization, not peat, not burned, boreal
+58- Urbanization, not peat, not burned, temperate, plantation
+581- Urbanization, not peat, not burned, temperate, no plantation
 
 60- No driver, peat, burned
 61- No driver, peat, not burned, temperate/boreal
 62- No driver, peat, not burned, tropical, plantation
-63- No driver, peat, not burned, tropical, no plantation
-64- No driver, not peat, burned
-65- No driver, not peat, not burned
+621- No driver, peat, not burned, tropical, not plantation
+63- No driver, not peat, burned
+64- No driver, not peat, not burned
+
+
 
 
 

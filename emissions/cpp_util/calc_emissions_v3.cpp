@@ -355,7 +355,7 @@ for(x=0; x<xsize; x++)
 						outdata20 = 11;
 					}
 				}
-				if (peat_data[x] == 0)// Commodity, not peat
+				if (peat_data[x] == 0) // Commodity, not peat
 				{
 					if (burn_data[x] > 0) // Commodity, not peat, burned
 					{
@@ -442,20 +442,21 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-//				if (outdata1 < 0)
-//				{
-//                cout << "New pixel:" << endl;
-//                cout << "outdata1:" << outdata1 << endl;
-//                cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-//                cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
-//                cout << "flu: " << flu << endl;
-//                cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
-//                cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
-//                cout << "minsoil: " << minsoil << endl;
-//                cout << "soildata: "	<< soil_data[x] << endl;
-//                cout << "lossname: " << loss_data[x] << endl;
-//                cout << "" << endl;
-//				}
+				if (outdata20 == 16)
+				{
+                    cout << "New pixel:" << endl;
+                    cout << "outdata1:" << outdata1 << endl;
+                    cout << "non_soil_c:" << non_soil_c << endl;
+                    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+                    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
+                    cout << "flu: " << flu << endl;
+                    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+                    cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
+                    cout << "minsoil: " << minsoil << endl;
+                    cout << "soildata: "	<< soil_data[x] << endl;
+                    cout << "lossname: " << loss_data[x] << endl;
+                    cout << "" << endl;
+				}
 			}
 
 			// Emissions model for shifting agriculture (only difference is flu val)
@@ -837,7 +838,7 @@ for(x=0; x<xsize; x++)
 							if (plant_data[x] == 0)  // No driver, peat, not burned, tropical, not plantation
 							{
 								outdata6 = Biomass_tCO2e_nofire;
-								outdata20 = 63;
+								outdata20 = 621;
 							}
 						}
 					}
@@ -847,12 +848,12 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // No driver, not peat, burned
 					{
 						outdata6 = Biomass_tCO2e_yesfire;
-						outdata20 = 64;
+						outdata20 = 63;
 					}
 					if (burn_data[x] == 0) // No driver, not peat, not burned
 					{
 						outdata6 = Biomass_tCO2e_nofire;
-						outdata20 = 65;
+						outdata20 = 64;
 					}
 				}
 			}

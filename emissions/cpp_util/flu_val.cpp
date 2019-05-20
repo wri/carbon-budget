@@ -51,6 +51,6 @@ float flu_val(int climate_zone, int eco_zone)
 	{
 		flu_value = 0;
 	}
-	
+
 	return flu_value;
 }
