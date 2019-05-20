@@ -337,8 +337,8 @@ for(x=0; x<xsize; x++)
 			// Emissions model for commodity-driven deforestation
 			if (drivermodel_data[x] == 1)
 			{
-				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				Biomass_tCO2e_nofire = non_soil_c * 44/12;
+				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (model_years-loss_data[x]);
 
@@ -447,7 +447,7 @@ for(x=0; x<xsize; x++)
                     cout << "New pixel:" << endl;
                     cout << "outdata1:" << outdata1 << endl;
                     cout << "non_soil_c:" << non_soil_c << endl;
-                    cout << "non_soil_c:" << C_to_CO2 << endl;
+                    cout << "c_to_co2:" << C_to_CO2 << endl;
                     cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
                     cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
                     cout << "flu: " << flu << endl;
@@ -463,8 +463,8 @@ for(x=0; x<xsize; x++)
 			// Emissions model for shifting agriculture (only difference is flu val)
 			else if (drivermodel_data[x] == 2)
 			{
-				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				Biomass_tCO2e_nofire = non_soil_c * 44/12;
+				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float shiftag_flu;
 				shiftag_flu = 0.72;
 				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20) * (model_years-loss_data[x]);
@@ -598,7 +598,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for forestry
 			else if (drivermodel_data[x] == 3)
 			{
-				Biomass_tCO2e_nofire = above_below_c * C_to_CO2;
+				Biomass_tCO2e_nofire = above_below_c * 44/12;
 				Biomass_tCO2e_yesfire = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3)) + ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // Forestry, peat
@@ -648,7 +648,7 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for wildfires
 		    else if (drivermodel_data[x] == 4)
 			{
-				Biomass_tCO2e_nofire = above_below_c * C_to_CO2;
+				Biomass_tCO2e_nofire = above_below_c * 44/12;
 				Biomass_tCO2e_yesfire = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3)) + ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
@@ -699,8 +699,8 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for urbanization
 		    else if (drivermodel_data[x] == 5)
 			{
-				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				Biomass_tCO2e_nofire = non_soil_c * 44/12;
+				Biomass_tCO2e_yesfire = (non_soil_c * 44/12) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float urb_flu;
 				urb_flu = 0.8;
 				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/20) * (model_years-loss_data[x]);
@@ -811,7 +811,7 @@ for(x=0; x<xsize; x++)
 		    // Nancy said to make this the same as forestry.
 		    else
 			{
-				Biomass_tCO2e_nofire = above_below_c * C_to_CO2;
+				Biomass_tCO2e_nofire = above_below_c * 44/12;
 				Biomass_tCO2e_yesfire = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3)) + ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
