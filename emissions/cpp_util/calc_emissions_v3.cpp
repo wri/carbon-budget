@@ -442,22 +442,22 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-				if (outdata20 == 16)
-				{
-                    cout << "New pixel:" << endl;
-                    cout << "outdata1:" << outdata1 << endl;
-                    cout << "non_soil_c:" << non_soil_c << endl;
-                    cout << "c_to_co2:" << C_to_CO2 << endl;
-                    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-                    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
-                    cout << "flu: " << flu << endl;
-                    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
-                    cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
-                    cout << "minsoil: " << minsoil << endl;
-                    cout << "soildata: "	<< soil_data[x] << endl;
-                    cout << "lossname: " << loss_data[x] << endl;
-                    cout << "" << endl;
-				}
+//				if (outdata20 == 16)
+//				{
+//                    cout << "New pixel:" << endl;
+//                    cout << "outdata1:" << outdata1 << endl;
+//                    cout << "non_soil_c:" << non_soil_c << endl;
+//                    cout << "c_to_co2:" << C_to_CO2 << endl;
+//                    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+//                    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
+//                    cout << "flu: " << flu << endl;
+//                    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+//                    cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
+//                    cout << "minsoil: " << minsoil << endl;
+//                    cout << "soildata: "	<< soil_data[x] << endl;
+//                    cout << "lossname: " << loss_data[x] << endl;
+//                    cout << "" << endl;
+//				}
 			}
 
 			// Emissions model for shifting agriculture (only difference is flu val)
