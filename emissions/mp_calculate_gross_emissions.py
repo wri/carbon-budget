@@ -62,21 +62,21 @@ download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_ye
 #       utilities.mask_loss_pre_2000_plantation(tile)
 
 
-# Creates tiles of 0s for any tile without any plantations
-for tile in tile_list:
-
-    uu.make_blank_tile(tile, cn.pattern_planted_forest_type_unmasked, 'cpp_util/')
-
-
-# 6.68 GB for four tiles simultaenously
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
-pool.map(calculate_gross_emissions.calc_emissions, tile_list)
-
-# # For single processor use
+# # Creates tiles of 0s for any tile without any plantations
 # for tile in tile_list:
 #
-#       calculate_gross_emissions.calc_emissions(tile)
+#     uu.make_blank_tile(tile, cn.pattern_planted_forest_type_unmasked, 'cpp_util/')
+
+
+# # 6.68 GB for four tiles simultaenously
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
+# pool.map(calculate_gross_emissions.calc_emissions, tile_list)
+
+# For single processor use
+for tile in tile_list:
+
+      calculate_gross_emissions.calc_emissions(tile)
 
 uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
 uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
