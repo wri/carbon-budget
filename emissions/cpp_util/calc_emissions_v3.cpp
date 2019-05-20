@@ -40,7 +40,7 @@ CH4_equiv = 28;
 int N2O_equiv;      // The CO2 equivalency (global warming potential) of N2O
 N2O_equiv = 265;
 
-int C_to_CO2;       // The conversion of carbon to CO2
+float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44/12;
 
 int model_years;    // How many loss years are in the model
@@ -447,6 +447,7 @@ for(x=0; x<xsize; x++)
                     cout << "New pixel:" << endl;
                     cout << "outdata1:" << outdata1 << endl;
                     cout << "non_soil_c:" << non_soil_c << endl;
+                    cout << "non_soil_c:" << C_to_CO2 << endl;
                     cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
                     cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
                     cout << "flu: " << flu << endl;
