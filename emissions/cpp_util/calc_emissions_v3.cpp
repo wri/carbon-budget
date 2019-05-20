@@ -313,11 +313,11 @@ for(x=0; x<xsize; x++)
 			vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float Cf = *(vars + 0);
-			float Gef_CO2 = *(vars + 1);
+			float Gef_CO2 = *(vars + 4);
 			float Gef_CH4 = *(vars + 2);
 			float Gef_N2O = *(vars + 3);
 			float peatburn = *(vars + 5);
-			float peat_drain_total = *(vars + 4);
+			float peat_drain_total = *(vars + 2);
 
 			cout << "cf main script: " << Cf << endl;
 			cout << "gef_co2 main script: " << Gef_CO2 << endl;
