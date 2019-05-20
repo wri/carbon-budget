@@ -341,7 +341,7 @@ def make_blank_tile(tile_id, pattern, folder = None):
         s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
                          '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
 
-        cmd = ['gdal_merge.py', '-createonly', '-init', '"0"', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+        cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_planted_forest_type_unmasked),
                '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
 
