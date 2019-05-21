@@ -302,6 +302,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
     q[2] = CH4;
     q[3] = N2O;
     q[4] = peatburn;
+    q[5] = peat_drain_total;
 
 }
 

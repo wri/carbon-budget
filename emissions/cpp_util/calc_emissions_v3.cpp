@@ -316,7 +316,7 @@ for(x=0; x<xsize; x++)
             /// based on several input rasters for that pixel. These are later used for calculating emissions.
 //            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 //            float *vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-            float q[5];
+            float q[6];
             def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
             peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
@@ -328,6 +328,13 @@ for(x=0; x<xsize; x++)
 //			float peatburn = *(vars + 4);
 ////			float peat_drain_total = *(vars + 5);
 //			float peat_drain_total = vars[5];
+
+			float Cf = q[0];
+			float Gef_CO2 = q[1];
+			float Gef_CH4 = q[2];
+			float q[3];
+			float q[4];
+    		float peat_drain_total = q[5];
 
 //			cout << "cf main script: " << Cf << endl;
 //			cout << "gef_co2 main script: " << Gef_CO2 << endl;
