@@ -365,7 +365,8 @@ for(x=0; x<xsize; x++)
 						if (ifl_data[x] > 0)
 						{
 						    cout << "x: " << x << endl;
-						    cout << "t: " << y << endl;
+						    cout << "y: " << y << endl;
+						    cout << "driver main script: " << drivermodel_data[x] << endl;
 						    cout << "cf main script: " << Cf << endl;
                             cout << "gef_co2 main script: " << Gef_CO2 << endl;
                             cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
