@@ -313,6 +313,7 @@ float peat_drain_fx(int ecozone, int forestmodel_data, int ifl, int climate, int
     boreal = 2;
 
 	// returns Cf, CO2, CH4, N2O, peatburn, peat_drain_total
+	float peat_drain_annual;
 	float peat_drain_total;
 
 	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)) // Commodities, shifting ag., or urbanization
