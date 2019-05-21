@@ -292,9 +292,6 @@ for(x=0; x<xsize; x++)
     // Everything from here down analyzes one pixel at a time
 	{
 
-//        cout << "x: " << x << endl;
-//		cout << "y: " << y << endl;
-
         // Initializes each output raster at 0 (nodata value)
 		float outdata1 = 0;  // commodities
 		float outdata2 = 0;  // shifting ag.
@@ -309,9 +306,6 @@ for(x=0; x<xsize; x++)
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
 
-//			float *vars;
-            float peat_drain_total_new;
-
             // From equations.cpp, a function called def_variables, we get back several constants
             /// based on several input rasters for that pixel. These are later used for calculating emissions.
 //            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
@@ -321,15 +315,14 @@ for(x=0; x<xsize; x++)
             // The first answer here told me how to solve that: https://stackoverflow.com/questions/51609816/return-float-array-from-a-function-c
             float q[6];
             def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-//            peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
-////			float Cf = *(vars + 0);
+//		    float Cf = *(vars + 0);
 //			float Cf = vars[0];
 //			float Gef_CO2 = *(vars + 1);
 //			float Gef_CH4 = *(vars + 2);
 //			float Gef_N2O = *(vars + 3);
 //			float peatburn = *(vars + 4);
-////			float peat_drain_total = *(vars + 5);
+//			float peat_drain_total = *(vars + 5);
 //			float peat_drain_total = vars[5];
 
 			float Cf = q[0];
