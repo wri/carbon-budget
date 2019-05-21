@@ -332,8 +332,8 @@ for(x=0; x<xsize; x++)
 			float Cf = q[0];
 			float Gef_CO2 = q[1];
 			float Gef_CH4 = q[2];
-			float q[3];
-			float q[4];
+			float Gef_N2O = q[3];
+			float peatburn = q[4];
     		float peat_drain_total = q[5];
 
 //			cout << "cf main script: " << Cf << endl;
