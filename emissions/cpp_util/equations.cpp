@@ -299,7 +299,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 
 }
 
-float def_variables(int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
+float peat_drain_fx(int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
 {
 
 	int model_years;    // How many loss years are in the model
