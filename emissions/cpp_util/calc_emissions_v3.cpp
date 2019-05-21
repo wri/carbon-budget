@@ -324,13 +324,13 @@ for(x=0; x<xsize; x++)
 			float peatburn = *(vars + 4);
 //			float peat_drain_total = *(vars + 5);
 
-			cout << "cf main script: " << Cf << endl;
-			cout << "gef_co2 main script: " << Gef_CO2 << endl;
-			cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
-			cout << "gef_n2o main script: " << Gef_N2O << endl;
-			cout << "peatburn main script: " << peatburn << endl;
+//			cout << "cf main script: " << Cf << endl;
+//			cout << "gef_co2 main script: " << Gef_CO2 << endl;
+//			cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
+//			cout << "gef_n2o main script: " << Gef_N2O << endl;
+//			cout << "peatburn main script: " << peatburn << endl;
 			cout << "peat_drain_total_new main script: " << peat_drain_total_new << endl;
-			cout << endl;
+//			cout << endl;
 
             // Define and calculate several values used later
 			float non_soil_c;
