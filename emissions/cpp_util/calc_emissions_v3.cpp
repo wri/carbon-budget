@@ -269,9 +269,6 @@ float out_data6[xsize];
 float out_data10[xsize];
 float out_data20[xsize];
 
-float *vars;
-float peat_drain_total_new;
-
 // Loop over the y coordinates, then the x coordinates
 for (y=0; y<ysize; y++)
 {
@@ -316,6 +313,9 @@ for(x=0; x<xsize; x++)
         // Only evaluates pixels that have loss and carbon
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
+
+			float *vars;
+            float peat_drain_total_new;
 
 			float Cf = *(vars + 0);
 			float Gef_CO2 = *(vars + 1);
