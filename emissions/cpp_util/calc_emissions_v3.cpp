@@ -946,19 +946,22 @@ for(x=0; x<xsize; x++)
 				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
-				// Decision tree end node value stored in its raster
-				out_data20[x] = outdata20;
+            // Decision tree end node value stored in its raster
+            out_data20[x] = outdata20;
 
 
-				// Add up all drivers for a combined raster. Each pixel only has one driver
-				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
-				if (outdata10 == 0)
-				{
-					out_data10[x] = 0;
-				}
-				else{
-					out_data10[x] = outdata10;
-				}
+            // Add up all drivers for a combined raster. Each pixel only has one driver
+            outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
+            if (outdata10 == 0)
+            {
+                out_data10[x] = 0;
+            }
+            else{
+                out_data10[x] = outdata10;
+            }
+
+			delete[] vars;
+
 		}
 
 		// If pixel is not on loss and carbon, all output rasters get 0
