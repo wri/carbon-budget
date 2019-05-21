@@ -324,7 +324,8 @@ for(x=0; x<xsize; x++)
 			float Gef_CH4 = *(vars + 2);
 			float Gef_N2O = *(vars + 3);
 			float peatburn = *(vars + 4);
-			float peat_drain_total = *(vars + 5);
+//			float peat_drain_total = *(vars + 5);
+			float peat_drain_total = vars[5];
 
 //			cout << "cf main script: " << Cf << endl;
 //			cout << "gef_co2 main script: " << Gef_CO2 << endl;
