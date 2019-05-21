@@ -293,7 +293,7 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 //    cout << "random_number end of fx: " << test << endl;
 //    cout << endl;
 
-	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn};
+	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, peat_drain_total};
 
 	return def_variables;
 

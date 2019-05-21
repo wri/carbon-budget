@@ -305,24 +305,24 @@ for(x=0; x<xsize; x++)
 		float outdata10 = 0;  // total of all drivers
 		float outdata20 = 0;  // flowchart node
 
-		float *vars;
-        float peat_drain_total_new;
-
-		// From equations.cpp, a function called def_variables, we get back several constants
-		/// based on several input rasters for that pixel. These are later used for calculating emissions.
-		vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-		peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-
         // Only evaluates pixels that have loss and carbon
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
+
+			float *vars;
+            float peat_drain_total_new;
+
+            // From equations.cpp, a function called def_variables, we get back several constants
+            /// based on several input rasters for that pixel. These are later used for calculating emissions.
+            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
+            peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			float Cf = *(vars + 0);
 			float Gef_CO2 = *(vars + 1);
 			float Gef_CH4 = *(vars + 2);
 			float Gef_N2O = *(vars + 3);
 			float peatburn = *(vars + 4);
-//			float peat_drain_total = *(vars + 5);
+			float peat_drain_total = *(vars + 5);
 
 //			cout << "cf main script: " << Cf << endl;
 //			cout << "gef_co2 main script: " << Gef_CO2 << endl;
@@ -374,6 +374,7 @@ for(x=0; x<xsize; x++)
                             cout << "gef_n2o main script: " << Gef_N2O << endl;
                             cout << "peatburn main script: " << peatburn << endl;
                             cout << "peat_drain_total_new main script: " << peat_drain_total_new << endl;
+                            cout << "peat_drain_total_old main script: " << peat_drain_total << endl;
                             cout << endl;
 						}
 					}
