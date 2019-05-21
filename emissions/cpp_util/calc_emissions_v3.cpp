@@ -317,7 +317,7 @@ for(x=0; x<xsize; x++)
 //            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 //            float *vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
             float q[5];
-            def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x])
+            def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
             peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 ////			float Cf = *(vars + 0);
