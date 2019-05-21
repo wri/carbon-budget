@@ -366,6 +366,7 @@ for(x=0; x<xsize; x++)
 						{
 						    cout << "x: " << x << endl;
 						    cout << "y: " << y << endl;
+						    cout << "loss_year main script: " << loss_data[x] << endl;
 						    cout << "driver main script: " << drivermodel_data[x] << endl;
 						    cout << "cf main script: " << Cf << endl;
                             cout << "gef_co2 main script: " << Gef_CO2 << endl;
