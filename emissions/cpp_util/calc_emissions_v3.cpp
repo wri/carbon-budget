@@ -295,8 +295,8 @@ for(x=0; x<xsize; x++)
     // Everything from here down analyzes one pixel at a time
 	{
 
-        cout << "x: " << x << endl;
-		cout << "y: " << y << endl;
+//        cout << "x: " << x << endl;
+//		cout << "y: " << y << endl;
 
         // Initializes each output raster at 0 (nodata value)
 		float outdata1 = 0;  // commodities
@@ -329,7 +329,7 @@ for(x=0; x<xsize; x++)
 //			cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
 //			cout << "gef_n2o main script: " << Gef_N2O << endl;
 //			cout << "peatburn main script: " << peatburn << endl;
-			cout << "peat_drain_total_new main script: " << peat_drain_total_new << endl;
+//			cout << "peat_drain_total_new main script: " << peat_drain_total_new << endl;
 //			cout << endl;
 
             // Define and calculate several values used later

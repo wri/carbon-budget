@@ -478,10 +478,10 @@ float peat_drain_fx(int ecozone, int forestmodel_data, int ifl, int climate, int
 //    srand(time(0));
 //    test = rand();
 
-    cout << "peat_drain_annual end of fx: " << peat_drain_annual << endl;
-    cout << "peat_drain_total end of fx: " << peat_drain_total << endl;
-//    cout << "random_number end of fx: " << test << endl;
-    cout << endl;
+//    cout << "peat_drain_annual end of fx: " << peat_drain_annual << endl;
+//    cout << "peat_drain_total end of fx: " << peat_drain_total << endl;
+////    cout << "random_number end of fx: " << test << endl;
+//    cout << endl;
 
 	return peat_drain_total;
 
