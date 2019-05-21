@@ -314,11 +314,12 @@ for(x=0; x<xsize; x++)
 
             // From equations.cpp, a function called def_variables, we get back several constants
             /// based on several input rasters for that pixel. These are later used for calculating emissions.
-            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
+//            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
+            float *vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
             peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 //			float Cf = *(vars + 0);
-			float *Cf = def_variables(0);
+			float Cf = vars[0];
 			float Gef_CO2 = *(vars + 1);
 			float Gef_CH4 = *(vars + 2);
 			float Gef_N2O = *(vars + 3);
