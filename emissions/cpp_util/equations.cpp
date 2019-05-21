@@ -3,7 +3,7 @@
 #include <stdlib.h>
 using namespace std;
 
-float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
+void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
 {
 
 	int model_years;    // How many loss years are in the model
@@ -293,9 +293,15 @@ float* def_variables(int ecozone, int forestmodel_data, int ifl, int climate, in
 //    cout << "random_number end of fx: " << test << endl;
 //    cout << endl;
 
-	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, peat_drain_total};
+//	static float def_variables[6] = {Cf, CO2, CH4, N2O, peatburn, peat_drain_total};
 
-	return def_variables;
+//	return def_variables;
+
+    q[0] = Cf;
+    q[1] = CO2;
+    q[2] = CH4;
+    q[3] = N2O;
+    q[4] = peatburn;
 
 }
 

@@ -315,7 +315,9 @@ for(x=0; x<xsize; x++)
             // From equations.cpp, a function called def_variables, we get back several constants
             /// based on several input rasters for that pixel. These are later used for calculating emissions.
 //            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-            float *vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
+//            float *vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
+            float q[5];
+            def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x])
             peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 //			float Cf = *(vars + 0);
@@ -946,22 +948,19 @@ for(x=0; x<xsize; x++)
 				out_data5[x] = 0;
 				out_data6[x] = outdata6;
 			}
-            // Decision tree end node value stored in its raster
-            out_data20[x] = outdata20;
+				// Decision tree end node value stored in its raster
+				out_data20[x] = outdata20;
 
 
-            // Add up all drivers for a combined raster. Each pixel only has one driver
-            outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
-            if (outdata10 == 0)
-            {
-                out_data10[x] = 0;
-            }
-            else{
-                out_data10[x] = outdata10;
-            }
-
-			delete[] vars;
-
+				// Add up all drivers for a combined raster. Each pixel only has one driver
+				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
+				if (outdata10 == 0)
+				{
+					out_data10[x] = 0;
+				}
+				else{
+					out_data10[x] = outdata10;
+				}
 		}
 
 		// If pixel is not on loss and carbon, all output rasters get 0
