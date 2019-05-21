@@ -309,7 +309,7 @@ for(x=0; x<xsize; x++)
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
 
-			float *vars;
+//			float *vars;
             float peat_drain_total_new;
 
             // From equations.cpp, a function called def_variables, we get back several constants
