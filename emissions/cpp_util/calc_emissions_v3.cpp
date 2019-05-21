@@ -270,6 +270,7 @@ float out_data10[xsize];
 float out_data20[xsize];
 
 float *vars;
+float peat_drain_total_new;
 
 // Loop over the y coordinates, then the x coordinates
 for (y=0; y<ysize; y++)
@@ -310,6 +311,7 @@ for(x=0; x<xsize; x++)
 		// From equations.cpp, a function called def_variables, we get back several constants
 		/// based on several input rasters for that pixel. These are later used for calculating emissions.
 		vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
+		peat_drain_total_new = peat_drain_fx(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
         // Only evaluates pixels that have loss and carbon
 		if (loss_data[x] > 0 && agc_data[x] > 0)
