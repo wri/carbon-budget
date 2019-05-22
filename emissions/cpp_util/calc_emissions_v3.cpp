@@ -156,9 +156,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
-// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 13000;
-//ysize = 10000;
+ // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+xsize = 13000;
+ysize = 13000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -417,6 +417,10 @@ for(x=0; x<xsize; x++)
 						        {
 						            outdata1 = Biomass_tCO2e_yesfire;
 						            outdata20 = 13;
+                                    cout << "x: " << x << endl;
+                                    cout << "y: " << y << endl;
+                                    cout << "total non-soil c: " << non_soil_c << endl;
+                                    cout << "yesfire: " << Biomass_tCO2e_yesfire << endl;
 						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, not IFL, not plantation
 						        {
