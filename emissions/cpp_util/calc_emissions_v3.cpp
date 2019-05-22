@@ -156,9 +156,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
-// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 4000;
-//ysize = 3000;
+ // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+xsize = 7000;
+ysize = 39000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -723,6 +723,16 @@ for(x=0; x<xsize; x++)
 					{
 						outdata4 = Biomass_tCO2e_yesfire;
 						outdata20 = 43;
+                        cout << "New pixel:" << endl;
+                        cout << "x: " << x << endl;
+                        cout << "y: " << y << endl;
+                        cout << "non_soil_c:" << agc_data[x] << endl;
+                        cout << "cf main script: " << Cf << endl;
+                        cout << "gef_co2 main script: " << Gef_CO2 << endl;
+                        cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
+                        cout << "gef_n2o main script: " << Gef_N2O << endl;
+                        cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+                        cout << "" << endl;
 					}
 					else  // Wildfire, not peat, not burned
 					{
