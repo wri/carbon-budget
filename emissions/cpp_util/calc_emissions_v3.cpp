@@ -358,7 +358,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for commodity-driven deforestation
 			if (drivermodel_data[x] == 1)
 			{
-				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
+				Biomass_tCO2e_nofire = non_soil_c * 3.6666667;
 				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (model_years-loss_data[x]);
