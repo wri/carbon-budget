@@ -419,6 +419,7 @@ for(x=0; x<xsize; x++)
 						            outdata20 = 13;
                                     cout << "x: " << x << endl;
                                     cout << "y: " << y << endl;
+                                    cout << "C to CO2: " << C_to_CO2 << endl;
                                     cout << "total non-soil c: " << non_soil_c << endl;
                                     cout << "yesfire: " << Biomass_tCO2e_yesfire << endl;
 						        }
