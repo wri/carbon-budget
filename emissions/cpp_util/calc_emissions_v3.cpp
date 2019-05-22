@@ -157,8 +157,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
  // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-xsize = 7000;
-ysize = 39000;
+xsize = 900;
+ysize = 7900;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -726,7 +726,7 @@ for(x=0; x<xsize; x++)
                         cout << "New pixel:" << endl;
                         cout << "x: " << x << endl;
                         cout << "y: " << y << endl;
-                        cout << "non_soil_c:" << agc_data[x] << endl;
+                        cout << "agc: " << agc_data[x] << endl;
                         cout << "cf main script: " << Cf << endl;
                         cout << "gef_co2 main script: " << Gef_CO2 << endl;
                         cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
