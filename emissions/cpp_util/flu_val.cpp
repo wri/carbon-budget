@@ -42,6 +42,10 @@ float flu_val(int climate_zone, int eco_zone)
 		{
 			flu_value = 0.64;
 		}
+		else if ((eco_zone == 2) || (eco_zone == 3)) // Montane, boreal/temperate
+		{
+			flu_value = 0.75;
+		}
 		else
 		{
 			flu_value = 0;

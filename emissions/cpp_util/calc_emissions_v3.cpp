@@ -157,8 +157,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
  // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-xsize = 13000;
-ysize = 13000;
+xsize = 4000;
+ysize = 3000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -358,7 +358,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for commodity-driven deforestation
 			if (drivermodel_data[x] == 1)
 			{
-				Biomass_tCO2e_nofire = non_soil_c * 3.6666667;
+				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (model_years-loss_data[x]);
@@ -417,12 +417,7 @@ for(x=0; x<xsize; x++)
 						        {
 						            outdata1 = Biomass_tCO2e_yesfire;
 						            outdata20 = 13;
-                                    cout << "x: " << x << endl;
-                                    cout << "y: " << y << endl;
-                                    cout << "C to CO2: " << C_to_CO2 << endl;
-                                    cout << "total non-soil c: " << non_soil_c << endl;
-                                    cout << "yesfire: " << Biomass_tCO2e_yesfire << endl;
-						        }
+ 						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, not IFL, not plantation
 						        {
 						            outdata1 = Biomass_tCO2e_yesfire + minsoil;
@@ -565,6 +560,15 @@ for(x=0; x<xsize; x++)
 						        {
 						            outdata2 = Biomass_tCO2e_yesfire + minsoil;
 						            outdata20 = 241;
+                                    cout << "x: " << x << endl;
+                                    cout << "y: " << y << endl;
+                                    cout << "loss_year main script: " << loss_data[x] << endl;
+                                    cout << "driver main script: " << drivermodel_data[x] << endl;
+                                    cout << "cf main script: " << Cf << endl;
+                                    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
+                                    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
+                                    cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
+                                    cout << "minsoil: " << minsoil << endl;
 						        }
 						    }
 						    if (ifl_data[x] == 0)   // Shifting ag, not peat, burned, tropical, not IFL
@@ -692,7 +696,6 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3)) + ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
-				flu = flu_val(climate_data[x], ecozone_data[x]);
 
 				if (peat_data[x] > 0) // Wildfire, peat
 				{
@@ -855,7 +858,6 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3)) + ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
-				flu = flu_val(climate_data[x], ecozone_data[x]);
 
 				if (peat_data[x] > 0) // No driver, peat
 				{
