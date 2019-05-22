@@ -564,7 +564,7 @@ for(x=0; x<xsize; x++)
                                     cout << "y: " << y << endl;
                                     cout << "loss_year main script: " << loss_data[x] << endl;
                                     cout << "driver main script: " << drivermodel_data[x] << endl;
-                                    cout << "non soil C: " << non_soil_c[x] << endl;
+                                    cout << "non soil C: " << non_soil_c << endl;
                                     cout << "cf main script: " << Cf << endl;
                                     cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
                                     cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
