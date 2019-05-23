@@ -111,9 +111,8 @@ for pattern in pattern_list:
 
 
 # Calculates gross emissions for each tile
-# 6.68 GB for four tiles simultaenously
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
+pool = multiprocessing.Pool(count/3)
 pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
 # # For single processor use
