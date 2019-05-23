@@ -332,7 +332,6 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 def make_blank_tile(tile_id, pattern, folder):
 
     file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
-    print file
 
     # If there's already a plantations tile, there's no need to create a blank one
     if os.path.exists(file):
@@ -346,6 +345,7 @@ def make_blank_tile(tile_id, pattern, folder):
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.)
+        print '{0}{1}.tif'.format(folder, tile_id)
         if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
             print "Hansen loss tile exists for {}.".format(tile_id)
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
