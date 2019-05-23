@@ -95,16 +95,16 @@ download_list = [
 pattern = cn.pattern_planted_forest_type_unmasked
 folder = 'cpp_util/'
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
-pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
-pool.close()
-pool.join()
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
+# pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use
-# for tile in tile_list:
-#
-#     uu.make_blank_tile(tile, cn.pattern_planted_forest_type_unmasked)
+# For single processor use
+for tile in tile_list:
+
+    uu.make_blank_tile(tile, pattern, folder)
 
 
 # 6.68 GB for four tiles simultaenously
