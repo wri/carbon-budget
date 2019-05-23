@@ -96,11 +96,15 @@ download_list = [
 pattern = cn.pattern_planted_forest_type_unmasked
 folder = 'cpp_util/'
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/2)
-# pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
-# pool.close()
-# pool.join()
+pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.peat_mask_dir, cn.ifl_dir, cn.planted_forest_type_unmasked_dir, cn.drivers_processed_dir]
+
+for pattern in pattern_list:
+
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count-10)
+    pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+    pool.close()
+    pool.join()
 
 # # For single processor use
 # for tile in tile_list:
