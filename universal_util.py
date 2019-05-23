@@ -3,6 +3,7 @@ import glob
 import constants_and_names as cn
 import datetime
 import os
+from shutil import copy
 import re
 import pandas as pd
 from osgeo import gdal
@@ -348,9 +349,10 @@ def make_blank_tile(tile_id, pattern, folder):
         print '{0}{1}.tif'.format(folder, tile_id)
         if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
             print "Hansen loss tile exists for {}.".format(tile_id)
+            copy('{0}{1}.tif'.format(folder, tile_id), '{0}{1}_copy.tif'.format(folder, tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_planted_forest_type_unmasked),
-                   '{0}{1}.tif'.format(folder, tile_id)]
+                   '{0}{1}_copy.tif'.format(folder, tile_id)]
             subprocess.check_call(cmd)
 
         # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
