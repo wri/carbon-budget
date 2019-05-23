@@ -96,12 +96,12 @@ folder = 'cpp_util/'
 pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl, cn.pattern_planted_forest_type_unmasked,
                 cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-# for pattern in pattern_list:
-#     count = multiprocessing.cpu_count()
-#     pool = multiprocessing.Pool(count-10)
-#     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
-#     pool.close()
-#     pool.join()
+for pattern in pattern_list:
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count-10)
+    pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+    pool.close()
+    pool.join()
 
 # # For single processor use
 # for pattern in pattern_list:
@@ -110,11 +110,11 @@ pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, c
 #         uu.make_blank_tile(tile, pattern, folder)
 
 
-# Calculates gross emissions for each tile
-# 6.68 GB for four tiles simultaenously
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count-10)
-pool.map(calculate_gross_emissions.calc_emissions, tile_list)
+# # Calculates gross emissions for each tile
+# # 6.68 GB for four tiles simultaenously
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count-10)
+# pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
