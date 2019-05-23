@@ -44,8 +44,8 @@ download_list = [
                  cn.loss_dir
                 ]
 
-# for input in download_list:
-#     uu.s3_folder_download(input, './cpp_util/')
+for input in download_list:
+    uu.s3_folder_download(input, './cpp_util/')
 
 # # For copying individual tiles to s3 for testing
 # for tile in tile_list:
@@ -72,12 +72,12 @@ download_list = [
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
 
 
-# print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-# # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-# # Pre-2000 plantations have not previously been masked, so that is done here.
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/2)
-# pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
+print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+# Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+# Pre-2000 plantations have not previously been masked, so that is done here.
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count/2)
+pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
@@ -110,11 +110,11 @@ for pattern in pattern_list:
 #         uu.make_blank_tile(tile, pattern, folder)
 
 
-# # Calculates gross emissions for each tile
-# # 6.68 GB for four tiles simultaenously
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count-10)
-# pool.map(calculate_gross_emissions.calc_emissions, tile_list)
+# Calculates gross emissions for each tile
+# 6.68 GB for four tiles simultaenously
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count-10)
+pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
