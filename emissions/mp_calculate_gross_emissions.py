@@ -44,8 +44,8 @@ download_list = [
                  cn.loss_dir
                 ]
 
-# for input in download_list:
-#     uu.s3_folder_download(input, './cpp_util/')
+for input in download_list:
+    uu.s3_folder_download(input, './cpp_util/')
 
 # # For copying individual tiles to s3 for testing
 # for tile in tile_list:
@@ -96,18 +96,18 @@ folder = 'cpp_util/'
 pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl, cn.pattern_planted_forest_type_unmasked,
                 cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-# for pattern in pattern_list:
-#     count = multiprocessing.cpu_count()
-#     pool = multiprocessing.Pool(count-10)
-#     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
-#     pool.close()
-#     pool.join()
-
-# For single processor use
 for pattern in pattern_list:
-    for tile in tile_list:
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count-10)
+    pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+    pool.close()
+    pool.join()
 
-        uu.make_blank_tile(tile, pattern, folder)
+# # For single processor use
+# for pattern in pattern_list:
+#     for tile in tile_list:
+#
+#         uu.make_blank_tile(tile, pattern, folder)
 
 
 # Calculates gross emissions for each tile
