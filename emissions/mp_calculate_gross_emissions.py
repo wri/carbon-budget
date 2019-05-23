@@ -95,13 +95,13 @@ folder = 'cpp_util/'
 # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
 pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl, cn.pattern_planted_forest_type_unmasked,
                 cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
-for pattern in pattern_list:
 
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count-10)
-    pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
-    pool.close()
-    pool.join()
+# for pattern in pattern_list:
+#     count = multiprocessing.cpu_count()
+#     pool = multiprocessing.Pool(count-10)
+#     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+#     pool.close()
+#     pool.join()
 
 # # For single processor use
 # for pattern in pattern_list:
@@ -110,11 +110,11 @@ for pattern in pattern_list:
 #         uu.make_blank_tile(tile, pattern, folder)
 
 
-# # Calculates gross emissions for each tile
-# # 6.68 GB for four tiles simultaenously
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count-10)
-# pool.map(calculate_gross_emissions.calc_emissions, tile_list)
+# Calculates gross emissions for each tile
+# 6.68 GB for four tiles simultaenously
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count-10)
+pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
@@ -122,12 +122,12 @@ for pattern in pattern_list:
 #       calculate_gross_emissions.calc_emissions(tile)
 
 
-# uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
-# uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
-# uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
-# uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
-# uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
-# uu.upload_final_set(cn.gross_emis_no_driver_dir, cn.pattern_gross_emis_no_driver)
-# uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
-# uu.upload_final_set(cn.gross_emis_all_drivers_dir, cn.pattern_gross_emis_all_drivers)
+uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
+uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
+uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
+uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
+uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
+uu.upload_final_set(cn.gross_emis_no_driver_dir, cn.pattern_gross_emis_no_driver)
+uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
+uu.upload_final_set(cn.gross_emis_all_drivers_dir, cn.pattern_gross_emis_all_drivers)
 

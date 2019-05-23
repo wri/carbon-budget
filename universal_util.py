@@ -346,7 +346,6 @@ def make_blank_tile(tile_id, pattern, folder):
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.)
-        print '{0}{1}.tif'.format(folder, tile_id)
         if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
             print "Hansen loss tile exists for {}.".format(tile_id)
             copy('{0}{1}.tif'.format(folder, tile_id), '{0}{1}_copy.tif'.format(folder, tile_id))
