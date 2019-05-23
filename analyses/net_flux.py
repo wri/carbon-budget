@@ -8,6 +8,7 @@ import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names as cn
+import universal_util as uu
 
 def net_calc(tile_id):
 
@@ -18,14 +19,7 @@ def net_calc(tile_id):
 
     # Names of the annual gain rate and cumulative gain tiles for non-mangrove natural forests
     gain_in = '{0}_{1}.tif'.format(cn.pattern_cumul_gain_combo, tile_id)
-    loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emissions)
-
-    # Emissions nodata values are currently -9999, which messes up the net calculation. This converts the
-    # emissions nodata values to nothing so that they aren't part of the net calculation.
-    print "Removing nodata values in emissions tile", tile_id
-    loss_nodata = '{0}_{1}_without_nodata.tif'.format(tile_id, cn.pattern_gross_emissions)
-    cmd = ['gdalwarp', '-srcnodata', '-9999', '-dstnodata', 'none', '-overwrite', loss_in, loss_nodata]
-    subprocess.check_call(cmd)
+    loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emis_all_drivers)
 
     # Output net emissions file
     net_emis = '{0}_{1}.tif'.format(tile_id, cn.pattern_net_flux)
@@ -40,8 +34,7 @@ def net_calc(tile_id):
         windows = gain_src.block_windows(1)
 
         # Opens loss tile
-        ######## Making nodata = -9999 outputs the wrong results
-        with rasterio.open(loss_nodata) as loss_src:
+        with rasterio.open(loss_in) as loss_src:
             kwargs.update(
                 driver='GTiff',
                 count=1,
@@ -60,16 +53,13 @@ def net_calc(tile_id):
                     loss = loss_src.read(1, window=window)
 
                     # Converts gain from C to CO2 and subtracts that from loss
-                    dst_data = loss - gain*cn.c_to_co2
+                    dst_data = loss - (gain*cn.c_to_co2)
 
                     dst.write_band(1, dst_data, window=window)
-
-    end = datetime.datetime.now()
-    elapsed_time = end-start
 
     # Need to include these or the spot machine will run out of memory otherwise
     os.remove(gain_in)
     os.remove(loss_in)
-    os.remove(loss_nodata)
 
-    print "  Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, os.path.join(cn.pattern_gross_emis_commod))

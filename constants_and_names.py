@@ -355,7 +355,7 @@ gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/2019523/'.format(b
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2_ha_all_forest_types_all_drivers_2001_15'
-net_flux_dir = os.path.join(base_dir, 'net_emissions_all_forest_types_all_drivers/20181107/')
+net_flux_dir = os.path.join(base_dir, 'net_emissions_all_forest_types_all_drivers/20190523/')
 
 
 
