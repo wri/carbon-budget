@@ -341,6 +341,8 @@ def make_blank_tile(tile_id, pattern, folder):
 
         print '{} does not exist. Creating a blank tile.'.format(file)
 
+        print '{0}{1}.tif'.format(folder, tile_id)
+
         if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
             print "Hansen loss tile exists for {}.".format(tile_id)
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
