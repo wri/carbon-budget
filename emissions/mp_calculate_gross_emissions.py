@@ -103,11 +103,11 @@ pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, c
 #     pool.close()
 #     pool.join()
 
-# # For single processor use
-# for pattern in pattern_list:
-#     for tile in tile_list:
-#
-#         uu.make_blank_tile(tile, pattern, folder)
+# For single processor use
+for pattern in pattern_list:
+    for tile in tile_list:
+
+        uu.make_blank_tile(tile, pattern, folder)
 
 
 # # Calculates gross emissions for each tile
