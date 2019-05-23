@@ -349,7 +349,7 @@ def make_blank_tile(tile_id, pattern, folder):
             subprocess.check_call(cmd)
 
         else:
-            print "No Hansen tile for {}. Using pixel area area instead.".format(tile_id)
+            print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
 
             s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
                              '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
