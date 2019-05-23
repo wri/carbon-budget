@@ -39,8 +39,8 @@ download_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_ye
                  cn.bor_tem_trop_processed_dir, cn.burn_year_dir, cn.plant_pre_2000_raw_dir,
                  cn.loss_dir]
 
-# for input in download_list:
-#     uu.s3_folder_download(input, './cpp_util/')
+for input in download_list:
+    uu.s3_folder_download(input, './cpp_util/')
 
 # # For copying individual tiles to s3 for testing
 # for tile in tile_list:
