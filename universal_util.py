@@ -346,12 +346,11 @@ def make_blank_tile(tile_id, pattern, folder):
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.)
-        if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
+        if os.path.exists('{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)):
             print "Hansen loss tile exists for {}.".format(tile_id)
-            copy('{0}{1}.tif'.format(folder, tile_id), '{0}{1}_copy.tif'.format(folder, tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}{1}_copy.tif'.format(folder, tile_id)]
+                   '{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)]
             subprocess.check_call(cmd)
 
         # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
