@@ -1,5 +1,7 @@
 '''
 This script calculates the gross emissions in tonnes CO2e/ha for every loss pixel.
+The properties of each pixel determine the appropriate emissions equation, the constants for the equation, and the
+carbon pool values that go into the equation.
 '''
 
 import subprocess

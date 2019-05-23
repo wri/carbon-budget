@@ -1,3 +1,18 @@
+// Implements the calculation of gross emissions and stores the outputs as rasters.
+// This is essentially one large decision tree that iterates pixel by pixel across each Hansen tile.
+// The first split is whether the pixel has carbon and loss.
+// NOTE: The way I've set up the model, all carbon pixels have loss (i.e. only carbon pixels with loss are input to the model).
+// The next split is which driver of tree cover loss the pixel falls in.
+// The next split is whther the pixel is on peat, followed by whether there was fire.
+// The splits after that depend on the particular tree, but include ecozone (boreal/temperate/tropical), IFL, and plantation status.
+// Each series of splits ends with a particular equation that calculates gross emissions in that case.
+// The equations sometimes rely on constants, which are calculated for each pixel and are based on properties of
+// underlying pixels (e.g., ecozone, climate zone, IFL status) (calculated in equations.cpp).
+// Each end point of the decision tree gets its own code, so that it's easier to tell what branch of the decision tree
+// each pixel came from. That makes checking the results easier, too.
+// These codes are summarized in carbon-budget/emissions/node_codes.txt
+
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,14 +29,14 @@
 #include <gdal/cpl_conv.h>
 #include <gdal/ogr_spatialref.h>
 
-// these are the functions we call when doing complicated calculations
+// These provide constants for the emissions equations
 #include "flu_val.cpp"
 #include "equations.cpp"
 
 using namespace std;
 
 //to compile:  c++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -lgdal
-// to compile on MINGW: g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
+// to compile on MINGW:  g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
 // If code is run other than <program name> <tile id> , it will raise this error.
@@ -307,38 +322,21 @@ for(x=0; x<xsize; x++)
         {
 
             // From equations.cpp, a function called def_variables, we get back several constants
-            /// based on several input rasters for that pixel. These are later used for calculating emissions.
-//            vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-//            float *vars = def_variables(ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
-            //  def_variables kept returning the same values for all pixels in a tile as the first pixel in the tile regardless of the inputs to the function;
+            // based on several input rasters for that pixel. These are later used for calculating emissions.
+
+            // def_variables kept returning the same values for all pixels in a tile as the first pixel in the tile regardless of the inputs to the function;
             // it was as if the returned values for the first pixel evaluated couldn't be overwritten.
             // The first answer here told me how to solve that: https://stackoverflow.com/questions/51609816/return-float-array-from-a-function-c
             float q[6];
             def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
-//		    float Cf = *(vars + 0);
-//			float Cf = vars[0];
-//			float Gef_CO2 = *(vars + 1);
-//			float Gef_CH4 = *(vars + 2);
-//			float Gef_N2O = *(vars + 3);
-//			float peatburn = *(vars + 4);
-//			float peat_drain_total = *(vars + 5);
-//			float peat_drain_total = vars[5];
-
-			float Cf = q[0];
-			float Gef_CO2 = q[1];
-			float Gef_CH4 = q[2];
-			float Gef_N2O = q[3];
-			float peatburn = q[4];
-    		float peat_drain_total = q[5];
-
-//			cout << "cf main script: " << Cf << endl;
-//			cout << "gef_co2 main script: " << Gef_CO2 << endl;
-//			cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
-//			cout << "gef_n2o main script: " << Gef_N2O << endl;
-//			cout << "peatburn main script: " << peatburn << endl;
-//			cout << "peat_drain_total_new main script: " << peat_drain_total_new << endl;
-//			cout << endl;
+			// The constants needed for calculating emissions
+			float Cf = q[0];            // Combustion factor
+			float Gef_CO2 = q[1];       // Emissions factor for CO2
+			float Gef_CH4 = q[2];       // Emissions factor for CH4
+			float Gef_N2O = q[3];       // Emissions factor for N20
+			float peatburn = q[4];      // Emissions from burning peat
+    		float peat_drain_total = q[5];      // Emissions from draining peat
 
             // Define and calculate several values used later
 			float non_soil_c;
@@ -347,10 +345,10 @@ for(x=0; x<xsize; x++)
 			float above_below_c;
 			above_below_c = agc_data[x] + bgc_data[x];
 
-			float minsoil;
-			float flu;
-			float Biomass_tCO2e_nofire;
-			float Biomass_tCO2e_yesfire;
+			float minsoil;                  // Emissions from mineral soil
+			float flu;                      // Emissions fraction from mineral soil
+			float Biomass_tCO2e_nofire;     // Emissions from biomass on pixels without fire
+			float Biomass_tCO2e_yesfire;    // Emissions from biomass on pixels with fire
 
 		    // Each driver is an output raster and has its own emissions model. outdata20 is the code for each
             // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
@@ -358,6 +356,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for commodity-driven deforestation
 			if (drivermodel_data[x] == 1)
 			{
+				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				Biomass_tCO2e_nofire = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire = (non_soil_c * C_to_CO2) + ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
@@ -369,22 +368,6 @@ for(x=0; x<xsize; x++)
 					{
 						outdata1 = Biomass_tCO2e_yesfire + peat_drain_total + peatburn;
 						outdata20 = 10;
-
-//						if (ifl_data[x] > 0)
-//						{
-//						    cout << "x: " << x << endl;
-//						    cout << "y: " << y << endl;
-//						    cout << "loss_year main script: " << loss_data[x] << endl;
-//						    cout << "driver main script: " << drivermodel_data[x] << endl;
-//						    cout << "cf main script: " << Cf << endl;
-//                            cout << "gef_co2 main script: " << Gef_CO2 << endl;
-//                            cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
-//                            cout << "gef_n2o main script: " << Gef_N2O << endl;
-//                            cout << "peatburn main script: " << peatburn << endl;
-//                            cout << "peat_drain_total_new main script: " << peat_drain_total_new << endl;
-//                            cout << "peat_drain_total_old main script: " << peat_drain_total << endl;
-//                            cout << endl;
-//						}
 					}
 					if (burn_data[x] == 0)// Commodity, peat, not burned
 					{
@@ -479,22 +462,6 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-//				if (outdata20 == 16)
-//				{
-//                    cout << "New pixel:" << endl;
-//                    cout << "outdata1:" << outdata1 << endl;
-//                    cout << "non_soil_c:" << non_soil_c << endl;
-//                    cout << "c_to_co2:" << C_to_CO2 << endl;
-//                    cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-//                    cout << "Biomass_tCO2e_nofire: " << Biomass_tCO2e_nofire << endl;
-//                    cout << "flu: " << flu << endl;
-//                    cout << "minsoil part 1: " << ((soil_data[x]-(soil_data[x] * flu))/20) << endl;
-//                    cout << "minsoil part 2: " << (model_years-loss_data[x]) << endl;
-//                    cout << "minsoil: " << minsoil << endl;
-//                    cout << "soildata: "	<< soil_data[x] << endl;
-//                    cout << "lossname: " << loss_data[x] << endl;
-//                    cout << "" << endl;
-//				}
 			}
 
 			// Emissions model for shifting agriculture (only difference is flu val)
@@ -723,16 +690,6 @@ for(x=0; x<xsize; x++)
 					{
 						outdata4 = Biomass_tCO2e_yesfire;
 						outdata20 = 43;
-                        cout << "New pixel:" << endl;
-                        cout << "x: " << x << endl;
-                        cout << "y: " << y << endl;
-                        cout << "agc: " << agc_data[x] << endl;
-                        cout << "cf main script: " << Cf << endl;
-                        cout << "gef_co2 main script: " << Gef_CO2 << endl;
-                        cout << "gef_Ch4 main script: " << Gef_CH4 << endl;
-                        cout << "gef_n2o main script: " << Gef_N2O << endl;
-                        cout << "Biomass_tCO2e_yesfire: " << Biomass_tCO2e_yesfire << endl;
-                        cout << "" << endl;
 					}
 					else  // Wildfire, not peat, not burned
 					{
