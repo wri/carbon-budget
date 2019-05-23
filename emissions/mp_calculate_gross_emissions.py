@@ -38,7 +38,7 @@ download_list = [
                 # cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
                 #  cn.peat_mask_dir, cn.ifl_dir, cn.planted_forest_type_unmasked_dir, cn.drivers_processed_dir, cn.climate_zone_processed_dir,
                 #  cn.bor_tem_trop_processed_dir, cn.burn_year_dir,
-                 cn.plant_pre_2000_raw_dir,
+                 cn.plant_pre_2000_processed_dir,
                  cn.loss_dir]
 
 for input in download_list:
@@ -69,17 +69,17 @@ for input in download_list:
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
 
 
-# print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-# # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-# # Pre-2000 plantations have not previously been masked, so that is done here.
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/2)
-# pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
+print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+# Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+# Pre-2000 plantations have not previously been masked, so that is done here.
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count/2)
+pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
 
-# For single processor use
-for tile in tile_list:
-
-      utilities.mask_loss_pre_2000_plantation(tile)
+# # For single processor use
+# for tile in tile_list:
+#
+#       utilities.mask_loss_pre_2000_plantation(tile)
 
 
 # The C++ code expects a plantations tile for every input 10x10.
