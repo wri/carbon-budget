@@ -39,16 +39,16 @@ for pattern in pattern_list:
     pool.join()
 
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count / 3)
-# pool.map(net_flux.net_calc, tile_list)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count / 3)
+pool.map(net_flux.net_calc, tile_list)
+
+# # For single processor use
+# for tile in tile_list:
 #
-# # # For single processor use
-# # for tile in tile_list:
-# #
-# #     net_flux.net_calc(tile)
-#
-# print "Tiles processed. Uploading to s3 now..."
-#
-# # Uploads all output tiles to s3
-# uu.upload_final_set(cn.net_flux_dir, cn.pattern_net_flux)
+#     net_flux.net_calc(tile)
+
+print "Tiles processed. Uploading to s3 now..."
+
+# Uploads all output tiles to s3
+uu.upload_final_set(cn.net_flux_dir, cn.pattern_net_flux)
