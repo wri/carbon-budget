@@ -75,20 +75,21 @@ download_list = [
                 # cn.drivers_processed_dir,
                 # cn.climate_zone_processed_dir
 
-                cn.AGC_emis_year_dir,
-                cn.BGC_emis_year_dir,
-                cn.deadwood_emis_year_2000_dir,
-                cn.litter_emis_year_2000_dir,
-                cn.soil_C_emis_year_2000_dir,
-                cn.total_C_emis_year_dir
+                # cn.AGC_emis_year_dir,
+                # cn.BGC_emis_year_dir,
+                # cn.deadwood_emis_year_2000_dir,
+                # cn.litter_emis_year_2000_dir,
+                # cn.soil_C_emis_year_2000_dir,
+                # cn.total_C_emis_year_dir
 
-                # , cn.net_flux_dir
-                # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/deforestation_model/'
-                # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/disturbance_model_noData_removed/'
-                # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/forestry_model/'
-                # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/shiftingag_model/'
-                # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/urbanization_model/'
-                # , 's3://gfw2-data/climate/carbon_model/output_emissions/20180828/wildfire_model/'
+                cn.gross_emis_commod_dir,
+                cn.gross_emis_shifting_ag_dir,
+                cn.gross_emis_forestry_dir,
+                cn.gross_emis_wildfire_dir,
+                cn.gross_emis_urban_dir,
+                cn.gross_emis_no_driver_dir,
+                cn.gross_emis_all_drivers_dir,
+                cn.net_flux_dir
 ]
 
 # Iterates through each set of tiles and gets statistics of it
@@ -108,7 +109,7 @@ for input in download_list:
     # For multiprocessor use.
     # 15 processors uses up to around 400 GB of memory, which works fine on an r4.16xlarge machine
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=11)
+    pool = multiprocessing.Pool(processes=12)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
     # Added these in response to error12: Cannot allocate memory error.
     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool

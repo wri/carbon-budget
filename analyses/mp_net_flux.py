@@ -28,7 +28,7 @@ for input in download_list:
 
 
 # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
-# so that it has all the necessary inputs
+# so that it has all the necessary input tiles
 # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
 folder = './'
 pattern_list = [cn.pattern_cumul_gain_combo, cn.pattern_gross_emis_all_drivers]
@@ -40,7 +40,7 @@ for pattern in pattern_list:
     pool.close()
     pool.join()
 
-
+# Count/3 uses about 380 GB on a r4.16xlarge spot machine
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 3)
 pool.map(net_flux.net_calc, tile_list)
