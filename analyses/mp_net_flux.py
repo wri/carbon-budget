@@ -17,8 +17,8 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # For downloading all tiles in the input folders
 download_list = [cn.cumul_gain_combo_dir, cn.gross_emis_all_drivers_dir]
 
-# for input in download_list:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
@@ -27,7 +27,9 @@ download_list = [cn.cumul_gain_combo_dir, cn.gross_emis_all_drivers_dir]
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile, cn.pattern_gross_emis_all_drivers), '.')  # emissions from all drivers
 
 
-# All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
+# Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+# so that it has all the necessary inputs
+# The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
 folder = './'
 pattern_list = [cn.pattern_cumul_gain_combo, cn.pattern_gross_emis_all_drivers]
 
