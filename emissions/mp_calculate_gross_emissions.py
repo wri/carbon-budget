@@ -20,9 +20,7 @@ These codes are summarized in carbon-budget/emissions/node_codes.txt
 import multiprocessing
 import calculate_gross_emissions
 from functools import partial
-from multiprocessing.pool import Pool
 import utilities
-import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -89,7 +87,6 @@ pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
 # However, not all Hansen tiles have plantations.
 # This function creates "dummy" plantation tiles for all Hansen tiles that do not have plantations.
 # That way, the C++ script gets all the necessary input files
-pattern = cn.pattern_planted_forest_type_unmasked
 folder = 'cpp_util/'
 
 # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
