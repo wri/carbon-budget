@@ -39,7 +39,8 @@ def net_calc(tile_id):
                 driver='GTiff',
                 count=1,
                 compress='lzw',
-                nodata=0
+                nodata=0,
+                dtype='float32'
             )
 
             # Opens the output tile, giving it the arguments of the input tiles
