@@ -21,6 +21,7 @@ biomass_to_c_non_mangrove_litter = 0.37
 biomass_to_c_mangrove = 0.45
 
 # Carbon to CO2 ratio
+# Needs the decimal places in order to be cast as a float
 c_to_co2 = 44.0/12.0
 
 # Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
