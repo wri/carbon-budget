@@ -55,7 +55,7 @@ def net_calc(tile_id):
         loss = loss_src.read(1, window=window)
 
         # Converts gain from C to CO2 and subtracts that from loss
-        dst_data = loss - (gain*cn.c_to_co2)
+        dst_data = loss - (gain*float(cn.c_to_co2))
 
         net_flux_dst.write_band(1, dst_data, window=window)
 
@@ -64,4 +64,4 @@ def net_calc(tile_id):
     os.remove(loss_in)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, os.path.join(cn.pattern_gross_emis_commod))
+    uu.end_of_fx_summary(start, tile_id, os.path.join(cn.pattern_net_flux))
