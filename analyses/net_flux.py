@@ -1,10 +1,8 @@
 ### Calculates the net emissions over the study period, with units of CO2/ha on a pixel-by-pixel basis
 
-import utilities
 import os
 import datetime
 import rasterio
-import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -54,10 +52,17 @@ def net_calc(tile_id):
         gain = gain_src.read(1, window=window)
         loss = loss_src.read(1, window=window)
 
+        print gain
+        print loss
+        print gain*float(cn.c_to_co2)
+        print loss - (gain*float(cn.c_to_co2))
+
         # Converts gain from C to CO2 and subtracts that from loss
         dst_data = loss - (gain*float(cn.c_to_co2))
 
         net_flux_dst.write_band(1, dst_data, window=window)
+
+        sys.quit()
 
     # Need to include these or the spot machine will run out of memory otherwise
     os.remove(gain_in)
