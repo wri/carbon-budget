@@ -327,28 +327,28 @@ total_C_emis_year_dir = '{}total_carbon/20190430/'.format(base_carbon_pool_dir)
 ######
 
 pattern_gross_emis_commod = 'commodity_t_CO2_ha_gross_emis_year'
-gross_emis_commod_dir = '{}gross_emissions/commodities/20190524_test/'.format(base_dir)
+gross_emis_commod_dir = '{}gross_emissions/commodities/20190523/'.format(base_dir)
 
 pattern_gross_emis_forestry = 'forestry_t_CO2_ha_gross_emis_year'
-gross_emis_forestry_dir = '{}gross_emissions/forestry/20190524_test/'.format(base_dir)
+gross_emis_forestry_dir = '{}gross_emissions/forestry/20190523/'.format(base_dir)
 
 pattern_gross_emis_shifting_ag = 'shifting_ag_t_CO2_ha_gross_emis_year'
-gross_emis_shifting_ag_dir = '{}gross_emissions/shifting_ag/20190524_test/'.format(base_dir)
+gross_emis_shifting_ag_dir = '{}gross_emissions/shifting_ag/20190523t/'.format(base_dir)
 
 pattern_gross_emis_urban = 'urbanization_t_CO2_ha_gross_emis_year'
-gross_emis_urban_dir = '{}gross_emissions/urbanization/20190524_test/'.format(base_dir)
+gross_emis_urban_dir = '{}gross_emissions/urbanization/20190523/'.format(base_dir)
 
 pattern_gross_emis_wildfire = 'wildfire_t_CO2_ha_gross_emis_year'
-gross_emis_wildfire_dir = '{}gross_emissions/wildfire/20190524_test/'.format(base_dir)
+gross_emis_wildfire_dir = '{}gross_emissions/wildfire/20190523/'.format(base_dir)
 
 pattern_gross_emis_no_driver = 'no_driver_t_CO2_ha_gross_emis_year'
-gross_emis_no_driver_dir = '{}gross_emissions/no_driver/20190524_test/'.format(base_dir)
+gross_emis_no_driver_dir = '{}gross_emissions/no_driver/20190523/'.format(base_dir)
 
 pattern_gross_emis_all_drivers = 'all_drivers_t_CO2_ha_gross_emis_year'
 gross_emis_all_drivers_dir = '{}gross_emissions/all_drivers/20190523/'.format(base_dir)
 
 pattern_gross_emis_nodes = 'decision_tree_nodes_gross_emis'
-gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/20190524_test/'.format(base_dir)
+gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/20190523/'.format(base_dir)
 
 
 ### Net emissions
