@@ -35,8 +35,8 @@ f.close()
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
 
 
-# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-uu.s3_folder_download(cn.pixel_area_dir, '.')
+# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+# uu.s3_folder_download(cn.pixel_area_dir, '.')
 
 # For downloading all tiles in selected folders
 download_list = [
