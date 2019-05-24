@@ -92,6 +92,8 @@ download_list = [
                 cn.net_flux_dir
 ]
 
+print download_list
+
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
 
