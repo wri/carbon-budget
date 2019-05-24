@@ -18,7 +18,7 @@ def net_calc(tile_id):
     start = datetime.datetime.now()
 
     # Names of the annual gain rate and cumulative gain tiles for non-mangrove natural forests
-    gain_in = '{0}_{1}.tif'.format(cn.pattern_cumul_gain_combo, tile_id)
+    gain_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)
     loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emis_all_drivers)
 
     # Output net emissions file
