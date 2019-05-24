@@ -22,7 +22,7 @@ download_list = [cn.cumul_gain_combo_dir, cn.gross_emis_all_drivers_dir]
 # For copying individual tiles to spot machine for testing
 for tile in tile_list:
 
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, cn.pattern_cumul_gain_combo, tile), '.')  # cumulative aboveand belowground carbon gain for all forest types
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile, cn.pattern_cumul_gain_combo), '.')  # cumulative aboveand belowground carbon gain for all forest types
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile, cn.pattern_gross_emis_all_drivers), '.')  # emissions from all drivers
 
 # count = multiprocessing.cpu_count()
