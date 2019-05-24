@@ -7,8 +7,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# tile_list = uu.create_combined_tile_list(cn.gross_emis_all_drivers_dir, cn.cumul_gain_combo_dir)
-tile_list = ['00N_110E'] # test tiles
+tile_list = uu.create_combined_tile_list(cn.gross_emis_all_drivers_dir, cn.cumul_gain_combo_dir)
+# tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
@@ -16,23 +16,23 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # For downloading all tiles in the input folders
 download_list = [cn.cumul_gain_combo_dir, cn.gross_emis_all_drivers_dir]
 
-# for input in download_list:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
+# # For copying individual tiles to spot machine for testing
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile, cn.pattern_cumul_gain_combo), '.')  # cumulative aboveand belowground carbon gain for all forest types
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile, cn.pattern_gross_emis_all_drivers), '.')  # emissions from all drivers
 
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile, cn.pattern_cumul_gain_combo), '.')  # cumulative aboveand belowground carbon gain for all forest types
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile, cn.pattern_gross_emis_all_drivers), '.')  # emissions from all drivers
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count / 2)
+pool.map(net_flux.net_calc, tile_list)
 
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count / 4)
-# pool.map(net_flux.net_calc, tile_list)
-
-# For single processor use
-for tile in tile_list:
-
-    net_flux.net_calc(tile)
+# # For single processor use
+# for tile in tile_list:
+#
+#     net_flux.net_calc(tile)
 
 print "Tiles processed. Uploading to s3 now..."
 
