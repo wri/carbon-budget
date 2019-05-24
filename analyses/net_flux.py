@@ -17,12 +17,12 @@ def net_calc(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the annual gain rate and cumulative gain tiles for non-mangrove natural forests
+    # Names of the gain and emissions tiles
     gain_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)
     loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emis_all_drivers)
 
     # Output net emissions file
-    net_emis = '{0}_{1}.tif'.format(tile_id, cn.pattern_net_flux)
+    net_flux = '{0}_{1}.tif'.format(tile_id, cn.pattern_net_flux)
 
     # Opens cumulative gain input tile
     gain_src = rasterio.open(gain_in)
@@ -36,8 +36,16 @@ def net_calc(tile_id):
     # Opens loss tile
     loss_src = rasterio.open(loss_in)
 
+    kwargs.update(
+        driver='GTiff',
+        count=1,
+        compress='lzw',
+        nodata=0,
+        dtype='float32'
+    )
+
     # Opens the output tile, giving it the arguments of the input tiles
-    net_flux_dst = rasterio.open(net_emis, 'w', **kwargs)
+    net_flux_dst = rasterio.open(net_flux, 'w', **kwargs)
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
