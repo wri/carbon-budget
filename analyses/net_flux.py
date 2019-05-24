@@ -55,6 +55,7 @@ def net_calc(tile_id):
         print gain
         print loss
         print gain*float(cn.c_to_co2)
+        print cn.c_to_co2
         print loss - (gain*float(cn.c_to_co2))
 
         # Converts gain from C to CO2 and subtracts that from loss
