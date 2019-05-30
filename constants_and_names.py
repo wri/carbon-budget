@@ -333,7 +333,7 @@ pattern_gross_emis_forestry = 'forestry_t_CO2_ha_gross_emis_year'
 gross_emis_forestry_dir = '{}gross_emissions/forestry/20190523/'.format(base_dir)
 
 pattern_gross_emis_shifting_ag = 'shifting_ag_t_CO2_ha_gross_emis_year'
-gross_emis_shifting_ag_dir = '{}gross_emissions/shifting_ag/20190523t/'.format(base_dir)
+gross_emis_shifting_ag_dir = '{}gross_emissions/shifting_ag/20190523/'.format(base_dir)
 
 pattern_gross_emis_urban = 'urbanization_t_CO2_ha_gross_emis_year'
 gross_emis_urban_dir = '{}gross_emissions/urbanization/20190523/'.format(base_dir)
