@@ -65,7 +65,7 @@ download_list = [
                 # cn.cumul_gain_AGC_natrl_forest_dir,
                 # cn.cumul_gain_BGC_natrl_forest_dir,
                 # cn.annual_gain_combo_dir,
-                cn.cumul_gain_combo_dir
+                # cn.cumul_gain_combo_dir
 
                 # cn.elevation_processed_dir,
                 # cn.precip_processed_dir,
@@ -83,7 +83,7 @@ download_list = [
                 # cn.total_C_emis_year_dir
 
                 # cn.gross_emis_commod_dir,
-                # cn.gross_emis_shifting_ag_dir,
+                cn.gross_emis_shifting_ag_dir
                 # cn.gross_emis_forestry_dir,
                 # cn.gross_emis_wildfire_dir,
                 # cn.gross_emis_urban_dir,
@@ -109,7 +109,7 @@ for input in download_list:
     # For multiprocessor use.
     # 15 processors uses up to around 400 GB of memory, which works fine on an r4.16xlarge machine
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=8)
+    pool = multiprocessing.Pool(processes=15)
     pool.map(tile_statistics.create_tile_statistics, tile_list)
     # Added these in response to error12: Cannot allocate memory error.
     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
