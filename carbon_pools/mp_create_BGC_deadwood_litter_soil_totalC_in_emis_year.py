@@ -9,7 +9,7 @@ NOTE: Because there are so many input files, this script needs a machine with ex
 Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
 '''
 
-import create_BGC_deadwood_litter_soil_totalC_in_emis_year
+import create_BGC_deadwood_litter_soil_totalC
 from multiprocessing.pool import Pool
 from functools import partial
 import subprocess
@@ -19,6 +19,9 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+
+# Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
+extent = "loss"
 
 pd.options.mode.chained_assignment = None
 
@@ -80,17 +83,17 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.below_to_above_trop_dry_mang,
                                                                            cn.below_to_above_trop_wet_mang,
                                                                            cn.below_to_above_subtrop_mang)
 
-mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.deadwood_to_above_trop_dry_mang,
                                                                            cn.deadwood_to_above_trop_wet_mang,
                                                                            cn.deadwood_to_above_subtrop_mang)
 
-mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.litter_to_above_trop_dry_mang,
                                                                            cn.litter_to_above_trop_wet_mang,
                                                                            cn.litter_to_above_subtrop_mang)
@@ -100,7 +103,7 @@ print "Creating carbon pools..."
 # # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
 # num_of_processes = 18
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
 # pool.close()
 # pool.join()
 #
@@ -110,7 +113,7 @@ print "Creating carbon pools..."
 #
 # num_of_processes = 16
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
 # pool.close()
 # pool.join()
 #
@@ -120,7 +123,7 @@ print "Creating carbon pools..."
 #
 # num_of_processes = 16
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
 # pool.close()
 # pool.join()
 #
@@ -130,7 +133,7 @@ print "Creating carbon pools..."
 #
 # num_of_processes = 16
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_soil), tile_list)
 # pool.close()
 # pool.join()
 #
@@ -142,7 +145,7 @@ print "Creating carbon pools..."
 # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
 num_of_processes = 14
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C), tile_list)
 pool.close()
 pool.join()
 
@@ -152,11 +155,11 @@ uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
 
 # # For single processor use
 # for tile in tile_list:
-#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
-#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood(tile, mang_deadwood_AGB_ratio)
-#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter(tile, mang_litter_AGB_ratio)
-#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil(tile)
-#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C(tile)
+#     create_BGC_deadwood_litter_soil_totalC.create_BGC(tile, mang_BGB_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC.create_deadwood(tile, mang_deadwood_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC.create_litter(tile, mang_litter_AGB_ratio)
+#     create_BGC_deadwood_litter_soil_totalC.create_soil(tile)
+#     create_BGC_deadwood_litter_soil_totalC.create_total_C(tile)
 #
 # uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
 # uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
