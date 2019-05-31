@@ -92,7 +92,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
     dst_BGC = rasterio.open(BGC, 'w', **kwargs)
 
-    print "  Creating belowground carbon density in the year of loss for {}...".format(tile_id)
+    print "  Creating belowground carbon density for {}...".format(tile_id)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -224,7 +224,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
     # The output file: belowground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_deadwood = rasterio.open(deadwood, 'w', **kwargs)
 
-    print "  Creating deadwood carbon density in the year of loss for {}...".format(tile_id)
+    print "  Creating deadwood carbon density for {}...".format(tile_id)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -406,7 +406,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent):
     # The output file: belowground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_litter = rasterio.open(litter, 'w', **kwargs)
 
-    print "  Creating litter carbon density in the year of loss for {}...".format(tile_id)
+    print "  Creating litter carbon density for {}...".format(tile_id)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -554,7 +554,7 @@ def create_soil(tile_id):
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
     dst_soil_emis_year = rasterio.open(soil_emis_year, 'w', **kwargs)
 
-    print "  Creating soil carbon density in the year of loss for loss pixels in {}...".format(tile_id)
+    print "  Creating soil carbon density for loss pixels in {}...".format(tile_id)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -634,7 +634,7 @@ def create_total_C(tile_id, extent):
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
     dst_total_C = rasterio.open(total_C, 'w', **kwargs)
 
-    print "  Creating total carbon density in the year of loss for loss pixels in {}...".format(tile_id)
+    print "  Creating total carbon density in {}...".format(tile_id)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:

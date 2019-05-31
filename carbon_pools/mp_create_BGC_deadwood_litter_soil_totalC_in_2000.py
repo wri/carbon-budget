@@ -25,8 +25,8 @@ extent = "full"
 
 pd.options.mode.chained_assignment = None
 
-# tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-tile_list = ['30N_080W'] # test tiles
+tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+# tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
@@ -43,33 +43,33 @@ input_files = [
     cn.elevation_processed_dir
     ]
 
-# for input in input_files:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in input_files:
+    uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_2000_dir, tile,
-                                                            cn.pattern_AGC_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
-                                                            cn.pattern_cont_eco_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
-                                                            cn.pattern_bor_tem_trop_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
-                                                            cn.pattern_precip), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
-                                                            cn.pattern_soil_C_full_extent_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
-                                                            cn.pattern_elevation), '.')
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
-                                                            cn.pattern_WHRC_biomass_2000_unmasked), '.')
-    except:
-        print "No WHRC biomass in", tile
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    except:
-        print "No mangrove biomass in", tile
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_2000_dir, tile,
+#                                                             cn.pattern_AGC_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
+#                                                             cn.pattern_cont_eco_processed), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
+#                                                             cn.pattern_bor_tem_trop_processed), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
+#                                                             cn.pattern_precip), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
+#                                                             cn.pattern_soil_C_full_extent_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
+#                                                             cn.pattern_elevation), '.')
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
+#                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
+#     except:
+#         print "No WHRC biomass in", tile
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     except:
+#         print "No mangrove biomass in", tile
 
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
@@ -102,7 +102,6 @@ print "Creating carbon pools..."
 
 # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
 num_of_processes = 18
-num_of_processes = 1
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio, extent=extent), tile_list)
 pool.close()
@@ -113,7 +112,6 @@ uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
 # subprocess.check_call(cmd)
 
 num_of_processes = 16
-num_of_processes = 1
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio, extent=extent), tile_list)
 pool.close()
@@ -124,7 +122,6 @@ uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
 # subprocess.check_call(cmd)
 
 num_of_processes = 16
-num_of_processes = 1
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio, extent=extent), tile_list)
 pool.close()
@@ -141,7 +138,6 @@ There's no soil C function here because full extent soil C is created in a diffe
 # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
 # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
 num_of_processes = 14
-num_of_processes = 1
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C, extent=extent), tile_list)
 pool.close()

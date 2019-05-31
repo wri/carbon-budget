@@ -25,8 +25,8 @@ extent = "loss"
 
 pd.options.mode.chained_assignment = None
 
-# tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-tile_list = ['00N_110E', '30N_080W'] # test tiles
+tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+# tile_list = ['00N_110E', '30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
@@ -43,8 +43,8 @@ input_files = [
     cn.elevation_processed_dir
     ]
 
-# for input in input_files:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in input_files:
+    uu.s3_folder_download('{}'.format(input), '.')
 
 # For copying individual tiles to spot machine for testing.
 for tile in tile_list:
@@ -102,61 +102,56 @@ print "Creating carbon pools..."
 
 # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
 num_of_processes = 18
-num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio, extent=extent), tile_list)
 pool.close()
 pool.join()
 
-# uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
-# # subprocess.check_call(cmd)
+uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
-num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio, extent=extent), tile_list)
 pool.close()
 pool.join()
 
-# uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
-# # subprocess.check_call(cmd)
+uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
-num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio, extent=extent), tile_list)
 pool.close()
 pool.join()
 
-# uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_litter_emis_year_2000)]
-# # subprocess.check_call(cmd)
+uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_litter_emis_year_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
-num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_soil), tile_list)
 pool.close()
 pool.join()
 
-# uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
-# # subprocess.check_call(cmd)
+uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
+# subprocess.check_call(cmd)
 
 # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
 # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
 num_of_processes = 14
-num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C, extent=extent), tile_list)
 pool.close()
 pool.join()
 
-# uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
-# # subprocess.check_call(cmd)
+uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
+# subprocess.check_call(cmd)
 
 # # For single processor use
 # for tile in tile_list:
