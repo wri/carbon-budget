@@ -43,30 +43,30 @@ input_files = [
 # for input in input_files:
 #     uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_2000_dir, tile,
-                                                            cn.pattern_AGC_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
-                                                            cn.pattern_cont_eco_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
-                                                            cn.pattern_bor_tem_trop_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
-                                                            cn.pattern_precip), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
-                                                            cn.pattern_soil_C_full_extent_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
-                                                            cn.pattern_elevation), '.')
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
-                                                            cn.pattern_WHRC_biomass_2000_unmasked), '.')
-    except:
-        print "No WHRC biomass in", tile
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    except:
-        print "No mangrove biomass in", tile
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_2000_dir, tile,
+#                                                             cn.pattern_AGC_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
+#                                                             cn.pattern_cont_eco_processed), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
+#                                                             cn.pattern_bor_tem_trop_processed), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
+#                                                             cn.pattern_precip), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
+#                                                             cn.pattern_soil_C_full_extent_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
+#                                                             cn.pattern_elevation), '.')
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
+#                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
+#     except:
+#         print "No WHRC biomass in", tile
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     except:
+#         print "No mangrove biomass in", tile
 
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
