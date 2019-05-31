@@ -90,7 +90,7 @@ def create_2000_AGC(tile_id):
 
             # Masks WHRC biomass where there is non-mangrove non-planted forest. If masked, the masked values are filled with 0s.
             if os.path.exists(mangrove_biomass_2000):
-                natural_forest_biomass = np.ma.masked_where(mangrove_biomass_2000_window > 0, natural_forest_C)
+                natural_forest_biomass = np.ma.masked_where(mangrove_biomass_2000_window > 0, natural_forest_biomass)
                 natural_forest_biomass = natural_forest_biomass.filled(0)
 
             # Adds the non-mang non-planted forest final AGC density values to the ongoing array.
