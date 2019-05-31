@@ -28,8 +28,8 @@ input_files = [
     cn.mangrove_biomass_2000_dir
     ]
 
-for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
+# for input in input_files:
+#     uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing.
 # for tile in tile_list:
@@ -47,7 +47,7 @@ for input in input_files:
 print "Creating tiles of aboveground carbon density in the year 2000"
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
+pool = multiprocessing.Pool(processes=count/5)
 pool.map(create_aboveground_carbon_in_2000.create_2000_AGC, tile_list)
 
 # # For single processor use
