@@ -152,7 +152,7 @@ print "Creating carbon pools..."
 # subprocess.check_call(cmd)
 
 # For single processor use
-for tile in tile_list:
+# for tile in tile_list:
     # create_BGC_deadwood_litter_soil_totalC_in_2000.create_BGC(tile, mang_BGB_AGB_ratio, extent)
     # create_BGC_deadwood_litter_soil_totalC_in_2000.create_deadwood(tile, mang_deadwood_AGB_ratio, extent)
     # create_BGC_deadwood_litter_soil_totalC_in_2000.create_litter(tile, mang_litter_AGB_ratio, extent)
