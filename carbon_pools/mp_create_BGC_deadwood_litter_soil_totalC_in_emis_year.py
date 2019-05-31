@@ -25,8 +25,8 @@ extent = "loss"
 
 pd.options.mode.chained_assignment = None
 
-tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-# tile_list = ['00N_110E'] # test tiles
+# tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+tile_list = ['00N_110E', '30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
@@ -148,6 +148,7 @@ pool.join()
 # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
 # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
 num_of_processes = 14
+num_of_processes = 2
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C), tile_list)
 pool.close()
