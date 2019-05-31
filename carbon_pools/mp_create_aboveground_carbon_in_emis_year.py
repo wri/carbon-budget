@@ -1,3 +1,10 @@
+'''
+This script create tiles of the aboveground carbon density in the year in which tree cover loss occurred
+using mangrove and non-mangrove (WHRC) aboveground biomass density in 2000 and carbon gain from 2000 until the loss year.
+Unlike the AGC in 2000, it outputs values only where there is loss, and the values are carbon in 2000 + gain until loss.
+This is used for the gross emissions model.
+'''
+
 import create_aboveground_carbon_in_emis_year
 import multiprocessing
 import os

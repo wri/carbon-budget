@@ -1,3 +1,10 @@
+'''
+This script create tiles of the aboveground carbon density in 2000 using mangrove and non-mangrove (WHRC) aboveground
+biomass density in 2000. Unlike the AGC in emission year, it uses the full extent (all pixels) of the two input
+biomass tiles.
+This is not used for the model. It is simply for having information on the carbon stocks in 2000.
+'''
+
 import datetime
 import sys
 import os

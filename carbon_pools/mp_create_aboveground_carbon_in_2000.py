@@ -1,3 +1,10 @@
+'''
+This script create tiles of the aboveground carbon density in 2000 using mangrove and non-mangrove (WHRC) aboveground
+biomass density in 2000. Unlike the AGC in emission year, it uses the full extent (all pixels) of the two input
+biomass tiles.
+This is not used for the model. It is simply for having information on the carbon stocks in 2000.
+'''
+
 import create_aboveground_carbon_in_2000
 import multiprocessing
 import os
@@ -6,11 +13,11 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-#                                          cn.annual_gain_AGB_mangrove_dir
-#                                          )
+tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
+                                         cn.annual_gain_AGB_mangrove_dir
+                                         )
 # tile_list = ['00N_110E'] # test tiles
-tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
+# tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
@@ -21,26 +28,26 @@ input_files = [
     cn.mangrove_biomass_2000_dir
     ]
 
-# for input in input_files:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in input_files:
+    uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    except:
-        print "No mangrove biomass in", tile
-
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.')
-    except:
-        print "No WHRC biomass in", tile
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     except:
+#         print "No mangrove biomass in", tile
+#
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.')
+#     except:
+#         print "No WHRC biomass in", tile
 
 print "Creating tiles of aboveground carbon density in the year 2000"
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/5)
+pool = multiprocessing.Pool(processes=count/4)
 pool.map(create_aboveground_carbon_in_2000.create_2000_AGC, tile_list)
 
 # # For single processor use
