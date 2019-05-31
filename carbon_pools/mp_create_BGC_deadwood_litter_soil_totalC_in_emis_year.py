@@ -104,7 +104,7 @@ print "Creating carbon pools..."
 num_of_processes = 18
 num_of_processes = 2
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio, extent=extent), tile_list)
 pool.close()
 pool.join()
 
@@ -115,7 +115,7 @@ pool.join()
 num_of_processes = 16
 num_of_processes = 2
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio, extent=extent), tile_list)
 pool.close()
 pool.join()
 
@@ -126,7 +126,7 @@ pool.join()
 num_of_processes = 16
 num_of_processes = 2
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio, extent=extent), tile_list)
 pool.close()
 pool.join()
 
@@ -150,7 +150,7 @@ pool.join()
 num_of_processes = 14
 num_of_processes = 2
 pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C), tile_list)
+pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C, extent=extent), tile_list)
 pool.close()
 pool.join()
 
