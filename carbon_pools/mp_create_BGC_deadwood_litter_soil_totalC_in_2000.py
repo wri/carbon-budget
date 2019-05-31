@@ -154,12 +154,12 @@ extent = "full"
 
 # For single processor use
 for tile in tile_list:
-    create_BGC_deadwood_litter_soil_totalC_in_2000.create_BGC(tile, mang_BGB_AGB_ratio, extent)
-#     create_BGC_deadwood_litter_soil_totalC_in_2000.create_deadwood(tile, mang_deadwood_AGB_ratio, extent)
-#     create_BGC_deadwood_litter_soil_totalC_in_2000.create_litter(tile, mang_litter_AGB_ratio, extent)
+    # create_BGC_deadwood_litter_soil_totalC_in_2000.create_BGC(tile, mang_BGB_AGB_ratio, extent)
+    create_BGC_deadwood_litter_soil_totalC_in_2000.create_deadwood(tile, mang_deadwood_AGB_ratio, extent)
+    create_BGC_deadwood_litter_soil_totalC_in_2000.create_litter(tile, mang_litter_AGB_ratio, extent)
 #     create_BGC_deadwood_litter_soil_totalC_in_2000.create_total_C(tile, extent)
 #
-uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
-# uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
-# uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
+# uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
+uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
+uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
 # uu.upload_final_set(cn.total_C_2000_dir, cn.pattern_total_C_2000)
