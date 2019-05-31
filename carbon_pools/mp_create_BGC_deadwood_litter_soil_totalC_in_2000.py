@@ -9,7 +9,7 @@ NOTE: Because there are so many input files, this script needs a machine with ex
 Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
 '''
 
-import create_BGC_deadwood_litter_soil_totalC_in_emis_year
+import create_BGC_deadwood_litter_soil_totalC_in_2000
 from multiprocessing.pool import Pool
 from functools import partial
 import subprocess
@@ -43,30 +43,30 @@ input_files = [
 # for input in input_files:
 #     uu.s3_folder_download('{}'.format(input), '.')
 
-# # For copying individual tiles to spot machine for testing.
-# for tile in tile_list:
-#
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
-#                                                             cn.pattern_AGC_emis_year), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
-#                                                             cn.pattern_cont_eco_processed), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
-#                                                             cn.pattern_bor_tem_trop_processed), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
-#                                                             cn.pattern_precip), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
-#                                                             cn.pattern_soil_C_full_extent_2000), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
-#                                                             cn.pattern_elevation), '.')
-#     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
-#                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
-#     except:
-#         print "No WHRC biomass in", tile
-#     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-#     except:
-#         print "No mangrove biomass in", tile
+# For copying individual tiles to spot machine for testing.
+for tile in tile_list:
+
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_2000_dir, tile,
+                                                            cn.pattern_AGC_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
+                                                            cn.pattern_cont_eco_processed), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
+                                                            cn.pattern_bor_tem_trop_processed), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
+                                                            cn.pattern_precip), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
+                                                            cn.pattern_soil_C_full_extent_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
+                                                            cn.pattern_elevation), '.')
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
+                                                            cn.pattern_WHRC_biomass_2000_unmasked), '.')
+    except:
+        print "No WHRC biomass in", tile
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+    except:
+        print "No mangrove biomass in", tile
 
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
@@ -80,22 +80,24 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_2000.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.below_to_above_trop_dry_mang,
                                                                            cn.below_to_above_trop_wet_mang,
                                                                            cn.below_to_above_subtrop_mang)
 
-mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_2000.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.deadwood_to_above_trop_dry_mang,
                                                                            cn.deadwood_to_above_trop_wet_mang,
                                                                            cn.deadwood_to_above_subtrop_mang)
 
-mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_emis_year.mangrove_pool_ratio_dict(gain_table_simplified,
+mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_2000.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                            cn.litter_to_above_trop_dry_mang,
                                                                            cn.litter_to_above_trop_wet_mang,
                                                                            cn.litter_to_above_subtrop_mang)
 
 print "Creating carbon pools..."
+
+extent = "full"
 
 # # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
 # num_of_processes = 18
@@ -138,28 +140,28 @@ print "Creating carbon pools..."
 # # cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
 # # subprocess.check_call(cmd)
 
-# I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
-# at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
-num_of_processes = 14
-pool = Pool(num_of_processes)
-pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
-pool.close()
-pool.join()
-
-uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
+# # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
+# # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
+# num_of_processes = 14
+# pool = Pool(num_of_processes)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
+# pool.close()
+# pool.join()
+#
+# uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
 # cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
 # subprocess.check_call(cmd)
 
-# # For single processor use
-# for tile in tile_list:
-#     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC(tile, mang_BGB_AGB_ratio)
+# For single processor use
+for tile in tile_list:
+    create_BGC_deadwood_litter_soil_totalC_in_2000.create_BGC(tile, mang_BGB_AGB_ratio, extent)
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood(tile, mang_deadwood_AGB_ratio)
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter(tile, mang_litter_AGB_ratio)
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil(tile)
 #     create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C(tile)
 #
-# uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
-# uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
-# uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
+uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
+# uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
+# uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
 # uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
-# uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
+# uu.upload_final_set(cn.total_C_2000_dir, cn.pattern_total_C_2000)

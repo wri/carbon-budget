@@ -36,17 +36,25 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
     return mang_x_pool_AGB_ratio
 
-def create_BGC(tile_id, mang_BGB_AGB_ratio):
+def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
 
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
+    if extent == "loss":
+        AGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
+    if extent == "full":
+        AGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_2000)
     cont_ecozone = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
     # Name of output tile
-    BGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_emis_year)
+    if extent == "loss":
+        BGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_emis_year)
+        pattern_BGC = cn.pattern_BGC_emis_year
+    if extent == "full":
+        BGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_2000)
+        pattern_BGC = cn.pattern_BGC_2000
 
     print "  Reading input files for {}...".format(tile_id)
 
@@ -58,13 +66,13 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         print "No mangrove biomass for", tile_id
 
     # Both of these tiles should exist and thus be able to be opened
-    AGC_emis_year_src = rasterio.open(AGC_emis_year)
+    AGC_src = rasterio.open(AGC)
     cont_ecozone_src = rasterio.open(cont_ecozone)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = AGC_emis_year_src.meta
+    kwargs = AGC_src.meta
     # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
-    windows = AGC_emis_year_src.block_windows(1)
+    windows = AGC_src.block_windows(1)
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional carbon pools
@@ -77,7 +85,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
     )
 
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
-    dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
+    dst_BGC = rasterio.open(BGC, 'w', **kwargs)
 
     print "  Creating belowground carbon density in the year of loss for {}...".format(tile_id)
 
@@ -89,8 +97,8 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         BGC_output = np.zeros((window.height, window.width), dtype='float32')
 
         # Reads in the windows of each input file that definitely exist
-        AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
-        # print AGC_emis_year_window[0][30020:30035]
+        AGC_window = AGC_src.read(1, window=window)
+        # print AGC_window[0][30020:30035]
         cont_ecozone_window = cont_ecozone_src.read(1, window=window)
         cont_ecozone_window = cont_ecozone_window.astype('float32')
         # print fao_ecozone_window[0][30020:30035]
@@ -108,7 +116,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
             # print fao_ecozone_window[0][30020:30035]
 
             # Multiplies the AGC in the loss year by the correct mangrove BGB:AGB ratio to get an array of BGC in the loss year
-            mangrove_C_final = AGC_emis_year_window * cont_ecozone_window
+            mangrove_C_final = AGC_window * cont_ecozone_window
             # print mangrove_C_final[0][30020:30035]
 
             # Masks out non-mangrove pixels and fills the masked values with 0s
@@ -117,7 +125,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
             # print mangrove_C_final[0][30020:30035]
 
             # Applies the non-mangrove BGB:AGB ratio to all AGC in emissions year pixels
-            non_mang_output = AGC_emis_year_window * cn.below_to_above_non_mang
+            non_mang_output = AGC_window * cn.below_to_above_non_mang
             # print non_mang_output[0][29930:29950]
 
             # Masks out mangrove pixels so that only non-mangrove pixels use the non-mangrove BGB:AGB ratio
@@ -132,14 +140,14 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio):
         # BGB:AGB ratio
         if not os.path.exists(mangrove_biomass_2000):
 
-            BGC_output = AGC_emis_year_window * cn.below_to_above_non_mang
+            BGC_output = AGC_window * cn.below_to_above_non_mang
             # print BGC_output[0][29930:29950]
 
         # Writes the output window to the output file
-        dst_BGC_emis_year.write_band(1, BGC_output, window=window)
+        dst_BGC.write_band(1, BGC_output, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
+    uu.end_of_fx_summary(start, tile_id, pattern_BGC)
 
 def create_deadwood(tile_id, mang_deadwood_AGB_ratio):
 
