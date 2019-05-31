@@ -576,19 +576,36 @@ def create_soil(tile_id):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
 
-def create_total_C(tile_id):
+def create_total_C(tile_id, extent):
 
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    AGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
-    BGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_emis_year)
-    deadwood = '{0}_{1}.tif'.format(tile_id, cn.pattern_deadwood_emis_year_2000)
-    litter = '{0}_{1}.tif'.format(tile_id, cn.pattern_litter_emis_year_2000)
-    soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_emis_year_2000)
+    # The AGC name depends on whether carbon in 2000 or in the emission year is being created.
+    # If litter in the loss year is being created, it uses the loss year AGC tile.
+    # If litter in 2000 is being created, is uses the 2000 AGC tile.
+    # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
+    if extent == "loss":
+        AGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
+        BGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_emis_year)
+        deadwood = '{0}_{1}.tif'.format(tile_id, cn.pattern_deadwood_emis_year_2000)
+        litter = '{0}_{1}.tif'.format(tile_id, cn.pattern_litter_emis_year_2000)
+        soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_emis_year_2000)
+    if extent == "full":
+        AGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_2000)
+        BGC = '{0}_{1}.tif'.format(tile_id, cn.pattern_BGC_2000)
+        deadwood = '{0}_{1}.tif'.format(tile_id, cn.pattern_deadwood_2000)
+        litter = '{0}_{1}.tif'.format(tile_id, cn.pattern_litter_2000)
+        soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
 
     # Name of output tile
-    total_C_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_total_C_emis_year)
+    # The output name depends on whether carbon in 2000 or in the emission year is being created.
+    if extent == "loss":
+        total_C = '{0}_{1}.tif'.format(tile_id, cn.pattern_total_C_emis_year)
+        pattern_total_C = cn.pattern_total_C_emis_year
+    if extent == "full":
+        total_C = '{0}_{1}.tif'.format(tile_id, cn.pattern_total_C_2000)
+        pattern_total_C = cn.pattern_total_C_2000
 
     print "  Reading input files for {}...".format(tile_id)
 
@@ -615,7 +632,7 @@ def create_total_C(tile_id):
     )
 
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
-    dst_total_C = rasterio.open(total_C_emis_year, 'w', **kwargs)
+    dst_total_C = rasterio.open(total_C, 'w', **kwargs)
 
     print "  Creating total carbon density in the year of loss for loss pixels in {}...".format(tile_id)
 
@@ -638,4 +655,4 @@ def create_total_C(tile_id):
         dst_total_C.write_band(1, total_C_output, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_emis_year)
+    uu.end_of_fx_summary(start, tile_id, pattern_total_C)

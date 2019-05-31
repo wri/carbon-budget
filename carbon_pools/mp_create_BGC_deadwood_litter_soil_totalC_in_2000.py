@@ -20,6 +20,9 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+# Tells the pool creation functions to calculate carbon pools in 2000 at full biomass 2000 extent
+extent = "full"
+
 pd.options.mode.chained_assignment = None
 
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
@@ -97,69 +100,65 @@ mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC_in_2000.mangrove_
 
 print "Creating carbon pools..."
 
-extent = "full"
-
 # # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
 # num_of_processes = 18
+# num_of_processes = 1
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_2000.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio, extent=extent), tile_list)
 # pool.close()
 # pool.join()
 #
-# uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
-# cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
+# uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_2000)]
 # subprocess.check_call(cmd)
 #
 # num_of_processes = 16
+# num_of_processes = 1
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_2000.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio, extent=extent), tile_list)
 # pool.close()
 # pool.join()
 #
-# uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_year_2000)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
-# # subprocess.check_call(cmd)
+# uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_2000)]
+# subprocess.check_call(cmd)
 #
 # num_of_processes = 16
+# num_of_processes = 1
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_2000.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio, extent=extent), tile_list)
 # pool.close()
 # pool.join()
 #
-# uu.upload_final_set(cn.litter_emis_year_2000_dir, cn.pattern_litter_emis_year_2000)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_litter_emis_year_2000)]
-# # subprocess.check_call(cmd)
+# uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_litter_2000)]
+# subprocess.check_call(cmd)
 #
-# num_of_processes = 16
-# pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_soil), tile_list)
-# pool.close()
-# pool.join()
+# '''
+# There's no soil C function here because full extent soil C is created in a different function (mp_create_soil_C.py).
+# '''
 #
-# uu.upload_final_set(cn.soil_C_emis_year_2000_dir, cn.pattern_soil_C_emis_year_2000)
-# # cmd = ['rm *{}*.tif'.format(cn.pattern_soil_C_emis_year_2000)]
-# # subprocess.check_call(cmd)
-
 # # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
 # # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
 # num_of_processes = 14
+# num_of_processes = 1
 # pool = Pool(num_of_processes)
-# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_emis_year.create_total_C), tile_list)
+# pool.map(partial(create_BGC_deadwood_litter_soil_totalC_in_2000.create_total_C, extent=extent), tile_list)
 # pool.close()
 # pool.join()
 #
-# uu.upload_final_set(cn.total_C_emis_year_dir, cn.pattern_total_C_emis_year)
-# cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_emis_year)]
+# uu.upload_final_set(cn.total_C_2000_dir, cn.pattern_total_C_2000)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_2000)]
 # subprocess.check_call(cmd)
 
 # For single processor use
 for tile in tile_list:
     # create_BGC_deadwood_litter_soil_totalC_in_2000.create_BGC(tile, mang_BGB_AGB_ratio, extent)
-    create_BGC_deadwood_litter_soil_totalC_in_2000.create_deadwood(tile, mang_deadwood_AGB_ratio, extent)
-    create_BGC_deadwood_litter_soil_totalC_in_2000.create_litter(tile, mang_litter_AGB_ratio, extent)
-#     create_BGC_deadwood_litter_soil_totalC_in_2000.create_total_C(tile, extent)
+    # create_BGC_deadwood_litter_soil_totalC_in_2000.create_deadwood(tile, mang_deadwood_AGB_ratio, extent)
+    # create_BGC_deadwood_litter_soil_totalC_in_2000.create_litter(tile, mang_litter_AGB_ratio, extent)
+    create_BGC_deadwood_litter_soil_totalC_in_2000.create_total_C(tile, extent)
 #
 # uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
-uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
-uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
-# uu.upload_final_set(cn.total_C_2000_dir, cn.pattern_total_C_2000)
+# uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
+# uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
+uu.upload_final_set(cn.total_C_2000_dir, cn.pattern_total_C_2000)
