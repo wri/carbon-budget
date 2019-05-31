@@ -6,7 +6,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          cn.annual_gain_AGB_mangrove_dir
                                          )
 # tile_list = ['30N_080W'] # test tiles
