@@ -109,8 +109,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
 num_of_processes = 1
@@ -120,8 +120,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.deadwood_2000_dir, cn.pattern_deadwood_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_2000)]
+# subprocess.check_call(cmd)
 
 num_of_processes = 16
 num_of_processes = 1
@@ -131,8 +131,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.litter_2000_dir, cn.pattern_litter_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_litter_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_litter_2000)]
+# subprocess.check_call(cmd)
 
 '''
 There's no soil C function here because full extent soil C is created in a different function (mp_create_soil_C.py).
@@ -148,8 +148,8 @@ pool.close()
 pool.join()
 
 uu.upload_final_set(cn.total_C_2000_dir, cn.pattern_total_C_2000)
-cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_2000)]
-subprocess.check_call(cmd)
+# cmd = ['rm *{}*.tif'.format(cn.pattern_total_C_2000)]
+# subprocess.check_call(cmd)
 
 # For single processor use
 # for tile in tile_list:
