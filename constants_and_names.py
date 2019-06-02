@@ -340,7 +340,7 @@ total_C_emis_year_dir = '{}total_carbon/loss_pixels/20190430/'.format(base_carbo
 
 # Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "t_total_C_ha_2000"
-total_C_2000_dir = '{0}total_carbon/extent_2000/20190531/'.format(base_carbon_pool_dir)
+total_C_2000_dir = '{0}total_carbon/extent_2000/20190602/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions
