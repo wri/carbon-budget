@@ -1,9 +1,16 @@
 '''
-This script creates carbon in belowground, deadwood, litter, and soil pools at the time of tree cover loss for loss pixels.
-It also calculates total carbon for loss pixels.
-For belowground carbon (as with aboveground carbon), the pools are carbon 2000 + carbon gain until loss year.
-For deadwood, litter, and soil, the pools are based on carbon 2000.
-Total carbon is thus a mixture of stocks in 2000 and in the year of tree cover loss.
+This script creates carbon in belowground, deadwood, and litter pools in the year 2000 for
+all WHRC and mangrove biomass 2000 pixels (i.e. forest extent in 2000 using biomass 2000 values).
+It does not calculate soil C carbon in 2000 because that is calculated in a separate script (mp_create_soil_C.py).
+It also calculates total carbon (AGC, BGC, deadwood, litter, and soil) for the same pixels (2000 biomass extent).
+For BGC, deadwood, and litter, the values are simply functions of the WHRC or mangrove biomass in 2000 at that pixel.
+Mangrove biomass gets precedence over WHRC biomass where pixels co-occur.
+
+This multiprocessing script uses the same functions for calculating pools as does mp_create_BGC_deadwood_litter_soil_totalC_in_emis_year.py
+because they both just apply the same calculations to their respective AGC inputs (2000 extent/values or loss year extent/values).
+Since the loss year pools and 2000 pools have different input AGC tiles and output tile names, the extent argument
+tells each pool creation function what input AGC name to expect and how to name the output tiles.
+The calculations are the same in either case.
 
 NOTE: Because there are so many input files, this script needs a machine with extra disk space.
 Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
@@ -20,7 +27,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Tells the pool creation functions to calculate carbon pools in 2000 at full biomass 2000 extent
+# Tells the carbon pool creation functions to calculate carbon pools based on biomass 2000 values at full biomass 2000 extent
 extent = "full"
 
 pd.options.mode.chained_assignment = None
@@ -34,17 +41,21 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # For downloading all tiles in the input folders.
 input_files = [
     cn.AGC_2000_dir,
-    cn.WHRC_biomass_2000_unmasked_dir,
-    cn.mangrove_biomass_2000_dir,
-    cn.cont_eco_dir,
-    cn.bor_tem_trop_processed_dir,
-    cn.precip_processed_dir,
-    cn.soil_C_full_extent_2000_dir,
-    cn.elevation_processed_dir
+    cn.BGC_2000_dir,
+    cn.deadwood_2000_dir,
+    cn.litter_2000_dir,
+    cn.soil_C_full_extent_2000_dir
+    # cn.WHRC_biomass_2000_unmasked_dir,
+    # cn.mangrove_biomass_2000_dir,
+    # cn.cont_eco_dir,
+    # cn.bor_tem_trop_processed_dir,
+    # cn.precip_processed_dir,
+    # cn.soil_C_full_extent_2000_dir,
+    # cn.elevation_processed_dir
     ]
 
-for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
+# for input in input_files:
+#     uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing.
 # for tile in tile_list:
@@ -111,6 +122,7 @@ uu.upload_final_set(cn.BGC_2000_dir, cn.pattern_BGC_2000)
 # cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_2000)]
 # subprocess.check_call(cmd)
 
+# 16 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
 num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio, extent=extent), tile_list)
@@ -137,7 +149,7 @@ There's no soil C function here because full extent soil C is created in a diffe
 
 # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
 # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
-num_of_processes = 14
+num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_total_C, extent=extent), tile_list)
 pool.close()

@@ -1,3 +1,12 @@
+'''
+This script contains functions to calculate belowground carbon density, deadwood carbon density, litter carbon density,
+soil C density in loss pixels only, and total carbon density.
+It will calculate belowground, deadwood, and litter carbon pools for any aboveground carbon tile, regardless of whether it is just AGC in loss
+pixels or AGC in the full extent of biomass 2000.
+
+For belowground
+'''
+
 import datetime
 import sys
 import pandas as pd
@@ -36,12 +45,14 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
     return mang_x_pool_AGB_ratio
 
+
+# Creates belowgrounc carbon tiles
 def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
 
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    # The AGC name depends on whether carbon in 2000 or in the emission year is being created.
+    # The AGC name depends on whether carbon 2000 or carbon in the emission year is being created.
     # If BGC in the loss year is being created, it uses the loss year AGC tile.
     # If BGC in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
@@ -63,16 +74,16 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
 
     print "  Reading input files for {}...".format(tile_id)
 
+    # Both of these tiles should exist and thus be able to be opened
+    AGC_src = rasterio.open(AGC)   # This will be either the AGC 2000 or AGC loss year tile
+    cont_ecozone_src = rasterio.open(cont_ecozone)
+
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         print "Mangrove biomass found for", tile_id
     except:
         print "No mangrove biomass for", tile_id
-
-    # Both of these tiles should exist and thus be able to be opened
-    AGC_src = rasterio.open(AGC)
-    cont_ecozone_src = rasterio.open(cont_ecozone)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = AGC_src.meta
@@ -89,7 +100,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
         dtype='float32'
     )
 
-    # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
+    # The output file: belowground carbon density
     dst_BGC = rasterio.open(BGC, 'w', **kwargs)
 
     print "  Creating belowground carbon density for {}...".format(tile_id)
@@ -129,7 +140,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
             mangrove_C_final = mangrove_C_final.filled(0)
             # print mangrove_C_final[0][30020:30035]
 
-            # Applies the non-mangrove BGB:AGB ratio to all AGC in emissions year pixels
+            # Applies the non-mangrove BGB:AGB ratio to all AGC pixels
             non_mang_output = AGC_window * cn.below_to_above_non_mang
             # print non_mang_output[0][29930:29950]
 
@@ -141,7 +152,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
             BGC_output = mangrove_C_final + non_mang_output_final
             # print BGC_output[0][29930:29950]
 
-        # If there is no mangrove tile, all AGC in emissions year pixels are multiplied by the non-mangrove
+        # If there is no mangrove tile, all AGC pixels are multiplied by the non-mangrove
         # BGB:AGB ratio
         if not os.path.exists(mangrove_biomass_2000):
 
@@ -154,6 +165,8 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern_BGC)
 
+
+# Creates deadwood carbon tiles
 def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
 
     start = datetime.datetime.now()
@@ -185,6 +198,14 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
 
     print "  Reading input files for {}...".format(tile_id)
 
+
+    # These tiles should exist and thus be able to be opened
+    AGC_src = rasterio.open(AGC)    # This will be either the AGC 2000 or AGC loss year tile
+    bor_tem_trop_src = rasterio.open(bor_tem_trop)
+    cont_ecozone_src = rasterio.open(cont_eco)
+    precip_src = rasterio.open(precip)
+    elevation_src = rasterio.open(elevation)
+
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
@@ -198,13 +219,6 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
         print "WHRC biomass found for", tile_id
     except:
         print "No WHRC biomass for", tile_id
-
-    # These tiles should exist and thus be able to be opened
-    AGC_src = rasterio.open(AGC)
-    bor_tem_trop_src = rasterio.open(bor_tem_trop)
-    cont_ecozone_src = rasterio.open(cont_eco)
-    precip_src = rasterio.open(precip)
-    elevation_src = rasterio.open(elevation)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = AGC_src.meta
@@ -221,7 +235,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
         dtype='float32'
     )
 
-    # The output file: belowground carbon density in the year of tree cover loss for pixels with tree cover loss
+    # The output file: deadwood carbon density
     dst_deadwood = rasterio.open(deadwood, 'w', **kwargs)
 
     print "  Creating deadwood carbon density for {}...".format(tile_id)
@@ -233,7 +247,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
         # any of the forest types will have 0s
         deadwood_output = np.zeros((window.height, window.width), dtype='float32')
 
-        # Reads in the window of the AGC emissions in loss year in order to determine if there was any loss in thw window
+        # Reads in the window of the AGC emissions in order to determine if there was any loss in thw window
         AGC_window = AGC_src.read(1, window=window)
 
         # If there was no loss in the window, the window is skipped
@@ -311,7 +325,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
             for key, value in mang_deadwood_AGB_ratio.iteritems():
                 cont_ecozone_window[cont_ecozone_window == key] = value
 
-            # Multiplies the AGB in the loss year (2000 for deadwood) by the correct mangrove deadwood:AGB ratio to get an array of deadwood in the loss year (2000)
+            # Multiplies the AGB in the loss year (2000 for deadwood) by the correct mangrove deadwood:AGB ratio to get an array of deadwood
             mangrove_C_final = mangrove_biomass_2000_window * cont_ecozone_window * cn.biomass_to_c_mangrove
 
             # Replaces non-mangrove deadwood with mangrove deadwood values
@@ -336,6 +350,8 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern_deadwood)
 
+
+# Creates litter carbon tiles
 def create_litter(tile_id, mang_litter_AGB_ratio, extent):
 
     start = datetime.datetime.now()
@@ -367,6 +383,13 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent):
 
     print "  Reading input files for {}...".format(tile_id)
 
+    # These tiles should exist and thus be able to be opened
+    AGC_src = rasterio.open(AGC)
+    bor_tem_trop_src = rasterio.open(bor_tem_trop)
+    cont_ecozone_src = rasterio.open(cont_eco)
+    precip_src = rasterio.open(precip)
+    elevation_src = rasterio.open(elevation)
+
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
@@ -380,13 +403,6 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent):
         print "WHRC biomass found for", tile_id
     except:
         print "No WHRC biomass for", tile_id
-
-    # These tiles should exist and thus be able to be opened
-    AGC_src = rasterio.open(AGC)
-    bor_tem_trop_src = rasterio.open(bor_tem_trop)
-    cont_ecozone_src = rasterio.open(cont_eco)
-    precip_src = rasterio.open(precip)
-    elevation_src = rasterio.open(elevation)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = AGC_src.meta
@@ -403,7 +419,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent):
         dtype='float32'
     )
 
-    # The output file: belowground carbon density in the year of tree cover loss for pixels with tree cover loss
+    # The output file: litter carbon density
     dst_litter = rasterio.open(litter, 'w', **kwargs)
 
     print "  Creating litter carbon density for {}...".format(tile_id)
@@ -493,7 +509,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent):
             for key, value in mang_litter_AGB_ratio.iteritems():
                 cont_ecozone_window[cont_ecozone_window == key] = value
 
-            # Multiplies the AGB in the loss year (2000 for litter) by the correct mangrove litter:AGB ratio to get an array of litter in the loss year (2000)
+            # Multiplies the AGB in the loss year (2000 for litter) by the correct mangrove litter:AGB ratio to get an array of litter
             mangrove_C_final = mangrove_biomass_2000_window * cont_ecozone_window * cn.biomass_to_c_mangrove
 
             # Replaces non-mangrove litter with mangrove litter values
@@ -519,6 +535,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent):
     uu.end_of_fx_summary(start, tile_id, pattern_litter)
 
 
+# Creates soil carbon tiles in loss pixels only
 def create_soil(tile_id):
 
     start = datetime.datetime.now()
@@ -576,6 +593,8 @@ def create_soil(tile_id):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
 
+
+# Creates total carbon tiles
 def create_total_C(tile_id, extent):
 
     start = datetime.datetime.now()
@@ -609,7 +628,7 @@ def create_total_C(tile_id, extent):
 
     print "  Reading input files for {}...".format(tile_id)
 
-    # Both of these tiles should exist and thus be able to be opened
+    # All of these tiles should exist and thus be able to be opened
     AGC_src = rasterio.open(AGC)
     BGC_src = rasterio.open(BGC)
     deadwood_src = rasterio.open(deadwood)
@@ -631,7 +650,7 @@ def create_total_C(tile_id, extent):
         dtype='float32'
     )
 
-    # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
+    # The output file: total carbon density
     dst_total_C = rasterio.open(total_C, 'w', **kwargs)
 
     print "  Creating total carbon density in {}...".format(tile_id)

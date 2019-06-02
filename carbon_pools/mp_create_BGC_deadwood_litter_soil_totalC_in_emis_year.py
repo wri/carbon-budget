@@ -1,9 +1,16 @@
 '''
-This script creates carbon in belowground, deadwood, litter, and soil pools at the time of tree cover loss for loss pixels.
+This script creates carbon in belowground, deadwood, litter, and soil pools at the time of tree cover loss for loss pixels only.
 It also calculates total carbon for loss pixels.
 For belowground carbon (as with aboveground carbon), the pools are carbon 2000 + carbon gain until loss year.
 For deadwood, litter, and soil, the pools are based on carbon 2000.
 Total carbon is thus a mixture of stocks in 2000 and in the year of tree cover loss.
+Mangrove biomass gets precedence over WHRC biomass where pixels co-occur.
+
+This multiprocessing script uses the same functions for calculating pools as does mp_create_BGC_deadwood_litter_soil_totalC_in_2000.py
+because they both just apply the same calculations to their respective AGC inputs (2000 extent/values or loss year extent/values).
+Since the loss year pools and 2000 pools have different input AGC tiles and output tile names, the extent argument
+tells each pool creation function what input AGC name to expect and how to name the output tiles.
+The calculations are the same in either case.
 
 NOTE: Because there are so many input files, this script needs a machine with extra disk space.
 Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
@@ -46,30 +53,30 @@ input_files = [
 for input in input_files:
     uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing.
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
-                                                            cn.pattern_AGC_emis_year), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
-                                                            cn.pattern_cont_eco_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
-                                                            cn.pattern_bor_tem_trop_processed), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
-                                                            cn.pattern_precip), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
-                                                            cn.pattern_soil_C_full_extent_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
-                                                            cn.pattern_elevation), '.')
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
-                                                            cn.pattern_WHRC_biomass_2000_unmasked), '.')
-    except:
-        print "No WHRC biomass in", tile
-    try:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    except:
-        print "No mangrove biomass in", tile
+# # For copying individual tiles to spot machine for testing.
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile,
+#                                                             cn.pattern_AGC_emis_year), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile,
+#                                                             cn.pattern_cont_eco_processed), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile,
+#                                                             cn.pattern_bor_tem_trop_processed), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.precip_processed_dir, tile,
+#                                                             cn.pattern_precip), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_full_extent_2000_dir, tile,
+#                                                             cn.pattern_soil_C_full_extent_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.elevation_processed_dir, tile,
+#                                                             cn.pattern_elevation), '.')
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile,
+#                                                             cn.pattern_WHRC_biomass_2000_unmasked), '.')
+#     except:
+#         print "No WHRC biomass in", tile
+#     try:
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     except:
+#         print "No mangrove biomass in", tile
 
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
