@@ -650,6 +650,11 @@ def create_total_C(tile_id, extent):
         dtype='float32'
     )
 
+    if extent == "full":
+        kwargs.update(
+            bigtiff='YES'
+        )
+
     # The output file: total carbon density
     dst_total_C = rasterio.open(total_C, 'w', **kwargs)
 
