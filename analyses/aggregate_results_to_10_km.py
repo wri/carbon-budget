@@ -53,20 +53,20 @@ def aggregate_results(tile, pixel_count_dict):
     # The number of pixels in the tile with values
     non_zero_pixels = 0
 
-    # # Iterates across the windows (1 pixel strips) of the input tile
-    # for idx, window in windows:
-    #
-    #     # Creates windows for each input tile
-    #     in_window = in_src.read(1, window=window)
-    #     pixel_area_window = pixel_area_src.read(1, window=window)
-    #
-    #     # Calculates the per-pixel value from the input tile value (/ha to /pixel)
-    #     per_pixel = in_window * pixel_area_window / cn.m2_per_ha
-    #
-    #     per_pixel_dst.write_band(1, per_pixel, window=window)
-    #
-    #     # Adds the number of pixels with values in that window to the total for that tile
-    #     non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
+    # Iterates across the windows (1 pixel strips) of the input tile
+    for idx, window in windows:
+
+        # Creates windows for each input tile
+        in_window = in_src.read(1, window=window)
+        pixel_area_window = pixel_area_src.read(1, window=window)
+
+        # Calculates the per-pixel value from the input tile value (/ha to /pixel)
+        per_pixel = in_window * pixel_area_window / cn.m2_per_ha
+
+        per_pixel_dst.write_band(1, per_pixel, window=window)
+
+        # Adds the number of pixels with values in that window to the total for that tile
+        non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
 
     print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
@@ -84,8 +84,6 @@ def aggregate_results(tile, pixel_count_dict):
 
     # cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str('0.096342599'), str('0.096342599'), '-tap', '-te',
     #         str(xmin), str(ymin), str(xmax), str(ymax), '-overwrite', per_pixel, avg_10km]
-    # subprocess.check_call(cmd)
-    #
     # subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
