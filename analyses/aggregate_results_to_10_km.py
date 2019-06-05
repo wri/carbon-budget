@@ -17,6 +17,8 @@ def aggregate_results(tile):
 
     print "Aggregating {}...".format(tile, tile_id)
 
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
     # start time
     start = datetime.datetime.now()
 
@@ -57,56 +59,10 @@ def aggregate_results(tile):
 
         per_pixel_dst.write_band(1, per_pixel, window=window)
 
+    avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-
-    # # Source: http://gis.stackexchange.com/questions/90726
-    # # Opens raster we're getting statistics on
-    # focus_tile = gdal.Open(tile)
-    #
-    # nodata = uu.get_raster_nodata_value(tile)
-    # print "NoData value =", nodata
-    #
-    # # Turns the raster into a numpy array
-    # tile_array = np.array(focus_tile.GetRasterBand(1).ReadAsArray())
-    #
-    # # Flattens the numpy array to a single dimension
-    # tile_array_flat = tile_array.flatten()
-    #
-    # # Removes NoData values from the array. NoData are generally either 0 or -9999.
-    # tile_array_flat_mask = tile_array_flat[tile_array_flat != nodata]
-    #
-    # ### For converting value/hectare to value/pixel
-    # # Tile with the area of each pixel in m2
-    # area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
-    #
-    # # Output file name
-    # tile_short = tile[:-4]
-    # outname = '{0}_value_per_pixel.tif'.format(tile_short)
-    #
-    # # Equation argument for converting emissions from per hectare to per pixel.
-    # # First, multiplies the per hectare emissions by the area of the pixel in m2, then divides by the number of m2 in a hectare.
-    # calc = '--calc=A*B/{}'.format(cn.m2_per_ha)
-    #
-    # # Argument for outputting file
-    # out = '--outfile={}'.format(outname)
-    #
-    # print "Converting {} from /ha to /pixel...".format(tile)
-    # cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-    #        '--overwrite']
-    # subprocess.check_call(cmd)
-    # print "{} converted to /pixel".format(tile)
-    #
-    # print "Converting value/pixel tile {} to numpy array...".format(tile)
-    # # Opens raster with value per pixel
-    # value_per_pixel = gdal.Open(outname)
-    #
-    # # Turns the pixel area raster into a numpy array
-    # value_per_pixel_array = np.array(value_per_pixel.GetRasterBand(1).ReadAsArray())
-    #
-    # # Flattens the pixel area numpy array to a single dimension
-    # value_per_pixel_array_flat = value_per_pixel_array.flatten()
-
-
+    cmd = ['gdalwarp', '-t_srs', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
+    subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, stats[0])
+    uu.end_of_fx_summary(start, tile_id, tile_type)
