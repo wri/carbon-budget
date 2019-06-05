@@ -74,9 +74,14 @@ def aggregate_results(tile, pixel_count_dict):
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    cmd = ['gdalwarp', '-tap', '-tr', '{}'.format(str(0.096342599)), '{}'.format(str(0.096342599)),  '-co', 'COMPRESS=LZW',
-           # '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           per_pixel, avg_10km]
+    # cmd = ['gdalwarp', '-tap', '-tr', '{}'.format(str(0.096342599)), '{}'.format(str(0.096342599)),  '-co', 'COMPRESS=LZW',
+    #        # '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+    #        per_pixel, avg_10km]
+
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(0.096342599), str(0.096342599), '-tap', '-te',
+            str(xmin), str(ymin), str(xmax), str(ymax), '-overwrite', per_pixel, avg_10km]
+    subprocess.check_call(cmd)
+
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
