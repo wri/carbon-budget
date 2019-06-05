@@ -74,7 +74,7 @@ def aggregate_results(tile, pixel_count_dict):
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    cmd = ['gdalwarp', '-tap', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW',
+    cmd = ['gdalwarp', '-tap', '-tr', '{}'.format(str(0.096342599)), '{}'.format(str(0.096342599)),  '-co', 'COMPRESS=LZW',
            # '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            per_pixel, avg_10km]
     subprocess.check_call(cmd)
