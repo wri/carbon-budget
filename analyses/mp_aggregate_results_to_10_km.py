@@ -29,14 +29,14 @@ print "Tiles to process:", tile_list
 pixel_count_dict = dict.fromkeys(tile_list, 0)
 print pixel_count_dict
 
-# # For single processor use
-# for tile in tile_list:
-#     aggregate_results_to_10_km.aggregate_results(tile, pixel_count_dict)
-#
-# print "Tiles processed. Uploading to s3 now..."
-#
-# # Uploads all output tiles to s3
-# uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, cn.pattern_gross_emis_all_drivers_aggreg)
+# For single processor use
+for tile in tile_list:
+    aggregate_results_to_10_km.aggregate_results(tile, pixel_count_dict)
+
+print "Tiles processed. Uploading to s3 now..."
+
+# Uploads all output tiles to s3
+uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, cn.pattern_gross_emis_all_drivers_aggreg)
 
 
 
