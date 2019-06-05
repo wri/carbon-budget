@@ -66,7 +66,7 @@ def aggregate_results(tile):
         per_pixel_dst.write_band(1, per_pixel, window=window)
 
         non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
-        print non_zero_pixels
+        # print non_zero_pixels
 
     print "total:", non_zero_pixels
 
