@@ -51,6 +51,8 @@ def aggregate_results(tile):
     # Opens the output tile, giving it the arguments of the input tiles
     per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
 
+    non_zero_pixels = 0
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 
@@ -63,12 +65,17 @@ def aggregate_results(tile):
 
         per_pixel_dst.write_band(1, per_pixel, window=window)
 
-    print "  Calculating average per-pixel value in", tile
+        non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
+        print non_zero_pixels
 
-    avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
+    print "total:", non_zero_pixels
 
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
-    subprocess.check_call(cmd)
+    # print "  Calculating average per-pixel value in", tile
+    #
+    # avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
+    #
+    # cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
+    # subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
