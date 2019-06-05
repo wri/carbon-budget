@@ -83,7 +83,7 @@ def aggregate_results(tile, pixel_count_dict):
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', '{}'.format(per_pixel), '{}'.format(avg_10km)]
     # subprocess.check_call(cmd)
 
-    uu.warp_to_Hansen('{}.tif'.format(per_pixel), '{}'.format(avg_10km), xmin, ymin, xmax, ymax, 'Byte')
+    uu.warp_to_Hansen('{}'.format(per_pixel), '{}'.format(avg_10km), xmin, ymin, xmax, ymax, 'Byte')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
