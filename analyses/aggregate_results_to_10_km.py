@@ -11,23 +11,26 @@ import universal_util as uu
 # Calculates a range of tile statistics
 def aggregate_results(tile):
 
-    # Extracts the tile id from the full tile name
+    # Extracts the tile id and the tile type from the full tile name
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
 
-    print "Aggregating {}...".format(tile, tile_id)
+    print "Aggregating {}".format(tile)
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # start time
     start = datetime.datetime.now()
 
-    # Names of the gain and emissions tiles
+    print "Converting {} to per-pixel values".format(tile)
+
+    # Names of pixel area tile
     area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
 
-    # Output net emissions file
+    # Per-pixel value tile (intermediate output)
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
 
+    # Opens input tiles for rasterio
     in_src = rasterio.open(tile)
     pixel_area_src = rasterio.open(area_tile)
 
@@ -55,9 +58,12 @@ def aggregate_results(tile):
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
 
+        # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel = in_window * pixel_area_window / cn.m2_per_ha
 
         per_pixel_dst.write_band(1, per_pixel, window=window)
+
+    print "Calculating average per-pixel value in", tile
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
