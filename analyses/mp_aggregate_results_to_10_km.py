@@ -24,7 +24,7 @@ for tile_id in tile_id_list:
 tile_list = uu.tile_list_spot_machine(".", ".tif")
 # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
 tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
-print tile_list
+print "Tiles to process:", tile_list
 
 pixel_count_dict = dict.fromkeys(tile_list, 0)
 print pixel_count_dict
