@@ -83,7 +83,7 @@ download_list = [
                 # cn.total_C_emis_year_dir
 
                 # cn.gross_emis_commod_dir,
-                cn.gross_emis_shifting_ag_dir
+                # cn.gross_emis_shifting_ag_dir,
                 # cn.gross_emis_forestry_dir,
                 # cn.gross_emis_wildfire_dir,
                 # cn.gross_emis_urban_dir,

@@ -21,6 +21,12 @@ def get_tile_id(tile_name):
 
     return tile_id
 
+# Gets the tile id from the full tile name using a regular expression
+def get_tile_type(tile_name):
+
+    tile_type = tile_name[9:-4]
+
+    return tile_type
 
 # Creates a list of all the biomass tiles (WHRC non-mangrove and mangrove)
 def read_biomass_tile_list():
