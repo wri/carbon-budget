@@ -9,7 +9,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def aggregate_results(tile):
+def aggregate_results(tile, pixel_count_dict):
 
     # Extracts the tile id and the tile type from the full tile name
     tile_id = uu.get_tile_id(tile)
