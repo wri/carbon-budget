@@ -78,14 +78,12 @@ def aggregate_results(tile, pixel_count_dict):
     #        # '-te', str(xmin), str(ymin), str(xmax), str(ymax),
     #        per_pixel, avg_10km]
 
+    dt = 'float32'
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.aggreg_res), str(cn.aggreg_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', per_pixel, avg_10km]
     # subprocess.check_call(cmd)
 
-    dt = 'float32'
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
-            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', per_pixel, avg_10km]
-    subprocess.check_call(cmd)
+    uu.warp_to_Hansen(per_pixel, avg_10km, xmin, ymin, xmax, ymax, dt)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
