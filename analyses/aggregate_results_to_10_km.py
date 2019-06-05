@@ -15,14 +15,14 @@ def aggregate_results(tile):
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
 
-    print "Aggregating {}".format(tile)
+    print "Processing {}".format(tile)
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # start time
     start = datetime.datetime.now()
 
-    print "Converting {} to per-pixel values".format(tile)
+    print "  Converting {} to per-pixel values".format(tile)
 
     # Names of pixel area tile
     area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
@@ -63,11 +63,11 @@ def aggregate_results(tile):
 
         per_pixel_dst.write_band(1, per_pixel, window=window)
 
-    print "Calculating average per-pixel value in", tile
+    print "  Calculating average per-pixel value in", tile
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    cmd = ['gdalwarp', '-t_srs', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
