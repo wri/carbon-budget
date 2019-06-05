@@ -81,7 +81,7 @@ def aggregate_results(tile, pixel_count_dict):
     dt = 'float32'
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.aggreg_res), str(cn.aggreg_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-overwrite', '{}'.format(per_pixel), '{}'.format(avg_10km)]
-    subprocess.check_call(cmd)
+    # subprocess.check_call(cmd)
 
     uu.warp_to_Hansen('{}.tif'.format(per_pixel), '{}'.format(avg_10km), xmin, ymin, xmax, ymax, 'Byte')
 
