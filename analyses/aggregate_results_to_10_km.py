@@ -17,8 +17,6 @@ def aggregate_results(tile):
 
     print "Processing {}".format(tile)
 
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
     # start time
     start = datetime.datetime.now()
 
@@ -75,7 +73,7 @@ def aggregate_results(tile):
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
+    cmd = ['gdalwarp', '-tap', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', per_pixel, avg_10km]
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
