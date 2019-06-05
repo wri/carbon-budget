@@ -51,31 +51,32 @@ def aggregate_results(tile):
     # Opens the output tile, giving it the arguments of the input tiles
     per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
 
+    # The number of pixels in the tile with values
     non_zero_pixels = 0
 
-    # Iterates across the windows (1 pixel strips) of the input tile
-    for idx, window in windows:
-
-        # Creates windows for each input tile
-        in_window = in_src.read(1, window=window)
-        pixel_area_window = pixel_area_src.read(1, window=window)
-
-        # Calculates the per-pixel value from the input tile value (/ha to /pixel)
-        per_pixel = in_window * pixel_area_window / cn.m2_per_ha
-
-        per_pixel_dst.write_band(1, per_pixel, window=window)
-
-        non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
-        # print non_zero_pixels
+    # # Iterates across the windows (1 pixel strips) of the input tile
+    # for idx, window in windows:
+    #
+    #     # Creates windows for each input tile
+    #     in_window = in_src.read(1, window=window)
+    #     pixel_area_window = pixel_area_src.read(1, window=window)
+    #
+    #     # Calculates the per-pixel value from the input tile value (/ha to /pixel)
+    #     per_pixel = in_window * pixel_area_window / cn.m2_per_ha
+    #
+    #     per_pixel_dst.write_band(1, per_pixel, window=window)
+    #
+    #     # Adds the number of pixels with values in that window to the total for that tile
+    #     non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
 
     print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
-    # print "  Calculating average per-pixel value in", tile
-    #
-    # avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
-    #
-    # cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
-    # subprocess.check_call(cmd)
+    print "  Calculating average per-pixel value in", tile
+
+    avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
+
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-tr', '0.096342599', '0.096342599',  '-co', 'COMPRESS=LZW', '-tap', per_pixel, avg_10km, '-te', str(xmin), str(ymin), str(xmax), str(ymax)]
+    subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
