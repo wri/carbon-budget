@@ -46,6 +46,9 @@ deadwood_to_above_subtrop_mang = 0.258
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
+# 10km res
+aggreg_res = 0.096342599
+
 # m2 per hectare
 m2_per_ha = 100 * 100
 
