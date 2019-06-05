@@ -61,9 +61,9 @@ def aggregate_results(tile, pixel_count_dict):
         pixel_area_window = pixel_area_src.read(1, window=window)
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
-        per_pixel = in_window * pixel_area_window / cn.m2_per_ha
+        per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
 
-        per_pixel_dst.write_band(1, per_pixel, window=window)
+        per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
         non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
