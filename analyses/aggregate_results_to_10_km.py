@@ -68,7 +68,7 @@ def aggregate_results(tile):
         non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
         # print non_zero_pixels
 
-    print "total:", non_zero_pixels
+    print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
     # print "  Calculating average per-pixel value in", tile
     #
