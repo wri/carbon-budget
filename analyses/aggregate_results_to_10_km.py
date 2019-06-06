@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Calculates a range of tile statistics
+# Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
 def convert_to_per_pixel(tile, pixel_count_dict):
 
     # start time
@@ -68,6 +68,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
     pixel_count_dict[tile] = non_zero_pixels
+    print pixel_count_dict
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
