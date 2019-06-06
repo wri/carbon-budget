@@ -32,7 +32,11 @@ print pixel_count_dict
 
 # For single processor use
 for tile in tile_list:
-    aggregate_results_to_10_km.aggregate_results(tile, pixel_count_dict)
+    aggregate_results_to_10_km.convert_to_per_pixel(tile, pixel_count_dict)
+
+# For single processor use
+for tile in tile_list:
+    aggregate_results_to_10_km.average_10km(tile)
 
 print "Tiles processed. Uploading to s3 now..."
 

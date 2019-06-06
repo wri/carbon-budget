@@ -9,9 +9,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def aggregate_results(tile, pixel_count_dict):
-
-    print "Processing {}".format(tile)
+def convert_to_per_pixel(tile, pixel_count_dict):
 
     # start time
     start = datetime.datetime.now()
@@ -19,7 +17,6 @@ def aggregate_results(tile, pixel_count_dict):
     # Extracts the tile id and the tile type from the full tile name
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     print "  Converting {} to per-pixel values".format(tile)
 
@@ -70,7 +67,23 @@ def aggregate_results(tile, pixel_count_dict):
 
     print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
-    print "  Calculating average per-pixel value in", tile
+    pixel_count_dict[tile] = non_zero_pixels
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, tile_type)
+
+
+def average_10km(tile):
+
+    # start time
+    start = datetime.datetime.now()
+
+    # Extracts the tile id and the tile type from the full tile name
+    tile_id = uu.get_tile_id(tile)
+    tile_type = uu.get_tile_type(tile)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
+    print "Calculating average per-pixel value in", tile
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
@@ -78,7 +91,6 @@ def aggregate_results(tile, pixel_count_dict):
     #        # '-te', str(xmin), str(ymin), str(xmax), str(ymax),
     #        per_pixel, avg_10km]
 
-    dt = 'float32'
     # cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.aggreg_res), str(cn.aggreg_res), '-tap', '-te',
     #         str(xmin), str(ymin), str(xmax), str(ymax), '-r', 'average',
     #        '-dstnodata', '0', '-overwrite', '{}'.format(per_pixel), '{}'.format(avg_10km)]
