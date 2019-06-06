@@ -74,6 +74,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     uu.end_of_fx_summary(start, tile_id, tile_type)
 
 
+# Calculates the average per pixel value at native resolution in each ~10x10 km pixel
 def average_10km(tile):
 
     # start time
@@ -84,14 +85,14 @@ def average_10km(tile):
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "Calculating average per-pixel value in", tile
+    print "Calculating average per-pixel value for each 10x10 km pixel in", tile
 
     # Per-pixel value tile (intermediate output)
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.01', '0.01', '-overwrite', '-r', 'average',
+    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.096342599', '0.096342599', '-overwrite', '-r', 'average',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            per_pixel, avg_10km]
 
