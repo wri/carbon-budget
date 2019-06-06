@@ -85,24 +85,16 @@ def average_10km(tile):
 
     print "Calculating average per-pixel value in", tile
 
+    # Per-pixel value tile (intermediate output)
+    per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
+
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    # cmd = ['gdalwarp', '-tap', '-tr', '{}'.format(str(0.096342599)), '{}'.format(str(0.096342599)),  '-co', 'COMPRESS=LZW',
-    #        # '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-    #        per_pixel, avg_10km]
-
-    # cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.aggreg_res), str(cn.aggreg_res), '-tap', '-te',
-    #         str(xmin), str(ymin), str(xmax), str(ymax), '-r', 'average',
-    #        '-dstnodata', '0', '-overwrite', '{}'.format(per_pixel), '{}'.format(avg_10km)]
-    # cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.01', '0.01', '-overwrite', '-r', 'average',
-    #        '00N_110E_all_drivers_t_CO2_ha_gross_emis_year_per_pixel.tif', 'test3.tif']
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.01', '0.01', '-overwrite', '-r', 'average',
-           '00N_110E_all_drivers_t_CO2_ha_gross_emis_year_per_pixel.tif', 'test4.tif']
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+           per_pixel, avg_10km]
 
     subprocess.check_call(cmd)
-
-    # uu.warp_to_Hansen('{0}_{1}_per_pixel.tif'.format(tile_id, tile_type), '{0}_{1}_average.tif'.format(tile_id, tile_type),
-    #                   xmin, ymin, xmax, ymax, 'Byte')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
