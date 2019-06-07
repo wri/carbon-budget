@@ -56,7 +56,7 @@ pool.join()
 out_vrt = "{}.vrt".format(cn.pattern_gross_emis_all_drivers_aggreg)
 os.system('gdalbuildvrt {0} *{1}*.tif'.format(out_vrt, cn.pattern_gross_emis_all_drivers_aggreg))
 
-cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Float32',
        '-o', '{}.tif'.format(cn.pattern_gross_emis_all_drivers_aggreg),
        '{}.vrt'.format(cn.pattern_gross_emis_all_drivers_aggreg)]
 subprocess.check_call(cmd)
