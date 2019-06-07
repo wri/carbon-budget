@@ -1,4 +1,3 @@
-from osgeo import gdal
 import numpy as np
 import subprocess
 import rasterio
@@ -9,7 +8,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels
+# Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+# which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
 def rewindow(tile):
 
     # start time
@@ -47,10 +47,12 @@ def rewindow(tile):
     uu.end_of_fx_summary(start, tile_id, tile_type)
 
 
-# Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel),
-# gets the average value of the 0.00025x0.00025 pixels in each 0.1x0.1 pixel to make a new 0.1x0.1 raster,
-# and then multiplies the 0.1x0.1 raster cell by the number of 0.00025x0.00025 pixels in it.
-# Based on https://gis.stackexchange.com/questions/152661/downsampling-geotiff-using-summation-gdal-numpy
+# Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+# and sums those values in each 400x400 pixel window.
+# The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+# 0.1x0.1 degree resolution (approximately 10m in the tropics).
+# Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+# The 0.1x0.1 degree tile is output.
 def convert_to_per_pixel(tile):
 
     # start time

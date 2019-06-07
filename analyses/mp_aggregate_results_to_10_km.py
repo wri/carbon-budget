@@ -15,48 +15,49 @@ tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
 print tile_id_list
 print "There are {} tiles to process".format(str(len(tile_id_list)))
 
-# For copying individual tiles to spot machine for testing
-for tile_id in tile_id_list:
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+# # For copying individual tiles to spot machine for testing
+# for tile_id in tile_id_list:
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
-# Lists the tiles of the particular type that's being iterates through
+# Lists the tiles of the particular type that is being iterates through.
+# Excludes all intermediate files
 tile_list = uu.tile_list_spot_machine(".", ".tif")
 # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
 tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
-tile_list = [i for i in tile_list if not ('per_pixel' in i)]
 tile_list = [i for i in tile_list if not ('rewindow' in i)]
 tile_list = [i for i in tile_list if not ('10km' in i)]
 print "Tiles to process:", tile_list
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
-pool.map(aggregate_results_to_10_km.rewindow, tile_list)
-# Added these in response to error12: Cannot allocate memory error.
-# This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-# Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-pool.close()
-pool.join()
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
+# pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+# # Added these in response to error12: Cannot allocate memory error.
+# # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+# # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+# pool.close()
+# pool.join()
+#
+# # For multiprocessor use
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
+# pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
+# # Added these in response to error12: Cannot allocate memory error.
+# # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+# # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+# pool.close()
+# pool.join()
 
-
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
-pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
-# Added these in response to error12: Cannot allocate memory error.
-# This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-# Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-pool.close()
-pool.join()
-
+# Makes a vrt of all the output 10x10 tiles (10 km resolution)
 out_vrt = "{}.vrt".format(cn.pattern_gross_emis_all_drivers_aggreg)
 os.system('gdalbuildvrt {0} *{1}*.tif'.format(out_vrt, cn.pattern_gross_emis_all_drivers_aggreg))
 
-cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Float32',
+# Produces a single raster of all the 10x10 tiles (10 km resolution)
+cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Float32', '-a_nodata', '0',
        '-o', '{}.tif'.format(cn.pattern_gross_emis_all_drivers_aggreg),
        '{}.vrt'.format(cn.pattern_gross_emis_all_drivers_aggreg)]
 subprocess.check_call(cmd)
