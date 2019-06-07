@@ -124,6 +124,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         non_zero_pixel_sum = np.sum(per_pixel_value)
         print non_zero_pixel_sum
 
+        sum_array[idx[0], idx[1]] = non_zero_pixel_sum
+        print sum_array
+
         sys.quit()
 
     print "Pixels with values in {}: {}".format(tile, non_zero_pixel_count)
