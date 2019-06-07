@@ -26,6 +26,7 @@ def retile(tile):
 
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+           '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
            tile, retiled]
 
