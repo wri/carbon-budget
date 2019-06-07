@@ -119,7 +119,8 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         non_zero_pixel_count_in = np.count_nonzero(in_window)
         non_zero_pixel_count_per_pixel = np.count_nonzero(per_pixel_value)
         non_zero_pixel_average = np.average(per_pixel_value)
-        non_zero_pixel_average_no_zeros = np.ma.masked_equal(per_pixel_value,0)
+        non_zero_pixel_no_zeros = np.ma.masked_equal(per_pixel_value,0)
+        non_zero_pixel_average_no_zeros = np.average(non_zero_pixel_no_zeros)
         non_zero_pixel_sum = np.sum(per_pixel_value)
         print non_zero_pixel_count_in
         print non_zero_pixel_count_per_pixel
