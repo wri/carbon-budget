@@ -123,7 +123,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         blockysize='1'
     )
 
-    new_dataset = rasterio.open('test1.tid', 'w', **kwargs)
+    print "Creating sum tile..."
+
+    new_dataset = rasterio.open('test1.tif', 'w', **kwargs)
     new_dataset.write(sum_array,1)
     new_dataset.close()
 
