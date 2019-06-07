@@ -19,7 +19,7 @@ def retile(tile):
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "Calculating average per-pixel value for each 10x10 km pixel in", tile
+    print "Retiling {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
 
     # Per-pixel value tile (intermediate output)
     retiled = '{0}_{1}_retile.tif'.format(tile_id, tile_type)
