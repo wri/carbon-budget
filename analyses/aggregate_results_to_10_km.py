@@ -95,13 +95,15 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # The number of pixels in the tile with values
     non_zero_pixel_count = 0
 
+    sum_array = np.zeros([100,100], float)
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
-        print idx
+        print idx.type
         print window
         print in_window.shape
         print pixel_area_window.shape
@@ -117,16 +119,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # print np.count_nonzero(in_window)
         # non_zero_pixel_count = non_zero_pixel_count + np.count_nonzero(in_window)
         non_zero_pixel_count_in = np.count_nonzero(in_window)
-        non_zero_pixel_count_per_pixel = np.count_nonzero(per_pixel_value)
-        non_zero_pixel_average = np.average(per_pixel_value)
-        non_zero_pixel_no_zeros = np.ma.masked_equal(per_pixel_value,0)
-        non_zero_pixel_average_no_zeros = np.average(non_zero_pixel_no_zeros)
         non_zero_pixel_sum = np.sum(per_pixel_value)
-        print non_zero_pixel_count_in
-        print non_zero_pixel_count_per_pixel
-        print non_zero_pixel_average
-        print non_zero_pixel_average_no_zeros
-        print non_zero_pixel_average * non_zero_pixel_count_per_pixel
         print non_zero_pixel_sum
 
         sys.quit()
