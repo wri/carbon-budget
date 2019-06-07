@@ -119,13 +119,17 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         compress='lzw',
         nodata=0,
         dtype='float32',
-        blockxsize='100',
-        blockysize='1'
+        height='100',
+        width='100'
+        # blockxsize='100',
+        # blockysize='100',
+
     )
 
     print "Creating sum tile..."
 
-    new_dataset = rasterio.open('test1.tif', 'w', **kwargs)
+    # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
+    new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w', **kwargs)
     new_dataset.write(sum_array,1)
     new_dataset.close()
 
