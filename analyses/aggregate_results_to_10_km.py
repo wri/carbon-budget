@@ -123,25 +123,25 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     print pixel_count_dict
 
 
-    avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
-
-    print "Creating average tile"
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-           per_pixel, avg_10km]
-    subprocess.check_call(cmd)
-
-    print "Creating sum tile"
-    # calc year tile values to be equal to year. ex: 17*1
-    calc = '--calc={}*A'.format(non_zero_pixels)
-    sum_10km = "{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
-    outfile = '--outfile={}'.format(sum_10km)
-
-    cmd = ['gdal_calc.py', '-A', avg_10km, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
-    subprocess.check_call(cmd)
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
+    # avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
+    #
+    # print "Creating average tile"
+    # cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
+    #        '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+    #        per_pixel, avg_10km]
+    # subprocess.check_call(cmd)
+    #
+    # print "Creating sum tile"
+    # # calc year tile values to be equal to year. ex: 17*1
+    # calc = '--calc={}*A'.format(non_zero_pixels)
+    # sum_10km = "{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
+    # outfile = '--outfile={}'.format(sum_10km)
+    #
+    # cmd = ['gdal_calc.py', '-A', avg_10km, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+    # subprocess.check_call(cmd)
+    #
+    # # Prints information about the tile that was just processed
+    # uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
 
 
 # Calculates the average per pixel value at native resolution in each ~10x10 km pixel
