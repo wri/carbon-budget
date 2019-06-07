@@ -63,15 +63,17 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     print "  Converting {} to per-pixel values...".format(tile)
 
     # Name of inputs
-    rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
-    area_tile = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
+    focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
+    pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
+    print focal_tile_rewindow
+    print pixel_area_rewindow
 
     # Per-pixel value tile (intermediate output)
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
 
     # Opens input tiles for rasterio
-    in_src = rasterio.open(rewindow)
-    pixel_area_src = rasterio.open(area_tile)
+    in_src = rasterio.open(focal_tile_rewindow)
+    pixel_area_src = rasterio.open(pixel_area_rewindow)
 
     # Grabs metadata about the tif, like its location/projection/cellsize
     kwargs = in_src.meta
@@ -99,6 +101,8 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
+        print in_window
+        print pixel_area_window
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
@@ -107,6 +111,8 @@ def convert_to_per_pixel(tile, pixel_count_dict):
 
         # Adds the number of pixels with values in that window to the total for that tile
         non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
+
+        sys.quit()
 
     print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
