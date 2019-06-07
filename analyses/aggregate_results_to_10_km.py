@@ -73,27 +73,14 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     in_src = rasterio.open(focal_tile_rewindow)
     pixel_area_src = rasterio.open(pixel_area_rewindow)
 
-    # Grabs metadata about the tif, like its location/projection/cellsize
-    kwargs = in_src.meta
-
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    kwargs.update(
-        driver='GTiff',
-        count=1,
-        compress='lzw',
-        nodata=0,
-        dtype='float32',
-        blockxsize='400',
-        blockysize='400'
-    )
-
-    # Opens the output tile, giving it the arguments of the input tiles
-    per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
-
-    # The number of pixels in the tile with values
-    non_zero_pixel_count = 0
+    # # Opens the output tile, giving it the arguments of the input tiles
+    # per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
+    #
+    # # The number of pixels in the tile with values
+    # non_zero_pixel_count = 0
 
     sum_array = np.zeros([100,100], float)
 
@@ -109,7 +96,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
         # print per_pixel_value.shape
 
-        per_pixel_dst.write_band(1, per_pixel_value, window=window)
+        # per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
         # print np.size(per_pixel_value)
@@ -123,8 +110,25 @@ def convert_to_per_pixel(tile, pixel_count_dict):
 
     print sum_array
 
-    pixel_count_dict[tile] = non_zero_pixel_count
-    print pixel_count_dict
+    # Grabs metadata about the tif, like its location/projection/cellsize
+    kwargs = in_src.meta
+
+    kwargs.update(
+        driver='GTiff',
+        count=1,
+        compress='lzw',
+        nodata=0,
+        dtype='float32',
+        blockxsize='100',
+        blockysize='1'
+    )
+
+    new_dataset = rasterio.open('test1.tid', 'w', **kwargs)
+    new_dataset.write(sum_array,1)
+    new_dataset.close()
+
+    # pixel_count_dict[tile] = non_zero_pixel_count
+    # print pixel_count_dict
 
 
     # avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
