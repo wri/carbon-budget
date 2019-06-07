@@ -8,55 +8,58 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-
-def retile(tile):
+# Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels
+def rewindow(tile):
 
     # start time
     start = datetime.datetime.now()
 
-    # Extracts the tile id and the tile type from the full tile name
+    # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "Retiling {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
+    print "Rewindowing {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
 
-    # Per-pixel value tile (intermediate output)
-    retiled = '{0}_{1}_retile.tif'.format(tile_id, tile_type)
+    # Raster name for 400x400 pixel tiles (intermediate output)
+    rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
 
+    # Converts the tile to the 400x400 pixel windows
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
-           tile, retiled]
-
+           tile, rewindow]
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
 
 
-# Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+# Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel),
+# gets the average value of the 0.00025x0.00025 pixels in each 0.1x0.1 pixel to make a new 0.1x0.1 raster,
+# and then multiplies the 0.1x0.1 raster cell by the number of 0.00025x0.00025 pixels in it.
 def convert_to_per_pixel(tile, pixel_count_dict):
 
     # start time
     start = datetime.datetime.now()
 
-    # Extracts the tile id and the tile type from the full tile name
+    # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "  Converting {} to per-pixel values".format(tile)
+    print "  Converting {} to per-pixel values...".format(tile)
 
-    # Names of pixel area tile
+    # Name of inputs
+    rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
     area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
 
     # Per-pixel value tile (intermediate output)
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
 
     # Opens input tiles for rasterio
-    in_src = rasterio.open(tile)
+    in_src = rasterio.open(rewindow)
     pixel_area_src = rasterio.open(area_tile)
 
     # Grabs metadata about the tif, like its location/projection/cellsize
@@ -70,7 +73,8 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         count=1,
         compress='lzw',
         nodata=0,
-        dtype='float32'
+        dtype='float32',
+
     )
 
     # Opens the output tile, giving it the arguments of the input tiles
@@ -99,12 +103,12 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     pixel_count_dict[tile] = non_zero_pixels
     print pixel_count_dict
 
+
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            per_pixel, avg_10km]
-
     subprocess.check_call(cmd)
 
     # calc year tile values to be equal to year. ex: 17*1
@@ -116,7 +120,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, tile_type)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
 
 
 # Calculates the average per pixel value at native resolution in each ~10x10 km pixel
