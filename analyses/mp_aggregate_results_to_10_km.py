@@ -42,11 +42,11 @@ print tile_list
 for tile in tile_list:
     aggregate_results_to_10_km.convert_to_per_pixel(tile, pixel_count_dict)
 
-# tile_list = glob.glob("*per_pixel.tif")
-print tile_list
-# For single processor use
-for tile in tile_list:
-    aggregate_results_to_10_km.average_10km(tile)
+# # tile_list = glob.glob("*per_pixel.tif")
+# print tile_list
+# # For single processor use
+# for tile in tile_list:
+#     aggregate_results_to_10_km.average_10km(tile)
 
 
 
