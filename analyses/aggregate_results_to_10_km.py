@@ -123,7 +123,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         print non_zero_pixel_count_in
         print non_zero_pixel_count_per_pixel
         print non_zero_pixel_average
-        print non_zero_pixel_average * non_zero_pixel_sum
+        print non_zero_pixel_average * non_zero_pixel_count_per_pixel
         print non_zero_pixel_sum
 
         sys.quit()
