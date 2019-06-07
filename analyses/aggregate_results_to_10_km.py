@@ -103,12 +103,12 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
-        print in_window
-        print pixel_area_window
+        # print in_window
+        # print pixel_area_window
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
-        print per_pixel_value
+        # print per_pixel_value
 
         per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
