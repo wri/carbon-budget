@@ -87,6 +87,14 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs metadata about the tif, like its location/projection/cellsize
     kwargs = in_src.meta
 
+    kwargs.update(
+        driver='GTiff',
+        count=1,
+        compress='lzw',
+        nodata=0,
+        dtype='float32'
+    )
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 
@@ -128,7 +136,6 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         pixelSizeX='0.1'
         # blockxsize='100',
         # blockysize='100',
-
     )
 
     print "Creating sum tile..."
