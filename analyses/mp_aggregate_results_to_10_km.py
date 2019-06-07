@@ -2,12 +2,14 @@ import multiprocessing
 import aggregate_results_to_10_km
 import subprocess
 import os
+import glob
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 # tile_list = uu.tile_list(cn.net_flux_dir)
+# tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
 tile_id_list = ['00N_110E'] # test tiles
 # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_id_list
@@ -31,14 +33,31 @@ print "Tiles to process:", tile_list
 pixel_count_dict = dict.fromkeys(tile_list, 0)
 print pixel_count_dict
 
+for tile in tile_list:
+    aggregate_results_to_10_km.retile(tile)
+
+tile_list = glob.glob("*retile.tif")
+print tile_list
 # For single processor use
 for tile in tile_list:
     aggregate_results_to_10_km.convert_to_per_pixel(tile, pixel_count_dict)
 
+tile_list = glob.glob("*per_pixel.tif")
+print tile_list
 # For single processor use
 for tile in tile_list:
     aggregate_results_to_10_km.average_10km(tile)
 
+
+
+# out_vrt = "value_per_pixel.vrt"
+# os.system('gdalbuildvrt {} *per_pixel.tif'.format(out_vrt))
+#
+# avg_10km = "average_10_km.tif"
+# cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.096342599', '0.096342599', '-overwrite', '-r', 'average',
+#        '-tap', out_vrt, avg_10km]
+#
+# subprocess.check_call(cmd)
 print "Tiles processed. Uploading to s3 now..."
 
 # Uploads all output tiles to s3

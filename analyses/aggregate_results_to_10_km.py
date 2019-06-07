@@ -8,6 +8,33 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+
+def retile(tile):
+
+    # start time
+    start = datetime.datetime.now()
+
+    # Extracts the tile id and the tile type from the full tile name
+    tile_id = uu.get_tile_id(tile)
+    tile_type = uu.get_tile_type(tile)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
+    print "Calculating average per-pixel value for each 10x10 km pixel in", tile
+
+    # Per-pixel value tile (intermediate output)
+    retiled = '{0}_{1}_retile.tif'.format(tile_id, tile_type)
+
+    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+           tile, retiled]
+
+    subprocess.check_call(cmd)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, tile_type)
+
+
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
 def convert_to_per_pixel(tile, pixel_count_dict):
 
@@ -92,7 +119,7 @@ def average_10km(tile):
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.096342599', '0.096342599', '-overwrite', '-r', 'average',
+    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            per_pixel, avg_10km]
 
