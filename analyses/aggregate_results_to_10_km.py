@@ -103,7 +103,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
-        print idx.type
+        print idx
+        print idx[0]
+        print idx[1]
         print window
         print in_window.shape
         print pixel_area_window.shape
