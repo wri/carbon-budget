@@ -79,13 +79,13 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    kwargs.update(
-        driver='GTiff',
-        count=1,
-        compress='lzw',
-        nodata=0,
-        dtype='float32'
-    )
+    # kwargs.update(
+    #     driver='GTiff',
+    #     count=1,
+    #     compress='lzw',
+    #     nodata=0,
+    #     dtype='float32'
+    # )
 
     # Opens the output tile, giving it the arguments of the input tiles
     per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
@@ -116,11 +116,13 @@ def convert_to_per_pixel(tile, pixel_count_dict):
 
     avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
 
+    print "Creating average tile"
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            per_pixel, avg_10km]
     subprocess.check_call(cmd)
 
+    print "Creating sum tile"
     # calc year tile values to be equal to year. ex: 17*1
     calc = '--calc={}*A'.format(non_zero_pixels)
     sum_10km = "{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
