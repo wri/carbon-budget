@@ -76,6 +76,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
+    # Grabs metadata about the tif, like its location/projection/cellsize
+    kwargs = in_src.meta
+
     # Opens the output tile, giving it the arguments of the input tiles
     per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
 
@@ -83,9 +86,6 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # non_zero_pixel_count = 0
 
     sum_array = np.zeros([100,100], 'float32')
-
-    # Grabs metadata about the tif, like its location/projection/cellsize
-    kwargs = in_src.meta
 
     kwargs.update(
         driver='GTiff',
