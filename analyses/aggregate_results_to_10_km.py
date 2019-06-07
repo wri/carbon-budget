@@ -59,8 +59,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
 
     # Opens input tiles for rasterio
-    in_src = rasterio.open(tile)
-    # in_src = rasterio.open(rewindow)
+    in_src = rasterio.open(rewindow)
     pixel_area_src = rasterio.open(area_tile)
 
     # Grabs metadata about the tif, like its location/projection/cellsize
