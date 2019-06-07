@@ -79,14 +79,6 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs metadata about the tif, like its location/projection/cellsize
     kwargs = in_src.meta
 
-    # Opens the output tile, giving it the arguments of the input tiles
-    per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
-
-    # # The number of pixels in the tile with values
-    # non_zero_pixel_count = 0
-
-    sum_array = np.zeros([100,100], 'float32')
-
     kwargs.update(
         driver='GTiff',
         count=1,
@@ -94,6 +86,14 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         nodata=0,
         dtype='float32'
     )
+
+    # Opens the output tile, giving it the arguments of the input tiles
+    per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
+
+    # # The number of pixels in the tile with values
+    # non_zero_pixel_count = 0
+
+    sum_array = np.zeros([100,100], 'float32')
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
@@ -121,78 +121,31 @@ def convert_to_per_pixel(tile, pixel_count_dict):
 
     print sum_array
 
-    # Grabs metadata about the tif, like its location/projection/cellsize
-    kwargs = in_src.meta
-
-    kwargs.update(
-        driver='GTiff',
-        count=1,
-        compress='lzw',
-        nodata=0,
-        dtype='float32',
-        height='100',
-        width='100',
-        pixelSizeY='0.1',
-        pixelSizeX='0.1'
-        # blockxsize='100',
-        # blockysize='100',
-    )
+    # # Grabs metadata about the tif, like its location/projection/cellsize
+    # kwargs = in_src.meta
+    #
+    # kwargs.update(
+    #     driver='GTiff',
+    #     count=1,
+    #     compress='lzw',
+    #     nodata=0,
+    #     dtype='float32',
+    #     height='100',
+    #     width='100',
+    #     pixelSizeY='0.1',
+    #     pixelSizeX='0.1'
+    #     # blockxsize='100',
+    #     # blockysize='100',
+    # )
 
     print "Creating sum tile..."
 
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
-    new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w', **kwargs)
+    new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w',
+                                driver='GTiff', compress='lzw', nodata='0', dtype='float32',
+                                pixelSizeY='0.1', pixelSizeX='0.1')
     new_dataset.write(sum_array,1)
     new_dataset.close()
 
-    # pixel_count_dict[tile] = non_zero_pixel_count
-    # print pixel_count_dict
-
-
-    # avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
-    #
-    # print "Creating average tile"
-    # cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
-    #        '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-    #        per_pixel, avg_10km]
-    # subprocess.check_call(cmd)
-    #
-    # print "Creating sum tile"
-    # # calc year tile values to be equal to year. ex: 17*1
-    # calc = '--calc={}*A'.format(non_zero_pixels)
-    # sum_10km = "{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
-    # outfile = '--outfile={}'.format(sum_10km)
-    #
-    # cmd = ['gdal_calc.py', '-A', avg_10km, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
-    # subprocess.check_call(cmd)
-
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
-
-
-# Calculates the average per pixel value at native resolution in each ~10x10 km pixel
-def average_10km(tile):
-
-    # start time
-    start = datetime.datetime.now()
-
-    # Extracts the tile id and the tile type from the full tile name
-    tile_id = uu.get_tile_id(tile)
-    tile_type = uu.get_tile_type(tile)
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    print "Calculating average per-pixel value for each 10x10 km pixel in", tile
-
-    # Per-pixel value tile (intermediate output)
-    per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
-
-    avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
-
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-           per_pixel, avg_10km]
-
-    subprocess.check_call(cmd)
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, tile_type)
