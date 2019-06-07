@@ -106,6 +106,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
+        print per_pixel_value
 
         per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
