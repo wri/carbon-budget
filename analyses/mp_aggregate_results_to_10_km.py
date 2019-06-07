@@ -57,9 +57,8 @@ out_vrt = "{}.vrt".format(cn.pattern_gross_emis_all_drivers_aggreg)
 os.system('gdalbuildvrt {0} *{1}*.tif'.format(out_vrt, cn.pattern_gross_emis_all_drivers_aggreg))
 
 # Produces a single raster of all the 10x10 tiles (10 km resolution)
-cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Float32', '-a_nodata', '0',
-       '-o', '{}.tif'.format(cn.pattern_gross_emis_all_drivers_aggreg),
-       '{}.vrt'.format(cn.pattern_gross_emis_all_drivers_aggreg)]
+cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-tap', '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
+       out_vrt, '{}.tif'.format(cn.pattern_gross_emis_all_drivers_aggreg)]
 subprocess.check_call(cmd)
 
 print "Tiles processed. Uploading to s3 now..."
