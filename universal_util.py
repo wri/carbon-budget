@@ -299,8 +299,6 @@ def count_completed_tiles(pattern):
     mypath = os.getcwd()
     completed = len(glob.glob1(mypath, '*{}*'.format(pattern)))
 
-
-    # completed = str(os.system('''ls -l *{}*.tif | wc -l'''.format(pattern)))
     print "Number of completed or in progress tiles:", completed
 
 

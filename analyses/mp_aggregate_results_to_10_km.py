@@ -15,13 +15,13 @@ tile_id_list = ['00N_110E'] # test tiles
 print tile_id_list
 print "There are {} tiles to process".format(str(len(tile_id_list)))
 
-# For copying individual tiles to spot machine for testing
-for tile_id in tile_id_list:
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
-    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+# # For copying individual tiles to spot machine for testing
+# for tile_id in tile_id_list:
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
+#     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
 tile_list = uu.tile_list_spot_machine(".", ".tif")
 # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
@@ -34,8 +34,8 @@ print "Tiles to process:", tile_list
 pixel_count_dict = dict.fromkeys(tile_list, 0)
 print pixel_count_dict
 
-for tile in tile_list:
-    aggregate_results_to_10_km.rewindow(tile)
+# for tile in tile_list:
+#     aggregate_results_to_10_km.rewindow(tile)
 
 # tile_list = glob.glob("*retile.tif")
 print tile_list

@@ -93,7 +93,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
 
     # The number of pixels in the tile with values
-    non_zero_pixels = 0
+    non_zero_pixel_count = 0
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
@@ -101,46 +101,54 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
-        # print idx
-        # print in_window.shape
-        # print pixel_area_window.shape
+        print idx
+        print window
+        print in_window.shape
+        print pixel_area_window.shape
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
-        # print per_pixel_value.shape
+        print per_pixel_value.shape
 
         per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
         # print np.size(in_window)
         # print np.count_nonzero(in_window)
-        non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
-        # print non_zero_pixels
+        # non_zero_pixel_count = non_zero_pixel_count + np.count_nonzero(in_window)
+        non_zero_pixel_count_in = np.count_nonzero(in_window)
+        non_zero_pixel_count_per_pixel = np.count_nonzero(per_pixel_value)
+        non_zero_pixel_average = np.average(per_pixel_value)
+        non_zero_pixel_sum = np.sum(per_pixel_value)
+        print non_zero_pixel_count_in
+        print non_zero_pixel_count_per_pixel
+        print non_zero_pixel_average
+        print non_zero_pixel_sum
 
-        # sys.quit()
+        sys.quit()
 
-    print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
+    print "Pixels with values in {}: {}".format(tile, non_zero_pixel_count)
 
-    pixel_count_dict[tile] = non_zero_pixels
+    pixel_count_dict[tile] = non_zero_pixel_count
     print pixel_count_dict
 
 
-    avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
-
-    print "Creating average tile"
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-           per_pixel, avg_10km]
-    subprocess.check_call(cmd)
-
-    print "Creating sum tile"
-    # calc year tile values to be equal to year. ex: 17*1
-    calc = '--calc={}*A'.format(non_zero_pixels)
-    sum_10km = "{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
-    outfile = '--outfile={}'.format(sum_10km)
-
-    cmd = ['gdal_calc.py', '-A', avg_10km, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
-    subprocess.check_call(cmd)
+    # avg_10km = '{0}_{1}_average.tif'.format(tile_id, tile_type)
+    #
+    # print "Creating average tile"
+    # cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.1', '0.1', '-overwrite', '-r', 'average',
+    #        '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+    #        per_pixel, avg_10km]
+    # subprocess.check_call(cmd)
+    #
+    # print "Creating sum tile"
+    # # calc year tile values to be equal to year. ex: 17*1
+    # calc = '--calc={}*A'.format(non_zero_pixels)
+    # sum_10km = "{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
+    # outfile = '--outfile={}'.format(sum_10km)
+    #
+    # cmd = ['gdal_calc.py', '-A', avg_10km, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+    # subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
