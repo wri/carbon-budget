@@ -76,19 +76,19 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    # Grabs metadata about the tif, like its location/projection/cellsize
-    kwargs = in_src.meta
-
-    kwargs.update(
-        driver='GTiff',
-        count=1,
-        compress='lzw',
-        nodata=0,
-        dtype='float32'
-    )
-
-    # Opens the output tile, giving it the arguments of the input tiles
-    per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
+    # # Grabs metadata about the tif, like its location/projection/cellsize
+    # kwargs = in_src.meta
+    #
+    # kwargs.update(
+    #     driver='GTiff',
+    #     count=1,
+    #     compress='lzw',
+    #     nodata=0,
+    #     dtype='float32'
+    # )
+    #
+    # # Opens the output tile, giving it the arguments of the input tiles
+    # per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
 
     # # The number of pixels in the tile with values
     # non_zero_pixel_count = 0
@@ -107,7 +107,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
         # print per_pixel_value.shape
 
-        per_pixel_dst.write_band(1, per_pixel_value, window=window)
+        # per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
         # print np.size(per_pixel_value)
@@ -143,7 +143,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32',
-                                pixelSizeY='0.1', pixelSizeX='0.1')
+                                pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100)
     new_dataset.write(sum_array,1)
     new_dataset.close()
 
