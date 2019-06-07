@@ -115,7 +115,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # Adds the number of pixels with values in that window to the total for that tile
         non_zero_pixels = non_zero_pixels + np.count_nonzero(in_window)
 
-        sys.quit()
+        # sys.quit()
 
     print "Pixels with values in {}: {}".format(tile, non_zero_pixels)
 
