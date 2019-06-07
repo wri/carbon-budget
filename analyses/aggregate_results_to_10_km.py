@@ -26,7 +26,7 @@ def rewindow(tile):
     area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
 
-    # Converts the tile to the 400x400 pixel windows
+    # Converts the tile of interest to the 400x400 pixel windows
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
@@ -34,7 +34,7 @@ def rewindow(tile):
            tile, input_rewindow]
     subprocess.check_call(cmd)
 
-    # Converts the tile to the 400x400 pixel windows
+    # Converts the pixel area tile to the 400x400 pixel windows
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
@@ -49,6 +49,7 @@ def rewindow(tile):
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel),
 # gets the average value of the 0.00025x0.00025 pixels in each 0.1x0.1 pixel to make a new 0.1x0.1 raster,
 # and then multiplies the 0.1x0.1 raster cell by the number of 0.00025x0.00025 pixels in it.
+# Based on https://gis.stackexchange.com/questions/152661/downsampling-geotiff-using-summation-gdal-numpy
 def convert_to_per_pixel(tile, pixel_count_dict):
 
     # start time
@@ -63,7 +64,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
 
     # Name of inputs
     rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
-    area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
+    area_tile = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
 
     # Per-pixel value tile (intermediate output)
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
