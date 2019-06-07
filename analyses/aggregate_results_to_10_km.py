@@ -104,11 +104,6 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
         print idx
-        print idx[0]
-        print idx[1]
-        print window
-        print in_window.shape
-        print pixel_area_window.shape
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
@@ -117,10 +112,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
-        # print np.size(in_window)
-        # print np.count_nonzero(in_window)
-        # non_zero_pixel_count = non_zero_pixel_count + np.count_nonzero(in_window)
-        non_zero_pixel_count_in = np.count_nonzero(in_window)
+        print np.size(per_pixel_value)
         non_zero_pixel_sum = np.sum(per_pixel_value)
         print non_zero_pixel_sum
 
