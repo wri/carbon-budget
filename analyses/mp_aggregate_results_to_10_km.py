@@ -33,8 +33,8 @@ print "Tiles to process:", tile_list
 pixel_count_dict = dict.fromkeys(tile_list, 0)
 print pixel_count_dict
 
-# for tile in tile_list:
-#     aggregate_results_to_10_km.rewindow(tile)
+for tile in tile_list:
+    aggregate_results_to_10_km.rewindow(tile)
 
 # tile_list = glob.glob("*retile.tif")
 print tile_list
