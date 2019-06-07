@@ -35,7 +35,7 @@ def rewindow(tile):
     subprocess.check_call(cmd)
 
     # Converts the pixel area tile to the 400x400 pixel windows
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
+    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
@@ -65,8 +65,6 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
-    print focal_tile_rewindow
-    print pixel_area_rewindow
 
     # Per-pixel value tile (intermediate output)
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
