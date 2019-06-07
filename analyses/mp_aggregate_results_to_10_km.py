@@ -23,6 +23,7 @@ for tile_id in tile_id_list:
     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
+# Lists the tiles of the particular type that's being iterates through
 tile_list = uu.tile_list_spot_machine(".", ".tif")
 # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
 tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
@@ -52,16 +53,14 @@ pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
 pool.close()
 pool.join()
 
+out_vrt = "{}.vrt".format(cn.pattern_gross_emis_all_drivers_aggreg)
+os.system('gdalbuildvrt {0} *{1}*.tif'.format(out_vrt, cn.pattern_gross_emis_all_drivers_aggreg))
 
+cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+       '-o', '{}.tif'.format(cn.pattern_gross_emis_all_drivers_aggreg),
+       '{}.vrt'.format(cn.pattern_gross_emis_all_drivers_aggreg)]
+subprocess.check_call(cmd)
 
-# out_vrt = "value_per_pixel.vrt"
-# os.system('gdalbuildvrt {} *per_pixel.tif'.format(out_vrt))
-#
-# avg_10km = "average_10_km.tif"
-# cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-tr', '0.096342599', '0.096342599', '-overwrite', '-r', 'average',
-#        '-tap', out_vrt, avg_10km]
-#
-# subprocess.check_call(cmd)
 print "Tiles processed. Uploading to s3 now..."
 
 # Uploads all output tiles to s3
