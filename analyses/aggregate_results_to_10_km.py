@@ -73,8 +73,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         count=1,
         compress='lzw',
         nodata=0,
-        dtype='float32',
-
+        dtype='float32'
+        # blocksizex='400',
+        # blocksizey='400'
     )
 
     # Opens the output tile, giving it the arguments of the input tiles
