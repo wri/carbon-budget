@@ -2,6 +2,7 @@ from osgeo import gdal
 import numpy as np
 import subprocess
 import rasterio
+from rasterio.transform import from_origin
 import datetime
 import sys
 sys.path.append('../')
@@ -143,7 +144,8 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
-                                pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100, crs='EPSG:4326')
+                                pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100,
+                                crs='EPSG:4326', transform=from_origin(xmin,ymax,0.1,0.1))
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     # new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w', **kwargs)
     new_dataset.write(sum_array,1)
