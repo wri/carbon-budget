@@ -59,7 +59,8 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
 
     # Opens input tiles for rasterio
-    in_src = rasterio.open(rewindow)
+    in_src = rasterio.open(tile)
+    # in_src = rasterio.open(rewindow)
     pixel_area_src = rasterio.open(area_tile)
 
     # Grabs metadata about the tif, like its location/projection/cellsize
@@ -73,9 +74,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         count=1,
         compress='lzw',
         nodata=0,
-        dtype='float32'
-        # blocksizex='400',
-        # blocksizey='400'
+        dtype='float32',
+        blocksizex='400',
+        blocksizey='400'
     )
 
     # Opens the output tile, giving it the arguments of the input tiles
