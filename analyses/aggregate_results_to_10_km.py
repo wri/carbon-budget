@@ -76,13 +76,16 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    # # Opens the output tile, giving it the arguments of the input tiles
-    # per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
-    #
+    # Opens the output tile, giving it the arguments of the input tiles
+    per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
+
     # # The number of pixels in the tile with values
     # non_zero_pixel_count = 0
 
     sum_array = np.zeros([100,100], 'float32')
+
+    # Grabs metadata about the tif, like its location/projection/cellsize
+    kwargs = in_src.meta
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
@@ -96,7 +99,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
         # print per_pixel_value.shape
 
-        # per_pixel_dst.write_band(1, per_pixel_value, window=window)
+        per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
         # print np.size(per_pixel_value)
@@ -120,7 +123,9 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         nodata=0,
         dtype='float32',
         height='100',
-        width='100'
+        width='100',
+        pixelSizeY='0.1',
+        pixelSizeX='0.1'
         # blockxsize='100',
         # blockysize='100',
 
