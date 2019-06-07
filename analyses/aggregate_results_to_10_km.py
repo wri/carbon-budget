@@ -51,7 +51,7 @@ def rewindow(tile):
 # gets the average value of the 0.00025x0.00025 pixels in each 0.1x0.1 pixel to make a new 0.1x0.1 raster,
 # and then multiplies the 0.1x0.1 raster cell by the number of 0.00025x0.00025 pixels in it.
 # Based on https://gis.stackexchange.com/questions/152661/downsampling-geotiff-using-summation-gdal-numpy
-def convert_to_per_pixel(tile, pixel_count_dict):
+def convert_to_per_pixel(tile):
 
     # start time
     start = datetime.datetime.now()
@@ -67,32 +67,12 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
 
-    # Per-pixel value tile (intermediate output)
-    per_pixel = '{0}_{1}_per_pixel.tif'.format(tile_id, tile_type)
-
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)
     pixel_area_src = rasterio.open(pixel_area_rewindow)
 
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
-
-    # # Grabs metadata about the tif, like its location/projection/cellsize
-    # kwargs = in_src.meta
-    #
-    # kwargs.update(
-    #     driver='GTiff',
-    #     count=1,
-    #     compress='lzw',
-    #     nodata=0,
-    #     dtype='float32'
-    # )
-    #
-    # # Opens the output tile, giving it the arguments of the input tiles
-    # per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
-
-    # # The number of pixels in the tile with values
-    # non_zero_pixel_count = 0
 
     sum_array = np.zeros([100,100], 'float32')
 
@@ -102,23 +82,14 @@ def convert_to_per_pixel(tile, pixel_count_dict):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
-        # print idx
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
-        # print per_pixel_value.shape
-
-        # per_pixel_dst.write_band(1, per_pixel_value, window=window)
 
         # Adds the number of pixels with values in that window to the total for that tile
-        # print np.size(per_pixel_value)
         non_zero_pixel_sum = np.sum(per_pixel_value)
-        # print non_zero_pixel_sum
 
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
-        # print sum_array
-
-        # sys.quit()
 
     print sum_array
 
