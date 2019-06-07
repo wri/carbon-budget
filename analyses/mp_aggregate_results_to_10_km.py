@@ -28,6 +28,7 @@ tile_list = uu.tile_list_spot_machine(".", ".tif")
 tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
 tile_list = [i for i in tile_list if not ('per_pixel' in i)]
 tile_list = [i for i in tile_list if not ('average' in i)]
+tile_list = [i for i in tile_list if not ('rewindow' in i)]
 print "Tiles to process:", tile_list
 
 pixel_count_dict = dict.fromkeys(tile_list, 0)
