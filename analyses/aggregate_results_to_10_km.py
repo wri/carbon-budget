@@ -76,9 +76,10 @@ def convert_to_per_pixel(tile):
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
+    #2D array in which the 10x10 km aggregated sums will be stored
     sum_array = np.zeros([100,100], 'float32')
 
-    # Iterates across the windows (1 pixel strips) of the input tile
+    # Iterates across the windows (400x400 30m pixels) of the input tile
     for idx, window in windows:
 
         # Creates windows for each input tile
@@ -88,23 +89,24 @@ def convert_to_per_pixel(tile):
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
 
-        # Adds the number of pixels with values in that window to the total for that tile
+        # Sums the pixels to create a total value for the 10x10 km pixel
         non_zero_pixel_sum = np.sum(per_pixel_value)
 
+        # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    print sum_array
+    print "Creating aggregated tile for {}...".format(tile)
 
-    print "Creating sum tile..."
-
+    # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
+    # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
-    new_dataset = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w',
+    aggregated = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
                                 height=100, width=100,
                                 # pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.1,0.1))
-    new_dataset.write(sum_array,1)
-    new_dataset.close()
+    aggregated.write(sum_array,1)
+    aggregated.close()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_gross_emis_all_drivers_aggreg)
