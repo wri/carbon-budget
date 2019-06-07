@@ -82,7 +82,7 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # # The number of pixels in the tile with values
     # non_zero_pixel_count = 0
 
-    sum_array = np.zeros([100,100], float)
+    sum_array = np.zeros([100,100], 'float32')
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
