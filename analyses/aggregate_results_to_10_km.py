@@ -22,14 +22,24 @@ def rewindow(tile):
     print "Rewindowing {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
 
     # Raster name for 400x400 pixel tiles (intermediate output)
-    rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
+    input_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
+    area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
+    pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
 
     # Converts the tile to the 400x400 pixel windows
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
            '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
-           tile, rewindow]
+           tile, input_rewindow]
+    subprocess.check_call(cmd)
+
+    # Converts the tile to the 400x400 pixel windows
+    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+           '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+           area_tile, pixel_area_rewindow]
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -68,13 +78,13 @@ def convert_to_per_pixel(tile, pixel_count_dict):
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    # kwargs.update(
-    #     driver='GTiff',
-    #     count=1,
-    #     compress='lzw',
-    #     nodata=0,
-    #     dtype='float32'
-    # )
+    kwargs.update(
+        driver='GTiff',
+        count=1,
+        compress='lzw',
+        nodata=0,
+        dtype='float32'
+    )
 
     # Opens the output tile, giving it the arguments of the input tiles
     per_pixel_dst = rasterio.open(per_pixel, 'w', **kwargs)
