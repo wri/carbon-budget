@@ -60,7 +60,7 @@ def rewindow(tile):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def convert_to_per_pixel(tile):
+def aggregate(tile):
 
     # start time
     start = datetime.datetime.now()

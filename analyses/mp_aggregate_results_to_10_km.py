@@ -16,9 +16,9 @@ print tile_id_list
 print "There are {} tiles to process".format(str(len(tile_id_list)))
 
 input_dict = {
-         cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
-         cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
-         cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
+         # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
+         # cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
+         # cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
          cn.net_flux_dir: cn.pattern_net_flux
          }
 
@@ -56,7 +56,7 @@ for dir, pattern in input_dict.items():
     # For multiprocessor use
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/2)
-    pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
+    pool.map(aggregate_results_to_10_km.aggregate, tile_list)
     # Added these in response to error12: Cannot allocate memory error.
     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
     # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
