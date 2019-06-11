@@ -70,13 +70,13 @@ for dir, pattern in input_dict.items():
     pool.join()
 
     # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-    out_vrt = "{}.vrt".format(pattern)
+    out_vrt = "{}_10km.vrt".format(pattern)
     os.system('gdalbuildvrt {0} *{1}*.tif'.format(out_vrt, pattern))
 
     # Produces a single raster of all the 10x10 tiles (10 km resolution)
     cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
            '-tr', '0.1', '0.1',
-           out_vrt, '{}.tif'.format(pattern)]
+           out_vrt, '{}_10km.tif'.format(pattern)]
     subprocess.check_call(cmd)
 
 
@@ -102,5 +102,5 @@ for dir, pattern in input_dict.items():
     #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
     # Uploads all output tiles to s3
-    uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, cn.pattern_gross_emis_all_drivers_aggreg)
+    uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, '{}_10km.tif'.format(pattern))
 
