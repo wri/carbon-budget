@@ -59,15 +59,15 @@ for dir, pattern in input_dict.items():
     # pool.close()
     # pool.join()
 
-    # # For multiprocessor use
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
-    # # Added these in response to error12: Cannot allocate memory error.
-    # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    # pool.close()
-    # pool.join()
+    # For multiprocessor use
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
+    # Added these in response to error12: Cannot allocate memory error.
+    # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+    # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+    pool.close()
+    pool.join()
 
     # Makes a vrt of all the output 10x10 tiles (10 km resolution)
     out_vrt = "{}_10km.vrt".format(pattern)
@@ -91,15 +91,15 @@ for dir, pattern in input_dict.items():
 
     print "Tiles processed. Uploading to s3 now..."
 
-    # vrtList = glob.glob('*vrt')
-    # for vrt in vrtList:
-    #     os.remove(vrt)
-    #
-    # for tile_id in tile_id_list:
-    #
-    #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-    #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-    #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+    vrtList = glob.glob('*vrt')
+    for vrt in vrtList:
+        os.remove(vrt)
+
+    for tile_id in tile_id_list:
+
+        os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+        os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
     print '{}_10km.tif'.format(pattern)
 
