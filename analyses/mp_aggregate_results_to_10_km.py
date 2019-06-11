@@ -67,13 +67,13 @@ for dir, pattern in input_dict.items():
     out_vrt = "{}_10km.vrt".format(pattern)
     # os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}*.tif'.format(out_vrt, pattern))
     # os.system('gdalbuildvrt -tr 0.1 0.1 test_00N_110E.vrt 00N_110E_net_flux_t_CO2_ha_2001_15_10km.tif')
-    os.system('gdalbuildvrt -tr 0.1 0.1 test_00N_110E.vrt *{0}_10km*.tif'.format(pattern))
+    os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
     # # Produces a single raster of all the 10x10 tiles (10 km resolution)
     # cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
     #        '-tr', '0.1', '0.1',
     #        out_vrt, '{}_10km.tif'.format(pattern)]
-    os.system('gdal_translate test_00N_110E.vrt test_flux_local_process_spot_machine.tif')
+    os.system('gdal_translate {0} test_flux_local_process_spot_machine.tif'.format(out_vrt))
     # subprocess.check_call(cmd)
 
     print "Tiles processed. Uploading to s3 now..."
