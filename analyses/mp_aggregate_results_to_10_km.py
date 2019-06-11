@@ -58,16 +58,16 @@ for dir, pattern in input_dict.items():
     # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
     # pool.close()
     # pool.join()
-    #
-    # # For multiprocessor use
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
-    # # Added these in response to error12: Cannot allocate memory error.
-    # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    # pool.close()
-    # pool.join()
+
+    # For multiprocessor use
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(aggregate_results_to_10_km.convert_to_per_pixel, tile_list)
+    # Added these in response to error12: Cannot allocate memory error.
+    # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+    # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+    pool.close()
+    pool.join()
 
     # Makes a vrt of all the output 10x10 tiles (10 km resolution)
     out_vrt = "{}.vrt".format(pattern)
