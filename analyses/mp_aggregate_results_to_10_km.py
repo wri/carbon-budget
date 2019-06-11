@@ -73,7 +73,8 @@ for dir, pattern in input_dict.items():
     # cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
     #        '-tr', '0.1', '0.1',
     #        out_vrt, '{}_10km.tif'.format(pattern)]
-    os.system('gdal_translate test_00N_110E.vrt test_flux_local_process_spot_machine.tif')
+    # os.system('gdal_translate test_00N_110E.vrt test_flux_local_process_spot_machine.tif')
+    os.system('gdal_translate {0} test_flux_local_process_spot_machine.tif'.format(out_vrt))
     # subprocess.check_call(cmd)
 
     print "Tiles processed. Uploading to s3 now..."
