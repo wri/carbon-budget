@@ -16,9 +16,9 @@ print tile_id_list
 print "There are {} tiles to process".format(str(len(tile_id_list)))
 
 files = {
-         cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo
+         # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
          # cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
-         # cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
+         cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers
          # cn.net_flux_dir: cn.pattern_net_flux
          }
 
