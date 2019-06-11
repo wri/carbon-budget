@@ -373,7 +373,7 @@ gross_emis_all_drivers_dir = '{}gross_emissions/all_drivers/20190523/'.format(ba
 pattern_gross_emis_nodes = 'decision_tree_nodes_gross_emis'
 gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/20190523/'.format(base_dir)
 
-pattern_gross_emis_all_drivers_aggreg = 'all_drivers_t_CO2_ha_gross_emis_year_10km'
+pattern_gross_emis_all_drivers_aggreg = '{}_10km'.format(pattern_gross_emis_all_drivers)
 gross_emis_all_drivers_aggreg_dir = '{}gross_emissions/all_drivers/10km/20190610/'.format(base_dir)
 
 
