@@ -15,12 +15,12 @@ def rewindow(tile):
     # start time
     start = datetime.datetime.now()
 
+    print "Rewindowing {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
+
     # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    print "Rewindowing {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
 
     # Raster name for 400x400 pixel tiles (intermediate output)
     input_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
