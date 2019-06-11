@@ -15,26 +15,18 @@ tile_id_list = ['00N_110E'] # test tiles
 print tile_id_list
 print "There are {} tiles to process".format(str(len(tile_id_list)))
 
-files = {
+input_dict = {
          # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
          # cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
          cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers
          # cn.net_flux_dir: cn.pattern_net_flux
          }
 
-# download_list = [
-#                 cn.annual_gain_combo_dir,
-#                 cn.cumul_gain_combo_dir,
-#                 cn.gross_emis_all_drivers_dir,
-#                 cn.net_flux_dir
-# ]
+# output_dict = {
 #
-# download_list_pattern = [
-#                 cn.pattern_annual_gain_combo,
-#                 cn.pattern_cumul_gain_combo,
-#                 cn.pattern_gross_emis_all_drivers,
-#                 cn.pattern_net_flux
-# ]
+#
+#
+# }
 
 # For copying individual tiles to spot machine for testing
 for tile_id in tile_id_list:
@@ -44,10 +36,7 @@ for tile_id in tile_id_list:
     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
-for dir,pattern in files.items():
-
-    print dir
-    print pattern
+for dir, pattern in input_dict.items():
 
     # uu.s3_folder_download(dir, '.')
 
@@ -101,16 +90,16 @@ for dir,pattern in files.items():
 
     print "Tiles processed. Uploading to s3 now..."
 
-    vrtList = glob.glob('*vrt')
-    for vrt in vrtList:
-        os.remove(vrt)
-
-    for tile_id in tile_id_list:
-
-        os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+    # vrtList = glob.glob('*vrt')
+    # for vrt in vrtList:
+    #     os.remove(vrt)
+    #
+    # for tile_id in tile_id_list:
+    #
+    #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+    #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+    #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
     # Uploads all output tiles to s3
-    uu.upload_final_set(dir, pattern)
+    uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, cn.pattern_gross_emis_all_drivers_aggreg)
 

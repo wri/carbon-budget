@@ -370,11 +370,11 @@ gross_emis_no_driver_dir = '{}gross_emissions/no_driver/20190523/'.format(base_d
 pattern_gross_emis_all_drivers = 'all_drivers_t_CO2_ha_gross_emis_year'
 gross_emis_all_drivers_dir = '{}gross_emissions/all_drivers/20190523/'.format(base_dir)
 
-pattern_gross_emis_nodes = 'decision_tree_nodes_gross_emis'
-gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/20190523/'.format(base_dir)
-
 pattern_gross_emis_all_drivers_aggreg = '{}_10km'.format(pattern_gross_emis_all_drivers)
 gross_emis_all_drivers_aggreg_dir = '{}gross_emissions/all_drivers/10km/20190610/'.format(base_dir)
+
+pattern_gross_emis_nodes = 'decision_tree_nodes_gross_emis'
+gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/20190523/'.format(base_dir)
 
 
 ### Net emissions
@@ -383,6 +383,9 @@ gross_emis_all_drivers_aggreg_dir = '{}gross_emissions/all_drivers/10km/20190610
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2_ha_2001_15'
 net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/20190524/')
+
+pattern_net_flux_aggreg = '{}_10km'.format(pattern_net_flux)
+net_flux_aggreg_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/10km/20190610/')
 
 
 
