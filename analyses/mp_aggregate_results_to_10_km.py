@@ -24,11 +24,11 @@ input_dict = {
 
 # For copying individual tiles to spot machine for testing
 for tile_id in tile_id_list:
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+    # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
 for dir, pattern in input_dict.items():
 
@@ -75,15 +75,15 @@ for dir, pattern in input_dict.items():
 
     print "Tiles processed. Uploading to s3 now..."
 
-    vrtList = glob.glob('*vrt')
-    for vrt in vrtList:
-        os.remove(vrt)
-
-    for tile_id in tile_id_list:
-
-        os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+    # vrtList = glob.glob('*vrt')
+    # for vrt in vrtList:
+    #     os.remove(vrt)
+    #
+    # for tile_id in tile_id_list:
+    #
+    #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+    #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+    #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
     print '{}_10km.tif'.format(pattern)
 
