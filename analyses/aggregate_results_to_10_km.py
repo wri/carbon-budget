@@ -100,11 +100,6 @@ def convert_to_per_pixel(tile):
     # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
-    # aggregated = rasterio.open("{0}_{1}.tif".format(tile_id, cn.pattern_gross_emis_all_drivers_aggreg), 'w',
-    #                             driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
-    #                             height=100, width=100,
-    #                             # pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100,
-    #                             crs='EPSG:4326', transform=from_origin(xmin,ymax,0.1,0.1))
     aggregated = rasterio.open("{0}_{1}_10km.tif".format(tile_id, tile_type), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
                                 height=100, width=100,
