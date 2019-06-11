@@ -104,5 +104,5 @@ for dir, pattern in input_dict.items():
     print '{}_10km.tif'.format(pattern)
 
     # Uploads all output tiles to s3
-    uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, '{}_10km.tif'.format(pattern))
+    uu.upload_final_set(cn.gross_emis_all_drivers_aggreg_dir, '{}_10km'.format(pattern))
 
