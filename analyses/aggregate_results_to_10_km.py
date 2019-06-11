@@ -89,6 +89,8 @@ def aggregate(tile):
     # Iterates across the windows (400x400 30m pixels) of the input tile
     for idx, window in windows:
 
+        print idx
+
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
@@ -101,6 +103,10 @@ def aggregate(tile):
 
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
+
+        print non_zero_pixel_sum
+
+    print sum_array
 
     print "Creating aggregated tile for {}...".format(tile)
 
