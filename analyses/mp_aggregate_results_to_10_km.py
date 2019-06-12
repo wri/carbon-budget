@@ -8,11 +8,10 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-tile_id_list = uu.tile_list(cn.net_flux_dir)
 # tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
 # tile_id_list = ['00N_110E'] # test tiles
 # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-print tile_id_list
+# print tile_id_list
 print "There are {} tiles to process".format(str(len(tile_id_list)))
 
 input_dict = {
@@ -33,6 +32,9 @@ print "Model outputs to process are:", input_dict
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
 for dir, pattern in input_dict.items():
+
+    tile_id_list = uu.tile_list(dir)
+    print tile_id_list
 
     uu.s3_folder_download(dir, '.')
 
