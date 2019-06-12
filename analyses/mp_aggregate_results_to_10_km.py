@@ -22,6 +22,8 @@ input_dict = {
          cn.net_flux_dir: cn.pattern_net_flux
          }
 
+print "Model outputs to process are:", input_dict
+
 # For copying individual tiles to spot machine for testing
 for tile_id in tile_id_list:
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
