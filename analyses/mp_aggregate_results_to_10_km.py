@@ -8,8 +8,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# tile_list = uu.tile_list(cn.net_flux_dir)
-tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
+tile_id_list = uu.tile_list(cn.net_flux_dir)
+# tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
 # tile_id_list = ['00N_110E'] # test tiles
 # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_id_list
@@ -24,17 +24,17 @@ input_dict = {
 
 print "Model outputs to process are:", input_dict
 
-# For copying individual tiles to spot machine for testing
-for tile_id in tile_id_list:
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+# # For copying individual tiles to spot machine for testing
+# for tile_id in tile_id_list:
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
 for dir, pattern in input_dict.items():
 
-    # uu.s3_folder_download(dir, '.')
+    uu.s3_folder_download(dir, '.')
 
     # Lists the tiles of the particular type that is being iterates through.
     # Excludes all intermediate files
