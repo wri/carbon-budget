@@ -22,6 +22,9 @@ import universal_util as uu
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
 
+# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+uu.s3_folder_download(cn.pixel_area_dir, '.')
+
 input_dict = {
          cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
          cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
