@@ -1,3 +1,8 @@
+'''
+This script creates maps of model outputs at roughly 10km resolution
+'''
+
+
 import multiprocessing
 import aggregate_results_to_10_km
 import subprocess
@@ -18,6 +23,7 @@ def main():
     args = parser.parse_args()
 
     thresh = args.tcd_threshold
+    thresh = int(thresh)
     print thresh
 
     if thresh < 0 or thresh > 99:
