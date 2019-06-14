@@ -88,7 +88,7 @@ def main():
 
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/3)
+        pool = multiprocessing.Pool(count/2)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
