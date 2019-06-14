@@ -112,7 +112,7 @@ def main():
 
         out_pattern = re.sub('ha_', '', pattern)
         print out_pattern
-        out_pattern = re.sub('2001_15_', 'per_year_', out_pattern)
+        out_pattern = re.sub('2001_15', 'per_year_', out_pattern)
         print out_pattern
         out_pattern = re.sub('AGC_BGC_', 'AGCO2_BGCO2_', out_pattern)
         print out_pattern
