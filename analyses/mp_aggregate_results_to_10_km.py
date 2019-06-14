@@ -45,14 +45,14 @@ def main():
     # print tile_id_list
     # print "There are {} tiles to process".format(str(len(tile_id_list)))
 
-    # # For copying individual tiles to spot machine for testing
-    # for tile_id in tile_id_list:
-    #     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
-    #     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
+    # For copying individual tiles to spot machine for testing
+    for tile_id in tile_id_list:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     # uu.s3_folder_download(cn.pixel_area_dir, '.')
@@ -60,10 +60,10 @@ def main():
     # uu.s3_folder_download(cn.tcd_dir, '.')
 
     input_dict = {
-             # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
+             cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
              cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
-             # cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
-             # cn.net_flux_dir: cn.pattern_net_flux
+             cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
+             cn.net_flux_dir: cn.pattern_net_flux
              }
 
     print "Model outputs to process are:", input_dict
@@ -86,25 +86,25 @@ def main():
         tile_list = [i for i in tile_list if not ('10km' in i)]
         print "Tiles to process:", tile_list
 
-        # # For multiprocessor use
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(aggregate_results_to_10_km.rewindow, tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+        # For multiprocessor use
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
-        # # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+        # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
@@ -112,7 +112,7 @@ def main():
 
         out_pattern = re.sub('ha_', '', pattern)
         print out_pattern
-        out_pattern = re.sub('2001_15', 'per_year_', out_pattern)
+        out_pattern = re.sub('2001_15', 'per_year', out_pattern)
         print out_pattern
         out_pattern = re.sub('AGC_BGC_', 'AGCO2_BGCO2_', out_pattern)
         print out_pattern
@@ -131,11 +131,11 @@ def main():
         for vrt in vrtList:
             os.remove(vrt)
 
-        # for tile_id in tile_id_list:
-        #
-        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        for tile_id in tile_id_list:
+
+            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
         # Uploads all output tiles to s3
         uu.upload_final_set(cn.output_aggreg_dir, '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted))
