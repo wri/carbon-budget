@@ -390,7 +390,7 @@ pattern_annual_gain_combo_aggreg = '{}_10km'.format(pattern_annual_gain_combo)
 pattern_cumul_gain_combo_aggreg = '{}_10km'.format(pattern_cumul_gain_combo)
 pattern_gross_emis_all_drivers_aggreg = '{}_10km'.format(pattern_gross_emis_all_drivers)
 pattern_net_flux_aggreg = '{}_10km'.format(pattern_net_flux)
-output_aggreg_dir = '{}10km_output_aggregation/20190612/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/20190614/'.format(base_dir)
 
 
 # Tile summary spreadsheets
