@@ -110,13 +110,14 @@ def main():
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
         out_pattern = re.sub('ha_', '', pattern)
+        out_pattern = re.sub('2001_15_', 'per_year_', out_pattern)
         date = datetime.datetime.now()
         date_formatted = date.strftime("%Y-%m-%d")
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
                '-tr', '0.1', '0.1',
-               out_vrt, '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted)]
+               out_vrt, '{0}_10km_tcd{1}_modelv1_{2}.tif'.format(out_pattern, thresh, date_formatted)]
         subprocess.check_call(cmd)
 
         print "Tiles processed. Uploading to s3 now..."
