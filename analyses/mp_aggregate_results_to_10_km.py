@@ -57,9 +57,9 @@ def main():
 
     input_dict = {
              # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
-             # cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
+             cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
              # cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
-             cn.net_flux_dir: cn.pattern_net_flux
+             # cn.net_flux_dir: cn.pattern_net_flux
              }
 
     print "Model outputs to process are:", input_dict
@@ -128,7 +128,7 @@ def main():
         print '{}_10km.tif'.format(pattern)
 
         # Uploads all output tiles to s3
-        uu.upload_final_set(cn.output_aggreg_dir, '{}_10km'.format(pattern))
+        uu.upload_final_set(cn.output_aggreg_dir, '{0}_10km_tcd{1}_modelv1'.format(pattern, thresh))
 
 
 if __name__ == '__main__':

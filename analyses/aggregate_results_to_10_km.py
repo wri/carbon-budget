@@ -38,16 +38,6 @@ def rewindow(tile):
            tile, input_rewindow]
     subprocess.check_call(cmd)
 
-    if not os.path.exists(pixel_area_rewindow):
-
-        # Converts the pixel area tile to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
-               area_tile, pixel_area_rewindow]
-        subprocess.check_call(cmd)
-
     if not os.path.exists(tcd_rewindow):
 
         # Converts the pixel area tile to the 400x400 pixel windows
@@ -56,6 +46,16 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
                tcd_tile, tcd_rewindow]
+        subprocess.check_call(cmd)
+
+    if not os.path.exists(pixel_area_rewindow):
+
+        # Converts the pixel area tile to the 400x400 pixel windows
+        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
+               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               area_tile, pixel_area_rewindow]
         subprocess.check_call(cmd)
 
     else:
@@ -127,6 +127,14 @@ def aggregate(tile, thresh):
 
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
+
+    # Converts the cumulative carbon gain values to annualized CO2
+    if tile_type == cn.pattern_cumul_gain_combo:
+        sum_array = sum_array/cn.loss_years*cn.c_to_co2
+
+    # Converts the cumulative net flux CO2 values to annualized net flux CO2
+    if tile_type == cn.pattern_net_flux:
+        sum_array = sum_array/cn.loss_years
 
     print "Creating aggregated tile for {}...".format(tile)
 
