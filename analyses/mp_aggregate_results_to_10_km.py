@@ -7,7 +7,8 @@ First, it rewindows the model output, pixel area tile, and tcd tile into 400x400
 Then it calculates the per pixel value for each model output pixel and sums those values within each 0.1x0.1 degree
 aggregated pixel.
 It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
-converts cumulative gross CO2e emissions to gross CO2e emissions per year.
+converts cumulative gross CO2 emissions to gross CO2 emissions per year.
+The user has to supply a tcd threshold for which forest pixels to include in the results.
 '''
 
 
@@ -27,6 +28,7 @@ import universal_util as uu
 
 def main():
 
+    # Sole argument for the script: the tree cover density threshold (pixels below this will not be aggregated)
     parser = argparse.ArgumentParser(description='Create maps of model output at approximately 10 km resolution')
     parser.add_argument('--tcd-threshold', '-tcd', required=True,
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
@@ -110,19 +112,13 @@ def main():
         out_vrt = "{}_10km.vrt".format(pattern)
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
-        out_pattern = re.sub('ha_', '', pattern)
-        print out_pattern
-        out_pattern = re.sub('2001_15', 'per_year', out_pattern)
-        print out_pattern
-        out_pattern = re.sub('AGC_BGC_', 'AGCO2_BGCO2_', out_pattern)
-        print out_pattern
-        date = datetime.datetime.now()
-        date_formatted = date.strftime("%Y_%m_%d")
+        # Renames outputs
+        out_pattern = uu.name_aggregated_output(pattern, thresh)
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
                '-tr', '0.1', '0.1',
-               out_vrt, '{0}_10km_tcd{1}_modelv1_{2}.tif'.format(out_pattern, thresh, date_formatted)]
+               out_vrt, '{}.tif'.format(out_pattern)]
         subprocess.check_call(cmd)
 
         print "Tiles processed. Uploading to s3 now..."
@@ -132,7 +128,6 @@ def main():
             os.remove(vrt)
 
         for tile_id in tile_id_list:
-
             os.remove('{0}_{1}.tif'.format(tile_id, pattern))
             os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
             os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))

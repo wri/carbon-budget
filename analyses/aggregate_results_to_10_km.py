@@ -1,7 +1,19 @@
+'''
+This script creates maps of model outputs at roughly 10km resolution (0.1x0.1 degrees), where each output pixel
+represents the total value in the pixel (not the density) (hence, the aggregated results).
+It iterates through all the model outputs that are supplied.
+First, it rewindows the model output, pixel area tile, and tcd tile into 400x400 (0.1x0.1 degree) windows, instead of the native
+40000x1 pixel windows.
+Then it calculates the per pixel value for each model output pixel and sums those values within each 0.1x0.1 degree
+aggregated pixel.
+It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
+converts cumulative gross CO2 emissions to gross CO2 emissions per year.
+The user has to supply a tcd threshold for which forest pixels to include in the results.
+'''
+
 import numpy as np
 import subprocess
 import os
-import re
 import rasterio
 from rasterio.transform import from_origin
 import datetime

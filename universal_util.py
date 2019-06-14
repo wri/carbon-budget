@@ -408,6 +408,19 @@ def make_blank_tile(tile_id, pattern, folder):
         print "Created raster of all 0s for", file
 
 
+def name_aggregated_output(pattern, thresh):
 
+    out_pattern = re.sub('ha_', '', pattern)
+    print out_pattern
+    out_pattern = re.sub('2001_15', 'per_year', out_pattern)
+    print out_pattern
+    out_pattern = re.sub('AGC_BGC_', 'AGCO2_BGCO2_', out_pattern)
+    print out_pattern
+    date = datetime.datetime.now()
+    date_formatted = date.strftime("%Y_%m_%d")
+
+    out_name = '{0}_10km_tcd{1}_modelv1_{2}.tif'.format(out_pattern, thresh, date_formatted)
+
+    return out_name
 
 
