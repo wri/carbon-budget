@@ -1,5 +1,5 @@
 '''
-This script creates maps of model outputs at roughly 10km resolution
+This script creates maps of model outputs at roughly 10km resolution (0.1x0.1 degrees)
 '''
 
 
@@ -24,7 +24,6 @@ def main():
 
     thresh = args.tcd_threshold
     thresh = int(thresh)
-    print thresh
 
     if thresh < 0 or thresh > 99:
         raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
@@ -61,10 +60,10 @@ def main():
 
     for dir, pattern in input_dict.items():
 
-        tile_id_list = uu.tile_list(dir)
-        print tile_id_list
-        print "There are {} tiles to process".format(str(len(tile_id_list)))
-        print "Processing:", dir, "; ", pattern
+        # tile_id_list = uu.tile_list(dir)
+        # print tile_id_list
+        # print "There are {} tiles to process".format(str(len(tile_id_list)))
+        # print "Processing:", dir, "; ", pattern
 
         # uu.s3_folder_download(dir, '.')
 
@@ -79,7 +78,7 @@ def main():
 
         # For multiprocessor use
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/3)
+        pool = multiprocessing.Pool(count/2)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -114,11 +113,11 @@ def main():
         for vrt in vrtList:
             os.remove(vrt)
 
-        for tile_id in tile_id_list:
-
-            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        # for tile_id in tile_id_list:
+        #
+        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
         print '{}_10km.tif'.format(pattern)
 
