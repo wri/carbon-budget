@@ -46,6 +46,16 @@ def rewindow(tile):
                area_tile, pixel_area_rewindow]
         subprocess.check_call(cmd)
 
+    if not os.path.exists(pixel_area_rewindow):
+
+        # Converts the pixel area tile to the 400x400 pixel windows
+        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
+               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               area_tile, pixel_area_rewindow]
+        subprocess.check_call(cmd)
+
     else:
 
         print "Pixel area for {} already rewindowed.".format(tile_id)
@@ -60,10 +70,12 @@ def rewindow(tile):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile):
+def aggregate(tile, thresh):
 
     # start time
     start = datetime.datetime.now()
+
+    print thresh
 
     # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
@@ -92,6 +104,19 @@ def aggregate(tile):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
+
+        if tile_type == cn.pattern_annual_gain_combo:
+            max_allowed = 1000
+            in_window = np.ma.masked_where(in_window > max_allowed, in_window)
+            in_window = in_window.filled(10)
+        if tile_type == cn.pattern_cumul_gain_combo:
+            max_allowed = 1000
+            in_window = np.ma.masked_where(in_window > max_allowed, in_window)
+            in_window = in_window.filled(100)
+        if tile_type == cn.pattern_net_flux:
+            min_allowed = -100000
+            in_window = np.ma.masked_where(in_window < min_allowed, in_window)
+            in_window = in_window.filled(-360)
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha

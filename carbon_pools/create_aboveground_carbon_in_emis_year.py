@@ -127,8 +127,8 @@ def create_emitted_AGC(tile_id):
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
             planted_forest_cumul_AGC_gain_window = planted_forest_cumul_AGC_gain_src.read(1, window=window)
 
-            # Calculates the aboveground C density in non-mangrove planted forest pixels. T
-            # he masking command makes sure that only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
+            # Calculates the aboveground C density in non-mangrove planted forest pixels.
+            # The masking command makes sure that only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
             # (Otherwise, all WHRC biomass pixels would be included in the planted forest calculation, not just the pixels
             # at planted forests.)
             planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + planted_forest_cumul_AGC_gain_window
