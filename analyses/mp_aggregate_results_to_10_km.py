@@ -47,14 +47,14 @@ def main():
     # print tile_id_list
     # print "There are {} tiles to process".format(str(len(tile_id_list)))
 
-    # For copying individual tiles to spot machine for testing
-    for tile_id in tile_id_list:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
+    # # For copying individual tiles to spot machine for testing
+    # for tile_id in tile_id_list:
+    #     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+    #     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+    #     # uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     # uu.s3_folder_download(cn.pixel_area_dir, '.')
@@ -62,9 +62,9 @@ def main():
     # uu.s3_folder_download(cn.tcd_dir, '.')
 
     input_dict = {
+             cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
              cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
              cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
-             cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
              cn.net_flux_dir: cn.pattern_net_flux
              }
 
@@ -123,6 +123,7 @@ def main():
 
         print "Tiles processed. Uploading to s3 now..."
 
+        # Cleans up the folder before starting on the next raster type
         vrtList = glob.glob('*vrt')
         for vrt in vrtList:
             os.remove(vrt)
@@ -133,7 +134,7 @@ def main():
             os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
         # Uploads all output tiles to s3
-        uu.upload_final_set(cn.output_aggreg_dir, '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted))
+        uu.upload_final_set(cn.output_aggreg_dir, out_pattern)
 
 
 if __name__ == '__main__':

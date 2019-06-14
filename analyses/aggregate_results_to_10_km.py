@@ -63,7 +63,7 @@ def rewindow(tile):
 
     if not os.path.exists(pixel_area_rewindow):
 
-        # Converts the pixel area tile to the 400x400 pixel windows
+        # Converts the tcd tile to the 400x400 pixel windows
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
@@ -105,6 +105,7 @@ def aggregate(tile, thresh):
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)
     pixel_area_src = rasterio.open(pixel_area_rewindow)
+    tcd_src = rasterio.open(tcd_rewindow)
 
     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
@@ -118,6 +119,10 @@ def aggregate(tile, thresh):
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
+        tcd_window = tcd_src.read(1, window=window)
+
+        in_window = np.ma.masked_where(tcd_window < thresh, in_window)
+        in_window = in_window.filled(0)
 
         if tile_type == cn.pattern_annual_gain_combo:
             max_allowed = 1000

@@ -381,18 +381,6 @@ def make_blank_tile(tile_id, pattern, folder):
 
             print "Created raster of all 0s for", file
 
-        # # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
-        # elif:
-        #     print "No Hansen tile on spot machine for {}. Trying to download Hansen tile.".format(tile_id)
-        #
-        #     s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-        #                      '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
-        #
-        #     cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-        #            '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-        #            '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
-        #     subprocess.check_call(cmd)
-
         # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
         else:
             print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
@@ -408,6 +396,7 @@ def make_blank_tile(tile_id, pattern, folder):
         print "Created raster of all 0s for", file
 
 
+# Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
 def name_aggregated_output(pattern, thresh):
 
     out_pattern = re.sub('ha_', '', pattern)
@@ -419,7 +408,7 @@ def name_aggregated_output(pattern, thresh):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    out_name = '{0}_10km_tcd{1}_modelv1_{2}.tif'.format(out_pattern, thresh, date_formatted)
+    out_name = '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted)
 
     return out_name
 
