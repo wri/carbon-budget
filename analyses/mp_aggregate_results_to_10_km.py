@@ -6,6 +6,8 @@ First, it rewindows the model output, pixel area tile, and tcd tile into 400x400
 40000x1 pixel windows.
 Then it calculates the per pixel value for each model output pixel and sums those values within each 0.1x0.1 degree
 aggregated pixel.
+It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
+converts cumulative gross CO2e emissions to gross CO2e emissions per year.
 '''
 
 
@@ -94,23 +96,26 @@ def main():
         # pool.close()
         # pool.join()
 
-        # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # Added these in response to error12: Cannot allocate memory error.
-        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        pool.close()
-        pool.join()
+        # # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(count/2)
+        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # # Added these in response to error12: Cannot allocate memory error.
+        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        # pool.close()
+        # pool.join()
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
         out_pattern = re.sub('ha_', '', pattern)
+        print out_pattern
         out_pattern = re.sub('2001_15_', 'per_year_', out_pattern)
+        print out_pattern
         out_pattern = re.sub('AGC_BGC_', 'AGCO2_BGCO2_', out_pattern)
+        print out_pattern
         date = datetime.datetime.now()
         date_formatted = date.strftime("%Y_%m_%d")
 

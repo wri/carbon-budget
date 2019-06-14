@@ -139,6 +139,10 @@ def aggregate(tile, thresh):
     if tile_type == cn.pattern_net_flux:
         sum_array = sum_array/cn.loss_years
 
+    # Converts the cumulative gross emissions CO2e values to annualized gross emissions CO2e
+    if tile_type == cn.pattern_gross_emis_all_drivers:
+        sum_array = sum_array/cn.loss_years
+
     print sum_array
 
     print "Creating aggregated tile for {}...".format(tile)
