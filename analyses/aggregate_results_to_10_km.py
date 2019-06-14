@@ -129,13 +129,13 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    # # Converts the cumulative carbon gain values to annualized CO2
-    # if tile_type == cn.pattern_cumul_gain_combo:
-    #     sum_array = sum_array/cn.loss_years*cn.c_to_co2
-    #
-    # # Converts the cumulative net flux CO2 values to annualized net flux CO2
-    # if tile_type == cn.pattern_net_flux:
-    #     sum_array = sum_array/cn.loss_years
+    # Converts the cumulative carbon gain values to annualized CO2
+    if tile_type == cn.pattern_cumul_gain_combo:
+        sum_array = sum_array/cn.loss_years*cn.c_to_co2
+
+    # Converts the cumulative net flux CO2 values to annualized net flux CO2
+    if tile_type == cn.pattern_net_flux:
+        sum_array = sum_array/cn.loss_years
 
     print "Creating aggregated tile for {}...".format(tile)
 

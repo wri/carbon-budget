@@ -93,17 +93,16 @@ def main():
         # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
         # pool.close()
         # pool.join()
-        #
-        # # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
-        #
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+
+        # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
@@ -111,8 +110,9 @@ def main():
 
         out_pattern = re.sub('ha_', '', pattern)
         out_pattern = re.sub('2001_15_', 'per_year_', out_pattern)
+        out_pattern = re.sub('AGC_BGC_', 'AGCO2_BGCO2_', out_pattern)
         date = datetime.datetime.now()
-        date_formatted = date.strftime("%Y-%m-%d")
+        date_formatted = date.strftime("%Y_%m_%d")
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
