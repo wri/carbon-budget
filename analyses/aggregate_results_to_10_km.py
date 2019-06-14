@@ -43,13 +43,15 @@ def rewindow(tile):
     tcd_tile = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
 
-    # Converts the tile of interest to the 400x400 pixel windows
-    cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-           '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
-           tile, input_rewindow]
-    subprocess.check_call(cmd)
+    if not os.path.exists(input_rewindow):
+
+        # Converts the tile of interest to the 400x400 pixel windows
+        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
+               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               tile, input_rewindow]
+        subprocess.check_call(cmd)
 
     if not os.path.exists(tcd_rewindow):
 
