@@ -27,6 +27,8 @@ def rewindow(tile):
     input_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
     area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
+    tcd_tile = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
+    tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
 
     # Converts the tile of interest to the 400x400 pixel windows
     cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
@@ -44,6 +46,16 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
                area_tile, pixel_area_rewindow]
+        subprocess.check_call(cmd)
+
+    if not os.path.exists(tcd_rewindow):
+
+        # Converts the pixel area tile to the 400x400 pixel windows
+        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
+               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               tcd_tile, tcd_rewindow]
         subprocess.check_call(cmd)
 
     else:
@@ -65,8 +77,6 @@ def aggregate(tile, thresh):
     # start time
     start = datetime.datetime.now()
 
-    print thresh
-
     # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
@@ -77,6 +87,7 @@ def aggregate(tile, thresh):
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
+    tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
 
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)
