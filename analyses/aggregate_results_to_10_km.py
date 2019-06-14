@@ -1,6 +1,7 @@
 import numpy as np
 import subprocess
 import os
+import re
 import rasterio
 from rasterio.transform import from_origin
 import datetime
@@ -128,13 +129,13 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    # Converts the cumulative carbon gain values to annualized CO2
-    if tile_type == cn.pattern_cumul_gain_combo:
-        sum_array = sum_array/cn.loss_years*cn.c_to_co2
-
-    # Converts the cumulative net flux CO2 values to annualized net flux CO2
-    if tile_type == cn.pattern_net_flux:
-        sum_array = sum_array/cn.loss_years
+    # # Converts the cumulative carbon gain values to annualized CO2
+    # if tile_type == cn.pattern_cumul_gain_combo:
+    #     sum_array = sum_array/cn.loss_years*cn.c_to_co2
+    #
+    # # Converts the cumulative net flux CO2 values to annualized net flux CO2
+    # if tile_type == cn.pattern_net_flux:
+    #     sum_array = sum_array/cn.loss_years
 
     print "Creating aggregated tile for {}...".format(tile)
 
@@ -149,5 +150,9 @@ def aggregate(tile, thresh):
     aggregated.write(sum_array,1)
     aggregated.close()
 
+    out_pattern = re.sub('ha_', '', tile_type)
+    date = datetime.datetime.now()
+    date_formatted = date.strftime("%Y-%m-%d")
+
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_10km'.format(tile_type))
+    uu.end_of_fx_summary(start, tile_id, '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted))

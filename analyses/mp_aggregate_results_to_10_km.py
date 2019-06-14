@@ -14,7 +14,9 @@ import aggregate_results_to_10_km
 import subprocess
 from functools import partial
 import argparse
+import datetime
 import os
+import re
 import glob
 import sys
 sys.path.append('../')
@@ -59,7 +61,7 @@ def main():
              # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
              cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
              # cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
-             cn.net_flux_dir: cn.pattern_net_flux
+             # cn.net_flux_dir: cn.pattern_net_flux
              }
 
     print "Model outputs to process are:", input_dict
@@ -125,10 +127,12 @@ def main():
         #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
         #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
-        print '{}_10km.tif'.format(pattern)
+        out_pattern = re.sub('ha_', '', pattern)
+        date = datetime.datetime.now()
+        date_formatted = date.strftime("%Y-%m-%d")
 
         # Uploads all output tiles to s3
-        uu.upload_final_set(cn.output_aggreg_dir, '{0}_10km_tcd{1}_modelv1'.format(pattern, thresh))
+        uu.upload_final_set(cn.output_aggreg_dir, '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted))
 
 
 if __name__ == '__main__':
