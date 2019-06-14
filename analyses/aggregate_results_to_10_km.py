@@ -150,9 +150,5 @@ def aggregate(tile, thresh):
     aggregated.write(sum_array,1)
     aggregated.close()
 
-    out_pattern = re.sub('ha_', '', tile_type)
-    date = datetime.datetime.now()
-    date_formatted = date.strftime("%Y-%m-%d")
-
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted))
+    uu.end_of_fx_summary(start, tile_id, tile_type)
