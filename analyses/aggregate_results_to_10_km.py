@@ -121,9 +121,19 @@ def aggregate(tile, thresh):
         pixel_area_window = pixel_area_src.read(1, window=window)
         tcd_window = tcd_src.read(1, window=window)
 
+        # Applies the tree cover density threshold to the 30x30m pixels
         in_window = np.ma.masked_where(tcd_window < thresh, in_window)
         in_window = in_window.filled(0)
 
+        ##### TEMPORARY !!!!!!!!
+        # This is a hacky way to alter the annual and cumulative gain and net flux Hansen pixels that have
+        # erroneously high values because of a problem with the mangrove gain rate script.
+        # It's a problem in only three tiles.
+        # The max_allowed values are values above which I know the Hansen pixel is a mistake
+        # (i.e. the actual maximum annual gain rate for mangroves is about 18, so anything above 1000 is a mistake).
+        # I'm replacing the erroneous values with common nearby values.
+        # Obviously, this is an approximation and not a permanent fix (I need to create new tiles) but it's good enough
+        # for the moment.
         if tile_type == cn.pattern_annual_gain_combo:
             max_allowed = 1000
             in_window = np.ma.masked_where(in_window > max_allowed, in_window)
@@ -146,8 +156,6 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    print sum_array
-
     # Converts the cumulative carbon gain values to annualized CO2
     if tile_type == cn.pattern_cumul_gain_combo:
         sum_array = sum_array/cn.loss_years*cn.c_to_co2
@@ -159,8 +167,6 @@ def aggregate(tile, thresh):
     # Converts the cumulative gross emissions CO2e values to annualized gross emissions CO2e
     if tile_type == cn.pattern_gross_emis_all_drivers:
         sum_array = sum_array/cn.loss_years
-
-    print sum_array
 
     print "Creating aggregated tile for {}...".format(tile)
 
