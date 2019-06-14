@@ -59,7 +59,7 @@ def main():
              # cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
              cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
              # cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
-             # cn.net_flux_dir: cn.pattern_net_flux
+             cn.net_flux_dir: cn.pattern_net_flux
              }
 
     print "Model outputs to process are:", input_dict
