@@ -46,16 +46,6 @@ def rewindow(tile):
                area_tile, pixel_area_rewindow]
         subprocess.check_call(cmd)
 
-    if not os.path.exists(pixel_area_rewindow):
-
-        # Converts the pixel area tile to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
-               area_tile, pixel_area_rewindow]
-        subprocess.check_call(cmd)
-
     else:
 
         print "Pixel area for {} already rewindowed.".format(tile_id)
