@@ -224,6 +224,8 @@ def main ():
 
             print "Country extent 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles..."
 
+            print '{}/'.format(gadm_index_path)
+
             # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
             cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp), '--recursive']
             subprocess.check_call(cmd)
