@@ -47,7 +47,7 @@ def main():
     #
     # # For copying individual tiles to spot machine for testing
     # for tile_id in tile_id_list:
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_drivers), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_combo_dir, tile_id, cn.pattern_cumul_gain_combo), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
@@ -60,9 +60,9 @@ def main():
     uu.s3_folder_download(cn.tcd_dir, '.')
 
     input_dict = {
-             cn.gross_emis_all_drivers_dir: cn.pattern_gross_emis_all_drivers,
-             cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
+             cn.gross_emis_all_gases_all_drivers_dir: cn.pattern_gross_emis_all_gases_all_drivers,
              cn.cumul_gain_combo_dir: cn.pattern_cumul_gain_combo,
+             cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
              cn.net_flux_dir: cn.pattern_net_flux
              }
 
@@ -96,7 +96,7 @@ def main():
         pool.close()
         pool.join()
 
-        # For multiprocessor use. This used about 275 GB of memory with count/3, so count/2 should work on an r4.16xlarge
+        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count/2)
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)

@@ -17,7 +17,7 @@ def net_calc(tile_id):
 
     # Names of the gain and emissions tiles
     gain_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_combo)
-    loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emis_all_drivers)
+    loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emis_all_gases_all_drivers)
 
     # Output net emissions file
     net_flux = '{0}_{1}.tif'.format(tile_id, cn.pattern_net_flux)

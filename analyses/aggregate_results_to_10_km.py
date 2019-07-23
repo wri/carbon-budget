@@ -78,7 +78,7 @@ def rewindow(tile):
         print "Pixel area for {} already rewindowed.".format(tile_id)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, tile_type)
+    uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type))
 
 
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
@@ -123,9 +123,11 @@ def aggregate(tile, thresh):
         pixel_area_window = pixel_area_src.read(1, window=window)
         tcd_window = tcd_src.read(1, window=window)
 
-        # Applies the tree cover density threshold to the 30x30m pixels
-        in_window = np.ma.masked_where(tcd_window < thresh, in_window)
-        in_window = in_window.filled(0)
+        if thresh > 0:
+
+            # Applies the tree cover density threshold to the 30x30m pixels
+            in_window = np.ma.masked_where(tcd_window < thresh, in_window)
+            in_window = in_window.filled(0)
 
         ##### TEMPORARY !!!!!!!!
         # This is a hacky way to alter the annual and cumulative gain and net flux Hansen pixels that have
@@ -167,7 +169,7 @@ def aggregate(tile, thresh):
         sum_array = sum_array/cn.loss_years
 
     # Converts the cumulative gross emissions CO2e values to annualized gross emissions CO2e
-    if tile_type == cn.pattern_gross_emis_all_drivers:
+    if tile_type == cn.pattern_gross_emis_all_gases_all_drivers:
         sum_array = sum_array/cn.loss_years
 
     print "Creating aggregated tile for {}...".format(tile)
