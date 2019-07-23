@@ -130,6 +130,11 @@ def main ():
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
+    print gadm_index_path
+    print gadm_index_shp
+    print planted_index
+    print planted_index_shp
+
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
         raise Exception('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
