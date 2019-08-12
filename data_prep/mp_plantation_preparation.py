@@ -26,7 +26,7 @@ since the last processing, e.g., newly added planted forests in countries alread
 of existing features have been altered. This entry point will use the supplied index shapefile of the 1x1 tiles of
 countries with planted forests to create new 1x1 planted forest growth rate tiles. This entry point is accessed by
 providing the s3 location of the index shapefile of the 1x1 country tiles,
-e.g., mp_plantation_preparation.py s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/GADM_index_1x1_20190108.shp None
+e.g., mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
 
 Third entry point: Script uses existing index shapefile of 1x1 tiles of planted forest extent to create new 1x1 tiles
 of planted forest growth rates. Use this entry point if the spatial properties of the database haven't changed but
@@ -34,8 +34,8 @@ the growth rates or forest type have. This route will iterate through only the 1
 create new planted forest growth rate tiles for them.
 This entry point is accessed by providing the s3 location of the index shapefile of the 1x1
 planted forest extent tiles,
-e.g., python mp_plantation_preparation.py None s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
-e.g., python mp_plantation_preparation.py --gadm-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp --planted-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+e.g., python mp_plantation_preparation.py -gi None -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+e.g., python mp_plantation_preparation.py -gi gadm-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
 
 All entry points conclude with creating 10x10 degree tiles of planted forest carbon accumulation rates and
 planted forest type from 1x1 tiles of planted forest extent.
@@ -130,11 +130,6 @@ def main ():
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
-    print gadm_index_path
-    print gadm_index_shp
-    print planted_index
-    print planted_index_shp
-
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
         raise Exception('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
@@ -227,7 +222,7 @@ def main ():
             print '{}/'.format(gadm_index_path)
 
             # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
-            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp), '--recursive']
+            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
             subprocess.check_call(cmd)
 
             # Gets the attribute table of the country extent 1x1 tile shapefile
@@ -253,7 +248,7 @@ def main ():
         # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
         # 1x1 country extent tile.
         # For multiprocessor use
-        num_of_processes = 30
+        num_of_processes = 45
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
         pool.close()

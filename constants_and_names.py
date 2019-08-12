@@ -370,7 +370,7 @@ gross_emis_no_driver_dir = '{}gross_emissions/no_driver/20190523/'.format(base_d
 pattern_gross_emis_co2_only_all_drivers = 'CO2_only_all_drivers_t_CO2e_ha_gross_emis_year'
 gross_emis_co2_only_all_drivers_dir = '{}gross_emissions/all_drivers/CO2_only/20190523/'.format(base_dir)
 
-pattern_gross_emis_non_co2_all_drivers = 'non_co2_all_drivers_t_CO2e_ha_gross_emis_year'
+pattern_gross_emis_non_co2_all_drivers = 'non_CO2_all_drivers_t_CO2e_ha_gross_emis_year'
 gross_emis_non_co2_all_drivers_dir = '{}gross_emissions/all_drivers/non_CO2/20190523/'.format(base_dir)
 
 pattern_gross_emis_all_gases_all_drivers = 'all_gases_all_drivers_t_CO2e_ha_gross_emis_year'
