@@ -247,9 +247,10 @@ def main ():
         # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks
         # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
         # 1x1 country extent tile.
-        # 45 processors seems to use about 350 GB of memory, which means more can be used on an r4.16xlarge
+        # 55 processors seems to use about 350 GB of memory, which seems fine. But there was some error about "PQconnectdb failed-- sorry, too many clients already".
+        # So, moved the number of processors down to 48.
         # For multiprocessor use
-        num_of_processes = 55
+        num_of_processes = 48
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
         pool.close()
