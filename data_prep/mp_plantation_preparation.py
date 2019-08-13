@@ -26,7 +26,7 @@ since the last processing, e.g., newly added planted forests in countries alread
 of existing features have been altered. This entry point will use the supplied index shapefile of the 1x1 tiles of
 countries with planted forests to create new 1x1 planted forest growth rate tiles. This entry point is accessed by
 providing the s3 location of the index shapefile of the 1x1 country tiles,
-e.g., mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
+e.g., python mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
 
 Third entry point: Script uses existing index shapefile of 1x1 tiles of planted forest extent to create new 1x1 tiles
 of planted forest growth rates. Use this entry point if the spatial properties of the database haven't changed but
@@ -264,7 +264,7 @@ def main ():
 
         # Creates a shapefile in which each feature is the extent of a plantation extent tile.
         # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
-        os.system('''gdaltindex {0}_{1}.shp plant_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
+        os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
         cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
         subprocess.check_call(cmd)
 
