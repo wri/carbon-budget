@@ -52,8 +52,7 @@ gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='fi
 # the "mangType" field in the gain rate spreadsheet.
 # If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
 # keys in this dictionary would need to change accordingly.
-# Key 4 is water, so there shouldn't be any mangrove values there.
-type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang, '4': '100'}
+type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang}
 type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
 
 # Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
