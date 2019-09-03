@@ -21,21 +21,21 @@ mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
 mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 # mangrove_ecozone_list = ['10N_080W', '00N_110E'] # test tiles
-mangrove_ecozone_list = ['20N_100W', '30N_110W', '30N_120W'] # test tiles
+# mangrove_ecozone_list = ['20N_100W', '30N_110W', '30N_120W'] # test tiles
 print mangrove_ecozone_list
 print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
 
-# for input in download_list:
-#     uu.s3_folder_download(input, '.')
+for input in download_list:
+    uu.s3_folder_download(input, '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in mangrove_ecozone_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
+# # For copying individual tiles to spot machine for testing
+# for tile in mangrove_ecozone_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
