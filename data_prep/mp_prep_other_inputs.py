@@ -7,7 +7,8 @@ import multiprocessing
 import subprocess
 import sys
 import os
-import prep_other_emissions_inputs
+import prep_other_inputs
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -37,13 +38,13 @@ subprocess.check_call(cmd)
 
 # Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count-10)
-pool.map(prep_other_emissions_inputs.data_prep, tile_list)
+pool = multiprocessing.Pool(count-7)
+pool.map(prep_other_inputs.data_prep, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
 #
-#       prep_other_emissions_inputs.data_prep(tile)
+#       prep_other_inputs.data_prep(tile)
 
 uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)

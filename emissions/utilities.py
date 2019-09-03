@@ -63,6 +63,7 @@ def mask_loss_pre_2000_plantation(tile_id):
 
     print "Pre-2000 plantations for {} complete".format(tile_id)
 
+
 def download(file_dict, tile_id, carbon_pool_dir):
     carbon_pool_files = file_dict['carbon_pool']
     data_prep_file_list = file_dict['data_prep']
