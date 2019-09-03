@@ -86,7 +86,7 @@ mangrove_biomass_2000_dir = os.path.join(base_dir, 'mangrove_biomass/processed/2
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet_dir = os.path.join(base_dir)
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190116.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190903.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'
@@ -200,11 +200,11 @@ age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_f
 
 # Annual aboveground biomass gain rate for mangroves
 pattern_annual_gain_AGB_mangrove = 'annual_gain_rate_AGB_t_ha_mangrove'
-annual_gain_AGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_mangrove/20190225/')
+annual_gain_AGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_mangrove/20190903/')
 
 # Annual belowground biomass gain rate for mangroves
 pattern_annual_gain_BGB_mangrove = 'annual_gain_rate_BGB_t_ha_mangrove'
-annual_gain_BGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_mangrove/20190225/')
+annual_gain_BGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_mangrove/20190903/')
 
 # Annual aboveground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
 pattern_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_AGC_BGC_t_ha_planted_forest_unmasked'

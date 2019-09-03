@@ -12,6 +12,13 @@ from osgeo import gdal
 d = datetime.datetime.today()
 date_today = d.strftime('%Y%m%d_%h%m%s')
 
+# Calculates beloground biomass from aboveground biomass using the main equation from Mokany et al. 2006, Table 2
+def calculate_belowground_biomass(AGB):
+
+    BGB = (AGB ^ 0.89) * 0.489
+
+    return BGB
+
 
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
@@ -21,12 +28,14 @@ def get_tile_id(tile_name):
 
     return tile_id
 
+
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_type(tile_name):
 
     tile_type = tile_name[9:-4]
 
     return tile_type
+
 
 # Creates a list of all the biomass tiles (WHRC non-mangrove and mangrove)
 def read_biomass_tile_list():
@@ -411,5 +420,6 @@ def name_aggregated_output(pattern, thresh):
     out_name = '{0}_10km_tcd{1}_modelv1_{2}'.format(out_pattern, thresh, date_formatted)
 
     return out_name
+
 
 
