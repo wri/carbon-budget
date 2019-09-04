@@ -450,4 +450,4 @@ def mask_pre_2000_plantation(tile_id, pre_2000_plant, tile_to_mask, out_name):
 
         print "No pre-2000 plantation exists for {}.".format(tile_id)
 
-    print "Pre-2000 plantations for {} complete".format(tile_id)
+    print "  Pre-2000 plantations for {} complete".format(tile_id)
