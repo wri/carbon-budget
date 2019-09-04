@@ -89,7 +89,7 @@ def create_combined_soil_C(tile_id):
     # Output file
     combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
 
-    # Checks if mangrove aAGB tile exists. If not, mangrove soil C is not combined with mineral soil C.
+    # Checks if mangrove AGB tile exists. If not, mangrove soil C is not combined with mineral soil C.
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
         print "Mangrove aboveground biomass tile found for", tile_id

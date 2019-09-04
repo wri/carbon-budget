@@ -39,7 +39,7 @@ cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(
       '{}.shp'.format(cn.pattern_plant_pre_2000_raw), '{}.tif'.format(cn.pattern_plant_pre_2000_raw)]
 subprocess.check_call(cmd)
 
-# Used about 200 GB of memory. count-10 worked fine (with memory to spare) on an r4.16xlarge machine.
+# Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count-7)
 pool.map(prep_other_inputs.data_prep, tile_list)

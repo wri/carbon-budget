@@ -422,4 +422,32 @@ def name_aggregated_output(pattern, thresh):
     return out_name
 
 
+# Removes plantations that existed before 2000 from loss tile
+def mask_pre_2000_plantation(tile_id, pre_2000_plant, tile_to_mask, out_name):
 
+    if os.path.exists(pre_2000_plant):
+
+        print "Pre-2000 plantation exists for {}. Cutting out pixels in those plantations...".format(tile_id)
+
+        # In order to mask out the pre-2000 plantation pixels from the loss raster, the pre-2000 plantations need to
+        # become a vrt. I couldn't get gdal_calc to work while keeping pre-2000 plantations as a raster; it wasn't
+        # recognizing the 0s (nodata).
+        # Based on https://gis.stackexchange.com/questions/238397/how-to-indicate-nodata-into-gdal-calc-formula
+        # Only the pre-2000 plantation raster needed to be converted to a vrt; the loss raster did not.
+        cmd = ['gdal_translate', '-of', 'VRT', '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
+               '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
+        subprocess.check_call(cmd)
+
+        # Removes the pre-2000 plantation pixels from the loss tile
+        pre_2000_vrt = '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000)
+        calc = '--calc=A*(B==0)'
+        loss_outfilearg = '--outfile={}'.format(out_name)
+        cmd = ['gdal_calc.py', '-A', tile_to_mask, '-B', pre_2000_vrt,
+               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+        subprocess.check_call(cmd)
+
+    else:
+
+        print "No pre-2000 plantation exists for {}.".format(tile_id)
+
+    print "Pre-2000 plantations for {} complete".format(tile_id)

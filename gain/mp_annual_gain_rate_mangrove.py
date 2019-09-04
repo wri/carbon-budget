@@ -21,21 +21,22 @@ mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
 mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 # mangrove_ecozone_list = ['10N_080W', '00N_110E'] # test tiles
-# mangrove_ecozone_list = ['20N_100W', '30N_110W', '30N_120W'] # test tiles
+mangrove_ecozone_list = ['00N_110E', '30N_110W', '30N_120W'] # test tiles
 print mangrove_ecozone_list
 print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
 
 # For downloading all tiles in the input folders
-download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir]
+download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir, cn.plant_pre_2000_processed_dir]
 
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
-# # For copying individual tiles to spot machine for testing
-# for tile in mangrove_ecozone_list:
-#
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
+# For copying individual tiles to spot machine for testing
+for tile in mangrove_ecozone_list:
+
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')    # continents and FAO ecozones 2000
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')         # mangrove aboveground biomass
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), '.')
 
 # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
@@ -72,19 +73,19 @@ gain_below_dict[0] = 0
 gain_above_dict = {float(key): value for key, value in gain_above_dict.iteritems()}
 gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems()}
 
-# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# Ran with 16 processors on r4.16xlarge (370 GB memory peak)
-num_of_processes = 16
-pool = Pool(num_of_processes)
-pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_ecozone_list)
-pool.close()
-pool.join()
+# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# # Ran with 16 processors on r4.16xlarge (370 GB memory peak)
+# num_of_processes = 16
+# pool = Pool(num_of_processes)
+# pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_ecozone_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use
-# for tile in mangrove_ecozone_list:
-#
-#     annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
+# For single processor use
+for tile in mangrove_ecozone_list:
+
+    annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
 
 print "Tiles processed. Uploading to s3 now..."
 
