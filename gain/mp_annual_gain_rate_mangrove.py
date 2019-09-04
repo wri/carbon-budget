@@ -85,7 +85,7 @@ gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems
 # For single processor use
 for tile in mangrove_ecozone_list:
 
-    annual_gain_rate_mangrove.annual_gain_rate(tile, gain_table_dict)
+    annual_gain_rate_mangrove.annual_gain_rate(tile, gain_above_dict, gain_below_dict)
 
 print "Tiles processed. Uploading to s3 now..."
 
