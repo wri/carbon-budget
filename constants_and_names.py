@@ -208,7 +208,7 @@ annual_gain_BGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_mang
 
 # Annual aboveground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
 pattern_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_AGC_BGC_t_ha_planted_forest_unmasked'
-annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(base_dir, 'annual_gain_rate_AGC_BGC_planted_forest_unmasked/20190207/')
+annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(base_dir, 'annual_gain_rate_AGC_BGC_planted_forest_unmasked/20190816/')
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'

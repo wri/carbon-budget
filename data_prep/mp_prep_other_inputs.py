@@ -14,7 +14,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                         cn.annual_gain_AGB_mangrove_dir,
+                                         cn.mangrove_biomass_2000_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                          )
 # tile_list = ['00N_110E'] # test tiles
