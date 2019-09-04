@@ -21,7 +21,7 @@ mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
 ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
 mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 # mangrove_ecozone_list = ['10N_080W', '00N_110E'] # test tiles
-mangrove_ecozone_list = ['00N_110E', '30N_110W', '30N_120W'] # test tiles
+mangrove_ecozone_list = ['00N_110E'] # test tiles
 print mangrove_ecozone_list
 print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
 
