@@ -30,6 +30,8 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
     AGB_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
     BGB_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
 
+    uu.mask_pre_2000_plantation(tile_id, pre_2000_plant, mangrove_biomass, mangrove_biomass)
+
     print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
 
     cont_eco_src = rasterio.open(cont_eco)
@@ -59,8 +61,6 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
 
     dst_above = rasterio.open(AGB_gain_rate, 'w', **kwargs)
     dst_below = rasterio.open(BGB_gain_rate, 'w', **kwargs)
-
-    uu.mask_pre_2000_plantation(tile_id, pre_2000_plant, mangrove_biomass, mangrove_biomass)
 
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
