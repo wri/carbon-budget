@@ -66,10 +66,10 @@ download_list = [cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, cn.mangrove
 for tile in tile_list:
     annual_gain_rate_planted_forest.create_BGB_rate(tile)
 
-# for tile in tile_list:
-#     annual_gain_rate_planted_forest.check_for_planted_forest(tile)
+for tile in tile_list:
+    annual_gain_rate_planted_forest.check_for_planted_forest(tile)
 
 print "Tiles processed. Uploading to s3 now..."
-uu.upload_final_set(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
-# uu.upload_final_set(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+# uu.upload_final_set(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+uu.upload_final_set(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
 
