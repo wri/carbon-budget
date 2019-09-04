@@ -75,7 +75,7 @@ gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# Ran with 16 processors on r4.16xlarge (370 GB memory peak)
+# Ran with 18 processors on r4.16xlarge (430 GB memory peak)
 num_of_processes = 18
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_ecozone_list)

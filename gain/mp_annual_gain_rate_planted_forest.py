@@ -21,52 +21,55 @@ pd.options.mode.chained_assignment = None
 
 tile_list = uu.tile_list(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir)
 # tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-# tile_list = ['00N_020E', '00N_110E'] # test tiles: mangrove and planted forest
+tile_list = ['00N_110E'] # test tiles: mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the input folders
-download_list = [cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, cn.mangrove_biomass_2000_dir]
+download_list = [cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.plant_pre_2000_processed_dir]
 
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
-# # For copying individual tiles to spot machine for testing
-# for tile in tile_list:
+# For copying individual tiles to spot machine for testing
+for tile in tile_list:
+
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), '.')
+
+# # For multiprocessing. count/3 worked on an r4.16xlarge machine.
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/3)
+# # Masks mangroves out of planted forests where they overlap
+# pool.map(annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant, tile_list)
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-
-# For multiprocessing. count/3 worked on an r4.16xlarge machine.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
-# Masks mangroves out of planted forests where they overlap
-pool.map(annual_gain_rate_planted_forest.mask_mangroves, tile_list)
-
-# Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
-pool.map(annual_gain_rate_planted_forest.create_AGB_rate, tile_list)
-
-# Calculates belowground biomass gain rates from aboveground biomass gain rates
-pool.map(annual_gain_rate_planted_forest.create_BGB_rate, tile_list)
-
-# Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
-# This keep them from unnecessarily being stored on s3.
-pool.map(annual_gain_rate_planted_forest.check_for_planted_forest, tile_list)
-pool.close()
-pool.join()
-
-# # For single processor use
-# for tile in tile_list:
+# # Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
+# pool.map(annual_gain_rate_planted_forest.create_AGB_rate, tile_list)
 #
-#     annual_gain_rate_planted_forest.mask_mangroves(tile)
+# # Calculates belowground biomass gain rates from aboveground biomass gain rates
+# pool.map(annual_gain_rate_planted_forest.create_BGB_rate, tile_list)
 #
-# for tile in tile_list:
-#     annual_gain_rate_planted_forest.create_AGB_rate(tile)
-#
+# # Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
+# # This keep them from unnecessarily being stored on s3.
+# pool.map(annual_gain_rate_planted_forest.check_for_planted_forest, tile_list)
+# pool.close()
+# pool.join()
+
+# For single processor use
+for tile in tile_list:
+    annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant(tile)
+
+for tile in tile_list:
+    annual_gain_rate_planted_forest.create_AGB_rate(tile)
+
 # for tile in tile_list:
 #     annual_gain_rate_planted_forest.create_BGB_rate(tile)
+#
+# for tile in tile_list:
+#     annual_gain_rate_planted_forest.check_for_planted_forest(tile)
 
 print "Tiles processed. Uploading to s3 now..."
 uu.upload_final_set(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
-uu.upload_final_set(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+# uu.upload_final_set(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
 

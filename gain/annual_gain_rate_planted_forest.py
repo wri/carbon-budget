@@ -16,7 +16,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mask_mangroves(tile_id):
+def mask_mangroves_and_pre_2000_plant(tile_id):
 
     print "Evaluating whether to mask mangroves from planted forests for {}".format(tile_id)
 
@@ -26,6 +26,11 @@ def mask_mangroves(tile_id):
     # Names of the unmasked planted forest and mangrove tiles
     planted_forest_full_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
     mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+
+    # Name of pre-2000 plantation tile
+    pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+
+    uu.mask_pre_2000_plantation(tile_id, pre_2000_plant, planted_forest_full_extent, planted_forest_full_extent)
 
     # Name of the planted forest AGC/BGC gain rate tile, with mangroves masked out
     planted_forest_no_mangrove = '{0}_no_mang_AGC_BGC.tif'.format(tile_id)
