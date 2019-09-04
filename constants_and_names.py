@@ -24,9 +24,11 @@ biomass_to_c_mangrove = 0.45
 # Needs the decimal places in order to be cast as a float
 c_to_co2 = 44.0/12.0
 
-# Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
-# Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
-below_to_above_non_mang = 0.26
+# Belowground to aboveground biomass ratios.
+# Non-mangrove values are the two constants in the AGB to BGB equation in Figure 3 of Mokany et al. 2006.
+above_to_below_non_mang_coeff = 0.489
+above_to_below_non_mang_exp = 0.89
+# Mangrove values are from Table 4.5 of IPCC wetland supplement.
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96

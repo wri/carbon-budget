@@ -31,12 +31,12 @@ download_list = [cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, cn.mangrove
 # for input in download_list:
 #     uu.s3_folder_download(input, '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), '.')
+# # For copying individual tiles to spot machine for testing
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), '.')
 
 # # For multiprocessing. count/3 worked on an r4.16xlarge machine.
 # count = multiprocessing.cpu_count()
@@ -56,16 +56,16 @@ for tile in tile_list:
 # pool.close()
 # pool.join()
 
-# For single processor use
-for tile in tile_list:
-    annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant(tile)
-
-for tile in tile_list:
-    annual_gain_rate_planted_forest.create_AGB_rate(tile)
-
+# # For single processor use
 # for tile in tile_list:
-#     annual_gain_rate_planted_forest.create_BGB_rate(tile)
+#     annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant(tile)
 #
+# for tile in tile_list:
+#     annual_gain_rate_planted_forest.create_AGB_rate(tile)
+
+for tile in tile_list:
+    annual_gain_rate_planted_forest.create_BGB_rate(tile)
+
 # for tile in tile_list:
 #     annual_gain_rate_planted_forest.check_for_planted_forest(tile)
 
