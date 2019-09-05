@@ -142,7 +142,7 @@ def create_combined_ifl_primary(tile_id):
     start = datetime.datetime.now()
 
     ifl_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
-    primary_tile = '{}_primary.tif'.format(tile_id)
+    primary_tile = '{}_primary_2001.tif'.format(tile_id)
 
     ifl_primary_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary)
 

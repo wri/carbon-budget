@@ -58,11 +58,11 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
-#
-print "Creating primary forest tiles..."
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count - 2)
-pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
+# #
+# print "Creating primary forest tiles..."
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count - 2)
+# pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
 # for tile in tile_list:
