@@ -58,10 +58,10 @@ os.system('gdalbuildvrt {} *2001_primary.tif'.format(primary_vrt))
 ifl_vrt = 'ifl_2000.vrt'
 os.system('gdalbuildvrt {} *res_ifl_2000.tif'.format(ifl_vrt))
 
-# combined_vrt = 'ifl_primary.vrt'
-# cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-#        '-o', combined_vrt, ifl_vrt, primary_vrt]
-# subprocess.check_call(cmd)
+combined_vrt = 'ifl_primary.vrt'
+cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+       '-o', combined_vrt, ifl_vrt, primary_vrt]
+subprocess.check_call(cmd)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
