@@ -62,7 +62,7 @@ os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 #
 print "Creating primary forest tiles..."
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count - 2)
+pool = multiprocessing.Pool(count/3)
 pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
@@ -73,7 +73,7 @@ pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt)
 #
 print "Assigning each tile to ifl2000 or primary forest..."
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count - 3)
+pool = multiprocessing.Pool(count-5)
 pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
 
 # # For single processor use
