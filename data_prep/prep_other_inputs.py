@@ -124,14 +124,14 @@ def create_primary_tile(tile_id, primary_vrt):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    primary_tile = '{}_primary.tif'.format(tile_id)
+    primary_tile = '{}_primary_2001.tif'.format(tile_id)
 
     print "Creating primary forest tile for {}".format(tile_id)
 
     uu.warp_to_Hansen(primary_vrt, primary_tile, xmin, ymin, xmax, ymax, 'Byte')
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, "primary.tif")
+    uu.end_of_fx_summary(start, tile_id, "primary_2001.tif")
 
 def create_combined_ifl_primary(tile_id):
 
@@ -146,7 +146,7 @@ def create_combined_ifl_primary(tile_id):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    if ymax <= 30 or ymin >= -30:
+    if ymax <= 30 and ymin >= -30:
 
         print "{} between 30N and 30S. Using primary forest tile.".format(tile_id)
 

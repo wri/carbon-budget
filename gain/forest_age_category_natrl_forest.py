@@ -41,7 +41,7 @@ def forest_age_category(tile_id, gain_table_dict):
     loss = '{}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    ifl = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
+    ifl_primary = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary)
     biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
@@ -60,7 +60,7 @@ def forest_age_category(tile_id, gain_table_dict):
         with rasterio.open(gain) as gain_src:
 
             # Opens ifl tile
-            with rasterio.open(ifl) as ifl_src:
+            with rasterio.open(ifl_primary) as ifl_primary_src:
 
                 # Opens continent-ecozone combinations tile
                 with rasterio.open(cont_eco) as cont_eco_src:
@@ -89,7 +89,7 @@ def forest_age_category(tile_id, gain_table_dict):
                                     loss = loss_src.read(1, window=window)
                                     gain = gain_src.read(1, window=window)
                                     tcd = extent_src.read(1, window=window)
-                                    ifl = ifl_src.read(1, window=window)
+                                    ifl_primary = ifl_primary_src.read(1, window=window)
                                     cont_eco = cont_eco_src.read(1, window=window)
                                     biomass = biomass_src.read(1, window=window)
 
@@ -109,13 +109,13 @@ def forest_age_category(tile_id, gain_table_dict):
 
                                     if tropics == 1:
 
-                                        dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl != 1))] = 2
-                                        dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl == 1))] = 3
+                                        dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl_primary != 1))] = 2
+                                        dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl_primary == 1))] = 3
 
                                     # Loss-only pixels
-                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl != 1) & (biomass <= gain_20_years))] = 4
-                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl != 1) & (biomass > gain_20_years))] = 5
-                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl ==1))] = 6
+                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl_primary != 1) & (biomass <= gain_20_years))] = 4
+                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl_primary != 1) & (biomass > gain_20_years))] = 5
+                                    dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl_primary ==1))] = 6
 
                                     # Gain-only pixels
                                     dst_data[np.where((biomass > 0) & (gain == 1) & (loss == 0))] = 7
