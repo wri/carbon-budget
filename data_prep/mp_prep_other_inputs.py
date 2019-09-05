@@ -21,7 +21,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          )
 # tile_list = ['60N_090E', '50N_040E', '40N_090E', '30N_100E', '20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
 # tile_list = ['20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
-# tile_list = ['30N_100E']
+tile_list = ['20S_140E']
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
@@ -32,7 +32,7 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
 uu.s3_folder_download(cn.primary_raw_dir, '.')
 uu.s3_folder_download(cn.ifl_dir, '.')
-#
+
 # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 # subprocess.check_call(cmd)
 #
@@ -59,7 +59,7 @@ uu.s3_folder_download(cn.ifl_dir, '.')
 primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
-#
+# count/3 uses about 300GB, so there's room for more processors on an r4.16xlarge
 print "Creating primary forest tiles..."
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/3)
@@ -70,7 +70,7 @@ pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt)
 #
 #       prep_other_inputs.create_primary_tile(tile, primary_vrt)
 
-#
+# Uses very little memory since it's just file renaming
 print "Assigning each tile to ifl2000 or primary forest..."
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count-5)

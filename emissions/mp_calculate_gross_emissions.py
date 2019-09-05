@@ -36,7 +36,7 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 # This takes about 40 minutes.
 download_list = [
                  cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
-                 cn.peat_mask_dir, cn.ifl_dir, cn.planted_forest_type_unmasked_dir, cn.drivers_processed_dir, cn.climate_zone_processed_dir,
+                 cn.peat_mask_dir, cn.ifl_primary_processed_dir, cn.planted_forest_type_unmasked_dir, cn.drivers_processed_dir, cn.climate_zone_processed_dir,
                  cn.bor_tem_trop_processed_dir, cn.burn_year_dir,
                  cn.plant_pre_2000_processed_dir,
                  cn.loss_dir
@@ -54,7 +54,7 @@ for tile in tile_list:
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), './cpp_util/')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), './cpp_util/')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), './cpp_util/')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_dir, tile, cn.pattern_ifl), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
     try:
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
     except:
