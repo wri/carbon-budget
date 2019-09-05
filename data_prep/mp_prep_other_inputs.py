@@ -27,8 +27,8 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
 # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
 # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
-uu.s3_folder_download(cn.primary_raw_dir, '.')
-uu.s3_folder_download(cn.ifl_dir, '.')
+# uu.s3_folder_download(cn.primary_raw_dir, '.')
+# uu.s3_folder_download(cn.ifl_dir, '.')
 #
 # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 # subprocess.check_call(cmd)
@@ -53,7 +53,7 @@ uu.s3_folder_download(cn.ifl_dir, '.')
 #       prep_other_inputs.data_prep(tile)
 
 primary_vrt = 'primary_2001.vrt'
-os.system('gdalbuildvrt {} *2001_primary.tif'.format(primary_vrt))
+os.system('gdalbuildvrt -a_nodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
 # # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
 # count = multiprocessing.cpu_count()
