@@ -115,13 +115,21 @@ def data_prep(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
 
 
-def merge_ifl_primary(tile_id):
+def merge_ifl_primary(tile_id, primary_vrt):
 
     # Start time
     start = datetime.datetime.now()
 
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
+    ifl_tile = '{0}_{1}'.format(tile_id, cn.pattern_ifl)
+
+    combined_vrt = 'ifl_primary.vrt'
+    cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+           '-ul_lr {0} {1} {2} {3}'.format(xmax, ymax, xmin, ymin),
+           '-o', combined_vrt, ifl_tile, primary_vrt]
+    subprocess.check_call(cmd)
 
     uu.warp_to_Hansen('ifl_primary.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary), xmin, ymin, xmax, ymax, 'Byte')
 

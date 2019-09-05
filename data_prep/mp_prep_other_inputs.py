@@ -55,25 +55,17 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt {} *2001_primary.tif'.format(primary_vrt))
 
-ifl_vrt = 'ifl_2000.vrt'
-os.system('gdalbuildvrt {} *res_ifl_2000.tif'.format(ifl_vrt))
-
-combined_vrt = 'ifl_primary.vrt'
-cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte', '-v',
-       '-o', combined_vrt, ifl_vrt, primary_vrt]
-subprocess.check_call(cmd)
-
 # # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(count-7)
 # pool.map(prep_other_inputs.merge_ifl_primary, tile_list)
 
-# For single processor use
-for tile in tile_list:
-
-      prep_other_inputs.merge_ifl_primary(tile)
+# # For single processor use
+# for tile in tile_list:
+#
+#       prep_other_inputs.merge_ifl_primary(tile, primary_vrt)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
 # uu.upload_final_set(cn.drivers_processed_dir, cn.pattern_drivers)
-uu.upload_final_set(cn.ifl_primary_processed_dir, cn.pattern_ifl_primary)
+# uu.upload_final_set(cn.ifl_primary_processed_dir, cn.pattern_ifl_primary)
