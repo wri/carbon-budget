@@ -59,7 +59,7 @@ ifl_vrt = 'ifl_2000.vrt'
 os.system('gdalbuildvrt {} *res_ifl_2000.tif'.format(ifl_vrt))
 
 combined_vrt = 'ifl_primary.vrt'
-cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte', '-v',
        '-o', combined_vrt, ifl_vrt, primary_vrt]
 subprocess.check_call(cmd)
 
