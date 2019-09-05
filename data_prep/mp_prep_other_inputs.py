@@ -56,7 +56,7 @@ primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt {} *2001_primary.tif'.format(primary_vrt))
 
 ifl_vrt = 'ifl_2000.vrt'
-os.system('gdalbuildvrt {} *res_ifl.tif'.format(ifl_vrt))
+os.system('gdalbuildvrt {} *res_ifl_2000.tif'.format(ifl_vrt))
 
 # combined_vrt = 'ifl_primary.vrt'
 # cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
