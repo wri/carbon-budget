@@ -227,11 +227,11 @@ annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/20190905/')
+annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/20190906/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/20190905/')
+annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/20190906/')
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_combo = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
@@ -243,11 +243,11 @@ annual_gain_combo_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_type
 
 # Cumulative aboveground gain for mangroves
 pattern_cumul_gain_AGC_mangrove = 'cumul_gain_AGC_t_ha_mangrove_2001_15'
-cumul_gain_AGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_mangrove/20190227/')
+cumul_gain_AGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_mangrove/20190905/')
 
 # Cumulative belowground gain for mangroves
 pattern_cumul_gain_BGC_mangrove = 'cumul_gain_BGC_t_ha_mangrove_2001_15'
-cumul_gain_BGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_mangrove/20190227/')
+cumul_gain_BGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_mangrove/20190905/')
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
 pattern_cumul_gain_AGC_planted_forest_non_mangrove = 'cumul_gain_AGC_t_ha_planted_forest_non_mangrove_2001_15'
