@@ -5,7 +5,7 @@ and combining IFL2000 (extratropics) and primary forests (tropics) into a single
 '''
 
 import subprocess
-from multiprocessing.pool import Pool
+import multiprocessing
 from functools import partial
 import sys
 import os
@@ -19,7 +19,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          cn.mangrove_biomass_2000_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                          )
-tile_list = ['40N_110E', '30N_110E', '20N_110E','10N_110E','00N_110E', '10S_110E', '20S_110E','30S_110E', '40S_110E'] # test tiles
+tile_list = ['40N_110E', '30N_110E', '20N_110E','10N_110E','00N_110E', '10S_110E', '20S_110E','30S_110E', '40S_160E'] # test tiles
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
@@ -57,7 +57,8 @@ primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
 # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-pool = Pool(count-2)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count - 3)
 pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
@@ -66,7 +67,8 @@ pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt)
 #       prep_other_inputs.create_primary_tile(tile, primary_vrt)
 
 # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-pool = Pool(count-2)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count - 3)
 pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
 
 # # For single processor use
