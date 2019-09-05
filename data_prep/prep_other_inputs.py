@@ -15,6 +15,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+# Prepares the non ifl/primary forest tiles
 def data_prep(tile_id):
 
     # Start time
@@ -115,7 +116,7 @@ def data_prep(tile_id):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
 
-
+# Creates primary forest tiles
 def create_primary_tile(tile_id, primary_vrt):
 
     # Start time
@@ -133,6 +134,8 @@ def create_primary_tile(tile_id, primary_vrt):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, "primary_2001.tif")
 
+# Creates a combined primary forest/ifl tile set. Tiles between 30N and 30S get primary forest; tiles outside that
+# get ifl2000
 def create_combined_ifl_primary(tile_id):
 
     # Start time
@@ -146,6 +149,7 @@ def create_combined_ifl_primary(tile_id):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
+    # Assigns the correct time (primary forest or ifl)
     if ymax <= 30 and ymin >= -30:
 
         print "{} between 30N and 30S. Using primary forest tile.".format(tile_id)

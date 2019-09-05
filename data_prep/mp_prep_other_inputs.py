@@ -53,28 +53,31 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 #
 #       prep_other_inputs.data_prep(tile)
 
-primary_vrt = 'primary_2001.vrt'
-os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
-
-# Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count - 3)
-pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
+# # Creates a vrt of the primary forests with nodata=0
+# primary_vrt = 'primary_2001.vrt'
+# os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
+#
+# #
+# print "Creating primary forest tiles..."
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count - 3)
+# pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
 # for tile in tile_list:
 #
 #       prep_other_inputs.create_primary_tile(tile, primary_vrt)
 
-# Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count - 3)
-pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
+# #
+# print "Assigning each tile to ifl2000 or primary forest..."
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count - 3)
+# pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#       prep_other_inputs.create_combined_ifl_primary(tile)
+# For single processor use
+for tile in tile_list:
+
+      prep_other_inputs.create_combined_ifl_primary(tile)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
