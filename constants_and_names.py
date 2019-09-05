@@ -104,6 +104,13 @@ tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
 pattern_ifl = 'res_ifl_2000'
 ifl_dir = os.path.join(base_dir, 'other_emissions_inputs/ifl_2000/')
 
+# Primary forest 2001 raw rasters
+primary_raw_dir = 's3://gfw2-data/forest_cover/primary_forest/jan_2019/'
+
+# Primary forest/IFL merged tiles
+pattern_ifl_primary = 'ifl_2000_primary_2001_merged'
+ifl_primary_processed_dir = os.path.join(base_dir, 'ifl_primary_merged/processed/20190905')
+
 # Processed FAO ecozone shapefile
 cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
 

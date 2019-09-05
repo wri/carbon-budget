@@ -113,3 +113,14 @@ def data_prep(tile_id):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
+
+
+def merge_ifl_primary(tile_id):
+
+    # Start time
+    start = datetime.datetime.now()
+
+
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
