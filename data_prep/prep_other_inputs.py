@@ -120,7 +120,10 @@ def merge_ifl_primary(tile_id):
     # Start time
     start = datetime.datetime.now()
 
+    print "Getting extent of", tile_id
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
+    uu.warp_to_Hansen('ifl_primary.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary), xmin, ymin, xmax, ymax, 'Byte')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)

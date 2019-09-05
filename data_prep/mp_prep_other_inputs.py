@@ -18,7 +18,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          cn.mangrove_biomass_2000_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                          )
-# tile_list = ['00N_110E'] # test tiles
+tile_list = ['00N_060W'] # test tiles
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
@@ -59,9 +59,19 @@ ifl_vrt = 'ifl_2000.vrt'
 os.system('gdalbuildvrt {} *res_ifl_2000.tif'.format(ifl_vrt))
 
 combined_vrt = 'ifl_primary.vrt'
-cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+cmd = ['gdal_merge.py', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
        '-o', combined_vrt, ifl_vrt, primary_vrt]
 subprocess.check_call(cmd)
+
+# # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count-7)
+# pool.map(prep_other_inputs.merge_ifl_primary, tile_list)
+
+# For single processor use
+for tile in tile_list:
+
+      prep_other_inputs.merge_ifl_primary(tile)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
