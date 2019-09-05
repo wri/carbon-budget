@@ -37,6 +37,11 @@ def annual_gain_rate(tile_id, gain_table_dict):
     age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest)
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
 
+    # Name of pre-2000 plantation tile
+    pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+
+    uu.mask_pre_2000_plantation(tile_id, pre_2000_plant, age_cat, age_cat)
+
     # Names of the output natural forest gain rate tiles (above and belowground)
     AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
     BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
