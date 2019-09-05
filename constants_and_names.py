@@ -251,11 +251,11 @@ cumul_gain_BGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_mangro
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
 pattern_cumul_gain_AGC_planted_forest_non_mangrove = 'cumul_gain_AGC_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_AGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_planted_forest_non_mangrove/20190723/')
+cumul_gain_AGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_planted_forest_non_mangrove/20190905/')
 
 # Cumulative belowground gain for non-mangrove planted natural forests
 pattern_cumul_gain_BGC_planted_forest_non_mangrove = 'cumul_gain_BGC_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_BGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_planted_forest_non_mangrove/20190723/')
+cumul_gain_BGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_planted_forest_non_mangrove/20190905/')
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
