@@ -6,6 +6,7 @@ At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000
 import datetime
 import subprocess
 import rasterio
+import os
 import numpy as np
 from scipy import stats
 import os
@@ -115,7 +116,7 @@ def data_prep(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
 
 
-def merge_ifl_primary(tile_id, primary_vrt):
+def create_primary_tile(tile_id, primary_vrt):
 
     # Start time
     start = datetime.datetime.now()
@@ -123,10 +124,40 @@ def merge_ifl_primary(tile_id, primary_vrt):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    ifl_tile = '{0}_{1}'.format(tile_id, cn.pattern_ifl)
     primary_tile = '{}_primary.tif'.format(tile_id)
 
-    uu.warp_to_Hansen('primary_2001.vrt', primary_tile, xmin, ymin, xmax, ymax, 'Byte')
+    print "Creating primary forest tile for {}".format(tile_id)
+
+    uu.warp_to_Hansen(primary_vrt, primary_tile, xmin, ymin, xmax, ymax, 'Byte')
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
+    uu.end_of_fx_summary(start, tile_id, "primary.tif")
+
+def create_combined_ifl_primary(tile_id):
+
+    # Start time
+    start = datetime.datetime.now()
+
+    ifl_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl)
+    primary_tile = '{}_primary.tif'.format(tile_id)
+
+    ifl_primary_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary)
+
+    print "Getting extent of", tile_id
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
+    if ymax <= 30 or ymin >= -30:
+
+        print "{} between 30N and 30S. Using primary forest tile.".format(tile_id)
+
+        os.rename(primary_tile, ifl_primary_tile)
+
+    else:
+
+        print "{} not between 30N and 30S. Using IFL tile.".format(tile_id)
+
+        os.rename(ifl_tile, ifl_primary_tile)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_ifl_primary)
+

@@ -4,8 +4,9 @@ At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000
 and combining IFL2000 (extratropics) and primary forests (tropics) into a single layer.
 '''
 
-import multiprocessing
 import subprocess
+from multiprocessing.pool import Pool
+from functools import partial
 import sys
 import os
 import prep_other_inputs
@@ -18,7 +19,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          cn.mangrove_biomass_2000_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                          )
-tile_list = ['00N_060W'] # test tiles
+tile_list = ['40N_110E', '30N_110E', '20N_110E','10N_110E','00N_110E', '10S_110E', '20S_110E','30S_110E', '40S_110E'] # test tiles
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
@@ -27,8 +28,8 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
 # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
 # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
-# uu.s3_folder_download(cn.primary_raw_dir, '.')
-# uu.s3_folder_download(cn.ifl_dir, '.')
+uu.s3_folder_download(cn.primary_raw_dir, '.')
+uu.s3_folder_download(cn.ifl_dir, '.')
 #
 # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 # subprocess.check_call(cmd)
@@ -55,17 +56,25 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
-# # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count-7)
-# pool.map(prep_other_inputs.merge_ifl_primary, tile_list)
+# Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
+pool = Pool(count-2)
+pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
-# For single processor use
-for tile in tile_list:
+# # For single processor use
+# for tile in tile_list:
+#
+#       prep_other_inputs.create_primary_tile(tile, primary_vrt)
 
-      prep_other_inputs.merge_ifl_primary(tile, primary_vrt)
+# Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
+pool = Pool(count-2)
+pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
+
+# # For single processor use
+# for tile in tile_list:
+#
+#       prep_other_inputs.create_combined_ifl_primary(tile)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
 # uu.upload_final_set(cn.drivers_processed_dir, cn.pattern_drivers)
-# uu.upload_final_set(cn.ifl_primary_processed_dir, cn.pattern_ifl_primary)
+uu.upload_final_set(cn.ifl_primary_processed_dir, cn.pattern_ifl_primary)
