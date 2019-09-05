@@ -30,6 +30,7 @@ for input in download_list:
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 3)
 # Calculates cumulative aboveground carbon gain in mangroves
+# count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
 pool.map(cumulative_gain_mangrove.cumulative_gain_AGC, mangrove_biomass_tile_list)
 
 # Calculates cumulative belowground carbon gain in mangroves
