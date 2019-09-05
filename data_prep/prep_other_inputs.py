@@ -124,14 +124,9 @@ def merge_ifl_primary(tile_id, primary_vrt):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     ifl_tile = '{0}_{1}'.format(tile_id, cn.pattern_ifl)
+    primary_tile = '{}_primary.tif'.format(tile_id)
 
-    combined_vrt = 'ifl_primary.vrt'
-    cmd = ['gdal_merge.py', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-           '-ul_lr {0} {1} {2} {3}'.format(xmax, ymax, xmin, ymin),
-           '-o', combined_vrt, ifl_tile, primary_vrt]
-    subprocess.check_call(cmd)
-
-    uu.warp_to_Hansen('ifl_primary.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary), xmin, ymin, xmax, ymax, 'Byte')
+    uu.warp_to_Hansen('primary_2001.vrt', primary_tile, xmin, ymin, xmax, ymax, 'Byte')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)

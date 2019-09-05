@@ -60,10 +60,10 @@ os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 # pool = multiprocessing.Pool(count-7)
 # pool.map(prep_other_inputs.merge_ifl_primary, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#       prep_other_inputs.merge_ifl_primary(tile, primary_vrt)
+# For single processor use
+for tile in tile_list:
+
+      prep_other_inputs.merge_ifl_primary(tile, primary_vrt)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
