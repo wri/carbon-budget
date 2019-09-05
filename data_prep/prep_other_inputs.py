@@ -158,9 +158,15 @@ def create_combined_ifl_primary(tile_id):
 
     else:
 
-        print "{} not between 30N and 30S. Using IFL tile.".format(tile_id)
+        print "{} not between 30N and 30S. Using IFL tile, if it exists.".format(tile_id)
 
-        os.rename(ifl_tile, ifl_primary_tile)
+        if os.path.exists(ifl_tile):
+
+            os.rename(ifl_tile, ifl_primary_tile)
+
+        else:
+
+            print "IFL tile does not exist for {}".format(tile_id)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_ifl_primary)
