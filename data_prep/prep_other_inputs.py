@@ -150,7 +150,7 @@ def create_combined_ifl_primary(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # Assigns the correct time (primary forest or ifl)
-    if ymax <= 30 and ymin >= -30:
+    if ymax <= 30 and ymax >= -20:
 
         print "{} between 30N and 30S. Using primary forest tile.".format(tile_id)
 

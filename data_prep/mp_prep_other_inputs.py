@@ -28,8 +28,8 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
 # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
 # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
-# uu.s3_folder_download(cn.primary_raw_dir, '.')
-# uu.s3_folder_download(cn.ifl_dir, '.')
+uu.s3_folder_download(cn.primary_raw_dir, '.')
+uu.s3_folder_download(cn.ifl_dir, '.')
 #
 # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 # subprocess.check_call(cmd)
@@ -53,15 +53,15 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 #
 #       prep_other_inputs.data_prep(tile)
 
-# # Creates a vrt of the primary forests with nodata=0
-# primary_vrt = 'primary_2001.vrt'
-# os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
+# Creates a vrt of the primary forests with nodata=0
+primary_vrt = 'primary_2001.vrt'
+os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
+
 #
-# #
-# print "Creating primary forest tiles..."
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count - 3)
-# pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
+print "Creating primary forest tiles..."
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count - 2)
+pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
 # for tile in tile_list:
