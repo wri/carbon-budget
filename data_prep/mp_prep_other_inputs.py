@@ -19,7 +19,8 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          cn.mangrove_biomass_2000_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                          )
-tile_list = ['60N_090E', '50N_040E', '40N_090E', '30N_100E', '20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
+# tile_list = ['60N_090E', '50N_040E', '40N_090E', '30N_100E', '20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
+tile_list = ['20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
 # tile_list = ['30N_100E']
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
