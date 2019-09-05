@@ -12,14 +12,6 @@ from osgeo import gdal
 d = datetime.datetime.today()
 date_today = d.strftime('%Y%m%d_%h%m%s')
 
-# Calculates beloground biomass from aboveground biomass using the main equation from Mokany et al. 2006, Table 2
-def AGB_to_BGB_non_mangrove(AGB):
-
-    BGB = (AGB ^ cn.above_to_below_non_mang_exp) * cn.above_to_below_non_mang_coeff
-
-    return BGB
-
-
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
 

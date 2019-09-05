@@ -24,11 +24,9 @@ biomass_to_c_mangrove = 0.45
 # Needs the decimal places in order to be cast as a float
 c_to_co2 = 44.0/12.0
 
-# Belowground to aboveground biomass ratios.
-# Non-mangrove values are the two constants in the AGB to BGB equation in Figure 3 of Mokany et al. 2006.
-above_to_below_non_mang_coeff = 0.489
-above_to_below_non_mang_exp = 0.89
-# Mangrove values are from Table 4.5 of IPCC wetland supplement.
+# Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
+# Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
+below_to_above_non_mang = 0.26
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96
@@ -214,11 +212,11 @@ annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(base_dir, 'annual
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
-annual_gain_AGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_planted_forest_non_mangrove/20190904/')
+annual_gain_AGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_planted_forest_non_mangrove/20190905/')
 
 # Annual belowground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_BGB_planted_forest_non_mangrove = 'annual_gain_rate_BGB_t_ha_planted_forest_non_mangrove'
-annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_planted_forest_non_mangrove/20190904/')
+annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_planted_forest_non_mangrove/20190905/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted'
