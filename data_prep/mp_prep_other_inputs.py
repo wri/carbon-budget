@@ -27,8 +27,8 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
 # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
 # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
-uu.s3_folder_download(cn.primary_raw_dir, '.')
-uu.s3_folder_download(cn.ifl_dir, '.')
+# uu.s3_folder_download(cn.primary_raw_dir, '.')
+# uu.s3_folder_download(cn.ifl_dir, '.')
 #
 # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 # subprocess.check_call(cmd)
@@ -52,8 +52,16 @@ uu.s3_folder_download(cn.ifl_dir, '.')
 #
 #       prep_other_inputs.data_prep(tile)
 
-out_vrt = 'primary_2001.vrt'
-os.system('gdalbuildvrt {} *2001_primary.tif'.format(out_vrt))
+primary_vrt = 'primary_2001.vrt'
+os.system('gdalbuildvrt {} *2001_primary.tif'.format(primary_vrt))
+
+ifl_vrt = 'ifl_2000.vrt'
+os.system('gdalbuildvrt {} *res_ifl.tif'.format(ifl_vrt))
+
+combined_vrt = 'ifl_primary.vrt'
+cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+       '-o', combined_vrt, ifl_vrt, primary_vrt]
+subprocess.check_call(cmd)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
