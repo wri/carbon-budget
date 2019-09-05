@@ -20,7 +20,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                          )
 # tile_list = ['60N_090E', '50N_040E', '40N_090E', '30N_100E', '20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
-tile_list = ['20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
+# tile_list = ['20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
 # tile_list = ['30N_100E']
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
@@ -30,8 +30,8 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.')
 # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.')
 # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.')
-# uu.s3_folder_download(cn.primary_raw_dir, '.')
-# uu.s3_folder_download(cn.ifl_dir, '.')
+uu.s3_folder_download(cn.primary_raw_dir, '.')
+uu.s3_folder_download(cn.ifl_dir, '.')
 #
 # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 # subprocess.check_call(cmd)
@@ -59,27 +59,27 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
-# #
-# print "Creating primary forest tiles..."
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count - 2)
-# pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
+#
+print "Creating primary forest tiles..."
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count - 2)
+pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
 # for tile in tile_list:
 #
 #       prep_other_inputs.create_primary_tile(tile, primary_vrt)
 
-# #
-# print "Assigning each tile to ifl2000 or primary forest..."
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count - 3)
-# pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
+#
+print "Assigning each tile to ifl2000 or primary forest..."
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(count - 3)
+pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
 
-# For single processor use
-for tile in tile_list:
-
-      prep_other_inputs.create_combined_ifl_primary(tile)
+# # For single processor use
+# for tile in tile_list:
+#
+#       prep_other_inputs.create_combined_ifl_primary(tile)
 
 # uu.upload_final_set(cn.climate_zone_processed_dir, cn.pattern_climate_zone)
 # uu.upload_final_set(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000)
