@@ -53,7 +53,7 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 #       prep_other_inputs.data_prep(tile)
 
 primary_vrt = 'primary_2001.vrt'
-os.system('gdalbuildvrt -a_nodata 0 {} *2001_primary.tif'.format(primary_vrt))
+os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
 # # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
 # count = multiprocessing.cpu_count()
