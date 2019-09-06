@@ -30,8 +30,8 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # Mangrove biomass and full-extent planted forests are used to mask out mangrove and planted forests from the natural forests.
 download_list = [cn.age_cat_natrl_forest_dir, cn.cont_eco_dir, cn.plant_pre_2000_processed_dir]
 
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -90,7 +90,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
 # processes=21 peaks at about 400 GB of memory on an r4.16xlarge machine
-num_of_processes = 21
+num_of_processes = 24
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()

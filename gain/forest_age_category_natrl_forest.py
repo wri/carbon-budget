@@ -93,13 +93,6 @@ def forest_age_category(tile_id, gain_table_dict):
                                     cont_eco = cont_eco_src.read(1, window=window)
                                     biomass = biomass_src.read(1, window=window)
 
-                                    print loss[0][8628:8638]
-                                    print gain[0][8628:8638]
-                                    print tcd[0][8628:8638]
-                                    print ifl_primary[0][8628:8638]
-                                    print cont_eco[0][8628:8638]
-                                    print biomass[0][8628:8638]
-
                                     # Creates a numpy array that has the <=20 year secondary forest growth rate x 20
                                     # based on the continent-ecozone code of each pixel (the dictionary).
                                     # This is used to assign pixels to the correct age category.
@@ -134,10 +127,6 @@ def forest_age_category(tile_id, gain_table_dict):
 
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
-
-                                    print dst_data[0][8628:8638]
-
-                                    sys.quit()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_age_cat_natrl_forest)
