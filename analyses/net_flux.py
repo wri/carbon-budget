@@ -53,7 +53,7 @@ def net_calc(tile_id):
         loss = loss_src.read(1, window=window)
 
         # Converts gain from C to CO2 and subtracts that from loss
-        dst_data = loss - (gain*float(cn.c_to_co2))
+        dst_data = loss - gain
 
         net_flux_dst.write_band(1, dst_data, window=window)
 
