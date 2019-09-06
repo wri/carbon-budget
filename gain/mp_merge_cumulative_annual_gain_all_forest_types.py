@@ -19,12 +19,13 @@ print tile_list
 print "There are {} unique tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the input folders
-download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrove_dir,
-                 cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_AGCO2_mangrove_dir,
-                 cn.annual_gain_BGB_natrl_forest_dir, cn.annual_gain_BGB_mangrove_dir,
-                 cn.cumul_gain_BGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_mangrove_dir,
+download_list = [
+                 cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir,
+                 cn.cumul_gain_AGCO2_mangrove_dir, cn.cumul_gain_BGCO2_mangrove_dir,
                  cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
-                 cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir
+                 cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir,
+                 cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
+                 cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir
                  ]
 
 for input in download_list:
