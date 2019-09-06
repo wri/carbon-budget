@@ -32,10 +32,10 @@ for input in download_list:
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 3)
 # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
-pool.map(cumulative_gain_natrl_forest.cumulative_gain_AGC, biomass_tile_list)
+pool.map(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, biomass_tile_list)
 
 # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-pool.map(cumulative_gain_natrl_forest.cumulative_gain_BGC, biomass_tile_list)
+pool.map(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, biomass_tile_list)
 pool.close()
 pool.join()
 
@@ -48,6 +48,6 @@ pool.join()
 #
 #     cumulative_gain_natrl_forest.cumulative_gain_BGC(tile)
 
-uu.upload_final_set(cn.cumul_gain_AGC_natrl_forest_dir, cn.pattern_cumul_gain_AGC_natrl_forest)
-uu.upload_final_set(cn.cumul_gain_BGC_natrl_forest_dir, cn.pattern_cumul_gain_BGC_natrl_forest)
+uu.upload_final_set(cn.cumul_gain_AGCO2_natrl_forest_dir, cn.pattern_cumul_gain_AGCO2_natrl_forest)
+uu.upload_final_set(cn.cumul_gain_BGCO2_natrl_forest_dir, cn.pattern_cumul_gain_BGCO2_natrl_forest)
 

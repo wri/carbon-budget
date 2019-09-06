@@ -26,9 +26,9 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 input_files = [
     cn.WHRC_biomass_2000_unmasked_dir, # This uses the unmasked HWRC biomass because it needs the biomass in planted forest pixels, not just the non-mangrove non-planted forest pixels
     cn.mangrove_biomass_2000_dir,
-    cn.cumul_gain_AGC_mangrove_dir,
-    cn.cumul_gain_AGC_planted_forest_non_mangrove_dir,
-    cn.cumul_gain_AGC_natrl_forest_dir,
+    cn.cumul_gain_AGCO2_mangrove_dir,
+    cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
+    cn.cumul_gain_AGCO2_natrl_forest_dir,
     cn.loss_dir
     ]
 
@@ -49,17 +49,17 @@ for input in input_files:
 #         print "No WHRC biomass in", tile
 #
 #     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_mangrove), '.')
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_mangrove), '.')
 #     except:
 #         print "No mangrove carbon accumulation in", tile
 #
 #     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_planted_forest_non_mangrove), '.')
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove), '.')
 #     except:
 #         print "No planted forests in", tile
 #
 #     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGC_natrl_forest), '.')
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGCO2_natrl_forest), '.')
 #     except:
 #         print "No non-mangrove non-planted forests in", tile
 #

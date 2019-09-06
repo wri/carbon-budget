@@ -9,7 +9,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates cumulative aboveground carbon gain in non-mangrove, non-planted forests
-def cumulative_gain_AGC(tile_id):
+def cumulative_gain_AGCO2(tile_id):
 
     print "Calculating cumulative aboveground carbon gain:", tile_id
 
@@ -22,17 +22,17 @@ def cumulative_gain_AGC(tile_id):
 
     # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
     accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c_non_mangrove)
-    AGC_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
-    AGC_accum_outfilearg = '--outfile={}'.format(AGC_accum_outfilename)
-    cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGC_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    AGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
+    AGCO2_accum_outfilearg = '--outfile={}'.format(AGCO2_accum_outfilename)
+    cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_AGC_natrl_forest)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
 
 
 # Calculates cumulative belowground carbon gain in non-mangrove, non-planted forests
-def cumulative_gain_BGC(tile_id):
+def cumulative_gain_BGCO2(tile_id):
 
     print "Calculating cumulative belowground carbon gain:", tile_id
 
@@ -45,10 +45,10 @@ def cumulative_gain_BGC(tile_id):
 
     # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
     accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c_non_mangrove)
-    BGC_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
-    BGC_accum_outfilearg = '--outfile={}'.format(BGC_accum_outfilename)
-    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGC_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    BGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)
+    BGCO2_accum_outfilearg = '--outfile={}'.format(BGCO2_accum_outfilename)
+    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_BGC_natrl_forest)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)

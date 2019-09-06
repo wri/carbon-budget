@@ -142,7 +142,7 @@ def aggregate(tile, thresh):
             max_allowed = 1000
             in_window = np.ma.masked_where(in_window > max_allowed, in_window)
             in_window = in_window.filled(10)
-        if tile_type == cn.pattern_cumul_gain_combo:
+        if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
             max_allowed = 1000
             in_window = np.ma.masked_where(in_window > max_allowed, in_window)
             in_window = in_window.filled(100)
@@ -161,7 +161,7 @@ def aggregate(tile, thresh):
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
     # Converts the cumulative carbon gain values to annualized CO2
-    if tile_type == cn.pattern_cumul_gain_combo:
+    if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
         sum_array = sum_array/cn.loss_years*cn.c_to_co2
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2

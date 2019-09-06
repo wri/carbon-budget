@@ -20,11 +20,11 @@ print "There are {} unique tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the input folders
 download_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_AGB_mangrove_dir,
-                 cn.cumul_gain_AGC_natrl_forest_dir, cn.cumul_gain_AGC_mangrove_dir,
+                 cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_AGCO2_mangrove_dir,
                  cn.annual_gain_BGB_natrl_forest_dir, cn.annual_gain_BGB_mangrove_dir,
-                 cn.cumul_gain_BGC_natrl_forest_dir, cn.cumul_gain_BGC_mangrove_dir,
+                 cn.cumul_gain_BGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_mangrove_dir,
                  cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
-                 cn.cumul_gain_AGC_planted_forest_non_mangrove_dir, cn.cumul_gain_BGC_planted_forest_non_mangrove_dir
+                 cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir
                  ]
 
 for input in download_list:
@@ -35,16 +35,16 @@ for input in download_list:
 #
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_natrl_forest_dir, tile, cn.pattern_annual_gain_AGB_natrl_forest), '.')  # annual aboveground gain rate tiles for non-mangrove non-planted natural forests
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_mangrove_dir, tile, cn.pattern_annual_gain_AGB_mangrove), '.')  # annual aboveground gain rate tiles for mangroves
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGC_natrl_forest), '.')           # cumulative aboveground gain tiles for non-mangrove non-planted natural forests
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGC_mangrove_dir, tile, cn.pattern_cumul_gain_AGC_mangrove), '.')  # cumulative aboveground gain tiles for mangroves
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGCO2_natrl_forest), '.')           # cumulative aboveground gain tiles for non-mangrove non-planted natural forests
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_mangrove), '.')  # cumulative aboveground gain tiles for mangroves
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_natrl_forest_dir, tile, cn.pattern_annual_gain_BGB_natrl_forest), '.')  # annual belowground gain rate tiles for non-mangrove non-planted natural forests
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_mangrove_dir, tile, cn.pattern_annual_gain_BGB_mangrove), '.')  # annual belowground gain rate tiles for mangroves
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGC_natrl_forest_dir, tile, cn.pattern_cumul_gain_BGC_natrl_forest), '.')           # cumulative belowground gain tiles for non-mangrove non-planted natural forests
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGC_mangrove_dir, tile, cn.pattern_cumul_gain_BGC_mangrove), '.')  # cumulative belowground gain tiles for mangroves
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGCO2_natrl_forest_dir, tile, cn.pattern_cumul_gain_BGCO2_natrl_forest), '.')           # cumulative belowground gain tiles for non-mangrove non-planted natural forests
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGCO2_mangrove_dir, tile, cn.pattern_cumul_gain_BGCO2_mangrove), '.')  # cumulative belowground gain tiles for mangroves
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove), '.')  # annual belowground gain rate tiles for non-mangrove planted forests
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove), '.')  # annual belowground gain rate tiles for non-mangrove planted forests
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_BGC_planted_forest_non_mangrove), '.')    # cumulative belowground gain tiles for non-mangrove planted forests
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGC_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_BGC_planted_forest_non_mangrove), '.')    # cumulative belowground gain tiles for non-mangrove planted forests
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove), '.')    # cumulative belowground gain tiles for non-mangrove planted forests
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove), '.')    # cumulative belowground gain tiles for non-mangrove planted forests
 
 # For multiprocessing
 # This works on an r4.16xlarge. count/3 does not work.
@@ -59,4 +59,4 @@ pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
 
 
 uu.upload_final_set(cn.annual_gain_combo_dir, cn.pattern_annual_gain_combo)
-uu.upload_final_set(cn.cumul_gain_combo_dir, cn.pattern_cumul_gain_combo)
+uu.upload_final_set(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)

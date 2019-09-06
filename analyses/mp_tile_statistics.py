@@ -56,16 +56,16 @@ download_list = [
                 # cn.gain_year_count_planted_forest_non_mangrove_dir,
                 # cn.annual_gain_AGB_natrl_forest_dir,
                 # cn.annual_gain_BGB_natrl_forest_dir,
-                # cn.cumul_gain_AGC_mangrove_dir,
-                # cn.cumul_gain_BGC_mangrove_dir,
+                # cn.cumul_gain_AGCO2_mangrove_dir,
+                # cn.cumul_gain_BGCO2_mangrove_dir,
                 # cn.cumul_gain_AGC_planted_forest_dir,
                 # cn.cumul_gain_BGC_planted_forest_dir
 
                 # cn.annual_gain_BGB_mangrove_dir,
-                # cn.cumul_gain_AGC_natrl_forest_dir,
-                # cn.cumul_gain_BGC_natrl_forest_dir,
+                # cn.cumul_gain_AGCO2_natrl_forest_dir,
+                # cn.cumul_gain_BGCO2_natrl_forest_dir,
                 # cn.annual_gain_combo_dir,
-                # cn.cumul_gain_combo_dir
+                # cn.cumul_gain_AGCO2_BGCO2_all_types_dir
 
                 # cn.elevation_processed_dir,
                 # cn.precip_processed_dir,

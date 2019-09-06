@@ -1,5 +1,6 @@
-### This script calculates the cumulative above and belowground carbon gain in mangrove forest pixels from 2001-2015.
-### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion.
+### This script calculates the cumulative above and belowground carbon dioxide gain in mangrove forest pixels from 2001-2015.
+### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and
+### by to the C to CO2 conversion.
 
 import multiprocessing
 import cumulative_gain_mangrove
@@ -31,10 +32,10 @@ count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 3)
 # Calculates cumulative aboveground carbon gain in mangroves
 # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
-pool.map(cumulative_gain_mangrove.cumulative_gain_AGC, mangrove_biomass_tile_list)
+pool.map(cumulative_gain_mangrove.cumulative_gain_AGCO2, mangrove_biomass_tile_list)
 
 # Calculates cumulative belowground carbon gain in mangroves
-pool.map(cumulative_gain_mangrove.cumulative_gain_BGC, mangrove_biomass_tile_list)
+pool.map(cumulative_gain_mangrove.cumulative_gain_BGCO2, mangrove_biomass_tile_list)
 pool.close()
 pool.join()
 
@@ -47,5 +48,5 @@ pool.join()
 #
 #     cumulative_gain_mangrove.cumulative_gain_BGC(tile)
 
-uu.upload_final_set(cn.cumul_gain_AGC_mangrove_dir, cn.pattern_cumul_gain_AGC_mangrove)
-uu.upload_final_set(cn.cumul_gain_BGC_mangrove_dir, cn.pattern_cumul_gain_BGC_mangrove)
+uu.upload_final_set(cn.cumul_gain_AGCO2_mangrove_dir, cn.pattern_cumul_gain_AGCO2_mangrove)
+uu.upload_final_set(cn.cumul_gain_BGCO2_mangrove_dir, cn.pattern_cumul_gain_BGCO2_mangrove)

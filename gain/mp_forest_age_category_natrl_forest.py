@@ -29,9 +29,7 @@ print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # For downloading all tiles in the folders
-download_list = [
-    # cn.loss_dir, cn.gain_dir, cn.tcd_dir,
-                 cn.ifl_primary_processed_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
+download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_primary_processed_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
 
 for input in download_list:
     uu.s3_folder_download(input, '.')
@@ -66,7 +64,7 @@ gain_table_dict[0] = 0
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 20    # This works on an r4.16xlarge spot machine (not m4)
+num_of_processes = 20    # With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
 pool = Pool(num_of_processes)
 pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()

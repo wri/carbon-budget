@@ -238,36 +238,36 @@ pattern_annual_gain_combo = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
 annual_gain_combo_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/20190228/')
 
 
-### Cumulative carbon gain rates
+### Cumulative carbon dioxide gain rates
 ######
 
 # Cumulative aboveground gain for mangroves
-pattern_cumul_gain_AGC_mangrove = 'cumul_gain_AGC_t_ha_mangrove_2001_15'
-cumul_gain_AGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_mangrove/20190905/')
+pattern_cumul_gain_AGCO2_mangrove = 'cumul_gain_AGCO2_t_ha_mangrove_2001_15'
+cumul_gain_AGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_mangrove/20190906/')
 
 # Cumulative belowground gain for mangroves
-pattern_cumul_gain_BGC_mangrove = 'cumul_gain_BGC_t_ha_mangrove_2001_15'
-cumul_gain_BGC_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_mangrove/20190905/')
+pattern_cumul_gain_BGCO2_mangrove = 'cumul_gain_BGCO2_t_ha_mangrove_2001_15'
+cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_mangrove/20190906/')
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
-pattern_cumul_gain_AGC_planted_forest_non_mangrove = 'cumul_gain_AGC_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_AGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGC_planted_forest_non_mangrove/20190905/')
+pattern_cumul_gain_AGCO2_planted_forest_non_mangrove = 'cumul_gain_AGCO2_t_ha_planted_forest_non_mangrove_2001_15'
+cumul_gain_AGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_planted_forest_non_mangrove/20190906/')
 
 # Cumulative belowground gain for non-mangrove planted natural forests
-pattern_cumul_gain_BGC_planted_forest_non_mangrove = 'cumul_gain_BGC_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_BGC_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGC_planted_forest_non_mangrove/20190905/')
+pattern_cumul_gain_BGCO2_planted_forest_non_mangrove = 'cumul_gain_BGCO2_t_ha_planted_forest_non_mangrove_2001_15'
+cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_planted_forest_non_mangrove/20190906/')
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
-pattern_cumul_gain_AGC_natrl_forest = 'cumul_gain_AGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_AGC_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGC_natural_forest/20190228/')
+pattern_cumul_gain_AGCO2_natrl_forest = 'cumul_gain_AGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
+cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/20190228/')
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
-pattern_cumul_gain_BGC_natrl_forest = 'cumul_gain_BGC_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_BGC_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGC_natural_forest/20190228/')
+pattern_cumul_gain_BGCO2_natrl_forest = 'cumul_gain_BGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
+cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/20190228/')
 
 # Cumulative gain for all forest types
-pattern_cumul_gain_combo = 'cumul_gain_AGC_BGC_t_ha_all_forest_types_2001_15'
-cumul_gain_combo_dir = os.path.join(base_dir, 'cumulative_gain_all_forest_types/20190228/')
+pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/20190228/')
 
 
 ### Non-biomass inputs to carbon pools
@@ -400,7 +400,7 @@ net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/201
 #####
 
 pattern_annual_gain_combo_aggreg = '{}_10km'.format(pattern_annual_gain_combo)
-pattern_cumul_gain_combo_aggreg = '{}_10km'.format(pattern_cumul_gain_combo)
+pattern_cumul_gain_combo_aggreg = '{}_10km'.format(pattern_cumul_gain_AGCO2_BGCO2_all_types)
 pattern_gross_emis_all_drivers_aggreg = '{}_10km'.format(pattern_gross_emis_all_gases_all_drivers)
 pattern_net_flux_aggreg = '{}_10km'.format(pattern_net_flux)
 output_aggreg_dir = '{}10km_output_aggregation/20190614/'.format(base_dir)
