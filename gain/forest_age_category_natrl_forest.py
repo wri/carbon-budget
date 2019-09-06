@@ -93,7 +93,12 @@ def forest_age_category(tile_id, gain_table_dict):
                                     cont_eco = cont_eco_src.read(1, window=window)
                                     biomass = biomass_src.read(1, window=window)
 
-
+                                    print loss[0][8620:8650]
+                                    print gain[0][8620:8650]
+                                    print tcd[0][8620:8650]
+                                    print ifl_primary[0][8620:8650]
+                                    print cont_eco[0][8620:8650]
+                                    print biomass[0][8620:8650]
 
                                     # Creates a numpy array that has the <=20 year secondary forest growth rate x 20
                                     # based on the continent-ecozone code of each pixel (the dictionary).
