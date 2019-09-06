@@ -24,15 +24,15 @@ import universal_util as uu
 
 biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-# biomass_tile_list = ['00N_000E', '00N_110E'] # test tiles
+biomass_tile_list = ['30N_100E'] # test tiles
 print biomass_tile_list
 print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
 # For downloading all tiles in the folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_primary_processed_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
 
-for input in download_list:
-    uu.s3_folder_download(input, '.')
+# for input in download_list:
+#     uu.s3_folder_download(input, '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
@@ -62,18 +62,18 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 gain_table_dict[0] = 0
 
 
-# This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-num_of_processes = 20    # With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
-pool = Pool(num_of_processes)
-pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
-pool.close()
-pool.join()
+# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# num_of_processes = 20    # With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
+# pool = Pool(num_of_processes)
+# pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use
-# for tile in biomass_tile_list:
-#
-#     forest_age_category_natrl_forest.forest_age_category(tile, gain_table_dict)
+# For single processor use
+for tile in biomass_tile_list:
+
+    forest_age_category_natrl_forest.forest_age_category(tile, gain_table_dict)
 
 print "Tiles processed. Uploading to s3 now..."
 uu.upload_final_set(cn.age_cat_natrl_forest_dir, cn.pattern_age_cat_natrl_forest)

@@ -89,6 +89,7 @@ gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# processes=21 peaks at about 400 GB of memory on an r4.16xlarge machine
 num_of_processes = 21
 pool = Pool(num_of_processes)
 pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, gain_table_dict=gain_table_dict), biomass_tile_list)
