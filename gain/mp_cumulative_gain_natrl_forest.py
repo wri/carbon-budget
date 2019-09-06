@@ -30,8 +30,9 @@ for input in download_list:
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_natrl_forest_dir, tile, cn.pattern_gain_year_count_natrl_forest), '.')  # number of years with gain tiles
 
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 3)
+pool = multiprocessing.Pool(26)
 # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
+# Processors=Count/3 peaks at about 370 GB memory on an r4.16xlarge
 pool.map(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, biomass_tile_list)
 
 # Calculates cumulative belowground carbon gain in non-mangrove planted forests
