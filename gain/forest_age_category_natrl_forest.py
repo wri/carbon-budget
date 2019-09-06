@@ -130,7 +130,7 @@ def forest_age_category(tile_id, gain_table_dict):
                                     # Writes the output window to the output
                                     dst.write_band(1, dst_data, window=window)
 
-                                    print dst_data[[0]][8000:8500]
+                                    print dst_data[0][8000:8500]
 
                                     sys.quit()
 
