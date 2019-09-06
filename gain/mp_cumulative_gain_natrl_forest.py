@@ -1,5 +1,5 @@
-### This script calculates the cumulative above and belowground carbon gain in non-mangrove, non-planted natural forest pixels from 2001-2015.
-### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion.
+### This script calculates the cumulative above and belowground CO2 gain in non-mangrove, non-planted natural forest pixels from 2001-2015.
+### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and C to CO2 conversion.
 
 import multiprocessing
 import cumulative_gain_natrl_forest
@@ -32,11 +32,11 @@ for input in download_list:
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(26)
 # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
-# Processors=Count/3 peaks at about 370 GB memory on an r4.16xlarge
+# Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
 pool.map(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, biomass_tile_list)
 
 # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-# Processors=Count/3 peaks at about 370 GB memory on an r4.16xlarge
+# Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
 pool.map(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, biomass_tile_list)
 pool.close()
 pool.join()

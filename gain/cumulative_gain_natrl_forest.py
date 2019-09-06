@@ -1,5 +1,5 @@
-### This script calculates the cumulative above and belowground carbon gain in non-mangrove, non-planted natural forest pixels from 2001-2015.
-### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion.
+### This script calculates the cumulative above and belowground CO2 gain in non-mangrove, non-planted natural forest pixels from 2001-2015.
+### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and C to CO2 conversion.
 
 import datetime
 import subprocess

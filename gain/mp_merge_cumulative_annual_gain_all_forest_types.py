@@ -1,5 +1,5 @@
 ### This script combines the annual gain rate tiles from different forest types (non-mangrove natural forests, mangroves,
-### plantations) into combined tiles. It does the same for cumulative gain over the study period.
+### plantations) into combined tiles. It does the same for cumulative CO2 gain over the study period (above and belowground).
 
 import multiprocessing
 import utilities
