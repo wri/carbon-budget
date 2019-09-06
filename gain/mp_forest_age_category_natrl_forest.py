@@ -31,7 +31,7 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # For downloading all tiles in the folders
 download_list = [
     # cn.loss_dir, cn.gain_dir, cn.tcd_dir,
-                 cn.ifl_primary_processed_dir cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
+                 cn.ifl_primary_processed_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir]
 
 for input in download_list:
     uu.s3_folder_download(input, '.')
