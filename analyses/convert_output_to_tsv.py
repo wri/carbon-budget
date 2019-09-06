@@ -26,7 +26,7 @@ local_dir = r'/home/ubuntu/data/'
 
 # For downloading all tiles in the input folders
 download_list = [
-                 cn.annual_gain_combo_dir,
+                 cn.annual_gain_AGB_BGB_all_types_dir,
                  cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
                  cn.net_flux_dir,
                  cn.gross_emissions_dir,
@@ -44,7 +44,7 @@ ras_cwd = r'/home/ubuntu/raster-to-tsv'
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, cn.pattern_annual_gain_combo, tile), local_dir)  # annual gain rate
+#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, cn.pattern_annual_gain_AGB_BGB_all_types, tile), local_dir)  # annual gain rate
 #     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, tile), local_dir)  # cumulative gain
 #     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, cn.pattern_net_flux, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
 #     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emissions_dir, tile, cn.pattern_gross_emissions), local_dir)  # emissions from all drivers
@@ -58,7 +58,7 @@ for tile in biomass_tile_list:
     print "Processing annual gain for biomass tile", tile
 
     # Names of the files that are used for this analysis
-    annual_gain = '{0}{1}_{2}.tif'.format(local_dir, cn.pattern_annual_gain_combo, tile)
+    annual_gain = '{0}{1}_{2}.tif'.format(local_dir, cn.pattern_annual_gain_AGB_BGB_all_types, tile)
     tcd = '{0}{1}_{2}.tif'.format(local_dir, cn.pattern_tcd, tile)
 
     print "Joining annual gain and tcd2000 for", tile

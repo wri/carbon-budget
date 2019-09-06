@@ -64,7 +64,7 @@ download_list = [
                 # cn.annual_gain_BGB_mangrove_dir,
                 # cn.cumul_gain_AGCO2_natrl_forest_dir,
                 # cn.cumul_gain_BGCO2_natrl_forest_dir,
-                # cn.annual_gain_combo_dir,
+                # cn.annual_gain_AGB_BGB_all_types_dir,
                 # cn.cumul_gain_AGCO2_BGCO2_all_types_dir
 
                 # cn.elevation_processed_dir,

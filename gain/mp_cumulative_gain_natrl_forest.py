@@ -35,6 +35,7 @@ pool = multiprocessing.Pool(count / 3)
 pool.map(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, biomass_tile_list)
 
 # Calculates cumulative belowground carbon gain in non-mangrove planted forests
+# Processors=Count/3 peaks at about 370 GB memory on an r4.16xlarge
 pool.map(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, biomass_tile_list)
 pool.close()
 pool.join()

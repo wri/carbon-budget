@@ -48,7 +48,7 @@ def main():
     # # For copying individual tiles to spot machine for testing
     # for tile_id in tile_id_list:
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_combo_dir, tile_id, cn.pattern_annual_gain_combo), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, tile_id, cn.pattern_annual_gain_AGB_BGB_all_types), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
@@ -62,7 +62,7 @@ def main():
     input_dict = {
              cn.gross_emis_all_gases_all_drivers_dir: cn.pattern_gross_emis_all_gases_all_drivers,
              cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
-             cn.annual_gain_combo_dir: cn.pattern_annual_gain_combo,
+             cn.annual_gain_AGB_BGB_all_types_dir: cn.pattern_annual_gain_AGB_BGB_all_types,
              cn.net_flux_dir: cn.pattern_net_flux
              }
 

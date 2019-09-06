@@ -58,5 +58,5 @@ pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
 #     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile)
 
 
-uu.upload_final_set(cn.annual_gain_combo_dir, cn.pattern_annual_gain_combo)
+uu.upload_final_set(cn.annual_gain_AGB_BGB_all_types_dir, cn.pattern_annual_gain_AGB_BGB_all_types)
 uu.upload_final_set(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)

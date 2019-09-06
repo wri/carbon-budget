@@ -234,8 +234,8 @@ pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest
 annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/20190906/')
 
 # Annual aboveground gain rate for all forest types
-pattern_annual_gain_combo = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_combo_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/20190228/')
+pattern_annual_gain_AGB_BGB_all_types = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
+annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/20190906/')
 
 
 ### Cumulative carbon dioxide gain rates
@@ -267,7 +267,7 @@ cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
-cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/20190228/')
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/20190906/')
 
 
 ### Non-biomass inputs to carbon pools
@@ -399,7 +399,7 @@ net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/201
 ### 10x10 km aggregation tiles for mapping
 #####
 
-pattern_annual_gain_combo_aggreg = '{}_10km'.format(pattern_annual_gain_combo)
+pattern_annual_gain_combo_aggreg = '{}_10km'.format(pattern_annual_gain_AGB_BGB_all_types)
 pattern_cumul_gain_combo_aggreg = '{}_10km'.format(pattern_cumul_gain_AGCO2_BGCO2_all_types)
 pattern_gross_emis_all_drivers_aggreg = '{}_10km'.format(pattern_gross_emis_all_gases_all_drivers)
 pattern_net_flux_aggreg = '{}_10km'.format(pattern_net_flux)

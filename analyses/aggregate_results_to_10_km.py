@@ -138,7 +138,7 @@ def aggregate(tile, thresh):
         # I'm replacing the erroneous values with common nearby values.
         # Obviously, this is an approximation and not a permanent fix (I need to create new tiles) but it's good enough
         # for the moment.
-        if tile_type == cn.pattern_annual_gain_combo:
+        if tile_type == cn.pattern_annual_gain_AGB_BGB_all_types:
             max_allowed = 1000
             in_window = np.ma.masked_where(in_window > max_allowed, in_window)
             in_window = in_window.filled(10)
