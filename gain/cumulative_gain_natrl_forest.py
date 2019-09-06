@@ -21,7 +21,7 @@ def cumulative_gain_AGCO2(tile_id):
     gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
 
     # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
-    accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c_non_mangrove)
+    accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     AGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
     AGCO2_accum_outfilearg = '--outfile={}'.format(AGCO2_accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
@@ -44,7 +44,7 @@ def cumulative_gain_BGCO2(tile_id):
     gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
 
     # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
-    accum_calc = '--calc=A*B*{}'.format(cn.biomass_to_c_non_mangrove)
+    accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     BGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)
     BGCO2_accum_outfilearg = '--outfile={}'.format(BGCO2_accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
