@@ -259,11 +259,11 @@ cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumul
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_AGCO2_natrl_forest = 'cumul_gain_AGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/20190228/')
+cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/20190906/')
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_BGCO2_natrl_forest = 'cumul_gain_BGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/20190228/')
+cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/20190906/')
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
