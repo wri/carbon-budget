@@ -2,7 +2,6 @@
 ### for zonal statistics. This does not call multiprocessor because the write-tsv.py script can use
 ### use multiple processors at once.
 
-import utilities
 import subprocess
 import os
 import sys
@@ -35,7 +34,7 @@ download_list = [
                  ]
 
 for input in download_list:
-    utilities.s3_folder_download('{}'.format(input), local_dir)
+    uu.s3_folder_download('{}'.format(input), local_dir)
 
 
 # Location of write-tsv.py
@@ -44,12 +43,12 @@ ras_cwd = r'/home/ubuntu/raster-to-tsv'
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, cn.pattern_annual_gain_AGB_BGB_all_types, tile), local_dir)  # annual gain rate
-#     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, tile), local_dir)  # cumulative gain
-#     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, cn.pattern_net_flux, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
-#     # utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emissions_dir, tile, cn.pattern_gross_emissions), local_dir)  # emissions from all drivers
-#     # utilities.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), local_dir)  # tree cover loss
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile), local_dir)  # tree cover density
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, cn.pattern_annual_gain_AGB_BGB_all_types, tile), local_dir)  # annual gain rate
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, tile), local_dir)  # cumulative gain
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, cn.pattern_net_flux, tile), local_dir)  # cumulative aboveand belowground carbon gain for all forest types
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emissions_dir, tile, cn.pattern_gross_emissions), local_dir)  # emissions from all drivers
+#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), local_dir)  # tree cover loss
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile), local_dir)  # tree cover density
 
 
 # Iterates through annual gain tiles to join the tcd rasters and convert them to tsvs

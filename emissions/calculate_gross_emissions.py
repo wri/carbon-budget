@@ -12,7 +12,18 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+# Calls the function to mask pre-2000 plantations from the loss tiles before calculating emissions from them
+def mask_pre_2000_plant(tile_id):
 
+    print "Masking pre-2000 plantations for {}".format(tile_id)
+
+    pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+    loss_tile = '{}.tif'.format(tile_id)
+
+    uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, loss_tile, tile_id)
+
+
+# Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id):
 
     print "Calculating gross emissions for", tile_id

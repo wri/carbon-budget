@@ -20,7 +20,6 @@ These codes are summarized in carbon-budget/emissions/node_codes.txt
 import multiprocessing
 import calculate_gross_emissions
 from functools import partial
-import utilities
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -75,12 +74,12 @@ print "Removing loss pixels from plantations that existed in Indonesia and Malay
 # Pre-2000 plantations have not previously been masked, so that is done here.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count/2)
-pool.map(utilities.mask_loss_pre_2000_plantation, tile_list)
+pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
 
 # # For single processor use
 # for tile in tile_list:
 #
-#       utilities.mask_loss_pre_2000_plantation(tile)
+#       calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
 # The C++ code expects a plantations tile for every input 10x10.
@@ -125,6 +124,8 @@ uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
 uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
 uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
 uu.upload_final_set(cn.gross_emis_no_driver_dir, cn.pattern_gross_emis_no_driver)
-uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
 uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_dir, cn.pattern_gross_emis_all_gases_all_drivers)
+uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_dir, cn.pattern_gross_emis_co2_only_all_drivers)
+uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_dir, cn.pattern_gross_emis_non_co2_all_drivers)
+uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
 

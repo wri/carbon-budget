@@ -14,7 +14,7 @@ import universal_util as uu
 def create_mangrove_tiles(tile_id):
 
     print "Getting bounding coordinates for tile", tile_id
-    xmin, xmax, ymin, ymax = utilities.coords(tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
     print "Creating tile", tile_id

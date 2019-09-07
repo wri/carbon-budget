@@ -6,7 +6,6 @@
 ### Only the merged raster is used later in the model; the 4 intermediates are saved just for checking.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_natrl_forest.py must be changed.
 
-import utilities
 import subprocess
 import datetime
 import os

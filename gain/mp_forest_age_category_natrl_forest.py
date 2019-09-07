@@ -12,7 +12,6 @@
 
 from multiprocessing.pool import Pool
 from functools import partial
-import utilities
 import forest_age_category_natrl_forest
 import pandas as pd
 import subprocess
@@ -37,12 +36,12 @@ for input in download_list:
 # # For copying individual tiles to spot machine for testing
 # for tile in biomass_tile_list:
 #
-#     utilities.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')                                # loss tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')            # gain tiles
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile), '.')    # tcd 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.pattern_ifl_primary, tile, cn.pattern_ifl_primary), '.')                    # ifl 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.natrl_forest_biomass_2000_dir, tile, cn.pattern_natrl_forest_biomass_2000), '.')                     # biomass 2000
-#     utilities.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
+#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')                                # loss tiles
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')            # gain tiles
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile), '.')    # tcd 2000
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pattern_ifl_primary, tile, cn.pattern_ifl_primary), '.')                    # ifl 2000
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.natrl_forest_biomass_2000_dir, tile, cn.pattern_natrl_forest_biomass_2000), '.')                     # biomass 2000
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']

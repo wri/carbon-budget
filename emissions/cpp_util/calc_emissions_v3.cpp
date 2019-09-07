@@ -85,7 +85,7 @@ string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
 string drivermodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
 string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
-string ifl_name = infolder + tile_id + "_res_ifl_2000.tif";
+string ifl_name = infolder + tile_id + "_ifl_2000_primary_2001_merged.tif";
 string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree

@@ -1,8 +1,6 @@
 import subprocess
-import glob
 import sys
 sys.path.append('../')
-import constants_and_names as cn
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainEcoCon=None, anodata=None):
@@ -12,10 +10,8 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, gainE
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', gainEcoCon, '-a_nodata',
-           anodata, in_shape, '{}.tif'.format(out_tif)]
+           anodata, in_shape, out_tif]
 
     subprocess.check_call(cmd)
 
     return out_tif
-
-

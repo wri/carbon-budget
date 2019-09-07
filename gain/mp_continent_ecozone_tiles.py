@@ -17,7 +17,6 @@
 
 
 import multiprocessing
-import utilities
 import continent_ecozone_tiles
 import subprocess
 import os
@@ -30,7 +29,7 @@ import universal_util as uu
 if not os.path.exists(cn.cont_eco_zip):
 
     # Downloads ecozone shapefile
-    utilities.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
+    uu.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]

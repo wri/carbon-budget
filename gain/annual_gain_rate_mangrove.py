@@ -30,7 +30,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
     AGB_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
     BGB_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
 
-    uu.mask_pre_2000_plantation(tile_id, pre_2000_plant, mangrove_biomass, mangrove_biomass)
+    uu.mask_pre_2000_plantation(pre_2000_plant, mangrove_biomass, mangrove_biomass, tile_id)
 
     print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
 

@@ -2,7 +2,6 @@
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and
 ### by to the C to CO2 conversion.
 
-import utilities
 import datetime
 import subprocess
 import sys

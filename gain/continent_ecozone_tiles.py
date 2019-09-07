@@ -32,7 +32,7 @@ def create_continent_ecozone_tiles(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    ymax, xmin, ymin, xmax = utilities.coords(tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
     print "Extent of", tile_id, "-- ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
     print "Rasterizing ecozone to extent of biomass tile {}".format(tile_id)

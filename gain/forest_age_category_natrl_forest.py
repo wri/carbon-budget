@@ -7,7 +7,6 @@
 ### These 10 values map to the three forest age categories.
 ### The forest age category tiles are inputs for assigning gain rates to pixels.
 
-import utilities
 import datetime
 import numpy as np
 import rasterio

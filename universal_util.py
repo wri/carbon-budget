@@ -416,7 +416,7 @@ def name_aggregated_output(pattern, thresh):
 
 
 # Removes plantations that existed before 2000 from loss tile
-def mask_pre_2000_plantation(tile_id, pre_2000_plant, tile_to_mask, out_name):
+def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
 
     if os.path.exists(pre_2000_plant):
 

@@ -3,7 +3,7 @@ This script creates the three inputs used for creating the carbon pools besides 
 It takes several hours to run.
 '''
 
-import util
+import utilities
 import datetime
 import rasterio
 import numpy as np
@@ -29,9 +29,9 @@ def create_input_files(tile_id):
     uu.warp_to_Hansen('add_30s_precip.tif', '{0}_{1}.tif'.format(tile_id, cn.pattern_precip), xmin, ymin, xmax, ymax, 'Int32')
 
     print "Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id
-    util.rasterize('fao_ecozones_bor_tem_tro.shp',
+    utilities.rasterize('fao_ecozones_bor_tem_tro.shp',
                    "{0}_{1}.tif".format(tile_id, cn.pattern_bor_tem_trop_intermediate),
-                   xmin, ymin, xmax, ymax, '.00025', 'Int16', 'recode', '0')
+                        xmin, ymin, xmax, ymax, '.00025', 'Int16', 'recode', '0')
 
     # Opens boreal/temperate/tropical ecozone tile.
     # Everything from here down is used to assign pixels without boreal-tem-tropical codes to a bor-tem-trop in the 1024x1024 windows.

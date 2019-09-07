@@ -356,54 +356,57 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/20190602/'.format(base_carbon_po
 ### Gross emissions
 ######
 
+# Date to include in the output directory
+emis_date = '20190909'
+
 pattern_gross_emis_commod = 'commodity_t_CO2e_ha_gross_emis_year'
-gross_emis_commod_dir = '{}gross_emissions/commodities/20190523/'.format(base_dir)
+gross_emis_commod_dir = '{0}gross_emissions/commodities/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_forestry = 'forestry_t_CO2e_ha_gross_emis_year'
-gross_emis_forestry_dir = '{}gross_emissions/forestry/20190523/'.format(base_dir)
+gross_emis_forestry_dir = '{0}gross_emissions/forestry/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_shifting_ag = 'shifting_ag_t_CO2e_ha_gross_emis_year'
-gross_emis_shifting_ag_dir = '{}gross_emissions/shifting_ag/20190523/'.format(base_dir)
+gross_emis_shifting_ag_dir = '{0}gross_emissions/shifting_ag/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_urban = 'urbanization_t_CO2e_ha_gross_emis_year'
-gross_emis_urban_dir = '{}gross_emissions/urbanization/20190523/'.format(base_dir)
+gross_emis_urban_dir = '{0}gross_emissions/urbanization/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_wildfire = 'wildfire_t_CO2e_ha_gross_emis_year'
-gross_emis_wildfire_dir = '{}gross_emissions/wildfire/20190523/'.format(base_dir)
+gross_emis_wildfire_dir = '{0}gross_emissions/wildfire/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_no_driver = 'no_driver_t_CO2e_ha_gross_emis_year'
-gross_emis_no_driver_dir = '{}gross_emissions/no_driver/20190523/'.format(base_dir)
+gross_emis_no_driver_dir = '{0}gross_emissions/no_driver/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_co2_only_all_drivers = 'CO2_only_all_drivers_t_CO2e_ha_gross_emis_year'
-gross_emis_co2_only_all_drivers_dir = '{}gross_emissions/all_drivers/CO2_only/20190523/'.format(base_dir)
+gross_emis_co2_only_all_drivers_dir = '{0}gross_emissions/all_drivers/CO2_only/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_non_co2_all_drivers = 'non_CO2_all_drivers_t_CO2e_ha_gross_emis_year'
-gross_emis_non_co2_all_drivers_dir = '{}gross_emissions/all_drivers/non_CO2/20190523/'.format(base_dir)
+gross_emis_non_co2_all_drivers_dir = '{0}gross_emissions/all_drivers/non_CO2/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_all_gases_all_drivers = 'all_gases_all_drivers_t_CO2e_ha_gross_emis_year'
-gross_emis_all_gases_all_drivers_dir = '{}gross_emissions/all_drivers/all_gases/20190523/'.format(base_dir)
+gross_emis_all_gases_all_drivers_dir = '{0}gross_emissions/all_drivers/all_gases/{1}/'.format(base_dir, emis_date)
 
 pattern_gross_emis_nodes = 'decision_tree_nodes_gross_emis'
-gross_emis_nodes_dir = '{}gross_emissions/decision_tree_nodes/20190523/'.format(base_dir)
+gross_emis_nodes_dir = '{0}gross_emissions/decision_tree_nodes/{1}/'.format(base_dir, emis_date)
 
 
-### Net emissions
+### Net flux
 ######
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15'
-net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/20190524/')
+net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/20190909/')
 
 
 
 ### 10x10 km aggregation tiles for mapping
-#####
+######
 
 pattern_annual_gain_combo_aggreg = '{}_10km'.format(pattern_annual_gain_AGB_BGB_all_types)
 pattern_cumul_gain_combo_aggreg = '{}_10km'.format(pattern_cumul_gain_AGCO2_BGCO2_all_types)
 pattern_gross_emis_all_drivers_aggreg = '{}_10km'.format(pattern_gross_emis_all_gases_all_drivers)
 pattern_net_flux_aggreg = '{}_10km'.format(pattern_net_flux)
-output_aggreg_dir = '{}10km_output_aggregation/20190614/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/20190909/'.format(base_dir)
 
 
 # Tile summary spreadsheets
