@@ -17,7 +17,7 @@ def mask_pre_2000_plant(tile_id):
 
     print "Masking pre-2000 plantations for {}".format(tile_id)
 
-    pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+    pre_2000_plant = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
     loss_tile = '{}.tif'.format(tile_id)
 
     print pre_2000_plant
