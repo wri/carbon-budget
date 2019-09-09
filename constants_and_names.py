@@ -299,7 +299,7 @@ base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
-AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/20190418/'.format(base_carbon_pool_dir)
+AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/20190909/'.format(base_carbon_pool_dir)
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "t_AGC_ha_2000"
