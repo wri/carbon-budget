@@ -427,7 +427,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         # recognizing the 0s (nodata).
         # Based on https://gis.stackexchange.com/questions/238397/how-to-indicate-nodata-into-gdal-calc-formula
         # Only the pre-2000 plantation raster needed to be converted to a vrt; the loss raster did not.
-        cmd = ['gdal_translate', '-of', 'VRT', '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
+        cmd = ['gdal_translate', '-of', 'VRT', pre_2000_plant,
                '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
         subprocess.check_call(cmd)
 
