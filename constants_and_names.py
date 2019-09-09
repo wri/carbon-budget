@@ -304,7 +304,7 @@ pattern_AGC_emis_year = "t_AGC_ha_emis_year"
 AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/20190909/'.format(base_carbon_pool_dir)
 
 # Date to include in the output directory
-emis_pool_run_date = '20190909'
+emis_pool_run_date = '20190430'
 
 # Belowground carbon in loss pixels
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
