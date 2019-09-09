@@ -444,7 +444,7 @@ for(x=0; x<xsize; x++)
 					}
 					if (burn_data[x] == 0)// Commodity, peat, not burned
 					{
-						outdata1 = Biomass_tCO2e_nofire + peat_drain_total;
+						outdata1 = Biomass_tCO2e_nofire_CO2_only + peat_drain_total;
 						outdata20 = 11;
 					}
 				}
@@ -458,12 +458,14 @@ for(x=0; x<xsize; x++)
                             {
                                 if (plant_data[x] >= 1)     // Commodity, not peat, burned, tropical, IFL, plantation
 						        {
-						            outdata1 = Biomass_tCO2e_yesfire;
+						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;
+						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						            outdata20 = 12;
 						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, IFL, not plantation
 						        {
-						            outdata1 = Biomass_tCO2e_yesfire + minsoil;
+						            outdata1a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
+						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						            outdata20 = 121;
 						        }
 						    }
