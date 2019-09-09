@@ -26,7 +26,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-tile_list = ['00N_020E'] # test tiles
+tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
@@ -106,16 +106,16 @@ for pattern in pattern_list:
 #         uu.make_blank_tile(tile, pattern, folder)
 
 
-# Calculates gross emissions for each tile
-# count/4 uses about 390 GB on a r4.16xlarge spot machine
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/4)
-pool.map(calculate_gross_emissions.calc_emissions, tile_list)
+# # Calculates gross emissions for each tile
+# # count/4 uses about 390 GB on a r4.16xlarge spot machine
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/4)
+# pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#       calculate_gross_emissions.calc_emissions(tile)
+# For single processor use
+for tile in tile_list:
+
+      calculate_gross_emissions.calc_emissions(tile)
 
 
 uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
