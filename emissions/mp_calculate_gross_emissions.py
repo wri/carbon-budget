@@ -44,29 +44,29 @@ download_list = [
 # for input in download_list:
 #     uu.s3_folder_download(input, './cpp_util/')
 
-# # For copying individual tiles to s3 for testing
-# for tile in tile_list:
-#
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile, cn.pattern_AGC_emis_year), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.BGC_emis_year_dir, tile, cn.pattern_BGC_emis_year), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.deadwood_emis_year_2000_dir, tile, cn.pattern_deadwood_emis_year_2000), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
-#     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
-#     except:
-#         print "No plantations in", tile
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.drivers_processed_dir, tile, cn.pattern_drivers), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.climate_zone_processed_dir, tile, cn.pattern_climate_zone), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile, cn.pattern_bor_tem_trop_processed), './cpp_util/')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.burn_year_dir, tile, cn.pattern_burn_year), './cpp_util/')
-#     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), './cpp_util/')
-#     except:
-#         print "No pre-2000 plantations in", tile
-#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
+# For copying individual tiles to s3 for testing
+for tile in tile_list:
+
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile, cn.pattern_AGC_emis_year), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.BGC_emis_year_dir, tile, cn.pattern_BGC_emis_year), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.deadwood_emis_year_2000_dir, tile, cn.pattern_deadwood_emis_year_2000), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
+    except:
+        print "No plantations in", tile
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.drivers_processed_dir, tile, cn.pattern_drivers), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.climate_zone_processed_dir, tile, cn.pattern_climate_zone), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile, cn.pattern_bor_tem_trop_processed), './cpp_util/')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.burn_year_dir, tile, cn.pattern_burn_year), './cpp_util/')
+    try:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), './cpp_util/')
+    except:
+        print "No pre-2000 plantations in", tile
+    uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
 
 
 print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
@@ -89,7 +89,7 @@ pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
 folder = 'cpp_util/'
 
 # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
-pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl, cn.pattern_planted_forest_type_unmasked,
+pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary, cn.pattern_planted_forest_type_unmasked,
                 cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
 # for pattern in pattern_list:
