@@ -20,8 +20,6 @@ def mask_pre_2000_plant(tile_id):
     pre_2000_plant = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
     loss_tile = './cpp_util/{}.tif'.format(tile_id)
 
-    print pre_2000_plant
-
     uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, loss_tile, tile_id)
 
 

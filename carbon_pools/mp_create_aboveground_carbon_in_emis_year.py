@@ -70,6 +70,7 @@ for input in input_files:
 
 print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
 
+# count/5 peaked at 310 GB on an r4.16xlarge machine. Room to use more processors.
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/5)
 pool.map(create_aboveground_carbon_in_emis_year.create_emitted_AGC, tile_list)
