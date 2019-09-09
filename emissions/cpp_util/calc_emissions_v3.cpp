@@ -439,7 +439,7 @@ for(x=0; x<xsize; x++)
 					if (burn_data[x] > 0) // Commodity, peat, burned
 					{
 						outdata1a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total + peatburn;
-						outdata1b = Biomass_tCO2e_yesfire_non_CO2
+						outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						outdata20 = 10;
 					}
 					if (burn_data[x] == 0)// Commodity, peat, not burned
