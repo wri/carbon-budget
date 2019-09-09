@@ -297,33 +297,48 @@ elevation_processed_dir = os.path.join(base_dir, 'inputs_for_carbon_pools/proces
 # Base directory for all carbon pools
 base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 
+## Carbon pools in loss year
+
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
 AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/20190909/'.format(base_carbon_pool_dir)
+
+# Date to include in the output directory
+emis_pool_run_date = '20190909'
+
+# Belowground carbon in loss pixels
+pattern_BGC_emis_year = 't_BGC_ha_emis_year'
+BGC_emis_year_dir = '{0}belowground_carbon/loss_pixels/{1}/'.format(base_carbon_pool_dir, emis_pool_run_date)
+
+# Deadwood in loss pixels
+pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
+deadwood_emis_year_2000_dir = '{0}deadwood_carbon/loss_pixels/{1}/'.format(base_carbon_pool_dir, emis_pool_run_date)
+
+# Litter in loss pixels
+pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
+litter_emis_year_2000_dir = '{0}litter_carbon/loss_pixels/{1}/'.format(base_carbon_pool_dir, emis_pool_run_date)
+
+# Soil C in loss pixels
+pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'
+soil_C_emis_year_2000_dir = '{0}soil_carbon/loss_pixels/{1}/'.format(base_carbon_pool_dir, emis_pool_run_date)
+
+# All carbon pools combined in loss pixels, with emitted values
+pattern_total_C_emis_year = 't_total_C_ha_emis_year'
+total_C_emis_year_dir = '{0}total_carbon/loss_pixels/{1}/'.format(base_carbon_pool_dir, emis_pool_run_date)
+
+## Carbon pools in 2000
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "t_AGC_ha_2000"
 AGC_2000_dir = '{0}aboveground_carbon/extent_2000/20190531/'.format(base_carbon_pool_dir)
 
-# Belowground carbon in loss pixels
-pattern_BGC_emis_year = 't_BGC_ha_emis_year'
-BGC_emis_year_dir = '{}belowground_carbon/loss_pixels/20190430/'.format(base_carbon_pool_dir)
-
 # Belowground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_BGC_2000 = "t_BGC_ha_2000"
 BGC_2000_dir = '{0}belowground_carbon/extent_2000/20190531/'.format(base_carbon_pool_dir)
 
-# Deadwood in loss pixels
-pattern_deadwood_emis_year_2000 = 't_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = '{}deadwood_carbon/loss_pixels/20190430/'.format(base_carbon_pool_dir)
-
 # Deadwood carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_deadwood_2000 = "t_deadwood_C_ha_2000"
 deadwood_2000_dir = '{0}deadwood_carbon/extent_2000/20190531/'.format(base_carbon_pool_dir)
-
-# Litter in loss pixels
-pattern_litter_emis_year_2000 = 't_litter_C_ha_emis_year_2000'
-litter_emis_year_2000_dir = '{}litter_carbon/loss_pixels/20190430/'.format(base_carbon_pool_dir)
 
 # Litter carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_litter_2000 = "t_litter_C_ha_2000"
@@ -340,14 +355,6 @@ pattern_mineral_soil_C = 'OCSTHA_M_30cm_250m_ll.tif'
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
 soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/20190419/'.format(base_carbon_pool_dir)
 
-# Soil C in loss pixels
-pattern_soil_C_emis_year_2000 = 't_soil_C_ha_emis_year_2000'
-soil_C_emis_year_2000_dir = '{}soil_carbon/loss_pixels/20190430/'.format(base_carbon_pool_dir)
-
-# All carbon pools combined in loss pixels, with emitted values
-pattern_total_C_emis_year = 't_total_C_ha_emis_year'
-total_C_emis_year_dir = '{}total_carbon/loss_pixels/20190430/'.format(base_carbon_pool_dir)
-
 # Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "t_total_C_ha_2000"
 total_C_2000_dir = '{0}total_carbon/extent_2000/20190602/'.format(base_carbon_pool_dir)
@@ -357,37 +364,37 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/20190602/'.format(base_carbon_po
 ######
 
 # Date to include in the output directory
-emis_date = '20190909'
+emis_run_date = '20190909'
 
 pattern_gross_emis_commod = 'commodity_t_CO2e_ha_gross_emis_year'
-gross_emis_commod_dir = '{0}gross_emissions/commodities/{1}/'.format(base_dir, emis_date)
+gross_emis_commod_dir = '{0}gross_emissions/commodities/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_forestry = 'forestry_t_CO2e_ha_gross_emis_year'
-gross_emis_forestry_dir = '{0}gross_emissions/forestry/{1}/'.format(base_dir, emis_date)
+gross_emis_forestry_dir = '{0}gross_emissions/forestry/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_shifting_ag = 'shifting_ag_t_CO2e_ha_gross_emis_year'
-gross_emis_shifting_ag_dir = '{0}gross_emissions/shifting_ag/{1}/'.format(base_dir, emis_date)
+gross_emis_shifting_ag_dir = '{0}gross_emissions/shifting_ag/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_urban = 'urbanization_t_CO2e_ha_gross_emis_year'
-gross_emis_urban_dir = '{0}gross_emissions/urbanization/{1}/'.format(base_dir, emis_date)
+gross_emis_urban_dir = '{0}gross_emissions/urbanization/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_wildfire = 'wildfire_t_CO2e_ha_gross_emis_year'
-gross_emis_wildfire_dir = '{0}gross_emissions/wildfire/{1}/'.format(base_dir, emis_date)
+gross_emis_wildfire_dir = '{0}gross_emissions/wildfire/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_no_driver = 'no_driver_t_CO2e_ha_gross_emis_year'
-gross_emis_no_driver_dir = '{0}gross_emissions/no_driver/{1}/'.format(base_dir, emis_date)
+gross_emis_no_driver_dir = '{0}gross_emissions/no_driver/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_co2_only_all_drivers = 'CO2_only_all_drivers_t_CO2e_ha_gross_emis_year'
-gross_emis_co2_only_all_drivers_dir = '{0}gross_emissions/all_drivers/CO2_only/{1}/'.format(base_dir, emis_date)
+gross_emis_co2_only_all_drivers_dir = '{0}gross_emissions/all_drivers/CO2_only/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_non_co2_all_drivers = 'non_CO2_all_drivers_t_CO2e_ha_gross_emis_year'
-gross_emis_non_co2_all_drivers_dir = '{0}gross_emissions/all_drivers/non_CO2/{1}/'.format(base_dir, emis_date)
+gross_emis_non_co2_all_drivers_dir = '{0}gross_emissions/all_drivers/non_CO2/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_all_gases_all_drivers = 'all_gases_all_drivers_t_CO2e_ha_gross_emis_year'
-gross_emis_all_gases_all_drivers_dir = '{0}gross_emissions/all_drivers/all_gases/{1}/'.format(base_dir, emis_date)
+gross_emis_all_gases_all_drivers_dir = '{0}gross_emissions/all_drivers/all_gases/{1}/'.format(base_dir, emis_run_date)
 
 pattern_gross_emis_nodes = 'decision_tree_nodes_gross_emis'
-gross_emis_nodes_dir = '{0}gross_emissions/decision_tree_nodes/{1}/'.format(base_dir, emis_date)
+gross_emis_nodes_dir = '{0}gross_emissions/decision_tree_nodes/{1}/'.format(base_dir, emis_run_date)
 
 
 ### Net flux
