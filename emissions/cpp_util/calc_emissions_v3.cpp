@@ -183,46 +183,22 @@ cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << en
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
 GDALDataset *OUTGDAL1;   // Commodities, all gases
-GDALDataset *OUTGDAL1a;  // Commodities, CO2 only
-GDALDataset *OUTGDAL1b;  // Commodities, non-CO2
 GDALDataset *OUTGDAL2;   // Shifting ag, all gases
-GDALDataset *OUTGDAL2a;  // Shifting ag, CO2 only
-GDALDataset *OUTGDAL2b;  // Shifting ag, non-CO2
 GDALDataset *OUTGDAL3;   // Forestry, all gases
-GDALDataset *OUTGDAL3a;  // Forestry, CO2 only
-GDALDataset *OUTGDAL3b;  // Forestry, non-CO2
 GDALDataset *OUTGDAL4;   // Wildfire, all gases
-GDALDataset *OUTGDAL4a;  // Wildfire, CO2 only
-GDALDataset *OUTGDAL4b;  // Wildfire, non-CO2
 GDALDataset *OUTGDAL5;   // Urbanization, all gases
-GDALDataset *OUTGDAL5a;  // Urbanization, CO2 only
-GDALDataset *OUTGDAL5b;  // Urbanization, non-CO2
 GDALDataset *OUTGDAL6;   // No driver, all gases
-GDALDataset *OUTGDAL6a;  // No driver, CO2 only
-GDALDataset *OUTGDAL6b;  // No driver, non-CO2
 GDALDataset *OUTGDAL10;  // All drivers, all gases
 GDALDataset *OUTGDAL11;  // All drivers, CO2 only
 GDALDataset *OUTGDAL12;  // All drivers, non-CO2
 GDALDataset *OUTGDAL20;  // Decision tree node
 
 GDALRasterBand *OUTBAND1;
-GDALRasterBand *OUTBAND1a;
-GDALRasterBand *OUTBAND1b;
 GDALRasterBand *OUTBAND2;
-GDALRasterBand *OUTBAND2a;
-GDALRasterBand *OUTBAND2b;
 GDALRasterBand *OUTBAND3;
-GDALRasterBand *OUTBAND3a;
-GDALRasterBand *OUTBAND3b;
 GDALRasterBand *OUTBAND4;
-GDALRasterBand *OUTBAND4a;
-GDALRasterBand *OUTBAND4b;
 GDALRasterBand *OUTBAND5;
-GDALRasterBand *OUTBAND5a;
-GDALRasterBand *OUTBAND5b;
 GDALRasterBand *OUTBAND6;
-GDALRasterBand *OUTBAND6a;
-GDALRasterBand *OUTBAND6b;
 GDALRasterBand *OUTBAND10;
 GDALRasterBand *OUTBAND11;
 GDALRasterBand *OUTBAND12;
@@ -1096,8 +1072,8 @@ OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 
 OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND11->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND12->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND11->RasterIO( GF_Write, 0, y, xsize, 1, out_data11, xsize, 1, GDT_Float32, 0, 0 );
+OUTBAND12->RasterIO( GF_Write, 0, y, xsize, 1, out_data12, xsize, 1, GDT_Float32, 0, 0 );
 OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
 }
 
