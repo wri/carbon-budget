@@ -26,7 +26,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-tile_list = ['00N_110E'] # test tiles
+tile_list = ['00N_110E', '30N_080W', '50N_050E', '50N_100E', '80N_020E'] # test tiles
 # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
