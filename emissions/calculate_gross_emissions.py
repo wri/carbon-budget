@@ -19,8 +19,9 @@ def mask_pre_2000_plant(tile_id):
 
     pre_2000_plant = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
     loss_tile = './cpp_util/{}.tif'.format(tile_id)
+    out_tile = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked)
 
-    uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, loss_tile, tile_id)
+    uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, out_tile, tile_id)
 
 
 # Calls the c++ script to calculate gross emissions
