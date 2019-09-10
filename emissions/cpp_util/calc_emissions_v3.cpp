@@ -696,7 +696,7 @@ for(x=0; x<xsize; x++)
 			// Emissions model for forestry
 			else if (drivermodel_data[x] == 3)
 			{
-				Biomass_tCO2e_nofire = above_below_c * C_to_CO2;
+				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
                 Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
@@ -721,7 +721,7 @@ for(x=0; x<xsize; x++)
 							if (plant_data[x] > 0)  // Forestry, peat, not burned, tropical, plantation
 							{
 								outdata3a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total;
-								outdata3b = 0
+								outdata3b = 0;
 								outdata20 = 32;
 							}
 							if (plant_data[x] == 0)  // Forestry, peat, not burned, tropical, not plantation
@@ -906,7 +906,7 @@ for(x=0; x<xsize; x++)
 						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, tropical, no plantation
 						    {
 						        outdata5a = Biomass_tCO2e_nofire_CO2_only + minsoil;
-						        outdata5b = 0
+						        outdata5b = 0;
 						        outdata20 = 561;
 						    }
 						}
