@@ -58,14 +58,14 @@ download_list = [
                 # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
                 # cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir
 
-                cn.age_cat_natrl_forest_dir,
-                # cn.gain_year_count_natrl_forest_dir,
-                cn.annual_gain_AGB_natrl_forest_dir,
-                cn.annual_gain_BGB_natrl_forest_dir,
-                cn.cumul_gain_AGCO2_natrl_forest_dir,
-                cn.cumul_gain_BGCO2_natrl_forest_dir,
-                cn.annual_gain_AGB_BGB_all_types_dir,
-                cn.cumul_gain_AGCO2_BGCO2_all_types_dir
+                # cn.age_cat_natrl_forest_dir,
+                # # cn.gain_year_count_natrl_forest_dir,
+                # cn.annual_gain_AGB_natrl_forest_dir,
+                # cn.annual_gain_BGB_natrl_forest_dir,
+                # cn.cumul_gain_AGCO2_natrl_forest_dir,
+                # cn.cumul_gain_BGCO2_natrl_forest_dir,
+                # cn.annual_gain_AGB_BGB_all_types_dir,
+                # cn.cumul_gain_AGCO2_BGCO2_all_types_dir
 
                 # cn.elevation_processed_dir,
                 # cn.precip_processed_dir,
@@ -75,12 +75,12 @@ download_list = [
                 # cn.drivers_processed_dir,
                 # cn.climate_zone_processed_dir
 
-                # cn.AGC_emis_year_dir,
-                # cn.BGC_emis_year_dir,
-                # cn.deadwood_emis_year_2000_dir,
-                # cn.litter_emis_year_2000_dir,
-                # cn.soil_C_emis_year_2000_dir,
-                # cn.total_C_emis_year_dir
+                cn.AGC_emis_year_dir,
+                cn.BGC_emis_year_dir,
+                cn.deadwood_emis_year_2000_dir,
+                cn.litter_emis_year_2000_dir,
+                cn.soil_C_emis_year_2000_dir,
+                cn.total_C_emis_year_dir
 
                 # cn.gross_emis_commod_dir,
                 # cn.gross_emis_shifting_ag_dir,
