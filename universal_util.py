@@ -100,6 +100,7 @@ def tile_list_spot_machine(source, pattern):
 
     return file_list
 
+
 # Creates a list of all tiles found in either two or three s3 folders and removes duplicates from the list
 def create_combined_tile_list(set1, set2, set3=None):
 
