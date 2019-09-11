@@ -25,7 +25,7 @@ with open(cn.tile_stats_pattern, 'w+') as f:
 f.close()
 
 # # Creates list of tiles to iterate through, for testing
-# download_tile_list = ["00N_000E", "00N_050W"] # test tiles
+# download_tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
 # print download_tile_list
 #
 # # For copying individual tiles to spot machine for testing
@@ -75,21 +75,23 @@ download_list = [
                 # cn.drivers_processed_dir,
                 # cn.climate_zone_processed_dir
 
-                cn.AGC_emis_year_dir,
-                cn.BGC_emis_year_dir,
-                cn.deadwood_emis_year_2000_dir,
-                cn.litter_emis_year_2000_dir,
-                cn.soil_C_emis_year_2000_dir,
-                cn.total_C_emis_year_dir
+                # cn.AGC_emis_year_dir,
+                # cn.BGC_emis_year_dir,
+                # cn.deadwood_emis_year_2000_dir,
+                # cn.litter_emis_year_2000_dir,
+                # cn.soil_C_emis_year_2000_dir,
+                # cn.total_C_emis_year_dir
 
-                # cn.gross_emis_commod_dir,
-                # cn.gross_emis_shifting_ag_dir,
-                # cn.gross_emis_forestry_dir,
-                # cn.gross_emis_wildfire_dir,
-                # cn.gross_emis_urban_dir,
-                # cn.gross_emis_no_driver_dir,
-                # cn.gross_emis_all_gases_all_drivers_dir,
-                # cn.net_flux_dir
+                cn.gross_emis_commod_dir,
+                cn.gross_emis_shifting_ag_dir,
+                cn.gross_emis_forestry_dir,
+                cn.gross_emis_wildfire_dir,
+                cn.gross_emis_urban_dir,
+                cn.gross_emis_no_driver_dir,
+                cn.gross_emis_all_gases_all_drivers_dir,
+                cn.gross_emis_co2_only_all_drivers_dir,
+                cn.gross_emis_non_co2_all_drivers_dir,
+                cn.net_flux_dir
 ]
 
 # Iterates through each set of tiles and gets statistics of it
