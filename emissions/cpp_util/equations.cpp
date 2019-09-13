@@ -34,7 +34,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn = 41;
-			peat_drain_total = (model_years - lossyr) * 36;
+			peat_drain_total = (model_years - lossyr) * 35;
 		}
 		else if (ecozone == temperate)// Commodities/shifting ag/urbanization, temperate
 		{

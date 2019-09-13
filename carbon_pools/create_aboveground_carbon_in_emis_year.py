@@ -1,6 +1,7 @@
 '''
 This script create tiles of the aboveground carbon density in the year in which tree cover loss occurred
-using mangrove and non-mangrove (WHRC) aboveground biomass density in 2000 and carbon gain from 2000 until the loss year.
+using mangrove and non-mangrove (WHRC) aboveground biomass density in 2000 and CO2 gain from 2000 until the loss year
+(CO2 gain converted to C gain during calculation).
 Unlike the AGC in 2000, it outputs values only where there is loss, and the values are carbon in 2000 + gain until loss.
 This is used for the gross emissions model.
 '''
@@ -30,9 +31,9 @@ def create_emitted_AGC(tile_id):
     # Names of the input tiles. Creates the names even if the files don't exist.
     mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-    mangrove_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_mangrove)
-    planted_forest_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove)
-    natrl_forest_cumul_AGC_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
+    mangrove_cumul_AGCO2_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_mangrove)
+    planted_forest_cumul_AGCO2_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove)
+    natrl_forest_cumul_AGCO2_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
     loss_year = '{0}.tif'.format(tile_id)
 
     # Name of output tile
@@ -64,19 +65,19 @@ def create_emitted_AGC(tile_id):
         print "No WHRC biomass found for", tile_id
 
     try:
-        mangrove_cumul_AGC_gain_src = rasterio.open(mangrove_cumul_AGC_gain)
+        mangrove_cumul_AGCO2_gain_src = rasterio.open(mangrove_cumul_AGCO2_gain)
         print "Mangrove carbon accumulation found for", tile_id
     except:
         print "No mangrove carbon accumulation for", tile_id
 
     try:
-        planted_forest_cumul_AGC_gain_src = rasterio.open(planted_forest_cumul_AGC_gain)
+        planted_forest_cumul_AGCO2_gain_src = rasterio.open(planted_forest_cumul_AGCO2_gain)
         print "Non-mangrove planted carbon accumulation found for", tile_id
     except:
         print "No non-mangrove planted carbon accumulation for", tile_id
 
     try:
-        natrl_forest_cumul_AGC_gain_src = rasterio.open(natrl_forest_cumul_AGC_gain)
+        natrl_forest_cumul_AGCO2_gain_src = rasterio.open(natrl_forest_cumul_AGCO2_gain)
         print "Non-mangrove non-planted forest carbon accumulation found for", tile_id
     except:
         print "No non-mangrove non-planted forest carbon accumulation for", tile_id
@@ -113,26 +114,26 @@ def create_emitted_AGC(tile_id):
         if os.path.exists(mangrove_biomass_2000):
 
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-            mangrove_cumul_AGC_gain_window = mangrove_cumul_AGC_gain_src.read(1, window=window)
+            mangrove_cumul_AGCO2_gain_window = mangrove_cumul_AGCO2_gain_src.read(1, window=window)
 
-            mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + mangrove_cumul_AGC_gain_window
+            mangrove_C_final = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + (mangrove_cumul_AGCO2_gain_window / cn.c_to_co2)
 
             # Adds the mangrove final AGC density values to the ongoing array
             all_forest_types_AGC_combined = all_forest_types_AGC_combined + mangrove_C_final
 
         # Non-mangrove planted forest calculation if there is a planted forest C accumulation tile
-        if os.path.exists(planted_forest_cumul_AGC_gain):
+        if os.path.exists(planted_forest_cumul_AGCO2_gain):
 
             # There are no special planted forest biomass tiles, so planted forests start with the WHRC biomass tiles
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-            planted_forest_cumul_AGC_gain_window = planted_forest_cumul_AGC_gain_src.read(1, window=window)
+            planted_forest_cumul_AGCO2_gain_window = planted_forest_cumul_AGCO2_gain_src.read(1, window=window)
 
             # Calculates the aboveground C density in non-mangrove planted forest pixels.
             # The masking command makes sure that only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
             # (Otherwise, all WHRC biomass pixels would be included in the planted forest calculation, not just the pixels
             # at planted forests.)
-            planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + planted_forest_cumul_AGC_gain_window
-            planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGC_gain_window == 0, planted_forest_C)
+            planted_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + (planted_forest_cumul_AGCO2_gain_window / cn.c_to_co2)
+            planted_forest_C_final = np.ma.masked_where(planted_forest_cumul_AGCO2_gain_window == 0, planted_forest_C)
             # Fills the masked pixels (WHRC biomass that isn't in non-mangrove planted forests) with 0s
             planted_forest_C_final = planted_forest_C_final.filled(0)
 
@@ -141,20 +142,20 @@ def create_emitted_AGC(tile_id):
             all_forest_types_AGC_combined = all_forest_types_AGC_combined + planted_forest_C_final
 
         # Non-mangrove non-planted forest calculation if there is a corresponding C accumulation tile
-        if os.path.exists(natrl_forest_cumul_AGC_gain):
+        if os.path.exists(natrl_forest_cumul_AGCO2_gain):
 
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-            natrl_forest_cumul_AGC_gain_window = natrl_forest_cumul_AGC_gain_src.read(1, window=window)
+            natrl_forest_cumul_AGCO2_gain_window = natrl_forest_cumul_AGCO2_gain_src.read(1, window=window)
 
             # Calculates the aboveground C density in non-mangrove non-planted forest pixels. The masking commands make sure that
             # only WHRC biomass pixels that correspond with non-mangrove non-planted forest pixels are included.
             # (Otherwise, all WHRC biomass pixels would be included in the non-mang non-planted forest calculation, not just
             # the pixels in non-mang non-planted forests.)
-            natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + natrl_forest_cumul_AGC_gain_window
+            natural_forest_C = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) + (natrl_forest_cumul_AGCO2_gain_window / cn.c_to_co2)
 
             # Masks WHRC biomass where there is non-mangrove planted forest. If masked, the masked values are filled with 0s.
-            if os.path.exists(planted_forest_cumul_AGC_gain):
-                natural_forest_C = np.ma.masked_where(planted_forest_cumul_AGC_gain_window > 0, natural_forest_C)
+            if os.path.exists(planted_forest_cumul_AGCO2_gain):
+                natural_forest_C = np.ma.masked_where(planted_forest_cumul_AGCO2_gain_window > 0, natural_forest_C)
                 natural_forest_C = natural_forest_C.filled(0)
 
             # Masks WHRC biomass where there is non-mangrove non-planted forest. If masked, the masked values are filled with 0s.
