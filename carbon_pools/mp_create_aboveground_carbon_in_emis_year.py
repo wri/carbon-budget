@@ -32,8 +32,8 @@ input_files = [
     cn.loss_dir
     ]
 
-for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
+# for input in input_files:
+#     uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing.
 # for tile in tile_list:
@@ -72,7 +72,7 @@ print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumu
 
 # count/5 peaked at 310 GB on an r4.16xlarge machine. Room to use more processors.
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/5)
+pool = multiprocessing.Pool(processes=count/4)
 pool.map(create_aboveground_carbon_in_emis_year.create_emitted_AGC, tile_list)
 
 # # For single processor use

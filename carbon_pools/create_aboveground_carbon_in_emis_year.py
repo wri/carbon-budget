@@ -107,7 +107,8 @@ def create_emitted_AGC(tile_id):
         # any of the forest types will have 0s
         all_forest_types_AGC_combined = np.zeros((window.height, window.width), dtype='float32')
 
-        # Checks if each forest type exists for the tile. If so, calculates AGC density as AGC in 2000 + AGC accumulation.
+        # Checks if each forest type exists for the tile. If so, calculates AGC density as AGC in 2000 + AGC accumulation
+        # (AGC accumulation is converted from AGCO2 accumulation).
         # Initialy does this for all pixles (not just loss pixels)-- loss mask is applied at the very end of the window processing.
 
         # Mangrove calculation if there is a mangrove biomass tile
