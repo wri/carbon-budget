@@ -13,7 +13,7 @@ import universal_util as uu
 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
-headers = ['tile_type', 'tile_id', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
+headers = ['tile_id', 'tile_type', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
            'percentile75', 'percentile90', 'min', 'max', 'sum']
 header_no_brackets = ', '.join(headers)
 
