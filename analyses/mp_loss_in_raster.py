@@ -52,7 +52,7 @@ download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 for tile in tile_list:
 
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
+    uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
 
 num_of_processes = 14
 pool = Pool(num_of_processes)
