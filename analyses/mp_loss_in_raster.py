@@ -16,7 +16,7 @@ import universal_util as uu
 
 tile_list = uu.tile_list(cn.loss_dir)
 # tile_list = ['00N_110E'] # test tiles
-tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+# tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
@@ -53,8 +53,8 @@ if mask not in valid_masks:
 # For downloading all tiles in the input folders
 download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 
-# for input in download_list:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
@@ -62,17 +62,17 @@ download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
 #     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
 
-# # 14 processors maxed out at about 70 GB on an m4.16xlarge for  peat mask processing.
-# num_of_processes = 14
-# pool = Pool(num_of_processes)
-# pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat, mask=mask), tile_list)
-# pool.close()
-# pool.join()
+# 14 processors maxed out at about 70 GB on an m4.16xlarge for  peat mask processing.
+num_of_processes = 45
+pool = Pool(num_of_processes)
+pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat, mask=mask), tile_list)
+pool.close()
+pool.join()
 
-# For single processor use
-for tile in tile_list:
-
-    loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat, mask)
+# # For single processor use
+# for tile in tile_list:
+#
+#     loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat, mask)
 
 print "Tiles processed. Uploading to s3 now..."
 
