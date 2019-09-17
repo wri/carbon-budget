@@ -361,7 +361,7 @@ for(x=0; x<xsize; x++)
             // def_variables kept returning the same values for all pixels in a tile as the first pixel in the tile regardless of the inputs to the function;
             // it was as if the returned values for the first pixel evaluated couldn't be overwritten.
             // The first answer here told me how to solve that: https://stackoverflow.com/questions/51609816/return-float-array-from-a-function-c
-            float q[6];
+            float q[8];
             def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			// The constants needed for calculating emissions
@@ -369,8 +369,10 @@ for(x=0; x<xsize; x++)
 			float Gef_CO2 = q[1];       // Emissions factor for CO2
 			float Gef_CH4 = q[2];       // Emissions factor for CH4
 			float Gef_N2O = q[3];       // Emissions factor for N20
-			float peatburn = q[4];      // Emissions from burning peat
-    		float peat_drain_total = q[5];      // Emissions from draining peat
+			float peatburn_CO2_only = q[4];      // Emissions from burning peat, CO2 emissions only
+			float peatburn_non_CO2 = q[5];       // Emissions from burning peat, non-CO2 emissions only
+    		float peat_drain_total_CO2_only = q[6];      // Emissions from draining peat, CO2 emissions only
+    		float peat_drain_total_non_CO2 = q[7];      // Emissions from draining peat, non-CO2 emissions only
 
             // Define and calculate several values used later
 			float non_soil_c;
@@ -379,7 +381,7 @@ for(x=0; x<xsize; x++)
 			float above_below_c;
 			above_below_c = agc_data[x] + bgc_data[x];
 
-			float Biomass_tCO2e_nofire_CO2_only;     // Emissions from biomass on pixels without fire- only emits CO2
+			float Biomass_tCO2e_nofire_CO2_only;     // Emissions from biomass on pixels without fire- only emits CO2 (no non-CO2 option)
 			float Biomass_tCO2e_yesfire_CO2_only;    // Emissions from biomass on pixels with fire- only the CO2
 			float Biomass_tCO2e_yesfire_non_CO2;     // Emissions from biomass on pixels with fire- only the non-CO2 gases
 			float minsoil;                           // Emissions from mineral soil
@@ -410,7 +412,7 @@ for(x=0; x<xsize; x++)
 					{
 						outdata1a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total;
 						outdata1b = 0;
-						outdata20 = 11;
+						outdata20 = 11;    NEED TO INCORPORATE FLOW CHART CHANGE-- REMOVES PEAT_DRAIN_TOTAL, REVISE ENDPOINT NUMBERS
 					}
 				}
 				if (peat_data[x] == 0) // Commodity, not peat
@@ -807,7 +809,7 @@ for(x=0; x<xsize; x++)
 					{
 						outdata5a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total;
 						outdata5b = 0;
-						outdata20 = 51;
+						outdata20 = 51;      NEED TO INCORPORATE FLOW CHART CHANGE-- REMOVES PEAT_DRAIN_TOTAL, REVISE ENDPOINT NUMBERS
 					}
 				}
 				if (peat_data[x] == 0)// Urbanization, not peat
