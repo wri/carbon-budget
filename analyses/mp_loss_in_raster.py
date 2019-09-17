@@ -55,16 +55,16 @@ download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
 #     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
 
-num_of_processes = 14
-pool = Pool(num_of_processes)
-pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat), tile_list)
-pool.close()
-pool.join()
+# num_of_processes = 14
+# pool = Pool(num_of_processes)
+# pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat), tile_list)
+# pool.close()
+# pool.join()
 
-# # For single processor use
-# for tile in tile_list:
-#
-#     loss_in_raster.loss_in_raster(tile, raster_type)
+# For single processor use
+for tile in tile_list:
+
+    loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat)
 
 print "Tiles processed. Uploading to s3 now..."
 
