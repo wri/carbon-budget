@@ -21,7 +21,7 @@ print "There are {} tiles to process".format(str(len(tile_list)))
 
 parser = argparse.ArgumentParser(description='Create rasters of loss masked by some other raster')
 parser.add_argument('--raster-of-interest', '-r', required=True,
-                    help='s3 directory of the raster that loss will be masked by.')
+                    help='one raster in the s3 directory of the raster that loss will be masked by.')
 parser.add_argument('--latitude-constraint', '-l', required=False,
                     help='Enter a latitude in the format of 20, 0, -30, etc. Only tiles north of that will be evaluated. For example, entering 20 means that the tiles with a southern edge of 20 will be processed.')
 args = parser.parse_args()
@@ -30,12 +30,10 @@ args = parser.parse_args()
 args_index = os.path.split(args.raster_of_interest)
 raster_path = args_index[0]
 raster_name = args_index[1]
-raster_type = raster_name[:-4]
+raster_type = raster_type[:-4]
 
 print args_index
 print raster_path
-print raster_name
-print raster_type
 
 # The name of the output rasters-- a combination of loss and the type of the raster of interest
 output_name = 'loss_in_{}'.format(raster_type)
@@ -44,7 +42,7 @@ output_name = 'loss_in_{}'.format(raster_type)
 lat = args.latitude_constraint
 
 # For downloading all tiles in the input folders
-download_list = [cn.loss_dir, raster_path]
+download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 
 for input in download_list:
     uu.s3_folder_download('{}'.format(input), '.')
