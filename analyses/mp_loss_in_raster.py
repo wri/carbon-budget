@@ -16,7 +16,7 @@ import universal_util as uu
 
 tile_list = uu.tile_list(cn.loss_dir)
 # tile_list = ['00N_110E'] # test tiles
-tile_list = ['00N_110E', '70N_100W', '70N_140E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 

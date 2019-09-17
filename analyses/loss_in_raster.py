@@ -33,7 +33,7 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
         # If the user has asked to create just a mask of loss as opposed to the actual output values
         if mask == "True":
 
-            calc = '--calc=(A+1)/(A+1)*B'
+            calc = '--calc=(A>=1)*(A+1)/(A+1)*B'
 
         # If the user has asked to output the actual loss values
         if mask == "False":
