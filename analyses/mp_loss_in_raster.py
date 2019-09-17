@@ -34,6 +34,7 @@ raster_type = raster_name[:-4]
 
 print args_index
 print raster_path
+print raster_type
 
 # The name of the output rasters-- a combination of loss and the type of the raster of interest
 output_name = 'loss_in_{}'.format(raster_type)
