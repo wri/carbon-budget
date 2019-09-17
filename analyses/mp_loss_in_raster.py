@@ -2,6 +2,7 @@
 ### get the pixel count and total loss area in the raster of interest in each tile.
 ### This script has three arguments: the directory for the raster of interest (required), whether the output loss is
 ### masked to 1s or kept as actual loss years (required), and the latitude above which tiles will be processed (optional).
+### e.g., python mp_loss_in_raster.py -r s3://gfw2-data/climate/carbon_model/other_emissions_inputs/peatlands/processed/20190429/00N_000E_peat_mask_processed.tif -m True -l 30
 
 from multiprocessing.pool import Pool
 from functools import partial

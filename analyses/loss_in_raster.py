@@ -10,6 +10,7 @@ import universal_util as uu
 def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
 
     print "Calculating loss area for tile id {0}...".format(tile_id)
+    print mask
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
