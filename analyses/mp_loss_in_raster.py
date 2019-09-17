@@ -56,11 +56,11 @@ download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 # for input in download_list:
 #     uu.s3_folder_download('{}'.format(input), '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
-
-    uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
-    uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
+# # For copying individual tiles to spot machine for testing
+# for tile in tile_list:
+#
+#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
+#     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
 
 # # 14 processors maxed out at about 70 GB on an m4.16xlarge for  peat mask processing.
 # num_of_processes = 14

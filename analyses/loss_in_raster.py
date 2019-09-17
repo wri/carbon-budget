@@ -34,10 +34,14 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
         # If the user has asked to create just a mask of loss as opposed to the actual output values
         if mask is True:
 
+            print "masked"
+
             calc = '--calc=A/A*B'
 
         # If the user has asked to output the actual loss values
         if mask is False:
+
+            print "not masked"
 
             # Equation argument for converting emissions from per hectare to per pixel.
             # First, multiplies the per hectare emissions by the area of the pixel in m2, then divides by the number of m2 in a hectare.
