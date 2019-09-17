@@ -27,7 +27,7 @@ parser.add_argument('--latitude-constraint', '-l', required=False,
 args = parser.parse_args()
 
 # Gets the path, full name, and type of the raster that loss is being considered in.
-args_index = os.path.splt(args.raster_of_interest)
+args_index = os.path.split(args.raster_of_interest)
 raster_path = args_index[0]
 raster_name = args_index[1]
 raster_type = raster_name[:-4]
