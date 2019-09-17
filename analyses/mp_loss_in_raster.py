@@ -55,6 +55,7 @@ download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
 #     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
 
+# 14 processors maxed out at about 70 GB on an m4.16xlarge for  peat mask processing.
 num_of_processes = 14
 pool = Pool(num_of_processes)
 pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat), tile_list)
