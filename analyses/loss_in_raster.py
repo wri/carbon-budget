@@ -1,5 +1,6 @@
 import subprocess
 import datetime
+import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -15,19 +16,19 @@ def loss_in_raster(tile_id, raster_type, output_name, lat):
     # start time
     start = datetime.datetime.now()
 
+    # Name of the loss time
+    loss_tile = '{0}.tif'.format(tile_id)
+
+    # The raster that loss is being analyzed inside
+    raster_of_interest = '{0}_{1}.tif'.format(tile_id, raster_type)
+
+    # Output file name
+    outname = '{0}_{1}.tif'.format(tile_id, output_name)
+
     # Only processes the tile if it is inside the latitude band (north of the specified latitude)
-    if ymax > lat:
+    if ymax > lat and os.path.exists(raster_of_interest):
 
-        print "{} inside latitude band. Processing tile.".format(tile_id)
-
-        # Name of the loss time
-        loss_tile = '{0}.tif'.format(tile_id)
-
-        # The raster that loss is being analyzed inside
-        raster_of_interest = '{0}_{1}.tif'.format(tile_id, raster_type)
-
-        # Output file name
-        outname = '{0}_{1}.tif'.format(tile_id, output_name)
+        print "{} inside latitude band and peat tile exists. Processing tile.".format(tile_id)
 
         # Equation argument for converting emissions from per hectare to per pixel.
         # First, multiplies the per hectare emissions by the area of the pixel in m2, then divides by the number of m2 in a hectare.

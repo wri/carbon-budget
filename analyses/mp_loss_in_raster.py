@@ -46,8 +46,8 @@ lat = int(lat)
 # For downloading all tiles in the input folders
 download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 
-for input in download_list:
-    uu.s3_folder_download('{}'.format(input), '.')
+# for input in download_list:
+#     uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
