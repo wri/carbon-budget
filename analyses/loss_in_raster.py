@@ -32,14 +32,14 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
         print "{} inside latitude band and peat tile exists. Processing tile.".format(tile_id)
 
         # If the user has asked to create just a mask of loss as opposed to the actual output values
-        if mask == True:
+        if mask == "True":
 
             print "masked"
 
             calc = '--calc=A/A*B'
 
         # If the user has asked to output the actual loss values
-        if mask == False:
+        if mask == "False":
 
             print "not masked"
 
