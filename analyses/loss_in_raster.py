@@ -6,17 +6,11 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def loss_in_raster(tile, raster_type, output_name, lat):
+def loss_in_raster(tile_id, raster_type, output_name, lat):
 
-    # Extracts the tile id from the full tile name
-    tile_id = uu.get_tile_id(tile)
-
-    print "Calculating loss area for {0}, tile id {1}...".format(tile, tile_id)
+    print "Calculating loss area for tile id {0}...".format(tile_id)
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    print ymax
-    print lat
 
     # start time
     start = datetime.datetime.now()
@@ -24,7 +18,10 @@ def loss_in_raster(tile, raster_type, output_name, lat):
     # Only processes the tile if it is inside the latitude band (north of the specified latitude)
     if ymax > lat:
 
-        print "{} inside latitude band. Processing tile.".format(tile)
+        print "{} inside latitude band. Processing tile.".format(tile_id)
+
+        # Name of the loss time
+        loss_tile = '{0}.tif'.format(tile_id)
 
         # The raster that loss is being analyzed inside
         raster_of_interest = '{0}_{1}.tif'.format(tile_id, raster_type)
@@ -39,11 +36,11 @@ def loss_in_raster(tile, raster_type, output_name, lat):
         # Argument for outputting file
         out = '--outfile={}'.format(outname)
 
-        print "Masking loss in {} by raster of interest...".format(tile)
-        cmd = ['gdal_calc.py', '-A', tile, '-B', raster_of_interest, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
+        print "Masking loss in {} by raster of interest...".format(tile_id)
+        cmd = ['gdal_calc.py', '-A', loss_tile, '-B', raster_of_interest, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
                '--overwrite']
         subprocess.check_call(cmd)
-        print "{} masked".format(tile)
+        print "{} masked".format(tile_id)
 
     else:
 
