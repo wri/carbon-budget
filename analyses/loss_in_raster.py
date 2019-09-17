@@ -15,6 +15,9 @@ def loss_in_raster(tile, raster_type, output_name, lat):
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
+    print ymax
+    print lat
+
     # start time
     start = datetime.datetime.now()
 
