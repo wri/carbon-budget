@@ -15,7 +15,7 @@ import universal_util as uu
 
 tile_list = uu.tile_list(cn.loss_dir)
 # tile_list = ['00N_110E'] # test tiles
-tile_list = ['00N_110E', '70N_100W', '70N_140E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+# tile_list = ['00N_110E', '70N_100W', '70N_140E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
@@ -46,8 +46,8 @@ lat = int(lat)
 # For downloading all tiles in the input folders
 download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 
-# for input in download_list:
-#     uu.s3_folder_download('{}'.format(input), '.')
+for input in download_list:
+    uu.s3_folder_download('{}'.format(input), '.')
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
@@ -55,16 +55,16 @@ download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
 #     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
 
-# num_of_processes = 14
-# pool = Pool(num_of_processes)
-# pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat), tile_list)
-# pool.close()
-# pool.join()
+num_of_processes = 14
+pool = Pool(num_of_processes)
+pool.map(partial(loss_in_raster.loss_in_raster, raster_type=raster_type, output_name=output_name, lat=lat), tile_list)
+pool.close()
+pool.join()
 
-# For single processor use
-for tile in tile_list:
-
-    loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat)
+# # For single processor use
+# for tile in tile_list:
+#
+#     loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat)
 
 print "Tiles processed. Uploading to s3 now..."
 
