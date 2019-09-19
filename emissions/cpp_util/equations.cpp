@@ -211,8 +211,8 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
                 peat_drain_annual_CO2_only = 58;
                 peat_drain_annual_non_CO2 = 3;
             }
-            peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual;
-            peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual;
+            peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
+            peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
 
 			if (ifl > 0)        // Wildfire, tropics, in IFL
 			{
@@ -294,7 +294,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
     q[2] = CH4;
     q[3] = N2O;
     q[4] = peatburn_CO2_only;
-    q[5] = peatburn_non_CO2
+    q[5] = peatburn_non_CO2;
     q[6] = peat_drain_total_CO2_only;
     q[7] = peat_drain_total_non_CO2;
 }
