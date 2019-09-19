@@ -31,7 +31,7 @@ def calc_emissions(tile_id):
 
     start = datetime.datetime.now()
 
-    emissions_tiles_cmd = ['cpp_util/calc_emissions_v3.exe', tile_id]
+    emissions_tiles_cmd = ['cpp_util/calc_gross_emissions.exe', tile_id]
     subprocess.check_call(emissions_tiles_cmd)
 
     # Prints information about the tile that was just processed

@@ -5,13 +5,13 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled first.
 Navigate to carbon-budget/emissions/cpp_util.
-Compile the C++ file calc_emissions: c++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -lgdal
+Compile the C++ file calc_emissions: c++ calc_gross_emissions.cpp -o calc_emissions_v3.exe -lgdal
 calc_emissions_v3.exe should appear in the directory.
 Return to carbon-budget/emissions using cd ..
 Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py. The Python script will call the
 compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
-Through the magic of C++, calc_emissions_v3.cpp reads them just fine without the user compiling them.
+Through the magic of C++, calc_gross_emissions.cpp reads them just fine without the user compiling them.
 Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
@@ -26,8 +26,8 @@ import constants_and_names as cn
 import universal_util as uu
 
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-# tile_list = ['00N_110E'] # test tiles
+# tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
+tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
@@ -76,17 +76,17 @@ for tile in tile_list:
         print "No IFL/primary forest in", tile
 
 
-print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-# Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-# Pre-2000 plantations have not previously been masked, so that is done here.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
-pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
+# print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+# # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+# # Pre-2000 plantations have not previously been masked, so that is done here.
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
+# pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#       calculate_gross_emissions.mask_pre_2000_plant(tile)
+# For single processor use
+for tile in tile_list:
+
+      calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
 # The C++ code expects a plantations tile for every input 10x10.
@@ -113,16 +113,16 @@ for pattern in pattern_list:
         uu.make_blank_tile(tile, pattern, folder)
 
 
-# Calculates gross emissions for each tile
-# count/4 uses about 390 GB on a r4.16xlarge spot machine
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/2)
-pool.map(calculate_gross_emissions.calc_emissions, tile_list)
+# # Calculates gross emissions for each tile
+# # count/4 uses about 390 GB on a r4.16xlarge spot machine
+# count = multiprocessing.cpu_count()
+# pool = multiprocessing.Pool(count/2)
+# pool.map(calculate_gross_emissions.calc_emissions, tile_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#       calculate_gross_emissions.calc_emissions(tile)
+# For single processor use
+for tile in tile_list:
+
+      calculate_gross_emissions.calc_emissions(tile)
 
 
 uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)

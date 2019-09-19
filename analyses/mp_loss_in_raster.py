@@ -42,12 +42,13 @@ output_name = 'loss_in_{}'.format(raster_type)
 lat = args.latitude_constraint
 lat = int(lat)
 
-#
+# The list of valid mask arguments
 mask = args.mask_output
 valid_masks = ['True', 'False']
 
+# If the mask argument isn't valid, the script terminates
 if mask not in valid_masks:
-    print "Mask is not valid. Use either True or False."
+    print "Mask argument is not valid. Use either True or False."
     sys.exit()
 
 # For downloading all tiles in the input folders
