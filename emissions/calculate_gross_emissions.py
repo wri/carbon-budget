@@ -31,10 +31,10 @@ def calc_emissions(tile_id, pools):
 
     start = datetime.datetime.now()
 
-    if pools is 'biomass_soil':
+    if pools == 'biomass_soil':
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
 
-    elif pools is 'biomass_only':
+    elif pools == 'biomass_only':
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_only.exe', tile_id]
 
     else:

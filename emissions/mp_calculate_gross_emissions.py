@@ -162,7 +162,7 @@ def main ():
           calculate_gross_emissions.calc_emissions(tile, pools)
 
 
-    if pools is 'biomass_soil':
+    if pools == 'biomass_soil':
 
         uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
         uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
@@ -175,7 +175,7 @@ def main ():
         uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_dir, cn.pattern_gross_emis_non_co2_all_drivers)
         uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
 
-    if pools is 'biomass_only':
+    if pools == 'biomass_only':
 
         upload_list = [cn.gross_emis_commod_dir, cn.gross_emis_shifting_ag_dir, cn.gross_emis_forestry_dir,
                        cn.gross_emis_wildfire_dir, cn.gross_emis_urban_dir, cn.gross_emis_no_driver_dir,
