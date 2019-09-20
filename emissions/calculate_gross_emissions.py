@@ -25,13 +25,21 @@ def mask_pre_2000_plant(tile_id):
 
 
 # Calls the c++ script to calculate gross emissions
-def calc_emissions(tile_id):
+def calc_emissions(tile_id, pools):
 
     print "Calculating gross emissions for", tile_id
 
     start = datetime.datetime.now()
 
-    emissions_tiles_cmd = ['cpp_util/calc_gross_emissions.exe', tile_id]
+    if pools is 'biomass_soil':
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
+
+    elif pools is 'biomass_only':
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_only.exe', tile_id]
+
+    else:
+        raise Exception('Pool option not valid')
+
     subprocess.check_call(emissions_tiles_cmd)
 
     # Prints information about the tile that was just processed
