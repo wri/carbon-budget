@@ -712,18 +712,18 @@ for(x=0; x<xsize; x++)
 						//if ((agc_data[x] = 26.25) && (soil_data[x] = 216) && (y > 12700) && (x < 12707))
 						if ((total < 715) && (total > 714) && (agc_data[x] = 26.25) && (soil_data[x] = 216) && (dead_data[x] = 1.44) && (litter_data[x] = 0.5328) && (burn_data[x] = 6))
 						{
-						    cout << total << endl;
-						    cout << Biomass_tCO2e_yesfire_CO2_only << endl;
-						    cout << peat_drain_total_CO2_only << endl;
-						    cout << peatburn_CO2_only << endl;
-						    cout << Biomass_tCO2e_yesfire_non_CO2 << endl;
-						    cout << peat_drain_total_non_CO2 << endl;
-						    cout << peatburn_non_CO2 << endl;
-						    cout << agc_data[x] << endl;
-						    cout << Cf << endl;
-						    cout << Gef_CO2 << endl;
-						    cout << Gef_CH4 << endl;
-						    cout << Gef_N2O << endl;
+						    cout << "total" + total << endl;
+						    cout << "Biomass_tCO2e_yesfire_CO2_only" + Biomass_tCO2e_yesfire_CO2_only << endl;
+						    cout << "Biomass_tCO2e_yesfire_non_CO2" + Biomass_tCO2e_yesfire_non_CO2 << endl;
+						    cout << "peat_drain_total_CO2_only" + peat_drain_total_CO2_only << endl;
+						    cout << "peat_drain_total_non_CO2" + peat_drain_total_non_CO2 << endl;
+						    cout << "peatburn_CO2_only" + peatburn_CO2_only << endl;
+						    cout << "peatburn_non_CO2" + peatburn_non_CO2 << endl;
+						    cout << "agc_data[x]" + agc_data[x] << endl;
+						    cout << "Cf" + Cf << endl;
+						    cout << "Gef_CO2" + Gef_CO2 << endl;
+						    cout << "Gef_CH4" + Gef_CH4 << endl;
+						    cout << "Gef_N2O" + Gef_N2O << endl;
 						    cout << "" << endl;
 						}
 					}
