@@ -137,15 +137,13 @@ def main ():
         if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
             print "C++ for biomass+soil already compiled."
         else:
-            print "Compiling biomass+soil C++..."
-            os.system('./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal')
+            raise Exception('Must compile biomass+soil C++...')
 
     elif pools == 'biomass_only':
         if os.path.exists('./cpp_util/calc_gross_emissions_biomass_only.exe'):
             print "C++ for biomass_only already compiled."
         else:
-            print "Compiling biomass_only C++..."
-            os.system('./cpp_util/calc_gross_emissions_biomass_only.cpp -o ./cpp_util/calc_gross_emissions_biomass_only.exe -lgdal')
+            raise Exception('Must compile biomass_only C++...')
 
     else:
         raise Exception('Pool option not valid')
