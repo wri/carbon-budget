@@ -364,7 +364,7 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/20190602/'.format(base_carbon_po
 ######
 
 # Date to include in the output directory
-emis_run_date = '20190919'
+emis_run_date = '20190920'
 
 pattern_gross_emis_commod = 'commodity_t_CO2e_ha_gross_emis_year'
 gross_emis_commod_dir = '{0}gross_emissions/commodities/biomass_soil/{1}/'.format(base_dir, emis_run_date)
