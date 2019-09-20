@@ -706,7 +706,7 @@ for(x=0; x<xsize; x++)
 						outdata3b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 30;
 
-						if ((agc_data[x] = 26.25) && (soil_data[x] = 216) && (y > 27,294) && (x < 27,298))
+						if ((agc_data[x] = 26.25) && (soil_data[x] = 216) && (y > 12700) && (x < 12707))
 						{
 						    cout << Biomass_tCO2e_yesfire_CO2_only << endl;
 						    cout << peat_drain_total_CO2_only << endl;
