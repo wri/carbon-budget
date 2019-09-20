@@ -705,6 +705,21 @@ for(x=0; x<xsize; x++)
 						outdata3a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata3b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 30;
+
+						if (agc_data[x] = 26.25)
+						{
+						    cout << Biomass_tCO2e_yesfire_CO2_only;
+						    cout << peat_drain_total_CO2_only;
+						    cout << peatburn_CO2_only;
+						    cout << Biomass_tCO2e_yesfire_non_CO2;
+						    cout << peat_drain_total_non_CO2;
+						    cout << peatburn_non_CO2;
+						    cout << agc_data[x];
+						    cout << Cf;
+						    cout << Gef_CO2;
+						    cout << Gef_CH4;
+						    cout << Gef_N2O;
+						}
 					}
 					if (burn_data[x] == 0 )  // Forestry, peat, not burned
 					{
