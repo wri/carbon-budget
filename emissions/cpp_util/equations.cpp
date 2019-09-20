@@ -1,3 +1,6 @@
+// Provides most of the constants for the gross emissions calculation.
+// These are basically found in the table preceding the emissions model decision trees.
+
 #include <map>
 #include <iostream>
 #include <stdlib.h>

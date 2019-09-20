@@ -3,7 +3,7 @@
 // The first split is whether the pixel has carbon and loss.
 // NOTE: The way I've set up the model, all carbon pixels have loss (i.e. only carbon pixels with loss are input to the model).
 // The next split is which driver of tree cover loss the pixel falls in.
-// The next split is whther the pixel is on peat, followed by whether there was fire.
+// The next split is whether the pixel is on peat, followed by whether there was fire.
 // The splits after that depend on the particular tree, but include ecozone (boreal/temperate/tropical), IFL, and plantation status.
 // Each series of splits ends with a particular equation that calculates gross emissions in that case.
 // The equations sometimes rely on constants, which are calculated for each pixel and are based on properties of
@@ -11,6 +11,8 @@
 // Each end point of the decision tree gets its own code, so that it's easier to tell what branch of the decision tree
 // each pixel came from. That makes checking the results easier, too.
 // These codes are summarized in carbon-budget/emissions/node_codes.txt
+// Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N20), each model endpoint has a CO2-only and
+// a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
 
 
 #include <iostream>
@@ -717,7 +719,7 @@ for(x=0; x<xsize; x++)
 							if (plant_data[x] > 0)  // Forestry, peat, not burned, tropical, plantation
 							{
 								outdata3a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-								outdata3b = peat_drain_total_non_CO2;
+								outdata3b = 0 + peat_drain_total_non_CO2;
 								outdata20 = 32;
 							}
 							if (plant_data[x] == 0)  // Forestry, peat, not burned, tropical, not plantation
@@ -775,7 +777,7 @@ for(x=0; x<xsize; x++)
 					        if (plant_data[x] > 0)  // Wildfire, peat, not burned, tropical, plantation
 							{
 								outdata4a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-								outdata4b = peat_drain_total_non_CO2;
+								outdata4b = 0 + peat_drain_total_non_CO2;
 								outdata20 = 42;
 							}
 							if (plant_data[x] == 0)  // Wildfire, peat, not burned, tropical, not plantation
@@ -830,7 +832,7 @@ for(x=0; x<xsize; x++)
 						    if (plant_data[x] >= 1) // Urbanization, peat, not burned, tropical, plantation
 						    {
 						    	outdata5a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						        outdata5b = peat_drain_total_non_CO2;
+						        outdata5b = 0 + peat_drain_total_non_CO2;
 						        outdata20 = 51;
 						    }
 						    if (plant_data[x] == 0)     // Urbanization, peat, not burned, tropical, not plantation
@@ -843,7 +845,7 @@ for(x=0; x<xsize; x++)
                         if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))      // Urbanization, peat, not burned, temperate/boreal
 						{
 						    outdata5a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						    outdata5b = peat_drain_total_non_CO2;
+						    outdata5b = 0 + peat_drain_total_non_CO2;
 						    outdata20 = 52;
 						}
 					}
@@ -979,7 +981,7 @@ for(x=0; x<xsize; x++)
 							if (plant_data[x] > 0)  // No driver, peat, not burned, tropical, plantation
 							{
 								outdata6a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-								outdata6b = peat_drain_total_non_CO2;
+								outdata6b = 0 + peat_drain_total_non_CO2;
 								outdata20 = 62;
 							}
 							if (plant_data[x] == 0)  // No driver, peat, not burned, tropical, not plantation

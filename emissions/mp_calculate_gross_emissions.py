@@ -3,16 +3,18 @@ This script calculates the gross emissions in tonnes CO2e/ha for every loss pixe
 The properties of each pixel determine the appropriate emissions equation, the constants for the equation, and the
 carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
-Before running the model, the C++ script must be compiled first.
+Before running the model, the C++ script must be compiled.
 Navigate to carbon-budget/emissions/cpp_util.
 Compile the C++ file calc_emissions: c++ calc_gross_emissions.cpp -o calc_emissions_v3.exe -lgdal
-calc_emissions_v3.exe should appear in the directory.
 Return to carbon-budget/emissions using cd ..
+Or, from carbon-budget/emissions/, do c++ ./cpp_util/calc_gross_emissions.cpp -o ./cpp_util/calc_gross_emissions.exe -lgdal
+calc_emissions_v3.exe should appear in the directory.
 Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py. The Python script will call the
 compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
 Through the magic of C++, calc_gross_emissions.cpp reads them just fine without the user compiling them.
 Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
+Emissions from all drivers is also output as emissions due to CO2 only and emissions due to other GHG (CH4 and N2O).
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
 '''
@@ -27,7 +29,7 @@ import universal_util as uu
 
 # tile_list = uu.tile_list(cn.AGC_emis_year_dir)
 # tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-tile_list = ['00N_110E'] # test tiles
+tile_list = ['60N_080E'] # test tiles
 # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
