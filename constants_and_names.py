@@ -402,7 +402,7 @@ gross_emis_nodes_dir = '{0}gross_emissions/decision_tree_nodes/biomass_soil/{1}/
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15'
-net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/20190921/')
+net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/20190921/')
 
 
 
