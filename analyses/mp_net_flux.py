@@ -42,7 +42,7 @@ for pattern in pattern_list:
 
 # Count/3 uses about 380 GB on a r4.16xlarge spot machine
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count / 3)
+pool = multiprocessing.Pool(processes=24)
 pool.map(net_flux.net_calc, tile_list)
 
 # # For single processor use
