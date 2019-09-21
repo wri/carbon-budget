@@ -8,7 +8,7 @@ Navigate to carbon-budget/emissions/cpp_util.
 Compile the C++ file calc_emissions: c++ calc_gross_emissions_biomass_soil.cpp -o calc_emissions_v3_biomass_soil.exe -lgdal
 Return to carbon-budget/emissions using cd ..
 Or, from carbon-budget/emissions/, do c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
-calc_emissions_v3.exe should appear in the directory.
+calc_emissions_v3_biomass_soil.exe should appear in the directory.
 Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py. The Python script will call the
 compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
@@ -175,7 +175,7 @@ def main ():
         uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_dir, cn.pattern_gross_emis_non_co2_all_drivers)
         uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
 
-    if pools == 'biomass_only':
+    elif pools == 'biomass_only':
 
         upload_list = [cn.gross_emis_commod_dir, cn.gross_emis_shifting_ag_dir, cn.gross_emis_forestry_dir,
                        cn.gross_emis_wildfire_dir, cn.gross_emis_urban_dir, cn.gross_emis_no_driver_dir,
