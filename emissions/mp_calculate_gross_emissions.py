@@ -153,7 +153,7 @@ def main ():
     # Calculates gross emissions for each tile
     # count/4 uses about 390 GB on a r4.16xlarge spot machine
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/4)
+    pool = multiprocessing.Pool(processes=18)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_list)
 
     # # For single processor use
