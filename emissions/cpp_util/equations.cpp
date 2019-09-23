@@ -61,7 +61,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
 		}
-		else if (ecozone == tropical) // Commodities/shifting ag/urbanization, tropics
+		else // Commodities/shifting ag/urbanization, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -126,7 +126,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
 		}
-		else if (ecozone == tropical) // Forestry, tropics
+		else  // Forestry, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -191,7 +191,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
 		}
-		else if (ecozone == tropical) // Wildfire, tropics
+		else // Wildfire, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -256,7 +256,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
 		}
-		else if (ecozone == tropical) // No driver, tropics
+		else // No driver, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
