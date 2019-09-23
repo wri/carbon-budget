@@ -786,7 +786,7 @@ for(x=0; x<xsize; x++)
                         //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
                         double total;
                         total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
-                        if ((total < 262) && (total > 261) && (agc_data[x] = 19) && (burn_data[x] = 1))
+                        if ((total < 263) && (total > 260) && (agc_data[x] = 19) && (burn_data[x] = 1))
                         {
                             cout << "total: " << total << endl;
                             cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
