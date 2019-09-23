@@ -787,7 +787,7 @@ for(x=0; x<xsize; x++)
                         double total;
                         total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
                         //if ((total < 263) && (total > 260) && (agc_data[x] = 19) && (burn_data[x] = 1))
-                        if ((outdata4b > 2000) && (outdata4b = -2.125) && (agc_data[x] = 19) && (burn_data[x] = 1))
+                        if ((outdata4a > 2000) && (outdata4b = -2.125) && (agc_data[x] = 19) && (burn_data[x] = 1))
                         {
                             cout << "total: " << total << endl;
                             cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
