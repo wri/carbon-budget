@@ -115,4 +115,4 @@ def create_tile_statistics(tile):
     f.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, stats[1])
+    uu.end_of_fx_summary(start, tile_id, tile[9:])
