@@ -55,10 +55,10 @@ def main():
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_folder_download(cn.pixel_area_dir, '.')
-    # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_folder_download(cn.tcd_dir, '.')
+    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    # uu.s3_folder_download(cn.pixel_area_dir, '.')
+    # # tree cover density tiles-- necessary for filtering sums by tcd
+    # uu.s3_folder_download(cn.tcd_dir, '.')
 
     input_dict = {
              cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
@@ -74,11 +74,12 @@ def main():
     for dir, pattern in input_dict.items():
 
         tile_id_list = uu.tile_list(dir)
+
+        # uu.s3_folder_download(dir, '.')
+
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list)))
         print "Processing:", dir, "; ", pattern
-
-        uu.s3_folder_download(dir, '.')
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files
