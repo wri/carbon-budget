@@ -146,20 +146,20 @@ def main ():
     #
     # else:
     #     raise Exception('Pool option not valid')
+
+
+
+    # Calculates gross emissions for each tile
+    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=18)
+    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_list)
+
+    # # For single processor use
+    # for tile in tile_list:
     #
-    #
-    #
-    # # Calculates gross emissions for each tile
-    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=18)
-    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_list)
-    #
-    # # # For single processor use
-    # # for tile in tile_list:
-    # #
-    # #       calculate_gross_emissions.calc_emissions(tile, pools)
+    #       calculate_gross_emissions.calc_emissions(tile, pools)
 
 
     # Uploads emissions to default directory for biomass+soil
