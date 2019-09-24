@@ -411,7 +411,7 @@ def name_aggregated_output(pattern, thresh):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    out_name = '{0}_10km_tcd{1}_modelv1_1_{2}'.format(out_pattern, thresh, date_formatted)
+    out_name = '{0}_10km_tcd{1}_modelv1_1_biomass_soil_{2}'.format(out_pattern, thresh, date_formatted)
 
     return out_name
 
