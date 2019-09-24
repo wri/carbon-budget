@@ -43,5 +43,17 @@ def calc_emissions(tile_id, pools):
 
     subprocess.check_call(emissions_tiles_cmd)
 
+
+    # Identifies which pattern to use for counting tile completion
+    pattern = cn.pattern_gross_emis_commod
+    if pools == 'biomass_soil':
+        pattern = pattern
+
+    elif pools == 'soil_only':
+        pattern = pattern.replace('biomass_soil', 'soil_only')
+
+    else:
+        raise Exception('Pool option not valid')
+
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, os.path.join(cn.pattern_gross_emis_commod))
+    uu.end_of_fx_summary(start, tile_id, pattern)
