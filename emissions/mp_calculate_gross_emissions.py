@@ -4,15 +4,12 @@ The properties of each pixel determine the appropriate emissions equation, the c
 carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
-Navigate to carbon-budget/emissions/cpp_util.
-Compile the C++ file calc_emissions: c++ calc_gross_emissions_biomass_soil.cpp -o calc_emissions_v3_biomass_soil.exe -lgdal
-Return to carbon-budget/emissions using cd ..
-Or, from carbon-budget/emissions/, do c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
+From carbon-budget/emissions/, do c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
 calc_emissions_v3_biomass_soil.exe should appear in the directory.
-Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py. The Python script will call the
+Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION]. The Python script will call the
 compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
-Through the magic of C++, calc_gross_emissions_biomass_soil.cpp reads them just fine without the user compiling them.
+The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
 Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
 Emissions from all drivers is also output as emissions due to CO2 only and emissions due to other GHG (CH4 and N2O).
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
@@ -33,23 +30,23 @@ def main ():
 
     tile_list = uu.tile_list(cn.AGC_emis_year_dir)
     # tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-    # tile_list = ['20N_010E'] # test tiles
+    tile_list = ['20N_010E'] # test tiles
     # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
     print tile_list
     print "There are {} tiles to process".format(str(len(tile_list)))
 
 
-    # One argument for the script: whether only emissions from biomass is being calculated or emissions from biomass and soil
+    # One argument for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil)
     parser = argparse.ArgumentParser(description='Calculate gross emissions')
     parser.add_argument('--pools-to-use', '-p', required=True,
-                        help='Options are biomass_only or biomass_soil. Former only considers emissions from biomass. Latter considers emissions from biomass and soil.')
+                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
     args = parser.parse_args()
 
     pools = args.pools_to_use
 
     # Checks the validity of the argument.
-    if (pools not in ['biomass_only', 'biomass_soil']):
-        raise Exception('Invalid pool input. Please choose biomass_only or biomass_soil.')
+    if (pools not in ['soil_only', 'biomass_soil']):
+        raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
 
 
     # For downloading all tiles in the folders.
@@ -62,38 +59,38 @@ def main ():
                      cn.loss_dir
                     ]
 
-    for input in download_list:
-        uu.s3_folder_download(input, './cpp_util/')
+    # for input in download_list:
+    #     uu.s3_folder_download(input, './cpp_util/')
 
-    # # For copying individual tiles to s3 for testing
-    # for tile in tile_list:
-    #
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile, cn.pattern_AGC_emis_year), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.BGC_emis_year_dir, tile, cn.pattern_BGC_emis_year), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.deadwood_emis_year_2000_dir, tile, cn.pattern_deadwood_emis_year_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.drivers_processed_dir, tile, cn.pattern_drivers), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.climate_zone_processed_dir, tile, cn.pattern_climate_zone), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile, cn.pattern_bor_tem_trop_processed), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.burn_year_dir, tile, cn.pattern_burn_year), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
-    #     try:
-    #         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), './cpp_util/')
-    #     except:
-    #         print "No pre-2000 plantations in", tile
-    #     try:
-    #         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), './cpp_util/')
-    #     except:
-    #         print "No peat mask for", tile
-    #     try:
-    #         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
-    #     except:
-    #         print "No plantations in", tile
-    #     try:
-    #         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
-    #     except:
-    #         print "No IFL/primary forest in", tile
+    # For copying individual tiles to s3 for testing
+    for tile in tile_list:
+
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile, cn.pattern_AGC_emis_year), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.BGC_emis_year_dir, tile, cn.pattern_BGC_emis_year), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.deadwood_emis_year_2000_dir, tile, cn.pattern_deadwood_emis_year_2000), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.drivers_processed_dir, tile, cn.pattern_drivers), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.climate_zone_processed_dir, tile, cn.pattern_climate_zone), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile, cn.pattern_bor_tem_trop_processed), './cpp_util/')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.burn_year_dir, tile, cn.pattern_burn_year), './cpp_util/')
+        uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
+        try:
+            uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), './cpp_util/')
+        except:
+            print "No pre-2000 plantations in", tile
+        try:
+            uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), './cpp_util/')
+        except:
+            print "No peat mask for", tile
+        try:
+            uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
+        except:
+            print "No plantations in", tile
+        try:
+            uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
+        except:
+            print "No IFL/primary forest in", tile
 
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
@@ -134,17 +131,18 @@ def main ():
     #         uu.make_blank_tile(tile, pattern, folder)
 
 
+    # Checks if the correct c++ script has been compiled for the pool option selected
     if pools == 'biomass_soil':
         if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
             print "C++ for biomass+soil already compiled."
         else:
             raise Exception('Must compile biomass+soil C++...')
 
-    elif pools == 'biomass_only':
-        if os.path.exists('./cpp_util/calc_gross_emissions_biomass_only.exe'):
-            print "C++ for biomass_only already compiled."
+    elif pools == 'soil_only':
+        if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
+            print "C++ for soil_only already compiled."
         else:
-            raise Exception('Must compile biomass_only C++...')
+            raise Exception('Must compile soil_only C++...')
 
     else:
         raise Exception('Pool option not valid')
@@ -164,6 +162,7 @@ def main ():
     #       calculate_gross_emissions.calc_emissions(tile, pools)
 
 
+    # Uploads emissions to default directory for biomass+soil
     if pools == 'biomass_soil':
 
         uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
@@ -177,12 +176,27 @@ def main ():
         uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_dir, cn.pattern_gross_emis_non_co2_all_drivers)
         uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
 
-    elif pools == 'biomass_only':
+    # If soil_only was chosen, the output directories need to be changed.
+    # The soil_only output names are included in the c++ script, so they don't need to be changed here.
+    elif pools == 'soil_only':
 
-        upload_list = [cn.gross_emis_commod_dir, cn.gross_emis_shifting_ag_dir, cn.gross_emis_forestry_dir,
-                       cn.gross_emis_wildfire_dir, cn.gross_emis_urban_dir, cn.gross_emis_no_driver_dir,
-                       cn.gross_emis_all_gases_all_drivers_dir, cn.gross_emis_co2_only_all_drivers_dir,
-                       cn.gross_emis_non_co2_all_drivers_dir, cn.gross_emis_nodes_dir]
+        input_dict = {cn.gross_emis_commod_dir: cn.pattern_gross_emis_commod,
+                      cn.gross_emis_shifting_ag_dir: cn.pattern_gross_emis_shifting_ag,
+                      cn.gross_emis_forestry_dir: cn.pattern_gross_emis_forestry,
+                      cn.gross_emis_wildfire_dir: cn.pattern_gross_emis_wildfire,
+                      cn.gross_emis_urban_dir: cn.pattern_gross_emis_urban,
+                      cn.gross_emis_no_driver_dir: cn.pattern_gross_emis_no_driver,
+                      cn.gross_emis_all_gases_all_drivers_dir: cn.pattern_gross_emis_all_gases_all_drivers,
+                      cn.gross_emis_co2_only_all_drivers_dir: cn.pattern_gross_emis_co2_only_all_drivers,
+                      cn.gross_emis_non_co2_all_drivers_dir: cn.pattern_gross_emis_non_co2_all_drivers,
+                      cn.gross_emis_nodes_dir: cn.pattern_gross_emis_nodes
+                      }
+
+        # For each output, changes the output directory to soil_only
+        for dir, pattern in input_dict.items():
+
+            dir = dir.replace('biomass_soil', 'soil_only')
+            uu.upload_final_set(dir, pattern)
 
     else:
         raise Exception('Pool option not valid')

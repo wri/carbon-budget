@@ -31,11 +31,12 @@ def calc_emissions(tile_id, pools):
 
     start = datetime.datetime.now()
 
+    # Runs the correct c++ script given the pools selected (biomass+soil or soil_only)
     if pools == 'biomass_soil':
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
 
-    elif pools == 'biomass_only':
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_only.exe', tile_id]
+    elif pools == 'soil_only':
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
 
     else:
         raise Exception('Pool option not valid')

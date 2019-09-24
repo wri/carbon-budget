@@ -1,4 +1,4 @@
-// Implements the calculation of gross emissions from biomass and soil and stores the outputs as rasters.
+// Implements the calculation of gross emissions from soil only and stores the outputs as rasters.
 // This is essentially one large decision tree that iterates pixel by pixel across each Hansen tile.
 // The first split is whether the pixel has carbon and loss.
 // NOTE: The way I've set up the model, all carbon pixels have loss (i.e. only carbon pixels with loss are input to the model).
@@ -92,16 +92,16 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1  = tile_id + "_commodity_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name2  = tile_id + "_shifting_ag_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name3  = tile_id + "_forestry_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name4  = tile_id + "_wildfire_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name5  = tile_id + "_urbanization_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name6  = tile_id + "_no_driver_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name10 = tile_id + "_all_gases_all_drivers_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name11 = tile_id + "_CO2_only_all_drivers_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name12 = tile_id + "_non_CO2_all_drivers_t_CO2e_ha_gross_emis_year_biomass_soil.tif";
-string out_name20 = tile_id + "_decision_tree_nodes_gross_emis_biomass_soil.tif";
+string out_name1  = tile_id + "_commodity_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name2  = tile_id + "_shifting_ag_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name3  = tile_id + "_forestry_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name4  = tile_id + "_wildfire_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name5  = tile_id + "_urbanization_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name6  = tile_id + "_no_driver_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name10 = tile_id + "_all_gases_all_drivers_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name11 = tile_id + "_CO2_only_all_drivers_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name12 = tile_id + "_non_CO2_all_drivers_t_CO2e_ha_gross_emis_year_soil_only.tif";
+string out_name20 = tile_id + "_decision_tree_nodes_gross_emis_soil_only.tif";
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
@@ -382,9 +382,9 @@ for(x=0; x<xsize; x++)
 			float above_below_c;
 			above_below_c = agc_data[x] + bgc_data[x];
 
-			float Biomass_tCO2e_nofire_CO2_only;     // Emissions from biomass on pixels without fire- only emits CO2 (no non-CO2 option)
-			float Biomass_tCO2e_yesfire_CO2_only;    // Emissions from biomass on pixels with fire- only the CO2
-			float Biomass_tCO2e_yesfire_non_CO2;     // Emissions from biomass on pixels with fire- only the non-CO2 gases
+//			float Biomass_tCO2e_nofire_CO2_only;     // Emissions from biomass on pixels without fire- only emits CO2 (no non-CO2 option)
+//			float Biomass_tCO2e_yesfire_CO2_only;    // Emissions from biomass on pixels with fire- only the CO2
+//			float Biomass_tCO2e_yesfire_non_CO2;     // Emissions from biomass on pixels with fire- only the non-CO2 gases
 			float minsoil;                           // Emissions from mineral soil- all CO2
 			float flu;                               // Emissions fraction from mineral soil
 
@@ -395,9 +395,9 @@ for(x=0; x<xsize; x++)
 			if (drivermodel_data[x] == 1)
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
-				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+//				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_CO2_only = non_soil_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (model_years-loss_data[x]);
 
@@ -405,8 +405,8 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // Commodity, peat, burned
 					{
-						outdata1a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
-						outdata1b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+						outdata1a = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata1b = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 10;
 					}
 					if (burn_data[x] == 0) // Commodity, peat, not burned
@@ -415,21 +415,21 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1) // Commodity, peat, not burned, tropical, plantation
 						    {
-						    	outdata1a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						        outdata1b = 0 + peat_drain_total_non_CO2;
+						    	outdata1a = peat_drain_total_CO2_only;
+						        outdata1b = peat_drain_total_non_CO2;
 						        outdata20 = 11;
 						    }
 						    if (plant_data[x] == 0)     // Commodity, peat, not burned, tropical, not plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata1a = 0;
 						        outdata1b = 0;
 						        outdata20 = 111;
 						    }
 						}
                         if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))      // Commodity, peat, not burned, temperate/boreal
 						{
-						    outdata1a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						    outdata1b = 0 + peat_drain_total_non_CO2;
+						    outdata1a = peat_drain_total_CO2_only;
+						    outdata1b = peat_drain_total_non_CO2;
 						    outdata20 = 12;
 						}
 					}
@@ -444,14 +444,14 @@ for(x=0; x<xsize; x++)
                             {
                                 if (plant_data[x] >= 1)     // Commodity, not peat, burned, tropical, IFL, plantation
 						        {
-						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;
-						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata1a = 0;
+						            outdata1b = 0;
 						            outdata20 = 13;
 						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, IFL, not plantation
 						        {
-						            outdata1a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata1a = minsoil;
+						            outdata1b = 0;
 						            outdata20 = 131;
 						        }
 						    }
@@ -459,36 +459,36 @@ for(x=0; x<xsize; x++)
 						    {
                                 if (plant_data[x] >= 1)     // Commodity, not peat, burned, tropical, not IFL, plantation
 						        {
-						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;
-						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata1a = 0;
+						            outdata1b = 0;
 						            outdata20 = 14;
  						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, not IFL, not plantation
 						        {
-						            outdata1a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata1a = minsoil;
+						            outdata1b = 0;
 						            outdata20 = 141;
 						        }
                             }
 						}
 						if (ecozone_data[x] == boreal)   // Commodity, not peat, burned, boreal
 						{
-                            outdata1a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-                            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+                            outdata1a = minsoil;
+                            outdata1b = 0;
 						    outdata20 = 15;
 						}
 						if (ecozone_data[x] == temperate)   // Commodity, not peat, burned, temperate
 						{
 						    if (plant_data[x] >= 1)     // Commodity, not peat, burned, temperate, plantation
 						    {
-						        outdata1a = Biomass_tCO2e_yesfire_CO2_only;
-						        outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+						        outdata1a = 0;
+						        outdata1b = 0;
 						        outdata20 = 16;
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
 						    {
-						        outdata1a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						        outdata1b = Biomass_tCO2e_yesfire_non_CO2;
+						        outdata1a = minsoil;
+						        outdata1b = 0;
 						        outdata20 = 161;
 						    }
 						}
@@ -499,20 +499,20 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Commodity, not peat, not burned, tropical, plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata1a = 0;
 						        outdata1b = 0;
 						        outdata20 = 17;
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, tropical, no plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+						        outdata1a = minsoil;
 						        outdata1b = 0;
 						        outdata20 = 171;
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Commodity, not peat, not burned, boreal
 						{
-                            outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+                            outdata1a = minsoil;
                             outdata1b = 0;
                             outdata20 = 18;
 						}
@@ -520,13 +520,13 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Commodity, not peat, not burned, temperate, plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata1a = 0;
 						        outdata1b = 0;
 						        outdata20 = 19;
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+						        outdata1a = minsoil;
 						        outdata1b = 0;
 						        outdata20 = 191;
 
@@ -559,9 +559,9 @@ for(x=0; x<xsize; x++)
 			// Emissions model for shifting agriculture (only difference is flu val)
 			else if (drivermodel_data[x] == 2)
 			{
-				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
-                Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+//				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
+//              Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float shiftag_flu;
 				shiftag_flu = 0.72;
 				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20) * (model_years-loss_data[x]);
@@ -572,14 +572,14 @@ for(x=0; x<xsize; x++)
 					{
 						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))      // Shifting ag, peat, burned, temperate/boreal
 						{
-						    outdata2a = Biomass_tCO2e_yesfire_CO2_only + peatburn_CO2_only;
-						    outdata2b = Biomass_tCO2e_yesfire_non_CO2 + peatburn_non_CO2;
+						    outdata2a = peatburn_CO2_only;
+						    outdata2b = peatburn_non_CO2;
 						    outdata20 = 20;
 						}
 						if (ecozone_data[x] == tropical)      // Shifting ag, peat, burned, tropical
 						{
-						    outdata2a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_non_CO2;
-						    outdata2b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+						    outdata2a = peat_drain_total_CO2_only + peatburn_non_CO2;
+						    outdata2b = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						    outdata20 = 21;
 						}
 					}
@@ -587,7 +587,7 @@ for(x=0; x<xsize; x++)
 					{
 						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))      // Shifting ag, peat, not burned, temperate/boreal
 						{
-						    outdata2a = Biomass_tCO2e_nofire_CO2_only;
+						    outdata2a = 0;
 						    outdata2b = 0;
 						    outdata20 = 22;
 						}
@@ -595,13 +595,13 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Shifting ag, peat, not burned, tropical, plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						        outdata2b = 0 + peat_drain_total_non_CO2;
+						        outdata2a = peat_drain_total_CO2_only;
+						        outdata2b = peat_drain_total_non_CO2;
 						        outdata20 = 23;
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, peat, not burned, tropical, not plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata2a = 0;
 						        outdata2b = 0;
 						        outdata20 = 231;
 						    }
@@ -618,14 +618,14 @@ for(x=0; x<xsize; x++)
                             {
                                 if (plant_data[x] >= 1)     // Shifting ag, not peat, burned, tropical, IFL, plantation
 						        {
-						            outdata2a = Biomass_tCO2e_yesfire_CO2_only;
-						            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata2a = 0;
+						            outdata2b = 0;
 						            outdata20 = 24;
 						        }
 						        if (plant_data[x] == 0)     // Shifting ag, not peat, burned, tropical, IFL, not plantation
 						        {
-						            outdata2a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata2a = minsoil;
+						            outdata2b = 0;
 						            outdata20 = 241;
 						        }
 						    }
@@ -633,36 +633,36 @@ for(x=0; x<xsize; x++)
 						    {
                                 if (plant_data[x] >= 1)     // Shifting ag, not peat, burned, tropical, not IFL, plantation
 						        {
-						            outdata2a = Biomass_tCO2e_yesfire_CO2_only;
-						            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata2a = 0;
+						            outdata2b = 0;
 						            outdata20 = 25;
 						        }
 						        if (plant_data[x] == 0)     // Shifting ag, not peat, burned, tropical, not IFL, not plantation
 						        {
-						            outdata2a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata2a = minsoil;
+						            outdata2b = 0;
 						            outdata20 = 251;
 						        }
                             }
 						}
 						if (ecozone_data[x] == boreal)   // Shifting ag, not peat, burned, boreal
 						{
-                            outdata2a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-                            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+                            outdata2a = minsoil;
+                            outdata2b = 0;
 						    outdata20 = 26;
 						}
 						if (ecozone_data[x] == temperate)   // Shifting ag, not peat, burned, temperate
 						{
 						    if (plant_data[x] >= 1)     // Shifting ag, not peat, burned, temperate, plantation
 						    {
-						        outdata2a = Biomass_tCO2e_yesfire_CO2_only;
-						        outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+						        outdata2a = 0;
+						        outdata2b = 0;
 						        outdata20 = 27;
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, not peat, burned, temperate, no plantation
 						    {
-						        outdata2a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						        outdata2b = Biomass_tCO2e_yesfire_non_CO2;
+						        outdata2a = minsoil;
+						        outdata2b = 0;
 						        outdata20 = 271;
 						    }
 						}
@@ -673,20 +673,20 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Shifting ag, not peat, not burned, tropical, plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata2a = 0;
 						        outdata2b = 0;
 						        outdata20 = 28;
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, tropical, no plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+						        outdata2a = minsoil;
 						        outdata2b = 0;
 						        outdata20 = 281;
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Shifting ag, not peat, not burned, boreal
 						{
-                            outdata2a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+                            outdata2a = minsoil;
                             outdata2b = 0;
                             outdata20 = 29;
 						}
@@ -694,13 +694,13 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Shifting ag, not peat, not burned, temperate, plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata2a = 0;
 						        outdata2b = 0;
 						        outdata20 = 291;
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, temperate, no plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+						        outdata2a = minsoil;
 						        outdata2b = 0;
 						        outdata20 = 292;
 						    }
@@ -713,23 +713,23 @@ for(x=0; x<xsize; x++)
 			// Emissions model for forestry
 			else if (drivermodel_data[x] == 3)
 			{
-				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
-                Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+//				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
+//                Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // Forestry, peat
 				{
 					if (burn_data[x] > 0 ) // Forestry, peat, burned
 					{
-						outdata3a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
-						outdata3b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+						outdata3a = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata3b = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 30;
 					}
 					if (burn_data[x] == 0 )  // Forestry, peat, not burned
 					{
 						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))  // Forestry, peat, not burned, temperate/boreal
 						{
-							outdata3a = Biomass_tCO2e_nofire_CO2_only;
+							outdata3a = 0;
 							outdata3b = 0;
 							outdata20 = 31;
 						}
@@ -737,13 +737,13 @@ for(x=0; x<xsize; x++)
 						{
 							if (plant_data[x] > 0)  // Forestry, peat, not burned, tropical, plantation
 							{
-								outdata3a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-								outdata3b = 0 + peat_drain_total_non_CO2;
+								outdata3a = peat_drain_total_CO2_only;
+								outdata3b = peat_drain_total_non_CO2;
 								outdata20 = 32;
 							}
 							if (plant_data[x] == 0)  // Forestry, peat, not burned, tropical, not plantation
 							{
-								outdata3a = Biomass_tCO2e_nofire_CO2_only;
+								outdata3a = 0;
 								outdata3b = 0;
 								outdata20 = 321;
 							}
@@ -754,13 +754,13 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // Forestry, not peat, burned
 					{
-						outdata3a = Biomass_tCO2e_yesfire_CO2_only;
-						outdata3b = Biomass_tCO2e_yesfire_non_CO2;
+						outdata3a = 0;
+						outdata3b = 0;
 						outdata20 = 33;
 					}
 					if (burn_data[x] == 0) // Forestry, not peat, not burned
 					{
-						outdata3a = Biomass_tCO2e_nofire_CO2_only;
+						outdata3a = 0;
 						outdata3b = 0;
 						outdata20 = 34;
 					}
@@ -771,23 +771,23 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for wildfires
 		    else if (drivermodel_data[x] == 4)
 			{
-				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+//				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
+//				Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // Wildfire, peat
 				{
 					if (burn_data[x] > 0) // Wildfire, peat, burned
 					{
-						outdata4a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
-						outdata4b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+						outdata4a = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata4b = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 40;
 					}
 					if (burn_data[x] == 0) // Wildfire, peat, not burned
 					{
 						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate)) // Wildfire, peat, not burned, temperate/boreal
 						{
-							outdata4a = Biomass_tCO2e_nofire_CO2_only;
+							outdata4a = 0;
 							outdata4b = 0;
 							outdata20 = 41;
 						}
@@ -795,13 +795,13 @@ for(x=0; x<xsize; x++)
 						{
 					        if (plant_data[x] > 0)  // Wildfire, peat, not burned, tropical, plantation
 							{
-								outdata4a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-								outdata4b = 0 + peat_drain_total_non_CO2;
+								outdata4a = peat_drain_total_CO2_only;
+								outdata4b = peat_drain_total_non_CO2;
 								outdata20 = 42;
 							}
 							if (plant_data[x] == 0)  // Wildfire, peat, not burned, tropical, not plantation
 							{
-								outdata4a = Biomass_tCO2e_nofire_CO2_only;
+								outdata4a = 0;
 								outdata4b = 0;
 								outdata20 = 421;
 							}
@@ -812,13 +812,13 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0)  // Wildfire, not peat, burned
 					{
-						outdata4a = Biomass_tCO2e_yesfire_CO2_only;
-						outdata4b = Biomass_tCO2e_yesfire_non_CO2;
+						outdata4a = 0;
+						outdata4b = 0;
 						outdata20 = 43;
 					}
 					else  // Wildfire, not peat, not burned
 					{
-						outdata4a = Biomass_tCO2e_nofire_CO2_only;
+						outdata4a = 0;
 						outdata4b = 0;
 						outdata20 = 44;
 					}
@@ -829,9 +829,9 @@ for(x=0; x<xsize; x++)
 		    // Emissions model for urbanization
 		    else if (drivermodel_data[x] == 5)
 			{
-				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+//				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
+//				Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float urb_flu;
 				urb_flu = 0.8;
 				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/20) * (model_years-loss_data[x]);
@@ -840,8 +840,8 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // Urbanization, peat, burned
 					{
-						outdata5a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
-						outdata5b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+						outdata5a = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata5b = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 50;
 					}
 					if (burn_data[x] == 0) // Urbanization, peat, not burned
@@ -850,21 +850,21 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1) // Urbanization, peat, not burned, tropical, plantation
 						    {
-						    	outdata5a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						        outdata5b = 0 + peat_drain_total_non_CO2;
+						    	outdata5a = peat_drain_total_CO2_only;
+						        outdata5b = peat_drain_total_non_CO2;
 						        outdata20 = 51;
 						    }
 						    if (plant_data[x] == 0)     // Urbanization, peat, not burned, tropical, not plantation
 						    {
-						        outdata5a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata5a = 0;
 						        outdata5b = 0;
 						        outdata20 = 511;
 						    }
 						}
                         if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))      // Urbanization, peat, not burned, temperate/boreal
 						{
-						    outdata5a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-						    outdata5b = 0 + peat_drain_total_non_CO2;
+						    outdata5a = peat_drain_total_CO2_only;
+						    outdata5b = peat_drain_total_non_CO2;
 						    outdata20 = 52;
 						}
 					}
@@ -879,14 +879,14 @@ for(x=0; x<xsize; x++)
                             {
                                 if (plant_data[x] >= 1)     // Urbanization, not peat, burned, tropical, IFL, plantation
 						        {
-						            outdata5a = Biomass_tCO2e_yesfire_CO2_only;
-						            outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata5a = 0;
+						            outdata5b = 0;
 						            outdata20 = 53;
 						        }
 						        if (plant_data[x] == 0)     // Urbanization, not peat, burned, tropical, IFL, not plantation
 						        {
-						            outdata5a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						            outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata5a = minsoil;
+						            outdata5b = 0;
 						            outdata20 = 531;
 						        }
 						    }
@@ -894,36 +894,36 @@ for(x=0; x<xsize; x++)
 						    {
                                 if (plant_data[x] >= 1)     // Urbanization, not peat, burned, tropical, not IFL, plantation
 						        {
-						            outdata5a = Biomass_tCO2e_yesfire_CO2_only;
-						            outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata5a = 0;
+						            outdata5b = 0;
 						            outdata20 = 54;
 						        }
 						        if (plant_data[x] == 0)     // Urbanization, not peat, burned, tropical, not IFL, not plantation
 						        {
-						            outdata5a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						            outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+						            outdata5a = minsoil;
+						            outdata5b = 0;
 						            outdata20 = 541;
 						        }
                             }
 						}
 						if (ecozone_data[x] == boreal)   // Urbanization, not peat, burned, boreal
 						{
-                            outdata5a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-                            outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+                            outdata5a = minsoil;
+                            outdata5b = 0;
 						    outdata20 = 55;
 						}
 						if (ecozone_data[x] == temperate)   // Urbanization, not peat, burned, temperate
 						{
 						    if (plant_data[x] >= 1)     // Urbanization, not peat, burned, temperate, plantation
 						    {
-						        outdata5a = Biomass_tCO2e_yesfire_CO2_only;
-						        outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+						        outdata5a = 0;
+						        outdata5b = 0;
 						        outdata20 = 56;
 						    }
 						    if (plant_data[x] == 0)     // Urbanization, not peat, burned, temperate, no plantation
 						    {
-						        outdata5a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
-						        outdata5b = Biomass_tCO2e_yesfire_non_CO2;
+						        outdata5a = minsoil;
+						        outdata5b = 0;
 						        outdata20 = 561;
 						    }
 						}
@@ -934,20 +934,20 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Urbanization, not peat, not burned, tropical, plantation
 						    {
-						        outdata5a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata5a = 0;
 						        outdata5b = 0;
 						        outdata20 = 57;
 						    }
 						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, tropical, no plantation
 						    {
-						        outdata5a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+						        outdata5a = minsoil;
 						        outdata5b = 0;
 						        outdata20 = 571;
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Urbanization, not peat, not burned, boreal
 						{
-                            outdata5a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+                            outdata5a = minsoil;
                             outdata5b = 0;
                             outdata20 = 58;
 						}
@@ -955,13 +955,13 @@ for(x=0; x<xsize; x++)
 						{
 						    if (plant_data[x] >= 1)     // Urbanization, not peat, not burned, temperate, plantation
 						    {
-						        outdata5a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata5a = 0;
 						        outdata5b = 0;
 						        outdata20 = 59;
 						    }
 						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, temperate, no plantation
 						    {
-						        outdata5a = Biomass_tCO2e_nofire_CO2_only + minsoil;
+						        outdata5a = minsoil;
 						        outdata5b = 0;
 						        outdata20 = 591;
 						    }
@@ -975,23 +975,23 @@ for(x=0; x<xsize; x++)
 		    // Nancy said to make this the same as forestry.
 		    else
 			{
-				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+//				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
+//				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
+//				Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // No driver, peat
 				{
 					if (burn_data[x] > 0 ) // No driver, peat, burned
 					{
-						outdata6a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
-						outdata6b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+						outdata6a = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata6b = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						outdata20 = 60;
 					}
 					if (burn_data[x] == 0 )  // No driver, peat, not burned
 					{
 						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))  // No driver, peat, not burned, temperate/boreal
 						{
-							outdata6a = Biomass_tCO2e_nofire_CO2_only;
+							outdata6a = 0;
 							outdata6b = 0;
 							outdata20 = 61;
 						}
@@ -999,13 +999,13 @@ for(x=0; x<xsize; x++)
 						{
 							if (plant_data[x] > 0)  // No driver, peat, not burned, tropical, plantation
 							{
-								outdata6a = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
-								outdata6b = 0 + peat_drain_total_non_CO2;
+								outdata6a = peat_drain_total_CO2_only;
+								outdata6b = peat_drain_total_non_CO2;
 								outdata20 = 62;
 							}
 							if (plant_data[x] == 0)  // No driver, peat, not burned, tropical, not plantation
 							{
-								outdata6a = Biomass_tCO2e_nofire_CO2_only;
+								outdata6a = 0;
 								outdata6b = 0;
 								outdata20 = 621;
 							}
@@ -1016,13 +1016,13 @@ for(x=0; x<xsize; x++)
 				{
 					if (burn_data[x] > 0) // No driver, not peat, burned
 					{
-						outdata6a = Biomass_tCO2e_yesfire_CO2_only;
-						outdata6b = Biomass_tCO2e_yesfire_non_CO2;
+						outdata6a = 0;
+						outdata6b = 0;
 						outdata20 = 63;
 					}
 					if (burn_data[x] == 0) // No driver, not peat, not burned
 					{
-						outdata6a = Biomass_tCO2e_nofire_CO2_only;
+						outdata6a = 0;
 						outdata6b = 0;
 						outdata20 = 64;
 					}
