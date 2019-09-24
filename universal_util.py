@@ -98,6 +98,8 @@ def tile_list_spot_machine(source, pattern):
 
                 file_list.append(tile_name)
 
+        print file_list
+
     return file_list
 
 
