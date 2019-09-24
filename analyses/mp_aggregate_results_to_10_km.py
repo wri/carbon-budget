@@ -88,6 +88,9 @@ def main():
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
         tile_list = [i for i in tile_list if not ('10km' in i)]
+
+        print pattern
+
         print "Tiles to process:", tile_list
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
