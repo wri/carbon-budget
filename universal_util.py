@@ -75,8 +75,6 @@ def tile_list(source):
 # Lists the tiles on the spot machine
 def tile_list_spot_machine(source, pattern):
 
-    print "fx pattern:", pattern
-
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -99,8 +97,6 @@ def tile_list_spot_machine(source, pattern):
             if pattern in tile_name:
 
                 file_list.append(tile_name)
-
-        print file_list
 
     return file_list
 

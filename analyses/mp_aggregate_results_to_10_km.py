@@ -75,7 +75,7 @@ def main():
 
         tile_id_list = uu.tile_list(dir)
 
-        # uu.s3_folder_download(dir, '.')
+        uu.s3_folder_download(dir, '.')
 
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list)))
@@ -88,8 +88,6 @@ def main():
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
         tile_list = [i for i in tile_list if not ('10km' in i)]
-
-        print pattern
 
         print "Tiles to process:", tile_list
 
