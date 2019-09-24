@@ -406,6 +406,8 @@ def name_aggregated_output(pattern, thresh):
     print out_pattern
     out_pattern = re.sub('2001_15', 'per_year', out_pattern)
     print out_pattern
+    out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
+    print out_pattern
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
