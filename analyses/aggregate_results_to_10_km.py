@@ -43,6 +43,9 @@ def rewindow(tile):
     tcd_tile = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
 
+    # Only rewindows the necessary files if they haven't already been processed (just in case
+    # this was run on the spot machine before)
+
     if not os.path.exists(input_rewindow):
 
         # Converts the tile of interest to the 400x400 pixel windows
@@ -55,7 +58,7 @@ def rewindow(tile):
 
     if not os.path.exists(tcd_rewindow):
 
-        # Converts the pixel area tile to the 400x400 pixel windows
+        # Converts the tcd tile to the 400x400 pixel windows
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
@@ -65,7 +68,7 @@ def rewindow(tile):
 
     if not os.path.exists(pixel_area_rewindow):
 
-        # Converts the tcd tile to the 400x400 pixel windows
+        # Converts the pixel area tile to the 400x400 pixel windows
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
@@ -109,10 +112,10 @@ def aggregate(tile, thresh):
     pixel_area_src = rasterio.open(pixel_area_rewindow)
     tcd_src = rasterio.open(tcd_rewindow)
 
-    # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+    # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    #2D array in which the 10x10 km aggregated sums will be stored
+    #2D array in which the 0.1x0.1 deg aggregated sums will be stored
     sum_array = np.zeros([100,100], 'float32')
 
     # Iterates across the windows (400x400 30m pixels) of the input tile
@@ -123,33 +126,11 @@ def aggregate(tile, thresh):
         pixel_area_window = pixel_area_src.read(1, window=window)
         tcd_window = tcd_src.read(1, window=window)
 
+        # Applies the tree cover density threshold to the 30x30m pixels
         if thresh > 0:
 
-            # Applies the tree cover density threshold to the 30x30m pixels
             in_window = np.ma.masked_where(tcd_window < thresh, in_window)
             in_window = in_window.filled(0)
-
-        ##### TEMPORARY !!!!!!!!
-        # This is a hacky way to alter the annual and cumulative gain and net flux Hansen pixels that have
-        # erroneously high values because of a problem with the mangrove gain rate script.
-        # It's a problem in only three tiles.
-        # The max_allowed values are values above which I know the Hansen pixel is a mistake
-        # (i.e. the actual maximum annual gain rate for mangroves is about 18, so anything above 1000 is a mistake).
-        # I'm replacing the erroneous values with common nearby values.
-        # Obviously, this is an approximation and not a permanent fix (I need to create new tiles) but it's good enough
-        # for the moment.
-        if tile_type == cn.pattern_annual_gain_AGB_BGB_all_types:
-            max_allowed = 1000
-            in_window = np.ma.masked_where(in_window > max_allowed, in_window)
-            in_window = in_window.filled(10)
-        if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
-            max_allowed = 1000
-            in_window = np.ma.masked_where(in_window > max_allowed, in_window)
-            in_window = in_window.filled(100)
-        if tile_type == cn.pattern_net_flux:
-            min_allowed = -100000
-            in_window = np.ma.masked_where(in_window < min_allowed, in_window)
-            in_window = in_window.filled(-360)
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
@@ -160,16 +141,24 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    # Converts the cumulative carbon gain values to annualized CO2
+    # Converts the cumulative CO2 values to annualized CO2
     if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
-        sum_array = sum_array/cn.loss_years*cn.c_to_co2
+        sum_array = sum_array/cn.loss_years
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2
     if tile_type == cn.pattern_net_flux:
         sum_array = sum_array/cn.loss_years
 
-    # Converts the cumulative gross emissions CO2e values to annualized gross emissions CO2e
-    if tile_type == cn.pattern_gross_emis_all_gases_all_drivers:
+    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e
+    if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
+        sum_array = sum_array/cn.loss_years
+
+    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e
+    if tile_type == cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil:
+        sum_array = sum_array/cn.loss_years
+
+    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e
+    if tile_type == cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil:
         sum_array = sum_array/cn.loss_years
 
     print "Creating aggregated tile for {}...".format(tile)

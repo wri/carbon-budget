@@ -1,4 +1,5 @@
-### Calculates the net emissions over the study period, with units of CO2/ha on a pixel-by-pixel basis
+### Calculates the net emissions over the study period, with units of Mg CO2e/ha on a pixel-by-pixel basis.
+### This only uses gross emissions from biomass+soil (doesn't run with gross emissions from soil_only).
 
 import multiprocessing
 import net_flux
@@ -8,14 +9,14 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-tile_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
+tile_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
 # tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the input folders
-download_list = [cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.gross_emis_all_gases_all_drivers_dir]
+download_list = [cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.gross_emis_all_gases_all_drivers_biomass_soil_dir]
 
 for input in download_list:
     uu.s3_folder_download('{}'.format(input), '.')
@@ -24,14 +25,14 @@ for input in download_list:
 # for tile in tile_list:
 #
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')  # cumulative aboveand belowground carbon gain for all forest types
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_dir, tile, cn.pattern_gross_emis_all_gases_all_drivers), '.')  # emissions from all drivers
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')  # emissions from all drivers
 
 
 # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
 # so that it has all the necessary input tiles
 # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
 folder = './'
-pattern_list = [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_gross_emis_all_gases_all_drivers]
+pattern_list = [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
 
 for pattern in pattern_list:
     count = multiprocessing.cpu_count()

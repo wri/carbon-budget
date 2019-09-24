@@ -165,38 +165,32 @@ def main ():
     # Uploads emissions to default directory for biomass+soil
     if pools == 'biomass_soil':
 
-        uu.upload_final_set(cn.gross_emis_commod_dir, cn.pattern_gross_emis_commod)
-        uu.upload_final_set(cn.gross_emis_shifting_ag_dir, cn.pattern_gross_emis_shifting_ag)
-        uu.upload_final_set(cn.gross_emis_forestry_dir, cn.pattern_gross_emis_forestry)
-        uu.upload_final_set(cn.gross_emis_wildfire_dir, cn.pattern_gross_emis_wildfire)
-        uu.upload_final_set(cn.gross_emis_urban_dir, cn.pattern_gross_emis_urban)
-        uu.upload_final_set(cn.gross_emis_no_driver_dir, cn.pattern_gross_emis_no_driver)
-        uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_dir, cn.pattern_gross_emis_all_gases_all_drivers)
-        uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_dir, cn.pattern_gross_emis_co2_only_all_drivers)
-        uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_dir, cn.pattern_gross_emis_non_co2_all_drivers)
-        uu.upload_final_set(cn.gross_emis_nodes_dir, cn.pattern_gross_emis_nodes)
+        uu.upload_final_set(cn.gross_emis_commod_biomass_soil_dir, cn.pattern_gross_emis_commod_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_shifting_ag_biomass_soil_dir, cn.pattern_gross_emis_shifting_ag_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_forestry_biomass_soil_dir, cn.pattern_gross_emis_forestry_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_wildfire_biomass_soil_dir, cn.pattern_gross_emis_wildfire_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_urban_biomass_soil_dir, cn.pattern_gross_emis_urban_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_no_driverv_biomass_soil_dir, cn.pattern_gross_emis_no_driver_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_biomass_soil_dir, cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_biomass_soil_dir, cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil)
+        uu.upload_final_set(cn.gross_emis_nodes_biomass_soil_dir, cn.pattern_gross_emis_nodes_biomass_soil)
 
     # If soil_only was chosen, the output directories need to be changed.
     elif pools == 'soil_only':
+        
+        uu.upload_final_set(cn.gross_emis_commod_soil_only_dir, cn.pattern_gross_emis_commod_soil_only)
+        uu.upload_final_set(cn.gross_emis_shifting_ag_soil_only_dir, cn.pattern_gross_emis_shifting_ag_soil_only)
+        uu.upload_final_set(cn.gross_emis_forestry_soil_only_dir, cn.pattern_gross_emis_forestry_soil_only)
+        uu.upload_final_set(cn.gross_emis_wildfire_soil_only_dir, cn.pattern_gross_emis_wildfire_soil_only)
+        uu.upload_final_set(cn.gross_emis_urban_soil_only_dir, cn.pattern_gross_emis_urban_soil_only)
+        uu.upload_final_set(cn.gross_emis_no_driverv_soil_only_dir, cn.pattern_gross_emis_no_driver_soil_only)
+        uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_soil_only_dir, cn.pattern_gross_emis_all_gases_all_drivers_soil_only)
+        uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_soil_only_dir, cn.pattern_gross_emis_co2_only_all_drivers_soil_only)
+        uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_soil_only_dir, cn.pattern_gross_emis_non_co2_all_drivers_soil_only)
+        uu.upload_final_set(cn.gross_emis_nodes_soil_only_dir, cn.pattern_gross_emis_nodes_soil_only)
 
-        input_dict = {cn.gross_emis_commod_dir: cn.pattern_gross_emis_commod,
-                      cn.gross_emis_shifting_ag_dir: cn.pattern_gross_emis_shifting_ag,
-                      cn.gross_emis_forestry_dir: cn.pattern_gross_emis_forestry,
-                      cn.gross_emis_wildfire_dir: cn.pattern_gross_emis_wildfire,
-                      cn.gross_emis_urban_dir: cn.pattern_gross_emis_urban,
-                      cn.gross_emis_no_driver_dir: cn.pattern_gross_emis_no_driver,
-                      cn.gross_emis_all_gases_all_drivers_dir: cn.pattern_gross_emis_all_gases_all_drivers,
-                      cn.gross_emis_co2_only_all_drivers_dir: cn.pattern_gross_emis_co2_only_all_drivers,
-                      cn.gross_emis_non_co2_all_drivers_dir: cn.pattern_gross_emis_non_co2_all_drivers,
-                      cn.gross_emis_nodes_dir: cn.pattern_gross_emis_nodes
-                      }
 
-        # For each output, changes the output directory to soil_only
-        for dir, pattern in input_dict.items():
-
-            dir = dir.replace('biomass_soil', 'soil_only')
-            pattern = pattern.replace('biomass_soil', 'soil_only')
-            uu.upload_final_set(dir, pattern)
 
     else:
         raise Exception('Pool option not valid')

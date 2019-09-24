@@ -45,7 +45,7 @@ def calc_emissions(tile_id, pools):
 
 
     # Identifies which pattern to use for counting tile completion
-    pattern = cn.pattern_gross_emis_commod
+    pattern = cn.pattern_gross_emis_commod_biomass_soil
     if pools == 'biomass_soil':
         pattern = pattern
 

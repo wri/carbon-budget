@@ -1,6 +1,7 @@
 '''
 This script creates maps of model outputs at roughly 10km resolution (0.1x0.1 degrees), where each output pixel
 represents the total value in the pixel (not the density) (hence, the aggregated results).
+This is currently only set up for gross emissions from biomass+soil and net flux from biomass+soil.
 It iterates through all the model outputs that are supplied.
 First, it rewindows the model output, pixel area tile, and tcd tile into 400x400 (0.1x0.1 degree) windows, instead of the native
 40000x1 pixel windows.
@@ -47,7 +48,7 @@ def main():
     #
     # # For copying individual tiles to spot machine for testing
     # for tile_id in tile_id_list:
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, tile_id, cn.pattern_annual_gain_AGB_BGB_all_types), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
@@ -60,7 +61,9 @@ def main():
     uu.s3_folder_download(cn.tcd_dir, '.')
 
     input_dict = {
-             cn.gross_emis_all_gases_all_drivers_dir: cn.pattern_gross_emis_all_gases_all_drivers,
+             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+             cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+             cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
              cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
              cn.annual_gain_AGB_BGB_all_types_dir: cn.pattern_annual_gain_AGB_BGB_all_types,
              cn.net_flux_dir: cn.pattern_net_flux
@@ -86,6 +89,8 @@ def main():
         tile_list = [i for i in tile_list if not ('10km' in i)]
         print "Tiles to process:", tile_list
 
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+        # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count/2)
@@ -96,6 +101,12 @@ def main():
         pool.close()
         pool.join()
 
+        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # and sums those values in each 400x400 pixel window.
+        # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count/2)
