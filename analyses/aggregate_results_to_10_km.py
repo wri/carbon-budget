@@ -161,6 +161,9 @@ def aggregate(tile, thresh):
     if tile_type == cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil:
         sum_array = sum_array/cn.loss_years
 
+    # Converts outputs from metric tonnes to megatonnes
+    sum_array = sum_array * cn.tonnes_to_megatonnes
+
     print "Creating aggregated tile for {}...".format(tile)
 
     # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
