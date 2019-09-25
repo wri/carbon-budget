@@ -139,15 +139,15 @@ def main():
 
         print "Tiles processed. Uploading to s3 now..."
 
-        # # Cleans up the folder before starting on the next raster type
-        # vrtList = glob.glob('*vrt')
-        # for vrt in vrtList:
-        #     os.remove(vrt)
-        #
-        # for tile_id in tile_id_list:
-        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        # Cleans up the folder before starting on the next raster type
+        vrtList = glob.glob('*vrt')
+        for vrt in vrtList:
+            os.remove(vrt)
+
+        for tile_id in tile_id_list:
+            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
         # Uploads all output tiles to s3
         uu.upload_final_set(cn.output_aggreg_dir, out_pattern)
