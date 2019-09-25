@@ -135,7 +135,7 @@ def aggregate(tile, thresh):
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
 
-        # Sums the pixels to create a total value for the 10x10 km pixel
+        # Sums the pixels to create a total value for the 0.1x0.1 deg pixel
         non_zero_pixel_sum = np.sum(per_pixel_value)
 
         # Stores the resulting value in the array
@@ -157,7 +157,7 @@ def aggregate(tile, thresh):
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
-        sum_array = sum_array/cn.loss_years # * cn.tonnes_to_megatonnes
+        sum_array = sum_array/cn.loss_years / 1000000
         print sum_array
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
