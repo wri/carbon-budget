@@ -96,7 +96,7 @@ def main():
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/3)
+        pool = multiprocessing.Pool(count/4)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -112,7 +112,7 @@ def main():
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/3)
+        pool = multiprocessing.Pool(count/4)
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
