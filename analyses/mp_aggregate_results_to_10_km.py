@@ -46,14 +46,14 @@ def main():
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list)))
 
-    # For copying individual tiles to spot machine for testing
-    for tile_id in tile_id_list:
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, tile_id, cn.pattern_annual_gain_AGB_BGB_all_types), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
+    # # For copying individual tiles to spot machine for testing
+    # for tile_id in tile_id_list:
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, tile_id, cn.pattern_annual_gain_AGB_BGB_all_types), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     # uu.s3_folder_download(cn.pixel_area_dir, '.')
@@ -103,21 +103,26 @@ def main():
         pool.close()
         pool.join()
 
-        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # and sums those values in each 400x400 pixel window.
-        # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # 0.1x0.1 degree resolution (approximately 10m in the tropics).
-        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # The 0.1x0.1 degree tile is output.
-        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # Added these in response to error12: Cannot allocate memory error.
-        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        pool.close()
-        pool.join()
+        # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # # and sums those values in each 400x400 pixel window.
+        # # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # # The 0.1x0.1 degree tile is output.
+        # # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(count/2)
+        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # # Added these in response to error12: Cannot allocate memory error.
+        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        # pool.close()
+        # pool.join()
+
+        # For single processor use
+        for tile in tile_list:
+
+            aggregate_results_to_10_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
