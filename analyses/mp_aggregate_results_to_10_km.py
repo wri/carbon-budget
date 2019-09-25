@@ -39,21 +39,21 @@ def main():
     if thresh < 0 or thresh > 99:
         raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
 
-    # tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
-    # tile_id_list = ['00N_110E'] # test tiles
-    # tile_id_list = ['30N_110W']  # test tiles
+    tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
+    tile_id_list = ['30N_110W']  # test tiles
     # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    # print tile_id_list
-    # print "There are {} tiles to process".format(str(len(tile_id_list)))
-    #
-    # # For copying individual tiles to spot machine for testing
-    # for tile_id in tile_id_list:
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, tile_id, cn.pattern_annual_gain_AGB_BGB_all_types), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list)))
+
+    # For copying individual tiles to spot machine for testing
+    for tile_id in tile_id_list:
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_BGB_all_types_dir, tile_id, cn.pattern_annual_gain_AGB_BGB_all_types), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_BGCO2_all_types_dir, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.net_flux_dir, tile_id, cn.pattern_net_flux), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     # uu.s3_folder_download(cn.pixel_area_dir, '.')
@@ -75,7 +75,7 @@ def main():
 
         tile_id_list = uu.tile_list(dir)
 
-        uu.s3_folder_download(dir, '.')
+        # uu.s3_folder_download(dir, '.')
 
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list)))

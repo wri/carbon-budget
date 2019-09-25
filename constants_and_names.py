@@ -448,7 +448,7 @@ net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/bio
 ### 10x10 km aggregation tiles for mapping
 ######
 
-output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/20190924/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/20190925/'.format(base_dir)
 
 
 # Tile summary spreadsheets
