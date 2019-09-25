@@ -141,25 +141,32 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
+    print sum_array
+
+    # Converts the annual biomass gain values annual gain in megatonnes
+    if tile_type == cn.pattern_annual_gain_AGB_BGB_all_types:
+        sum_array = sum_array * cn.tonnes_to_megatonnes
+
     # Converts the cumulative CO2 gain values to annualized CO2 in megatonnes
     if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
-        sum_array = sum_array/cn.loss_years
+        sum_array = sum_array/cn.loss_years * cn.tonnes_to_megatonnes
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
     if tile_type == cn.pattern_net_flux:
-        sum_array = sum_array/cn.loss_years
+        sum_array = sum_array/cn.loss_years * cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
-        sum_array = sum_array/cn.loss_years
+        sum_array = sum_array/cn.loss_years / cn.tonnes_to_megatonnes
+        print sum_array
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil:
-        sum_array = sum_array/cn.loss_years
+        sum_array = sum_array/cn.loss_years * cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil:
-        sum_array = sum_array/cn.loss_years
+        sum_array = sum_array/cn.loss_years * cn.tonnes_to_megatonnes
 
     print "Creating aggregated tile for {}...".format(tile)
 
@@ -167,7 +174,7 @@ def aggregate(tile, thresh):
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     aggregated = rasterio.open("{0}_{1}_10km.tif".format(tile_id, tile_type), 'w',
-                                driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
+                                driver='GTiff', compress='lzw', nodata='0', dtype='float64', count=1,
                                 height=100, width=100,
                                 # pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.1,0.1))
