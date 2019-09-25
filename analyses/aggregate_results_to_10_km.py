@@ -157,7 +157,7 @@ def aggregate(tile, thresh):
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
-        sum_array = sum_array/cn.loss_years * cn.tonnes_to_megatonnes
+        sum_array = sum_array/cn.loss_years # * cn.tonnes_to_megatonnes
         print sum_array
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
