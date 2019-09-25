@@ -184,7 +184,7 @@ def main ():
         uu.upload_final_set(cn.gross_emis_forestry_soil_only_dir, cn.pattern_gross_emis_forestry_soil_only)
         uu.upload_final_set(cn.gross_emis_wildfire_soil_only_dir, cn.pattern_gross_emis_wildfire_soil_only)
         uu.upload_final_set(cn.gross_emis_urban_soil_only_dir, cn.pattern_gross_emis_urban_soil_only)
-        uu.upload_final_set(cn.gross_emis_no_driverv_soil_only_dir, cn.pattern_gross_emis_no_driver_soil_only)
+        uu.upload_final_set(cn.gross_emis_no_driver_soil_only_dir, cn.pattern_gross_emis_no_driver_soil_only)
         uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_soil_only_dir, cn.pattern_gross_emis_all_gases_all_drivers_soil_only)
         uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_soil_only_dir, cn.pattern_gross_emis_co2_only_all_drivers_soil_only)
         uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_soil_only_dir, cn.pattern_gross_emis_non_co2_all_drivers_soil_only)

@@ -99,10 +99,10 @@ download_list = [
                 # cn.gross_emis_commod_soil_only_dir,
                 # cn.gross_emis_shifting_ag_soil_only_dir,
                 # cn.gross_emis_forestry_soil_only_dir,
-                cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                cn.gross_emis_wildfire_soil_only_dir,
+                # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                # cn.gross_emis_wildfire_soil_only_dir,
                 cn.gross_emis_urban_soil_only_dir,
-                cn.gross_emis_no_driverv_soil_only_dir,
+                cn.gross_emis_no_driver_soil_only_dir,
                 cn.gross_emis_nodes_soil_only_dir
 
 ]

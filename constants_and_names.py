@@ -421,7 +421,7 @@ pattern_gross_emis_wildfire_soil_only = 'wildfire_t_CO2e_ha_gross_emis_year_soil
 gross_emis_wildfire_soil_only_dir = '{0}gross_emissions/wildfire/soil_only/{1}/'.format(base_dir, emis_run_date_soil_only)
 
 pattern_gross_emis_no_driver_soil_only = 'no_driver_t_CO2e_ha_gross_emis_year_soil_only'
-gross_emis_no_driverv_soil_only_dir = '{0}gross_emissions/no_driver/soil_only/{1}/'.format(base_dir, emis_run_date_soil_only)
+gross_emis_no_driver_soil_only_dir = '{0}gross_emissions/no_driver/soil_only/{1}/'.format(base_dir, emis_run_date_soil_only)
 
 pattern_gross_emis_all_gases_all_drivers_soil_only = 'all_gases_all_drivers_t_CO2e_ha_gross_emis_year_soil_only'
 gross_emis_all_gases_all_drivers_soil_only_dir = '{0}gross_emissions/all_drivers/all_gases/soil_only/{1}/'.format(base_dir, emis_run_date_soil_only)
