@@ -62,12 +62,11 @@ def main():
 
     input_dict = {
              cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
-             cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
-             cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
-             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
-            cn.net_flux_dir: cn.pattern_net_flux,
-            cn.annual_gain_AGB_BGB_all_types_dir: cn.pattern_annual_gain_AGB_BGB_all_types
-
+             # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+             # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
+             # cn.net_flux_dir: cn.pattern_net_flux,
+             # cn.annual_gain_AGB_BGB_all_types_dir: cn.pattern_annual_gain_AGB_BGB_all_types
              }
 
     print "Model outputs to process are:", input_dict
@@ -96,7 +95,7 @@ def main():
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/4)
+        pool = multiprocessing.Pool(count/2)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -112,7 +111,7 @@ def main():
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/4)
+        pool = multiprocessing.Pool(count/2)
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
