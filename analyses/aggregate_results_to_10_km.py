@@ -141,8 +141,6 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    print sum_array
-
     # Converts the annual biomass gain values annual gain in megatonnes
     if tile_type == cn.pattern_annual_gain_AGB_BGB_all_types:
         sum_array = sum_array * cn.tonnes_to_megatonnes
@@ -158,7 +156,6 @@ def aggregate(tile, thresh):
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
         sum_array = sum_array/cn.loss_years / cn.tonnes_to_megatonnes
-        print sum_array
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil:

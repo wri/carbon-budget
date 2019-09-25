@@ -39,13 +39,13 @@ def main():
     if thresh < 0 or thresh > 99:
         raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
 
-    tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
-    tile_id_list = ['00N_110E'] # test tiles
-    tile_id_list = ['30N_110W']  # test tiles
+    # tile_id_list = ['00N_100E', '00N_110E', '00N_120E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['30N_110W']  # test tiles
     # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list)))
-
+    # print tile_id_list
+    # print "There are {} tiles to process".format(str(len(tile_id_list)))
+    #
     # # For copying individual tiles to spot machine for testing
     # for tile_id in tile_id_list:
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil), '.')
@@ -55,18 +55,18 @@ def main():
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id), '.')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
-    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    # uu.s3_folder_download(cn.pixel_area_dir, '.')
-    # # tree cover density tiles-- necessary for filtering sums by tcd
-    # uu.s3_folder_download(cn.tcd_dir, '.')
+    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    uu.s3_folder_download(cn.pixel_area_dir, '.')
+    # tree cover density tiles-- necessary for filtering sums by tcd
+    uu.s3_folder_download(cn.tcd_dir, '.')
 
     input_dict = {
-             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
-             # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
-             # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
-             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
-             # cn.annual_gain_AGB_BGB_all_types_dir: cn.pattern_annual_gain_AGB_BGB_all_types,
-             # cn.net_flux_dir: cn.pattern_net_flux
+             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+             cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+             cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
+             cn.annual_gain_AGB_BGB_all_types_dir: cn.pattern_annual_gain_AGB_BGB_all_types,
+             cn.net_flux_dir: cn.pattern_net_flux
              }
 
     print "Model outputs to process are:", input_dict
@@ -75,7 +75,7 @@ def main():
 
         tile_id_list = uu.tile_list(dir)
 
-        # uu.s3_folder_download(dir, '.')
+        uu.s3_folder_download(dir, '.')
 
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list)))
@@ -103,26 +103,26 @@ def main():
         pool.close()
         pool.join()
 
-        # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # # and sums those values in each 400x400 pixel window.
-        # # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # # 0.1x0.1 degree resolution (approximately 10m in the tropics).
-        # # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # # The 0.1x0.1 degree tile is output.
-        # # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # and sums those values in each 400x400 pixel window.
+        # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # The 0.1x0.1 degree tile is output.
+        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
-        # For single processor use
-        for tile in tile_list:
-
-            aggregate_results_to_10_km.aggregate(tile, thresh)
+        # # For single processor use
+        # for tile in tile_list:
+        #
+        #     aggregate_results_to_10_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
@@ -139,15 +139,15 @@ def main():
 
         print "Tiles processed. Uploading to s3 now..."
 
-        # # Cleans up the folder before starting on the next raster type
-        # vrtList = glob.glob('*vrt')
-        # for vrt in vrtList:
-        #     os.remove(vrt)
-        #
-        # for tile_id in tile_id_list:
-        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        # Cleans up the folder before starting on the next raster type
+        vrtList = glob.glob('*vrt')
+        for vrt in vrtList:
+            os.remove(vrt)
+
+        for tile_id in tile_id_list:
+            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
         # Uploads all output tiles to s3
         uu.upload_final_set(cn.output_aggreg_dir, out_pattern)
