@@ -272,9 +272,6 @@ def main ():
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
     # This is the part that actually creates the sequestration rate and forest type tiles.
 
-    print "master variable:", cn.pattern_plant_1x1_index
-    print "arg:", args.planted_tile_index
-
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
         print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
@@ -302,14 +299,14 @@ def main ():
         # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
         # to intersecting the planted forest table with the 1x1 tile.
 
-        # # For multiprocessor use
-        # # This works with 30 processors on an r4.16xlarge.
-        # num_of_processes = 50
-        # pool = Pool(num_of_processes)
-        # pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
-        # pool.close()
-        # pool.join()
-
+        # For multiprocessor use
+        # This works with 30 processors on an r4.16xlarge.
+        num_of_processes = 50
+        pool = Pool(num_of_processes)
+        pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
+        pool.close()
+        pool.join()
+        
         # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
         num_of_processes = 50
         pool = Pool(num_of_processes)
