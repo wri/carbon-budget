@@ -305,7 +305,7 @@ def main ():
 
         # For multiprocessor use
         # This works with 30 processors on an r4.16xlarge.
-        num_of_processes = 50
+        num_of_processes = 40
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
         pool.close()
