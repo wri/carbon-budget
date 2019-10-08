@@ -272,8 +272,8 @@ def main ():
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
     # This is the part that actually creates the sequestration rate and forest type tiles.
 
-    print cn.pattern_plant_1x1_index
-    print args.planted_tile_index
+    print "master variable:", cn.pattern_plant_1x1_index
+    print "arg:", args.planted_tile_index
 
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
