@@ -35,11 +35,14 @@ for input in download_list:
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_non_mang_non_planted_dir, tile, cn.pattern_WHRC_biomass_2000_non_mang_non_planted), '.')
 
 # Creates gain year count tiles using only pixels that had only loss
+# count/3 uses about 220 GB on an r4.16xlarge machine
+# count/2 uses about 330 GB on an r4.16xlarge machine
 count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
+pool = multiprocessing.Pool(count/2)
 pool.map(gain_year_count_natrl_forest.create_gain_year_count_loss_only, biomass_tile_list)
 
 # Creates gain year count tiles using only pixels that had only gain
+# count/2 uses about 200 GB on an r4.16xlarge machine
 pool.map(gain_year_count_natrl_forest.create_gain_year_count_gain_only, biomass_tile_list)
 
 # Creates gain year count tiles using only pixels that had neither loss nor gain pixels

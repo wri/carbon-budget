@@ -143,4 +143,4 @@ def create_gain_year_count_merge(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_mangrove)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_gain_year_count_natrl_forest)
