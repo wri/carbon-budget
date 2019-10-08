@@ -121,9 +121,9 @@ def create_1x1_plantation_growth_from_1x1_planted(tile_1x1):
     # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
     print coords
-    xmin_1x1 = str(coords[2])[:-4]
+    xmin_1x1 = str(coords[3])[:-4]
     xmax_1x1 = int(xmin_1x1) + 1
-    ymax_1x1 = int(coords[1])
+    ymax_1x1 = int(coords[2])
     ymin_1x1 = ymax_1x1 - 1
 
     print "For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
@@ -144,9 +144,9 @@ def create_1x1_plantation_type_from_1x1_planted(tile_1x1):
 
     # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
-    xmin_1x1 = str(coords[2])[:-4]
+    xmin_1x1 = str(coords[3])[:-4]
     xmax_1x1 = int(xmin_1x1) + 1
-    ymax_1x1 = int(coords[1])
+    ymax_1x1 = int(coords[2])
     ymin_1x1 = ymax_1x1 - 1
 
     print "For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
