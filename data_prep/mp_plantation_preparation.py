@@ -302,7 +302,7 @@ def main ():
         # For single processor use
         for tile in planted_list_1x1:
             plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
-        
+
         # For multiprocessor use
         # This works with 30 processors on an r4.16xlarge.
         num_of_processes = 50
