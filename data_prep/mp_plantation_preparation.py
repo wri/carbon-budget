@@ -34,8 +34,8 @@ the growth rates or forest type have. This route will iterate through only the 1
 create new planted forest growth rate tiles for them.
 This entry point is accessed by providing the s3 location of the index shapefile of the 1x1
 planted forest extent tiles,
-e.g., python mp_plantation_preparation.py -gi None -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
-e.g., python mp_plantation_preparation.py -gi gadm-tile-index s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190108.shp
+e.g., python mp_plantation_preparation.py -gi None -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
+e.g., python mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
 
 All entry points conclude with creating 10x10 degree tiles of planted forest carbon accumulation rates and
 planted forest type from 1x1 tiles of planted forest extent.
@@ -51,14 +51,14 @@ planted forest type from 1x1 tiles of planted forest extent.
 spotutil new r4.16xlarge dgibbs_wri
 
 # Copy zipped plantation gdb with growth rate field in tables
-aws s3 cp s3://gfw-files/plantations/final/global/plantations_v2_0.gdb.zip .
+aws s3 cp s3://gfw-files/plantations/final/global/plantations_v2_1.zip .
 
 # Unzip the zipped plantation gdb. This can take several minutes.
-unzip plantations_v2_0.gdb.zip
+unzip plantations_v2_1.zip
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
-ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_0.gdb -progress -nln all_plant -sql "SELECT growth, species_simp FROM cmr_plant"
+ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_1.gdb -progress -nln all_plant -sql "SELECT growth, species_simp FROM cmr_plant"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
@@ -71,14 +71,14 @@ DELETE FROM all_plant;
 \q
 
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
-ogrinfo plantations_v2_0.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
+ogrinfo plantations_v2_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
 # Make sure all the country tables are listed in the txt, then exit it
 more out.txt
 q
 
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
-while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_0.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp FROM $p"; done < out.txt
+while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_1.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
@@ -271,6 +271,10 @@ def main ():
     ### Entry point 3
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
     # This is the part that actually creates the sequestration rate and forest type tiles.
+
+    print cn.pattern_plant_1x1_index
+    print args.planted_tile_index
+
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
         print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
