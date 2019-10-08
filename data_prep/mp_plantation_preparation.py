@@ -299,6 +299,10 @@ def main ():
         # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
         # to intersecting the planted forest table with the 1x1 tile.
 
+        # For single processor use
+        for tile in planted_list_1x1:
+            plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
+        
         # For multiprocessor use
         # This works with 30 processors on an r4.16xlarge.
         num_of_processes = 50
@@ -306,7 +310,7 @@ def main ():
         pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
-        
+
         # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
         num_of_processes = 50
         pool = Pool(num_of_processes)
