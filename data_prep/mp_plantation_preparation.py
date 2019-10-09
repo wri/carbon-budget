@@ -304,7 +304,7 @@ def main ():
         #     plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
 
         # For multiprocessor use
-        # This works with 30 processors on an r4.16xlarge.
+        # processes=40 uses about 360 GB of memory. Works on r4.16xlarge with space to spare
         num_of_processes = 40
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
