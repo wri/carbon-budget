@@ -118,6 +118,17 @@ def main ():
                         help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
     parser.add_argument('--planted-tile-index', '-pi', required=True,
                         help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
+    parser.add_argument('--bounding-box', '-bb', required=False,
+                        help='The bounding box of the tiles to be update, supplied in the order min-x, max-x, min-y, max-y. They must be at 10 degree increments.')
+    # parser.add_argument('--minx', '-minx', required=False,
+    #                     help='Minimum .')
+    # parser.add_argument('--maxx', '-maxx', required=False,
+    #                     help='.')
+    # parser.add_argument('--miny', '-miny', required=False,
+    #                     help='.')
+    # parser.add_argument('--maxy', '-maxy', required=False,
+    #                     help='.')
+
     args = parser.parse_args()
 
     # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
