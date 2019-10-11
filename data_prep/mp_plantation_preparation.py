@@ -145,7 +145,7 @@ def main ():
     print bound_list
 
     for bound in bound_list:
-        if not bound%10:
+        if bound%10:
             raise Exception(bound, 'not a multiple of 10. Please make sure bounding box coordinates are multiples of 10.')
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
