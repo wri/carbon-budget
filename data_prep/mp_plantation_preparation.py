@@ -146,7 +146,7 @@ def main ():
 
     for bound in bound_list:
         if not bound%10:
-            raise Exception('Boundary not a multiple of 10. Please make sure bounding box coordinates are multiples of 10.')
+            raise Exception('{} not a multiple of 10. Please make sure bounding box coordinates are multiples of 10.'.format(bound))
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
