@@ -118,16 +118,9 @@ def main ():
                         help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
     parser.add_argument('--planted-tile-index', '-pi', required=True,
                         help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
-    parser.add_argument('--bounding-box', '-bb', required=False, type=int, nargs='+',
-                        help='The bounding box of the tiles to be update, supplied in the order min-x, max-x, min-y, max-y. They must be at 10 degree increments.')
-    # parser.add_argument('--minx', '-minx', required=False,
-    #                     help='Minimum .')
-    # parser.add_argument('--maxx', '-maxx', required=False,
-    #                     help='.')
-    # parser.add_argument('--miny', '-miny', required=False,
-    #                     help='.')
-    # parser.add_argument('--maxy', '-maxy', required=False,
-    #                     help='.')
+    # # This is the beginning of adding a way to have the model run on a selected area, rather than globally. I didn't finish implementing it, though.
+    # parser.add_argument('--bounding-box', '-bb', required=False, type=int, nargs='+',
+    #                     help='The bounding box of the tiles to be update, supplied in the order min-x, max-x, min-y, max-y. They must be at 10 degree increments.')
 
     args = parser.parse_args()
 
@@ -141,12 +134,14 @@ def main ():
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
-    bound_list = args.bounding_box
-    print bound_list
-
-    for bound in bound_list:
-        if bound%10:
-            raise Exception(bound, 'not a multiple of 10. Please make sure bounding box coordinates are multiples of 10.')
+    # ## Not actually using this but leaving it here in case I want to add this functionality eventually. This
+    # # was to allow users to run plantations for a select (contiguous) area rather than for the whole planet.
+    # # List of bounding box coordinates
+    # bound_list = args.bounding_box
+    # # Checks if bounding box coordinates are in multiples of 10 (10 degree tiles). If they're not, the script stops.
+    # for bound in bound_list:
+    #     if bound%10:
+    #         raise Exception(bound, 'not a multiple of 10. Please make bounding box coordinates are multiples of 10.')
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
@@ -172,222 +167,221 @@ def main ():
     print "Number of 10x10 tiles to evaluate after extreme latitudes have been removed:", len(planted_lat_tile_list)
 
 
-    # # If a planted forest extent 1x1 tile index shapefile isn't supplied
-    # if 'None' in args.planted_tile_index:
-    #
-    #     ### Entry point 1:
-    #     # If no shapefile of 1x1 tiles for countries with planted forests is supplied, 1x1 tiles of country extents will be created.
-    #     # This runs the process from the very beginning and will take a few days.
-    #     if 'None' in args.gadm_tile_index:
-    #
-    #         print "No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch..."
-    #
-    #         # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-    #         uu.s3_file_download(cn.gadm_path, '.')
-    #         cmd = ['unzip', cn.gadm_zip]
-    #         subprocess.check_call(cmd)
-    #
-    #         # Creates a new GADM shapefile with just the countries that have planted forests in them.
-    #         # This limits creation of 1x1 rasters of land area on the countries that have planted forests rather than on all countries.
-    #         # NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
-    #         # in constants_and_names.py must be updated, too.
-    #         print "Creating shapefile of countries with planted forests..."
-    #         os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
-    #
-    #         # Creates 1x1 degree tiles of countries that have planted forests in them.
-    #         # I think this can handle using 50 processors because it's not trying to upload files to s3 and the tiles are small.
-    #         # This takes several days to run because it iterates through at least 250 10x10 tiles.
-    #         # For multiprocessor use.
-    #         num_of_processes = 50
-    #         pool = Pool(num_of_processes)
-    #         pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-    #         pool.close()
-    #         pool.join()
-    #
-    #         # # Creates 1x1 degree tiles of countries that have planted forests in them.
-    #         # # For single processor use.
-    #         # for tile in planted_lat_tile_list:
-    #         #
-    #         #     plantation_preparation.rasterize_gadm_1x1(tile)
-    #
-    #         # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
-    #         os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_today))
-    #         cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
-    #         subprocess.check_call(cmd)
-    #
-    #         # # Saves the 1x1 country extent tiles to s3
-    #         # # Only use if the entire process can't run in one go on the spot machine
-    #         # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
-    #         # subprocess.check_call(cmd)
-    #
-    #         # Delete the aux.xml files
-    #         os.system('''rm GADM*.tif.*''')
-    #
-    #         # List of all 1x1 degree countey extent tiles created
-    #         gadm_list_1x1 = uu.tile_list_spot_machine(".", "GADM_")
-    #         print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1
-    #         print len(gadm_list_1x1)
-    #
-    #     ### Entry point 2:
-    #     # If a shapefile of the boundaries of 1x1 degree tiles of countries with planted forests is supplied,
-    #     # a list of the 1x1 tiles is created from the shapefile.
-    #     # This avoids creating the 1x1 country extent tiles all over again because the relevant tile extent are supplied
-    #     # in the shapefile.
-    #     elif cn.gadm_plant_1x1_index_dir in args.gadm_tile_index:
-    #
-    #         print "Country extent 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles..."
-    #
-    #         print '{}/'.format(gadm_index_path)
-    #
-    #         # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
-    #         cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
-    #         subprocess.check_call(cmd)
-    #
-    #         # Gets the attribute table of the country extent 1x1 tile shapefile
-    #         gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
-    #
-    #         # Converts the attribute table to a dataframe
-    #         dbf = Dbf5(gadm)
-    #         df = dbf.to_dataframe()
-    #
-    #         # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
-    #         gadm_list_1x1 = df['location'].tolist()
-    #         gadm_list_1x1 = [str(y) for y in gadm_list_1x1]
-    #         print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1
-    #         print "There are", len(gadm_list_1x1), "1x1 country extent tiles to iterate through."
-    #
-    #     # In case some other arguments are provided
-    #     else:
-    #
-    #         raise Exception('Invalid GADM tile index shapefile provided. Please provide a valid shapefile.')
-    #
-    #     # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
-    #     # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks
-    #     # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
-    #     # 1x1 country extent tile.
-    #     # 55 processors seems to use about 350 GB of memory, which seems fine. But there was some error about "PQconnectdb failed-- sorry, too many clients already".
-    #     # So, moved the number of processors down to 48.
-    #     # For multiprocessor use
-    #     num_of_processes = 48
-    #     pool = Pool(num_of_processes)
-    #     pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
-    #     pool.close()
-    #     pool.join()
-    #
-    #     # # Creates 1x1 degree tiles of plantation growth wherever there are plantations
-    #     # # For single processor use
-    #     # for tile in gadm_list_1x1:
-    #     #
-    #     #     plantation_preparation.create_1x1_plantation(tile)
-    #
-    #     # Creates a shapefile in which each feature is the extent of a plantation extent tile.
-    #     # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
-    #     os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
-    #     cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
-    #     subprocess.check_call(cmd)
-    #
-    # ### Entry point 3
-    # # If a shapefile of the extents of 1x1 planted forest tiles is provided.
-    # # This is the part that actually creates the sequestration rate and forest type tiles.
-    #
-    # if cn.pattern_plant_1x1_index in args.planted_tile_index:
-    #
-    #     print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
-    #
-    #     # Copies the shapefile of 1x1 tiles of extent of planted forests
-    #     cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), '.', '--recursive', '--exclude', '*', '--include',
-    #            '{}*'.format(planted_index_shp), '--recursive']
-    #     subprocess.check_call(cmd)
-    #
-    #     # Gets the attribute table of the planted forest extent 1x1 tile shapefile
-    #     gadm = glob.glob('{}*.dbf'.format(cn.pattern_plant_1x1_index))[0]
-    #
-    #     # Converts the attribute table to a dataframe
-    #     dbf = Dbf5(gadm)
-    #     df = dbf.to_dataframe()
-    #
-    #     # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
-    #     planted_list_1x1 = df['location'].tolist()
-    #     planted_list_1x1 = [str(y) for y in planted_list_1x1]
-    #     print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1
-    #     print "There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through."
-    #
-    #     # Creates 1x1 degree tiles of plantation growth and type wherever there are plantations.
-    #     # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
-    #     # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
-    #     # to intersecting the planted forest table with the 1x1 tile.
-    #
-    #     # # For single processor use
-    #     # for tile in planted_list_1x1:
-    #     #     plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
-    #
-    #     # For multiprocessor use
-    #     # processes=40 uses about 360 GB of memory. Works on r4.16xlarge with space to spare
-    #     num_of_processes = 40
-    #     pool = Pool(num_of_processes)
-    #     pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
-    #     pool.close()
-    #     pool.join()
-    #
-    #     # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
-    #     num_of_processes = 50
-    #     pool = Pool(num_of_processes)
-    #     pool.map(plantation_preparation.create_1x1_plantation_type_from_1x1_planted, planted_list_1x1)
-    #     pool.close()
-    #     pool.join()
-    #
-    #
-    #
-    # ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
-    # ### from 1x1 degree planted forest gain rate and type tiles
-    #
-    # # Name of the vrt of 1x1 planted forest gain rate tiles
-    # plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
-    #
-    # # Creates a mosaic of all the 1x1 plantation gain rate tiles
-    # print "Creating vrt of 1x1 plantation gain rate tiles"
-    # os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
-    #
+    # If a planted forest extent 1x1 tile index shapefile isn't supplied
+    if 'None' in args.planted_tile_index:
+
+        ### Entry point 1:
+        # If no shapefile of 1x1 tiles for countries with planted forests is supplied, 1x1 tiles of country extents will be created.
+        # This runs the process from the very beginning and will take a few days.
+        if 'None' in args.gadm_tile_index:
+
+            print "No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch..."
+
+            # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
+            uu.s3_file_download(cn.gadm_path, '.')
+            cmd = ['unzip', cn.gadm_zip]
+            subprocess.check_call(cmd)
+
+            # Creates a new GADM shapefile with just the countries that have planted forests in them.
+            # This limits creation of 1x1 rasters of land area on the countries that have planted forests rather than on all countries.
+            # NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
+            # in constants_and_names.py must be updated, too.
+            print "Creating shapefile of countries with planted forests..."
+            os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
+
+            # Creates 1x1 degree tiles of countries that have planted forests in them.
+            # I think this can handle using 50 processors because it's not trying to upload files to s3 and the tiles are small.
+            # This takes several days to run because it iterates through at least 250 10x10 tiles.
+            # For multiprocessor use.
+            num_of_processes = 50
+            pool = Pool(num_of_processes)
+            pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
+            pool.close()
+            pool.join()
+
+            # # Creates 1x1 degree tiles of countries that have planted forests in them.
+            # # For single processor use.
+            # for tile in planted_lat_tile_list:
+            #
+            #     plantation_preparation.rasterize_gadm_1x1(tile)
+
+            # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
+            os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_today))
+            cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
+            subprocess.check_call(cmd)
+
+            # # Saves the 1x1 country extent tiles to s3
+            # # Only use if the entire process can't run in one go on the spot machine
+            # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
+            # subprocess.check_call(cmd)
+
+            # Delete the aux.xml files
+            os.system('''rm GADM*.tif.*''')
+
+            # List of all 1x1 degree countey extent tiles created
+            gadm_list_1x1 = uu.tile_list_spot_machine(".", "GADM_")
+            print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1
+            print len(gadm_list_1x1)
+
+        ### Entry point 2:
+        # If a shapefile of the boundaries of 1x1 degree tiles of countries with planted forests is supplied,
+        # a list of the 1x1 tiles is created from the shapefile.
+        # This avoids creating the 1x1 country extent tiles all over again because the relevant tile extent are supplied
+        # in the shapefile.
+        elif cn.gadm_plant_1x1_index_dir in args.gadm_tile_index:
+
+            print "Country extent 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles..."
+
+            print '{}/'.format(gadm_index_path)
+
+            # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
+            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
+            subprocess.check_call(cmd)
+
+            # Gets the attribute table of the country extent 1x1 tile shapefile
+            gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
+
+            # Converts the attribute table to a dataframe
+            dbf = Dbf5(gadm)
+            df = dbf.to_dataframe()
+
+            # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
+            gadm_list_1x1 = df['location'].tolist()
+            gadm_list_1x1 = [str(y) for y in gadm_list_1x1]
+            print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1
+            print "There are", len(gadm_list_1x1), "1x1 country extent tiles to iterate through."
+
+        # In case some other arguments are provided
+        else:
+
+            raise Exception('Invalid GADM tile index shapefile provided. Please provide a valid shapefile.')
+
+        # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
+        # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks
+        # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
+        # 1x1 country extent tile.
+        # 55 processors seems to use about 350 GB of memory, which seems fine. But there was some error about "PQconnectdb failed-- sorry, too many clients already".
+        # So, moved the number of processors down to 48.
+        # For multiprocessor use
+        num_of_processes = 48
+        pool = Pool(num_of_processes)
+        pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
+        pool.close()
+        pool.join()
+
+        # # Creates 1x1 degree tiles of plantation growth wherever there are plantations
+        # # For single processor use
+        # for tile in gadm_list_1x1:
+        #
+        #     plantation_preparation.create_1x1_plantation(tile)
+
+        # Creates a shapefile in which each feature is the extent of a plantation extent tile.
+        # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
+        os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
+        cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
+        subprocess.check_call(cmd)
+
+    ### Entry point 3
+    # If a shapefile of the extents of 1x1 planted forest tiles is provided.
+    # This is the part that actually creates the sequestration rate and forest type tiles.
+    if cn.pattern_plant_1x1_index in args.planted_tile_index:
+
+        print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
+
+        # Copies the shapefile of 1x1 tiles of extent of planted forests
+        cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), '.', '--recursive', '--exclude', '*', '--include',
+               '{}*'.format(planted_index_shp), '--recursive']
+        subprocess.check_call(cmd)
+
+        # Gets the attribute table of the planted forest extent 1x1 tile shapefile
+        gadm = glob.glob('{}*.dbf'.format(cn.pattern_plant_1x1_index))[0]
+
+        # Converts the attribute table to a dataframe
+        dbf = Dbf5(gadm)
+        df = dbf.to_dataframe()
+
+        # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
+        planted_list_1x1 = df['location'].tolist()
+        planted_list_1x1 = [str(y) for y in planted_list_1x1]
+        print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1
+        print "There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through."
+
+        # Creates 1x1 degree tiles of plantation growth and type wherever there are plantations.
+        # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
+        # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
+        # to intersecting the planted forest table with the 1x1 tile.
+
+        # # For single processor use
+        # for tile in planted_list_1x1:
+        #     plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
+
+        # For multiprocessor use
+        # processes=40 uses about 360 GB of memory. Works on r4.16xlarge with space to spare
+        num_of_processes = 40
+        pool = Pool(num_of_processes)
+        pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
+        pool.close()
+        pool.join()
+
+        # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
+        num_of_processes = 50
+        pool = Pool(num_of_processes)
+        pool.map(plantation_preparation.create_1x1_plantation_type_from_1x1_planted, planted_list_1x1)
+        pool.close()
+        pool.join()
+
+
+
+    ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
+    ### from 1x1 degree planted forest gain rate and type tiles
+
+    # Name of the vrt of 1x1 planted forest gain rate tiles
+    plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
+
+    # Creates a mosaic of all the 1x1 plantation gain rate tiles
+    print "Creating vrt of 1x1 plantation gain rate tiles"
+    os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
+
+    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
+    # For multiprocessor use
+    num_of_processes = 20
+    pool = Pool(num_of_processes)
+    pool.map(partial(plantation_preparation.create_10x10_plantation_gain, plant_gain_1x1_vrt=plant_gain_1x1_vrt), planted_lat_tile_list)
+    pool.close()
+    pool.join()
+
     # # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
-    # # at the start of the script that are in latitudes with planted forests.
-    # # For multiprocessor use
-    # num_of_processes = 20
-    # pool = Pool(num_of_processes)
-    # pool.map(partial(plantation_preparation.create_10x10_plantation_gain, plant_gain_1x1_vrt=plant_gain_1x1_vrt), planted_lat_tile_list)
-    # pool.close()
-    # pool.join()
+    # at the start of the script that are in latitudes with planted forests.
+    # # For single processor use
+    # for tile in planted_lat_tile_list:
     #
-    # # # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
-    # # at the start of the script that are in latitudes with planted forests.
-    # # # For single processor use
-    # # for tile in planted_lat_tile_list:
-    # #
-    # #     plantation_preparation.create_10x10_plantation_gain(tile, plant_gain_1x1_vrt)
-    #
-    #
-    # # Name of the vrt of 1x1 planted forest type tiles
-    # plant_type_1x1_vrt = 'plant_type_1x1.vrt'
-    #
-    # # Creates a mosaic of all the 1x1 plantation type tiles
-    # print "Creating vrt of 1x1 plantation type tiles"
-    # os.system('gdalbuildvrt {} plant_type_*.tif'.format(plant_type_1x1_vrt))
-    #
+    #     plantation_preparation.create_10x10_plantation_gain(tile, plant_gain_1x1_vrt)
+
+
+    # Name of the vrt of 1x1 planted forest type tiles
+    plant_type_1x1_vrt = 'plant_type_1x1.vrt'
+
+    # Creates a mosaic of all the 1x1 plantation type tiles
+    print "Creating vrt of 1x1 plantation type tiles"
+    os.system('gdalbuildvrt {} plant_type_*.tif'.format(plant_type_1x1_vrt))
+
+    # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
+    # For multiprocessor use
+    num_of_processes = 20
+    pool = Pool(num_of_processes)
+    pool.map(partial(plantation_preparation.create_10x10_plantation_type, plant_type_1x1_vrt=plant_type_1x1_vrt),
+             planted_lat_tile_list)
+    pool.close()
+    pool.join()
+
     # # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
-    # # at the start of the script that are in latitudes with planted forests.
-    # # For multiprocessor use
-    # num_of_processes = 20
-    # pool = Pool(num_of_processes)
-    # pool.map(partial(plantation_preparation.create_10x10_plantation_type, plant_type_1x1_vrt=plant_type_1x1_vrt),
-    #          planted_lat_tile_list)
-    # pool.close()
-    # pool.join()
+    # at the start of the script that are in latitudes with planted forests.
+    # # For single processor use
+    # for tile in planted_lat_tile_list:
     #
-    # # # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
-    # # at the start of the script that are in latitudes with planted forests.
-    # # # For single processor use
-    # # for tile in planted_lat_tile_list:
-    # #
-    # #     plantation_preparation.create_10x10_plantation_type(tile, plant_type_1x1_vrt)
+    #     plantation_preparation.create_10x10_plantation_type(tile, plant_type_1x1_vrt)
 
 
 
