@@ -303,10 +303,10 @@ base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
-AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/20190912/'.format(base_carbon_pool_dir)
+AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/20191012/'.format(base_carbon_pool_dir)
 
 # Date to include in the output directory for all emissions year carbon pools except aboveground carbon
-emis_pool_run_date = '20190912'
+emis_pool_run_date = '20191012'
 
 # Belowground carbon in loss pixels
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
