@@ -108,7 +108,7 @@ mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_rat
 print "Creating carbon pools..."
 
 # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
-num_of_processes = 18
+num_of_processes = 20
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio, extent=extent), tile_list)
 pool.close()
