@@ -39,6 +39,10 @@ e.g., python mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_mode
 
 All entry points conclude with creating 10x10 degree tiles of planted forest carbon accumulation rates and
 planted forest type from 1x1 tiles of planted forest extent.
+
+To run this for just a part of the world, create a new shapefile of 1x1 GADM or plantation tile boundaries (making sure that they
+extend to 10x10 degree tiles (that is, the area being processed must match 10x10 degree tiles) and use that as a
+command line argument. Supply the rest of the global tiles (the unchanged tiles) from the previous model run.
 '''
 
 """
