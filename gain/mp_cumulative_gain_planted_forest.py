@@ -32,9 +32,11 @@ for input in download_list:
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(count / 3)
 # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
+# count/3 maxes out at 360 GB on an r4.16xlarge
 pool.map(cumulative_gain_planted_forest.cumulative_gain_AGC, tile_list)
 
 # Calculates cumulative belowground carbon gain in non-mangrove planted forests
+# count/3 maxes out at 370 GB on an r4.16xlarge
 pool.map(cumulative_gain_planted_forest.cumulative_gain_BGC, tile_list)
 pool.close()
 pool.join()
