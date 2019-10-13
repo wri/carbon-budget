@@ -53,7 +53,8 @@ def main ():
     # This takes about 40 minutes.
     download_list = [
                      cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
-                     cn.peat_mask_dir, cn.ifl_primary_processed_dir, cn.planted_forest_type_unmasked_dir, cn.drivers_processed_dir, cn.climate_zone_processed_dir,
+                     cn.peat_mask_dir, cn.ifl_primary_processed_dir, cn.planted_forest_type_unmasked_dir,
+                     cn.drivers_processed_dir, cn.climate_zone_processed_dir,
                      cn.bor_tem_trop_processed_dir, cn.burn_year_dir,
                      cn.plant_pre_2000_processed_dir,
                      cn.loss_dir
