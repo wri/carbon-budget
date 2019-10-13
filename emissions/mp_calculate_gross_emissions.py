@@ -49,6 +49,23 @@ def main ():
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
 
 
+    # Checks if the correct c++ script has been compiled for the pool option selected
+    if pools == 'biomass_soil':
+        if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
+            print "C++ for biomass+soil already compiled."
+        else:
+            raise Exception('Must compile biomass+soil C++...')
+
+    elif pools == 'soil_only':
+        if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
+            print "C++ for soil_only already compiled."
+        else:
+            raise Exception('Must compile soil_only C++...')
+
+    else:
+        raise Exception('Pool option not valid')
+
+
     # For downloading all tiles in the folders.
     # This takes about 40 minutes.
     download_list = [
@@ -130,24 +147,6 @@ def main ():
     #     for tile in tile_list:
     #
     #         uu.make_blank_tile(tile, pattern, folder)
-
-
-    # Checks if the correct c++ script has been compiled for the pool option selected
-    if pools == 'biomass_soil':
-        if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
-            print "C++ for biomass+soil already compiled."
-        else:
-            raise Exception('Must compile biomass+soil C++...')
-
-    elif pools == 'soil_only':
-        if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
-            print "C++ for soil_only already compiled."
-        else:
-            raise Exception('Must compile soil_only C++...')
-
-    else:
-        raise Exception('Pool option not valid')
-
 
 
     # Calculates gross emissions for each tile
