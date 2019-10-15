@@ -30,7 +30,7 @@ download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_
 for tile in biomass_tile_list:
 
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, tile, cn.pattern_tcd), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_non_mang_non_planted_dir, tile, cn.pattern_WHRC_biomass_2000_non_mang_non_planted), '.')
 
