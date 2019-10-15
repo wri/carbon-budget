@@ -14,11 +14,11 @@ import constants_and_names as cn
 import universal_util as uu
 
 # The list of tiles to iterate through
-biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
-# biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-biomass_tile_list = ['00N_110E'] # test tile
-print biomass_tile_list
-print "There are {} tiles to process".format(str(len(biomass_tile_list)))
+tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
+# tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
+tile_list = ['00N_110E'] # test tile
+print tile_list
+print "There are {} tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir]
@@ -27,7 +27,7 @@ download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_
 #     uu.s3_folder_download(input, '.')
 
 # For copying individual tiles to s3 for testing
-for tile in biomass_tile_list:
+for tile in tile_list:
 
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')
@@ -39,22 +39,22 @@ for tile in biomass_tile_list:
 # # count/2 uses about 330 GB on an r4.16xlarge machine
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(count/2)
-# pool.map(gain_year_count_natrl_forest.create_gain_year_count_loss_only, biomass_tile_list)
+# pool.map(gain_year_count_natrl_forest.create_gain_year_count_loss_only, tile_list)
 #
 # # Creates gain year count tiles using only pixels that had only gain
 # # count/2 uses about 200 GB on an r4.16xlarge machine
-# pool.map(gain_year_count_natrl_forest.create_gain_year_count_gain_only, biomass_tile_list)
+# pool.map(gain_year_count_natrl_forest.create_gain_year_count_gain_only, tile_list)
 #
 # # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
-# pool.map(gain_year_count_natrl_forest.create_gain_year_count_no_change, biomass_tile_list)
+# pool.map(gain_year_count_natrl_forest.create_gain_year_count_no_change, tile_list)
 #
 # # Creates gain year count tiles using only pixels that had both loss and gain pixels
-# pool.map(gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain, biomass_tile_list)
+# pool.map(gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain, tile_list)
 #
 # # Merges the four above gain year count tiles for each Hansen tile into a single output tile
 # count = multiprocessing.cpu_count()
 # pool = multiprocessing.Pool(count/6)
-# pool.map(gain_year_count_natrl_forest.create_gain_year_count_merge, biomass_tile_list)
+# pool.map(gain_year_count_natrl_forest.create_gain_year_count_merge, tile_list)
 # pool.close()
 # pool.join()
 
