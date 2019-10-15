@@ -46,7 +46,7 @@ def mask_mangroves_and_pre_2000_plant(tile_id):
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
         print "    Removing nodata values in mangrove biomass raster {}".format(tile_id)
-        cmd = ['gdal_translate', '-a_nodata', 'none', mangrove_biomass, mangrove_reclass]
+        cmd = ['gdal_translate', '-a_nodata', 'none', '-co', 'COMPRESS=LZW', mangrove_biomass, mangrove_reclass]
         subprocess.check_call(cmd)
 
         # Masks out the mangrove biomass from the planted forest gain rate
