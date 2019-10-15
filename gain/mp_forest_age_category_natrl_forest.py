@@ -41,7 +41,7 @@ for tile in biomass_tile_list:
     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')                                # loss tiles
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')            # gain tiles
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile), '.')    # tcd 2000
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pattern_ifl_primary, tile, cn.pattern_ifl_primary), '.')                    # ifl 2000
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), '.')                    # ifl 2000
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_non_mang_non_planted_dir, tile, cn.pattern_WHRC_biomass_2000_non_mang_non_planted), '.')                     # biomass 2000
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
 
