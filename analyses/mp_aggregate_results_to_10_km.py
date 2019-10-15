@@ -75,7 +75,7 @@ def main():
 
         tile_id_list = uu.tile_list(dir)
 
-        # uu.s3_folder_download(dir, '.')
+        uu.s3_folder_download(dir, '.')
 
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list)))
