@@ -388,7 +388,7 @@ gross_emis_wildfire_biomass_soil_dir = '{0}gross_emissions/wildfire/biomass_soil
 pattern_gross_emis_no_driver_biomass_soil = 'no_driver_t_CO2e_ha_gross_emis_year'
 gross_emis_no_driverv_biomass_soil_dir = '{0}gross_emissions/no_driver/biomass_soil/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_all_gases_all_drivers_biomass_soil = 'all_gases_all_drivers_t_CO2e_ha_gross_emis_year'
+pattern_gross_emis_all_gases_all_drivers_biomass_soil = 'all_gases_all_drivers_t_CO2e_ha_gross_emis_year_biomass_soil'
 gross_emis_all_gases_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/all_gases/biomass_soil/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_co2_only_all_drivers_biomass_soil = 'CO2_only_all_drivers_t_CO2e_ha_gross_emis_year'
