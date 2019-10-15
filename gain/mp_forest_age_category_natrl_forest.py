@@ -30,7 +30,7 @@ print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 # For downloading all tiles in the folders
 download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.ifl_primary_processed_dir,
                  cn.WHRC_biomass_2000_non_mang_non_planted_dir, cn.cont_eco_dir,
-                 cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, cn.mangrove_biomass_2000_dir]
+                 cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_dir]
 
 # for input in download_list:
 #     uu.s3_folder_download(input, '.')
@@ -44,6 +44,8 @@ for tile in biomass_tile_list:
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), '.')                    # ifl 2000
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_non_mang_non_planted_dir, tile, cn.pattern_WHRC_biomass_2000_non_mang_non_planted), '.')                     # biomass 2000
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
 # Table with IPCC Table 4.9 default gain rates
 cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']

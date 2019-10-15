@@ -43,6 +43,8 @@ def forest_age_category(tile_id, gain_table_dict):
     ifl_primary = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary)
     biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
     cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
+    plantations = '{0}_{1}.tif'.format(tile_id, cn.pattern_planted_forest_type_unmasked)
+    mangroves = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
     print "  Reading input files and evaluating conditions"
 
@@ -61,6 +63,8 @@ def forest_age_category(tile_id, gain_table_dict):
         cont_eco_src = rasterio.open(cont_eco)
         biomass_src = rasterio.open(biomass)
         extent_src = rasterio.open(tcd)
+        plantations_src = rasterio.open(plantations)
+        mangroves_src = rasterio.open(mangroves)
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -77,17 +81,19 @@ def forest_age_category(tile_id, gain_table_dict):
         for idx, window in windows:
 
             # Creates windows for each input raster
-            loss = loss_src.read(1, window=window)
-            gain = gain_src.read(1, window=window)
-            tcd = extent_src.read(1, window=window)
-            ifl_primary = ifl_primary_src.read(1, window=window)
-            cont_eco = cont_eco_src.read(1, window=window)
-            biomass = biomass_src.read(1, window=window)
+            loss_window = loss_src.read(1, window=window)
+            gain_window = gain_src.read(1, window=window)
+            tcd_window = extent_src.read(1, window=window)
+            ifl_primary_window = ifl_primary_src.read(1, window=window)
+            cont_eco_window = cont_eco_src.read(1, window=window)
+            biomass_window = biomass_src.read(1, window=window)
+            plantations_window = plantations_src.read(1, window=window)
+            mangroves_window = mangroves_src.read(1, window=window)
 
             # Creates a numpy array that has the <=20 year secondary forest growth rate x 20
             # based on the continent-ecozone code of each pixel (the dictionary).
             # This is used to assign pixels to the correct age category.
-            gain_20_years = np.vectorize(gain_table_dict.get)(cont_eco)*20
+            gain_20_years = np.vectorize(gain_table_dict.get)(cont_eco_window)*20
 
             # Create a 0s array for the output
             dst_data = np.zeros((window.height, window.width), dtype='uint8')
@@ -96,25 +102,25 @@ def forest_age_category(tile_id, gain_table_dict):
             # No change pixels- no loss or gain
             if tropics == 0:
 
-                dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0))] = 1
+                dst_data[np.where((biomass_window > 0) & (tcd_window > 0) & (gain_window == 0) & (loss_window == 0))] = 1
 
             if tropics == 1:
 
-                dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl_primary != 1))] = 2
-                dst_data[np.where((biomass > 0) & (tcd > 0) & (gain == 0) & (loss == 0) & (ifl_primary == 1))] = 3
+                dst_data[np.where((biomass_window > 0) & (tcd_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window != 1))] = 2
+                dst_data[np.where((biomass_window > 0) & (tcd_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window == 1))] = 3
 
             # Loss-only pixels
-            dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl_primary != 1) & (biomass <= gain_20_years))] = 4
-            dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl_primary != 1) & (biomass > gain_20_years))] = 5
-            dst_data[np.where((biomass > 0) & (gain == 0) & (loss > 0) & (ifl_primary ==1))] = 6
+            dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window <= gain_20_years))] = 4
+            dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window > gain_20_years))] = 5
+            dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window ==1))] = 6
 
             # Gain-only pixels
-            dst_data[np.where((biomass >= 0) & (gain == 1) & (loss == 0))] = 7
+            dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
 
             # Pixels with loss and gain
-            dst_data[np.where((biomass >= 0) & (gain == 1) & (loss >= 13))] = 8
-            dst_data[np.where((biomass >= 0) & (gain == 1) & (loss > 0) & (loss <= 6))] = 9
-            dst_data[np.where((biomass >= 0) & (gain == 1) & (loss > 6) & (loss < 13))] = 10
+            dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window >= 13))] = 8
+            dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= 6))] = 9
+            dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window > 6) & (loss_window < 13))] = 10
 
             # Writes the output window to the output
             dst.write_band(1, dst_data, window=window)

@@ -21,7 +21,8 @@ print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
 # For downloading all tiles in the folders
-download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir]
+download_list = [cn.loss_dir, cn.gain_dir, cn.tcd_dir, cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+                 cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_dir]
 
 # for input in download_list:
 #     uu.s3_folder_download(input, '.')
@@ -33,6 +34,9 @@ for tile in tile_list:
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_non_mang_non_planted_dir, tile, cn.pattern_WHRC_biomass_2000_non_mang_non_planted), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+
 
 # # Creates gain year count tiles using only pixels that had only loss
 # # count/3 uses about 220 GB on an r4.16xlarge machine
