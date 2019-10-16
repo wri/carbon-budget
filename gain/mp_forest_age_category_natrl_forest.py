@@ -70,9 +70,8 @@ gain_table_dict[0] = 0
 
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
-# With processes=30, peak usage was about 410 GB
-num_of_processes = 32
+# With processes=30, peak usage was about 350 GB
+num_of_processes = 20
 pool = Pool(num_of_processes)
 pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
 pool.close()

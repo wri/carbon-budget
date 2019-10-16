@@ -262,7 +262,7 @@ def s3_folder_download(source, dest):
     subprocess.check_call(cmd)
 
 
-# Downloads invididual tiles
+# Downloads individual tiles
 def s3_file_download(source, dest):
 
     # Retrieves the name of the tile from the full path name
