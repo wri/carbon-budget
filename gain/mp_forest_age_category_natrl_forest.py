@@ -50,17 +50,17 @@ for tile in biomass_tile_list:
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cont_eco_dir, tile, cn.pattern_cont_eco_processed), '.')               # continents and FAO ecozones 2000
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), '.')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-#
-# # Table with IPCC Table 4.9 default gain rates
-# cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
-# subprocess.check_call(cmd)
-#
-# # Imports the table with the ecozone-continent codes and the carbon gain rates
-# gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-#                            sheet_name = "natrl fores gain, for model")
-#
-# # Removes rows with duplicate codes (N. and S. America for the same ecozone)
-# gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+# Table with IPCC Table 4.9 default gain rates
+cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+subprocess.check_call(cmd)
+
+# Imports the table with the ecozone-continent codes and the carbon gain rates
+gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                           sheet_name = "natrl fores gain, for model")
+
+# Removes rows with duplicate codes (N. and S. America for the same ecozone)
+gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
 # Converts the continent-ecozone codes and young forest gain rates to a dictionary
 gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
