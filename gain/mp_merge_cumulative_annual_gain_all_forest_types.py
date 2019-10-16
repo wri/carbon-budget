@@ -48,7 +48,7 @@ for input in download_list:
 
 # For multiprocessing
 # Count/4 seems to pretty consistently use about 390 GB memory on an r4.16xlarge (not so much of an initial peak).
-# This could probably handle 18 processors.
+# processes=18 maxes out at about 440 GB memory
 count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=18)
 pool.map(merge_cumulative_annual_gain_all_forest_types.gain_merge, tile_list)
