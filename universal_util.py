@@ -32,7 +32,7 @@ def get_tile_type(tile_name):
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_name(tile):
 
-    tile_name = os.path.split(tile)
+    tile_name = os.path.split(tile)[1]
 
     return tile_name
 
