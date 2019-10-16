@@ -68,21 +68,6 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
 gain_table_dict[0] = 0
 
-# All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
-pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_mangrove_biomass_2000]
-
-# for pattern in pattern_list:
-#     count = multiprocessing.cpu_count()
-#     pool = multiprocessing.Pool(count - 10)
-#     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder='./'), biomass_tile_list)
-#     pool.close()
-#     pool.join()
-
-# For single processor use
-for pattern in pattern_list:
-    for tile in biomass_tile_list:
-        uu.make_blank_tile(tile, pattern, './')
-
 # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
 # # With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
