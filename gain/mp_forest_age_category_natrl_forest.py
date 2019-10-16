@@ -69,7 +69,7 @@ gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.value
 gain_table_dict[0] = 0
 
 # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
-pattern_list = [cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_dir]
+pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_mangrove_biomass_2000]
 
 # for pattern in pattern_list:
 #     count = multiprocessing.cpu_count()
