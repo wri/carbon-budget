@@ -50,22 +50,22 @@ download_list = [
                 # cn.cumul_gain_AGCO2_mangrove_dir,
                 # cn.cumul_gain_BGCO2_mangrove_dir,
                 #
-                # # cn.gain_year_count_planted_forest_non_mangrove_dir,
-                # cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
+                # cn.gain_year_count_planted_forest_non_mangrove_dir,
+                cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
                 # cn.planted_forest_type_unmasked_dir,
-                # cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
-                # cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
-                # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
-                # cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir,
+                cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
+                cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
+                cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
+                cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir,
 
                 # cn.age_cat_natrl_forest_dir
                 # cn.gain_year_count_natrl_forest_dir,
-                # cn.annual_gain_AGB_natrl_forest_dir,
-                # cn.annual_gain_BGB_natrl_forest_dir,
-                # cn.cumul_gain_AGCO2_natrl_forest_dir,
-                # cn.cumul_gain_BGCO2_natrl_forest_dir,
-                # cn.annual_gain_AGB_BGB_all_types_dir,
-                # cn.cumul_gain_AGCO2_BGCO2_all_types_dir
+                cn.annual_gain_AGB_natrl_forest_dir,
+                cn.annual_gain_BGB_natrl_forest_dir,
+                cn.cumul_gain_AGCO2_natrl_forest_dir,
+                cn.cumul_gain_BGCO2_natrl_forest_dir,
+                cn.annual_gain_AGB_BGB_all_types_dir,
+                cn.cumul_gain_AGCO2_BGCO2_all_types_dir
 
                 # cn.elevation_processed_dir,
                 # cn.precip_processed_dir,
@@ -102,8 +102,8 @@ download_list = [
                 # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                 # cn.gross_emis_wildfire_soil_only_dir,
                 # cn.gross_emis_urban_soil_only_dir,
-                cn.gross_emis_no_driver_soil_only_dir,
-                cn.gross_emis_nodes_soil_only_dir
+                # cn.gross_emis_no_driver_soil_only_dir,
+                # cn.gross_emis_nodes_soil_only_dir
 
 ]
 
