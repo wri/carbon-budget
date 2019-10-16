@@ -81,9 +81,6 @@ pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_mangrove_bio
 # For single processor use
 for pattern in pattern_list:
     for tile in biomass_tile_list:
-        print tile
-        print pattern
-
         uu.make_blank_tile(tile, pattern, './')
 
 # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
