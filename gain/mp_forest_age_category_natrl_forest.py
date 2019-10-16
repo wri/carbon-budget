@@ -61,38 +61,38 @@ for tile in biomass_tile_list:
 #
 # # Removes rows with duplicate codes (N. and S. America for the same ecozone)
 # gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
-#
-# # Converts the continent-ecozone codes and young forest gain rates to a dictionary
-# gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
-#
-# # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
-# gain_table_dict[0] = 0
-#
-# # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
-# pattern_list = [cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_dir]
-#
-# for pattern in pattern_list:
-#     count = multiprocessing.cpu_count()
-#     # pool = multiprocessing.Pool(count - 10)
-#     pool = multiprocessing.Pool(processes=2)
-#     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder='./'), biomass_tile_list)
-#     pool.close()
-#     pool.join()
-#
-# # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-# # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-# # # With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
-# # # With processes=30, peak usage was about 410 GB
-# # num_of_processes = 32
-# # pool = Pool(num_of_processes)
-# # pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
-# # pool.close()
-# # pool.join()
-#
-# # For single processor use
-# for tile in biomass_tile_list:
-#
-#     forest_age_category_natrl_forest.forest_age_category(tile, gain_table_dict)
-#
-# print "Tiles processed. Uploading to s3 now..."
-# uu.upload_final_set(cn.age_cat_natrl_forest_dir, cn.pattern_age_cat_natrl_forest)
+
+# Converts the continent-ecozone codes and young forest gain rates to a dictionary
+gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
+
+# Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
+gain_table_dict[0] = 0
+
+# All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
+pattern_list = [cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_dir]
+
+for pattern in pattern_list:
+    count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count - 10)
+    pool = multiprocessing.Pool(processes=2)
+    pool.map(partial(uu.make_blank_tile, pattern=pattern, folder='./'), biomass_tile_list)
+    pool.close()
+    pool.join()
+
+# # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+# # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+# # With processes=20, peak usage was about 280 GB, so plenty of room on an r4.16xlarge
+# # With processes=30, peak usage was about 410 GB
+# num_of_processes = 32
+# pool = Pool(num_of_processes)
+# pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict), biomass_tile_list)
+# pool.close()
+# pool.join()
+
+# For single processor use
+for tile in biomass_tile_list:
+
+    forest_age_category_natrl_forest.forest_age_category(tile, gain_table_dict)
+
+print "Tiles processed. Uploading to s3 now..."
+uu.upload_final_set(cn.age_cat_natrl_forest_dir, cn.pattern_age_cat_natrl_forest)

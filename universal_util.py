@@ -262,14 +262,17 @@ def s3_folder_download(source, dest):
     subprocess.check_call(cmd)
 
 
+# Downloads invididual tiles
 def s3_file_download(source, dest):
 
+    # Retrieves the name of the tile from the full path name
     file_name = get_tile_name(source)
-    print "file is", file_name
 
+    # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
         print file_name, "already downloaded"
 
+    # Tries to download the tile if it's not on the spot machine
     else:
         try:
             cmd = ['aws', 's3', 'cp', source, dest]
