@@ -51,7 +51,7 @@ download_list = [
                 # cn.cumul_gain_BGCO2_mangrove_dir,
                 #
                 # cn.gain_year_count_planted_forest_non_mangrove_dir,
-                cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
+                # cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
                 # cn.planted_forest_type_unmasked_dir,
                 cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
                 cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
