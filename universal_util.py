@@ -379,8 +379,8 @@ def make_blank_tile(tile_id, pattern, folder):
         if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
             print "Hansen loss tile exists for {}.".format(tile_id)
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}{1}.tif'.format(folder, tile_id),
-                   '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)]
+                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+                   '{0}{1}.tif'.format(folder, tile_id)]
             subprocess.check_call(cmd)
 
         # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
