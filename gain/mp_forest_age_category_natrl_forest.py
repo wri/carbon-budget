@@ -71,13 +71,18 @@ gain_table_dict[0] = 0
 # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
 pattern_list = [cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_dir]
 
+# for pattern in pattern_list:
+#     count = multiprocessing.cpu_count()
+#     pool = multiprocessing.Pool(count - 10)
+#     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder='./'), biomass_tile_list)
+#     pool.close()
+#     pool.join()
+
+# For single processor use
 for pattern in pattern_list:
-    count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count - 10)
-    pool = multiprocessing.Pool(processes=2)
-    pool.map(partial(uu.make_blank_tile, pattern=pattern, folder='./'), biomass_tile_list)
-    pool.close()
-    pool.join()
+    for tile in biomass_tile_list:
+
+        uu.make_blank_tile(tile, pattern, './')
 
 # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
