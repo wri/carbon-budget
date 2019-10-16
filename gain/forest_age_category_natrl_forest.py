@@ -128,13 +128,14 @@ def forest_age_category(tile_id, gain_table_dict):
             dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window > gain_20_years))] = 5
             dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window ==1))] = 6
 
-            # Gain-only pixels
-            # Since the gain-only pixels are supposed to exclude mangroves and planted forests
+            # Since the gain-only and loss-and-gain pixels are supposed to exclude mangroves and planted forests.
+            # Need separate conditions to do that since not every tile has mangroves and/or plantations
             if os.path.exists(mangroves) & os.path.exists(plantations):
 
                 plantations_window = plantations_src.read(1, window=window)
                 mangroves_window = mangroves_src.read(1, window=window)
 
+                # Gain-only pixels
                 # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
                 dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
 
@@ -148,6 +149,7 @@ def forest_age_category(tile_id, gain_table_dict):
 
                 mangroves_window = mangroves_src.read(1, window=window)
 
+                # Gain-only pixels
                 # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
                 dst_data[np.where((mangroves_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
 
@@ -161,6 +163,7 @@ def forest_age_category(tile_id, gain_table_dict):
 
                 plantations_window = plantations_src.read(1, window=window)
 
+                # Gain-only pixels
                 # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
                 dst_data[np.where((plantations_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
 
@@ -172,6 +175,7 @@ def forest_age_category(tile_id, gain_table_dict):
 
             else:
 
+                # Gain-only pixels
                 # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
                 dst_data[np.where((gain_window == 1) & (loss_window == 0))] = 7
 
