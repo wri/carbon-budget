@@ -255,8 +255,11 @@ def s3_folder_download(source, dest):
 
 
 def s3_file_download(source, dest):
-    cmd = ['aws', 's3', 'cp', source, dest]
-    subprocess.check_call(cmd)
+    try:
+        cmd = ['aws', 's3', 'cp', source, dest]
+        subprocess.check_call(cmd)
+    except:
+        print source, "not found."
 
 
 # Uploads all tiles of a pattern to specified location
