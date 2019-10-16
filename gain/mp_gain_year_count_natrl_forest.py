@@ -1,4 +1,9 @@
-### Creates tiles in which each natural non-mangrove non-planted forest biomass pixel is the number of years that trees are believed to have been growing there between 2001 and 2015.
+### Creates tiles in which each pixel is the number of years that natural forest trees are believed to have been growing there between 2001 and 2015.
+### While it is for use in calculating cumulative non-mangrove non-planted forest gains, it is not limited to the extent of
+### non-mangrove non-planted forest gains.
+### Rather, it can include plantation and mangrove pixels, but these are filtered out during the calculation of the
+### non-mangrove non-planted forest cumulative gains.
+### Thus, this is an overly expansive layer.
 ### It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data (as well as the 2000 tree cover density data).
 ### First it calculates rasters of gain years for non-mangrove non-planted forest biomass pixels that had loss only, gain only, neither loss nor gain, and both loss and gain.
 ### The gain years for each of these conditions are calculated according to rules that are found in the function called by the multiprocessor command.

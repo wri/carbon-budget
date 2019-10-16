@@ -85,7 +85,7 @@ def create_gain_year_count_no_change(tile_id):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, tcd, biomass = tile_names(tile_id)
 
-    # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0
+    # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0 (so that oceans aren't included)
     print "Creating raster of growth years for no change pixels"
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*(D>0)*{}'.format(cn.loss_years)
     no_change_outfilename = 'growth_years_no_change_{}.tif'.format(tile_id)
