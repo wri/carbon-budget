@@ -29,6 +29,14 @@ def get_tile_type(tile_name):
     return tile_type
 
 
+# Gets the tile id from the full tile name using a regular expression
+def get_tile_name(tile):
+
+    tile_name = os.path.split(tile)
+
+    return tile_name
+
+
 # Creates a list of all the biomass tiles (WHRC non-mangrove and mangrove)
 def read_biomass_tile_list():
 
@@ -255,11 +263,19 @@ def s3_folder_download(source, dest):
 
 
 def s3_file_download(source, dest):
-    try:
-        cmd = ['aws', 's3', 'cp', source, dest]
-        subprocess.check_call(cmd)
-    except:
-        print source, "not found."
+
+    file_name = get_tile_name(source)
+    print "file is", file_name
+
+    if os.path.exists(file_name):
+        print file_name, "already downloaded"
+
+    else:
+        try:
+            cmd = ['aws', 's3', 'cp', source, dest]
+            subprocess.check_call(cmd)
+        except:
+            print source, "not found."
 
 
 # Uploads all tiles of a pattern to specified location
@@ -414,7 +430,7 @@ def name_aggregated_output(pattern, thresh):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    out_name = '{0}_10km_tcd{1}_modelv1_1_biomass_soil_{2}'.format(out_pattern, thresh, date_formatted)
+    out_name = '{0}_10km_tcd{1}_modelv1_1_1_biomass_soil_{2}'.format(out_pattern, thresh, date_formatted)
 
     return out_name
 
