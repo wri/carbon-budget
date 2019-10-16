@@ -81,6 +81,8 @@ pattern_list = [cn.planted_forest_type_unmasked_dir, cn.mangrove_biomass_2000_di
 # For single processor use
 for pattern in pattern_list:
     for tile in biomass_tile_list:
+        print tile
+        print pattern
 
         uu.make_blank_tile(tile, pattern, './')
 
