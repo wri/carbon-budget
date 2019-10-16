@@ -49,7 +49,7 @@ pool.join()
 # for tile in tile_list:
 #
 #     cumulative_gain_natrl_forest.cumulative_gain_BGC(tile)
-
+ 
 uu.upload_final_set(cn.cumul_gain_AGCO2_natrl_forest_dir, cn.pattern_cumul_gain_AGCO2_natrl_forest)
 uu.upload_final_set(cn.cumul_gain_BGCO2_natrl_forest_dir, cn.pattern_cumul_gain_BGCO2_natrl_forest)
 
