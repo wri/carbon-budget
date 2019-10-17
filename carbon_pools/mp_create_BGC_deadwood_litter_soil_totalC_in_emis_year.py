@@ -118,6 +118,7 @@ uu.upload_final_set(cn.BGC_emis_year_dir, cn.pattern_BGC_emis_year)
 # cmd = ['rm *{}*.tif'.format(cn.pattern_BGC_emis_year)]
 # subprocess.check_call(cmd)
 
+# processes=16 maxes out at about 430 GB
 num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio, extent=extent), tile_list)
@@ -128,6 +129,7 @@ uu.upload_final_set(cn.deadwood_emis_year_2000_dir, cn.pattern_deadwood_emis_yea
 # cmd = ['rm *{}*.tif'.format(cn.pattern_deadwood_emis_year_2000)]
 # subprocess.check_call(cmd)
 
+# processes=16 maxes out at about 420 GB
 num_of_processes = 16
 pool = Pool(num_of_processes)
 pool.map(partial(create_BGC_deadwood_litter_soil_totalC.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio, extent=extent), tile_list)

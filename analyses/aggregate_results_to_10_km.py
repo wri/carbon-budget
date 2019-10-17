@@ -141,13 +141,13 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    # Converts the annual biomass gain values annual gain in megatonnes
+    # Converts the annual biomass gain values annual gain in megatonnes and makes negative (because removals are negative)
     if tile_type == cn.pattern_annual_gain_AGB_BGB_all_types:
-        sum_array = sum_array / cn.tonnes_to_megatonnes
+        sum_array = sum_array / cn.tonnes_to_megatonnes * -1
 
-    # Converts the cumulative CO2 gain values to annualized CO2 in megatonnes
+    # Converts the cumulative CO2 gain values to annualized CO2 in megatonnes and makes negative (because removals are negative)
     if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
-        sum_array = sum_array/cn.loss_years / cn.tonnes_to_megatonnes
+        sum_array = sum_array/cn.loss_years / cn.tonnes_to_megatonnes * -1
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
     if tile_type == cn.pattern_net_flux:
