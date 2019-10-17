@@ -40,7 +40,7 @@ def main ():
     ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
     mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
     # mangrove_ecozone_list = ['20S_110E', '30S_110E'] # test tiles
-    mangrove_ecozone_list = ['00N_110E'] # test tiles
+    mangrove_ecozone_list = ['10N_110E'] # test tiles
     print mangrove_ecozone_list
     print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
 
@@ -101,7 +101,7 @@ def main ():
         gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
 
     for tile_id in mangrove_ecozone_list:
-        if sensit_type == 'maxgain':
+        if sensit_type is 'maxgain':
             gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
         else:
             gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
@@ -110,7 +110,7 @@ def main ():
         gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
 
     for tile_id in mangrove_ecozone_list:
-        if sensit_type == 'maxgain':
+        if sensit_type is 'maxgain':
             gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
         else:
             gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
