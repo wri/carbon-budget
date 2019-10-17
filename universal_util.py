@@ -481,7 +481,7 @@ def check_sensit_type(sensit_type):
         pass
 
 
-def alter_output_dir(sensit_type, raw_dir_list):
+def alter_dirs(sensit_type, raw_dir_list):
 
     print raw_dir_list
 
@@ -491,7 +491,7 @@ def alter_output_dir(sensit_type, raw_dir_list):
     return processed_dir_list
 
 
-def alter_output_pattern(sensit_type, raw_pattern_list):
+def alter_patterns(sensit_type, raw_pattern_list):
 
     print raw_pattern_list
 

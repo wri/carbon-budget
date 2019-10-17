@@ -20,8 +20,8 @@ import universal_util as uu
 def main ():
 
     # List of output directories and output file name patterns
-    dir_list = [cn.gain_year_count_mangrove_dir]
-    pattern_list = [cn.pattern_gain_year_count_mangrove]
+    output_dir_list = [cn.gain_year_count_mangrove_dir]
+    output_pattern_list = [cn.pattern_gain_year_count_mangrove]
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
@@ -33,15 +33,6 @@ def main ():
 
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
-
-    # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
-
-        print "Changing output directory and file name pattern based on sensitivity analysis"
-
-        dir_list = uu.alter_output_dir(sensit_type, dir_list)
-        pattern_list = uu.alter_output_pattern(sensit_type, pattern_list)
-
 
     # Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
     # calculating mangrove gain
@@ -55,6 +46,15 @@ def main ():
 
     # For downloading all tiles in the input folders
     download_list = [cn.loss_dir, cn.gain_dir, cn.mangrove_biomass_2000_dir]
+
+    # If the model run isn't the standard one, the output directory and file names are changed
+    if sensit_type != 'std':
+
+        print "Changing output directory and file name pattern based on sensitivity analysis"
+
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+        download_list = uu.alter_dirs(sensit_type, download_list)
 
     # for input in download_list:
     #     uu.s3_folder_download(input, '.')
@@ -119,13 +119,13 @@ def main ():
         gain_year_count_mangrove.create_gain_year_count_merge(tile_id)
 
     # Intermediate output tiles for checking outputs
-    uu.upload_final_set(dir_list[0], "growth_years_loss_only")
-    uu.upload_final_set(dir_list[0], "growth_years_gain_only")
-    uu.upload_final_set(dir_list[0], "growth_years_no_change")
-    uu.upload_final_set(dir_list[0], "growth_years_loss_and_gain")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
+    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
+    uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
 
     # This is the final output used later in the model
-    uu.upload_final_set(dir_list[0], pattern_list[0])
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
