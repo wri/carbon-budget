@@ -63,7 +63,7 @@ def main ():
     for tile in mangrove_ecozone_list:
 
         uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.')
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
 
     # # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
