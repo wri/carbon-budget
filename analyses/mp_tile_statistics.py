@@ -75,10 +75,10 @@ download_list = [
                 # cn.drivers_processed_dir,
                 # cn.climate_zone_processed_dir
 
-                cn.AGC_emis_year_dir,
-                cn.BGC_emis_year_dir,
-                cn.deadwood_emis_year_2000_dir,
-                cn.litter_emis_year_2000_dir,
+                # cn.AGC_emis_year_dir,
+                # cn.BGC_emis_year_dir,
+                # cn.deadwood_emis_year_2000_dir,
+                # cn.litter_emis_year_2000_dir,
                 cn.soil_C_emis_year_2000_dir,
                 cn.total_C_emis_year_dir
 

@@ -284,7 +284,7 @@ def s3_file_download(source, dest):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern), '--recursive']
+    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*'.format(pattern), '--recursive']
 
     try:
         subprocess.check_call(cmd)
@@ -483,19 +483,19 @@ def check_sensit_type(sensit_type):
 
 def alter_dirs(sensit_type, raw_dir_list):
 
-    print raw_dir_list
+    print "Raw directory list:", raw_dir_list
 
     processed_dir_list = [d.replace('standard', sensit_type) for d in raw_dir_list]
 
-    print processed_dir_list
+    print "Processed directory list:", processed_dir_list
     return processed_dir_list
 
 
 def alter_patterns(sensit_type, raw_pattern_list):
 
-    print raw_pattern_list
+    print "Raw pattern list:", raw_pattern_list
 
     processed_pattern_list = [(d + '_' + sensit_type) for d in raw_pattern_list]
 
-    print processed_pattern_list
+    print "Processed pattern list:", processed_pattern_list
     return processed_pattern_list
