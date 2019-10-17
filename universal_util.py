@@ -489,6 +489,8 @@ def alter_output_dir(sensit_type, raw_dir_list):
 
         dir.replace("standard", sensit_type)
 
+    print raw_dir_list
+
 
 def alter_output_pattern(sensit_type, raw_pattern_list):
 
@@ -497,3 +499,5 @@ def alter_output_pattern(sensit_type, raw_pattern_list):
     for dir in raw_pattern_list:
 
         dir.replace("standard", sensit_type)
+
+    print raw_pattern_list
