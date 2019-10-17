@@ -30,6 +30,8 @@ def main ():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
+    print sensit_type
+
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type is not 'std':
 
