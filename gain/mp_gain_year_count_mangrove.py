@@ -35,8 +35,8 @@ def main ():
 
         print "Changing output directory and file name pattern based on sensitivity analysis"
 
-        raw_dir_list = [cn.gain_year_count_mangrove_dir]
-        raw_pattern_list = [cn.pattern_gain_year_count_mangrove]
+        raw_dir_list = [cn.gain_year_count_mangrove_dir, cn.gain_year_count_planted_forest_non_mangrove_dir, cn.gain_year_count_natrl_forest_dir]
+        raw_pattern_list = [cn.pattern_gain_year_count_mangrove, cn.pattern_gain_year_count_planted_forest_non_mangrove, cn.gain_year_count_natrl_forest_dir]
 
         revised_dir_list = uu.alter_output_dir(sensit_type, raw_dir_list)
         revised_pattern_list = uu.alter_output_pattern(sensit_type, raw_pattern_list)
