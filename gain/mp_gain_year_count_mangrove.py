@@ -33,6 +33,8 @@ def main ():
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type is not 'std':
 
+        print "Changing output directory and file name pattern based on sensitivity analysis"
+
         raw_dir_list = [cn.gain_year_count_mangrove_dir]
         raw_pattern_list = [cn.pattern_gain_year_count_mangrove]
 
