@@ -55,7 +55,5 @@ def calc_emissions(tile_id, pools):
     else:
         raise Exception('Pool option not valid')
 
-    print pattern
-
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)
