@@ -96,24 +96,24 @@ def main ():
     # pool.close()
     # pool.join()
 
-    # # For single processor use
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     if sensit_type == 'maxgain':
-    #         gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
-    #     else:
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     if sensit_type == 'maxgain':
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
-    #     else:
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+    # For single processor use
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
+        else:
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+        else:
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
 
     for tile_id in mangrove_ecozone_list:
         gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
