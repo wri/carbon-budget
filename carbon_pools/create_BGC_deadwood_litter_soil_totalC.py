@@ -591,7 +591,7 @@ def create_soil(tile_id):
         dst_soil_emis_year.write_band(1, soil_output, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_emis_year_2000)
 
 
 # Creates total carbon tiles

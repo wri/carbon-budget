@@ -469,3 +469,22 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         os.rename(tile_to_mask, out_name)
 
     print "  Pre-2000 plantations for {} complete".format(tile_id)
+
+
+# Checks whether the provided sensitivity analysis type is valid
+def check_sensit_type(sensit_type):
+
+    # Checks the validity of the two arguments. If either one is invalid, the script ends.
+    if (sensit_type not in cn.sensitivity_list):
+        raise Exception('Invalid model type. Please provide a model type from {}.'.format(cn.sensitivity_list))
+    else:
+        pass
+
+
+def alter_output_dir(sensit_type, raw_dir_list):
+
+    print raw_dir_list
+
+    for dir in raw_dir_list:
+
+        dir.replace("standard", sensit_type)

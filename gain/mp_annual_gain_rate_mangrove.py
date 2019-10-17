@@ -2,7 +2,7 @@
 ### Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC
 ### gain rate table.
 
-from multiprocessing.pool import Pool
+import multiprocessing
 from functools import partial
 import annual_gain_rate_mangrove
 import pandas as pd
@@ -76,8 +76,8 @@ gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems
 # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
 # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
 # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
-num_of_processes = 18
-pool = Pool(num_of_processes)
+count = multiprocessing.cpu_count()
+pool = multiprocessing.Pool(processes=18)
 pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), mangrove_ecozone_list)
 pool.close()
 pool.join()
