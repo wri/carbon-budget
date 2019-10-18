@@ -56,7 +56,7 @@ def create_gain_year_count_loss_only(tile_id):
 # Creates gain year count tiles for pixels that only had gain
 def create_gain_year_count_gain_only_standard(tile_id):
 
-    print "Gain pixel-only processing:", tile_id
+    print "Gain pixel-only processing using standard function:", tile_id
 
     # start time
     start = datetime.datetime.now()
@@ -84,7 +84,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
 # Creates gain year count tiles for pixels that only had gain
 def create_gain_year_count_gain_only_maxgain(tile_id):
 
-    print "Gain pixel-only processing:", tile_id
+    print "Gain pixel-only processing using maxgain function:", tile_id
 
     # start time
     start = datetime.datetime.now()
@@ -141,7 +141,7 @@ def create_gain_year_count_no_change(tile_id):
 # Creates gain year count tiles for pixels that had both loss and gain
 def create_gain_year_count_loss_and_gain_standard(tile_id):
 
-    print "Loss and gain pixel processing:", tile_id
+    print "Loss and gain pixel processing using standard function:", tile_id
 
     # start time
     start = datetime.datetime.now()
@@ -169,7 +169,7 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
 # Creates gain year count tiles for pixels that had both loss and gain
 def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 
-    print "Loss and gain pixel processing:", tile_id
+    print "Loss and gain pixel processing using maxgain function:", tile_id
 
     # start time
     start = datetime.datetime.now()
