@@ -185,7 +185,7 @@ plantation_countries = [
 
 # Number of gain years for mangroves
 pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
-gain_year_count_mangrove_dir = os.path.join(base_dir, 'gain_year_count_mangrove/standard/20191017/')
+gain_year_count_mangrove_dir = os.path.join(base_dir, 'gain_year_count_mangrove/standard/20191018/')
 
 # Number of gain years for non-mangrove planted forests
 pattern_gain_year_count_planted_forest_non_mangrove = 'gain_year_count_planted_forest_non_mangrove'
