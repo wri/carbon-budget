@@ -87,14 +87,14 @@ def main ():
     #     # Creates gain year count tiles using only pixels that had both loss and gain pixels
     #     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard, mangrove_ecozone_list)
 
-    output_pattern = output_pattern_list[0]
+    pattern = output_pattern_list[0]
 
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
     # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
     # (e.g., about 450 GB out of 480 GB).
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/6)
-    pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, output_pattern=output_pattern), mangrove_ecozone_list)
+    pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), mangrove_ecozone_list)
     pool.close()
     pool.join()
 
