@@ -263,10 +263,16 @@ def s3_folder_download(source, dest):
 
 
 # Downloads individual tiles
-def s3_file_download(source, dest):
+def s3_file_download(source, dest, sensit_type):
 
     # Retrieves the name of the tile from the full path name
     file_name = get_tile_name(source)
+
+    # Changes the file to download based on the sensitivity analysis being run
+    if sensit_type != 'std' and 'standard' in source:
+
+        source = source.replace('standard', sensit_type)
+        source = source[:-4] + sensit_type
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
