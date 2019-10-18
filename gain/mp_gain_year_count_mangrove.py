@@ -96,11 +96,9 @@ def main ():
     # pool.close()
     # pool.join()
 
-    # # For single processor use
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
-
-    print sensit_type
+    # For single processor use
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
 
     for tile_id in mangrove_ecozone_list:
         if sensit_type == 'maxgain':
