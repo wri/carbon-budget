@@ -271,6 +271,8 @@ def s3_file_download(source, dest, sensit_type):
     # Changes the file to download based on the sensitivity analysis being run
     if sensit_type != 'std' and 'standard' in source:
 
+        print "Changing {} name to reflect sensitivity analysis".format(source)
+
         source = source.replace('standard', sensit_type)
         source = source[:-4] + sensit_type
 
