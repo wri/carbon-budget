@@ -56,8 +56,8 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         download_list = uu.alter_dirs(sensit_type, download_list)
 
-    # for input in download_list:
-    #     uu.s3_folder_download(input, '.')
+    for input in download_list:
+        uu.s3_folder_download(input, '.')
 
     # For copying individual tiles to s3 for testing
     for tile in mangrove_ecozone_list:
@@ -99,27 +99,27 @@ def main ():
     pool.close()
     pool.join()
 
-    # # For single processor use
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     if sensit_type == 'maxgain':
-    #         gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
-    #     else:
-    #         gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     if sensit_type == 'maxgain':
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
-    #     else:
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
-    #
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
+    # For single processor use
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
+        else:
+            gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+        else:
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
     uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")

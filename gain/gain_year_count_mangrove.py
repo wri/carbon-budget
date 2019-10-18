@@ -129,10 +129,6 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, mangrove = tile_names(tile_id)
 
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'Mangrove biomass tile is', mangrove
-
     # Pixels with both loss and gain
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
@@ -182,6 +178,7 @@ def create_gain_year_count_merge(tile_id, pattern):
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
 
+    # All four components are merged together to the final output raster
     age_outfile = '{}_{}.tif'.format(tile_id, pattern)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
