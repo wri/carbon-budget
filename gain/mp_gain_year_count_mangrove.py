@@ -71,7 +71,7 @@ def main ():
     # pool = multiprocessing.Pool(count/3)
     # pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_ecozone_list)
     #
-    # if sensit_type is 'maxgain':
+    # if sensit_type == 'maxgain':
     #     # Creates gain year count tiles using only pixels that had only gain
     #     pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain, mangrove_ecozone_list)
     # else:
@@ -81,7 +81,7 @@ def main ():
     # # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     # pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_ecozone_list)
     #
-    # if sensit_type is 'maxgain':
+    # if sensit_type == 'maxgain':
     #     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain, mangrove_ecozone_list)
     # else:
     #     # Creates gain year count tiles using only pixels that had both loss and gain pixels
@@ -103,8 +103,8 @@ def main ():
     print sensit_type
 
     for tile_id in mangrove_ecozone_list:
-        if sensit_type in ('maxgain'):
-            gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
         else:
             gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
 
@@ -112,8 +112,8 @@ def main ():
         gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
 
     for tile_id in mangrove_ecozone_list:
-        if sensit_type is 'maxgain':
-            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
         else:
             gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
 
