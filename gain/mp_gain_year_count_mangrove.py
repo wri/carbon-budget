@@ -103,7 +103,7 @@ def main ():
     print sensit_type
 
     for tile_id in mangrove_ecozone_list:
-        if sensit_type is 'maxgain':
+        if sensit_type == 'maxgain':
             gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
         else:
             gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
