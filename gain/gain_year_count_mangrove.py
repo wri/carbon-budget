@@ -171,7 +171,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 # Merges the four gain year count tiles above to create a single gain year count tile
 def create_gain_year_count_merge(tile_id, pattern):
 
-    print "Merging:", tile_id
+    print "Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -182,7 +182,6 @@ def create_gain_year_count_merge(tile_id, pattern):
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
 
-    print "  Merging loss, gain, no change, and loss/gain pixels into single raster"
     age_outfile = '{}_{}.tif'.format(tile_id, pattern)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
