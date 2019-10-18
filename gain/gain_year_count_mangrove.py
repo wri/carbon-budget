@@ -36,10 +36,6 @@ def create_gain_year_count_loss_only(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'Mangrove biomass tile is', mangrove
-
     # Pixels with loss only
     print "Creating raster of growth years for loss-only pixels"
     loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
@@ -63,10 +59,6 @@ def create_gain_year_count_gain_only_standard(tile_id):
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, mangrove = tile_names(tile_id)
-
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'Mangrove biomass tile is', mangrove
 
     # Pixels with gain only
     print "Creating raster of growth years for gain-only pixels"
@@ -92,10 +84,6 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, mangrove = tile_names(tile_id)
 
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'Mangrove biomass tile is', mangrove
-
     # Pixels with gain only
     print "Creating raster of growth years for gain-only pixels"
     gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({})'.format(cn.loss_years)
@@ -119,10 +107,6 @@ def create_gain_year_count_no_change(tile_id):
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, mangrove = tile_names(tile_id)
-
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'Mangrove biomass tile is', mangrove
 
     # Pixels with neither loss nor gain but in areas with mangroves.
     # This is the only equation which really differs from the non-mangrove equations; it does not invoke tcd since that is irrelevant for mangroves.
@@ -176,10 +160,6 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, mangrove = tile_names(tile_id)
-
-    print 'Loss tile is', loss
-    print 'Gain tile is', gain
-    print 'Mangrove biomass tile is', mangrove
 
     # Pixels with both loss and gain
     print "Creating raster of growth years for loss and gain pixels"
