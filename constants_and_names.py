@@ -185,7 +185,7 @@ plantation_countries = [
 
 # Number of gain years for mangroves
 pattern_gain_year_count_mangrove = 'gain_year_count_mangrove'
-gain_year_count_mangrove_dir = os.path.join(base_dir, 'gain_year_count_mangrove/standard/20191018/')
+gain_year_count_mangrove_dir = os.path.join(base_dir, 'gain_year_count_mangrove/standard/20191023/')
 
 # Number of gain years for non-mangrove planted forests
 pattern_gain_year_count_planted_forest_non_mangrove = 'gain_year_count_planted_forest_non_mangrove'
@@ -448,7 +448,7 @@ net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/bio
 ### 10x10 km aggregation tiles for mapping
 ######
 
-output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/20191017/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191018/'.format(base_dir)
 
 
 # Tile summary spreadsheets
