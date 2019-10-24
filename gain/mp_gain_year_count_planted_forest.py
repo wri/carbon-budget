@@ -108,9 +108,9 @@ def main ():
 
     for tile_id in tile_list:
         if sensit_type == 'maxgain':
-            gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_standard(tile_id)
-        else:
             gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+        else:
+            gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_standard(tile_id)
 
     for tile_id in tile_list:
         gain_year_count_planted_forest.create_gain_year_count_merge(tile_id, output_pattern_list[0])
