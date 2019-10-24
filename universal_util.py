@@ -281,8 +281,6 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
         source = source.replace('standard', sensit_type)
         source = source[:-4] + '_' + sensit_type + '.tif'
 
-        print source
-
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
         print file_name, "already downloaded"
@@ -496,6 +494,7 @@ def check_sensit_type(sensit_type):
         pass
 
 
+# Changes the name of the input or output directory according to the sensitivity analysis
 def alter_dirs(sensit_type, raw_dir_list):
 
     print "Raw directory list:", raw_dir_list
@@ -506,6 +505,7 @@ def alter_dirs(sensit_type, raw_dir_list):
     return processed_dir_list
 
 
+# Alters the file patterns in a list according to the sensitivity analysis
 def alter_patterns(sensit_type, raw_pattern_list):
 
     print "Raw pattern list:", raw_pattern_list
@@ -516,12 +516,18 @@ def alter_patterns(sensit_type, raw_pattern_list):
     return processed_pattern_list
 
 
-def sensit_rename(sensit_type, raw_pattern):
+def sensit_rename(sensit_type, tile_id, raw_pattern, use_sensit):
 
-    if sensit_type != 'std':
-        processed_pattern = raw_pattern
+    if sensit_type != 'std' and use_sensit == 'false':
+        processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
         return processed_pattern
+
+    elif sensit_type != 'std' and use_sensit == 'true':
+        processed_pattern = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+        return processed_pattern
+
     else:
-        return raw_pattern
+        processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
+        return processed_pattern
 
 
