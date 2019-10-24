@@ -153,7 +153,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
     loss, gain, tcd, biomass = tile_names(tile_id)
 
     # Pixels with both loss and gain
-    loss_and_gain_calc = '--calc=((A>0)*(B==1)*({}-A))'.format(cn.loss_years)
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*(A-1))'.format(cn.loss_years)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
