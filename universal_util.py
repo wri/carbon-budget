@@ -512,3 +512,14 @@ def alter_patterns(sensit_type, raw_pattern_list):
 
     print "Processed pattern list:", processed_pattern_list
     return processed_pattern_list
+
+
+def sensit_rename(sensit_type, raw_pattern):
+
+    if sensit_type != 'std':
+        processed_pattern = raw_pattern
+        return processed_pattern
+    else:
+        return raw_pattern
+
+
