@@ -279,7 +279,7 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
         source = source.replace('standard', sensit_type)
-        source = source[:-4] + '_' + sensit_type
+        source = source[:-4] + '_' + sensit_type + '.tif'
 
         print source
 
