@@ -181,7 +181,7 @@ def create_gain_year_count_merge(tile_id, pattern):
     # All four components are merged together to the final output raster
     age_outfile = '{}_{}.tif'.format(tile_id, pattern)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
-           '-co', 'COMPRESS=LZW', '-a_nodata', '0', '--type', 'Byte']
+           '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
