@@ -58,7 +58,7 @@ def main ():
     for tile in tile_list:
 
         uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type)
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.', sensit_type)
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.', sensit_type)
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.', sensit_type)
 
     # # Creates gain year count tiles using only pixels that had only loss
