@@ -263,13 +263,18 @@ def s3_folder_download(source, dest):
 
 
 # Downloads individual tiles
-def s3_file_download(source, dest, sensit_type):
+# Source=source file on s3
+# dest=where to download onto spot machine
+# sensit_type = whether the model is standard or a sensitivity analysis model run
+# use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
+def s3_file_download(source, dest, sensit_type, use_sensit):
 
     # Retrieves the name of the tile from the full path name
     file_name = get_tile_name(source)
 
-    # Changes the file to download based on the sensitivity analysis being run
-    if sensit_type != 'std' and 'standard' in source:
+    # Changes the file to download based on the sensitivity analysis being run and whether that particular input
+    # has a sensitivity analysis path on s3
+    if sensit_type != 'std' and 'standard' in source and use_sensit == 'true':
 
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
