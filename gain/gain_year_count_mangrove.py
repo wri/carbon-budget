@@ -28,7 +28,7 @@ def tile_names(tile_id):
 # Creates gain year count tiles for pixels that only had loss
 def create_gain_year_count_loss_only(tile_id):
 
-    print "Loss pixel-only processing:", tile_id
+    print "Gain year count for loss only pixels:", tile_id
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, mangrove = tile_names(tile_id)
@@ -51,7 +51,7 @@ def create_gain_year_count_loss_only(tile_id):
 # Creates gain year count tiles for pixels that only had gain
 def create_gain_year_count_gain_only_standard(tile_id):
 
-    print "Gain pixel-only processing using standard function:", tile_id
+    print "Gain year count for gain only pixels using standard function:", tile_id
 
     # start time
     start = datetime.datetime.now()
@@ -97,7 +97,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
 # Creates gain year count tiles for pixels that had neither loss not gain
 def create_gain_year_count_no_change(tile_id):
 
-    print "No change pixel processing:", tile_id
+    print "Gain year count for pixels with neither loss nor gain:", tile_id
 
     # start time
     start = datetime.datetime.now()
@@ -181,7 +181,7 @@ def create_gain_year_count_merge(tile_id, pattern):
     # All four components are merged together to the final output raster
     age_outfile = '{}_{}.tif'.format(tile_id, pattern)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
-           '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
+           '-co', 'COMPRESS=LZW', '-a_nodata', '0', '--type', 'Byte']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed

@@ -25,7 +25,7 @@ def main ():
 
     # The list of tiles to iterate through
     tile_list = uu.tile_list(cn.annual_gain_AGB_planted_forest_non_mangrove_dir)
-    # biomass_tile_list = ['10N_080W'] # test tile
+    tile_list = ['00N_110E'] # test tile
     print tile_list
     print "There are {} tiles to process".format(str(len(tile_list)))
 
@@ -54,12 +54,12 @@ def main ():
     for input in download_list:
         uu.s3_folder_download(input, '.')
 
-    # For copying individual tiles to s3 for testing
-    for tile in tile_list:
-
-        uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type)
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.', sensit_type)
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.', sensit_type)
+    # # For copying individual tiles to s3 for testing
+    # for tile in tile_list:
+    #
+    #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type)
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, tile, cn.pattern_gain), '.', sensit_type)
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.', sensit_type)
 
     # Creates gain year count tiles using only pixels that had only loss
     count = multiprocessing.cpu_count()
@@ -93,27 +93,27 @@ def main ():
     pool.close()
     pool.join()
 
-    # For single processor use
-    for tile_id in tile_list:
-        gain_year_count_planted_forest.create_gain_year_count_loss_only(tile_id)
-
-    for tile_id in tile_list:
-        if sensit_type == 'maxgain':
-            gain_year_count_planted_forest.create_gain_year_count_gain_only_maxgain(tile_id)
-        else:
-            gain_year_count_planted_forest.create_gain_year_count_gain_only_standard(tile_id)
-
-    for tile_id in tile_list:
-        gain_year_count_planted_forest.create_gain_year_count_no_change(tile_id)
-
-    for tile_id in tile_list:
-        if sensit_type == 'maxgain':
-            gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_standard(tile_id)
-        else:
-            gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_maxgain(tile_id)
-
-    for tile_id in tile_list:
-        gain_year_count_planted_forest.create_gain_year_count_merge(tile_id, output_pattern_list[0])
+    # # For single processor use
+    # for tile_id in tile_list:
+    #     gain_year_count_planted_forest.create_gain_year_count_loss_only(tile_id)
+    #
+    # for tile_id in tile_list:
+    #     if sensit_type == 'maxgain':
+    #         gain_year_count_planted_forest.create_gain_year_count_gain_only_maxgain(tile_id)
+    #     else:
+    #         gain_year_count_planted_forest.create_gain_year_count_gain_only_standard(tile_id)
+    #
+    # for tile_id in tile_list:
+    #     gain_year_count_planted_forest.create_gain_year_count_no_change(tile_id)
+    #
+    # for tile_id in tile_list:
+    #     if sensit_type == 'maxgain':
+    #         gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_standard(tile_id)
+    #     else:
+    #         gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+    #
+    # for tile_id in tile_list:
+    #     gain_year_count_planted_forest.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
     uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
