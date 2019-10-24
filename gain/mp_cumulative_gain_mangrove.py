@@ -62,22 +62,22 @@ def main ():
     # pool = multiprocessing.Pool(count / 3)
     # # Calculates cumulative aboveground carbon gain in mangroves
     # # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
-    # pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern), mangrove_biomass_tile_list)
+    # pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), mangrove_biomass_tile_list)
     #
     # # Creates a single filename pattern to pass to the multiprocessor call
     # pattern = output_pattern_list[1]
     #
     # # Calculates cumulative belowground carbon gain in mangroves
-    # pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern), mangrove_biomass_tile_list)
+    # pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), mangrove_biomass_tile_list)
     # pool.close()
     # pool.join()
 
     # For single processor use
     for tile in mangrove_biomass_tile_list:
-        cumulative_gain_mangrove.cumulative_gain_AGCO2(tile, output_pattern_list[0])
+        cumulative_gain_mangrove.cumulative_gain_AGCO2(tile, output_pattern_list[0], sensit_type)
 
     for tile in mangrove_biomass_tile_list:
-        cumulative_gain_mangrove.cumulative_gain_BGCO2(tile, output_pattern_list[1])
+        cumulative_gain_mangrove.cumulative_gain_BGCO2(tile, output_pattern_list[1], sensit_type)
 
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
