@@ -55,9 +55,9 @@ def main ():
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_mangrove_dir, tile, cn.pattern_annual_gain_BGB_mangrove), '.', sensit_type, 'false')      # annual AGB gain rate tiles
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_mangrove_dir, tile, cn.pattern_gain_year_count_mangrove), '.', sensit_type, 'true')      # number of years with gain tiles
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
-
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[0]
+    #
     # count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(count / 3)
     # # Calculates cumulative aboveground carbon gain in mangroves

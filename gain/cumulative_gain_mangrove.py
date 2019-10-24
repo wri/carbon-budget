@@ -17,16 +17,12 @@ def cumulative_gain_AGCO2(tile_id, pattern, sensit_type):
     # Start time
     start = datetime.datetime.now()
 
-    print pattern
-
     # Creates input file names differently depending on whether it's a sensitivity analysis run or not
+    # Names of the annual gain rate and gain year count tiles
     if sensit_type != 'std':
-        print "it's not standard"
         gain_rate_AGB = '{0}_{1}_{2}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove, sensit_type)
         gain_year_count = '{0}_{1}_{2}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove, sensit_type)
     else:
-        print "it's standard"
-        # Names of the annual gain rate and gain year count tiles
         gain_rate_AGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
         gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove)
 
@@ -50,11 +46,11 @@ def cumulative_gain_BGCO2(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Creates input file names differently depending on whether it's a sensitivity analysis run or not
+    # Names of the annual gain rate and gain year count tiles
     if sensit_type != 'std':
         gain_rate_BGB = '{0}_{1}_{2}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove, sensit_type)
         gain_year_count = '{0}_{1}_{2}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove, sensit_type)
     else:
-        # Names of the annual gain rate and gain year count tiles
         gain_rate_BGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
         gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove)
 
