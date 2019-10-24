@@ -519,15 +519,20 @@ def alter_patterns(sensit_type, raw_pattern_list):
 def sensit_rename(sensit_type, tile_id, raw_pattern, use_sensit):
 
     if sensit_type != 'std' and use_sensit == 'false':
+        print "option 1"
         processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-        return processed_pattern
+        print processed_pattern
 
     elif sensit_type != 'std' and use_sensit == 'true':
+        print "option 2"
         processed_pattern = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-        return processed_pattern
+        print processed_pattern
 
     else:
+        print "option 3"
         processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-        return processed_pattern
+        print processed_pattern
+
+    return processed_pattern
 
 
