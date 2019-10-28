@@ -18,8 +18,8 @@ def cumulative_gain_AGCO2(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles, modified according to sensitivity analysis
-    gain_rate_AGB = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'false')
-    gain_year_count = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'true')
+    gain_rate_AGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'false')
+    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'true')
 
     # CO2 gain uses special mangrove biomass:carbon ratio
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_mangrove, cn.c_to_co2)
@@ -41,8 +41,8 @@ def cumulative_gain_BGCO2(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles, modified according to sensitivity analysis
-    gain_rate_BGB = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_mangrove, 'false')
-    gain_year_count = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'true')
+    gain_rate_BGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_mangrove, 'false')
+    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'true')
 
     # CO2 gain uses special mangrove biomass:carbon ratio
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_mangrove, cn.c_to_co2)
