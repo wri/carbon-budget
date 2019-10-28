@@ -502,6 +502,7 @@ def alter_dirs(sensit_type, raw_dir_list):
     processed_dir_list = [d.replace('standard', sensit_type) for d in raw_dir_list]
 
     print "Processed directory list:", processed_dir_list
+    print ""
     return processed_dir_list
 
 
@@ -513,6 +514,7 @@ def alter_patterns(sensit_type, raw_pattern_list):
     processed_pattern_list = [(d + '_' + sensit_type) for d in raw_pattern_list]
 
     print "Processed pattern list:", processed_pattern_list
+    print ""
     return processed_pattern_list
 
 
