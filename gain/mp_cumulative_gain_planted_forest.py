@@ -13,8 +13,8 @@ import universal_util as uu
 def main ():
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove]
-    output_pattern_list = [cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove]
+    output_dir_list = [cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir]
+    output_pattern_list = [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove]
 
     tile_list = uu.tile_list(cn.annual_gain_AGB_planted_forest_non_mangrove_dir)
     # tile_list = ['20S_110E', '30S_110E'] # test tiles
