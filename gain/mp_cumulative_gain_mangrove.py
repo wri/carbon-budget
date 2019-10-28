@@ -41,9 +41,9 @@ def main ():
 
         print "Changing output directory and file name pattern based on sensitivity analysis"
 
+        download_list = uu.alter_dirs(sensit_type, download_list)
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        download_list = uu.alter_dirs(sensit_type, download_list)
 
     # for input in download_list:
     #     uu.s3_folder_download(input, '.')
@@ -53,7 +53,7 @@ def main ():
 
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_mangrove_dir, tile, cn.pattern_annual_gain_AGB_mangrove), '.', sensit_type, 'false')      # annual AGB gain rate tiles
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_mangrove_dir, tile, cn.pattern_annual_gain_BGB_mangrove), '.', sensit_type, 'false')      # annual AGB gain rate tiles
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_mangrmrove_dir, tile, cn.pattern_gain_year_count_mangrove), '.', sensit_type, 'true')      # number of years with gain tiles
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_mangrrove_dir, tile, cn.pattern_gain_year_count_mangrove), '.', sensit_type, 'true')      # number of years with gain tiles
 
     # # Creates a single filename pattern to pass to the multiprocessor call
     # pattern = output_pattern_list[0]
