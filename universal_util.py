@@ -517,22 +517,21 @@ def alter_patterns(sensit_type, raw_pattern_list):
     return processed_pattern_list
 
 
-def sensit_rename(sensit_type, tile_id, raw_pattern, use_sensit):
+# Creates the correct input tile name for processing based on the sensitivity analysis being done
+def sensit_pattern_rename(sensit_type, tile_id, raw_pattern, use_sensit):
 
-    if sensit_type != 'std' and use_sensit == 'false':
-        print "option 1"
-        processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-        print processed_pattern
-
-    elif sensit_type != 'std' and use_sensit == 'true':
-        print "option 2"
+    # If the tile should be named based on the sensitivity analysis. This way, there is control over what the name
+    # of each tile should be.
+    if use_sensit == 'true':
+        # print "option 1"
         processed_pattern = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-        print processed_pattern
+        # print processed_pattern
 
+    # If the tile shouldn't be named based on the sensitivity analysis
     else:
-        print "option 3"
+        # print "option 2"
         processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-        print processed_pattern
+        # print processed_pattern
 
     return processed_pattern
 

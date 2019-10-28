@@ -17,11 +17,11 @@ def main ():
     output_dir_list = [cn.cumul_gain_AGCO2_mangrove_dir, cn.cumul_gain_BGCO2_mangrove_dir]
     output_pattern_list = [cn.pattern_cumul_gain_AGCO2_mangrove, cn.pattern_cumul_gain_BGCO2_mangrove]
 
-    mangrove_biomass_tile_list = uu.tile_list(cn.annual_gain_AGB_mangrove_dir)
+    biomass_tile_list = uu.tile_list(cn.annual_gain_AGB_mangrove_dir)
     # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-    mangrove_biomass_tile_list = ['00N_110E'] # test tiles
-    print mangrove_biomass_tile_list
-    print "There are {} tiles to process".format(str(len(mangrove_biomass_tile_list))) + "\n"
+    biomass_tile_list = ['00N_110E'] # test tiles
+    print biomass_tile_list
+    print "There are {} tiles to process".format(str(len(biomass_tile_list))) + "\n"
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
@@ -49,34 +49,34 @@ def main ():
     #     uu.s3_folder_download(input, '.')
 
     # For copying individual tiles to spot machine for testing
-    for tile in mangrove_biomass_tile_list:
+    for tile in biomass_tile_list:
 
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_mangrove_dir, tile, cn.pattern_annual_gain_AGB_mangrove), '.', sensit_type, 'false')      # annual AGB gain rate tiles
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_mangrove_dir, tile, cn.pattern_annual_gain_BGB_mangrove), '.', sensit_type, 'false')      # annual AGB gain rate tiles
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_mangrove_dir, tile, cn.pattern_gain_year_count_mangrove), '.', sensit_type, 'true')      # number of years with gain tiles
 
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[0]
-    #
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count / 3)
-    # # Calculates cumulative aboveground carbon gain in mangroves
-    # # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
-    # pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), mangrove_biomass_tile_list)
-    #
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[1]
-    #
-    # # Calculates cumulative belowground carbon gain in mangroves
-    # pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), mangrove_biomass_tile_list)
-    # pool.close()
-    # pool.join()
+    # Creates a single filename pattern to pass to the multiprocessor call
+    pattern = output_pattern_list[0]
+
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count / 3)
+    # Calculates cumulative aboveground carbon gain in mangroves
+    # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
+    pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_list)
+
+    # Creates a single filename pattern to pass to the multiprocessor call
+    pattern = output_pattern_list[1]
+
+    # Calculates cumulative belowground carbon gain in mangroves
+    pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_list)
+    pool.close()
+    pool.join()
 
     # For single processor use
-    for tile in mangrove_biomass_tile_list:
+    for tile in biomass_tile_list:
         cumulative_gain_mangrove.cumulative_gain_AGCO2(tile, output_pattern_list[0], sensit_type)
 
-    for tile in mangrove_biomass_tile_list:
+    for tile in biomass_tile_list:
         cumulative_gain_mangrove.cumulative_gain_BGCO2(tile, output_pattern_list[1], sensit_type)
 
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

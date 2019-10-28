@@ -32,7 +32,7 @@ def main ():
     # mangrove_ecozone_list = ['20S_110E', '30S_110E'] # test tiles
     # mangrove_ecozone_list = ['00N_110E'] # test tiles
     print mangrove_ecozone_list
-    print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
+    print "There are {} tiles to process".format(str(len(mangrove_ecozone_list))) + "\n"
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')

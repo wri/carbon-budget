@@ -24,7 +24,7 @@ biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
 # biomass_tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 # biomass_tile_list = ['00N_110E']
 print biomass_tile_list
-print "There are {} tiles to process".format(str(len(biomass_tile_list)))
+print "There are {} tiles to process".format(str(len(biomass_tile_list))) + "\n"
 
 # For downloading all tiles in the input folders.
 # Mangrove biomass and full-extent planted forests are used to mask out mangrove and planted forests from the natural forests.

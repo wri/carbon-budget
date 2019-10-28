@@ -23,7 +23,7 @@ mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozon
 # mangrove_ecozone_list = ['10N_080W', '00N_110E'] # test tiles
 # mangrove_ecozone_list = ['00N_110E'] # test tiles
 print mangrove_ecozone_list
-print "There are {} tiles to process".format(str(len(mangrove_ecozone_list)))
+print "There are {} tiles to process".format(str(len(mangrove_ecozone_list))) + "\n"
 
 # For downloading all tiles in the input folders
 download_list = [cn.cont_eco_dir, cn.mangrove_biomass_2000_dir, cn.plant_pre_2000_processed_dir]

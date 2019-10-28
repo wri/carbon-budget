@@ -31,7 +31,7 @@ def main ():
     # tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
     tile_list = ['00N_110E'] # test tile
     print tile_list
-    print "There are {} tiles to process".format(str(len(tile_list)))
+    print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')

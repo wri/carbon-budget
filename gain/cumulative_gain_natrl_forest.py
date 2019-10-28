@@ -8,19 +8,19 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Calculates cumulative aboveground carbon gain in non-mangrove, non-planted forests
-def cumulative_gain_AGCO2(tile_id):
+# Calculates cumulative aboveground CO2 gain in non-mangrove, non-planted forests
+def cumulative_gain_AGCO2(tile_id, pattern, sensit_type):
 
     print "Calculating cumulative aboveground CO2 gain:", tile_id
 
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the annual gain rate and gain year count tiles
-    gain_rate_AGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
-    gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
+    # Names of the input tiles, modified according to sensitivity analysis
+    gain_rate_AGB = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest, 'false')
+    gain_year_count = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_gain_year_count_natrl_forest, 'true')
 
-    # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
+    # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     AGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
     AGCO2_accum_outfilearg = '--outfile={}'.format(AGCO2_accum_outfilename)
@@ -28,11 +28,11 @@ def cumulative_gain_AGCO2(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
+    uu.end_of_fx_summary(start, tile_id, pattern)
 
 
-# Calculates cumulative belowground carbon gain in non-mangrove, non-planted forests
-def cumulative_gain_BGCO2(tile_id):
+# Calculates cumulative belowground CO2 gain in non-mangrove, non-planted forests
+def cumulative_gain_BGCO2(tile_id, pattern, sensit_type):
 
     print "Calculating cumulative belowground CO2 gain:", tile_id
 
@@ -40,10 +40,10 @@ def cumulative_gain_BGCO2(tile_id):
     start = datetime.datetime.now()
 
     # Names of the annual gain rate and gain year count tiles
-    gain_rate_BGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
-    gain_year_count = '{0}_{1}.tif'.format(tile_id, cn.pattern_gain_year_count_natrl_forest)
+    gain_rate_BGB = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_natrl_forest, 'false')
+    gain_year_count = uu.sensit_pattern_rename(sensit_type, tile_id, cn.pattern_gain_year_count_natrl_forest, 'true')
 
-    # Carbon gain uses non-mangrove non-planted biomass:carbon ratio
+    # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     BGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)
     BGCO2_accum_outfilearg = '--outfile={}'.format(BGCO2_accum_outfilename)
@@ -51,4 +51,4 @@ def cumulative_gain_BGCO2(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)
+    uu.end_of_fx_summary(start, tile_id, pattern)

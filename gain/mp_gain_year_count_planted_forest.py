@@ -27,7 +27,7 @@ def main ():
     tile_list = uu.tile_list(cn.annual_gain_AGB_planted_forest_non_mangrove_dir)
     tile_list = ['00N_110E'] # test tile
     print tile_list
-    print "There are {} tiles to process".format(str(len(tile_list)))
+    print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
