@@ -21,7 +21,7 @@ def cumulative_gain_AGCO2(tile_id, pattern, sensit_type):
     # gain_year_count = '{0}_{1}_{2}.tif'.format(tile_id, cn.pattern_gain_year_count_mangrove, sensit_type)
 
     gain_rate_AGB = uu.sensit_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'false')
-    gain_year_count = uu.sensit_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'false')
+    gain_year_count = uu.sensit_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'true')
 
     # # Creates input file names differently depending on whether it's a sensitivity analysis run or not
     # # Names of the annual gain rate and gain year count tiles
