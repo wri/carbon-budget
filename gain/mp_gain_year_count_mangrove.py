@@ -30,7 +30,7 @@ def main ():
     ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
     mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
     # mangrove_ecozone_list = ['20S_110E', '30S_110E'] # test tiles
-    # mangrove_ecozone_list = ['00N_110E'] # test tiles
+    mangrove_ecozone_list = ['00N_110E'] # test tiles
     print mangrove_ecozone_list
     print "There are {} tiles to process".format(str(len(mangrove_ecozone_list))) + "\n"
 
@@ -56,71 +56,71 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         download_list = uu.alter_dirs(sensit_type, download_list)
 
-    for input in download_list:
-        uu.s3_folder_download(input, '.')
+    # for input in download_list:
+    #     uu.s3_folder_download(input, '.')
 
-    # # For copying individual tiles to s3 for testing
-    # for tile in mangrove_ecozone_list:
+    # For copying individual tiles to s3 for testing
+    for tile in mangrove_ecozone_list:
+
+        uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type, 'false')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.', sensit_type, 'false')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.', sensit_type, 'false')
+
+    # # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/3)
+    # pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_ecozone_list)
     #
-    #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type, 'false')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.', sensit_type, 'false')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.', sensit_type, 'false')
-
-    # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/3)
-    pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, mangrove_ecozone_list)
-
-    if sensit_type == 'maxgain':
-        # Creates gain year count tiles using only pixels that had only gain
-        pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain, mangrove_ecozone_list)
-    else:
-        # Creates gain year count tiles using only pixels that had only gain
-        pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_standard, mangrove_ecozone_list)
-
-    # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
-    pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_ecozone_list)
-
-    if sensit_type == 'maxgain':
-        # Creates gain year count tiles using only pixels that had both loss and gain pixels
-        pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain, mangrove_ecozone_list)
-    else:
-        # Creates gain year count tiles using only pixels that had both loss and gain pixels
-        pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard, mangrove_ecozone_list)
-
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
-
-    # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
-    # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
-    # (e.g., about 450 GB out of 480 GB).
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/6)
-    pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), mangrove_ecozone_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
+    # if sensit_type == 'maxgain':
+    #     # Creates gain year count tiles using only pixels that had only gain
+    #     pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain, mangrove_ecozone_list)
+    # else:
+    #     # Creates gain year count tiles using only pixels that had only gain
+    #     pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_standard, mangrove_ecozone_list)
     #
-    # for tile_id in mangrove_ecozone_list:
-    #     if sensit_type == 'maxgain':
-    #         gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
-    #     else:
-    #         gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
+    # # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
+    # pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, mangrove_ecozone_list)
     #
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
+    # if sensit_type == 'maxgain':
+    #     # Creates gain year count tiles using only pixels that had both loss and gain pixels
+    #     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain, mangrove_ecozone_list)
+    # else:
+    #     # Creates gain year count tiles using only pixels that had both loss and gain pixels
+    #     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard, mangrove_ecozone_list)
     #
-    # for tile_id in mangrove_ecozone_list:
-    #     if sensit_type == 'maxgain':
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
-    #     else:
-    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[0]
     #
-    # for tile_id in mangrove_ecozone_list:
-    #     gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
+    # # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
+    # # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
+    # # (e.g., about 450 GB out of 480 GB).
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/6)
+    # pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), mangrove_ecozone_list)
+    # pool.close()
+    # pool.join()
+
+    # For single processor use
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
+        else:
+            gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        if sensit_type == 'maxgain':
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+        else:
+            gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+
+    for tile_id in mangrove_ecozone_list:
+        gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
     uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
