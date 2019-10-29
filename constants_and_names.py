@@ -253,19 +253,19 @@ cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_ma
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
 pattern_cumul_gain_AGCO2_planted_forest_non_mangrove = 'cumul_gain_AGCO2_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_AGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_planted_forest_non_mangrove/standard/20191028/')
+cumul_gain_AGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_planted_forest_non_mangrove/standard/20191029/')
 
 # Cumulative belowground gain for non-mangrove planted natural forests
 pattern_cumul_gain_BGCO2_planted_forest_non_mangrove = 'cumul_gain_BGCO2_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_planted_forest_non_mangrove/standard/20191028/')
+cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_planted_forest_non_mangrove/standard/20191029/')
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_AGCO2_natrl_forest = 'cumul_gain_AGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191016/')
+cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191029/')
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_BGCO2_natrl_forest = 'cumul_gain_BGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/standard/20191016/')
+cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/standard/20191029/')
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'

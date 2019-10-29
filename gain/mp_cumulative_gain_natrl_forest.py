@@ -18,7 +18,7 @@ def main ():
 
     biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
     # biomass_tile_list = ['20S_110E', '30S_110E'] # test tiles
-    # biomass_tile_list = ['20S_110E'] # test tiles
+    biomass_tile_list = ['00N_110E'] # test tiles
     print biomass_tile_list
     print "There are {} tiles to process".format(str(len(biomass_tile_list))) + "\n"
 
@@ -46,8 +46,8 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    for input in download_list:
-        uu.s3_folder_download(input, '.')
+    # for input in download_list:
+    #     uu.s3_folder_download(input, '.')
 
     # For copying individual tiles to spot machine for testing
     for tile in biomass_tile_list:
@@ -56,20 +56,20 @@ def main ():
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_BGB_natrl_forest_dir, tile, cn.pattern_annual_gain_BGB_natrl_forest), '.', sensit_type, 'false')  # annual AGB gain rate tiles
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_natrl_forest_dir, tile, cn.pattern_gain_year_count_natrl_forest), '.', sensit_type, 'true')  # number of years with gain tiles
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
-
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(26)
-    # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
-    # Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_list)
-
-    # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-    # Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_list)
-    pool.close()
-    pool.join()
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[0]
+    #
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(26)
+    # # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
+    # # Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
+    # pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_list)
+    #
+    # # Calculates cumulative belowground carbon gain in non-mangrove planted forests
+    # # Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
+    # pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_list)
+    # pool.close()
+    # pool.join()
 
     # For single processor use
     for tile in biomass_tile_list:
