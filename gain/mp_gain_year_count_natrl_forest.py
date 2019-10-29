@@ -128,10 +128,10 @@ def main ():
         gain_year_count_natrl_forest.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
-    uu.upload_final_set(cn.gain_year_count_natrl_forest_dir, "growth_years_loss_only")
-    uu.upload_final_set(cn.gain_year_count_natrl_forest_dir, "growth_years_gain_only")
-    uu.upload_final_set(cn.gain_year_count_natrl_forest_dir, "growth_years_no_change")
-    uu.upload_final_set(cn.gain_year_count_natrl_forest_dir, "growth_years_loss_and_gain")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
+    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
+    uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
 
     # This is the final output used later in the model
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
