@@ -523,17 +523,16 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern, use_sensit):
     # If the analysis is not the standard model and the input should be renamed
     # i.e. even in sensitivity analyses, sometimes inputs should keep their standard names
     if sensit_type != 'std' and use_sensit == 'true':
+        processed_pattern = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+
+    else:
         # For all tiles besides loss
-        print len(tile_id)
         if len(tile_id) > 4:
-            processed_pattern = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+            processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
+            # print processed_pattern
         # For loss tiles, which have no pattern and never have a sensitivity type
         else:
             '{}.tif'.format(tile_id)
-        # print processed_pattern
-
-    else:
-        processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)
         # print processed_pattern
 
     return processed_pattern
