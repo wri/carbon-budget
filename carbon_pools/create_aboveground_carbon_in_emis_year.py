@@ -15,7 +15,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def create_emitted_AGC(tile_id):
+def create_emitted_AGC(tile_id, pattern, sensit_type):
 
     # Only proceeds with running the function if there is a loss tile. Without a loss tile, there will be no output, so there's
     # no reason to run the function.
@@ -29,15 +29,17 @@ def create_emitted_AGC(tile_id):
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-    mangrove_cumul_AGCO2_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_mangrove)
-    planted_forest_cumul_AGCO2_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove)
-    natrl_forest_cumul_AGCO2_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
-    loss_year = '{0}.tif'.format(tile_id)
+
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
+    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked, 'false')
+    mangrove_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove, 'true')
+    planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true')
+    natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true')
+    loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '', 'false')
+    gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id, 'false')
 
     # Name of output tile
-    all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_emis_year)
+    all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
 
     print "  Reading input files for {}...".format(tile_id)
 
