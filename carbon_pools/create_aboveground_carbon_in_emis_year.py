@@ -36,6 +36,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true')
     natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true')
     loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '', 'false')
+    print loss_year
     gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id, 'false')
 
     # Name of output tile
