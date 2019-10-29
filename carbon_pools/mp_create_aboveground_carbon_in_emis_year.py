@@ -23,6 +23,7 @@ def main ():
     tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.annual_gain_AGB_mangrove_dir
                                              )
+
     # tile_list = ['30N_080W'] # test tiles
     tile_list = ['00N_110E'] # test tiles
     print tile_list
@@ -69,7 +70,7 @@ def main ():
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove), '.', sensit_type, 'true')
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGCO2_natrl_forest), '.', sensit_type, 'true')
         uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type, 'false')
-        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.loss_dir, cn.pattern_gain, tile), '.', sensit_type, 'false')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.', sensit_type, 'false')
 
     print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
 
