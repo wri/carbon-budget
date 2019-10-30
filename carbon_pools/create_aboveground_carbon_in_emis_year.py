@@ -123,19 +123,24 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             mangrove_cumul_AGCO2_gain_window = mangrove_cumul_AGCO2_gain_src.read(1, window=window)
             mangrove_gain_year_count_window = mangrove_gain_year_count_src.read(1, window=window)
 
-            mangrove_C_final_non_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
-                                                 + (mangrove_cumul_AGCO2_gain_window / cn.c_to_co2)
-            mangrove_C_final_non_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 1, mangrove_C_final_non_gain_and_loss).filled(0)
+            all_forest_types_AGC_combined[np.where((gain_window == 1) & (loss_year_window == 0))] = \
+                (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + (mangrove_cumul_AGCO2_gain_window / cn.c_to_co2)
 
-            gain_before_loss = mangrove_cumul_AGCO2_gain_window * (((cn.loss_years + 1 - loss_year_window)/2) / mangrove_gain_year_count_window)
-            mangrove_C_final_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
-                                             + (gain_before_loss / cn.c_to_co2)
-            mangrove_C_final_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, mangrove_C_final_gain_and_loss).filled(0)
+            # mangrove_C_final_non_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
+            #                                      + (mangrove_cumul_AGCO2_gain_window / cn.c_to_co2)
+            # mangrove_C_final_non_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 1, mangrove_C_final_non_gain_and_loss).filled(0)
+            #
+            #
+            #
+            # gain_before_loss = mangrove_cumul_AGCO2_gain_window * (((cn.loss_years + 1 - loss_year_window)/2) / mangrove_gain_year_count_window)
+            # mangrove_C_final_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
+            #                                  + (gain_before_loss / cn.c_to_co2)
+            # mangrove_C_final_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, mangrove_C_final_gain_and_loss).filled(0)
 
             # Adds the mangrove final AGC density values to the ongoing array
-            all_forest_types_AGC_combined = all_forest_types_AGC_combined \
-                                            + mangrove_C_final_non_gain_and_loss_masked \
-                                            + mangrove_C_final_gain_and_loss_masked
+            all_forest_types_AGC_combined = all_forest_types_AGC_combined 
+                                            # + mangrove_C_final_non_gain_and_loss_masked \
+                                            # + mangrove_C_final_gain_and_loss_masked
 
         # # Non-mangrove planted forest calculation if there is a planted forest C accumulation tile
         # if os.path.exists(planted_forest_cumul_AGCO2_gain):
