@@ -268,10 +268,12 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
     # For downloading test tiles (five or fewer)
     if len(tile_id_list) <= 5:
 
-        print "Downloading test tiles:", tile_id_list
-
         for tile_id in tile_id_list:
-            source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
+            if pattern == '':
+                source = '{0}{1}.tif'.format(source_dir, tile_id)
+            else:
+                source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
+                
             s3_file_download(source, dest, sensit_type, sensit_use)
 
     # For downloading full sets of tiles
