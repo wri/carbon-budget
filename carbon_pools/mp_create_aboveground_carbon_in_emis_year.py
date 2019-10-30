@@ -69,8 +69,8 @@ def main ():
 
     # For downloading all tiles in the input folders.
     download_dict = {
-        cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_mangrove_biomass_2000, 'false'],
-        cn.mangrove_biomass_2000_dir: [cn.pattern_WHRC_biomass_2000_unmasked, 'false'],
+        cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked, 'false'],
+        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000, 'false'],
         cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove, 'true'],
         cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true'],
         cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true'],
