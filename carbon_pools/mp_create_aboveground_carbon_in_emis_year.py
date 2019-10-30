@@ -55,6 +55,18 @@ def main ():
         cn.loss_dir, cn.gain_dir
         ]
 
+    # If the model run isn't the standard one, the output directory and file names are changed
+    if sensit_type != 'std':
+
+        print "Changing output directory and file name pattern based on sensitivity analysis"
+
+        download_list = uu.alter_dirs(sensit_type, download_list)
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+    # for input in download_list:
+    #     uu.s3_folder_download('{}'.format(input), '.')
+
     # For downloading all tiles in the input folders.
     download_dict = {
         cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_mangrove_biomass_2000, 'false'],
@@ -69,19 +81,7 @@ def main ():
         cn.gain_dir: [cn.pattern_gain, 'false']
     }
 
-    # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
-
-        print "Changing output directory and file name pattern based on sensitivity analysis"
-
-        download_list = uu.alter_dirs(sensit_type, download_list)
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-
-    # for input in download_list:
-    #     uu.s3_folder_download('{}'.format(input), '.')
-
-    for key, values in download_dict:
+    for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
         sensit_use = values[1]
