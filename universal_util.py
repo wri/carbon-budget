@@ -526,7 +526,6 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern, use_sensit):
         processed_pattern = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
 
     else:
-        print len(raw_pattern)
         # For all tiles besides loss
         if len(raw_pattern) > 4:
             processed_pattern = '{0}_{1}.tif'.format(tile_id, raw_pattern)

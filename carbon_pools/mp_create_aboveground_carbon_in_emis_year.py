@@ -46,6 +46,9 @@ def main ():
         cn.cumul_gain_AGCO2_mangrove_dir,
         cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
         cn.cumul_gain_AGCO2_natrl_forest_dir,
+        cn.gain_year_count_mangrove_dir,
+        cn.gain_year_count_planted_forest_non_mangrove_dir,
+        cn.gain_year_count_natrl_forest_dir,
         cn.loss_dir, cn.gain_dir
         ]
 
@@ -69,6 +72,9 @@ def main ():
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_mangrove), '.', sensit_type, 'true')
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove), '.', sensit_type, 'true')
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGCO2_natrl_forest), '.', sensit_type, 'true')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_mangrove_dir, tile, cn.pattern_gain_year_count_mangrove), '.', sensit_type, 'true')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_planted_forest_non_mangrove_dir, tile, cn.pattern_gain_year_count_planted_forest_non_mangrove), '.', sensit_type, 'true')
+        uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_year_count_natrl_forest_dir, tile, cn.pattern_gain_year_count_natrl_forest), '.', sensit_type, 'true')
         uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type, 'false')
         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.', sensit_type, 'false')
 
