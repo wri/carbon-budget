@@ -257,7 +257,21 @@ def coords(tile_id):
 
 
 def s3_folder_download(source, dest):
+
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+           '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+    subprocess.check_call(cmd)
+
+
+def s3_folder_download_dict(source_dir, pattern, dest, sensit_type, sensit_use, tile_list):
+
+    if len(tile_list) <= 5:
+
+        for tile in tile_list:
+
+            s3_file_download(source_dir, dest, sensit_type, sensit_use)
+
+    cmd = ['aws', 's3', 'cp', source_dir, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
     subprocess.check_call(cmd)
 

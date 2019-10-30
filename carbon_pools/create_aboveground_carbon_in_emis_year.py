@@ -173,7 +173,6 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             planted_forest_C_non_gain_and_loss_masked_final = \
                 np.ma.masked_where(planted_forest_cumul_AGCO2_gain_window == 0, planted_forest_C_non_gain_and_loss_masked).filled(0)
 
-
             # Calculates AGC in emission year for non-mangrove planted forest pixels that had loss & gain (excludes loss_gain_mask = 0).
             # To do this, it adds only the portion of the gain that occurred before the loss year to the carbon in 2000.
             gain_before_loss = planted_forest_annual_gain_window * (loss_year_window - 1)

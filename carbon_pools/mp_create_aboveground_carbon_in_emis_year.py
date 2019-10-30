@@ -13,7 +13,6 @@ import create_aboveground_carbon_in_emis_year
 import multiprocessing
 import argparse
 from functools import partial
-import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -56,6 +55,20 @@ def main ():
         cn.loss_dir, cn.gain_dir
         ]
 
+    # For downloading all tiles in the input folders.
+    download_dict = {
+        cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_mangrove_biomass_2000, 'false'],
+        cn.mangrove_biomass_2000_dir: [cn.pattern_WHRC_biomass_2000_unmasked, 'false'],
+        cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove, 'true'],
+        cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true'],
+        cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true'],
+        cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'true'],
+        cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'true'],
+        cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'true'],
+        cn.loss_dir: ['', 'false'],
+        cn.gain_dir: [cn.pattern_gain, 'false']
+    }
+
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
 
@@ -65,8 +78,14 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    for input in download_list:
-        uu.s3_folder_download('{}'.format(input), '.')
+    # for input in download_list:
+    #     uu.s3_folder_download('{}'.format(input), '.')
+
+    for key, values in download_dict:
+        dir = key
+        pattern = values[0]
+        sensit_use = values[1]
+        uu.s3_folder_download_dict(dir, pattern, '.', sensit_type, sensit_use, tile_list)
 
     # # For copying individual tiles to spot machine for testing.
     # for tile in tile_list:
@@ -87,9 +106,10 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # 
+    # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
+    # 14 processors maxes out at 415 GB
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=12)
+    pool = multiprocessing.Pool(processes=14)
     pool.map(partial(create_aboveground_carbon_in_emis_year.create_emitted_AGC, pattern=pattern, sensit_type=sensit_type), tile_list)
 
     # # For single processor use
