@@ -87,7 +87,7 @@ def main ():
         sensit_use = values[1]
         print dir
         print pattern
-        print sensit_use
+        print sensit_use, "\n"
         # uu.s3_folder_download_dict(dir, pattern, '.', sensit_type, sensit_use, tile_list)
 
     sys.quit()
