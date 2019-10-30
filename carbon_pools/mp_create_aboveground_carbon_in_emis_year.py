@@ -23,14 +23,14 @@ def main ():
     output_dir_list = [cn.AGC_emis_year_dir]
     output_pattern_list = [cn.pattern_AGC_emis_year]
 
-    tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
+    tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.annual_gain_AGB_mangrove_dir
                                              )
 
-    # tile_list = ['30N_080W'] # test tiles
-    # tile_list = ['00N_110E'] # test tiles
-    print tile_list
-    print "There are {} unique tiles to process".format(str(len(tile_list))) + "\n"
+    # tile_id_list = ['30N_080W'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
+    print tile_id_list
+    print "There are {} unique tiles to process".format(str(len(tile_id_list))) + "\n"
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
@@ -85,26 +85,23 @@ def main ():
         dir = key
         pattern = values[0]
         sensit_use = values[1]
-        print dir
-        print pattern
-        print sensit_use, "\n"
-        # uu.s3_folder_download_dict(dir, pattern, '.', sensit_type, sensit_use, tile_list)
+        uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
     sys.quit()
 
     # # For copying individual tiles to spot machine for testing.
-    # for tile in tile_list:
+    # for tile_id in tile_id_list:
     #
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.', sensit_type, 'false')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.', sensit_type, 'false')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_mangrove), '.', sensit_type, 'true')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, tile, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove), '.', sensit_type, 'true')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_natrl_forest_dir, tile, cn.pattern_cumul_gain_AGCO2_natrl_forest), '.', sensit_type, 'true')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_mangrove_dir, tile, cn.pattern_annual_gain_AGB_mangrove), '.', sensit_type, 'true')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.', sensit_type, 'true')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_natrl_forest_dir, tile, cn.pattern_annual_gain_AGB_natrl_forest), '.', sensit_type, 'true')
-    #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.', sensit_type, 'false')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile), '.', sensit_type, 'false')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile_id, cn.pattern_mangrove_biomass_2000), '.', sensit_type, 'false')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile_id, cn.pattern_WHRC_biomass_2000_unmasked), '.', sensit_type, 'false')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_mangrove_dir, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove), '.', sensit_type, 'true')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove), '.', sensit_type, 'true')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.cumul_gain_AGCO2_natrl_forest_dir, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest), '.', sensit_type, 'true')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_mangrove_dir, tile_id, cn.pattern_annual_gain_AGB_mangrove), '.', sensit_type, 'true')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove), '.', sensit_type, 'true')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGB_natrl_forest_dir, tile_id, cn.pattern_annual_gain_AGB_natrl_forest), '.', sensit_type, 'true')
+    #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id), '.', sensit_type, 'false')
+    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.gain_dir, cn.pattern_gain, tile_id), '.', sensit_type, 'false')
 
     print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
 
@@ -115,11 +112,11 @@ def main ():
     # 14 processors maxes out at 415 GB
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=14)
-    pool.map(partial(create_aboveground_carbon_in_emis_year.create_emitted_AGC, pattern=pattern, sensit_type=sensit_type), tile_list)
+    pool.map(partial(create_aboveground_carbon_in_emis_year.create_emitted_AGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # # For single processor use
-    # for tile in tile_list:
-    #     create_aboveground_carbon_in_emis_year.create_emitted_AGC(tile, output_pattern_list[0], sensit_type)
+    # for tile_id in tile_id_list:
+    #     create_aboveground_carbon_in_emis_year.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
 
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 

@@ -263,17 +263,22 @@ def s3_folder_download(source, dest):
     subprocess.check_call(cmd)
 
 
-def s3_folder_download_dict(source_dir, pattern, dest, sensit_type, sensit_use, tile_list):
+def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
 
-    if len(tile_list) <= 5:
+    # For downloading test tiles (five or fewer)
+    if len(tile_id_list) <= 5:
 
-        for tile in tile_list:
+        print "Downloading test tiles:", tile_id_list
 
-            s3_file_download(source_dir, dest, sensit_type, sensit_use)
+        for tile_id in tile_id_list:
+            source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
+            s3_file_download(source, dest, sensit_type, sensit_use)
 
-    cmd = ['aws', 's3', 'cp', source_dir, dest, '--recursive', '--exclude', '*tiled/*',
+    # For downloading full sets of tiles
+    else:
+        cmd = ['aws', 's3', 'cp', source_dir, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
-    subprocess.check_call(cmd)
+        subprocess.check_call(cmd)
 
 
 # Downloads individual tiles
