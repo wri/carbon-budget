@@ -85,7 +85,12 @@ def main ():
         dir = key
         pattern = values[0]
         sensit_use = values[1]
-        uu.s3_folder_download_dict(dir, pattern, '.', sensit_type, sensit_use, tile_list)
+        print dir
+        print pattern
+        print sensit_use
+        # uu.s3_folder_download_dict(dir, pattern, '.', sensit_type, sensit_use, tile_list)
+
+    sys.quit()
 
     # # For copying individual tiles to spot machine for testing.
     # for tile in tile_list:
