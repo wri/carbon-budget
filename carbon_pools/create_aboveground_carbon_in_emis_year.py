@@ -35,9 +35,9 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     mangrove_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove, 'true')
     planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true')
     natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true')
-    mangrove_gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_mangrove, 'true')
-    planted_forest_gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove, 'true')
-    natrl_forest_gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_natrl_forest, 'true')
+    mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'true')
+    planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'true')
+    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest, 'true')
     loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '', 'false')
     gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id, 'false')
 
@@ -52,7 +52,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         mangrove_cumul_AGCO2_gain_src = rasterio.open(mangrove_cumul_AGCO2_gain)
-        mangrove_gain_year_count_src = rasterio.open(mangrove_gain_year_count)
+        mangrove_annual_gain_src = rasterio.open(mangrove_annual_gain)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
         kwargs = mangrove_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
@@ -63,7 +63,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
 
     try:
         planted_forest_cumul_AGCO2_gain_src = rasterio.open(planted_forest_cumul_AGCO2_gain)
-        planted_forest_gain_year_count_src = rasterio.open(planted_forest_gain_year_count)
+        planted_forest_annual_gain_src = rasterio.open(planted_forest_annual_gain)
         print "Non-mangrove planted carbon accumulation found for", tile_id
     except:
         print "No non-mangrove planted carbon accumulation for", tile_id
@@ -71,7 +71,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
         natrl_forest_cumul_AGCO2_gain_src = rasterio.open(natrl_forest_cumul_AGCO2_gain)
-        natrl_forest_gain_year_count_src = rasterio.open(natrl_forest_gain_year_count)
+        natrl_forest_annual_gain_src = rasterio.open(natrl_forest_annual_gain)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
         kwargs = natrl_forest_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
@@ -121,7 +121,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
 
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
             mangrove_cumul_AGCO2_gain_window = mangrove_cumul_AGCO2_gain_src.read(1, window=window)
-            mangrove_gain_year_count_window = mangrove_gain_year_count_src.read(1, window=window)
+            mangrove_annual_gain_window = mangrove_annual_gain_src.read(1, window=window)
 
             # all_forest_types_AGC_combined[np.where((gain_window == 1) & (loss_year_window == 0))] = \
             #     (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) + (mangrove_cumul_AGCO2_gain_window / cn.c_to_co2)
@@ -129,18 +129,17 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             mangrove_C_final_non_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
                                                  + (mangrove_cumul_AGCO2_gain_window / cn.c_to_co2)
             mangrove_C_final_non_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 1, mangrove_C_final_non_gain_and_loss).filled(0)
-            #
-            #
-            #
-            # gain_before_loss = mangrove_cumul_AGCO2_gain_window * (((cn.loss_years + 1 - loss_year_window)/2) / mangrove_gain_year_count_window)
-            # mangrove_C_final_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
-            #                                  + (gain_before_loss / cn.c_to_co2)
-            # mangrove_C_final_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, mangrove_C_final_gain_and_loss).filled(0)
+
+
+            gain_before_loss = mangrove_annual_gain_window * (loss_year_window - 1)
+            mangrove_C_final_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
+                                             + (gain_before_loss / cn.c_to_co2)
+            mangrove_C_final_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, mangrove_C_final_gain_and_loss).filled(0)
 
             # Adds the mangrove final AGC density values to the ongoing array
             all_forest_types_AGC_combined = all_forest_types_AGC_combined \
-                                            + mangrove_C_final_non_gain_and_loss_masked 
-                                            # + mangrove_C_final_gain_and_loss_masked
+                                            + mangrove_C_final_non_gain_and_loss_masked \
+                                            + mangrove_C_final_gain_and_loss_masked
 
         # # Non-mangrove planted forest calculation if there is a planted forest C accumulation tile
         # if os.path.exists(planted_forest_cumul_AGCO2_gain):
