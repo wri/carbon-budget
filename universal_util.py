@@ -280,9 +280,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
 
     # For downloading full sets of tiles
     else:
-        cmd = ['aws', 's3', 'cp', source_dir, dest, '--recursive', '--exclude', '*tiled/*',
-           '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
-        subprocess.check_call(cmd)
+        s3_folder_download(source_dir, dest)
 
 
 # Downloads individual tiles
