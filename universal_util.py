@@ -281,7 +281,9 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
         source = source.replace('standard', sensit_type)
+        print source
         source = source[:-4] + '_' + sensit_type + '.tif'
+        print source
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
