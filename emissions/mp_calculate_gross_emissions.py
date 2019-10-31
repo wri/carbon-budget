@@ -212,16 +212,20 @@ def main ():
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-    uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
-    uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
-    uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
-    uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
-    uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
-    uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
-    uu.upload_final_set(output_dir_list[8], output_pattern_list[8])
-    uu.upload_final_set(output_dir_list[9], output_pattern_list[9])
+
+    for i in len(output_dir_list):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    # uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+    # uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+    # uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
+    # uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+    # uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
+    # uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+    # uu.upload_final_set(output_dir_list[8], output_pattern_list[8])
+    # uu.upload_final_set(output_dir_list[9], output_pattern_list[9])
 
 
 
