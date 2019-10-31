@@ -119,11 +119,11 @@ def main ():
     # For downloading all tiles in the folders.
     # This takes about 40 minutes.
     download_list = [
-                     cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
-                     cn.peat_mask_dir, cn.ifl_primary_processed_dir,
+                     # cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
+                     # cn.peat_mask_dir, cn.ifl_primary_processed_dir,
                      cn.planted_forest_type_unmasked_dir,
-                     cn.drivers_processed_dir, cn.climate_zone_processed_dir,
-                     cn.bor_tem_trop_processed_dir, cn.burn_year_dir,
+                     # cn.drivers_processed_dir, cn.climate_zone_processed_dir,
+                     # cn.bor_tem_trop_processed_dir, cn.burn_year_dir,
                      cn.plant_pre_2000_processed_dir,
                      cn.loss_dir
                     ]
@@ -137,8 +137,8 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    # for input in download_list:
-    #     uu.s3_folder_download(input, './cpp_util/')
+    for input in download_list:
+        uu.s3_folder_download(input, './cpp_util/')
 
     # # For copying individual tiles to s3 for testing
     # for tile in tile_list:
