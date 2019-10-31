@@ -40,25 +40,75 @@ def main ():
     parser = argparse.ArgumentParser(description='Calculate gross emissions')
     parser.add_argument('--pools-to-use', '-p', required=True,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
     args = parser.parse_args()
 
     pools = args.pools_to_use
+    sensit_type = args.model_type
 
-    # Checks the validity of the argument.
+    # Checks the validity of the pools argument
     if (pools not in ['soil_only', 'biomass_soil']):
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
+
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
 
 
     # Checks if the correct c++ script has been compiled for the pool option selected
     if pools == 'biomass_soil':
         if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
             print "C++ for biomass+soil already compiled."
+
+            output_dir_list = [cn.gross_emis_commod_biomass_soil_dir,
+                               cn.gross_emis_shifting_ag_biomass_soil_dir,
+                               cn.gross_emis_forestry_biomass_soil_dir,
+                               cn.gross_emis_wildfire_biomass_soil_dir,
+                               cn.gross_emis_urban_biomass_soil_dir,
+                               cn.gross_emis_no_driver_biomass_soil_dir,
+                               cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                               cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                               cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                               cn.gross_emis_nodes_biomass_soil_dir]
+
+            output_pattern_list = [cn.pattern_gross_emis_commod_biomass_soil,
+                                   cn.pattern_gross_emis_shifting_ag_biomass_soil,
+                                   cn.pattern_gross_emis_forestry_biomass_soil,
+                                   cn.pattern_gross_emis_wildfire_biomass_soil,
+                                   cn.pattern_gross_emis_urban_biomass_soil,
+                                   cn.pattern_gross_emis_no_driver_biomass_soil,
+                                   cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+                                   cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+                                   cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+                                   cn.pattern_gross_emis_nodes_biomass_soil]
         else:
             raise Exception('Must compile biomass+soil C++...')
 
     elif pools == 'soil_only':
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
+
+            output_dir_list = [cn.gross_emis_commod_soil_only_dir,
+                               cn.gross_emis_shifting_ag_soil_only_dir,
+                               cn.gross_emis_forestry_soil_only_dir,
+                               cn.gross_emis_wildfire_soil_only_dir,
+                               cn.gross_emis_urban_soil_only_dir,
+                               cn.gross_emis_no_driver_soil_only_dir,
+                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                               cn.gross_emis_nodes_soil_only_dir]
+
+            output_pattern_list = [cn.pattern_gross_emis_commod_soil_only,
+                                   cn.pattern_gross_emis_shifting_ag_soil_only,
+                                   cn.pattern_gross_emis_forestry_soil_only,
+                                   cn.pattern_gross_emis_wildfire_soil_only,
+                                   cn.pattern_gross_emis_urban_soil_only,
+                                   cn.pattern_gross_emis_no_driver_soil_only,
+                                   cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+                                   cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
+                                   cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
+                                   cn.pattern_gross_emis_nodes_soil_only]
         else:
             raise Exception('Must compile soil_only C++...')
 
@@ -77,6 +127,15 @@ def main ():
                      cn.plant_pre_2000_processed_dir,
                      cn.loss_dir
                     ]
+
+    # If the model run isn't the standard one, the output directory and file names are changed
+    if sensit_type != 'std':
+
+        print "Changing output directory and file name pattern based on sensitivity analysis"
+
+        download_list = uu.alter_dirs(sensit_type, download_list)
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
     # for input in download_list:
     #     uu.s3_folder_download(input, './cpp_util/')
@@ -99,13 +158,13 @@ def main ():
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
 
-    # print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # # Pre-2000 plantations have not previously been masked, so that is done here.
-    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
+    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # Pre-2000 plantations have not previously been masked, so that is done here.
+    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
 
     # # For single processor use
     # for tile in tile_list:
@@ -150,39 +209,17 @@ def main ():
     #       calculate_gross_emissions.calc_emissions(tile, pools)
 
 
-    # Uploads emissions to default directory for biomass+soil
-    if pools == 'biomass_soil':
-
-        uu.upload_final_set(cn.gross_emis_commod_biomass_soil_dir, cn.pattern_gross_emis_commod_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_shifting_ag_biomass_soil_dir, cn.pattern_gross_emis_shifting_ag_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_forestry_biomass_soil_dir, cn.pattern_gross_emis_forestry_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_wildfire_biomass_soil_dir, cn.pattern_gross_emis_wildfire_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_urban_biomass_soil_dir, cn.pattern_gross_emis_urban_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_no_driverv_biomass_soil_dir, cn.pattern_gross_emis_no_driver_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_biomass_soil_dir, cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_biomass_soil_dir, cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil)
-        uu.upload_final_set(cn.gross_emis_nodes_biomass_soil_dir, cn.pattern_gross_emis_nodes_biomass_soil)
-
-    # If soil_only was chosen, the output directories need to be changed.
-    elif pools == 'soil_only':
-        
-        uu.upload_final_set(cn.gross_emis_commod_soil_only_dir, cn.pattern_gross_emis_commod_soil_only)
-        uu.upload_final_set(cn.gross_emis_shifting_ag_soil_only_dir, cn.pattern_gross_emis_shifting_ag_soil_only)
-        uu.upload_final_set(cn.gross_emis_forestry_soil_only_dir, cn.pattern_gross_emis_forestry_soil_only)
-        uu.upload_final_set(cn.gross_emis_wildfire_soil_only_dir, cn.pattern_gross_emis_wildfire_soil_only)
-        uu.upload_final_set(cn.gross_emis_urban_soil_only_dir, cn.pattern_gross_emis_urban_soil_only)
-        uu.upload_final_set(cn.gross_emis_no_driver_soil_only_dir, cn.pattern_gross_emis_no_driver_soil_only)
-        uu.upload_final_set(cn.gross_emis_all_gases_all_drivers_soil_only_dir, cn.pattern_gross_emis_all_gases_all_drivers_soil_only)
-        uu.upload_final_set(cn.gross_emis_co2_only_all_drivers_soil_only_dir, cn.pattern_gross_emis_co2_only_all_drivers_soil_only)
-        uu.upload_final_set(cn.gross_emis_non_co2_all_drivers_soil_only_dir, cn.pattern_gross_emis_non_co2_all_drivers_soil_only)
-        uu.upload_final_set(cn.gross_emis_nodes_soil_only_dir, cn.pattern_gross_emis_nodes_soil_only)
-
-
-
-    else:
-        raise Exception('Pool option not valid')
-
+    # Uploads emissions to appropriate directory for the carbon pools chosen
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+    uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+    uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
+    uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+    uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
+    uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+    uu.upload_final_set(output_dir_list[8], output_pattern_list[8])
+    uu.upload_final_set(output_dir_list[9], output_pattern_list[9])
 
 
 

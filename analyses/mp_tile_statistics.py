@@ -91,7 +91,7 @@ download_list = [
                 # cn.gross_emis_forestry_biomass_soil_dir,
                 # cn.gross_emis_wildfire_biomass_soil_dir,
                 # cn.gross_emis_urban_biomass_soil_dir,
-                # cn.gross_emis_no_driverv_biomass_soil_dir,
+                # cn.gross_emis_no_driver_biomass_soil_dir,
                 # cn.gross_emis_nodes_biomass_soil_dir
 
                 # cn.gross_emis_all_gases_all_drivers_soil_only_dir,

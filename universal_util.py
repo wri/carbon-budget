@@ -234,6 +234,7 @@ def count_tiles_s3(source):
             pass
     return i + 1
 
+
 # Gets the bounding coordinates of a tile
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
@@ -374,6 +375,7 @@ def get_raster_nodata_value(tile):
 
     return nodata
 
+
 # Prints information about the tile that was just processed: how long it took and how many tiles have been completed
 def end_of_fx_summary(start, tile_id, pattern):
 
@@ -410,26 +412,27 @@ def make_blank_tile(tile_id, pattern, folder):
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
-        if os.path.exists('{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)):
+        if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
             print "Hansen loss tile exists for {}.".format(tile_id)
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)]
+                   '{0}{1}.tif'.format(folder, tile_id)]
             subprocess.check_call(cmd)
 
-        # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
-        if not os.path.exists('{0}{1}_{2}.tif'.format(folder, tile_id, cn.pattern_loss_pre_2000_plant_masked)):
+        # If the Hansen loss tile isn't already on the spot machine
+        else:
 
+            # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
             try:
                 s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
-                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'))
+                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
                 print "Downloaded Hansen loss tile for", tile_id
 
             # If there is no Hansen tile, it downloads the pixel area tile instead
             except:
 
                 s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'))
+                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
                 print "Downloaded pixel area tile for", tile_id
 
             # Uses either the Hansen loss tile or pixel area tile as a template tile
@@ -440,17 +443,17 @@ def make_blank_tile(tile_id, pattern, folder):
 
             print "Created raster of all 0s for", file
 
-        # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
-        else:
-            print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
-
-            s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-                             '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
-
-            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
-            subprocess.check_call(cmd)
+        # # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
+        # else:
+        #     print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
+        #
+        #     s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
+        #                      '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
+        #
+        #     cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+        #            '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+        #            '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
+        #     subprocess.check_call(cmd)
 
         print "Created raster of all 0s for", file
 
