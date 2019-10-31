@@ -213,7 +213,7 @@ def main ():
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
 
-    for i in len(output_dir_list):
+    for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
     # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
