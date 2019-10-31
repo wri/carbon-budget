@@ -139,8 +139,8 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    for input in download_list:
-        uu.s3_folder_download(input, './cpp_util/')
+    # for input in download_list:
+    #     uu.s3_folder_download(input, './cpp_util/')
 
     # # For copying individual tiles to s3 for testing
     # for tile in tile_list:
@@ -160,13 +160,13 @@ def main ():
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
 
-    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # Pre-2000 plantations have not previously been masked, so that is done here.
-    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/2)
-    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
+    # print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # # Pre-2000 plantations have not previously been masked, so that is done here.
+    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
 
     # # For single processor use
     # for tile in tile_list:
@@ -184,12 +184,12 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    for pattern in pattern_list:
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
-        pool.close()
-        pool.join()
+    # for pattern in pattern_list:
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+    #     pool.close()
+    #     pool.join()
 
     # # For single processor use
     # for pattern in pattern_list:
@@ -198,12 +198,12 @@ def main ():
     #         uu.make_blank_tile(tile, pattern, folder)
 
 
-    # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_list)
+    # # Calculates gross emissions for each tile
+    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_list)
 
     # # For single processor use
     # for tile in tile_list:
