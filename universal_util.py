@@ -37,16 +37,13 @@ def get_tile_name(tile):
     return tile_name
 
 
-# Creates a list of all the biomass tiles (WHRC non-mangrove and mangrove)
-def read_biomass_tile_list():
+# Gets the directory of the tile
+def get_tile_dir(tile):
 
-    file_list = []
+    tile_dir = os.path.split(tile)[0]
 
-    with open('{}{}'.format(cn.biomass_tile_list_dir, cn.pattern_biomass_tile_list), 'r') as tiles:
-        for tile in tiles:
-            file_list.append(tile)
+    return tile_dir
 
-    return file_list
 
 # Lists the tiles in a folder in s3
 def tile_list(source):
@@ -272,19 +269,19 @@ def s3_folder_download(source, dest):
 def s3_file_download(source, dest, sensit_type, use_sensit):
 
     # Retrieves the name of the tile from the full path name
+    dir = get_tile_dir(source)
     file_name = get_tile_name(source)
-    print file_name
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
-    if sensit_type != 'std' and 'standard' in source and use_sensit == 'true':
+    if sensit_type != 'std' and 'standard' in dir and use_sensit == 'true':
 
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
-        source = source.replace('standard', sensit_type)
-        print source
-        source = source[:-4] + '_' + sensit_type + '.tif'
-        print source
+        dir = dir.replace('standard', sensit_type)
+        print dir
+        file_name = file_name[:-4] + '_' + sensit_type + '.tif'
+        print file_name
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
@@ -293,7 +290,8 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
     # Tries to download the tile if it's not on the spot machine
     else:
         try:
-            cmd = ['aws', 's3', 'cp', source, dest]
+            final_source = os.path.join(dir, file_name)
+            cmd = ['aws', 's3', 'cp', final_source, dest]
             subprocess.check_call(cmd)
         except:
             print source, "not found."
