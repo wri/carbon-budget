@@ -264,26 +264,6 @@ def s3_folder_download(source, dest):
     subprocess.check_call(cmd)
 
 
-def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
-
-    # For downloading test tiles (five or fewer)
-    if len(tile_id_list) <= 5:
-
-        for tile_id in tile_id_list:
-            if pattern == '':
-                source = '{0}{1}.tif'.format(source_dir, tile_id)
-            elif pattern == cn.pattern_gain:
-                source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
-            else:
-                source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
-
-            s3_file_download(source, dest, sensit_type, sensit_use)
-
-    # For downloading full sets of tiles
-    else:
-        s3_folder_download(source_dir, dest)
-
-
 # Downloads individual tiles
 # Source=source file on s3
 # dest=where to download onto spot machine
@@ -314,6 +294,30 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
             subprocess.check_call(cmd)
         except:
             print source, "not found."
+
+
+def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
+
+    # For downloading test tiles (five or fewer)
+    if len(tile_id_list) <= 5:
+
+        for tile_id in tile_id_list:
+            if pattern == '':
+                source = '{0}{1}.tif'.format(source_dir, tile_id)
+            elif pattern == cn.pattern_gain:
+                source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
+            else:
+                source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
+
+            print source
+            print dest
+            print sensit_type
+            print sensit_use + "\n"
+            s3_file_download(source, dest, sensit_type, sensit_use)
+
+    # For downloading full sets of tiles
+    else:
+        s3_folder_download(source_dir, dest)
 
 
 # Uploads all tiles of a pattern to specified location
