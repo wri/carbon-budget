@@ -78,8 +78,8 @@ def main ():
     for tile in biomass_tile_list:
         cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile, output_pattern_list[1], sensit_type)
 
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

@@ -245,11 +245,11 @@ annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all
 
 # Cumulative aboveground gain for mangroves
 pattern_cumul_gain_AGCO2_mangrove = 'cumul_gain_AGCO2_t_ha_mangrove_2001_15'
-cumul_gain_AGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_mangrove/standard/20190906/')
+cumul_gain_AGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_mangrove/standard/20191031/')
 
 # Cumulative belowground gain for mangroves
 pattern_cumul_gain_BGCO2_mangrove = 'cumul_gain_BGCO2_t_ha_mangrove_2001_15'
-cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_mangrove/standard/20190906/')
+cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_mangrove/standard/20191031/')
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
 pattern_cumul_gain_AGCO2_planted_forest_non_mangrove = 'cumul_gain_AGCO2_t_ha_planted_forest_non_mangrove_2001_15'
