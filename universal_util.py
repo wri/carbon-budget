@@ -285,7 +285,7 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
-        print file_name, "already downloaded"
+        print file_name, "already downloaded" + "\n"
 
     # Tries to download the tile if it's not on the spot machine
     else:
@@ -312,7 +312,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
             print source
             print dest
             print sensit_type
-            print sensit_use + "\n"
+            print sensit_use
             s3_file_download(source, dest, sensit_type, sensit_use)
 
     # For downloading full sets of tiles
