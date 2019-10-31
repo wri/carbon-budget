@@ -254,7 +254,16 @@ def coords(tile_id):
     return xmin, ymin, xmax, ymax
 
 
-def s3_folder_download(source, dest):
+def s3_folder_download(source, dest, sensit_type, sensit_use):
+
+    # Changes the file to download based on the sensitivity analysis being run and whether that particular input
+    # has a sensitivity analysis path on s3
+    if sensit_type != 'std' and 'standard' in source and sensit_use == 'true':
+
+        print "Changing {} name to reflect sensitivity analysis".format(source)
+
+        source = source.replace('standard', sensit_type)
+        print source
 
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
@@ -266,7 +275,7 @@ def s3_folder_download(source, dest):
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 # use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
-def s3_file_download(source, dest, sensit_type, use_sensit):
+def s3_file_download(source, dest, sensit_type, sensit_use):
 
     # Retrieves the name of the tile from the full path name
     dir = get_tile_dir(source)
@@ -274,7 +283,7 @@ def s3_file_download(source, dest, sensit_type, use_sensit):
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
-    if sensit_type != 'std' and 'standard' in dir and use_sensit == 'true':
+    if sensit_type != 'std' and 'standard' in dir and sensit_use == 'true':
 
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
@@ -318,7 +327,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
 
     # For downloading full sets of tiles
     else:
-        s3_folder_download(source_dir, dest)
+        s3_folder_download(source_dir, dest, sensit_type, sensit_use)
 
 
 # Uploads all tiles of a pattern to specified location

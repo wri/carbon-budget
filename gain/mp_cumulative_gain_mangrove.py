@@ -19,7 +19,7 @@ def main ():
 
     tile_id_list = uu.tile_list(cn.annual_gain_AGB_mangrove_dir)
     # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -33,17 +33,17 @@ def main ():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    # For downloading all tiles in the input folders
-    download_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir, cn.gain_year_count_mangrove_dir]
-
-    # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
-
-        print "Changing output directory and file name pattern based on sensitivity analysis"
-
-        download_list = uu.alter_dirs(sensit_type, download_list)
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+    # # For downloading all tiles in the input folders
+    # download_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir, cn.gain_year_count_mangrove_dir]
+    #
+    # # If the model run isn't the standard one, the output directory and file names are changed
+    # if sensit_type != 'std':
+    #
+    #     print "Changing output directory and file name pattern based on sensitivity analysis"
+    #
+    #     download_list = uu.alter_dirs(sensit_type, download_list)
+    #     output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+    #     output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
     # for input in download_list:
     #     uu.s3_folder_download(input, '.')
