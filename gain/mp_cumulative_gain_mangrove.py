@@ -51,7 +51,8 @@ def main ():
     download_dict = {
         cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'false'],
         cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove, 'false'],
-        cn.gain_year_count_mangrove_dir: [cn.pattern_gain_year_count_mangrove, 'true']
+        cn.gain_year_count_mangrove_dir: [cn.pattern_gain_year_count_mangrove, 'true'],
+        cn.loss_dir: ['', 'false']      # Don't need for this script-- just included for testing
     }
 
     for key, values in download_dict.iteritems():
