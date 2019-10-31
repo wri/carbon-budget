@@ -10,6 +10,7 @@ Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emission
 compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
 The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
+The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
 Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
 Emissions from all drivers is also output as emissions due to CO2 only and emissions due to other GHG (CH4 and N2O).
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
@@ -35,7 +36,6 @@ def main ():
     print tile_list
     print "There are {} tiles to process".format(str(len(tile_list)))
 
-
     # One argument for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil)
     parser = argparse.ArgumentParser(description='Calculate gross emissions')
     parser.add_argument('--pools-to-use', '-p', required=True,
@@ -60,6 +60,7 @@ def main ():
         if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
             print "C++ for biomass+soil already compiled."
 
+            # Output file directories for biomass+soil. Must be in same order as output pattern directories.
             output_dir_list = [cn.gross_emis_commod_biomass_soil_dir,
                                cn.gross_emis_shifting_ag_biomass_soil_dir,
                                cn.gross_emis_forestry_biomass_soil_dir,
@@ -88,6 +89,7 @@ def main ():
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
 
+            # Output file directories for soil_only. Must be in same order as output pattern directories.
             output_dir_list = [cn.gross_emis_commod_soil_only_dir,
                                cn.gross_emis_shifting_ag_soil_only_dir,
                                cn.gross_emis_forestry_soil_only_dir,
