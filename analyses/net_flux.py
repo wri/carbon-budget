@@ -62,6 +62,8 @@ def net_calc(tile_id):
 
         print net_flux_dst
 
+        sys.quit()
+
     # Need to include these or the spot machine will run out of memory otherwise
     os.remove(gain_in)
     os.remove(loss_in)
