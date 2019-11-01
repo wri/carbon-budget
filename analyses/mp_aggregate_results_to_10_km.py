@@ -56,9 +56,9 @@ def main():
     #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.tcd_dir, cn.pattern_tcd, tile_id), '.')
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_folder_download(cn.pixel_area_dir, '.')
+    uu.s3_folder_download(cn.pixel_area_dir, '.', 'std', 'false')
     # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_folder_download(cn.tcd_dir, '.')
+    uu.s3_folder_download(cn.tcd_dir, '.', 'std', 'false')
 
     input_dict = {
              # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
@@ -75,7 +75,7 @@ def main():
 
         tile_id_list = uu.tile_list(dir)
 
-        uu.s3_folder_download(dir, '.')
+        uu.s3_folder_download(dir, '.', 'std', 'true')
 
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list)))
