@@ -24,7 +24,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
     # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -76,16 +76,16 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # # Count/3 uses about 380 GB on a r4.16xlarge spot machine
-    # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=24)
-    # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # Count/3 uses about 380 GB on a r4.16xlarge spot machine
+    # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=24)
+    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
- 
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+
 
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):
