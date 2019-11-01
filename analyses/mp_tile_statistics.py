@@ -36,7 +36,7 @@ f.close()
 
 
 # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-uu.s3_folder_download(cn.pixel_area_dir, '.')
+uu.s3_folder_download(cn.pixel_area_dir, '.', 'std', 'false')
 
 # For downloading all tiles in selected folders
 download_list = [
