@@ -3,7 +3,6 @@
 import os
 import datetime
 import rasterio
-import numpy as np
 import sys
 sys.path.append('../')
 import constants_and_names as cn
