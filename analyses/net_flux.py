@@ -53,8 +53,8 @@ def net_calc(tile_id):
         gain = gain_src.read(1, window=window)
         loss = loss_src.read(1, window=window)
 
-        print gain
-        print loss
+        print gain[0][0:15]
+        print loss[0][0:15]
         print np.amax(gain)
         print np.amax(loss)
 
@@ -63,7 +63,7 @@ def net_calc(tile_id):
 
         net_flux_dst.write_band(1, dst_data, window=window)
 
-        print dst_data
+        print dst_data[0][0:15]
 
         sys.quit()
 
