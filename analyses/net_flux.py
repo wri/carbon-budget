@@ -52,10 +52,15 @@ def net_calc(tile_id):
         gain = gain_src.read(1, window=window)
         loss = loss_src.read(1, window=window)
 
+        print gain
+        print loss
+
         # Subtracts gain that from loss
         dst_data = loss - gain
 
         net_flux_dst.write_band(1, dst_data, window=window)
+
+        print net_flux_dst
 
     # Need to include these or the spot machine will run out of memory otherwise
     os.remove(gain_in)
