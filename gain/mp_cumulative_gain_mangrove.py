@@ -56,7 +56,6 @@ def main ():
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
@@ -80,11 +79,11 @@ def main ():
     pool.join()
 
     # For single processor use
-    for tile in tile_id_list:
-        cumulative_gain_mangrove.cumulative_gain_AGCO2(tile, output_pattern_list[0], sensit_type)
+    for tile_id in tile_id_list:
+        cumulative_gain_mangrove.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
 
-    for tile in tile_id_list:
-        cumulative_gain_mangrove.cumulative_gain_BGCO2(tile, output_pattern_list[1], sensit_type)
+    for tile_id in tile_id_list:
+        cumulative_gain_mangrove.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
 
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):
