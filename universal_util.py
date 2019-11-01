@@ -263,7 +263,6 @@ def s3_folder_download(source, dest, sensit_type, sensit_use):
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
         source = source.replace('standard', sensit_type)
-        print source
 
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
@@ -319,10 +318,6 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
             else:
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
 
-            print source
-            print dest
-            print sensit_type
-            print sensit_use
             s3_file_download(source, dest, sensit_type, sensit_use)
 
     # For downloading full sets of tiles

@@ -3,6 +3,7 @@
 import os
 import datetime
 import rasterio
+import numpy as np
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -54,13 +55,15 @@ def net_calc(tile_id):
 
         print gain
         print loss
+        print np.amax(gain)
+        print np.amax(loss)
 
         # Subtracts gain that from loss
         dst_data = loss - gain
 
         net_flux_dst.write_band(1, dst_data, window=window)
 
-        print net_flux_dst
+        print dst_data
 
         sys.quit()
 
