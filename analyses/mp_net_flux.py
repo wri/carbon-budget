@@ -84,7 +84,7 @@ def main ():
 
     # For single processor use
     for tile_id in tile_id_list:
-        net_flux.net_calc(tile_id)
+        net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
 
     # Uploads output tiles to s3
