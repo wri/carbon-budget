@@ -80,11 +80,11 @@ def main ():
     # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
     # count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=24)
-    # pool.map(net_flux.net_calc, tile_list)
+    # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # For single processor use
-    for tile in tile_id_list:
-        net_flux.net_calc(tile)
+    for tile_id in tile_id_list:
+        net_flux.net_calc(tile_id)
 
 
     # Uploads output tiles to s3

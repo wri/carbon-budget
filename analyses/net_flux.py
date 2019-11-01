@@ -9,7 +9,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def net_calc(tile_id):
+def net_calc(tile_id, pattern, sensit_type):
 
     print "Calculating net flux for", tile_id
 
@@ -17,11 +17,11 @@ def net_calc(tile_id):
     start = datetime.datetime.now()
 
     # Names of the gain and emissions tiles
-    gain_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)
-    loss_in = '{0}_{1}.tif'.format(tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
+    gain_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true')
+    loss_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'true')
 
     # Output net emissions file
-    net_flux = '{0}_{1}.tif'.format(tile_id, cn.pattern_net_flux)
+    net_flux = '{0}_{1}.tif'.format(tile_id, pattern)
 
     # Opens cumulative gain input tile
     gain_src = rasterio.open(gain_in)
@@ -72,4 +72,4 @@ def net_calc(tile_id):
     os.remove(loss_in)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, os.path.join(cn.pattern_net_flux))
+    uu.end_of_fx_summary(start, tile_id, pattern)
