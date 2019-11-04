@@ -84,7 +84,7 @@ def main ():
 
     # For single processor use
     for tile_id in tile_id_list:
-        merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list[0], sensit_type)
+        merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list, sensit_type)
 
 
     # Uploads output tiles to s3
