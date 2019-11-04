@@ -90,9 +90,6 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
         dtype='float32'
     )
 
-    print output_pattern_list[0]
-    print output_pattern_list[1]
-
     # Creates the output data: annual AGB+BGB gain for all forest types and
     # cumulative AGC and BGC gain for all forest types
     annual_out = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
@@ -100,9 +97,6 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
 
     cumul_out = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     dst_cumul = rasterio.open(cumul_out, 'w', **kwargs)
-
-    print annual_out
-    print cumul_out
 
     # Iterates through the windows created above
     for idx, window in windows:
