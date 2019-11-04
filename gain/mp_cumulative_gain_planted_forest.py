@@ -18,7 +18,7 @@ def main ():
     download_dict = {
         cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false'],
         cn.annual_gain_BGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_BGB_planted_forest_non_mangrove, 'false'],
-        cn.gain_year_count_mangrove_dir: [cn.pattern_gain_year_count_planted_forest_non_mangrove, 'true']
+        cn.gain_year_count_planted_forest_non_mangrove_dir: [cn.pattern_gain_year_count_planted_forest_non_mangrove, 'true']
     }
 
 
