@@ -65,7 +65,7 @@ def main ():
     pattern = output_pattern_list[0]
 
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count / 3)
+    pool = multiprocessing.Pool(count/2)
     # Calculates cumulative aboveground carbon gain in mangroves
     # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
     pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -74,16 +74,19 @@ def main ():
     pattern = output_pattern_list[1]
 
     # Calculates cumulative belowground carbon gain in mangroves
+    # count/3 maxes out at about 320 GB
+    pool = multiprocessing.Pool(count/2)
     pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        cumulative_gain_mangrove.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     cumulative_gain_mangrove.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
+    #
+    # for tile_id in tile_id_list:
+    #     cumulative_gain_mangrove.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
 
-    for tile_id in tile_id_list:
-        cumulative_gain_mangrove.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
 
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):

@@ -63,17 +63,18 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count / 3)
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 360 GB on an r4.16xlarge
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=26)
     pool.map(partial(cumulative_gain_planted_forest.cumulative_gain_AGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[1]
 
     # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-    # count/3 maxes out at 370 GB on an r4.16xlarge
+    # count/3 maxes out at 320 GB on an r4.16xlarge
+    pool = multiprocessing.Pool(processes=26)
     pool.map(partial(cumulative_gain_planted_forest.cumulative_gain_BGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()

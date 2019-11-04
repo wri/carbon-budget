@@ -138,8 +138,9 @@ def main ():
     uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
     uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
 
-    # This is the final output used later in the model
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # Uploads final output tiles to s3
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
