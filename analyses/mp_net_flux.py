@@ -21,17 +21,17 @@ def main ():
     }
 
 
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.net_flux_dir]
+    output_pattern_list = [cn.pattern_net_flux]
+
+
     # List of tiles to run in the model
     tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
     # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-
-
-    # List of output directories and output file name patterns
-    output_dir_list = [cn.net_flux_dir]
-    output_pattern_list = [cn.pattern_net_flux]
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -59,7 +59,7 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+    # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
     folder = './'

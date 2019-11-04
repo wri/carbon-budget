@@ -26,7 +26,6 @@ def main ():
     tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.annual_gain_AGB_mangrove_dir
                                              )
-
     # tile_id_list = ['30N_080W'] # test tiles
     tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
@@ -42,30 +41,11 @@ def main ():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    # For downloading all tiles in the input folders.
-    download_list = [
-        cn.WHRC_biomass_2000_unmasked_dir, # This uses the unmasked HWRC biomass because it needs the biomass in planted forest pixels, not just the non-mangrove non-planted forest pixels
-        cn.mangrove_biomass_2000_dir,
-        cn.cumul_gain_AGCO2_mangrove_dir,
-        cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
-        cn.cumul_gain_AGCO2_natrl_forest_dir,
-        cn.annual_gain_AGB_mangrove_dir,
-        cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
-        cn.annual_gain_AGB_natrl_forest_dir,
-        cn.loss_dir, cn.gain_dir
-        ]
-
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
 
         print "Changing output directory and file name pattern based on sensitivity analysis"
-
-        download_list = uu.alter_dirs(sensit_type, download_list)
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-
-    # for input in download_list:
-    #     uu.s3_folder_download('{}'.format(input), '.')
 
     # For downloading all tiles in the input folders.
     download_dict = {
