@@ -22,11 +22,12 @@ def main ():
     }
 
 
-    biomass_tile_id_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
-    # biomass_tile_id_list = ['20S_110E', '30S_110E'] # test tiles
-    # biomass_tile_id_list = ['00N_110E'] # test tiles
-    print biomass_tile_id_list
-    print "There are {} tiles to process".format(str(len(biomass_tile_id_list))) + "\n"
+    # List of tiles to run in the model
+    tile_id_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
+    # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
     
     
     # List of output directories and output file name patterns
@@ -66,19 +67,19 @@ def main ():
     pool = multiprocessing.Pool(26)
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_id_list)
+    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # Calculates cumulative belowground carbon gain in non-mangrove planted forests
     # Processors=26 peaks at 450 GB of memory, which works on an r4.16xlarge
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), biomass_tile_id_list)
+    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
-    # for tile in biomass_tile_id_list:
+    # for tile in tile_id_list:
     #     cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile, output_pattern_list[0], sensit_type)
     #
-    # for tile in biomass_tile_id_list:
+    # for tile in tile_id_list:
     #     cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile, output_pattern_list[1], sensit_type)
 
     for i in range(0, len(output_dir_list)):
