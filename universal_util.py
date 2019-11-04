@@ -271,6 +271,7 @@ def s3_folder_download(source, dest, sensit_type, sensit_use):
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
     subprocess.check_call(cmd)
+    print '\n'
 
 
 # Downloads individual tiles
@@ -535,23 +536,22 @@ def check_sensit_type(sensit_type):
 # Changes the name of the input or output directory according to the sensitivity analysis
 def alter_dirs(sensit_type, raw_dir_list):
 
-    print "Raw directory list:", raw_dir_list
+    print "Raw output directory list:", raw_dir_list
 
     processed_dir_list = [d.replace('standard', sensit_type) for d in raw_dir_list]
 
-    print "Processed directory list:", processed_dir_list, "\n"
-    print ""
+    print "Processed output directory list:", processed_dir_list, "\n"
     return processed_dir_list
 
 
 # Alters the file patterns in a list according to the sensitivity analysis
 def alter_patterns(sensit_type, raw_pattern_list):
 
-    print "Raw pattern list:", raw_pattern_list
+    print "Raw output pattern list:", raw_pattern_list
 
     processed_pattern_list = [(d + '_' + sensit_type) for d in raw_pattern_list]
 
-    print "Processed pattern list:", processed_pattern_list, "\n"
+    print "Processed output pattern list:", processed_pattern_list, "\n"
     return processed_pattern_list
 
 

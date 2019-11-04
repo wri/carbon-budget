@@ -68,10 +68,12 @@ def main ():
 
 
     # Creates gain year count tiles using only pixels that had only loss
+    # count/3 maxes out at about 300 GB
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/3)
+    pool = multiprocessing.Pool(count/2)
     pool.map(gain_year_count_planted_forest.create_gain_year_count_loss_only, tile_id_list)
 
+    pool = multiprocessing.Pool(count/2)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(gain_year_count_planted_forest.create_gain_year_count_gain_only_maxgain, tile_id_list)
@@ -80,8 +82,12 @@ def main ():
         pool.map(gain_year_count_planted_forest.create_gain_year_count_gain_only_standard, tile_id_list)
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
+    # count/3 maxes out at 260 GB
+    pool = multiprocessing.Pool(count/2)
     pool.map(gain_year_count_planted_forest.create_gain_year_count_no_change, tile_id_list)
 
+    # count/3 maxes out at about 230 GB
+    pool = multiprocessing.Pool(count/2)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(gain_year_count_planted_forest.create_gain_year_count_loss_and_gain_maxgain, tile_id_list)
@@ -93,6 +99,7 @@ def main ():
     pattern = output_pattern_list[0]
 
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile
+    # Count/6 maxes out at about 220 GB (doesn't increase all the way through GDAL process for some reason)
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/6)
     pool.map(partial(gain_year_count_planted_forest.create_gain_year_count_merge, pattern=pattern), tile_id_list)

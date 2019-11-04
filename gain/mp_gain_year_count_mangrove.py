@@ -73,9 +73,10 @@ def main ():
 
     # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/3)
+    pool = multiprocessing.Pool(count/2)
     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, tile_id_list)
 
+    pool = multiprocessing.Pool(count/2)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain, tile_id_list)
@@ -84,8 +85,12 @@ def main ():
         pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_standard, tile_id_list)
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
+    # count/3 maxes out at 250 GB
+    pool = multiprocessing.Pool(count/2)
     pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, tile_id_list)
 
+    # count/3 maxes out at 255 GB
+    pool = multiprocessing.Pool(count/2)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had both loss and gain pixels
         pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain, tile_id_list)
