@@ -237,7 +237,7 @@ annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGB_BGB_all_types = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191016/')
+annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191104/')
 
 
 ### Cumulative carbon dioxide gain rates
