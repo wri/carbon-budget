@@ -52,11 +52,11 @@ def main ():
     uu.check_sensit_type(sensit_type)
 
     if (sensit_type != 'std') & (extent != 'loss'):
-        raise Exception('Sensitivity analysis run must use loss pixel extent')
+        raise Exception("Sensitivity analysis run must use 'loss' extent")
 
     # Checks the validity of the extent argument
     if (extent not in ['loss', '2000']):
-        raise Exception('Invalid extent input. Please choose loss or 2000.')
+        raise Exception("Invalid extent input. Please choose loss or 2000.")
 
 
     # List of tiles to run in the model
