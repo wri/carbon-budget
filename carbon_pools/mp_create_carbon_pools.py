@@ -17,7 +17,7 @@ litter, and total C (since those are purely functions of the AGC supplied to the
 The carbon pools in 2000 are not used for the model at all; they are purely for illustrative purposes. Only the
 emissions year pools are used for the model.
 
-Which carbon pools are being generated (2000 or loss) is controlled through the command line argument --extent (-e).
+Which carbon pools are being generated (2000 or loss pixels) is controlled through the command line argument --extent (-e).
 This extent argument determines which AGC function is used and how the outputs of the other pools' scripts are named.
 
 NOTE: Because there are so many input files, this script needs a machine with extra disk space.
@@ -37,8 +37,6 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-
-
 def main ():
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -52,6 +50,9 @@ def main ():
     extent = args.extent     # Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
+
+    if (sensit_type != 'std') & (extent == '2000'):
+        raise Exception('Sensitivity analysis run must use loss pixel extent')
 
     # Checks the validity of the extent argument
     if (extent not in ['loss', '2000']):

@@ -1,10 +1,27 @@
 '''
-This script contains functions to calculate belowground carbon density, deadwood carbon density, litter carbon density,
-soil C density in loss pixels only, and total carbon density.
-It will calculate belowground, deadwood, and litter carbon pools for any aboveground carbon tile, regardless of whether it is just AGC in loss
-pixels or AGC in the full extent of biomass 2000.
+This script creates carbon pools.
+For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
+carbon pools (soil is created in a separate script but is brought in to create total carbon). These are to the extent
+of WHRC and mangrove biomass 2000.
 
-For belowground
+It also creates carbon pools for the year of loss/emissions-- only for pixels that had loss. To do this, it adds
+CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
+until loss. (For Hansen loss+gain pixels, only the portion of C that is accumulated before loss is included in the
+lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon pools depend on
+carbon removals, any time the removals model changes, the emissions year carbon pools need to be regenerated.
+
+In both cases (carbon pools in 2000 and in the loss year), BGC, deadwood, and litter are calculated from AGC. Thus,
+there are two AGC functions (one for AGC2000 and one for AGC in loss year) but only one function for BGC, deadwood,
+litter, and total C (since those are purely functions of the AGC supplied to them).
+
+The carbon pools in 2000 are not used for the model at all; they are purely for illustrative purposes. Only the
+emissions year pools are used for the model.
+
+Which carbon pools are being generated (2000 or loss) is controlled through the command line argument --extent (-e).
+This extent argument determines which AGC function is used and how the outputs of the other pools' scripts are named.
+
+NOTE: Because there are so many input files, this script needs a machine with extra disk space.
+Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
 '''
 
 import datetime
@@ -49,7 +66,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
 '''
 This function creates tiles of the aboveground carbon density in 2000 using mangrove and non-mangrove (WHRC) aboveground
-biomass density in 2000. Unlike the AGC in emission year, it uses the full extent (all pixels) of the two input
+biomass density in 2000. Unlike the AGC in emission year function, it uses the full extent (all pixels) of the two input
 biomass tiles.
 This is not used for the model. It is simply for having information on the carbon stocks in 2000.
 '''
@@ -142,10 +159,6 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
             # Adds the non-mang non-planted forest final AGC density values to the ongoing array.
             # This may or may not include mangroves or planted forests, depending on what was in the tile
             all_forest_types_AGC_combined = all_forest_types_AGC_combined + (natural_forest_biomass * cn.biomass_to_c_non_mangrove)
-
-        # # Removes AGC pixels that do not have a loss year and fills with 0s
-        # all_forest_types_C_final = np.ma.masked_where(loss_year_window == 0, all_forest_types_AGC_combined)
-        # all_forest_types_C_final = all_forest_types_C_final.filled(0)
 
         # Converts the output to float32 since float64 is an unnecessary level of precision
         all_forest_types_C_final = all_forest_types_AGC_combined.astype('float32')
@@ -397,7 +410,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year)
 
 
-# Creates belowgrounc carbon tiles
+# Creates belowground carbon tiles (both in 2000 and loss year)
 def create_BGC(tile_id, mang_BGB_AGB_ratio, extent, pattern, sensit_type):
 
     start = datetime.datetime.now()
@@ -512,7 +525,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent, pattern, sensit_type):
     uu.end_of_fx_summary(start, tile_id, pattern)
 
 
-# Creates deadwood carbon tiles
+# Creates deadwood carbon tiles (both in 2000 and loss year)
 def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_type):
 
     start = datetime.datetime.now()
@@ -692,7 +705,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
     uu.end_of_fx_summary(start, tile_id, pattern)
 
 
-# Creates litter carbon tiles
+# Creates litter carbon tiles (both in 2000 and loss year)
 def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
 
     start = datetime.datetime.now()
@@ -930,7 +943,7 @@ def create_soil(tile_id, pattern, sensit_type):
     uu.end_of_fx_summary(start, tile_id, pattern)
 
 
-# Creates total carbon tiles
+# Creates total carbon tiles (both in 2000 and loss year)
 def create_total_C(tile_id, extent, pattern, sensit_type):
 
     start = datetime.datetime.now()
