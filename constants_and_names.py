@@ -301,12 +301,12 @@ base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 
 ## Carbon pools in loss year
 
+# Date to include in the output directory for all emissions year carbon pools
+emis_pool_run_date = '20191105'
+
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
-AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/standard/20191105/'.format(base_carbon_pool_dir)
-
-# Date to include in the output directory for all emissions year carbon pools except aboveground carbon
-emis_pool_run_date = '20191105'
+AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/standard/{1}/'.format(base_carbon_pool_dir, emis_pool_run_date)
 
 # Belowground carbon in loss pixels
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
@@ -330,21 +330,23 @@ total_C_emis_year_dir = '{0}total_carbon/loss_pixels/standard/{1}/'.format(base_
 
 ## Carbon pools in 2000
 
+pool_2000_run_date = '20191105'
+
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "t_AGC_ha_2000"
-AGC_2000_dir = '{0}aboveground_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
+AGC_2000_dir = '{0}aboveground_carbon/extent_2000/standard/{1}/'.format(base_carbon_pool_dir, pool_2000_run_date)
 
 # Belowground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_BGC_2000 = "t_BGC_ha_2000"
-BGC_2000_dir = '{0}belowground_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
+BGC_2000_dir = '{0}belowground_carbon/extent_2000/standard/{1}/'.format(base_carbon_pool_dir, pool_2000_run_date)
 
 # Deadwood carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_deadwood_2000 = "t_deadwood_C_ha_2000"
-deadwood_2000_dir = '{0}deadwood_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
+deadwood_2000_dir = '{0}deadwood_carbon/extent_2000/standard/{1}/'.format(base_carbon_pool_dir, pool_2000_run_date)
 
 # Litter carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_litter_2000 = "t_litter_C_ha_2000"
-litter_2000_dir = '{0}litter_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
+litter_2000_dir = '{0}litter_carbon/extent_2000/standard/{1}/'.format(base_carbon_pool_dir, pool_2000_run_date)
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = os.path.join(base_dir, 'carbon_pools/soil_carbon/raw/')
@@ -359,7 +361,7 @@ soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/standard/2
 
 # Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "t_total_C_ha_2000"
-total_C_2000_dir = '{0}total_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
+total_C_2000_dir = '{0}total_carbon/extent_2000/standard/{1}/'.format(base_carbon_pool_dir, pool_2000_run_date)
 
 
 ### Gross emissions (directory and pattern names changed in script to soil_only-- no separate variables for those)

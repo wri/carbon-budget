@@ -310,7 +310,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             # To do this, it adds only the portion of the gain that occurred before the loss year to the carbon in 2000.
             gain_before_loss = mangrove_annual_gain_window * (loss_year_window - 1)
             mangrove_C_final_gain_and_loss = (mangrove_biomass_2000_window * cn.biomass_to_c_mangrove) \
-                                             + (gain_before_loss / cn.c_to_co2)
+                                             + (gain_before_loss * cn.biomass_to_c_mangrove)
             mangrove_C_final_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, mangrove_C_final_gain_and_loss).filled(0)
 
             # Adds the mangrove final AGC density values to the ongoing array
@@ -343,7 +343,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             # To do this, it adds only the portion of the gain that occurred before the loss year to the carbon in 2000.
             gain_before_loss = planted_forest_annual_gain_window * (loss_year_window - 1)
             planted_forest_C_gain_and_loss = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) \
-                                             + (gain_before_loss / cn.c_to_co2)
+                                             + (gain_before_loss * cn.biomass_to_c_non_mangrove)
             planted_forest_C_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, planted_forest_C_gain_and_loss).filled(0)
 
             # Makes sure that only WHRC biomass pixels that correspond with non-mangrove planted forest pixels are included.
@@ -377,7 +377,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             # To do this, it adds only the portion of the gain that occurred before the loss year to the carbon in 2000.
             gain_before_loss = natrl_forest_annual_gain_window * (loss_year_window - 1)
             natural_forest_gain_and_loss = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) \
-                                             + (gain_before_loss / cn.c_to_co2)
+                                             + (gain_before_loss * cn.biomass_to_c_non_mangrove)
             natural_forest_gain_and_loss_masked = np.ma.masked_where(loss_gain_mask == 0, natural_forest_gain_and_loss).filled(0)
 
             natural_forest_C = natural_forest_non_gain_and_loss_masked + natural_forest_gain_and_loss_masked
