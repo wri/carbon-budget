@@ -174,7 +174,7 @@ def main ():
         raise Exception("Extent argument not valid")
 
 
-    print "Creating tiles of emitted belowground carbon (carbon 2000 + carbon accumulation until loss year)"
+    print "Creating tiles of belowground carbon"
     # # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
     # # Creates a single filename pattern to pass to the multiprocessor call
     # pattern = output_pattern_list[1]

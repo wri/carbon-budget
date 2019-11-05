@@ -411,7 +411,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent, pattern, sensit_type):
     cont_ecozone = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed, 'false')
     if extent == "loss":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
-    if extent == "full":
+    if extent == "2000":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000, 'true')
 
     # Name of output tile
@@ -530,7 +530,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
     elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation, 'false')
     if extent == "loss":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
-    if extent == "full":
+    if extent == "2000":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000, 'true')
 
     # Name of output tile
@@ -710,7 +710,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
     elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation, 'false')
     if extent == "loss":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
-    if extent == "full":
+    if extent == "2000":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000, 'true')
 
     # Name of output tile
@@ -946,7 +946,7 @@ def create_total_C(tile_id, extent, pattern, sensit_type):
         deadwood = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_emis_year_2000, 'true')
         litter = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_emis_year_2000, 'true')
         soil = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_emis_year_2000, 'true')
-    if extent == "full":
+    if extent == "2000":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000, 'true')
         BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_2000, 'true')
         deadwood = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_2000, 'true')
@@ -981,7 +981,7 @@ def create_total_C(tile_id, extent, pattern, sensit_type):
         dtype='float32'
     )
 
-    if extent == "full":
+    if extent == "2000":
         kwargs.update(
             bigtiff='YES'
         )
