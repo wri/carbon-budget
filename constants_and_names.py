@@ -245,27 +245,34 @@ annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all
 
 # Cumulative aboveground gain for mangroves
 pattern_cumul_gain_AGCO2_mangrove = 'cumul_gain_AGCO2_t_ha_mangrove_2001_15'
-cumul_gain_AGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_mangrove/standard/20191104/')
+cumul_gain_AGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_mangrove/standard/20190906/')
+# cumul_gain_AGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_mangrove/standard/20191104/')
 
 # Cumulative belowground gain for mangroves
 pattern_cumul_gain_BGCO2_mangrove = 'cumul_gain_BGCO2_t_ha_mangrove_2001_15'
-cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_mangrove/standard/20191104/')
+cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_mangrove/standard/20190906/')
+# cumul_gain_BGCO2_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_mangrove/standard/20191104/')
+
 
 # Cumulative aboveground gain for non-mangrove planted natural forests
 pattern_cumul_gain_AGCO2_planted_forest_non_mangrove = 'cumul_gain_AGCO2_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_AGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_planted_forest_non_mangrove/standard/20191104/')
+cumul_gain_AGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_planted_forest_non_mangrove/standard/20191012/')
+# cumul_gain_AGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_planted_forest_non_mangrove/standard/20191104/')
 
 # Cumulative belowground gain for non-mangrove planted natural forests
 pattern_cumul_gain_BGCO2_planted_forest_non_mangrove = 'cumul_gain_BGCO2_t_ha_planted_forest_non_mangrove_2001_15'
-cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_planted_forest_non_mangrove/standard/20191104/')
+cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_planted_forest_non_mangrove/standard/20191012/')
+# cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_planted_forest_non_mangrove/standard/20191104/')
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_AGCO2_natrl_forest = 'cumul_gain_AGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191104/')
+cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191016/')
+# cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191104/')
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_BGCO2_natrl_forest = 'cumul_gain_BGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/standard/20191104/')
+cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/standard/20191016/')
+# cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191104/')
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
@@ -303,10 +310,10 @@ base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
-AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/standard/20191030/'.format(base_carbon_pool_dir)
+AGC_emis_year_dir = '{0}aboveground_carbon/loss_pixels/standard/20191105/'.format(base_carbon_pool_dir)
 
 # Date to include in the output directory for all emissions year carbon pools except aboveground carbon
-emis_pool_run_date = '20191030'
+emis_pool_run_date = '20191105'
 
 # Belowground carbon in loss pixels
 pattern_BGC_emis_year = 't_BGC_ha_emis_year'
@@ -332,19 +339,19 @@ total_C_emis_year_dir = '{0}total_carbon/loss_pixels/standard/{1}/'.format(base_
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "t_AGC_ha_2000"
-AGC_2000_dir = '{0}aboveground_carbon/extent_2000/standard/20190531/'.format(base_carbon_pool_dir)
+AGC_2000_dir = '{0}aboveground_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
 
 # Belowground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_BGC_2000 = "t_BGC_ha_2000"
-BGC_2000_dir = '{0}belowground_carbon/extent_2000/standard/20190531/'.format(base_carbon_pool_dir)
+BGC_2000_dir = '{0}belowground_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
 
 # Deadwood carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_deadwood_2000 = "t_deadwood_C_ha_2000"
-deadwood_2000_dir = '{0}deadwood_carbon/extent_2000/standard/20190531/'.format(base_carbon_pool_dir)
+deadwood_2000_dir = '{0}deadwood_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
 
 # Litter carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_litter_2000 = "t_litter_C_ha_2000"
-litter_2000_dir = '{0}litter_carbon/extent_2000/standard/20190531/'.format(base_carbon_pool_dir)
+litter_2000_dir = '{0}litter_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = os.path.join(base_dir, 'carbon_pools/soil_carbon/raw/')
@@ -359,7 +366,7 @@ soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/standard/2
 
 # Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "t_total_C_ha_2000"
-total_C_2000_dir = '{0}total_carbon/extent_2000/standard/20190602/'.format(base_carbon_pool_dir)
+total_C_2000_dir = '{0}total_carbon/extent_2000/standard/20191105/'.format(base_carbon_pool_dir)
 
 
 ### Gross emissions (directory and pattern names changed in script to soil_only-- no separate variables for those)

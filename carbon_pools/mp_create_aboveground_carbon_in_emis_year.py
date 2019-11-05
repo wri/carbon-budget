@@ -67,8 +67,6 @@ def main ():
         sensit_use = values[1]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
-    sys.quit()
-
     # # For copying individual tiles to spot machine for testing.
     # for tile_id in tile_id_list:
     #
