@@ -51,7 +51,7 @@ def main ():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    if (sensit_type != 'std') & (extent == '2000'):
+    if (sensit_type != 'std') & (extent != 'loss'):
         raise Exception('Sensitivity analysis run must use loss pixel extent')
 
     # Checks the validity of the extent argument
