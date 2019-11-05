@@ -53,17 +53,17 @@ biomass density in 2000. Unlike the AGC in emission year, it uses the full exten
 biomass tiles.
 This is not used for the model. It is simply for having information on the carbon stocks in 2000.
 '''
-def create_2000_AGC(tile_id):
+def create_2000_AGC(tile_id, pattern, sensit_type):
 
     # Start time
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    mangrove_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
+    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked, 'false')
 
     # Name of output tile
-    all_forests_AGC_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_AGC_2000)
+    all_forests_AGC_2000 = '{0}_{1}.tif'.format(tile_id, pattern)
 
     print "  Reading input files for {}...".format(tile_id)
 
@@ -154,7 +154,7 @@ def create_2000_AGC(tile_id):
         dst_AGC_2000.write_band(1, all_forest_types_C_final, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_2000)
+    uu.end_of_fx_summary(start, tile_id, pattern)
 
 
 '''
