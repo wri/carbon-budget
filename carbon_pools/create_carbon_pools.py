@@ -199,9 +199,9 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     mangrove_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove, 'true')
     planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true')
     natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true')
-    mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'true')
-    planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'true')
-    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest, 'true')
+    mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'false')
+    planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false')
+    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest, 'false')
     loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '', 'false')
     gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id, 'false')
 
@@ -220,7 +220,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         mangrove_cumul_AGCO2_gain_src = rasterio.open(mangrove_cumul_AGCO2_gain)
-        # mangrove_annual_gain_src = rasterio.open(mangrove_annual_gain)
+        mangrove_annual_gain_src = rasterio.open(mangrove_annual_gain)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
         kwargs = mangrove_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
