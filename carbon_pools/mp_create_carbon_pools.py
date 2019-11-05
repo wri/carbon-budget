@@ -26,7 +26,7 @@ def main ():
         cn.cont_eco_dir: [cn.pattern_cont_eco_processed, 'false'],
         cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed, 'false'],
         cn.precip_processed_dir: [cn.pattern_precip, 'false'],
-        cn.elevation_processed_dir: [cn.elevation_processed_dir, 'false'],
+        cn.elevation_processed_dir: [cn.pattern_elevation, 'false'],
         cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000, 'false'],
         cn.loss_dir: ['', 'false'],
         cn.gain_dir: [cn.pattern_gain, 'false'],
@@ -151,16 +151,16 @@ def main ():
     elif extent == '2000':
 
         print "Creating tiles of aboveground carbon in 2000"
-        # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # 14 processors maxes out at 415 GB
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[0]
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=16)
-        pool.map(partial(create_carbon_pools.create_2000_AGC,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
+        # # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
+        # # 14 processors maxes out at 415 GB
+        # # Creates a single filename pattern to pass to the multiprocessor call
+        # pattern = output_pattern_list[0]
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(processes=16)
+        # pool.map(partial(create_carbon_pools.create_2000_AGC,
+        #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
+        # pool.close()
+        # pool.join()
 
         # For single processor use
         for tile_id in tile_id_list:

@@ -103,7 +103,7 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
     # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_AGC_2000 = rasterio.open(all_forests_AGC_2000, 'w', **kwargs)
 
-    print "  Creating aboveground carbon density in the year of loss for {}...".format(tile_id)
+    print "  Creating aboveground carbon density in 2000 for {}...".format(tile_id)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -449,7 +449,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent, pattern, sensit_type):
     # The output file: belowground carbon density
     dst_BGC = rasterio.open(BGC, 'w', **kwargs)
 
-    print "  Creating belowground carbon density for {}...".format(tile_id)
+    print "  Creating belowground carbon density for {0} using extent '{1}'...".format(tile_id, extent)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -579,7 +579,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
     # The output file: deadwood carbon density
     dst_deadwood = rasterio.open(deadwood, 'w', **kwargs)
 
-    print "  Creating deadwood carbon density for {}...".format(tile_id)
+    print "  Creating deadwood carbon density for {0} using extent '{1}'...".format(tile_id, extent)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -758,7 +758,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
     # The output file: litter carbon density
     dst_litter = rasterio.open(litter, 'w', **kwargs)
 
-    print "  Creating litter carbon density for {}...".format(tile_id)
+    print "  Creating litter carbon density for {0} using extent '{1}'...".format(tile_id, extent)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -989,7 +989,7 @@ def create_total_C(tile_id, extent, pattern, sensit_type):
     # The output file: total carbon density
     dst_total_C = rasterio.open(total_C, 'w', **kwargs)
 
-    print "  Creating total carbon density in {}...".format(tile_id)
+    print "  Creating total carbon density for {0} using extent '{1}'...".format(tile_id, extent)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
