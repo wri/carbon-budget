@@ -94,9 +94,9 @@ def main ():
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove, 'true'],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true'],
             cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true'],
-            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'true'],
-            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'true'],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'true']
+            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'false'],
+            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false'],
+            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'false']
         }
 
     # Output files and patterns and files to download if carbon pools for 2000 are being generated
