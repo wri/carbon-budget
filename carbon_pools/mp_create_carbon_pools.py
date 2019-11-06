@@ -91,12 +91,13 @@ def main ():
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000, 'false'],
             cn.loss_dir: ['', 'false'],
             cn.gain_dir: [cn.pattern_gain, 'false'],
-            cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove, 'true'],
-            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true'],
-            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true'],
-            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'false'],
-            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false'],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'false']
+            cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year, 'false']
+            # cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove, 'true'],
+            # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true'],
+            # cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true'],
+            # cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'false'],
+            # cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false'],
+            # cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'false']
         }
 
     # Output files and patterns and files to download if carbon pools for 2000 are being generated
@@ -171,73 +172,73 @@ def main ():
                                                                                             cn.litter_to_above_subtrop_mang)
 
 
-    if extent == 'loss':
-
-        print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
-        # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # 14 processors maxes out at 415 GB
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[0]
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=14)
-        pool.map(partial(create_carbon_pools.create_emitted_AGC,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
-
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-        # cmd = ['rm *{}*.tif'.format(output_pattern_list[0])]
-        # subprocess.check_call(cmd)
-
-    elif extent == '2000':
-
-        print "Creating tiles of aboveground carbon in 2000"
-        # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # 14 processors maxes out at 415 GB
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[0]
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=16)
-        pool.map(partial(create_carbon_pools.create_2000_AGC,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_2000_AGC(tile_id, output_pattern_list[0], sensit_type)
-
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-        # cmd = ['rm *{}*.tif'.format(output_pattern_list[0])]
-        # subprocess.check_call(cmd)
-
-    else:
-        raise Exception("Extent argument not valid")
-
-
-    print "Creating tiles of belowground carbon"
-    # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[1]
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=20)
-    pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
-                     extent=extent,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, extent, output_pattern_list[1], sensit_type)
-
-    uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-    # cmd = ['rm *{}*.tif'.format(output_pattern_list[1])]
-    # subprocess.check_call(cmd)
+    # if extent == 'loss':
+    #
+    #     print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
+    #     # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
+    #     # 14 processors maxes out at 410-415 GB
+    #     # Creates a single filename pattern to pass to the multiprocessor call
+    #     pattern = output_pattern_list[0]
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(processes=14)
+    #     pool.map(partial(create_carbon_pools.create_emitted_AGC,
+    #                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #     # # For single processor use
+    #     # for tile_id in tile_id_list:
+    #     #     create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
+    #
+    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #     # cmd = ['rm *{}*.tif'.format(output_pattern_list[0])]
+    #     # subprocess.check_call(cmd)
+    #
+    # elif extent == '2000':
+    #
+    #     print "Creating tiles of aboveground carbon in 2000"
+    #     # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
+    #     # 14 processors maxes out at 415 GB
+    #     # Creates a single filename pattern to pass to the multiprocessor call
+    #     pattern = output_pattern_list[0]
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(processes=16)
+    #     pool.map(partial(create_carbon_pools.create_2000_AGC,
+    #                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #     # # For single processor use
+    #     # for tile_id in tile_id_list:
+    #     #     create_carbon_pools.create_2000_AGC(tile_id, output_pattern_list[0], sensit_type)
+    #
+    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #     # cmd = ['rm *{}*.tif'.format(output_pattern_list[0])]
+    #     # subprocess.check_call(cmd)
+    #
+    # else:
+    #     raise Exception("Extent argument not valid")
+    #
+    #
+    # print "Creating tiles of belowground carbon"
+    # # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[1]
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=20)
+    # pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
+    #                  extent=extent,
+    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, extent, output_pattern_list[1], sensit_type)
+    #
+    # uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    # # cmd = ['rm *{}*.tif'.format(output_pattern_list[1])]
+    # # subprocess.check_call(cmd)
 
 
     print "Creating tiles of deadwood carbon"
