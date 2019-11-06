@@ -29,13 +29,6 @@ import universal_util as uu
 
 def main ():
 
-    tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-    # tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-    # tile_list = ['20N_010E'] # test tiles
-    # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    print tile_list
-    print "There are {} tiles to process".format(str(len(tile_list)))
-
     # One argument for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil)
     parser = argparse.ArgumentParser(description='Calculate gross emissions')
     parser.add_argument('--pools-to-use', '-p', required=True,
@@ -43,16 +36,23 @@ def main ():
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     args = parser.parse_args()
-
-    pools = args.pools_to_use
     sensit_type = args.model_type
+    pools = args.pools_to_use
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
 
     # Checks the validity of the pools argument
     if (pools not in ['soil_only', 'biomass_soil']):
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
 
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+
+    tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+    # tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
+    # tile_list = ['20N_010E'] # test tiles
+    # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+    print tile_list
+    print "There are {} tiles to process".format(str(len(tile_list)))
 
 
     # Checks if the correct c++ script has been compiled for the pool option selected
@@ -118,47 +118,37 @@ def main ():
         raise Exception('Pool option not valid')
 
 
-    # For downloading all tiles in the folders.
-    # This takes about 40 minutes.
-    download_list = [
-                     cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir,
-                     cn.peat_mask_dir, cn.ifl_primary_processed_dir,
-                     cn.planted_forest_type_unmasked_dir,
-                     cn.drivers_processed_dir, cn.climate_zone_processed_dir,
-                     cn.bor_tem_trop_processed_dir, cn.burn_year_dir,
-                     cn.plant_pre_2000_processed_dir,
-                     cn.loss_dir
-                    ]
+    download_dict = {
+        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year, 'true'],
+        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year, 'true'],
+        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000, 'true'],
+        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000, 'true'],
+        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000, 'true'],
+        cn.peat_mask_dir: [cn.pattern_peat_mask, 'false'],
+        cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary, 'false'],
+        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked, 'false'],
+        cn.drivers_processed_dir: [cn.pattern_drivers, 'false'],
+        cn.climate_zone_processed_dir: [cn.pattern_climate_zone, 'false'],
+        cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed, 'false'],
+        cn.burn_year_dir: [cn.pattern_burn_year, 'false'],
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000, 'false'],
+        cn.loss_dir: ['', 'false']
+    }
+
+
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        sensit_use = values[1]
+        uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
+
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-
         print "Changing output directory and file name pattern based on sensitivity analysis"
-
-        download_list = uu.alter_dirs(sensit_type, download_list)
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    for input in download_list:
-        uu.s3_folder_download(input, './cpp_util/')
-
-    # # For copying individual tiles to s3 for testing
-    # for tile in tile_list:
-    #
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.AGC_emis_year_dir, tile, cn.pattern_AGC_emis_year), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.BGC_emis_year_dir, tile, cn.pattern_BGC_emis_year), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.deadwood_emis_year_2000_dir, tile, cn.pattern_deadwood_emis_year_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.litter_emis_year_2000_dir, tile, cn.pattern_litter_emis_year_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.soil_C_emis_year_2000_dir, tile, cn.pattern_soil_C_emis_year_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.drivers_processed_dir, tile, cn.pattern_drivers), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.climate_zone_processed_dir, tile, cn.pattern_climate_zone), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.bor_tem_trop_processed_dir, tile, cn.pattern_bor_tem_trop_processed), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.burn_year_dir, tile, cn.pattern_burn_year), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.peat_mask_dir, tile, cn.pattern_peat_mask), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.planted_forest_type_unmasked_dir, tile, cn.pattern_planted_forest_type_unmasked), './cpp_util/')
-    #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.ifl_primary_processed_dir, tile, cn.pattern_ifl_primary), './cpp_util/')
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
     # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
@@ -170,7 +160,6 @@ def main ():
 
     # # For single processor use
     # for tile in tile_list:
-    #
     #       calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
@@ -194,7 +183,6 @@ def main ():
     # # For single processor use
     # for pattern in pattern_list:
     #     for tile in tile_list:
-    #
     #         uu.make_blank_tile(tile, pattern, folder)
 
 
@@ -207,12 +195,10 @@ def main ():
 
     # # For single processor use
     # for tile in tile_list:
-    #
     #       calculate_gross_emissions.calc_emissions(tile, pools)
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
-
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
