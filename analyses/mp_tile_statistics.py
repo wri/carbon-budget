@@ -83,27 +83,27 @@ download_list = [
                 # cn.total_C_emis_year_dir
 
                 # cn.net_flux_dir,
-                # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                # cn.gross_emis_commod_biomass_soil_dir,
-                # cn.gross_emis_shifting_ag_biomass_soil_dir,
-                # cn.gross_emis_forestry_biomass_soil_dir,
-                # cn.gross_emis_wildfire_biomass_soil_dir,
-                # cn.gross_emis_urban_biomass_soil_dir,
-                # cn.gross_emis_no_driver_biomass_soil_dir,
-                # cn.gross_emis_nodes_biomass_soil_dir
+                cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                cn.gross_emis_commod_biomass_soil_dir,
+                cn.gross_emis_shifting_ag_biomass_soil_dir,
+                cn.gross_emis_forestry_biomass_soil_dir,
+                cn.gross_emis_wildfire_biomass_soil_dir,
+                cn.gross_emis_urban_biomass_soil_dir,
+                cn.gross_emis_no_driver_biomass_soil_dir,
+                cn.gross_emis_nodes_biomass_soil_dir
 
-                cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                cn.gross_emis_commod_soil_only_dir,
-                cn.gross_emis_shifting_ag_soil_only_dir,
-                cn.gross_emis_forestry_soil_only_dir,
-                cn.gross_emis_wildfire_soil_only_dir,
-                cn.gross_emis_urban_soil_only_dir,
-                cn.gross_emis_no_driver_soil_only_dir,
-                cn.gross_emis_nodes_soil_only_dir
+                # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                # cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                # cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                # cn.gross_emis_commod_soil_only_dir,
+                # cn.gross_emis_shifting_ag_soil_only_dir,
+                # cn.gross_emis_forestry_soil_only_dir,
+                # cn.gross_emis_wildfire_soil_only_dir,
+                # cn.gross_emis_urban_soil_only_dir,
+                # cn.gross_emis_no_driver_soil_only_dir,
+                # cn.gross_emis_nodes_soil_only_dir
 
 ]
 
@@ -124,6 +124,9 @@ for input in download_list:
     # For multiprocessor use.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=9)
+    # processes=9 maxes out at about 340 for gross emissions
+    # processes=13 maxes out at above 480 for gross emissions
+    # processes=11 maxes out at about 440 for gross emissions
     pool.map(tile_statistics.create_tile_statistics, tile_list)
     # Added these in response to error12: Cannot allocate memory error.
     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
