@@ -268,7 +268,7 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[3]
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=16)
+    pool = multiprocessing.Pool(processes=18)
     pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
                      extent=extent,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
