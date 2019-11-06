@@ -47,12 +47,12 @@ def main ():
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
 
 
-    tile_list = uu.tile_list(cn.AGC_emis_year_dir)
-    # tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-    # tile_list = ['20N_010E'] # test tiles
-    # tile_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    print tile_list
-    print "There are {} tiles to process".format(str(len(tile_list)))
+    tile_id_list = uu.tile_list(cn.AGC_emis_year_dir)
+    # tile_id_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
+    # tile_id_list = ['20N_010E'] # test tiles
+    # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list)))
 
 
     # Checks if the correct c++ script has been compiled for the pool option selected
@@ -156,10 +156,10 @@ def main ():
     # There are only 8 tiles to process, so count/2 will cover all of them in one go.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/2)
-    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_list)
+    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
 
     # # For single processor use
-    # for tile in tile_list:
+    # for tile in tile_id_list:
     #       calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
@@ -176,13 +176,13 @@ def main ():
     for pattern in pattern_list:
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_list)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
         pool.close()
         pool.join()
 
     # # For single processor use
     # for pattern in pattern_list:
-    #     for tile in tile_list:
+    #     for tile in tile_id_list:
     #         uu.make_blank_tile(tile, pattern, folder)
 
 
@@ -191,10 +191,10 @@ def main ():
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_list)
+    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_id_list)
 
     # # For single processor use
-    # for tile in tile_list:
+    # for tile in tile_id_list:
     #       calculate_gross_emissions.calc_emissions(tile, pools)
 
 
