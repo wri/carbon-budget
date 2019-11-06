@@ -64,7 +64,7 @@ def main ():
                                              cn.annual_gain_AGB_mangrove_dir
                                              )
     # tile_id_list = ['30N_080W'] # test tiles
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} unique tiles to process".format(str(len(tile_id_list))) + "\n"
 
