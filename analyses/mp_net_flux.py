@@ -17,7 +17,7 @@ def main ():
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
         cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true'],
-        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'true']
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'false']
     }
 
 
@@ -52,9 +52,12 @@ def main ():
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
 
+    input_dir_list = download_dict.keys()
+
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
         print "Changing output directory and file name pattern based on sensitivity analysis"
+        input_dir_list = uu.alter_dirs(sensit_type, input_dir_list)
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -63,9 +66,8 @@ def main ():
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
     folder = './'
-    pattern_list = [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
 
-    for pattern in pattern_list:
+    for pattern in input_dir_list:
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count-10)
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
