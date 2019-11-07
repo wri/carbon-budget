@@ -52,10 +52,10 @@ def main ():
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
 
-    input_pattern_list = download_dict.values()
-    input_pattern_list = [input_pattern_list[0][0], input_pattern_list[1][0]]
+    # input_pattern_list = download_dict.values()
+    # input_pattern_list = [input_pattern_list[0][0], input_pattern_list[1][0]]
 
-    print input_pattern_list
+    # print input_pattern_list
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
@@ -63,10 +63,10 @@ def main ():
         input_pattern_list = uu.alter_patterns(sensit_type, input_pattern_list)
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-
-    input_pattern_list[0] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
-
-    print input_pattern_list
+    #
+    # input_pattern_list[0] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
+    #
+    # print input_pattern_list
 
 
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
