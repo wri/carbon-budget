@@ -65,7 +65,7 @@ download_list = [
                 # cn.cumul_gain_AGCO2_natrl_forest_dir,
                 # cn.cumul_gain_BGCO2_natrl_forest_dir,
                 # cn.annual_gain_AGB_BGB_all_types_dir,
-                cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
+                # cn.cumul_gain_AGCO2_BGCO2_all_types_dir
 
                 # cn.elevation_processed_dir,
                 # cn.precip_processed_dir,
@@ -82,7 +82,7 @@ download_list = [
                 # cn.soil_C_emis_year_2000_dir,
                 # cn.total_C_emis_year_dir
 
-                cn.net_flux_dir,
+                # cn.net_flux_dir,
                 # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
                 # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
                 # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
@@ -102,8 +102,8 @@ download_list = [
                 # cn.gross_emis_forestry_soil_only_dir,
                 # cn.gross_emis_wildfire_soil_only_dir,
                 # cn.gross_emis_urban_soil_only_dir,
-                # cn.gross_emis_no_driver_soil_only_dir,
-                # cn.gross_emis_nodes_soil_only_dir
+                cn.gross_emis_no_driver_soil_only_dir,
+                cn.gross_emis_nodes_soil_only_dir
 
 ]
 
