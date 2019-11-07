@@ -83,7 +83,9 @@ def main ():
 
     # For single processor use
     for dir, pattern in download_dict:
+        print pattern
         pattern_name = pattern[0]
+        print pattern_name
         for tile in tile_id_list:
             uu.make_blank_tile(tile, pattern_name, folder)
 
