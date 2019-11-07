@@ -62,7 +62,7 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    input_pattern_list[1] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
+    input_pattern_list[0] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
 
     print input_pattern_list
 
