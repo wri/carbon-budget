@@ -53,6 +53,7 @@ def main ():
 
 
     input_pattern_list = download_dict.values()
+    input_pattern_list = [input_pattern_list[0][0], input_pattern_list[1][0]]
     print input_pattern_list
     #
     # # If the model run isn't the standard one, the output directory and file names are changed
