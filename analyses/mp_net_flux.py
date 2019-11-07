@@ -62,6 +62,8 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
+    input_pattern_list[1] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
+
 
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
