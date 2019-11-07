@@ -82,12 +82,12 @@ def main ():
     #     pool.join()
 
     # For single processor use
-    for dir, pattern in download_dict.iteritems():
-        print pattern
-        pattern_name = pattern[0]
-        print pattern_name
+    for download_dir, download_pattern in download_dict.iteritems():
+
+        download_pattern_name = download_pattern[0]
+
         for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern_name, folder)
+            uu.make_blank_tile(tile, download_pattern_name, folder)
 
 
     # # Creates a single filename pattern to pass to the multiprocessor call
