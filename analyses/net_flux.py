@@ -17,7 +17,7 @@ def net_calc(tile_id, pattern, sensit_type):
 
     # Names of the gain and emissions tiles
     gain_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true')
-    loss_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'true')
+    loss_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'false')
 
     # Output net emissions file
     net_flux = '{0}_{1}.tif'.format(tile_id, pattern)
