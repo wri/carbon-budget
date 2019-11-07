@@ -61,7 +61,7 @@ def main():
     uu.s3_folder_download(cn.tcd_dir, '.', 'std', 'false')
 
     input_dict = {
-             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+             # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
              # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
              # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
              cn.cumul_gain_AGCO2_BGCO2_all_types_dir: cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
