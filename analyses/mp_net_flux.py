@@ -82,13 +82,14 @@ def main ():
     #     pool.join()
 
     # For single processor use
-    for pattern in input_pattern_list:
+    for dir, pattern in download_dict:
+        pattern_name = pattern[0]
         for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern, folder)
+            uu.make_blank_tile(tile, pattern_name, folder)
 
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[0]
 
     # # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
