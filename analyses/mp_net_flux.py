@@ -82,7 +82,7 @@ def main ():
     #     pool.join()
 
     # For single processor use
-    for dir, pattern in download_dict:
+    for dir, pattern in download_dict.iteritems():
         print pattern
         pattern_name = pattern[0]
         print pattern_name
