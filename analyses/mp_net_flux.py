@@ -49,49 +49,50 @@ def main ():
         dir = key
         pattern = values[0]
         sensit_use = values[1]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
+        # uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
 
-    input_dir_list = download_dict.keys()
-
-    # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
-        input_dir_list = uu.alter_dirs(sensit_type, input_dir_list)
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-
-
-    # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
-    # so that it has all the necessary input tiles
-    # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
-    folder = './'
-
-    for pattern in input_dir_list:
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-        pool.close()
-        pool.join()
-
-
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
-
-    # Count/3 uses about 380 GB on a r4.16xlarge spot machine
-    # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=24)
-    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
-
-
-    # Uploads output tiles to s3
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    input_pattern_list = download_dict.values()
+    print input_pattern_list
+    #
+    # # If the model run isn't the standard one, the output directory and file names are changed
+    # if sensit_type != 'std':
+    #     print "Changing output directory and file name pattern based on sensitivity analysis"
+    #     input_pattern_list = uu.alter_patterns(sensit_type, input_pattern_list)
+    #     output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+    #     output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+    #
+    #
+    # # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+    # # so that it has all the necessary input tiles
+    # # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
+    # folder = './'
+    #
+    # for pattern in input_pattern_list:
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[0]
+    #
+    # # Count/3 uses about 380 GB on a r4.16xlarge spot machine
+    # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=24)
+    # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+    #
+    #
+    # # Uploads output tiles to s3
+    # for i in range(0, len(output_dir_list)):
+    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
