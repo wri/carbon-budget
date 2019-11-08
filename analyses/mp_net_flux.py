@@ -91,7 +91,7 @@ def main ():
 
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
         print output_pattern
-        output_pattern = output_pattern[4:]
+        output_pattern = output_pattern[8:-4]
 
         print output_pattern
 
