@@ -84,9 +84,16 @@ def main ():
     for download_dir, download_pattern in download_dict.iteritems():
 
         download_pattern_name = download_pattern[0]
+        sensit_use = download_pattern[1]
+        tile_id = '99N_999E'
 
-        for tile in tile_id_list:
-            uu.make_blank_tile(tile, download_pattern_name, folder)
+        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        output_pattern = output_pattern[:-4]
+
+        print output_pattern
+
+        for tile_id in tile_id_list:
+            uu.make_blank_tile(tile_id, output_pattern, folder)
 
 
     # # Creates a single filename pattern to pass to the multiprocessor call
