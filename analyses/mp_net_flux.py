@@ -79,11 +79,11 @@ def main ():
         sensit_use = download_pattern[1]
         tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-        output_pattern = output_pattern[9:-4]
+        pattern = pattern[9:-4]
 
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, output_pattern=output_pattern, folder=folder), tile_id_list)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
         pool.close()
         pool.join()
 
@@ -95,10 +95,10 @@ def main ():
     #     sensit_use = download_pattern[1]
     #     tile_id = 'XXXXXXXX'
     #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-    #     output_pattern = output_pattern[9:-4]
+    #     pattern = pattern[9:-4]
     #
     #     for tile_id in tile_id_list:
-    #         uu.make_blank_tile(tile_id, output_pattern, folder)
+    #         uu.make_blank_tile(tile_id, pattern, folder)
 
 
     # Creates a single filename pattern to pass to the multiprocessor call
