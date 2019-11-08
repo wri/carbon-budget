@@ -52,20 +52,20 @@ def main ():
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
 
-    # input_pattern_list = download_dict.values()
-    # input_pattern_list = [input_pattern_list[0][0], input_pattern_list[1][0]]
+    input_pattern_list = download_dict.values()
+    input_pattern_list = [input_pattern_list[0][0], input_pattern_list[1][0]]
 
-    # print input_pattern_list
+    print input_pattern_list
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-    #
-    # input_pattern_list[0] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
-    #
-    # print input_pattern_list
+
+    input_pattern_list[0] = cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil
+
+    print input_pattern_list
 
 
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
@@ -81,9 +81,10 @@ def main ():
     #     pool.join()
 
     # For single processor use
-    for download_dir, download_pattern in download_dict.iteritems():
+    # for download_dir, download_pattern in download_dict.iteritems():
+    for download_pattern_name in input_pattern_list:
 
-        download_pattern_name = download_pattern[0]
+        # download_pattern_name = download_pattern[0]
 
         for tile in tile_id_list:
             uu.make_blank_tile(tile, download_pattern_name, folder)
