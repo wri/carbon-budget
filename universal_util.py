@@ -289,12 +289,9 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in dir and sensit_use == 'true':
 
-        print "Changing {} name to reflect sensitivity analysis".format(source)
-
         dir = dir.replace('standard', sensit_type)
-        print dir
         file_name = file_name[:-4] + '_' + sensit_type + '.tif'
-        print file_name
+        print "Changing {0} name to reflect sensitivity analysis to {1}/{2}".format(source, dir, file_name)
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
