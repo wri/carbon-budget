@@ -87,7 +87,10 @@ def main ():
         sensit_use = download_pattern[1]
         tile_id = '99N_999E'
 
+        print download_pattern_name
+
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        print output_pattern
         output_pattern = output_pattern[4:]
 
         print output_pattern
