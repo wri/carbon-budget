@@ -72,45 +72,47 @@ def main ():
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
     folder = './'
-
-    # for pattern in input_pattern_list:
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count-10)
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-    #     pool.close()
-    #     pool.join()
-
-    # For single processor use
     for download_dir, download_pattern in download_dict.iteritems():
 
+        # Renames the tiles according to the sensitivity analysis before creating dummy tiles
         download_pattern_name = download_pattern[0]
         sensit_use = download_pattern[1]
-        tile_id = 'XXXXXXXX'
-
-        print download_pattern_name
-
+        tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-        print output_pattern
         output_pattern = output_pattern[9:-4]
 
-        print output_pattern
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count-10)
+        pool.map(partial(uu.make_blank_tile, output_pattern=output_pattern, folder=folder), tile_id_list)
+        pool.close()
+        pool.join()
 
-        for tile_id in tile_id_list:
-            uu.make_blank_tile(tile_id, output_pattern, folder)
+    # # For single processor use
+    # for download_dir, download_pattern in download_dict.iteritems():
+    #
+    #
+    #     download_pattern_name = download_pattern[0]
+    #     sensit_use = download_pattern[1]
+    #     tile_id = 'XXXXXXXX'
+    #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+    #     output_pattern = output_pattern[9:-4]
+    #
+    #     for tile_id in tile_id_list:
+    #         uu.make_blank_tile(tile_id, output_pattern, folder)
 
 
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[0]
+    # Creates a single filename pattern to pass to the multiprocessor call
+    pattern = output_pattern_list[0]
 
-    # # Count/3 uses about 380 GB on a r4.16xlarge spot machine
-    # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=24)
-    # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # Count/3 uses about 380 GB on a r4.16xlarge spot machine
+    # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=24)
+    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
 
     # Uploads output tiles to s3
