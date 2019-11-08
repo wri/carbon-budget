@@ -85,7 +85,7 @@ def main ():
 
         download_pattern_name = download_pattern[0]
         sensit_use = download_pattern[1]
-        tile_id = '99N_999E'
+        tile_id = 'XXXXXXXX'
 
         print download_pattern_name
 
