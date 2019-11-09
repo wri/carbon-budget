@@ -475,7 +475,7 @@ def make_blank_tile(tile_id, pattern, folder):
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
-def name_aggregated_output(pattern, thresh):
+def name_aggregated_output(pattern, thresh, sensit_type):
 
     out_pattern = re.sub('ha_', '', pattern)
     print out_pattern
@@ -486,7 +486,7 @@ def name_aggregated_output(pattern, thresh):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    out_name = '{0}_10km_tcd{1}_modelv1_1_2_biomass_soil_{2}'.format(out_pattern, thresh, date_formatted)
+    out_name = '{0}_{1}_{2}_{3}_{4}'.format(out_pattern, thresh, cn.pattern_aggreg, sensit_type, date_formatted)
 
     return out_name
 

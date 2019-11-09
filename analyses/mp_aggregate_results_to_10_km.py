@@ -116,17 +116,17 @@ def main():
         # pool.close()
         # pool.join()
 
-        # For single processor use
-        for tile in tile_list:
-
-            aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
+        # # For single processor use
+        # for tile in tile_list:
+        #
+        #     aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
         # Renames outputs
-        out_pattern = uu.name_aggregated_output(pattern, thresh)
+        out_pattern = uu.name_aggregated_output(pattern, thresh, sensit_type)
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
@@ -136,15 +136,15 @@ def main():
 
         print "Tiles processed. Uploading to s3 now..."
 
-        # Cleans up the folder before starting on the next raster type
-        vrtList = glob.glob('*vrt')
-        for vrt in vrtList:
-            os.remove(vrt)
-
-        for tile_id in tile_list:
-            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        # # Cleans up the folder before starting on the next raster type
+        # vrtList = glob.glob('*vrt')
+        # for vrt in vrtList:
+        #     os.remove(vrt)
+        #
+        # for tile_id in tile_list:
+        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
         # Uploads all output tiles to s3
         uu.upload_final_set(cn.output_aggreg_dir, out_pattern)

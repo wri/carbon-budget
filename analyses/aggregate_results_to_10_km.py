@@ -66,6 +66,10 @@ def rewindow(tile):
                tcd_tile, tcd_rewindow]
         subprocess.check_call(cmd)
 
+    else:
+
+        print "Canopy cover for {} already rewindowed.".format(tile_id)
+
     if not os.path.exists(pixel_area_rewindow):
 
         # Converts the pixel area tile to the 400x400 pixel windows
@@ -165,7 +169,7 @@ def aggregate(tile, thresh, sensit_type):
     if tile_type == cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil:
         sum_array = sum_array/cn.loss_years / cn.tonnes_to_megatonnes
 
-    print "Creating aggregated tile for {}...".format(tile)
+    print "  Creating aggregated tile for {}...".format(tile)
 
     # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
     # from the 2D array created by rasterio above
