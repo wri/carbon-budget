@@ -32,8 +32,8 @@ def main():
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
              # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'true'],
-             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true'],
-             cn.net_flux_dir: [cn.pattern_net_flux, 'true']
+             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true']
+             # cn.net_flux_dir: [cn.pattern_net_flux, 'true']
              }
 
     # Sole argument for the script: the tree cover density threshold (pixels below this will not be aggregated)
@@ -116,10 +116,10 @@ def main():
         # pool.close()
         # pool.join()
 
-        # # For single processor use
-        # for tile in tile_list:
-        #
-        #     aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
+        # For single processor use
+        for tile in tile_list:
+
+            aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
