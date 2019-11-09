@@ -74,12 +74,14 @@ def main ():
     folder = './'
     for download_dir, download_pattern in download_dict.iteritems():
 
-        # Renames the tiles according to the sensitivity analysis before creating dummy tiles
+        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # lines later.
         download_pattern_name = download_pattern[0]
         sensit_use = download_pattern[1]
         tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-        pattern = pattern[9:-4]
+        pattern = output_pattern[9:-4]
 
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count-10)

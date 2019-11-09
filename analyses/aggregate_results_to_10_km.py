@@ -90,7 +90,7 @@ def rewindow(tile):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile, thresh):
+def aggregate(tile, thresh, sensit_type):
 
     # start time
     start = datetime.datetime.now()
