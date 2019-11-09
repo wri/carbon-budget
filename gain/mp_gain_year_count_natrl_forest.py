@@ -28,7 +28,7 @@ def main ():
     download_dict = {
         cn.loss_dir: ['', 'false'],
         cn.gain_dir: [cn.pattern_gain, 'false'],
-        cn.tcd_dir: [cn.pattern_gain, 'false'],
+        cn.tcd_dir: [cn.pattern_tcd, 'false'],
         cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted, 'false'],
         cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked, 'false'],
         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000, 'false']

@@ -320,7 +320,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
         for tile_id in tile_id_list:
             if pattern == '':
                 source = '{0}{1}.tif'.format(source_dir, tile_id)
-            elif pattern == cn.pattern_gain:
+            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
