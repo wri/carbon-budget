@@ -158,9 +158,11 @@ def aggregate(tile, thresh, sensit_type):
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
     if cn.pattern_net_flux in tile_type:
+        print sum_array
         print "doing this"
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
         print "did this"
+        print sum_array
 
     else:
         print "not doing this"
