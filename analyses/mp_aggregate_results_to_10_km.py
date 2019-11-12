@@ -65,16 +65,23 @@ def main():
 
     print "Model outputs to process are:", download_dict
 
-    for dir, download_pattern in download_dict.items():
+    for dir, values in download_dict.items():
 
-        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-        # lines later.
-        download_pattern_name = download_pattern[0]
-        sensit_use = download_pattern[1]
+        download_pattern_name = values[0]
+        sensit_use = values[1]
+
+        print download_pattern_name
+
+        # # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # # lines later.
+        # download_pattern_name = values[0]
+        # sensit_use = values[1]
         tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
         pattern = output_pattern[9:-4]
+
+        print pattern
 
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
