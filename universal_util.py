@@ -490,7 +490,14 @@ def name_aggregated_output(pattern, thresh, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
+    print thresh
+    print cn.pattern_aggreg
+    print sensit_type
+    print date_formatted
+
     out_name = '{0}_{1}_{2}_{3}_{4}'.format(out_pattern, thresh, cn.pattern_aggreg, sensit_type, date_formatted)
+
+    print out_name
 
     return out_name
 
