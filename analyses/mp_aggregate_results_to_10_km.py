@@ -62,8 +62,10 @@ def main():
     # tree cover density tiles-- necessary for filtering sums by tcd
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, 'false', tile_id_list)
 
-
     print "Model outputs to process are:", download_dict
+
+    output_dir_list = [cn.output_aggreg_dir]
+
 
     for dir, download_pattern in download_dict.items():
 
@@ -90,8 +92,6 @@ def main():
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
         print "Processing:", dir, "; ", pattern
 
-        output_dir_list = [cn.output_aggreg_dir]
-
         # # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # # # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
@@ -109,26 +109,26 @@ def main():
         #
         #     aggregate_results_to_10_km.rewindow(tile)
         #
-        # # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # # # and sums those values in each 400x400 pixel window.
-        # # # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # # # 0.1x0.1 degree resolution (approximately 10m in the tropics).
-        # # # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # # # The 0.1x0.1 degree tile is output.
-        # # # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        # # count = multiprocessing.cpu_count()
-        # # pool = multiprocessing.Pool(count/2)
-        # # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh, sensit_type=sensit_type), tile_list)
-        # # # Added these in response to error12: Cannot allocate memory error.
-        # # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # # pool.close()
-        # # pool.join()
-        #
-        # # For single processor use
-        # for tile in tile_list:
-        #
-        #     aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
+        # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # # and sums those values in each 400x400 pixel window.
+        # # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # # The 0.1x0.1 degree tile is output.
+        # # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(count/2)
+        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh, sensit_type=sensit_type), tile_list)
+        # # Added these in response to error12: Cannot allocate memory error.
+        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        # pool.close()
+        # pool.join()
+
+        # For single processor use
+        for tile in tile_list:
+
+            aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
