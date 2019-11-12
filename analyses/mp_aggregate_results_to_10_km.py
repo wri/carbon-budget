@@ -81,7 +81,8 @@ def main():
         # output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
         # pattern = output_pattern[9:-4]
 
-        pattern = download_pattern_name[9:]
+        # pattern = download_pattern_name[9:]
+        pattern = download_pattern_name
         print pattern
 
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
