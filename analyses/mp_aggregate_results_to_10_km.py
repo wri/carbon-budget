@@ -72,15 +72,16 @@ def main():
 
         print download_pattern_name
 
-        # # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-        # # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-        # # lines later.
-        # download_pattern_name = values[0]
-        # sensit_use = values[1]
-        tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
-        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-        pattern = output_pattern[9:-4]
+        # # # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # # # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # # # lines later.
+        # # download_pattern_name = values[0]
+        # # sensit_use = values[1]
+        # tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
+        # output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        # pattern = output_pattern[9:-4]
 
+        pattern = download_pattern_name[9:-4]
         print pattern
 
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
