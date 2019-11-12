@@ -153,8 +153,13 @@ def main():
         #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
         #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+            print "Changing output directory and file name pattern based on sensitivity analysis"
+            output_dir_list = uu.alter_dirs(sensit_type, cn.output_aggreg_dir)
+
         # Uploads all output tiles to s3
-        uu.upload_final_set(cn.output_aggreg_dir, out_pattern)
+        uu.upload_final_set(output_dir_list, out_pattern)
 
 
 if __name__ == '__main__':
