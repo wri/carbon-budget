@@ -160,6 +160,7 @@ def aggregate(tile, thresh, sensit_type):
     if cn.pattern_net_flux in tile_type:
         print "doing this"
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
+        print "did this"
 
     else:
         print "not doing this"
