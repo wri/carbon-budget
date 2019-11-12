@@ -483,6 +483,10 @@ def name_aggregated_output(pattern, thresh, sensit_type):
     print out_pattern
     out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
     print out_pattern
+    out_pattern = re.sub('_t_', '_Mt_', out_pattern)
+    print out_pattern
+    out_pattern = re.sub('_10km_', '_per_year_10km_', out_pattern)
+    print out_pattern
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 

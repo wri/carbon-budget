@@ -9,8 +9,6 @@
 ### The extent of this layer is what determines the extent of the non-mangrove non-planted forest gain rate layer
 ### (in conjunction with ecozone and continent layers).
 ### That is, the forest age category layer should cover the entire non-mangrove non-planted annual gain rate layer.
-### Unlike other multiprocessing scripts, this one passes two arguments to the main script: the tile list
-### and the dictionary of gain rates for different continent-ecozone combinations (needed for one node in the decision tree).
 ### Uses an r4.16xlarge spot machine.
 
 import multiprocessing
