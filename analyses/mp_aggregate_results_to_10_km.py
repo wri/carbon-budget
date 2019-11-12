@@ -32,8 +32,8 @@ def main():
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
              # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'true'],
-             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true']
-             # cn.net_flux_dir: [cn.pattern_net_flux, 'true']
+             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true'],
+             cn.net_flux_dir: [cn.pattern_net_flux, 'true']
              }
 
     # Sole argument for the script: the tree cover density threshold (pixels below this will not be aggregated)
@@ -62,13 +62,20 @@ def main():
     # tree cover density tiles-- necessary for filtering sums by tcd
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, 'false', tile_id_list)
 
- 
+
     print "Model outputs to process are:", download_dict
 
-    for dir, values in download_dict.items():
+    for dir, download_pattern in download_dict.items():
 
-        pattern = values[0]
-        sensit_use = values[1]
+        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # lines later.
+        download_pattern_name = download_pattern[0]
+        sensit_use = download_pattern[1]
+        tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
+        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        pattern = output_pattern[9:-4]
+
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
         # Lists the tiles of the particular type that is being iterates through.
