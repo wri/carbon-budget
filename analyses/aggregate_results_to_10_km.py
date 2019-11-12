@@ -122,9 +122,6 @@ def aggregate(tile, thresh, sensit_type):
     #2D array in which the 0.1x0.1 deg aggregated sums will be stored
     sum_array = np.zeros([100,100], 'float32')
 
-    print tile_type
-    print cn.pattern_net_flux
-
     # Iterates across the windows (400x400 30m pixels) of the input tile
     for idx, window in windows:
 
@@ -173,6 +170,8 @@ def aggregate(tile, thresh, sensit_type):
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     print "  Creating aggregated tile for {}...".format(tile)
+
+    sum_array = np.float32(sum_array)
 
     # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
     # from the 2D array created by rasterio above
