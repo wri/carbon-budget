@@ -168,6 +168,8 @@ def aggregate(tile, thresh, sensit_type):
         print "not doing this"
 
     print sum_array.dtype
+    sum_array = np.float32(sum_array)
+    print sum_array.dtype
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
