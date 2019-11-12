@@ -90,6 +90,8 @@ def main():
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
         print "Processing:", dir, "; ", pattern
 
+        output_dir_list = [cn.output_aggreg_dir]
+
         # # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # # # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
@@ -156,10 +158,10 @@ def main():
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            output_dir_list = uu.alter_dirs(sensit_type, cn.output_aggreg_dir)
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
 
         # Uploads all output tiles to s3
-        uu.upload_final_set(output_dir_list, out_pattern)
+        uu.upload_final_set(output_dir_list[0], out_pattern)
 
 
 if __name__ == '__main__':
