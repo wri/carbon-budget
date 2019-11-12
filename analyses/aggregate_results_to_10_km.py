@@ -149,38 +149,27 @@ def aggregate(tile, thresh, sensit_type):
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
     # Converts the annual biomass gain values annual gain in megatonnes and makes negative (because removals are negative)
-    if tile_type == cn.pattern_annual_gain_AGB_BGB_all_types:
+    if cn.pattern_annual_gain_AGB_BGB_all_types in tile_type:
         sum_array = sum_array / cn.tonnes_to_megatonnes * -1
 
     # Converts the cumulative CO2 gain values to annualized CO2 in megatonnes and makes negative (because removals are negative)
-    if tile_type == cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
+    if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
     if cn.pattern_net_flux in tile_type:
-        print sum_array
-        print "doing this"
-        sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
-        print "did this"
-        print sum_array
-
-    else:
-        print "not doing this"
-
-    print sum_array.dtype
-    sum_array = np.float32(sum_array)
-    print sum_array.dtype
-
-    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if tile_type == cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if tile_type == cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil:
+    if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if tile_type == cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil:
+    if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+        sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
+
+    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
+    if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     print "  Creating aggregated tile for {}...".format(tile)
