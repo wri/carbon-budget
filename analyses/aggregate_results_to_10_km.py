@@ -122,6 +122,9 @@ def aggregate(tile, thresh, sensit_type):
     #2D array in which the 0.1x0.1 deg aggregated sums will be stored
     sum_array = np.zeros([100,100], 'float32')
 
+    print tile_type
+    print cn.pattern_net_flux
+
     # Iterates across the windows (400x400 30m pixels) of the input tile
     for idx, window in windows:
 
