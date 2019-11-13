@@ -55,7 +55,7 @@ def main():
     uu.check_sensit_type(sensit_type)
 
     tile_id_list = ['00N_110E'] # test tiles
-    # tile_id_list = 'all'
+    tile_id_list = 'all'
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, 'false', tile_id_list)
