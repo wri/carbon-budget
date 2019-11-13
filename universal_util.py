@@ -309,12 +309,17 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
 
+    print tile_id_list
+
     # For downloading all tiles in a folder when the list of tiles can't be specified
     if tile_id_list == 'all':
+        print "downloading all"
         s3_folder_download(source_dir, dest, sensit_type, sensit_use)
 
     # For downloading test tiles (five or fewer)
     elif len(tile_id_list) <= 5:
+
+        print "downloading 1"
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
@@ -329,6 +334,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
 
     # For downloading full sets of tiles
     else:
+        print "downloading all second"
         s3_folder_download(source_dir, dest, sensit_type, sensit_use)
 
 
