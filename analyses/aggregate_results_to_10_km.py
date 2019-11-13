@@ -94,7 +94,7 @@ def rewindow(tile):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile, thresh, sensit_type):
+def aggregate(tile, thresh):
 
     # start time
     start = datetime.datetime.now()
@@ -171,6 +171,7 @@ def aggregate(tile, thresh, sensit_type):
 
     print "  Creating aggregated tile for {}...".format(tile)
 
+    # Converts array to the same output type as the raster that is created below
     sum_array = np.float32(sum_array)
 
     # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
@@ -179,7 +180,6 @@ def aggregate(tile, thresh, sensit_type):
     aggregated = rasterio.open("{0}_{1}_10km.tif".format(tile_id, tile_type), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
                                 height=100, width=100,
-                                # pixelSizeY='0.1', pixelSizeX='0.1', height=100, width=100,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.1,0.1))
     aggregated.write(sum_array,1)
     aggregated.close()

@@ -32,7 +32,7 @@ def main():
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
              # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, 'true'],
-             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true'],
+             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, 'true'],
              cn.net_flux_dir: [cn.pattern_net_flux, 'true']
              }
 
@@ -47,7 +47,7 @@ def main():
     thresh = int(thresh)
     sensit_type = args.model_type
 
-
+    # Checks whether the canopy cover argument is valid
     if thresh < 0 or thresh > 99:
         raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
 
@@ -64,21 +64,26 @@ def main():
 
     print "Model outputs to process are:", download_dict
 
+    # List of output directories. Modified later for sensitivity analysis.
+    # Output pattern is determined later.
     output_dir_list = [cn.output_aggreg_dir]
 
 
+    # Iterates through the types of tiles to be processed
     for dir, download_pattern in download_dict.items():
 
         download_pattern_name = download_pattern[0]
         sensit_use = download_pattern[1]
 
+        # Downloads the model output tiles to be processed
         uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, sensit_use, tile_id_list)
 
+        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # lines later.
         tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
         pattern = output_pattern[9:-4]
-
-        print pattern
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files
@@ -118,7 +123,7 @@ def main():
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count/2)
-        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh, sensit_type=sensit_type), tile_list)
+        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
         # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
@@ -128,13 +133,13 @@ def main():
         # # For single processor use
         # for tile in tile_list:
         #
-        #     aggregate_results_to_10_km.aggregate(tile, thresh, sensit_type)
+        #     aggregate_results_to_10_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
-        # Renames outputs
+        # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
@@ -155,7 +160,7 @@ def main():
         #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
         #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
-        # If the model run isn't the standard one, the output directory and file names are changed
+        # If the model run isn't the standard one, the output directory is changed
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
             output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
