@@ -54,7 +54,7 @@ def main():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     tile_id_list = 'all'
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
