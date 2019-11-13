@@ -270,6 +270,8 @@ def s3_folder_download(source, dest, sensit_type, sensit_use):
 
         source = source.replace('standard', sensit_type)
 
+        print source
+
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
     subprocess.check_call(cmd)
