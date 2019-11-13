@@ -260,6 +260,8 @@ def coords(tile_id):
 # use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
 def s3_folder_download(source, dest, sensit_type, sensit_use):
 
+    print "in folder download fx"
+
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in source and sensit_use == 'true':
