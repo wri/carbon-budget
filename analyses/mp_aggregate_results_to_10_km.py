@@ -135,7 +135,7 @@ def main():
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
         # Renames outputs
-        out_pattern = uu.name_aggregated_output(pattern, thresh, sensit_type)
+        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',

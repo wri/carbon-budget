@@ -488,7 +488,7 @@ def name_aggregated_output(pattern, thresh, sensit_type):
     out_pattern = re.sub('_10km_', '_per_year_10km_', out_pattern)
     print out_pattern
     date = datetime.datetime.now()
-    date_formatted = date.strftime("%Y_%m_%d")
+    date_formatted = date.strftime("%Y%m%d")
 
     print thresh
     print cn.pattern_aggreg
