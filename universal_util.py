@@ -260,8 +260,6 @@ def coords(tile_id):
 # use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
 def s3_folder_download(source, dest, sensit_type, sensit_use):
 
-    print "in folder download fx"
-
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in source and sensit_use == 'true':
@@ -269,8 +267,6 @@ def s3_folder_download(source, dest, sensit_type, sensit_use):
         print "Changing {} name to reflect sensitivity analysis".format(source)
 
         source = source.replace('standard', sensit_type)
-
-        print source
 
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
@@ -313,17 +309,12 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
 
-    print tile_id_list
-
     # For downloading all tiles in a folder when the list of tiles can't be specified
     if tile_id_list == 'all':
-        print "downloading all"
         s3_folder_download(source_dir, dest, sensit_type, sensit_use)
 
     # For downloading test tiles (five or fewer)
     elif len(tile_id_list) <= 5:
-
-        print "downloading 1"
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
@@ -338,7 +329,6 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
 
     # For downloading full sets of tiles
     else:
-        print "downloading all second"
         s3_folder_download(source_dir, dest, sensit_type, sensit_use)
 
 
