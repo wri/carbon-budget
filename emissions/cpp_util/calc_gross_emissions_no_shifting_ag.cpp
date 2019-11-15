@@ -392,7 +392,7 @@ for(x=0; x<xsize; x++)
             // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
 
 			// Emissions model for commodity-driven deforestation and shifting ag (shifting ag uses commodity decision tree)
-			if (drivermodel_data[x] == 1) || (drivermodel_data[x] == 2)
+			if ((drivermodel_data[x] == 1) || (drivermodel_data[x] == 2))
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
