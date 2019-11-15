@@ -503,8 +503,8 @@ for(x=0; x<xsize; x++)
 						        if (drivermodel_data[x] == 2)
 						        {
                                     //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
-                                    double total;
 //                                    total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+                                    cout << "node:" << outdata20 << endl;
                                     cout << "total: " << outdata1a << endl;
 //                                    cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
 //                                    cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
@@ -529,8 +529,8 @@ for(x=0; x<xsize; x++)
 						        if (drivermodel_data[x] == 2)
 						        {
                                     //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
-                                    double total;
 //                                    total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+                                    cout << "node:" << outdata20 << endl;
                                     cout << "total: " << outdata1a << endl;
 //                                    cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
 //                                    cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
@@ -593,7 +593,7 @@ for(x=0; x<xsize; x++)
 				outdata1 = outdata1a + outdata1b;
 
 				if (drivermodel_data[x] == 2){
-				    cout << "outdata1" << outdata1
+				    cout << "outdata1" << outdata1;
 				}
 			}
 
