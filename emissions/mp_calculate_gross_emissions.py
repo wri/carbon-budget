@@ -142,7 +142,7 @@ def main ():
             raise Exception('Must compile soil_only C++...')
 
     else:
-        raise Exception('Pool option not valid')
+        raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
     # Checks if the correct C++ for the sensitivity analysis has been compiled
