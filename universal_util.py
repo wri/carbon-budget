@@ -295,9 +295,15 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in dir and sensit_use == 'true':
 
-        dir = dir.replace('standard', sensit_type)
+        dir_sens = dir.replace('standard', sensit_type)
         file_name = file_name[:-4] + '_' + sensit_type + '.tif'
-        print "Changing {0} name to reflect sensitivity analysis to {1}/{2}".format(source, dir, file_name)
+        print "Changing {0} name to reflect sensitivity analysis to {1}/{2}".format(source, dir_sens, file_name)
+
+        if os.path.exists('{}/{}'.format(dir_sens, file_name)):
+            dir = dir_sens
+            print "Sensitivity analysis directory found for {}".format(dir)
+        else:
+            print "Sensivitity analysis directory not found for {}".format(dir)
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
@@ -324,9 +330,9 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern == '':
+            if pattern == '':   # For Hansen loss tiles
                 source = '{0}{1}.tif'.format(source_dir, tile_id)
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
