@@ -593,7 +593,7 @@ for(x=0; x<xsize; x++)
 				outdata1 = outdata1a + outdata1b;
 
 				if (drivermodel_data[x] == 2){
-				    cout << "outdata1" << outdata1 << endl;
+				    cout << "outdata1: " << outdata1 << endl;
 				    cout << endl;
 				}
 			}
@@ -928,9 +928,9 @@ for(x=0; x<xsize; x++)
 				out_data5[x] = 0;
 				out_data6[x] = 0;
 			}
-			else if (drivermodel_data[x] == 2)  // Shifting ag
+			else if (drivermodel_data[x] == 2)  // Shifting ag (actually commodities for this sensitivity analysis)
 			{
-				out_data1[x] = 0;
+				out_data1[x] = outdata1;
 				out_data2[x] = 0;
 				out_data3[x] = 0;
 				out_data4[x] = 0;
