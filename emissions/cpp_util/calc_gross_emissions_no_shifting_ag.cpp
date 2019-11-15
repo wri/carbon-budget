@@ -332,9 +332,6 @@ for(x=0; x<xsize; x++)
 		float outdata1 = 0;   // commodities, all gases
 		float outdata1a = 0;  // commodities, CO2 only
 		float outdata1b = 0;  // commodities, non-CO2
-		float outdata2 = 0;   // shifting ag., all gases
-		float outdata2a = 0;  // shifting ag., CO2 only
-		float outdata2b = 0;  // shifting ag., non-CO2
 		float outdata3 = 0;   // forestry, all gases
 		float outdata3a = 0;  // forestry, CO2 only
 		float outdata3b = 0;  // forestry, non-CO2
@@ -502,6 +499,29 @@ for(x=0; x<xsize; x++)
 						        outdata1a = Biomass_tCO2e_nofire_CO2_only;
 						        outdata1b = 0;
 						        outdata20 = 17;
+
+//						        if (drivermodel_data[x] == 2)
+//						        {
+//                                    //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
+//                                    double total;
+//                                    total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+//                                    if ((total < 715) && (total > 714) && (agc_data[x] = 26.25) && (soil_data[x] = 216) && (dead_data[x] = 1.44) && (litter_data[x] = 0.5328) && (burn_data[x] = 6))
+//                                    {
+//                                        cout << "total: " << total << endl;
+//                                        cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
+//                                        cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
+//                                        cout << "peat_drain_total_CO2_only: " << peat_drain_total_CO2_only << endl;
+//                                        cout << "peat_drain_total_non_CO2: " << peat_drain_total_non_CO2 << endl;
+//                                        cout << "peatburn_CO2_only: " << peatburn_CO2_only << endl;
+//                                        cout << "peatburn_non_CO2: " << peatburn_non_CO2 << endl;
+//                                        cout << "agc_data[x]: " << agc_data[x] << endl;
+//                                        cout << "Cf: " << Cf << endl;
+//                                        cout << "Gef_CO2: " << Gef_CO2 << endl;
+//                                        cout << "Gef_CH4: " << Gef_CH4 << endl;
+//                                        cout << "Gef_N2O: " << Gef_N2O << endl;
+//                                        cout << "" << endl;
+//                                    }
+//                                }
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, tropical, no plantation
 						    {
@@ -889,7 +909,7 @@ for(x=0; x<xsize; x++)
 			else if (drivermodel_data[x] == 2)  // Shifting ag
 			{
 				out_data1[x] = 0;
-				out_data2[x] = outdata2;
+				out_data2[x] = 0;
 				out_data3[x] = 0;
 				out_data4[x] = 0;
 				out_data5[x] = 0;
@@ -936,9 +956,9 @@ for(x=0; x<xsize; x++)
 
 
 				// Add up all drivers for a combined raster. Each pixel only has one driver
-				outdata10 = outdata1 + outdata2 + outdata3 + outdata4 + outdata5 + outdata6;
-				outdata11 = outdata1a + outdata2a + outdata3a + outdata4a + outdata5a + outdata6a;
-				outdata12 = outdata1b + outdata2b + outdata3b + outdata4b + outdata5b + outdata6b;
+				outdata10 = outdata1 + outdata3 + outdata4 + outdata5 + outdata6;
+				outdata11 = outdata1a + outdata3a + outdata4a + outdata5a + outdata6a;
+				outdata12 = outdata1b + outdata3b + outdata4b + outdata5b + outdata6b;
 
 				if (outdata10 == 0)
 				{
