@@ -54,7 +54,7 @@ def main ():
 
     # List of tiles to run in the model
     tile_id_list = uu.tile_list(cn.AGC_emis_year_dir)
-    # tile_id_list = ['00N_110E'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
