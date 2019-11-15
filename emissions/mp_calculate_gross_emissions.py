@@ -106,13 +106,15 @@ def main ():
         if sensit_type == 'std':
             if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
                 print "C++ for biomass+soil already compiled."
-        elif sensit_type == 'no_shifting_ag':
+            else:
+                raise Exception('Must compile standard biomass+soil model C++...')
+        if sensit_type == 'no_shifting_ag':
             if os.path.exists('./cpp_util/calc_gross_emissions_no_shifting_ag.exe'):
                 print "C++ for no_shifting_ag already compiled."
+            else:
+                raise Exception('Must compile no_shifting_ag model C++...')
         else:
-            raise Exception('Must compile biomass+soil model (standard or sensitivity analysis) C++...')
-
-        print "biomass_soil"
+            raise Exception('No C++ model for inputs')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
