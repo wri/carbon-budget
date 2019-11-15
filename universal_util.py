@@ -305,6 +305,8 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
         else:
             print "Sensivitity analysis file not found for {0}/{1}".format(dir, file_name)
 
+    print file_name
+
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
         print file_name, "already downloaded" + "\n"
