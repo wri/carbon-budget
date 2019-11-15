@@ -79,35 +79,40 @@ def main ():
 
     # Checks if the correct c++ script has been compiled for the pool option selected
     if pools == 'biomass_soil':
-        if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
-            print "C++ for biomass+soil already compiled."
 
-            # Output file directories for biomass+soil. Must be in same order as output pattern directories.
-            output_dir_list = [cn.gross_emis_commod_biomass_soil_dir,
-                               cn.gross_emis_shifting_ag_biomass_soil_dir,
-                               cn.gross_emis_forestry_biomass_soil_dir,
-                               cn.gross_emis_wildfire_biomass_soil_dir,
-                               cn.gross_emis_urban_biomass_soil_dir,
-                               cn.gross_emis_no_driver_biomass_soil_dir,
-                               cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_nodes_biomass_soil_dir]
+        # Output file directories for biomass+soil. Must be in same order as output pattern directories.
+        output_dir_list = [cn.gross_emis_commod_biomass_soil_dir,
+                           cn.gross_emis_shifting_ag_biomass_soil_dir,
+                           cn.gross_emis_forestry_biomass_soil_dir,
+                           cn.gross_emis_wildfire_biomass_soil_dir,
+                           cn.gross_emis_urban_biomass_soil_dir,
+                           cn.gross_emis_no_driver_biomass_soil_dir,
+                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_nodes_biomass_soil_dir]
 
-            output_pattern_list = [cn.pattern_gross_emis_commod_biomass_soil,
-                                   cn.pattern_gross_emis_shifting_ag_biomass_soil,
-                                   cn.pattern_gross_emis_forestry_biomass_soil,
-                                   cn.pattern_gross_emis_wildfire_biomass_soil,
-                                   cn.pattern_gross_emis_urban_biomass_soil,
-                                   cn.pattern_gross_emis_no_driver_biomass_soil,
-                                   cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
-                                   cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
-                                   cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
-                                   cn.pattern_gross_emis_nodes_biomass_soil]
+        output_pattern_list = [cn.pattern_gross_emis_commod_biomass_soil,
+                               cn.pattern_gross_emis_shifting_ag_biomass_soil,
+                               cn.pattern_gross_emis_forestry_biomass_soil,
+                               cn.pattern_gross_emis_wildfire_biomass_soil,
+                               cn.pattern_gross_emis_urban_biomass_soil,
+                               cn.pattern_gross_emis_no_driver_biomass_soil,
+                               cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+                               cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+                               cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+                               cn.pattern_gross_emis_nodes_biomass_soil]
+
+        if sensit_type == 'std':
+            if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
+                print "C++ for biomass+soil already compiled."
+        elif sensit_type == 'no_shifting_ag':
+            if os.path.exists('./cpp_util/calc_gross_emissions_no_shifting_ag.exe'):
+                print "C++ for no_shifting_ag already compiled."
         else:
-            raise Exception('Must compile biomass+soil C++...')
+            raise Exception('Must compile biomass+soil model (standard or sensitivity analysis) C++...')
 
-    elif pools == 'soil_only':
+    elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
 
