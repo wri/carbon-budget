@@ -36,8 +36,7 @@ def calc_emissions(tile_id, pools, sensit_type):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
 
     elif (pools == 'biomass_soil') & (sensit_type == 'no_shifting_ag'):
-        print "this one"
-        emissions_tiles_cmd = ['cpp_uti/calc_gross_emissions_no_shifting_ag.exe', tile_id]
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_no_shifting_ag.exe', tile_id]
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
