@@ -264,9 +264,15 @@ def s3_folder_download(source, dest, sensit_type, sensit_use):
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in source and sensit_use == 'true':
 
-        print "Changing {} name to reflect sensitivity analysis".format(source)
+        print "Attempting to change {} name to reflect sensitivity analysis".format(source)
 
-        source = source.replace('standard', sensit_type)
+        source_sens = source.replace('standard', sensit_type)
+
+        if os.path.exists(source):
+            source = source_sens
+            print "Sensitivity analysis directory found for {}".format(source)
+        else:
+            print "Sensivitity analysis directory not found for {}".format(source)
 
     cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
            '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
