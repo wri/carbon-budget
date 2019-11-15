@@ -176,8 +176,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
  // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-xsize = 6000;
-ysize = 6000;
+xsize = 5000;
+ysize = 5000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -500,34 +500,51 @@ for(x=0; x<xsize; x++)
 						        outdata1b = 0;
 						        outdata20 = 17;
 
-//						        if (drivermodel_data[x] == 2)
-//						        {
-//                                    //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
-//                                    double total;
+						        if (drivermodel_data[x] == 2)
+						        {
+                                    //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
+                                    double total;
 //                                    total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
-//                                    if ((total < 715) && (total > 714) && (agc_data[x] = 26.25) && (soil_data[x] = 216) && (dead_data[x] = 1.44) && (litter_data[x] = 0.5328) && (burn_data[x] = 6))
-//                                    {
-//                                        cout << "total: " << total << endl;
-//                                        cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
-//                                        cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
-//                                        cout << "peat_drain_total_CO2_only: " << peat_drain_total_CO2_only << endl;
-//                                        cout << "peat_drain_total_non_CO2: " << peat_drain_total_non_CO2 << endl;
-//                                        cout << "peatburn_CO2_only: " << peatburn_CO2_only << endl;
-//                                        cout << "peatburn_non_CO2: " << peatburn_non_CO2 << endl;
-//                                        cout << "agc_data[x]: " << agc_data[x] << endl;
-//                                        cout << "Cf: " << Cf << endl;
-//                                        cout << "Gef_CO2: " << Gef_CO2 << endl;
-//                                        cout << "Gef_CH4: " << Gef_CH4 << endl;
-//                                        cout << "Gef_N2O: " << Gef_N2O << endl;
-//                                        cout << "" << endl;
-//                                    }
-//                                }
+                                    cout << "total: " << outdata1a << endl;
+//                                    cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
+//                                    cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
+//                                    cout << "peat_drain_total_CO2_only: " << peat_drain_total_CO2_only << endl;
+//                                    cout << "peat_drain_total_non_CO2: " << peat_drain_total_non_CO2 << endl;
+//                                    cout << "peatburn_CO2_only: " << peatburn_CO2_only << endl;
+//                                    cout << "peatburn_non_CO2: " << peatburn_non_CO2 << endl;
+//                                    cout << "agc_data[x]: " << agc_data[x] << endl;
+//                                    cout << "Cf: " << Cf << endl;
+//                                    cout << "Gef_CO2: " << Gef_CO2 << endl;
+//                                    cout << "Gef_CH4: " << Gef_CH4 << endl;
+//                                    cout << "Gef_N2O: " << Gef_N2O << endl;
+                                    cout << "" << endl;
+                                }
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, tropical, no plantation
 						    {
 						        outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata1b = 0;
 						        outdata20 = 171;
+
+						        if (drivermodel_data[x] == 2)
+						        {
+                                    //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
+                                    double total;
+//                                    total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
+                                    cout << "total: " << outdata1a << endl;
+//                                    cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
+//                                    cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
+//                                    cout << "peat_drain_total_CO2_only: " << peat_drain_total_CO2_only << endl;
+//                                    cout << "peat_drain_total_non_CO2: " << peat_drain_total_non_CO2 << endl;
+//                                    cout << "peatburn_CO2_only: " << peatburn_CO2_only << endl;
+//                                    cout << "peatburn_non_CO2: " << peatburn_non_CO2 << endl;
+//                                    cout << "agc_data[x]: " << agc_data[x] << endl;
+//                                    cout << "Cf: " << Cf << endl;
+//                                    cout << "Gef_CO2: " << Gef_CO2 << endl;
+//                                    cout << "Gef_CH4: " << Gef_CH4 << endl;
+//                                    cout << "Gef_N2O: " << Gef_N2O << endl;
+//                                    cout << "" << endl;
+                                }
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Commodity, not peat, not burned, boreal
@@ -574,6 +591,10 @@ for(x=0; x<xsize; x++)
 					}
 				}
 				outdata1 = outdata1a + outdata1b;
+
+				if (drivermodel_data[x] == 2){
+				    cout << "outdata1" << outdata1
+				}
 			}
 
 			// Emissions model for forestry
