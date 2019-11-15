@@ -302,9 +302,9 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
         if os.path.exists('{}/{}'.format(dir_sens, file_name)):
             dir = dir_sens
             file_name = file_name_sens
-            print "Sensitivity analysis directory found for {}".format(dir) + '\n'
+            print "Sensitivity analysis directory found for {}".format(dir)
         else:
-            print "Sensivitity analysis directory not found for {}".format(dir) + '\n'
+            print "Sensivitity analysis directory not found for {}".format(dir)
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
@@ -316,6 +316,7 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
             source = os.path.join(dir, file_name)
             cmd = ['aws', 's3', 'cp', source, dest]
             subprocess.check_call(cmd)
+            print '\n'
         except:
             print source, "not found."
 
