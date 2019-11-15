@@ -510,7 +510,7 @@ for(x=0; x<xsize; x++)
                                 double total;
                                 total = Biomass_tCO2e_nofire_CO2_only + minsoil;
 //                                if ((total < 781) && (total > 780) && (agc_data[x] < 155) && (agc_data[x] > 154) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
-                                if ((total < 781) && (total > 780) & (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
+                                if ((total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
                                 {
                                     cout << "total: " << total << endl;
                                     cout << "Biomass_tCO2e_nofire_CO2_only: " << Biomass_tCO2e_nofire_CO2_only << endl;
