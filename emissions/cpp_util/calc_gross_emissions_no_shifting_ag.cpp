@@ -175,9 +175,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
-// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 900;
-//ysize = 7900;
+ // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+xsize = 6000;
+ysize = 6000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
