@@ -302,9 +302,9 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
         if os.path.exists('{}/{}'.format(dir_sens, file_name)):
             dir = dir_sens
             file_name = file_name_sens
-            print "Sensitivity analysis directory found for {}".format(dir)
+            print "Sensitivity analysis directory found for {}".format(dir) + '\n'
         else:
-            print "Sensivitity analysis directory not found for {}".format(dir)
+            print "Sensivitity analysis directory not found for {}".format(dir) + '\n'
 
     # Doesn't download the tile if it's already on the spot machine
     if os.path.exists(file_name):
@@ -517,11 +517,6 @@ def name_aggregated_output(pattern, thresh, sensit_type):
 
 # Removes plantations that existed before 2000 from loss tile
 def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
-
-    print pre_2000_plant
-    print tile_to_mask
-    print out_name
-    print tile_id
 
     if os.path.exists(pre_2000_plant):
 
