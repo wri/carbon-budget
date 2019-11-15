@@ -296,11 +296,12 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
     if sensit_type != 'std' and 'standard' in dir and sensit_use == 'true':
 
         dir_sens = dir.replace('standard', sensit_type)
-        file_name = file_name[:-4] + '_' + sensit_type + '.tif'
+        file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
         print "Changing {0} name to reflect sensitivity analysis to {1}/{2}".format(source, dir_sens, file_name)
 
         if os.path.exists('{}/{}'.format(dir_sens, file_name)):
             dir = dir_sens
+            file_name = file_name_sens
             print "Sensitivity analysis directory found for {}".format(dir)
         else:
             print "Sensivitity analysis directory not found for {}".format(dir)
