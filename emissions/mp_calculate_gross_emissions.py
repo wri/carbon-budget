@@ -112,6 +112,8 @@ def main ():
         else:
             raise Exception('Must compile biomass+soil model (standard or sensitivity analysis) C++...')
 
+        print "biomass_soil"
+
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
