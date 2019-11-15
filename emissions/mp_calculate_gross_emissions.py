@@ -54,7 +54,7 @@ def main ():
 
     # List of tiles to run in the model
     tile_id_list = uu.tile_list(cn.AGC_emis_year_dir)
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
@@ -163,7 +163,7 @@ def main ():
         dir = key
         pattern = values[0]
         sensit_use = values[1]
-        uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, sensit_use, tile_id_list)
+        # uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, sensit_use, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -173,17 +173,17 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # # Pre-2000 plantations have not previously been masked, so that is done here.
-    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
-    #
-    # # # For single processor use
-    # # for tile in tile_id_list:
-    # #       calculate_gross_emissions.mask_pre_2000_plant(tile)
+    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # Pre-2000 plantations have not previously been masked, so that is done here.
+    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+
+    # # For single processor use
+    # for tile in tile_id_list:
+    #       calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
     # The C++ code expects a plantations tile for every input 10x10.
