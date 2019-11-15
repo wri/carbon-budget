@@ -114,7 +114,7 @@ def main ():
             else:
                 raise Exception('Must compile no_shifting_ag model C++...')
         else:
-            raise Exception('No C++ model for inputs')
+            raise Exception('Pool and/or sensitivity analysis option not valid')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
