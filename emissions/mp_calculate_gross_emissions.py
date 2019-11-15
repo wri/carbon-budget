@@ -29,7 +29,37 @@ import universal_util as uu
 
 def main ():
 
-    # One argument for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil)
+    # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
+    # changed for a sensitivity analysis. This does not need to change based on what run is being done;
+    # this assignment should be true for all sensitivity analyses and the standard model.
+    download_dict = {
+        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year, 'true'],
+        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year, 'true'],
+        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000, 'true'],
+        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000, 'true'],
+        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000, 'true'],
+        cn.peat_mask_dir: [cn.pattern_peat_mask, 'false'],
+        cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary, 'false'],
+        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked, 'false'],
+        cn.drivers_processed_dir: [cn.pattern_drivers, 'false'],
+        cn.climate_zone_processed_dir: [cn.pattern_climate_zone, 'false'],
+        cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed, 'false'],
+        cn.burn_year_dir: [cn.pattern_burn_year, 'false'],
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000, 'false'],
+        cn.loss_dir: ['', 'false']
+    }
+
+
+    # List of tiles to run in the model
+    tile_id_list = uu.tile_list(cn.AGC_emis_year_dir)
+    # tile_id_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
+
+
+    # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
+    # and which model type is being run (standard or sensitivity analysis)
     parser = argparse.ArgumentParser(description='Calculate gross emissions')
     parser.add_argument('--pools-to-use', '-p', required=True,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
@@ -45,14 +75,6 @@ def main ():
     # Checks the validity of the pools argument
     if (pools not in ['soil_only', 'biomass_soil']):
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
-
-
-    tile_id_list = uu.tile_list(cn.AGC_emis_year_dir)
-    # tile_id_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-    # tile_id_list = ['20N_010E'] # test tiles
-    # tile_id_list = ['00N_110E', '80N_020E', '30N_080W', '00N_020E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list)))
 
 
     # Checks if the correct c++ script has been compiled for the pool option selected
@@ -118,24 +140,15 @@ def main ():
         raise Exception('Pool option not valid')
 
 
-    download_dict = {
-        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year, 'true'],
-        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year, 'true'],
-        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000, 'true'],
-        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000, 'true'],
-        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000, 'true'],
-        cn.peat_mask_dir: [cn.pattern_peat_mask, 'false'],
-        cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary, 'false'],
-        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked, 'false'],
-        cn.drivers_processed_dir: [cn.pattern_drivers, 'false'],
-        cn.climate_zone_processed_dir: [cn.pattern_climate_zone, 'false'],
-        cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed, 'false'],
-        cn.burn_year_dir: [cn.pattern_burn_year, 'false'],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000, 'false'],
-        cn.loss_dir: ['', 'false']
-    }
+    # Checks if the correct C++ for the sensitivity analysis has been compiled
+    if sensit_type == 'drivers':
+        if os.path.exists('./cpp_util/calc_gross_emissions_no_shifting_ag.exe'):
+            print "C++ for drivers sensitivity analysis already compiled."
+        else:
+            raise Exception('Must compile calc_gross_emissions_no_shifting_ag.exe...')
 
 
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
@@ -151,16 +164,16 @@ def main ():
 
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # Pre-2000 plantations have not previously been masked, so that is done here.
-    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/2)
-    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # # Pre-2000 plantations have not previously been masked, so that is done here.
+    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.mask_pre_2000_plant(tile)
+    # For single processor use
+    for tile in tile_id_list:
+          calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
     # The C++ code expects a plantations tile for every input 10x10.
@@ -173,29 +186,29 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    for pattern in pattern_list:
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
     # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder)
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+
+    # For single processor use
+    for pattern in pattern_list:
+        for tile in tile_id_list:
+            uu.make_blank_tile(tile, pattern, folder)
 
 
-    # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools), tile_id_list)
+    # # Calculates gross emissions for each tile
+    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, pools)
+    # For single processor use
+    for tile in tile_id_list:
+          calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen

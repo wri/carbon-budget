@@ -476,7 +476,7 @@ hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 ### Misc
 ######
 
-sensitivity_list = ['std', 'maxgain', 'biomass', 'USrem', 'noplant', 'drivers', 'soil']
+sensitivity_list = ['std', 'maxgain', 'biomass', 'USrem', 'noplant', 'no_shifting_ag', 'soil']
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
                       '{0} = Standard run. {1} = Maximize gain years. {2} = Change biomass map. {3} = Use US-specific removals.' \
