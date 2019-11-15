@@ -31,7 +31,7 @@ def calc_emissions(tile_id, pools, sensit_type):
 
     start = datetime.datetime.now()
 
-    # Runs the correct c++ script given the pools selected (biomass+soil or soil_only)
+    # Runs the correct c++ script given the pools (biomass+soil or soil_only) and model type selected
     if (pools == 'biomass_soil') & (sensit_type == 'std'):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
 

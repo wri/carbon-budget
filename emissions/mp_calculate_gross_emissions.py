@@ -4,10 +4,12 @@ The properties of each pixel determine the appropriate emissions equation, the c
 carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
-From carbon-budget/emissions/, do c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
+From carbon-budget/emissions/, do:
+c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
+(for the biomass_soil pools and standard model version).
 calc_emissions_v3_biomass_soil.exe should appear in the directory.
-Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION]. The Python script will call the
-compiled C++ code as needed.
+Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE].
+The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
 The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
 The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
@@ -52,8 +54,7 @@ def main ():
 
     # List of tiles to run in the model
     tile_id_list = uu.tile_list(cn.AGC_emis_year_dir)
-    # tile_id_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
@@ -172,14 +173,14 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # # # Pre-2000 plantations have not previously been masked, so that is done here.
-    # # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    # # count = multiprocessing.cpu_count()
-    # # pool = multiprocessing.Pool(count/2)
-    # # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
-    #
+    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # Pre-2000 plantations have not previously been masked, so that is done here.
+    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+
     # # For single processor use
     # for tile in tile_id_list:
     #       calculate_gross_emissions.mask_pre_2000_plant(tile)
@@ -195,29 +196,29 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    # for pattern in pattern_list:
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count-10)
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-    #     pool.close()
-    #     pool.join()
-
-    # For single processor use
     for pattern in pattern_list:
-        for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern, folder)
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count-10)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+        pool.close()
+        pool.join()
+
+    # # For single processor use
+    # for pattern in pattern_list:
+    #     for tile in tile_id_list:
+    #         uu.make_blank_tile(tile, pattern, folder)
 
 
-    # # Calculates gross emissions for each tile
-    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=18)
-    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
+    # Calculates gross emissions for each tile
+    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=18)
+    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
-    # For single processor use
-    for tile in tile_id_list:
-          calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
+    # # For single processor use
+    # for tile in tile_id_list:
+    #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
