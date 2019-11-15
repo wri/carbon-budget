@@ -552,10 +552,10 @@ for(x=0; x<xsize; x++)
 				}
 				outdata1 = outdata1a + outdata1b;
 
-				if (drivermodel_data[x] == 2){
-				    cout << "outdata1: " << outdata1 << endl;
-				    cout << endl;
-				}
+//				if (drivermodel_data[x] == 2){
+//				    cout << "outdata1: " << outdata1 << endl;
+//				    cout << endl;
+//				}
 			}
 
 			// Emissions model for forestry
