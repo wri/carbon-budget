@@ -106,6 +106,8 @@ def main ():
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
 
+        print "in the biomass_soil chunk"
+
         if sensit_type == 'std':
             if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
                 print "C++ for biomass+soil already compiled."
