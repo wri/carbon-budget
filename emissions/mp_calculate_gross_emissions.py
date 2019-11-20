@@ -172,17 +172,17 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # Pre-2000 plantations have not previously been masked, so that is done here.
-    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/2)
-    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
-
-    # For single processor use
-    for tile in tile_id_list:
-          calculate_gross_emissions.mask_pre_2000_plant(tile)
+    # print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # # Pre-2000 plantations have not previously been masked, so that is done here.
+    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+    #
+    # # For single processor use
+    # for tile in tile_id_list:
+    #       calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
     # The C++ code expects a plantations tile for every input 10x10.
@@ -195,17 +195,17 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
+    # # for pattern in pattern_list:
+    # #     count = multiprocessing.cpu_count()
+    # #     pool = multiprocessing.Pool(count-10)
+    # #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    # #     pool.close()
+    # #     pool.join()
+    #
+    # # For single processor use
     # for pattern in pattern_list:
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count-10)
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-    #     pool.close()
-    #     pool.join()
-
-    # For single processor use
-    for pattern in pattern_list:
-        for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern, folder)
+    #     for tile in tile_id_list:
+    #         uu.make_blank_tile(tile, pattern, folder)
 
 
     # # Calculates gross emissions for each tile
