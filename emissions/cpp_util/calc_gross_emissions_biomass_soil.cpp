@@ -698,20 +698,20 @@ for(x=0; x<xsize; x++)
                                 {
                                     cout << "x: " << x << endl;
                                     cout << "y: " << y << endl;
-//                                    cout << "agc_data: " << agc_data[x] << endl;
-//                                    cout << "bgc_data: " << bgc_data[x] << endl;
-//                                    cout << "deadwood_data: " << dead_data[x] << endl;
-//                                    cout << "litter_data: " << litter_data[x] << endl;
-//                                    cout << "non_soil_C: " << non_soil_c << endl;
-//                                    cout << "C_to_CO2: " << C_to_CO2 << endl;
-//                                    cout << "Biomass_tCO2e_nofire_CO2_only: " << Biomass_tCO2e_nofire_CO2_only << endl;
-//                                    cout << "soil_data: " << soil_data[x] << endl;
-//                                    cout << "shiftag_flu: " << shiftag_flu << endl;
-//                                    cout << "minsoil_first_half: " << minsoil_pt1 << endl;
-//                                    cout << "loss_year: " << loss_data[x] << endl;
-//                                    cout << "minsoil_second_half: " << (model_years-loss_data[x]) << endl;
-//                                    cout << "minsoil: " << minsoil << endl;
-//                                    cout << "total: " << total << endl;
+                                    cout << "agc_data: " << agc_data[x] << endl;
+                                    cout << "bgc_data: " << bgc_data[x] << endl;
+                                    cout << "deadwood_data: " << dead_data[x] << endl;
+                                    cout << "litter_data: " << litter_data[x] << endl;
+                                    cout << "non_soil_C: " << non_soil_c << endl;
+                                    cout << "C_to_CO2: " << C_to_CO2 << endl;
+                                    cout << "Biomass_tCO2e_nofire_CO2_only: " << Biomass_tCO2e_nofire_CO2_only << endl;
+                                    cout << "soil_data: " << soil_data[x] << endl;
+                                    cout << "shiftag_flu: " << shiftag_flu << endl;
+                                    cout << "minsoil_first_half: " << minsoil_pt1 << endl;
+                                    cout << "loss_year: " << loss_data[x] << endl;
+                                    cout << "minsoil_second_half: " << (model_years-loss_data[x]) << endl;
+                                    cout << "minsoil: " << minsoil << endl;
+                                    cout << "total: " << total << endl;
                                     cout << endl;
                                 }
 						    }
