@@ -77,9 +77,6 @@ def main ():
     if (pools not in ['soil_only', 'biomass_soil']):
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
 
-    print pools
-    print sensit_type
-
     # Checks if the correct c++ script has been compiled for the pool option selected
     if pools == 'biomass_soil':
 
@@ -105,8 +102,6 @@ def main ():
                                cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
-
-        print "in the biomass_soil chunk"
 
         if sensit_type == 'std':
             if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
@@ -178,16 +173,16 @@ def main ():
 
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # # Pre-2000 plantations have not previously been masked, so that is done here.
-    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # Pre-2000 plantations have not previously been masked, so that is done here.
+    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.mask_pre_2000_plant(tile)
+    # For single processor use
+    for tile in tile_id_list:
+          calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
     # The C++ code expects a plantations tile for every input 10x10.
@@ -213,16 +208,16 @@ def main ():
             uu.make_blank_tile(tile, pattern, folder)
 
 
-    # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
+    # # Calculates gross emissions for each tile
+    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
+    # For single processor use
+    for tile in tile_id_list:
+          calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
