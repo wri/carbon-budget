@@ -697,7 +697,7 @@ for(x=0; x<xsize; x++)
                                 {
                                     cout << "agc_data: " << agc_data[x] << endl;
                                     cout << "bgc_data: " << bgc_data[x] << endl;
-                                    cout << "deadwood_data: " << deadwood_data[x] << endl;
+                                    cout << "deadwood_data: " << dead_data[x] << endl;
                                     cout << "litter_data: " << litter_data[x] << endl;
                                     cout << "non_soil_C: " << non_soil_c << endl;
                                     cout << "C_to_CO2: " << C_to_CO2 << endl;
