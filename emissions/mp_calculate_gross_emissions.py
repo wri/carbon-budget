@@ -77,6 +77,8 @@ def main ():
     if (pools not in ['soil_only', 'biomass_soil']):
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
 
+    print pools
+    print sensit_type
 
     # Checks if the correct c++ script has been compiled for the pool option selected
     if pools == 'biomass_soil':
