@@ -695,6 +695,8 @@ for(x=0; x<xsize; x++)
 //                              if ((total < 781) && (total > 780) && (agc_data[x] < 155) && (agc_data[x] > 154) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
                                 if ((x > 3525) && (x < 3530) && (total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
                                 {
+                                    cout << "x: " << x << endl;
+                                    cout << "y: " << y << endl;
                                     cout << "agc_data: " << agc_data[x] << endl;
                                     cout << "bgc_data: " << bgc_data[x] << endl;
                                     cout << "deadwood_data: " << dead_data[x] << endl;
