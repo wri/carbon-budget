@@ -508,6 +508,23 @@ for(x=0; x<xsize; x++)
 						        outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata1b = 0;
 						        outdata20 = 171;
+
+                                //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
+                                double total;
+                                total = Biomass_tCO2e_nofire_CO2_only + minsoil;
+//                                if ((total < 781) && (total > 780) && (agc_data[x] < 155) && (agc_data[x] > 154) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
+                                if ((total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
+                                {
+                                    cout << "total: " << total << endl;
+                                    cout << "Biomass_tCO2e_nofire_CO2_only: " << Biomass_tCO2e_nofire_CO2_only << endl;
+                                    cout << "minsoil: " << minsoil << endl;
+                                    cout << "flu: " << flu << endl;
+                                    cout << "agc_data: " << agc_data[x] << endl;
+                                    cout << "bgc_data: " << bgc_data[x] << endl;
+                                    cout << "soil_data: " << soil_data[x] << endl;
+                                    cout << "loss_year: " << loss_data[x] << endl;
+                                    cout << endl;
+                                }
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Commodity, not peat, not burned, boreal
