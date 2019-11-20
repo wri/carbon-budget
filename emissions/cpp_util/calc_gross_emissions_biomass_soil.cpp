@@ -693,7 +693,7 @@ for(x=0; x<xsize; x++)
                                 double minsoil_pt2;
                                 minsoil_pt2 = (model_years-loss_data[x]);
 //                              if ((total < 781) && (total > 780) && (agc_data[x] < 155) && (agc_data[x] > 154) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
-                                if ((total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
+                                if ((x > 2200) && (x < 2207) && (total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
                                 {
                                     cout << "agc_data: " << agc_data[x] << endl;
                                     cout << "bgc_data: " << bgc_data[x] << endl;
