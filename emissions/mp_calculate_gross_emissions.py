@@ -113,7 +113,7 @@ def main ():
                 print "C++ for biomass+soil already compiled."
             else:
                 raise Exception('Must compile standard biomass+soil model C++...')
-        if sensit_type == 'no_shifting_ag':
+        elif sensit_type == 'no_shifting_ag':
             if os.path.exists('./cpp_util/calc_gross_emissions_no_shifting_ag.exe'):
                 print "C++ for no_shifting_ag already compiled."
             else:
