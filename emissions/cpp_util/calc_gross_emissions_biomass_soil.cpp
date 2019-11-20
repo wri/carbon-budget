@@ -177,9 +177,9 @@ ulx=GeoTransform[0];
 uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
- // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-xsize = 4500;
-ysize = 3500;
+// // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
+//xsize = 4500;
+//ysize = 3500;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -685,35 +685,35 @@ for(x=0; x<xsize; x++)
 						        outdata2b = 0;
 						        outdata20 = 281;
 
-                                //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
-                                double total;
-                                total = Biomass_tCO2e_nofire_CO2_only + minsoil;
-                                double minsoil_pt1;
-                                minsoil_pt1 = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20);
-                                double minsoil_pt2;
-                                minsoil_pt2 = (model_years-loss_data[x]);
-//                              if ((total < 781) && (total > 780) && (agc_data[x] < 155) && (agc_data[x] > 154) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
-//                                if ((x > 3525) && (x < 3530) && (total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
-                                if ((x > 3526) && (x < 3528) && (y > 1555) && (y < 1559) && (drivermodel_data[x] == 2) && (loss_data[x] = 3))
-                                {
-                                    cout << "x: " << x << endl;
-                                    cout << "y: " << y << endl;
-                                    cout << "agc_data: " << agc_data[x] << endl;
-                                    cout << "bgc_data: " << bgc_data[x] << endl;
-                                    cout << "deadwood_data: " << dead_data[x] << endl;
-                                    cout << "litter_data: " << litter_data[x] << endl;
-                                    cout << "non_soil_C: " << non_soil_c << endl;
-                                    cout << "C_to_CO2: " << C_to_CO2 << endl;
-                                    cout << "Biomass_tCO2e_nofire_CO2_only: " << Biomass_tCO2e_nofire_CO2_only << endl;
-                                    cout << "soil_data: " << soil_data[x] << endl;
-                                    cout << "shiftag_flu: " << shiftag_flu << endl;
-                                    cout << "minsoil_first_half: " << minsoil_pt1 << endl;
-                                    cout << "loss_year: " << loss_data[x] << endl;
-                                    cout << "minsoil_second_half: " << (model_years-loss_data[x]) << endl;
-                                    cout << "minsoil: " << minsoil << endl;
-                                    cout << "total: " << total << endl;
-                                    cout << endl;
-                                }
+//                                //QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
+//                                double total;
+//                                total = Biomass_tCO2e_nofire_CO2_only + minsoil;
+//                                double minsoil_pt1;
+//                                minsoil_pt1 = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20);
+//                                double minsoil_pt2;
+//                                minsoil_pt2 = (model_years-loss_data[x]);
+////                              if ((total < 781) && (total > 780) && (agc_data[x] < 155) && (agc_data[x] > 154) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
+////                                if ((x > 3525) && (x < 3530) && (total < 781) && (total > 780) && (agc_data[x] = 154.354538) && (loss_data[x] = 3) && (soil_data[x] = 135) && (drivermodel_data[x] == 2))
+//                                if ((x > 3526) && (x < 3528) && (y > 1555) && (y < 1559) && (drivermodel_data[x] == 2) && (loss_data[x] = 3))
+//                                {
+//                                    cout << "x: " << x << endl;
+//                                    cout << "y: " << y << endl;
+//                                    cout << "agc_data: " << agc_data[x] << endl;
+//                                    cout << "bgc_data: " << bgc_data[x] << endl;
+//                                    cout << "deadwood_data: " << dead_data[x] << endl;
+//                                    cout << "litter_data: " << litter_data[x] << endl;
+//                                    cout << "non_soil_C: " << non_soil_c << endl;
+//                                    cout << "C_to_CO2: " << C_to_CO2 << endl;
+//                                    cout << "Biomass_tCO2e_nofire_CO2_only: " << Biomass_tCO2e_nofire_CO2_only << endl;
+//                                    cout << "soil_data: " << soil_data[x] << endl;
+//                                    cout << "shiftag_flu: " << shiftag_flu << endl;
+//                                    cout << "minsoil_first_half: " << minsoil_pt1 << endl;
+//                                    cout << "loss_year: " << loss_data[x] << endl;
+//                                    cout << "minsoil_second_half: " << (model_years-loss_data[x]) << endl;
+//                                    cout << "minsoil: " << minsoil << endl;
+//                                    cout << "total: " << total << endl;
+//                                    cout << endl;
+//                                }
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Shifting ag, not peat, not burned, boreal
