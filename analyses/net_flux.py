@@ -52,9 +52,6 @@ def net_calc(tile_id, pattern, sensit_type):
         gain_window = gain_src.read(1, window=window)
         loss_window = loss_src.read(1, window=window)
 
-        print gain_window
-        print loss_window
-
         # Subtracts gain that from loss
         dst_data = loss_window - gain_window
 
