@@ -215,8 +215,6 @@ def create_combined_tile_list(set1, set2, set3=None):
 # Counts the number of tiles in a folder in s3
 def count_tiles_s3(source):
 
-    print source
-
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -228,6 +226,7 @@ def count_tiles_s3(source):
     tile_file.write(stdout)
     tile_file.close()
 
+    # Counts the number of rows in the csv
     i=0
     with open(tile_list_name) as f:
         for i, l in enumerate(f):
@@ -256,103 +255,6 @@ def coords(tile_id):
 
     return xmin, ymin, xmax, ymax
 
-# Downloads all tiles in an s3 folder
-# Source=source file on s3
-# dest=where to download onto spot machine
-# sensit_type = whether the model is standard or a sensitivity analysis model run
-# use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
-def s3_folder_download(source, dest, sensit_type):
-
-    # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
-    # has a sensitivity analysis path on s3
-    if sensit_type != 'std':
-
-        source_sens = source.replace('standard', sensit_type)
-
-        print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
-
-        count = count_tiles_s3(source_sens)
-
-        if count > 3:
-
-            print "sens download"
-            cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
-            subprocess.check_call(cmd)
-            print '\n'
-
-        else:
-
-            print "std download"
-            cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
-            subprocess.check_call(cmd)
-            print '\n'
-
-    else:
-
-        cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
-        subprocess.check_call(cmd)
-        print '\n'
-
-
-# Downloads individual tiles
-# Source=source file on s3
-# dest=where to download onto spot machine
-# sensit_type = whether the model is standard or a sensitivity analysis model run
-# use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
-def s3_file_download(source, dest, sensit_type):
-
-    # Retrieves the name of the tile from the full path name
-    dir = get_tile_dir(source)
-    file_name = get_tile_name(source)
-
-    # Changes the file to download based on the sensitivity analysis being run and whether that particular input
-    # has a sensitivity analysis path on s3
-    if sensit_type != 'std' and 'standard' in dir:
-
-        dir_sens = dir.replace('standard', sensit_type)
-        file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
-
-
-        try:
-            # Doesn't download the tile if it's already on the spot machine
-            if os.path.exists(file_name_sens):
-                print file_name, "already downloaded" + "\n"
-                return
-
-            else:
-                source = os.path.join(dir_sens, file_name_sens)
-                cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
-                print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
-
-        except:
-            # Doesn't download the tile if it's already on the spot machine
-            if os.path.exists(file_name):
-                print file_name, "already downloaded" + "\n"
-                return
-
-            else:
-                source = os.path.join(dir, file_name)
-                cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
-                print file_name, "not previously downloaded. Now downloaded." + '\n'
-
-    else:
-        # Doesn't download the tile if it's already on the spot machine
-        if os.path.exists(file_name):
-            print file_name, "already downloaded" + "\n"
-
-            return
-
-        else:
-            source = os.path.join(dir, file_name)
-            cmd = ['aws', 's3', 'cp', source, dest]
-            subprocess.check_call(cmd)
-            print file_name, "not previously downloaded. Now downloaded." + '\n'
-
 
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
@@ -370,7 +272,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
                 source = '{0}{1}.tif'.format(source_dir, tile_id)
             elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
-            else:
+            else:  # For every other type of tile
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
 
             s3_file_download(source, dest, sensit_type)
@@ -378,6 +280,113 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
     # For downloading full sets of tiles
     else:
         s3_folder_download(source_dir, dest, sensit_type)
+
+
+# Downloads all tiles in an s3 folder, adpating to sensitivity analysis type
+# Source=source file on s3
+# dest=where to download onto spot machine
+# sensit_type = whether the model is standard or a sensitivity analysis model run
+def s3_folder_download(source, dest, sensit_type):
+
+    # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
+    # has a sensitivity analysis path on s3
+    if sensit_type != 'std':
+
+        # Creates the appropriate path for getting sensitivity analysis tiles
+        source_sens = source.replace('standard', sensit_type)
+
+        print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
+
+        # Counts how many tiles are in that s3 folder
+        count = count_tiles_s3(source_sens)
+
+        # If there appears to be a full set of tiles in the sensitivity analysis folder (7 is semi arbitrary),
+        # the sensitivity folder is downloaded
+        if count > 7:
+
+            cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            subprocess.check_call(cmd)
+            print '\n'
+
+        # If there are fewer than 7 files in the sensitivity folder (i.e., either folder doesn't exist or it just has
+        # a few test tiles), the standard folder is downloaded.
+        # This can happen despite it being a sensitivity run because this input file type doesn't have a sensitivity version
+        # for this date.
+        else:
+
+            cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            subprocess.check_call(cmd)
+            print '\n'
+
+    # For the standard model, the standard folder is downloaded.
+    else:
+
+        cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+        subprocess.check_call(cmd)
+        print '\n'
+
+
+# Downloads individual tiles from s3
+# Source=source file on s3
+# dest=where to download onto spot machine
+# sensit_type = whether the model is standard or a sensitivity analysis model run
+def s3_file_download(source, dest, sensit_type):
+
+    # Retrieves the s3 directory and name of the tile from the full path name
+    dir = get_tile_dir(source)
+    file_name = get_tile_name(source)
+
+    # Changes the file to download based on the sensitivity analysis being run and whether that particular input
+    # has a sensitivity analysis path on s3
+    if sensit_type != 'std' and 'standard' in dir:
+
+        # Creates directory and file names according to sensitivity analysis type
+        dir_sens = dir.replace('standard', sensit_type)
+        file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
+
+        # First attempt is to try to download the sensitivity analysis version
+        try:
+            # Doesn't download the tile if it's already on the spot machine
+            if os.path.exists(file_name_sens):
+                print file_name, "already downloaded" + "\n"
+                return
+
+            # If not already on the spot machine, it downloads the file
+            else:
+                source = os.path.join(dir_sens, file_name_sens)
+                cmd = ['aws', 's3', 'cp', source, dest]
+                subprocess.check_call(cmd)
+                print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
+
+        # Second attempt is to download the standard version of the file.
+        # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
+        # for this date.
+        except:
+            if os.path.exists(file_name):
+                print file_name, "already downloaded" + "\n"
+                return
+
+            else:
+                source = os.path.join(dir, file_name)
+                cmd = ['aws', 's3', 'cp', source, dest]
+                subprocess.check_call(cmd)
+                print file_name, "not previously downloaded. Now downloaded." + '\n'
+
+    # If not a sensitivity run, the standard file is downloaded
+    else:
+        if os.path.exists(file_name):
+            print file_name, "already downloaded" + "\n"
+
+            return
+
+        else:
+            source = os.path.join(dir, file_name)
+            cmd = ['aws', 's3', 'cp', source, dest]
+            subprocess.check_call(cmd)
+            print file_name, "not previously downloaded. Now downloaded." + '\n'
 
 
 # Uploads all tiles of a pattern to specified location
@@ -461,15 +470,23 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
+    # Creates tile names for standard and sensitivity analyses.
+    # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
+    # Thus, it has to be prepared for either one.
     file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
     file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
+    # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
         print '{} exists. Not creating a blank tile.'.format(file_name)
+        return
 
+    # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
     elif os.path.exists(file_name_sens):
         print '{} exists. Not creating a blank tile.'.format(file_name_sens)
+        return
 
+    # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
     else:
         print '{} does not exist. Creating a blank tile.'.format(file_name)
 

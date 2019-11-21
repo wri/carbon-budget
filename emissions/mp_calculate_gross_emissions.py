@@ -35,25 +35,26 @@ def main ():
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year, 'true'],
-        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year, 'true'],
-        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000, 'true'],
-        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000, 'true'],
-        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000, 'true'],
-        cn.peat_mask_dir: [cn.pattern_peat_mask, 'false'],
-        cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary, 'false'],
-        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked, 'false'],
-        cn.drivers_processed_dir: [cn.pattern_drivers, 'false'],
-        cn.climate_zone_processed_dir: [cn.pattern_climate_zone, 'false'],
-        cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed, 'false'],
-        cn.burn_year_dir: [cn.pattern_burn_year, 'false'],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000, 'false'],
-        cn.loss_dir: ['', 'false']
+        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
+        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
+        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
+        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
+        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
+        cn.peat_mask_dir: [cn.pattern_peat_mask],
+        cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
+        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+        cn.drivers_processed_dir: [cn.pattern_drivers],
+        cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
+        cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+        cn.burn_year_dir: [cn.pattern_burn_year],
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000],
+        cn.loss_dir: ['']
     }
 
 
     # List of tiles to run in the model
     tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
+    # tile_id_list = ['30N_140E', '40N_030W']  # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'

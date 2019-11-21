@@ -16,7 +16,7 @@ NOTE: Because there are so many input files, this script needs a machine with ex
 Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
 '''
 
-import create_BGC_deadwood_litter_soil_totalC
+from carbon_pools.old_pool_scripts import create_BGC_deadwood_litter_soil_totalC
 from multiprocessing.pool import Pool
 from functools import partial
 import subprocess

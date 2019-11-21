@@ -16,7 +16,7 @@ NOTE: Because there are so many input files, this script needs a machine with ex
 Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
 '''
 
-import create_BGC_deadwood_litter_soil_totalC
+from carbon_pools.old_pool_scripts import create_BGC_deadwood_litter_soil_totalC
 from multiprocessing.pool import Pool
 from functools import partial
 import subprocess
@@ -91,19 +91,19 @@ gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
 gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
 mang_BGB_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_ratio_dict(gain_table_simplified,
-                                                                           cn.below_to_above_trop_dry_mang,
-                                                                           cn.below_to_above_trop_wet_mang,
-                                                                           cn.below_to_above_subtrop_mang)
+                                                                                     cn.below_to_above_trop_dry_mang,
+                                                                                     cn.below_to_above_trop_wet_mang,
+                                                                                     cn.below_to_above_subtrop_mang)
 
 mang_deadwood_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_ratio_dict(gain_table_simplified,
-                                                                           cn.deadwood_to_above_trop_dry_mang,
-                                                                           cn.deadwood_to_above_trop_wet_mang,
-                                                                           cn.deadwood_to_above_subtrop_mang)
+                                                                                          cn.deadwood_to_above_trop_dry_mang,
+                                                                                          cn.deadwood_to_above_trop_wet_mang,
+                                                                                          cn.deadwood_to_above_subtrop_mang)
 
 mang_litter_AGB_ratio = create_BGC_deadwood_litter_soil_totalC.mangrove_pool_ratio_dict(gain_table_simplified,
-                                                                           cn.litter_to_above_trop_dry_mang,
-                                                                           cn.litter_to_above_trop_wet_mang,
-                                                                           cn.litter_to_above_subtrop_mang)
+                                                                                        cn.litter_to_above_trop_dry_mang,
+                                                                                        cn.litter_to_above_trop_wet_mang,
+                                                                                        cn.litter_to_above_subtrop_mang)
 
 print "Creating carbon pools..."
 

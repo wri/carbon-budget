@@ -5,9 +5,8 @@ biomass tiles.
 This is not used for the model. It is simply for having information on the carbon stocks in 2000.
 '''
 
-import create_aboveground_carbon_in_2000
+from carbon_pools.old_pool_scripts import create_aboveground_carbon_in_2000
 import multiprocessing
-import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn

@@ -82,21 +82,21 @@ def main ():
         # changed for a sensitivity analysis. This does not need to change based on what run is being done;
         # this assignment should be true for all sensitivity analyses and the standard model.
         download_dict = {
-            cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked, 'false'],
-            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000, 'false'],
-            cn.cont_eco_dir: [cn.pattern_cont_eco_processed, 'false'],
-            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed, 'false'],
-            cn.precip_processed_dir: [cn.pattern_precip, 'false'],
-            cn.elevation_processed_dir: [cn.pattern_elevation, 'false'],
-            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000, 'false'],
-            cn.loss_dir: ['', 'false'],
-            cn.gain_dir: [cn.pattern_gain, 'false'],
-            cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove, 'true'],
-            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true'],
-            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true'],
-            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'false'],
-            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false'],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'false']
+            cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked],
+            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+            cn.precip_processed_dir: [cn.pattern_precip],
+            cn.elevation_processed_dir: [cn.pattern_elevation],
+            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
+            cn.loss_dir: [''],
+            cn.gain_dir: [cn.pattern_gain],
+            cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
+            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
+            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
+            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
+            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
+            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
         }
 
     # Output files and patterns and files to download if carbon pools for 2000 are being generated

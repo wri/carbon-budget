@@ -9,7 +9,7 @@ Therefore, loss+gain pixels only have part of their gross carbon accumulation ad
 This is used for the gross emissions model.
 '''
 
-import create_aboveground_carbon_in_emis_year
+from carbon_pools.old_pool_scripts import create_aboveground_carbon_in_emis_year
 import multiprocessing
 import argparse
 from functools import partial
