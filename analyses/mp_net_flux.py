@@ -90,6 +90,7 @@ def main ():
     #     pool.join()
 
     # For single processor use
+    folder = './'
     for download_dir, download_pattern in download_dict.iteritems():
 
 
