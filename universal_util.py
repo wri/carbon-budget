@@ -264,9 +264,9 @@ def s3_folder_download(source, dest, sensit_type):
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in source:
 
-        print "Attempting to change {} name to reflect sensitivity analysis".format(source)
-
         source_sens = source.replace('standard', sensit_type)
+
+        print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
         if os.path.exists(source):
             source = source_sens
@@ -472,14 +472,14 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
             try:
                 s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
-                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
+                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
                 print "Downloaded Hansen loss tile for", tile_id
 
             # If there is no Hansen tile, it downloads the pixel area tile instead
             except:
 
                 s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
+                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
                 print "Downloaded pixel area tile for", tile_id
 
             # Uses either the Hansen loss tile or pixel area tile as a template tile
