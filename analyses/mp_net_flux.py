@@ -92,7 +92,7 @@ def main ():
         # pattern = output_pattern[9:-4]
 
         for tile_id in tile_id_list:
-            uu.make_blank_tile(tile_id, download_pattern, folder, sensit_type)
+            uu.make_blank_tile(tile_id, download_pattern[0], folder, sensit_type)
 
 
     # # Creates a single filename pattern to pass to the multiprocessor call
