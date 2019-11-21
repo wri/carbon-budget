@@ -522,9 +522,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
                    '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             subprocess.check_call(cmd)
 
-            print "Created raster of all 0s for", file
+        print "Created raster of all 0s for", file_name
 
-        print "Created raster of all 0s for", file
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names

@@ -49,14 +49,14 @@ def net_calc(tile_id, pattern, sensit_type):
     for idx, window in windows:
 
         # Creates windows for each input tile
-        gain = gain_src.read(1, window=window)
-        loss = loss_src.read(1, window=window)
+        gain_window = gain_src.read(1, window=window)
+        loss_window = loss_src.read(1, window=window)
 
-        print gain
-        print loss
+        print gain_window
+        print loss_window
 
         # Subtracts gain that from loss
-        dst_data = loss - gain
+        dst_data = loss_window - gain_window
 
         net_flux_dst.write_band(1, dst_data, window=window)
 

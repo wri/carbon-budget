@@ -75,7 +75,7 @@ def main ():
     #     pool.close()
     #     pool.join()
 
-    tile_id_list = ['30N_140E', '40N_030W']  # test tiles
+    tile_id_list = ['30N_140E']  # test tiles
 
     # For single processor use
     folder = './'
