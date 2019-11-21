@@ -293,7 +293,7 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
-    if sensit_type != 'std' and 'standard' in dir and sensit_use == 'true':
+    if sensit_type != 'std' and 'standard' in dir:
 
         dir_sens = dir.replace('standard', sensit_type)
         file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
@@ -318,6 +318,7 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
             print '\n'
         except:
             print source, "not found."
+
 
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
