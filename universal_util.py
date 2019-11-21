@@ -516,36 +516,16 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
                                  '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
                 print "Downloaded pixel area tile for", tile_id
 
-            tile_list_standard = tile_list_spot_machine('.', pattern)
-            tile_list_sensit = tile_list_spot_machine('.', '{0}_{1}'.format(pattern, sensit_type))
+            tile_list= tile_list_spot_machine('.', pattern)
 
-            print pattern
-            print tile_list_standard
-            print tile_list_sensit
-            print len(tile_list_standard)
-            print len(tile_list_sensit)
+            full_pattern = get_tile_type(tile_list[0])
 
-            if len(tile_list_standard) > 0:
-
-                # Uses either the Hansen loss tile or pixel area tile as a template tile
-                cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                       '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-                       '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
-                subprocess.check_call(cmd)
-                print "Created raster of all 0s for", file_name
-
-            elif len(tile_list_sensit) > 0:
-
-                # Uses either the Hansen loss tile or pixel area tile as a template tile
-                cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                       '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, '{0}_{1}'.format(pattern, sensit_type)),
-                       '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
-                subprocess.check_call(cmd)
-                print "Created raster of all 0s for", file_name_sens
-
-            else:
-
-                raise Exception('No tiles found on which to base the empty tile')
+            # Uses either the Hansen loss tile or pixel area tile as a template tile
+            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, full_pattern),
+                   '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
+            subprocess.check_call(cmd)
+            print "Created raster of all 0s for", file_name
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
