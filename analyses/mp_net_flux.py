@@ -95,23 +95,23 @@ def main ():
             uu.make_blank_tile(tile_id, download_pattern[0], folder, sensit_type)
 
 
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[0]
-    #
+    # Creates a single filename pattern to pass to the multiprocessor call
+    pattern = output_pattern_list[0]
+
     # # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
     # count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=24)
     # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
-    #
-    #
-    # # Uploads output tiles to s3
-    # for i in range(0, len(output_dir_list)):
-    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    # For single processor use
+    for tile_id in tile_id_list:
+        net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+
+
+    # Uploads output tiles to s3
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

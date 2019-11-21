@@ -472,9 +472,6 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
     file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
-    print file_name
-    print file_name_sens
-
     if os.path.exists(file_name):
         print '{} exists. Not creating a blank tile.'.format(file_name)
 
