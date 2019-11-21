@@ -470,6 +470,7 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
     file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
+    print file
 
     try:
         if os.path.exists(file):
