@@ -323,18 +323,18 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
                 subprocess.check_call(cmd)
                 print file_name, "not previously downloaded. Now downloaded." + '\n'
 
-    # else:
-    #     # Doesn't download the tile if it's already on the spot machine
-    #     if os.path.exists(file_name):
-    #         print file_name, "already downloaded" + "\n"
-    #
-    #         return
-    #
-    #     else:
-    #         source = os.path.join(dir, file_name)
-    #         cmd = ['aws', 's3', 'cp', source, dest]
-    #         subprocess.check_call(cmd)
-    #         print file_name, "not previously downloaded. Now downloaded." + '\n'
+    else:
+        # Doesn't download the tile if it's already on the spot machine
+        if os.path.exists(file_name):
+            print file_name, "already downloaded" + "\n"
+
+            return
+
+        else:
+            source = os.path.join(dir, file_name)
+            cmd = ['aws', 's3', 'cp', source, dest]
+            subprocess.check_call(cmd)
+            print file_name, "not previously downloaded. Now downloaded." + '\n'
 
     #     print dir_sens
     #     print file_name_sens
