@@ -476,10 +476,10 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         if os.path.exists(file):
             print '{} exists. Not creating a blank tile.'.format(file)
 
-    # try:
-    #     file = file.replace('_{}'.format(pattern), '')
-    #     if os.path.exists(file):
-    #         print '{} exists. Not creating a blank tile.'.format(file)
+    try:
+        file = file.replace('_{}'.format(pattern), '')
+        if os.path.exists(file):
+            print '{} exists. Not creating a blank tile.'.format(file)
 
     except:
         print '{} does not exist. Creating a blank tile.'.format(file)
