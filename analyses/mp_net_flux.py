@@ -76,7 +76,7 @@ def main ():
     #
     #     count = multiprocessing.cpu_count()
     #     pool = multiprocessing.Pool(count-10)
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
     #     pool.close()
     #     pool.join()
 
@@ -92,7 +92,7 @@ def main ():
         pattern = output_pattern[9:-4]
 
         for tile_id in tile_id_list:
-            uu.make_blank_tile(tile_id, pattern, folder)
+            uu.make_blank_tile(tile_id, pattern, folder, sensit_type)
 
 
     # # Creates a single filename pattern to pass to the multiprocessor call

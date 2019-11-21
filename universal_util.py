@@ -467,9 +467,16 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 # Creates a tile of all 0s for any tile passed to it.
 # Uses the pixel area tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
-def make_blank_tile(tile_id, pattern, folder):
+def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
-    file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+    if sensit_type == 'std':
+
+        file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+
+    else:
+
+        file = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern,sensit_type)
+
 
     # If there's already a tile, there's no need to create a blank one
     if os.path.exists(file):
