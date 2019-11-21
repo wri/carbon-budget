@@ -298,6 +298,9 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
         dir_sens = dir.replace('standard', sensit_type)
         file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
 
+        print dir_sens
+        print file_name_sens
+
         if os.path.exists('{}/{}'.format(dir_sens, file_name_sens)):
             dir = dir_sens
             file_name = file_name_sens
