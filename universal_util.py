@@ -469,24 +469,18 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
-    if sensit_type == 'std':
+    file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
 
-        file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+    try:
+        if os.path.exists(file):
+            print '{} exists. Not creating a blank tile.'.format(file)
+
+    try:
         file = file.replace('_{}'.format(pattern), '')
+        if os.path.exists(file):
+            print '{} exists. Not creating a blank tile.'.format(file)
 
-    else:
-
-        file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
-
-
-    # If there's already a tile, there's no need to create a blank one
-    if os.path.exists(file):
-
-        print '{} exists. Not creating a blank tile.'.format(file)
-
-    # If there isn't a tile, a blank one must be created
-    else:
-
+    except:
         print '{} does not exist. Creating a blank tile.'.format(file)
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
@@ -523,19 +517,70 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
             print "Created raster of all 0s for", file
 
-        # # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
-        # else:
-        #     print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
-        #
-        #     s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-        #                      '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
-        #
-        #     cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-        #            '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-        #            '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
-        #     subprocess.check_call(cmd)
-
         print "Created raster of all 0s for", file
+
+
+
+
+
+
+    # # If there's already a tile, there's no need to create a blank one
+    # if os.path.exists(file):
+    #
+    #     print '{} exists. Not creating a blank tile.'.format(file)
+    #
+    # # If there isn't a tile, a blank one must be created
+    # else:
+    #
+    #     print '{} does not exist. Creating a blank tile.'.format(file)
+    #
+    #     # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
+    #     # (tile extent, resolution, pixel alignment, compression, etc.).
+    #     # If the tile is already on the spot machine, it uses the downloaded tile.
+    #     if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
+    #         print "Hansen loss tile exists for {}.".format(tile_id)
+    #         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+    #                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+    #                '{0}{1}.tif'.format(folder, tile_id)]
+    #         subprocess.check_call(cmd)
+    #
+    #     # If the Hansen loss tile isn't already on the spot machine
+    #     else:
+    #
+    #         # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
+    #         try:
+    #             s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
+    #                              '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
+    #             print "Downloaded Hansen loss tile for", tile_id
+    #
+    #         # If there is no Hansen tile, it downloads the pixel area tile instead
+    #         except:
+    #
+    #             s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
+    #                              '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
+    #             print "Downloaded pixel area tile for", tile_id
+    #
+    #         # Uses either the Hansen loss tile or pixel area tile as a template tile
+    #         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+    #                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+    #                '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
+    #         subprocess.check_call(cmd)
+    #
+    #         print "Created raster of all 0s for", file
+    #
+    #     # # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
+    #     # else:
+    #     #     print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
+    #     #
+    #     #     s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
+    #     #                      '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
+    #     #
+    #     #     cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+    #     #            '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+    #     #            '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
+    #     #     subprocess.check_call(cmd)
+    #
+    #     print "Created raster of all 0s for", file
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
