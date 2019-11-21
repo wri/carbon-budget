@@ -300,8 +300,9 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
 
         print dir_sens
         print file_name_sens
+        print '{0}/{1}'.format(dir_sens, file_name_sens)
 
-        if os.path.exists('{}/{}'.format(dir_sens, file_name_sens)):
+        if os.path.exists('{0}/{1}'.format(dir_sens, file_name_sens)):
             dir = dir_sens
             file_name = file_name_sens
             print "Sensitivity analysis file found for {0}/{1}".format(dir, file_name)
