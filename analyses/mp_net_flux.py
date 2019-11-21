@@ -16,7 +16,7 @@ def main ():
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
     }
 
