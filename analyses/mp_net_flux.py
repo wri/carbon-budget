@@ -24,7 +24,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
     # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
-    # tile_id_list = ['00N_110E'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -68,39 +68,39 @@ def main ():
     # print input_pattern_list
 
 
-    # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
-    # so that it has all the necessary input tiles
-    # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
-    folder = './'
-    for download_dir, download_pattern in download_dict.iteritems():
-
-        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-        # lines later.
-        download_pattern_name = download_pattern[0]
-        sensit_use = download_pattern[1]
-        tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
-        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-        pattern = output_pattern[9:-4]
-
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
+    # # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+    # # so that it has all the necessary input tiles
+    # # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
+    # folder = './'
     # for download_dir, download_pattern in download_dict.iteritems():
     #
-    #
+    #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+    #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+    #     # lines later.
     #     download_pattern_name = download_pattern[0]
     #     sensit_use = download_pattern[1]
-    #     tile_id = 'XXXXXXXX'
+    #     tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
     #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-    #     pattern = pattern[9:-4]
+    #     pattern = output_pattern[9:-4]
     #
-    #     for tile_id in tile_id_list:
-    #         uu.make_blank_tile(tile_id, pattern, folder)
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+
+    # For single processor use
+    for download_dir, download_pattern in download_dict.iteritems():
+
+
+        download_pattern_name = download_pattern[0]
+        sensit_use = download_pattern[1]
+        tile_id = 'XXXXXXXX'
+        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        pattern = pattern[9:-4]
+
+        for tile_id in tile_id_list:
+            uu.make_blank_tile(tile_id, pattern, folder)
 
 
     # Creates a single filename pattern to pass to the multiprocessor call
