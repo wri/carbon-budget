@@ -23,7 +23,7 @@ def main ():
 
     # List of tiles to run in the model
     tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
-    tile_id_list = ['80N_170E', '80N_170W'] # test tiles
+    tile_id_list = ['30N_140E', '40N_030W'] # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"

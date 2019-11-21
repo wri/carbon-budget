@@ -269,7 +269,7 @@ cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
-cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20191016/')
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20191104/')
 
 
 ### Non-biomass inputs to carbon pools
