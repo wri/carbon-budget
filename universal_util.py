@@ -472,10 +472,11 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     if sensit_type == 'std':
 
         file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+        file = file.replace('_{}'.format(pattern), '')
 
     else:
 
-        file = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern,sensit_type)
+        file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
 
 
     # If there's already a tile, there's no need to create a blank one
