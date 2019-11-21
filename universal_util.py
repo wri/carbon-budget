@@ -269,12 +269,14 @@ def s3_folder_download(source, dest, sensit_type):
         print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
         try:
+            print "sens download"
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             subprocess.check_call(cmd)
             print '\n'
 
         except:
+            print "std download"
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             subprocess.check_call(cmd)
