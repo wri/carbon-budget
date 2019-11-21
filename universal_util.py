@@ -336,31 +336,6 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
             subprocess.check_call(cmd)
             print file_name, "not previously downloaded. Now downloaded." + '\n'
 
-    #     print dir_sens
-    #     print file_name_sens
-    #     print '{0}/{1}'.format(dir_sens, file_name_sens)
-    #
-    #     if os.path.exists('{0}/{1}'.format(dir_sens, file_name_sens)):
-    #         dir = dir_sens
-    #         file_name = file_name_sens
-    #         print "Sensitivity analysis file found for {0}/{1}".format(dir, file_name)
-    #     else:
-    #         print "Sensivitity analysis file not found for {0}/{1}. Downloading standard version.".format(dir, file_name)
-    #
-    # # Doesn't download the tile if it's already on the spot machine
-    # if os.path.exists(os.path.join(dest,file_name)):
-    #     print file_name, "already downloaded" + "\n"
-    #
-    # # Tries to download the tile if it's not on the spot machine
-    # else:
-    #     try:
-    #         source = os.path.join(dir, file_name)
-    #         cmd = ['aws', 's3', 'cp', source, dest]
-    #         subprocess.check_call(cmd)
-    #         print '\n'
-    #     except:
-    #         print source, "not found."
-
 
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
@@ -518,69 +493,6 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         print "Created raster of all 0s for", file
 
 
-
-
-
-
-    # # If there's already a tile, there's no need to create a blank one
-    # if os.path.exists(file):
-    #
-    #     print '{} exists. Not creating a blank tile.'.format(file)
-    #
-    # # If there isn't a tile, a blank one must be created
-    # else:
-    #
-    #     print '{} does not exist. Creating a blank tile.'.format(file)
-    #
-    #     # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
-    #     # (tile extent, resolution, pixel alignment, compression, etc.).
-    #     # If the tile is already on the spot machine, it uses the downloaded tile.
-    #     if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
-    #         print "Hansen loss tile exists for {}.".format(tile_id)
-    #         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-    #                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-    #                '{0}{1}.tif'.format(folder, tile_id)]
-    #         subprocess.check_call(cmd)
-    #
-    #     # If the Hansen loss tile isn't already on the spot machine
-    #     else:
-    #
-    #         # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
-    #         try:
-    #             s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
-    #                              '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
-    #             print "Downloaded Hansen loss tile for", tile_id
-    #
-    #         # If there is no Hansen tile, it downloads the pixel area tile instead
-    #         except:
-    #
-    #             s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-    #                              '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std', 'false')
-    #             print "Downloaded pixel area tile for", tile_id
-    #
-    #         # Uses either the Hansen loss tile or pixel area tile as a template tile
-    #         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-    #                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-    #                '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
-    #         subprocess.check_call(cmd)
-    #
-    #         print "Created raster of all 0s for", file
-    #
-    #     # # If there's no Hansen loss tile, it uses a pixel area tile as the template for the blank plantation tile
-    #     # else:
-    #     #     print "No Hansen tile for {}. Using pixel area tile instead.".format(tile_id)
-    #     #
-    #     #     s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-    #     #                      '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id))
-    #     #
-    #     #     cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-    #     #            '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-    #     #            '{0}{1}_{2}.tif'.format(folder, cn.pattern_pixel_area, tile_id)]
-    #     #     subprocess.check_call(cmd)
-    #
-    #     print "Created raster of all 0s for", file
-
-
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
 def name_aggregated_output(pattern, thresh, sensit_type):
 
@@ -675,23 +587,49 @@ def alter_patterns(sensit_type, raw_pattern_list):
 
 
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
-def sensit_tile_rename(sensit_type, tile_id, raw_pattern, use_sensit):
+def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
-    # If the analysis is not the standard model and the input should be renamed
-    # i.e. even in sensitivity analyses, sometimes inputs should keep their standard names
-    if sensit_type != 'std' and use_sensit == 'true':
+    if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
         processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-
     else:
-        # For all tiles besides loss
-        if len(raw_pattern) > 4:
-            processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-            # print processed_pattern
-        # For loss tiles, which have no pattern and never have a sensitivity type
-        else:
-            processed_name = '{}.tif'.format(tile_id)
-            # print processed_pattern
+        processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
 
     return processed_name
+
+
+    # # If the analysis is not the standard model and the input should be renamed
+    # # i.e. even in sensitivity analyses, sometimes inputs should keep their standard names
+    # if sensit_type != 'std':
+    #     processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+    #
+    # else:
+    #     # For all tiles besides loss
+    #     if len(raw_pattern) > 4:
+    #         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
+    #         # print processed_pattern
+    #     # For loss tiles, which have no pattern and never have a sensitivity type
+    #     else:
+    #         processed_name = '{}.tif'.format(tile_id)
+    #         # print processed_pattern
+    #
+    # return processed_name
+
+
+    # # If the analysis is not the standard model and the input should be renamed
+    # # i.e. even in sensitivity analyses, sometimes inputs should keep their standard names
+    # if sensit_type != 'std' and use_sensit == 'true':
+    #     processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+    #
+    # else:
+    #     # For all tiles besides loss
+    #     if len(raw_pattern) > 4:
+    #         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
+    #         # print processed_pattern
+    #     # For loss tiles, which have no pattern and never have a sensitivity type
+    #     else:
+    #         processed_name = '{}.tif'.format(tile_id)
+    #         # print processed_pattern
+    #
+    # return processed_name
 
 
