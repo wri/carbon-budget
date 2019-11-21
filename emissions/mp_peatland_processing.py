@@ -17,7 +17,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Iterates through all tiles with aboveground carbon pool emissions (not just WHRC biomass tiles)
-tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+tile_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
 # tile_list = ['60N_020E', '70N_070E'] # test tiles
 # tile_list = ['60N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list

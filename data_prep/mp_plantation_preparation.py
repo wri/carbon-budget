@@ -152,7 +152,7 @@ def main ():
         raise Exception('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
 
     # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
-    total_tile_list = uu.tile_list(cn.pixel_area_dir)
+    total_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
     print "Number of possible 10x10 tiles to evaluate:", len(total_tile_list)
 
     # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.

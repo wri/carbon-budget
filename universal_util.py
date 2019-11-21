@@ -46,7 +46,7 @@ def get_tile_dir(tile):
 
 
 # Lists the tiles in a folder in s3
-def tile_list(source):
+def tile_list_s3(source):
 
     print "Creating list of tiles..."
 
@@ -268,14 +268,18 @@ def s3_folder_download(source, dest, sensit_type):
 
         print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
-        try:
+        count = count_tiles_s3(source_sens)
+
+        if count > 3:
+
             print "sens download"
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             subprocess.check_call(cmd)
             print '\n'
 
-        except:
+        else:
+
             print "std download"
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']

@@ -17,8 +17,8 @@ pd.options.mode.chained_assignment = None
 
 # Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
 # calculating mangrove gain
-mangrove_biomass_tile_list = uu.tile_list(cn.mangrove_biomass_2000_dir)
-ecozone_tile_list = uu.tile_list(cn.cont_eco_dir)
+mangrove_biomass_tile_list = uu.tile_list_s3(cn.mangrove_biomass_2000_dir)
+ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
 mangrove_ecozone_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 # mangrove_ecozone_list = ['10N_080W', '00N_110E'] # test tiles
 # mangrove_ecozone_list = ['00N_110E'] # test tiles

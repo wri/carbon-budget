@@ -41,7 +41,7 @@ def main ():
 
 
     # The list of tiles to iterate through
-    tile_id_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
+    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
     # tile_id_list = ['00N_110E'] # test tile
     print tile_id_list

@@ -19,7 +19,7 @@ import universal_util as uu
 
 pd.options.mode.chained_assignment = None
 
-tile_list = uu.tile_list(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir)
+tile_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir)
 # tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 tile_list = ['00N_110E'] # test tiles: mangrove and planted forest
 print tile_list

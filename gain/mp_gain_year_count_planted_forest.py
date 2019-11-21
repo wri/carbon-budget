@@ -36,7 +36,7 @@ def main ():
 
 
     # The list of tiles to iterate through
-    tile_id_list = uu.tile_list(cn.annual_gain_AGB_planted_forest_non_mangrove_dir)
+    tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_planted_forest_non_mangrove_dir)
     # tile_id_list = ['00N_110E'] # test tile
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"

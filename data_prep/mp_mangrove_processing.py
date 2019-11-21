@@ -24,7 +24,7 @@ subprocess.check_call(cmd)
 utilities.build_vrt(utilities.mangrove_vrt)
 
 # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
-total_tile_list = uu.tile_list(cn.pixel_area_dir)
+total_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
 # biomass_tile_list = ['00N_000E', '20S_120W', '00N_120E'] # test tile
 print total_tile_list
 

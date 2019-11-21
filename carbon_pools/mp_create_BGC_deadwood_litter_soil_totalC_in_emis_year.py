@@ -32,7 +32,7 @@ extent = "loss"
 
 pd.options.mode.chained_assignment = None
 
-tile_list = uu.tile_list(cn.AGC_emis_year_dir)
+tile_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
 # tile_list = ['00N_110E', '30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
 print tile_list

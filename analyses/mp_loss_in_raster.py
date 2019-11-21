@@ -14,7 +14,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-tile_list = uu.tile_list(cn.loss_dir)
+tile_list = uu.tile_list_s3(cn.loss_dir)
 # tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 print tile_list

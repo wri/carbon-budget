@@ -20,7 +20,7 @@ import universal_util as uu
 
 pd.options.mode.chained_assignment = None
 
-biomass_tile_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
+biomass_tile_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
 # biomass_tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
 # biomass_tile_list = ['00N_110E']
 print biomass_tile_list

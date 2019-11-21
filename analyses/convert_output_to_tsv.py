@@ -15,7 +15,7 @@ import universal_util as uu
 ### cd carbon-budget/analyses/
 
 print "Making list of biomass tiles..."
-biomass_tile_list = uu.tile_list(cn.natrl_forest_biomass_2000_dir)
+biomass_tile_list = uu.tile_list_s3(cn.natrl_forest_biomass_2000_dir)
 # biomass_tile_list = ['10N_080W', '40N_120E', '00N_000E'] # test tiles
 # biomass_tile_list = ['00N_140W', '00N_000E'] # test tiles
 print "  Biomass tile list retrieved. There are", len(biomass_tile_list), "biomass tiles total."

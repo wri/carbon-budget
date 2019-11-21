@@ -23,7 +23,7 @@ def main ():
 
 
     # List of tiles to run in the model
-    tile_id_list = uu.tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
+    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
     # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
