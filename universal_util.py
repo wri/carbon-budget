@@ -469,20 +469,17 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
-    file = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
-    print file
+    file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
+    file_name_sens = file_name.replace('_{}'.format(pattern), '')
 
-    try:
-        if os.path.exists(file):
-            print '{} exists. Not creating a blank tile.'.format(file)
+    if os.path.exists(file_name):
+        print '{} exists. Not creating a blank tile.'.format(file_name)
 
-    try:
-        file = file.replace('_{}'.format(pattern), '')
-        if os.path.exists(file):
-            print '{} exists. Not creating a blank tile.'.format(file)
+    elif os.path.exists(file_name_sens):
+        print '{} exists. Not creating a blank tile.'.format(file_name_sens)
 
-    except:
-        print '{} does not exist. Creating a blank tile.'.format(file)
+    else:
+        print '{} does not exist. Creating a blank tile.'.format(file_name)
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
