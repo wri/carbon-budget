@@ -469,8 +469,8 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
-    file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern,sensit_type)
-    file_name_sens = file_name.replace('_{}'.format(sensit_type), '')
+    file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+    file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
     print file_name
     print file_name_sens
