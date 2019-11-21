@@ -222,18 +222,16 @@ def count_tiles_s3(source):
     out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
 
-    # # Writes the output string to a text file for easier interpretation
-    # tile_file = open("tiles.txt", "w")
-
-
-    i=0
-    with open("tiles.txt", "w") as f:
-        for i, l in enumerate(f):
-            pass
-
+    # Writes the output string to a text file for easier interpretation
+    tile_list_name = "tiles.txt"
+    tile_file = open(tile_list_name, "w")
     tile_file.write(stdout)
     tile_file.close()
 
+    i=0
+    with open(tile_list_name) as f:
+        for i, l in enumerate(f):
+            pass
     return i + 1
 
 
