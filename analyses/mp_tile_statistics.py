@@ -24,15 +24,15 @@ with open(cn.tile_stats_pattern, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
 f.close()
 
-# # Creates list of tiles to iterate through, for testing
-# download_tile_list = ['00N_110E', '30N_080W', '40N_050E', '50N_100E', '80N_020E'] # test tiles
-# print download_tile_list
-#
-# # For copying individual tiles to spot machine for testing
-# for tile in download_tile_list:
+# Creates list of tiles to iterate through, for testing
+download_tile_list = ['80N_170E', '80N_170W'] # test tiles
+print download_tile_list
+
+# For copying individual tiles to spot machine for testing
+for tile in download_tile_list:
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, tile), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.natrl_forest_biomass_2000_dir, tile, cn.pattern_natrl_forest_biomass_2000), '.')
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.', 'std')
+    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.', 'std')
 
 
 # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -110,7 +110,7 @@ download_list = [
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
 
-    uu.s3_folder_download(input, '.', 'std')
+    # uu.s3_folder_download(input, '.', 'std')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
