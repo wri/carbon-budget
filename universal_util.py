@@ -262,22 +262,30 @@ def s3_folder_download(source, dest, sensit_type):
 
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
-    if sensit_type != 'std' and 'standard' in source:
+    if sensit_type != 'std':
 
         source_sens = source.replace('standard', sensit_type)
 
         print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
-        if os.path.exists(source):
-            source = source_sens
-            print "Sensitivity analysis directory found for {}".format(source)
-        else:
-            print "Sensivitity analysis directory not found for {}".format(source)
+        try:
+            cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            subprocess.check_call(cmd)
+            print '\n'
 
-    cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-           '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
-    subprocess.check_call(cmd)
-    print '\n'
+        except:
+            cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            subprocess.check_call(cmd)
+            print '\n'
+
+    else:
+
+        cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+        subprocess.check_call(cmd)
+        print '\n'
 
 
 # Downloads individual tiles
