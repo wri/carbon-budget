@@ -23,7 +23,7 @@ def main ():
 
     # List of tiles to run in the model
     tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir)
-    # tile_id_list = ['30N_140E', '40N_030W'] # test tiles
+    tile_id_list = ['80N_170E', '80N_170W'] # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
@@ -58,45 +58,43 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
-    # # so that it has all the necessary input tiles
-    # # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
-    # folder = './'
-    # for download_dir, download_pattern in download_dict.iteritems():
-    #
-    #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-    #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-    #     # lines later.
-    #     pattern = download_pattern[0]
-    #
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count-10)
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
-    #     pool.close()
-    #     pool.join()
-
-    tile_id_list = ['30N_140E', '40N_030W'] # test tiles
-
-    # For single processor use
+    # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+    # so that it has all the necessary input tiles
+    # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
     folder = './'
     for download_dir, download_pattern in download_dict.iteritems():
 
-        for tile_id in tile_id_list:
-            uu.make_blank_tile(tile_id, download_pattern[0], folder, sensit_type)
+        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # lines later.
+        pattern = download_pattern[0]
 
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count-10)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+        pool.close()
+        pool.join()
 
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[0]
+    # # For single processor use
+    # folder = './'
+    # for download_dir, download_pattern in download_dict.iteritems():
     #
-    # # Count/3 uses about 380 GB on a r4.16xlarge spot machine
-    # # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=24)
-    # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    #     for tile_id in tile_id_list:
+    #         uu.make_blank_tile(tile_id, download_pattern[0], folder, sensit_type)
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+
+    # Creates a single filename pattern to pass to the multiprocessor call
+    pattern = output_pattern_list[0]
+
+    # Count/3 uses about 380 GB on a r4.16xlarge spot machine
+    # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=24)
+    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
 
     # Uploads output tiles to s3
