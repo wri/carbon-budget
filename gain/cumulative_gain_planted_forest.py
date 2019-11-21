@@ -17,8 +17,8 @@ def cumulative_gain_AGC(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles, modified according to sensitivity analysis
-    gain_rate_AGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false')
-    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove, 'true')
+    gain_rate_AGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove)
 
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
@@ -40,8 +40,8 @@ def cumulative_gain_BGC(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles, modified according to sensitivity analysis
-    gain_rate_BGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove, 'false')
-    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove, 'true')
+    gain_rate_BGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_planted_forest_non_mangrove)
 
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)

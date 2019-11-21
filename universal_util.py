@@ -589,47 +589,12 @@ def alter_patterns(sensit_type, raw_pattern_list):
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
 def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
+    # Uses whatever name of the tile is found on the spot machine
     if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
         processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
     else:
         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
 
     return processed_name
-
-
-    # # If the analysis is not the standard model and the input should be renamed
-    # # i.e. even in sensitivity analyses, sometimes inputs should keep their standard names
-    # if sensit_type != 'std':
-    #     processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-    #
-    # else:
-    #     # For all tiles besides loss
-    #     if len(raw_pattern) > 4:
-    #         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-    #         # print processed_pattern
-    #     # For loss tiles, which have no pattern and never have a sensitivity type
-    #     else:
-    #         processed_name = '{}.tif'.format(tile_id)
-    #         # print processed_pattern
-    #
-    # return processed_name
-
-
-    # # If the analysis is not the standard model and the input should be renamed
-    # # i.e. even in sensitivity analyses, sometimes inputs should keep their standard names
-    # if sensit_type != 'std' and use_sensit == 'true':
-    #     processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-    #
-    # else:
-    #     # For all tiles besides loss
-    #     if len(raw_pattern) > 4:
-    #         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-    #         # print processed_pattern
-    #     # For loss tiles, which have no pattern and never have a sensitivity type
-    #     else:
-    #         processed_name = '{}.tif'.format(tile_id)
-    #         # print processed_pattern
-    #
-    # return processed_name
 
 

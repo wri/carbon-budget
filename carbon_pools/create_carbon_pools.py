@@ -76,8 +76,8 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
-    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked, 'false')
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
 
     # Name of output tile
     all_forests_AGC_2000 = '{0}_{1}.tif'.format(tile_id, pattern)
@@ -194,16 +194,16 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
-    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked, 'false')
-    mangrove_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove, 'true')
-    planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true')
-    natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true')
-    mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'false')
-    planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false')
-    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest, 'false')
-    loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '', 'false')
-    gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id, 'false')
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+    mangrove_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove)
+    planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove)
+    natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
+    mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove)
+    planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '')
+    gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id)
 
     print mangrove_biomass_2000
     print planted_forest_cumul_AGCO2_gain
@@ -424,12 +424,12 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, extent, pattern, sensit_type):
     # If BGC in the loss year is being created, it uses the loss year AGC tile.
     # If BGC in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
-    cont_ecozone = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed, 'false')
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    cont_ecozone = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
     if extent == "loss":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
     if extent == "2000":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
 
     # Name of output tile
     # The BGC name depends on whether carbon in 2000 or in the emission year is being created.
@@ -539,16 +539,16 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
     # If deadwood in the loss year is being created, it uses the loss year AGC tile.
     # If deadwood in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
-    WHRC_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked, 'false')
-    bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed, 'false')
-    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed, 'false')
-    precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip, 'false')
-    elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation, 'false')
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    WHRC_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+    bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed)
+    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip)
+    elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
     if extent == "loss":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
     if extent == "2000":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000)
 
     # Name of output tile
     # The output name depends on whether carbon in 2000 or in the emission year is being created.
@@ -719,16 +719,16 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
     # If litter in the loss year is being created, it uses the loss year AGC tile.
     # If litter in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000, 'false')
-    WHRC_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked, 'false')
-    bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed, 'false')
-    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed, 'false')
-    precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip, 'false')
-    elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation, 'false')
+    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    WHRC_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+    bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed)
+    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip)
+    elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
     if extent == "loss":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
     if extent == "2000":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000)
 
     # Name of output tile
     # The output name depends on whether carbon in 2000 or in the emission year is being created.
@@ -894,8 +894,8 @@ def create_soil(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    soil_full_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000, 'false')
-    AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
+    soil_full_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000)
+    AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
 
     # Name of output tile
     soil_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
@@ -958,17 +958,17 @@ def create_total_C(tile_id, extent, pattern, sensit_type):
     # If litter in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
     if extent == "loss":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year, 'true')
-        BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_emis_year, 'true')
-        deadwood = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_emis_year_2000, 'true')
-        litter = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_emis_year_2000, 'true')
-        soil = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_emis_year_2000, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
+        BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_emis_year)
+        deadwood = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_emis_year_2000)
+        litter = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_emis_year_2000)
+        soil = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_emis_year_2000)
     if extent == "2000":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000, 'true')
-        BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_2000, 'true')
-        deadwood = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_2000, 'true')
-        litter = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_2000, 'true')
-        soil = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000, 'true')
+        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
+        BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_2000)
+        deadwood = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_2000)
+        litter = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_2000)
+        soil = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000)
 
     # Name of output tile
     # The output name depends on whether carbon in 2000 or in the emission year is being created.

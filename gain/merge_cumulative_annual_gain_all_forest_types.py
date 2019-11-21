@@ -19,24 +19,24 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
 
     # Names of the annual gain rate and cumulative gain tiles for mangroves.
     # These names are created even if the tile doesn't have any mangroves.
-    annual_gain_AGB_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove, 'false')
-    cumul_gain_AGCO2_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove, 'true')
-    annual_gain_BGB_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_mangrove, 'false')
-    cumul_gain_BGCO2_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_mangrove, 'true')
+    annual_gain_AGB_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove)
+    cumul_gain_AGCO2_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove)
+    annual_gain_BGB_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_mangrove)
+    cumul_gain_BGCO2_mangrove = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_mangrove)
 
     # Names of the annual gain rate and cumulative gain tiles for non-mangrove planted forests
     # These names are created even if the tile doesn't have any planted forests.
-    annual_gain_AGB_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false')
-    cumul_gain_AGCO2_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, 'true')
-    annual_gain_BGB_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove, 'false')
-    cumul_gain_BGCO2_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove ,'true')
+    annual_gain_AGB_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    cumul_gain_AGCO2_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove)
+    annual_gain_BGB_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+    cumul_gain_BGCO2_planted_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove)
 
     # Names of the annual gain rate and cumulative gain tiles for non-mangrove non-planted forests
     # These names are created even if the tile doesn't have any non-mangrove non-planted forests.
-    annual_gain_AGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest, 'false')
-    cumul_gain_AGCO2_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest, 'true')
-    annual_gain_BGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_natrl_forest, 'false')
-    cumul_gain_BGCO2_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest, 'true')
+    annual_gain_AGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    cumul_gain_AGCO2_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
+    annual_gain_BGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
+    cumul_gain_BGCO2_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)
 
     # If there is a mangrove tile, it is read into rasterio.
     # Uses the annual AGB gain rate as a proxy for the other three tiles; if there's an annual AGB tile, there will

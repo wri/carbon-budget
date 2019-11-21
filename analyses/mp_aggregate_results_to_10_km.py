@@ -82,7 +82,7 @@ def main():
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
         # lines later.
         tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
-        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
 
         # Lists the tiles of the particular type that is being iterates through.
