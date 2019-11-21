@@ -295,20 +295,39 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in dir:
 
-        dir = dir.replace('standard', sensit_type)
-        file_name = file_name[:-4] + '_' + sensit_type + '.tif'
+        dir_sens = dir.replace('standard', sensit_type)
+        file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
 
+        # Doesn't download the tile if it's already on the spot machine
+        if os.path.exists(file_name_sens):
+            print file_name, "already downloaded" + "\n"
 
-    # Doesn't download the tile if it's already on the spot machine
-    if os.path.exists(file_name):
-        print file_name, "already downloaded" + "\n"
+            return
+
+        else:
+            try:
+                source = os.path.join(dir_sens, file_name_sens)
+                cmd = ['aws', 's3', 'cp', source, dest]
+                subprocess.check_call(cmd)
+                print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
+            except:
+                source = os.path.join(dir, file_name)
+                cmd = ['aws', 's3', 'cp', source, dest]
+                subprocess.check_call(cmd)
+                print file_name, "not previously downloaded. Now downloaded." + '\n'
 
     else:
-        print file_name, "not previously downloaded. Downloading now..."
-        source = os.path.join(dir, file_name)
-        cmd = ['aws', 's3', 'cp', source, dest]
-        subprocess.check_call(cmd)
-        print '\n'
+        # Doesn't download the tile if it's already on the spot machine
+        if os.path.exists(file_name):
+            print file_name, "already downloaded" + "\n"
+
+            return
+
+        else:
+            source = os.path.join(dir, file_name)
+            cmd = ['aws', 's3', 'cp', source, dest]
+            subprocess.check_call(cmd)
+            print file_name, "not previously downloaded. Now downloaded." + '\n'
 
     #     print dir_sens
     #     print file_name_sens
