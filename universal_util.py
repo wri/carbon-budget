@@ -258,11 +258,11 @@ def coords(tile_id):
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 # use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
-def s3_folder_download(source, dest, sensit_type, sensit_use):
+def s3_folder_download(source, dest, sensit_type):
 
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
-    if sensit_type != 'std' and 'standard' in source and sensit_use == 'true':
+    if sensit_type != 'std' and 'standard' in source:
 
         print "Attempting to change {} name to reflect sensitivity analysis".format(source)
 
@@ -285,7 +285,7 @@ def s3_folder_download(source, dest, sensit_type, sensit_use):
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 # use_sensit = shows whether to actually replace the standard path with the sensitivity analysis path
-def s3_file_download(source, dest, sensit_type, sensit_use):
+def s3_file_download(source, dest, sensit_type):
 
     # Retrieves the name of the tile from the full path name
     dir = get_tile_dir(source)
@@ -338,11 +338,11 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
 
 
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
-def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, tile_id_list):
+def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
     # For downloading all tiles in a folder when the list of tiles can't be specified
     if tile_id_list == 'all':
-        s3_folder_download(source_dir, dest, sensit_type, sensit_use)
+        s3_folder_download(source_dir, dest, sensit_type)
 
     # For downloading test tiles (five or fewer)
     elif len(tile_id_list) <= 5:
@@ -356,11 +356,11 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, sensit_use, til
             else:
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
 
-            s3_file_download(source, dest, sensit_type, sensit_use)
+            s3_file_download(source, dest, sensit_type)
 
     # For downloading full sets of tiles
     else:
-        s3_folder_download(source_dir, dest, sensit_type, sensit_use)
+        s3_folder_download(source_dir, dest, sensit_type)
 
 
 # Uploads all tiles of a pattern to specified location
