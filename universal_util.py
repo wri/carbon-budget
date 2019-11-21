@@ -519,6 +519,11 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             tile_list_standard = tile_list_spot_machine('.', pattern)
             tile_list_sensit = tile_list_spot_machine('.', '{0}_{1}'.format(pattern, sensit_type))
 
+            print tile_list_standard
+            print tile_list_sensit
+            print len(tile_list_standard)
+            print len(tile_list_sensit)
+
             if len(tile_list_standard) > 0:
 
                 # Uses either the Hansen loss tile or pixel area tile as a template tile
