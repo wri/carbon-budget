@@ -35,8 +35,8 @@ f.close()
 #     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.')
 
 
-# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-uu.s3_folder_download(cn.pixel_area_dir, '.', 'std', 'false')
+# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+# uu.s3_folder_download(cn.pixel_area_dir, '.', 'std')
 
 # For downloading all tiles in selected folders
 download_list = [
@@ -110,7 +110,7 @@ download_list = [
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
 
-    uu.s3_folder_download(input, '.', 'std', 'true')
+    uu.s3_folder_download(input, '.', 'std')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
@@ -118,6 +118,7 @@ for input in download_list:
     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
     tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
     # tile_list = ['00N_000E_biomass.tif']
+    tile_list = ['80N_170E_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif', '/80N_170W_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif']  # test tiles
     # tile_list = download_tile_list
     print tile_list
 
