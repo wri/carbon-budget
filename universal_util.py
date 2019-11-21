@@ -215,6 +215,8 @@ def create_combined_tile_list(set1, set2, set3=None):
 # Counts the number of tiles in a folder in s3
 def count_tiles_s3(source):
 
+    print source
+
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
