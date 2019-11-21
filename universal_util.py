@@ -295,33 +295,45 @@ def s3_file_download(source, dest, sensit_type, sensit_use):
     # has a sensitivity analysis path on s3
     if sensit_type != 'std' and 'standard' in dir:
 
-        dir_sens = dir.replace('standard', sensit_type)
-        file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
+        dir = dir.replace('standard', sensit_type)
+        file_name = file_name[:-4] + '_' + sensit_type + '.tif'
 
-        print dir_sens
-        print file_name_sens
-        print '{0}/{1}'.format(dir_sens, file_name_sens)
-
-        if os.path.exists('{0}/{1}'.format(dir_sens, file_name_sens)):
-            dir = dir_sens
-            file_name = file_name_sens
-            print "Sensitivity analysis file found for {0}/{1}".format(dir, file_name)
-        else:
-            print "Sensivitity analysis file not found for {0}/{1}. Downloading standard version.".format(dir, file_name)
 
     # Doesn't download the tile if it's already on the spot machine
-    if os.path.exists(os.path.join(dest,file_name)):
+    if os.path.exists(file_name):
         print file_name, "already downloaded" + "\n"
 
-    # Tries to download the tile if it's not on the spot machine
     else:
-        try:
-            source = os.path.join(dir, file_name)
-            cmd = ['aws', 's3', 'cp', source, dest]
-            subprocess.check_call(cmd)
-            print '\n'
-        except:
-            print source, "not found."
+        print file_name, "not previously downloaded. Downloading now..."
+        source = os.path.join(dir, file_name)
+        cmd = ['aws', 's3', 'cp', source, dest]
+        subprocess.check_call(cmd)
+        print '\n'
+
+    #     print dir_sens
+    #     print file_name_sens
+    #     print '{0}/{1}'.format(dir_sens, file_name_sens)
+    #
+    #     if os.path.exists('{0}/{1}'.format(dir_sens, file_name_sens)):
+    #         dir = dir_sens
+    #         file_name = file_name_sens
+    #         print "Sensitivity analysis file found for {0}/{1}".format(dir, file_name)
+    #     else:
+    #         print "Sensivitity analysis file not found for {0}/{1}. Downloading standard version.".format(dir, file_name)
+    #
+    # # Doesn't download the tile if it's already on the spot machine
+    # if os.path.exists(os.path.join(dest,file_name)):
+    #     print file_name, "already downloaded" + "\n"
+    #
+    # # Tries to download the tile if it's not on the spot machine
+    # else:
+    #     try:
+    #         source = os.path.join(dir, file_name)
+    #         cmd = ['aws', 's3', 'cp', source, dest]
+    #         subprocess.check_call(cmd)
+    #         print '\n'
+    #     except:
+    #         print source, "not found."
 
 
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
