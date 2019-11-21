@@ -52,49 +52,49 @@ def main ():
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
 
-    # # If the model run isn't the standard one, the output directory and file names are changed
-    # if sensit_type != 'std':
-    #     print "Changing output directory and file name pattern based on sensitivity analysis"
-    #     output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-    #     output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-    #
-    #
-    # # # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
-    # # # so that it has all the necessary input tiles
-    # # # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
-    # # folder = './'
-    # # for download_dir, download_pattern in download_dict.iteritems():
-    # #
-    # #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-    # #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-    # #     # lines later.
-    # #     download_pattern_name = download_pattern[0]
-    # #     sensit_use = download_pattern[1]
-    # #     tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
-    # #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
-    # #     pattern = output_pattern[9:-4]
-    # #
-    # #     count = multiprocessing.cpu_count()
-    # #     pool = multiprocessing.Pool(count-10)
-    # #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-    # #     pool.close()
-    # #     pool.join()
-    #
-    # # For single processor use
+    # If the model run isn't the standard one, the output directory and file names are changed
+    if sensit_type != 'std':
+        print "Changing output directory and file name pattern based on sensitivity analysis"
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+
+    # # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+    # # so that it has all the necessary input tiles
+    # # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
     # folder = './'
     # for download_dir, download_pattern in download_dict.iteritems():
     #
-    #
+    #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+    #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+    #     # lines later.
     #     download_pattern_name = download_pattern[0]
     #     sensit_use = download_pattern[1]
-    #     tile_id = 'XXXXXXXX'
+    #     tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
     #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
     #     pattern = output_pattern[9:-4]
     #
-    #     for tile_id in tile_id_list:
-    #         uu.make_blank_tile(tile_id, pattern, folder)
-    #
-    #
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+
+    # For single processor use
+    folder = './'
+    for download_dir, download_pattern in download_dict.iteritems():
+
+
+        download_pattern_name = download_pattern[0]
+        sensit_use = download_pattern[1]
+        tile_id = 'XXXXXXXX'
+        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name, sensit_use)
+        pattern = output_pattern[9:-4]
+
+        for tile_id in tile_id_list:
+            uu.make_blank_tile(tile_id, pattern, folder)
+
+
     # # Creates a single filename pattern to pass to the multiprocessor call
     # pattern = output_pattern_list[0]
     #
