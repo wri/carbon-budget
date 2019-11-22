@@ -10,7 +10,7 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
- 
+
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
 headers = ['tile_id', 'tile_type', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
@@ -110,7 +110,7 @@ download_list = [
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
 
-    # uu.s3_folder_download(input, '.', 'std')
+    uu.s3_folder_download(input, '.', 'std')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
