@@ -118,7 +118,7 @@ for input in download_list:
     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
     tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
     # tile_list = ['00N_000E_biomass.tif']
-    tile_list = ['80N_170E_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif', '/80N_170W_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif']  # test tiles
+    tile_list = ['80N_170E_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif', '80N_170W_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif']  # test tiles
     # tile_list = download_tile_list
     print tile_list
 

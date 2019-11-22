@@ -15,9 +15,6 @@ def create_tile_statistics(tile):
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)
 
-    print tile
-    print tile_id
-
     print "Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id)
 
     # start time
