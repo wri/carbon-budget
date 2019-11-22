@@ -139,14 +139,14 @@ for input in download_list:
     for tile in tile_list:
         tile_statistics.create_tile_statistics(tile)
 
-    # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
-    print "Deleting tiles..."
-    for tile in tile_list:
-        os.remove(tile)
-        tile_short = tile[:-4]
-        outname = '{0}_value_per_pixel.tif'.format(tile_short)
-        os.remove(outname)
-        print "  Tiles deleted"
+    # # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
+    # print "Deleting tiles..."
+    # for tile in tile_list:
+    #     os.remove(tile)
+    #     tile_short = tile[:-4]
+    #     outname = '{0}_value_per_pixel.tif'.format(tile_short)
+    #     os.remove(outname)
+    #     print "  Tiles deleted"
 
     # Copies the text file to the location on s3 that the tiles are from
     cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
