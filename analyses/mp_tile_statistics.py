@@ -82,7 +82,7 @@ download_list = [
 
                 cn.net_flux_dir,
                 cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                cn.gross_emis_co2_only_all_drivers_biomass_soil_dir
+                cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
                 cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
                 cn.gross_emis_commod_biomass_soil_dir,
                 cn.gross_emis_shifting_ag_biomass_soil_dir,
