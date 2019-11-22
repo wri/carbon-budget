@@ -10,7 +10,7 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-
+ 
 # The column names for the tile summary statistics.
 # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
 headers = ['tile_id', 'tile_type', 'tile_name', 'pixel_count', 'mean', 'median', 'percentile10', 'percentile25',
