@@ -30,8 +30,6 @@ print download_tile_list
 
 # For copying individual tiles to spot machine for testing
 for tile in download_tile_list:
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, tile), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.', 'std')
     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.', 'std')
 
 
