@@ -330,7 +330,7 @@ total_C_emis_year_dir = '{0}total_carbon/loss_pixels/standard/{1}/'.format(base_
 
 ## Carbon pools in 2000
 
-pool_2000_run_date = '20191105'
+pool_2000_run_date = '20191206'
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "t_AGC_ha_2000"
