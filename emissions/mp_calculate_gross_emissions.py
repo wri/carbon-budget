@@ -150,11 +150,11 @@ def main ():
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
+    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    # for key, values in download_dict.iteritems():
+    #     dir = key
+    #     pattern = values[0]
+    #     uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -192,7 +192,7 @@ def main ():
     for pattern in pattern_list:
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()
 
