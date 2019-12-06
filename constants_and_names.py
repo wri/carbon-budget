@@ -373,34 +373,34 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/standard/{1}/'.format(base_carbo
 emis_run_date_biomass_soil = '20191206'
 
 pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_t_CO2e_ha_biomass_soil'
-gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_forestry_biomass_soil = 'gross_emis_forestry_t_CO2e_ha_biomass_soil'
-gross_emis_forestry_biomass_soil_dir = '{0}gross_emissions/forestry/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_forestry_biomass_soil_dir = '{0}gross_emissions/forestry/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_shifting_ag_biomass_soil = 'gross_emis_shifting_ag_t_CO2e_ha_biomass_soil'
-gross_emis_shifting_ag_biomass_soil_dir = '{0}gross_emissions/shifting_ag/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_shifting_ag_biomass_soil_dir = '{0}gross_emissions/shifting_ag/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_urban_biomass_soil = 'gross_emis_urbanization_t_CO2e_ha_biomass_soil'
-gross_emis_urban_biomass_soil_dir = '{0}gross_emissions/urbanization/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_urban_biomass_soil_dir = '{0}gross_emissions/urbanization/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_wildfire_biomass_soil = 'gross_emis_wildfire_t_CO2e_ha_biomass_soil'
-gross_emis_wildfire_biomass_soil_dir = '{0}gross_emissions/wildfire/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_wildfire_biomass_soil_dir = '{0}gross_emissions/wildfire/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_no_driver_biomass_soil = 'gross_emis_no_driver_t_CO2e_ha_biomass_soil'
-gross_emis_no_driver_biomass_soil_dir = '{0}gross_emissions/no_driver/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_no_driver_biomass_soil_dir = '{0}gross_emissions/no_driver/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_all_gases_all_drivers_biomass_soil = 'gross_emis_all_gases_all_drivers_t_CO2e_ha_biomass_soil'
-gross_emis_all_gases_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/all_gases/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_all_gases_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/all_gases/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_co2_only_all_drivers_biomass_soil = 'gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomass_soil'
-gross_emis_co2_only_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/CO2_only/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_co2_only_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/CO2_only/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_non_co2_all_drivers_biomass_soil = 'gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil'
-gross_emis_non_co2_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/non_CO2/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_non_co2_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/non_CO2/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 pattern_gross_emis_nodes_biomass_soil = 'gross_emis_decision_tree_nodes_biomass_soil'
-gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
+gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biomass_soil/no_shifting_ag/{1}/'.format(base_dir, emis_run_date_biomass_soil)
 
 ## Emissions from soil only
 
@@ -443,7 +443,7 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15_biomass_soil'
-net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20191106/')
+net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/no_shifting_ag/20191121/')
 
 
 

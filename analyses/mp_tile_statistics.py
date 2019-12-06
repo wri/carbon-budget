@@ -24,19 +24,17 @@ with open(cn.tile_stats_pattern, 'w+') as f:
     f.write(header_no_brackets  +'\r\n')
 f.close()
 
-# Creates list of tiles to iterate through, for testing
-download_tile_list = ['80N_170E', '80N_170W'] # test tiles
-print download_tile_list
-
-# For copying individual tiles to spot machine for testing
-for tile in download_tile_list:
-#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, tile), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.WHRC_biomass_2000_unmasked_dir, tile, cn.pattern_WHRC_biomass_2000_unmasked), '.', 'std')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.', 'std')
+# # Creates list of tiles to iterate through, for testing
+# download_tile_list = ['30N_140E', '40N_030W'] # test tiles
+# print download_tile_list
+#
+# # For copying individual tiles to spot machine for testing
+# for tile in download_tile_list:
+#     uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile), '.', 'std')
 
 
-# # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-# uu.s3_folder_download(cn.pixel_area_dir, '.', 'std')
+# Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+uu.s3_folder_download(cn.pixel_area_dir, '.', 'std')
 
 # For downloading all tiles in selected folders
 download_list = [
@@ -82,17 +80,17 @@ download_list = [
                 # cn.soil_C_emis_year_2000_dir,
                 # cn.total_C_emis_year_dir
 
-                cn.net_flux_dir
-                # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                # cn.gross_emis_commod_biomass_soil_dir,
-                # cn.gross_emis_shifting_ag_biomass_soil_dir,
-                # cn.gross_emis_forestry_biomass_soil_dir,
-                # cn.gross_emis_wildfire_biomass_soil_dir,
-                # cn.gross_emis_urban_biomass_soil_dir,
-                # cn.gross_emis_no_driver_biomass_soil_dir,
-                # cn.gross_emis_nodes_biomass_soil_dir
+                cn.net_flux_dir,
+                cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                cn.gross_emis_commod_biomass_soil_dir,
+                cn.gross_emis_shifting_ag_biomass_soil_dir,
+                cn.gross_emis_forestry_biomass_soil_dir,
+                cn.gross_emis_wildfire_biomass_soil_dir,
+                cn.gross_emis_urban_biomass_soil_dir,
+                cn.gross_emis_no_driver_biomass_soil_dir,
+                cn.gross_emis_nodes_biomass_soil_dir
 
                 # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                 # cn.gross_emis_co2_only_all_drivers_soil_only_dir,
@@ -110,7 +108,7 @@ download_list = [
 # Iterates through each set of tiles and gets statistics of it
 for input in download_list:
 
-    # uu.s3_folder_download(input, '.', 'std')
+    uu.s3_folder_download(input, '.', 'std')
 
     # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
     # (in case this script was already run on this spot machine and created output from gdal_calc)
@@ -118,26 +116,27 @@ for input in download_list:
     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
     tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
     # tile_list = ['00N_000E_biomass.tif']
-    tile_list = ['80N_170E_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif', '/80N_170W_net_flux_t_CO2e_ha_2001_15_biomass_soil.tif']  # test tiles
+    # tile_list = ['30N_140E_net_flux_t_CO2e_ha_2001_15_biomass_soil_maxgain.tif',
+    #              '40N_030W_net_flux_t_CO2e_ha_2001_15_biomass_soil_maxgain.tif']  # test tiles
     # tile_list = download_tile_list
     print tile_list
 
-    # # For multiprocessor use.
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=9)
-    # # processes=9 maxes out at about 340 for gross emissions
-    # # processes=13 maxes out at above 480 for gross emissions
-    # # processes=11 maxes out at about 440 for gross emissions
-    # pool.map(tile_statistics.create_tile_statistics, tile_list)
-    # # Added these in response to error12: Cannot allocate memory error.
-    # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    # pool.close()
-    # pool.join()
+    # For multiprocessor use.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=9)
+    # processes=9 maxes out at about 340 for gross emissions
+    # processes=13 maxes out at above 480 for gross emissions
+    # processes=11 maxes out at about 440 for gross emissions
+    pool.map(tile_statistics.create_tile_statistics, tile_list)
+    # Added these in response to error12: Cannot allocate memory error.
+    # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+    # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+    pool.close()
+    pool.join()
 
-    # For single processor use
-    for tile in tile_list:
-        tile_statistics.create_tile_statistics(tile)
+    # # For single processor use
+    # for tile in tile_list:
+    #     tile_statistics.create_tile_statistics(tile)
 
     # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
     print "Deleting tiles..."
