@@ -160,6 +160,8 @@ def main ():
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
         print "Changing output directory and file name pattern based on sensitivity analysis"
+        print output_dir_list
+        print sensit_type
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         print output_dir_list
