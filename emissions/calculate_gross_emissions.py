@@ -27,7 +27,7 @@ def mask_pre_2000_plant(tile_id):
 # Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id, pools, sensit_type):
 
-    print "Calculating gross emissions for", tile_id
+    print "Calculating gross emissions for", tile_id, "using", sensit_type, ":"
 
     start = datetime.datetime.now()
 
@@ -47,13 +47,16 @@ def calc_emissions(tile_id, pools, sensit_type):
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
-    subprocess.check_call(emissions_tiles_cmd)
+    # subprocess.check_call(emissions_tiles_cmd)
 
 
     # Identifies which pattern to use for counting tile completion
     pattern = cn.pattern_gross_emis_commod_biomass_soil
-    if pools == 'biomass_soil':
+    if (pools == 'biomass_soil') & (sensit_type == 'std'):
         pattern = pattern
+
+    if (pools == 'biomass_soil') & (sensit_type != 'std'):
+        pattern = pattern.replace('biomass_soil', sensit_type)
 
     elif pools == 'soil_only':
         pattern = pattern.replace('biomass_soil', 'soil_only')
