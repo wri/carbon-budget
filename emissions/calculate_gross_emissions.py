@@ -47,7 +47,7 @@ def calc_emissions(tile_id, pools, sensit_type):
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
-    # subprocess.check_call(emissions_tiles_cmd)
+    subprocess.check_call(emissions_tiles_cmd)
 
 
     # Identifies which pattern to use for counting tile completion
@@ -56,7 +56,7 @@ def calc_emissions(tile_id, pools, sensit_type):
         pattern = pattern
 
     if (pools == 'biomass_soil') & (sensit_type != 'std'):
-        pattern = pattern.replace('biomass_soil', sensit_type)
+        pattern = pattern, "_", sensit_type
         print pattern
 
     elif pools == 'soil_only':
