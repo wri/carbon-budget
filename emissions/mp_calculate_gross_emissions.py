@@ -162,6 +162,7 @@ def main ():
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+        print output_dir_list
         print output_pattern_list
 
 
