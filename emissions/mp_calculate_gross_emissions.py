@@ -150,11 +150,11 @@ def main ():
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
+    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    # for key, values in download_dict.iteritems():
+    #     dir = key
+    #     pattern = values[0]
+    #     uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -166,17 +166,17 @@ def main ():
         print output_pattern_list
 
 
-    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
-    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # Pre-2000 plantations have not previously been masked, so that is done here.
-    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/2)
-    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
-
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.mask_pre_2000_plant(tile)
+    # print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    # # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
+    # # Pre-2000 plantations have not previously been masked, so that is done here.
+    # # There are only 8 tiles to process, so count/2 will cover all of them in one go.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+    #
+    # # # For single processor use
+    # # for tile in tile_id_list:
+    # #       calculate_gross_emissions.mask_pre_2000_plant(tile)
 
 
     # The C++ code expects a plantations tile for every input 10x10.
@@ -189,17 +189,17 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    for pattern in pattern_list:
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
     # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+
+    # For single processor use
+    for pattern in pattern_list:
+        for tile in tile_id_list:
+            uu.make_blank_tile(tile, pattern, folder, sensit_type)
 
 
     # Calculates gross emissions for each tile
