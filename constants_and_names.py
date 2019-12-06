@@ -370,7 +370,7 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/standard/{1}/'.format(base_carbo
 ## Emissions from biomass and soil (all carbon pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20191106'
+emis_run_date_biomass_soil = '20191206'
 
 pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_t_CO2e_ha_biomass_soil'
 gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
@@ -476,10 +476,13 @@ hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 ### Misc
 ######
 
-sensitivity_list = ['std', 'maxgain', 'biomass', 'USrem', 'noplant', 'no_shifting_ag', 'soil']
+sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
+                    'soil_awap', 'biomass_swap', 'US_removals', 'no_plantations', ]
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
-                      '{0} = Standard run. {1} = Maximize gain years. {2} = Change biomass map. {3} = Use US-specific removals.' \
-                      '{4} = Run model without plantations. {5} = Change tree cover loss drivers. {6} = Change soil map.'\
+                      '{0} = Standard run. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
+                      '{3} = Commodity-driven deforestation results in grassland rather than cropland.' \
+                      '{4} = Change soil map. {5} = Replace Baccini AGB map with Saatchi biomass map. ' \
+                      '{6} = Use US-specific removals. {7} = Remove plantations from the model.'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
-            sensitivity_list[5], sensitivity_list[6])
+            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])

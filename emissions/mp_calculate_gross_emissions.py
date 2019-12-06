@@ -55,7 +55,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
     # tile_id_list = ['30N_140E', '40N_030W']  # test tiles
-    # tile_id_list = ['00N_110E'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
@@ -77,6 +77,7 @@ def main ():
     # Checks the validity of the pools argument
     if (pools not in ['soil_only', 'biomass_soil']):
         raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
+
 
     # Checks if the correct c++ script has been compiled for the pool option selected
     if pools == 'biomass_soil':
@@ -109,13 +110,12 @@ def main ():
                 print "C++ for biomass+soil already compiled."
             else:
                 raise Exception('Must compile standard biomass+soil model C++...')
-        elif sensit_type == 'no_shifting_ag':
-            if os.path.exists('./cpp_util/calc_gross_emissions_no_shifting_ag.exe'):
-                print "C++ for no_shifting_ag already compiled."
-            else:
-                raise Exception('Must compile no_shifting_ag model C++...')
         else:
-            raise Exception('Pool and/or sensitivity analysis option not valid')
+            if os.path.exists('./cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+                print 'C++ for {} already compiled.'.format(sensit_type)
+            else:
+                raise Exception('Must compile {} model C++...'.format(sensit_type))
+
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
@@ -150,20 +150,11 @@ def main ():
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
-    # Checks if the correct C++ for the sensitivity analysis has been compiled
-    if sensit_type == 'drivers':
-        if os.path.exists('./cpp_util/calc_gross_emissions_no_shifting_ag.exe'):
-            print "C++ for drivers sensitivity analysis already compiled."
-        else:
-            raise Exception('Must compile calc_gross_emissions_no_shifting_ag.exe...')
-
-
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
-        sensit_use = values[1]
-        uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, sensit_use, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -196,29 +187,29 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    for pattern in pattern_list:
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
     # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder)
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+
+    # For single processor use
+    for pattern in pattern_list:
+        for tile in tile_id_list:
+            uu.make_blank_tile(tile, pattern, folder)
 
 
-    # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
+    # # Calculates gross emissions for each tile
+    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
+    # For single processor use
+    for tile in tile_id_list:
+          calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen

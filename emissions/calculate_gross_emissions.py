@@ -35,11 +35,14 @@ def calc_emissions(tile_id, pools, sensit_type):
     if (pools == 'biomass_soil') & (sensit_type == 'std'):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
 
+    elif (pools == 'soil_only') & (sensit_type == 'std'):
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
+
     elif (pools == 'biomass_soil') & (sensit_type == 'no_shifting_ag'):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_no_shifting_ag.exe', tile_id]
 
-    elif (pools == 'soil_only') & (sensit_type == 'std'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
+    elif (pools == 'biomass_soil') & (sensit_type == 'convert_to_grassland'):
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_convert_to_grassland.exe', tile_id]
 
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
