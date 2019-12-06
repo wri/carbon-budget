@@ -197,7 +197,7 @@ def main ():
     # For single processor use
     for pattern in pattern_list:
         for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern, folder)
+            uu.make_blank_tile(tile, pattern, folder, sensit_type)
 
 
     # # Calculates gross emissions for each tile
