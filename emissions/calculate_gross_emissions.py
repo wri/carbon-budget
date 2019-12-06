@@ -57,6 +57,7 @@ def calc_emissions(tile_id, pools, sensit_type):
 
     if (pools == 'biomass_soil') & (sensit_type != 'std'):
         pattern = pattern.replace('biomass_soil', sensit_type)
+        print pattern
 
     elif pools == 'soil_only':
         pattern = pattern.replace('biomass_soil', 'soil_only')
