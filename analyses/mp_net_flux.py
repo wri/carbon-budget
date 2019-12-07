@@ -57,7 +57,7 @@ def main ():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    tile_id_list = ['30N_140E', '40N_030W']  # test tiles
+    # tile_id_list = ['30N_140E', '40N_030W']  # test tiles
 
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
