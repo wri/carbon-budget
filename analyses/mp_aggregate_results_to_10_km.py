@@ -147,57 +147,57 @@ def main():
         out_vrt = "{}_10km.vrt".format(pattern)
         os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
-        # Creates the output name for the 10km map
-        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
-
-        # Produces a single raster of all the 10x10 tiles (10 km resolution)
-        cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-               '-tr', '0.1', '0.1',
-               out_vrt, '{}.tif'.format(out_pattern)]
-        subprocess.check_call(cmd)
-
-        print "Tiles processed. Uploading to s3 now..."
-
-        # Cleans up the folder before starting on the next raster type
-        vrtList = glob.glob('*vrt')
-        for vrt in vrtList:
-            os.remove(vrt)
-
-        for tile_id in tile_list:
-            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
-
-        # Uploads all output tiles to s3
-        uu.upload_final_set(output_dir_list[0], out_pattern)
-
-
-    # Compares the net flux from the standard model and the sensitivity analysis in two ways
-    if sensit_type != 'std':
-
-        # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
-        uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
-
-        try:
-            # Identifies the standard model and sensitivity model net flux maps
-            std_aggreg_flux = glob.glob('net_flux*std*')[0]
-            sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
-
-            print "Standard model net flux:", std_aggreg_flux
-            print "Sensitivity model net flux:", sensit_aggreg_flux
-
-        except:
-            print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
-
-        print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
-        aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
-
-        print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
-        aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
-
-        os.remove(sensit_aggreg_flux)
+    #     # Creates the output name for the 10km map
+    #     out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
+    #
+    #     # Produces a single raster of all the 10x10 tiles (10 km resolution)
+    #     cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
+    #            '-tr', '0.1', '0.1',
+    #            out_vrt, '{}.tif'.format(out_pattern)]
+    #     subprocess.check_call(cmd)
+    #
+    #     print "Tiles processed. Uploading to s3 now..."
+    #
+    #     # Cleans up the folder before starting on the next raster type
+    #     vrtList = glob.glob('*vrt')
+    #     for vrt in vrtList:
+    #         os.remove(vrt)
+    #
+    #     for tile_id in tile_list:
+    #         os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+    #         os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+    #         os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+    #
+    #     # Uploads all output tiles to s3
+    #     uu.upload_final_set(output_dir_list[0], out_pattern)
+    #
+    #
+    # # Compares the net flux from the standard model and the sensitivity analysis in two ways
+    # if sensit_type != 'std':
+    #
+    #     # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
+    #     uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
+    #
+    #     try:
+    #         # Identifies the standard model and sensitivity model net flux maps
+    #         std_aggreg_flux = glob.glob('net_flux*std*')[0]
+    #         sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
+    #
+    #         print "Standard model net flux:", std_aggreg_flux
+    #         print "Sensitivity model net flux:", sensit_aggreg_flux
+    #
+    #     except:
+    #         print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
+    #
+    #     print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
+    #     aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+    #     uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+    #
+    #     print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
+    #     aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+    #     uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+    #
+    #     os.remove(sensit_aggreg_flux)
 
 
 if __name__ == '__main__':
