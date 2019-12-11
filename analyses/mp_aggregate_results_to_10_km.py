@@ -187,7 +187,7 @@ def main():
 
         print output_dir_list
         print cn.pattern_aggreg_perc_diff
-        # uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
+        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
 
 
 if __name__ == '__main__':
