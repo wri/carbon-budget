@@ -32,9 +32,9 @@ def main():
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-             # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
              # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
-             cn.net_flux_dir: [cn.pattern_net_flux]
+             # cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
     # Sole argument for the script: the tree cover density threshold (pixels below this will not be aggregated)
@@ -83,8 +83,8 @@ def main():
 
         download_pattern_name = download_pattern[0]
 
-        # # Downloads the model output tiles to be processed
-        # uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        # Downloads the model output tiles to be processed
+        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
@@ -105,63 +105,63 @@ def main():
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
         print "Processing:", dir, "; ", pattern
 
-        # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
-        # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-        # # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(aggregate_results_to_10_km.rewindow, tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
-        #
-        # # # For single processor use
-        # # for tile in tile_list:
-        # #
-        # #     aggregate_results_to_10_km.rewindow(tile)
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+        # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
+        # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
-        # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # # and sums those values in each 400x400 pixel window.
-        # # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # # 0.1x0.1 degree resolution (approximately 10m in the tropics).
-        # # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # # The 0.1x0.1 degree tile is output.
-        # # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+        # # For single processor use
+        # for tile in tile_list:
         #
-        # # # For single processor use
-        # # for tile in tile_list:
-        # #
-        # #     aggregate_results_to_10_km.aggregate(tile, thresh)
+        #     aggregate_results_to_10_km.rewindow(tile)
+
+        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # and sums those values in each 400x400 pixel window.
+        # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # The 0.1x0.1 degree tile is output.
+        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile in tile_list:
         #
-        # # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-        # out_vrt = "{}_10km.vrt".format(pattern)
-        # os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
-        #
-        # # Creates the output name for the 10km map
-        # out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
-        # print out_pattern
-        #
-        # # Produces a single raster of all the 10x10 tiles (10 km resolution)
-        # cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-        #        '-tr', '0.1', '0.1',
-        #        out_vrt, '{}.tif'.format(out_pattern)]
-        # subprocess.check_call(cmd)
-        #
-        # print "Tiles processed. Uploading to s3 now..."
-        #
-        # # Uploads all output tiles to s3
-        # uu.upload_final_set(output_dir_list[0], out_pattern)
-        #
+        #     aggregate_results_to_10_km.aggregate(tile, thresh)
+
+        # Makes a vrt of all the output 10x10 tiles (10 km resolution)
+        out_vrt = "{}_10km.vrt".format(pattern)
+        os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
+
+        # Creates the output name for the 10km map
+        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
+        print out_pattern
+
+        # Produces a single raster of all the 10x10 tiles (10 km resolution)
+        cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
+               '-tr', '0.1', '0.1',
+               out_vrt, '{}.tif'.format(out_pattern)]
+        subprocess.check_call(cmd)
+
+        print "Tiles processed. Uploading to s3 now..."
+
+        # Uploads all output tiles to s3
+        uu.upload_final_set(output_dir_list[0], out_pattern)
+
         # # Cleans up the folder before starting on the next raster type
         # vrtList = glob.glob('*vrt')
         # for vrt in vrtList:
@@ -169,8 +169,8 @@ def main():
         #
         # for tile_id in tile_list:
         #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     # os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        # #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways
