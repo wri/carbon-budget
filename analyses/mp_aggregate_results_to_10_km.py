@@ -71,6 +71,11 @@ def main():
     # Output pattern is determined later.
     output_dir_list = [cn.output_aggreg_dir]
 
+    # If the model run isn't the standard one, the output directory is changed
+    if sensit_type != 'std':
+        print "Changing output directory and file name pattern based on sensitivity analysis"
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+
 
     # # Iterates through the types of tiles to be processed
     # for dir, download_pattern in download_dict.items():
@@ -161,11 +166,6 @@ def main():
     #     #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
     #     #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
     #     #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
-    #
-    #     # If the model run isn't the standard one, the output directory is changed
-    #     if sensit_type != 'std':
-    #         print "Changing output directory and file name pattern based on sensitivity analysis"
-    #         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
     #
     #     # Uploads all output tiles to s3
     #     uu.upload_final_set(output_dir_list[0], out_pattern)
