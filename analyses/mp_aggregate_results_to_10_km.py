@@ -176,7 +176,7 @@ def main():
         # Copies the standard model aggregation outputs to s3
         uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
 
-        aggreg_std_flux = glob.glob('net_flux_*_biomass_soil*')
+        aggreg_std_flux = glob.glob('net_flux*std*')
 
         print aggreg_std_flux
 
