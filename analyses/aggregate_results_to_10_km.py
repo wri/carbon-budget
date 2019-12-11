@@ -14,9 +14,11 @@ The user has to supply a tcd threshold for which forest pixels to include in the
 import numpy as np
 import subprocess
 import os
+from glob import glob
 import rasterio
 from rasterio.transform import from_origin
 import datetime
+import date
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -186,3 +188,30 @@ def aggregate(tile, thresh):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, tile_type)
+
+
+# Calculates the percent difference between the standard model's net flux output
+# and the sensitivity model's net flux outout
+def percent_diff(aggreg_sensit_flux, sensit_type):
+
+    # start time
+    start = datetime.datetime.now()
+    date_formatted = date.strftime("%Y%m%d")
+
+    print aggreg_sensit_flux
+
+    aggreg_std_flux = glob.glob('net_flux_t_CO2e_per_year_biomass_soil_10km_tcd30_modelv1_1_2_biomass_soil*')
+    print aggreg_sensit_flux
+
+    # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
+    perc_diff_calc = '--calc=(A-B)/B*100'.format(aggreg_sensit_flux, aggreg_std_flux)
+    perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_perc_diff, sensit_type, date_formatted)
+    perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
+    cmd = ['gdal_calc.py', '-A', aggreg_sensit_flux, '-B', aggreg_std_flux, perc_diff_calc, perc_diff_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    subprocess.check_call(cmd)
+
+
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, 'global', aggreg_sensit_flux)
