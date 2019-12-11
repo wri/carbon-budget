@@ -370,7 +370,7 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/standard/{1}/'.format(base_carbo
 ## Emissions from biomass and soil (all carbon pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20191206'
+emis_run_date_biomass_soil = '20191120'
 
 pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_t_CO2e_ha_biomass_soil'
 gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
@@ -443,7 +443,7 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15_biomass_soil'
-net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20191206/')
+net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20191121/')
 
 
 

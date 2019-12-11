@@ -189,7 +189,7 @@ def aggregate(tile, thresh):
 
 
 # Calculates the percent difference between the standard model's net flux output
-# and the sensitivity model's net flux outout
+# and the sensitivity model's net flux output
 def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
     # start time
@@ -211,8 +211,7 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)
 
 
-# Calculates the percent difference between the standard model's net flux output
-# and the sensitivity model's net flux outout
+# Maps where the sources stay sources, sinks stay sinks, sources become sinks, and sinks become sources
 def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
     # start time
@@ -237,7 +236,7 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
             dst_data = np.zeros((window.height, window.width), dtype='Float64')
 
-            dst_data[np.where((sensit_window > 0) & (std_window >= 0))] = 1  # stays net source or neutral
+            dst_data[np.where((sensit_window > 0) & (std_window >= 0))] = 1   # stays net source
             dst_data[np.where((sensit_window < 0) & (std_window < 0))] = 2    # stays net sink
             dst_data[np.where((sensit_window >= 0) & (std_window < 0))] = 3   # changes from sink to source
             dst_data[np.where((sensit_window < 0) & (std_window >= 0))] = 4   # changes from source to sink
