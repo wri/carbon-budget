@@ -195,7 +195,8 @@ def main():
 
         except:
 
-            print "One of the input flux tiles isn't valid."
+            raise Exception('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux '
+                            'rasters are on the spot machine.')
 
 
 if __name__ == '__main__':
