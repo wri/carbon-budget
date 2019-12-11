@@ -176,9 +176,11 @@ def main():
         # Copies the standard model aggregation outputs to s3
         uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
 
-        aggreg_std_flux = glob.glob('net_flux*std*')
+        std_aggreg_flux = glob.glob('net_flux*std*')[0]
+        sensit_aggreg_flux = glob.glob('net_flux*{}*'.format(sensit_type))[0]
 
-        print aggreg_std_flux
+        print std_aggreg_flux
+        print sensit_aggreg_flux
 
         print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
         aggregate_results_to_10_km.percent_diff(out_pattern, sensit_type)
