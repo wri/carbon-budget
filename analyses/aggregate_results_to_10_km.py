@@ -18,7 +18,7 @@ from glob import glob
 import rasterio
 from rasterio.transform import from_origin
 import datetime
-import date
+from datetime import date
 import sys
 sys.path.append('../')
 import constants_and_names as cn
