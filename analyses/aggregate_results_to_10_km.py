@@ -197,9 +197,9 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    np.seterr(divide='ignore', invalid='ignore')
-
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
+    # This produces errors about dividing by 0. As far as I can tell, those are fine. It's just trying to divide NoData
+    # pixels by NoData pixels, and it doesn't affect the output.
     perc_diff_calc = '--calc=(A-B)/B*100'.format(sensit_aggreg_flux, std_aggreg_flux)
     perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
     perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
@@ -220,13 +220,31 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
-    perc_diff_calc = '--calc=(A-B)/B*100'.format(sensit_aggreg_flux, std_aggreg_flux)
-    perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
-    perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
-    cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
-    subprocess.check_call(cmd)
+    with rasterio.open(std_aggreg_flux) as std_src:
+
+        kwargs = std_src.meta
+
+        windows = std_src.block_windows(1)
+
+        sensit_src = rasterio.open(sensit_aggreg_flux)
+
+        dst = rasterio.open('{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_sign_change, sensit_type, date_formatted), 'w', **kwargs)
+
+        for idx, window in windows:
+
+            std_window = std_src.read(1, window=window)
+            sensit_window = sensit_src.read(1, window=window)
+
+            dst_data = np.zeros((window.height, window.width), dtype='Float64')
+
+
+            dst_data[np.where((sensit_window >= 0) & (std_window >= 0))] = 1
+            dst_data[np.where((sensit_window < 0) & (std_window < 0))] = 2
+            dst_data[np.where((sensit_window >= 0) & (std_window < 0))] = 3
+            dst_data[np.where((sensit_window < 0) & (std_window >= 0))] = 4
+
+            dst.write_band(1, dst_data, window=window)
+
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)
