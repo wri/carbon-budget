@@ -173,8 +173,12 @@ def main():
 
     if sensit_type != 'std':
 
-        # Copies the standard model aggregation outputs to s3
-        uu.s3_flexible_download(std_net_flux, 'net_flux_{}'.format(cn.pattern_aggreg), '.', 'std', 'all')
+        try:
+            # Copies the standard model aggregation outputs to s3
+            uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
+
+        except:
+            print "Standard model aggregated output folder not found. Stopping script."
 
         print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
         aggregate_results_to_10_km.percent_diff(out_pattern, sensit_type)
