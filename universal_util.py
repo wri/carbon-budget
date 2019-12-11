@@ -288,6 +288,8 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_folder_download(source, dest, sensit_type):
 
+    print 'Im here'
+
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
     if sensit_type != 'std':
@@ -322,6 +324,8 @@ def s3_folder_download(source, dest, sensit_type):
 
     # For the standard model, the standard folder is downloaded.
     else:
+
+        print "Now I'm here"
 
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
