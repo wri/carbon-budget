@@ -451,7 +451,8 @@ net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/bio
 ######
 
 pattern_aggreg = '10km_modelv1_1_2'
-pattern_aggreg_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
+pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
+pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
 
 output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191113/'.format(base_dir)
 
