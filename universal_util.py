@@ -533,26 +533,26 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
 def name_aggregated_output(pattern, thresh, sensit_type):
 
     out_pattern = re.sub('ha_', '', pattern)
-    print out_pattern
+    # print out_pattern
     out_pattern = re.sub('2001_15', 'per_year', out_pattern)
-    print out_pattern
+    # print out_pattern
     out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
-    print out_pattern
+    # print out_pattern
     out_pattern = re.sub('_t_', '_Mt_', out_pattern)
-    print out_pattern
+    # print out_pattern
     out_pattern = re.sub('_10km_', '_per_year_10km_', out_pattern)
-    print out_pattern
+    # print out_pattern
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y%m%d")
 
-    print thresh
-    print cn.pattern_aggreg
-    print sensit_type
-    print date_formatted
+    # print thresh
+    # print cn.pattern_aggreg
+    # print sensit_type
+    # print date_formatted
 
     out_name = '{0}_tcd{1}_{2}_{3}_{4}'.format(out_pattern, thresh, cn.pattern_aggreg, sensit_type, date_formatted)
 
-    print out_name
+    # print out_name
 
     return out_name
 
