@@ -161,46 +161,44 @@ def main():
 
         # Uploads all output tiles to s3
         uu.upload_final_set(output_dir_list[0], out_pattern)
-        #
-        # # Cleans up the folder before starting on the next raster type
-        # vrtList = glob.glob('*vrt')
-        # for vrt in vrtList:
-        #     os.remove(vrt)
-        #
-        # for tile_id in tile_list:
-        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
-        #
 
-    #
-    #
-    # # Compares the net flux from the standard model and the sensitivity analysis in two ways
-    # if sensit_type != 'std':
-    #
-    #     # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
-    #     uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
-    #
-    #     try:
-    #         # Identifies the standard model and sensitivity model net flux maps
-    #         std_aggreg_flux = glob.glob('net_flux*std*')[0]
-    #         sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
-    #
-    #         print "Standard model net flux:", std_aggreg_flux
-    #         print "Sensitivity model net flux:", sensit_aggreg_flux
-    #
-    #     except:
-    #         print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
-    #
-    #     print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
-    #     aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-    #     uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
-    #
-    #     print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
-    #     aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-    #     uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
-    #
-    #     os.remove(sensit_aggreg_flux)
+        # Cleans up the folder before starting on the next raster type
+        vrtList = glob.glob('*vrt')
+        for vrt in vrtList:
+            os.remove(vrt)
+
+        for tile_id in tile_list:
+            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            # os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+
+
+    # Compares the net flux from the standard model and the sensitivity analysis in two ways
+    if sensit_type != 'std':
+
+        # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
+        uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
+
+        try:
+            # Identifies the standard model and sensitivity model net flux maps
+            std_aggreg_flux = glob.glob('net_flux*std*')[0]
+            sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
+
+            print "Standard model net flux:", std_aggreg_flux
+            print "Sensitivity model net flux:", sensit_aggreg_flux
+
+        except:
+            print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
+
+        print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
+        aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+
+        print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
+        aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+
+        os.remove(sensit_aggreg_flux)
 
 
 if __name__ == '__main__':
