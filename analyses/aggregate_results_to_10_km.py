@@ -216,26 +216,37 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
     # start time
     start = datetime.datetime.now()
+
+    # Date for the output raster name
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
+    # Opens the standard net flux output in rasterio
     with rasterio.open(std_aggreg_flux) as std_src:
 
         kwargs = std_src.meta
 
         windows = std_src.block_windows(1)
 
+        # Opens the sensitivity analysis net flux output in rasterio
         sensit_src = rasterio.open(sensit_aggreg_flux)
 
+        # Creates the sign change raster
         dst = rasterio.open('{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_sign_change, sensit_type, date_formatted), 'w', **kwargs)
 
+        # Iterates through the windows in the standard net flux output
         for idx, window in windows:
 
             std_window = std_src.read(1, window=window)
             sensit_window = sensit_src.read(1, window=window)
 
+            # Defaults the sign change output raster to 0
             dst_data = np.zeros((window.height, window.width), dtype='Float64')
 
+            # Assigns the output value based on the signs (source, sink) of the standard and sensitivity analysis.
+            # No option has both windows equaling 0 because that results in the NoData values getting assigned whatever
+            # output corresponds to that
+            # (e.g., if dst_data[np.where((sensit_window >= 0) & (std_window >= 0))] = 1, NoData values (0s) would become 1s.
             dst_data[np.where((sensit_window > 0) & (std_window >= 0))] = 1   # stays net source
             dst_data[np.where((sensit_window < 0) & (std_window < 0))] = 2    # stays net sink
             dst_data[np.where((sensit_window >= 0) & (std_window < 0))] = 3   # changes from sink to source
