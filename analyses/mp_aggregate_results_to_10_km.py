@@ -177,7 +177,7 @@ def main():
         uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
 
         std_aggreg_flux = glob.glob('net_flux*std*')[0]
-        sensit_aggreg_flux = glob.glob('net_flux*{}*'.format(sensit_type))[0]
+        sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
         print "Standard model net flux:", std_aggreg_flux
         print "Sensitivity model net flux:", sensit_aggreg_flux
@@ -188,6 +188,8 @@ def main():
         print output_dir_list
         print cn.pattern_aggreg_perc_diff
         uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
+
+        os.remove(sensit_aggreg_flux)
 
 
 if __name__ == '__main__':
