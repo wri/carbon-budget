@@ -236,13 +236,16 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
             sensit_window = sensit_src.read(1, window=window)
 
             dst_data = np.full((window.height, window.width), 10, dtype='Float64')
+            print dst_data
 
 
             dst_data[np.where((sensit_window >= 0) & (std_window >= 0))] = 1  # stays net source or neutral
             dst_data[np.where((sensit_window < 0) & (std_window < 0))] = 2    # stays net sink
             dst_data[np.where((sensit_window >= 0) & (std_window < 0))] = 3   # changes from sink to source
             dst_data[np.where((sensit_window < 0) & (std_window >= 0))] = 4   # changes from source to sink
+            print dst_data
             dst_data[np.where(dst_data) == 10] = 0
+            print dst_data
 
             dst.write_band(1, dst_data, window=window)
 
