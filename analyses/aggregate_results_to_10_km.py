@@ -196,7 +196,7 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
     # start time
     start = datetime.datetime.now()
-    date_formatted = date.strftime("%Y%m%d")
+    date_formatted = str(date.strftime("%Y%m%d"))
 
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     perc_diff_calc = '--calc=(A-B)/B*100'.format(sensit_aggreg_flux, std_aggreg_flux)
