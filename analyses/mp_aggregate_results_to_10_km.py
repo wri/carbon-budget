@@ -42,10 +42,13 @@ def main():
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
+                        help='The folder of the standard model net flux aggregated map, for comparison with the sensitivity analysis map')
     args = parser.parse_args()
     thresh = args.tcd_threshold
     thresh = int(thresh)
     sensit_type = args.model_type
+    std_net_flux = args.std_net_flux_aggreg
 
     # Checks whether the canopy cover argument is valid
     if thresh < 0 or thresh > 99:
@@ -63,7 +66,7 @@ def main():
     # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     # Copies the standard model aggregation outputs to s3
-    uu.s3_flexible_download(cn.output_aggreg_dir, cn.pattern_aggreg, '.', 'std', 'all')
+    uu.s3_flexible_download(std_net_flux, 'net_flux_{}'.format(cn.pattern_aggreg), '.', 'std', 'all')
 
 
     print "Model outputs to process are:", download_dict
@@ -172,10 +175,12 @@ def main():
     #     uu.upload_final_set(output_dir_list[0], out_pattern)
 
 
-    print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
-    aggregate_results_to_10_km.percent_diff(out_pattern, sensit_type)
+    if sensit_type != 'std':
 
-    uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
+        print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
+        aggregate_results_to_10_km.percent_diff(out_pattern, sensit_type)
+
+        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
 
 
 if __name__ == '__main__':
