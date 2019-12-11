@@ -185,7 +185,9 @@ def main():
         print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
         aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
 
-        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
+        print output_dir_list
+        print cn.pattern_aggreg_perc_diff
+        # uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
 
 
 if __name__ == '__main__':
