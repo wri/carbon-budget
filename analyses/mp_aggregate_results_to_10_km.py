@@ -10,6 +10,7 @@ aggregated pixel.
 It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
 converts cumulative gross CO2 emissions to gross CO2 emissions per year.
 The user has to supply a tcd threshold for which forest pixels to include in the results.
+sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/10km_output_aggregation/biomass_soil/standard/20191107/
 '''
 
 
@@ -60,10 +61,10 @@ def main():
     # tile_id_list = ['00N_110E'] # test tiles
     tile_id_list = 'all'
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # # tree cover density tiles-- necessary for filtering sums by tcd
+    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
@@ -82,8 +83,10 @@ def main():
 
         download_pattern_name = download_pattern[0]
 
-        # Downloads the model output tiles to be processed
-        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        print download_pattern_name
+
+        # # Downloads the model output tiles to be processed
+        # uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
@@ -91,6 +94,8 @@ def main():
         tile_id = 'XXXXXXXX'     # a dummy tile name. It is removed in the call to sensit_tile_rename
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
+
+        print pattern
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files
