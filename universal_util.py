@@ -323,10 +323,6 @@ def s3_folder_download(source, dest, sensit_type):
     # For the standard model, the standard folder is downloaded.
     else:
 
-        print "Now I'm here"
-        print source
-        print dest
-
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
         subprocess.check_call(cmd)

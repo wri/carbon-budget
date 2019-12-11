@@ -179,11 +179,11 @@ def main():
         std_aggreg_flux = glob.glob('net_flux*std*')[0]
         sensit_aggreg_flux = glob.glob('net_flux*{}*'.format(sensit_type))[0]
 
-        print std_aggreg_flux
-        print sensit_aggreg_flux
+        print "Standard model net flux:", std_aggreg_flux
+        print "Sensitivity model net flux:", sensit_aggreg_flux
 
         print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
-        aggregate_results_to_10_km.percent_diff(out_pattern, sensit_type)
+        aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
 
         uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
 
