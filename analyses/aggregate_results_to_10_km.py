@@ -235,7 +235,7 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
             std_window = std_src.read(1, window=window)
             sensit_window = sensit_src.read(1, window=window)
 
-            dst_data = np.full((window.height, window.width), 10, dtype='Byte')
+            dst_data = np.full((window.height, window.width), 10, dtype='int')
 
 
             dst_data[np.where((sensit_window >= 0) & (std_window >= 0))] = 1  # stays net source or neutral
