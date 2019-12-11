@@ -176,20 +176,26 @@ def main():
         # Copies the standard model aggregation outputs to s3
         uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
 
-        std_aggreg_flux = glob.glob('net_flux*std*')[0]
-        sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
+        try:
 
-        print "Standard model net flux:", std_aggreg_flux
-        print "Sensitivity model net flux:", sensit_aggreg_flux
+            std_aggreg_flux = glob.glob('net_flux*std*')[0]
+            sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
-        print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
-        aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+            print "Standard model net flux:", std_aggreg_flux
+            print "Sensitivity model net flux:", sensit_aggreg_flux
 
-        print output_dir_list
-        print cn.pattern_aggreg_perc_diff
-        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
+            print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
+            aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
 
-        os.remove(sensit_aggreg_flux)
+            print output_dir_list
+            print cn.pattern_aggreg_perc_diff
+            uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_perc_diff)
+
+            os.remove(sensit_aggreg_flux)
+
+        except:
+
+            print "One of the input flux tiles isn't valid."
 
 
 if __name__ == '__main__':
