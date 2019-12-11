@@ -142,35 +142,35 @@ def main():
         # # for tile in tile_list:
         # #
         # #     aggregate_results_to_10_km.aggregate(tile, thresh)
-
-        # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-        out_vrt = "{}_10km.vrt".format(pattern)
-        os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
-
-        # Creates the output name for the 10km map
-        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
-        print out_pattern
-
-        # Produces a single raster of all the 10x10 tiles (10 km resolution)
-        cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-               '-tr', '0.1', '0.1',
-               out_vrt, '{}.tif'.format(out_pattern)]
-        subprocess.check_call(cmd)
-
-        print "Tiles processed. Uploading to s3 now..."
-
-        # Uploads all output tiles to s3
-        uu.upload_final_set(output_dir_list[0], out_pattern)
-
-        # Cleans up the folder before starting on the next raster type
-        vrtList = glob.glob('*vrt')
-        for vrt in vrtList:
-            os.remove(vrt)
-
-        for tile_id in tile_list:
-            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-            # os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        #
+        # # Makes a vrt of all the output 10x10 tiles (10 km resolution)
+        # out_vrt = "{}_10km.vrt".format(pattern)
+        # os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
+        #
+        # # Creates the output name for the 10km map
+        # out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
+        # print out_pattern
+        #
+        # # Produces a single raster of all the 10x10 tiles (10 km resolution)
+        # cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
+        #        '-tr', '0.1', '0.1',
+        #        out_vrt, '{}.tif'.format(out_pattern)]
+        # subprocess.check_call(cmd)
+        #
+        # print "Tiles processed. Uploading to s3 now..."
+        #
+        # # Uploads all output tiles to s3
+        # uu.upload_final_set(output_dir_list[0], out_pattern)
+        #
+        # # Cleans up the folder before starting on the next raster type
+        # vrtList = glob.glob('*vrt')
+        # for vrt in vrtList:
+        #     os.remove(vrt)
+        #
+        # for tile_id in tile_list:
+        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+        #     # os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        # #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways
