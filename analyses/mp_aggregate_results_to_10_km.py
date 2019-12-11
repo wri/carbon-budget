@@ -65,10 +65,6 @@ def main():
     # # tree cover density tiles-- necessary for filtering sums by tcd
     # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
-    # Copies the standard model aggregation outputs to s3
-    uu.s3_flexible_download(std_net_flux, 'net_flux_{}'.format(cn.pattern_aggreg), '.', 'std', 'all')
-
-
     print "Model outputs to process are:", download_dict
 
     # List of output directories. Modified later for sensitivity analysis.
@@ -176,6 +172,9 @@ def main():
 
 
     if sensit_type != 'std':
+
+        # Copies the standard model aggregation outputs to s3
+        uu.s3_flexible_download(std_net_flux, 'net_flux_{}'.format(cn.pattern_aggreg), '.', 'std', 'all')
 
         print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
         aggregate_results_to_10_km.percent_diff(out_pattern, sensit_type)

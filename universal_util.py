@@ -261,11 +261,6 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
     # For downloading all tiles in a folder when the list of tiles can't be specified
     if tile_id_list == 'all':
-
-        print source_dir
-        print pattern
-        print dest
-
         s3_folder_download(source_dir, dest, sensit_type)
 
     # For downloading test tiles (five or fewer)
