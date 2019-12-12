@@ -454,7 +454,7 @@ pattern_aggreg = '10km_modelv1_1_2'
 pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
 pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
 
-output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191212/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191113/'.format(base_dir)
 
 
 # Tile summary spreadsheets
