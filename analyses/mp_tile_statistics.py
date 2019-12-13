@@ -147,6 +147,6 @@ for input in download_list:
         os.remove(outname)
         print "  Tiles deleted"
 
-    # Copies the text file to the location on s3 that the tiles are from
-    cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
-    subprocess.check_call(cmd)
+    # # Copies the text file to the location on s3 to the tile statistics directory
+    # cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
+    # subprocess.check_call(cmd)
