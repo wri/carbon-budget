@@ -367,7 +367,9 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
             natrl_forest_annual_gain_window = natrl_forest_annual_gain_src.read(1, window=window)
 
             # Loss pixels that also have gain pixels are treated differently from loss-only pixels.
-            # Calculates AGC in emission year for natural forest pixels that don't have gain and loss (excludes loss_gain_mask = 1).
+
+            # Calculates AGC in emission year for natural forest pixels that don't have gain and loss (i.e.
+            # (excludes loss_gain_mask = 1).
             # To do this, it adds all the accumulated carbon after 2000 to the carbon in 2000.
             natural_forest_non_gain_and_loss = (natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove) \
                                                  + (natrl_forest_cumul_AGCO2_gain_window / cn.c_to_co2)
