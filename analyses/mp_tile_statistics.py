@@ -80,17 +80,17 @@ download_list = [
                 # cn.soil_C_emis_year_2000_dir,
                 # cn.total_C_emis_year_dir
 
-                cn.net_flux_dir,
-                cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                cn.gross_emis_commod_biomass_soil_dir,
-                cn.gross_emis_shifting_ag_biomass_soil_dir,
-                cn.gross_emis_forestry_biomass_soil_dir,
-                cn.gross_emis_wildfire_biomass_soil_dir,
-                cn.gross_emis_urban_biomass_soil_dir,
-                cn.gross_emis_no_driver_biomass_soil_dir,
-                cn.gross_emis_nodes_biomass_soil_dir
+                # cn.net_flux_dir,
+                cn.gross_emis_all_gases_all_drivers_biomass_soil_dir
+                # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                # cn.gross_emis_commod_biomass_soil_dir,
+                # cn.gross_emis_shifting_ag_biomass_soil_dir,
+                # cn.gross_emis_forestry_biomass_soil_dir,
+                # cn.gross_emis_wildfire_biomass_soil_dir,
+                # cn.gross_emis_urban_biomass_soil_dir,
+                # cn.gross_emis_no_driver_biomass_soil_dir,
+                # cn.gross_emis_nodes_biomass_soil_dir
 
                 # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                 # cn.gross_emis_co2_only_all_drivers_soil_only_dir,
@@ -123,7 +123,7 @@ for input in download_list:
 
     # For multiprocessor use.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=9)
+    pool = multiprocessing.Pool(processes=13)
     # processes=9 maxes out at about 340 for gross emissions
     # processes=13 maxes out at above 480 for gross emissions
     # processes=11 maxes out at about 440 for gross emissions
