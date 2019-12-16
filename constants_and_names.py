@@ -491,22 +491,22 @@ model_type_arg_help = 'Argument for whether the model is being run in standard f
             sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
 
 name_FIA_regions_raw = 'FIA_regions_dissolve_20191210.zip'
-FIA_regions_raw_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/FIA_region/raw/'
+FIA_regions_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/FIA_region/raw/')
 
 pattern_FIA_regions_processed = 'FIA_regions_processed'
-FIA_regions_processed_dir = 's3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/FIA_region/processed/20191216/'
+FIA_regions_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/FIA_region/processed/20191216/')
 
 name_FIA_forest_group_raw = 'FIA_forest_group_raw.tif'
-FIA_forest_group_raw_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_group/raw/'
+FIA_forest_group_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_group/raw/')
 
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
-FIA_forest_group_processed_dir = 's3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_group/processed/20191216/'
+FIA_forest_group_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_group/processed/20191216/')
 
 name_US_forest_age_cat_raw = 'US_forest_age_category_20191216.tif'
-US_forest_age_cat_raw_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_age_category/raw/'
+US_forest_age_cat_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/raw/')
 
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
-US_forest_age_cat_processed_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_age_category/processed/20191216/'
+US_forest_age_cat_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/processed/20191216/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_US_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
@@ -515,6 +515,9 @@ US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_A
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests using US-specific removal rates
 pattern_US_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
 US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191216/')
+
+table_US_removal_rate = '.csv'
+US_removal_rate_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/')
 
 
 

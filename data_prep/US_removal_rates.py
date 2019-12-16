@@ -18,7 +18,7 @@ def prep_FIA_regions(tile_id):
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print "Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id
+    print "Rasterizing FIA region shapefile", tile_id
     uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
                    "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
                         xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
