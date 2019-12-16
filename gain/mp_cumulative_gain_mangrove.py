@@ -13,13 +13,11 @@ import universal_util as uu
 
 def main ():
 
-    # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
-    # changed for a sensitivity analysis. This does not need to change based on what run is being done;
-    # this assignment should be true for all sensitivity analyses and the standard model.
+    # Files to download for this script.
     download_dict = {
-        cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove, 'false'],
-        cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove, 'false'],
-        cn.gain_year_count_mangrove_dir: [cn.pattern_gain_year_count_mangrove, 'true']
+        cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
+        cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
+        cn.gain_year_count_mangrove_dir: [cn.pattern_gain_year_count_mangrove]
     }
 
 
@@ -50,8 +48,7 @@ def main ():
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
-        sensit_use = values[1]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, '.', tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed

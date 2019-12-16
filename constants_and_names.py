@@ -229,15 +229,15 @@ annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/standard/20191016/')
+annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/standard/20191216/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/standard/20191016/')
+annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/standard/20191216/')
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGB_BGB_all_types = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191104/')
+annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191216/')
 
 
 ### Cumulative carbon dioxide gain rates
@@ -489,3 +489,24 @@ model_type_arg_help = 'Argument for whether the model is being run in standard f
                       '{6} = Use US-specific removals. {7} = Remove plantations from the model.'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
             sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
+
+name_FIA_regions_raw = 'FIA_regions_dissolve_20191210.zip'
+FIA_regions_raw_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/FIA_region/raw/'
+
+pattern_FIA_regions_processed = 'FIA_regions_processed'
+FIA_regions_processed_dir = 's3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/FIA_region/processed/20191216/'
+
+name_FIA_forest_group_raw = 'FIA_forest_group_raw.tif'
+FIA_forest_group_raw_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_group/raw/'
+
+pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
+FIA_forest_group_processed_dir = 's3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_group/processed/20191216/'
+
+name_US_forest_age_cat_raw = 'US_forest_age_category_20191216.tif'
+US_forest_age_cat_raw_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_age_category/raw/'
+
+pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
+US_forest_age_cat_processed_dir ='s3://gfw2-data/climate/carbon_model/sensit_analysis_US_removals/forest_age_category/processed/20191216/'
+
+
+

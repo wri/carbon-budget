@@ -62,7 +62,6 @@ def main ():
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
-        sensit_use = values[1]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, sensit_use, tile_id_list)
 
 

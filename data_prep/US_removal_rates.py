@@ -1,12 +1,3 @@
-### This script creates tiles of natural non-mangrove forest age category according to a decision tree.
-### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
-### The decision tree uses several input tiles, including IFL status, gain, and loss.
-### Downloading all of these tiles can take awhile.
-### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
-### The output tiles have 10 possible values, each value representing an end of the decision tree.
-### These 10 values map to the three forest age categories.
-### The forest age category tiles are inputs for assigning gain rates to pixels.
-
 import datetime
 import numpy as np
 import os
@@ -15,6 +6,41 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+
+# Creates Hansen tiles out of FIA region shapefile
+def prep_FIA_regions(tile_id):
+
+    print "Creating Hansen tile for FIA regions"
+
+    # Start time
+    start = datetime.datetime.now()
+
+    print "Getting extent of", tile_id
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+
+    print "Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id
+    uu.rasterize('fao_ecozones_bor_tem_tro.shp',
+                   "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
+                        xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
+
+    print "Checking if {} contains any data...".format(tile_id)
+    stats = uu.check_for_data("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+
+    if stats[0] > 0:
+
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        uu.upload_final(cn.FIA_regions_processed_dir, tile_id, cn.pattern_FIA_regions_processed)
+        print "    Tile copied to s3"
+
+    else:
+
+        print "  No data found. Deleting {}.".format(tile_id)
+        os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
+
+
 
 def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 

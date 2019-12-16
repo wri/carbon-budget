@@ -3,6 +3,9 @@ import glob
 import constants_and_names as cn
 import datetime
 import os
+import multiprocessing
+from multiprocessing.pool import Pool
+from functools import partial
 from shutil import copy
 import re
 import pandas as pd
@@ -458,11 +461,44 @@ def end_of_fx_summary(start, tile_id, pattern):
     count_completed_tiles(pattern)
 
 
+# Warps raster to Hansen tiles using multiple processors
+def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
+
+    # Start time
+    start = datetime.datetime.now()
+
+    print "Getting extent of", tile_id
+    xmin, ymin, xmax, ymax = coords(tile_id)
+
+    out_file = '{0}_{1}.tif'.format(tile_id, out_pattern)
+
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
+            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_file]
+    subprocess.check_call(cmd)
+
+    end_of_fx_summary(start, tile_id, out_pattern)
+
+
 def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
     subprocess.check_call(cmd)
+
+
+# Rasterizes the shapefile within the bounding coordinates of a tile
+def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_field=None, anodata=None):
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+
+           # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
+           anodata, in_shape, out_tif]
+
+    subprocess.check_call(cmd)
+
+    return out_tif
 
 
 # Creates a tile of all 0s for any tile passed to it.
