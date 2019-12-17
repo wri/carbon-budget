@@ -29,7 +29,7 @@ uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), '.
 uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), '.') # Raster of the most likely soil group
 
 # Unzips the Jukka peat shapefile (IDN and MYS)
-cmd = ['unzip', '-j', cn.jukka_peat_zip]
+cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
 subprocess.check_call(cmd)
 
 jukka_tif = 'jukka_peat.tif'

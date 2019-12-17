@@ -17,7 +17,7 @@ uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomas
 
 # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
 # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
-cmd = ['unzip', '-j', cn.mangrove_biomass_raw_file]
+cmd = ['unzip', '-o', '-j', cn.mangrove_biomass_raw_file]
 subprocess.check_call(cmd)
 
 # Creates vrt of all raw mangrove tifs
