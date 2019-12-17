@@ -59,51 +59,51 @@ def main ():
         pool.map(US_removal_rates.prep_FIA_regions, tile_id_list)
 
 
-    # List of FIA region tiles on the spot machine. Only these are used for the rest of the script.
-    US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
-    US_tile_id_list = [i[0:8] for i in US_tile_list]
-    print US_tile_id_list
-
-
-    # Counts how many processed FIA region tiles there are on s3 already.
-    FIA_forest_group_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
-
-    # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    if FIA_forest_group_tile_count == 14:
-        print "FIA forest group tiles already created. Copying to spot machine now..."
-        uu.s3_flexible_download(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed, '', 'std', US_tile_id_list)
-
-    else:
-        print "FIA forest group tiles do not exist. Creating tiles, then copying to s3 for future use..."
-        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), '.', 'std')
-
-        # Converts the national forest grou raster to Hansen forest group tiles
-        source_raster = cn.name_FIA_forest_group_raw
-        out_pattern = cn.pattern_FIA_forest_group_processed
-        dt = 'Byte'
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-
-
-    # Counts how many processed FIA region tiles there are on s3 already.
-    US_age_tile_count = uu.count_tiles_s3(cn.US_forest_age_cat_processed_dir)
-
-    # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    if US_age_tile_count == 14:
-        print "Southern forest age category tiles already created. Copying to spot machine now..."
-        uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
-                                '', 'std', US_tile_id_list)
-
-    else:
-        print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
-        uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
-
-        # Converts the national forest age category raster to Hansen tiles
-        source_raster = cn.name_US_forest_age_cat_raw
-        out_pattern = cn.pattern_US_forest_age_cat_processed
-        dt = 'Int16'
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # # List of FIA region tiles on the spot machine. Only these are used for the rest of the script.
+    # US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
+    # US_tile_id_list = [i[0:8] for i in US_tile_list]
+    # print US_tile_id_list
+    #
+    #
+    # # Counts how many processed FIA region tiles there are on s3 already.
+    # FIA_forest_group_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
+    #
+    # # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
+    # if FIA_forest_group_tile_count == 14:
+    #     print "FIA forest group tiles already created. Copying to spot machine now..."
+    #     uu.s3_flexible_download(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed, '', 'std', US_tile_id_list)
+    #
+    # else:
+    #     print "FIA forest group tiles do not exist. Creating tiles, then copying to s3 for future use..."
+    #     uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), '.', 'std')
+    #
+    #     # Converts the national forest grou raster to Hansen forest group tiles
+    #     source_raster = cn.name_FIA_forest_group_raw
+    #     out_pattern = cn.pattern_FIA_forest_group_processed
+    #     dt = 'Byte'
+    #     pool = multiprocessing.Pool(count/2)
+    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    #
+    #
+    # # Counts how many processed FIA region tiles there are on s3 already.
+    # US_age_tile_count = uu.count_tiles_s3(cn.US_forest_age_cat_processed_dir)
+    #
+    # # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
+    # if US_age_tile_count == 14:
+    #     print "Southern forest age category tiles already created. Copying to spot machine now..."
+    #     uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
+    #                             '', 'std', US_tile_id_list)
+    #
+    # else:
+    #     print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
+    #     uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
+    #
+    #     # Converts the national forest age category raster to Hansen tiles
+    #     source_raster = cn.name_US_forest_age_cat_raw
+    #     out_pattern = cn.pattern_US_forest_age_cat_processed
+    #     dt = 'Int16'
+    #     pool = multiprocessing.Pool(count/2)
+    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
 
     # US_tile_id_list = '40N_100W'
