@@ -51,7 +51,7 @@ def main ():
         print "FIA region tiles do not exist. CCreating tiles, then copying to s3 for future use..."
         uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), '.', 'std')
 
-        cmd = ['unzip', '-j', cn.name_FIA_regions_raw]
+        cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
         subprocess.check_call(cmd)
 
         # Converts the region shapefile to Hansen tiles

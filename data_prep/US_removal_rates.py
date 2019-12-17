@@ -28,16 +28,16 @@ def prep_FIA_regions(tile_id):
     print "Checking if {} contains any data...".format(tile_id)
     stats = uu.check_for_data("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
-    # if stats[0] > 0:
-    #
-    #     print "  Data found in {}. Copying tile to s3...".format(tile_id)
-    #     uu.upload_final(cn.FIA_regions_processed_dir, tile_id, cn.pattern_FIA_regions_processed)
-    #     print "    Tile copied to s3"
-    #
-    # else:
-    #
-    #     print "  No data found. Deleting {}.".format(tile_id)
-    #     os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+    if stats[0] > 0:
+
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        uu.upload_final(cn.FIA_regions_processed_dir, tile_id, cn.pattern_FIA_regions_processed)
+        print "    Tile copied to s3"
+
+    else:
+
+        print "  No data found. Deleting {}.".format(tile_id)
+        os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
