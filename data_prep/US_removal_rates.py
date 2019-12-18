@@ -19,25 +19,27 @@ def prep_FIA_regions(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
 
-    print "Rasterizing FIA region shapefile", tile_id
-    uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
-                   "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
-                        xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
+    # print "Rasterizing FIA region shapefile", tile_id
+    # uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
+    #                "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
+    #                     xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
 
     print "Checking if {} contains any data...".format(tile_id)
-    is__data = uu.local_src_is_empty("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
-    print is__data
+    no__data = uu.local_src_is_empty("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+    print no__data
 
-    if is__data:
+    if no__data:
+
+        print "  No data found. Deleting {}.".format(tile_id)
+        # os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+
+    else:
 
         print "  Data found in {}. Copying tile to s3...".format(tile_id)
         uu.upload_final(cn.FIA_regions_processed_dir, tile_id, cn.pattern_FIA_regions_processed)
         print "    Tile copied to s3"
 
-    else:
 
-        print "  No data found. Deleting {}.".format(tile_id)
-        # os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
