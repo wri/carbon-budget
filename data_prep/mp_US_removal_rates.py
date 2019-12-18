@@ -23,7 +23,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_natrl_forest_dir)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-    # tile_id_list = ['40N_130W', '00N_110E'] # test tiles
+    tile_id_list = ['50N_070W'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -43,7 +43,7 @@ def main ():
     FIA_regions_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
 
     # Only creates FIA region tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    if FIA_regions_tile_count == 14:
+    if FIA_regions_tile_count == 15:
         print "FIA region tiles already created. Copying to s3 now..."
         uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, '.', 'std', tile_id_list)
 
@@ -64,12 +64,14 @@ def main ():
     US_tile_id_list = [i[0:8] for i in US_tile_list]
     print US_tile_id_list
 
+    US_tile_id_list = '50N_070W'
+
 
     # Counts how many processed FIA region tiles there are on s3 already.
     US_age_tile_count = uu.count_tiles_s3(cn.US_forest_age_cat_processed_dir)
 
     # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    if US_age_tile_count == 14:
+    if US_age_tile_count == 15:
         print "Forest age category tiles already created. Copying to spot machine now..."
         uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
                                 '', 'std', US_tile_id_list)
@@ -92,7 +94,7 @@ def main ():
     # FIA_forest_group_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
     #
     # # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    # if FIA_forest_group_tile_count == 14:
+    # if FIA_forest_group_tile_count == 15:
     #     print "FIA forest group tiles already created. Copying to spot machine now..."
     #     uu.s3_flexible_download(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed, '', 'std', US_tile_id_list)
     #
