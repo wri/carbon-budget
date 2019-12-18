@@ -431,7 +431,6 @@ def check_for_data(out_tile):
 
 
 def local_src_is_empty(tile):
-    print "Check if tile {} is empty".format(tile)
     with rasterio.open(tile) as img:
         msk = img.read_masks(1).astype(bool)
     if msk[msk].size == 0:
