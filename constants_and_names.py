@@ -502,7 +502,7 @@ FIA_forest_group_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/f
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_group/processed/20191216/')
 
-name_US_forest_age_cat_raw = 'US_forest_age_category_20191216.tif'
+name_US_forest_age_cat_raw = 'stand_age_category_all_US_reclass_focal_composite_20191217.tif'
 US_forest_age_cat_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/raw/')
 
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'

@@ -2,6 +2,7 @@ import subprocess
 import glob
 import constants_and_names as cn
 import datetime
+import rasterio
 import os
 import multiprocessing
 from multiprocessing.pool import Pool
@@ -427,6 +428,18 @@ def check_for_data(out_tile):
     print "  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3])
 
     return stats
+
+
+def local_src_is_empty(tile):
+    print "Check if tile {} is empty".format(tile)
+    with rasterio.open(tile) as img:
+        msk = img.read_masks(1).astype(bool)
+    if msk[msk].size == 0:
+        print "Tile {} is empty".format(tile)
+        return True
+    else:
+        print "Tile {} is not empty".format(tile)
+        return False
 
 
 # Prints the number of tiles that have been processed so far
