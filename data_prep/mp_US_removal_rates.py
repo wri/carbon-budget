@@ -45,7 +45,7 @@ def main ():
     # Only creates FIA region tiles if they don't already exist on s3. 13 tiles cover the continental US.
     if FIA_regions_tile_count == 14:
         print "FIA region tiles already created. Copying to s3 now..."
-        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, '', 'std', tile_id_list)
+        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, '.', 'std', tile_id_list)
 
     else:
         print "FIA region tiles do not exist. CCreating tiles, then copying to s3 for future use..."
