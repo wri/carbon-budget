@@ -25,7 +25,7 @@ def prep_FIA_regions(tile_id):
                         xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
 
     print "Checking if {} contains any data...".format(tile_id)
-    no_data = uu.local_src_is_empty("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+    no_data = uu.check_for_data("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     if no_data:
 

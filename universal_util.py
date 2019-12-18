@@ -418,7 +418,8 @@ def upload_final(upload_dir, tile_id, pattern):
         print "Error uploading output tile"
 
 
-def check_for_data(out_tile):
+# This version of checking for data is bad because it can miss tiles that have very little data in them
+def check_for_data_old(out_tile):
 
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find min, max
@@ -430,7 +431,8 @@ def check_for_data(out_tile):
     return stats
 
 
-def local_src_is_empty(tile):
+# This version of checking for data in a tile is more robust
+def check_for_data(tile):
     with rasterio.open(tile) as img:
         msk = img.read_masks(1).astype(bool)
     if msk[msk].size == 0:

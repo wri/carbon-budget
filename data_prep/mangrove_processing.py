@@ -25,7 +25,7 @@ def create_mangrove_tiles(tile_id):
     print "  Tile created"
 
     print "Checking if {} contains any data...".format(tile_id)
-    no_data = uu.local_src_is_empty(out_tile)
+    no_data = uu.check_for_data(out_tile)
 
     if no_data:
 
