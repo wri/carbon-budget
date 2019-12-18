@@ -77,7 +77,7 @@ def main ():
                                 '', 'std', US_tile_id_list)
 
     else:
-        print "Southern fForest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
+        print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
         uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
 
         # Converts the national forest age category raster to Hansen tiles
