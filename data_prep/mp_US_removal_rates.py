@@ -70,12 +70,12 @@ def main ():
 
     # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
     if US_age_tile_count == 14:
-        print "Southern forest age category tiles already created. Copying to spot machine now..."
+        print "Forest age category tiles already created. Copying to spot machine now..."
         uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
                                 '', 'std', US_tile_id_list)
 
     else:
-        print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
+        print "Southern fForest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
         uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
 
         # Converts the national forest age category raster to Hansen tiles
@@ -83,7 +83,7 @@ def main ():
         out_pattern = cn.pattern_US_forest_age_cat_processed
         dt = 'Int16'
         pool = multiprocessing.Pool(count/2)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
 
         uu.upload_final_set(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed)
 
@@ -105,7 +105,7 @@ def main ():
     #     out_pattern = cn.pattern_FIA_forest_group_processed
     #     dt = 'Byte'
     #     pool = multiprocessing.Pool(count/2)
-    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
     #
     #
     # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -135,7 +135,7 @@ def main ():
     # count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=26)
     # pool.map(partial(US_removal_rates.forest_age_category, gain_table_dict=gain_table_dict,
-    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
     # pool.close()
     # pool.join()
     # #
