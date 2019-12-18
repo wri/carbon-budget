@@ -479,8 +479,6 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     # Start time
     start = datetime.datetime.now()
 
-    print "tile id is", tile_id
-
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = coords(tile_id)
 
