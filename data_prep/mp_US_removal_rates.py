@@ -1,3 +1,4 @@
+import multiprocessing
 from multiprocessing.pool import Pool
 from functools import partial
 import US_removal_rates
