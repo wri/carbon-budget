@@ -506,7 +506,7 @@ name_US_forest_age_cat_raw = 'stand_age_category_all_US_reclass_focal_composite_
 US_forest_age_cat_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/raw/')
 
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
-US_forest_age_cat_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/processed/20191216/')
+US_forest_age_cat_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/processed/20191218/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_US_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'

@@ -25,17 +25,19 @@ def create_mangrove_tiles(tile_id):
     print "  Tile created"
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = uu.check_for_data(out_tile)
+    no_data = uu.local_src_is_empty(out_tile)
 
-    if stats[0] > 0:
+    if no_data:
+
+        print "  No data found. Not copying {}.".format(tile_id)
+
+    else:
 
         print "  Data found in {}. Copying tile to s3...".format(tile_id)
         uu.upload_final(cn.mangrove_biomass_2000_dir, tile_id, cn.pattern_mangrove_biomass_2000)
         print "    Tile copied to s3"
 
-    else:
 
-        print "  No data found. Not copying {}.".format(tile_id)
 
 
 
