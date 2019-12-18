@@ -17,16 +17,16 @@ def prep_FIA_regions(tile_id):
 
     print "Getting extent of", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    print "  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
 
 
-    # print "Rasterizing FIA region shapefile", tile_id
-    # uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
-    #                "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
-    #                     xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
+    print "Rasterizing FIA region shapefile", tile_id
+    uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
+                   "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
+                        xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
 
     print "Checking if {} contains any data...".format(tile_id)
     is__data = uu.local_src_is_empty("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+    print is__data
 
     if is__data:
 
@@ -37,7 +37,7 @@ def prep_FIA_regions(tile_id):
     else:
 
         print "  No data found. Deleting {}.".format(tile_id)
-        os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
+        # os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
