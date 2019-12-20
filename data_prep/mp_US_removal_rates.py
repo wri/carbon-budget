@@ -137,6 +137,7 @@ def main ():
 
     # Creates a unique value for each continent-ecozone-age category
     gain_table_group_region_age = gain_table_group_region_by_age.replace({"variable": age_dict})
+    gain_table_group_region_age['age_cat'] = gain_table_group_region_age['variable']
     print gain_table_group_region_age
 
 
