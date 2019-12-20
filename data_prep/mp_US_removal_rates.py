@@ -143,8 +143,12 @@ def main ():
     # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
     gain_table_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.combined).to_dict()
 
+    print gain_table_dict
+
     # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
     gain_table_dict[0] = 0
+
+    print gain_table_dict
 
 
 
