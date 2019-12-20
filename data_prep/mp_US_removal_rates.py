@@ -14,9 +14,7 @@ import universal_util as uu
 def main ():
 
     # Files to download for this script.
-    download_dict = {cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
-                     cn.gain_dir: [cn.pattern_gain],
-                     cn.tcd_dir: [cn.pattern_tcd],
+    download_dict = {cn.gain_dir: [cn.pattern_gain],
                      cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
     }
 
@@ -133,12 +131,22 @@ def main ():
     gain_table_group_region_by_age = gain_table_group_region_by_age.dropna()
 
     # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
-    age_dict = {'growth_young': 10000, 'growth_middle': 20000, 'growth_old': 30000}
+    age_dict = {'growth_young': 1000, 'growth_middle': 2000, 'growth_old': 3000}
 
     # Creates a unique value for each continent-ecozone-age category
     gain_table_group_region_age = gain_table_group_region_by_age.replace({"variable": age_dict})
-    gain_table_group_region_age['age_cat'] = gain_table_group_region_age['variable']
-    print gain_table_group_region_age
+    gain_table_group_region_age['age_cat'] = gain_table_group_region_age['variable']*10
+    gain_table_group_region_age['combined'] = gain_table_group_region_age['age_cat'] + \
+                                              gain_table_group_region_age['forest_group_code']*100 + \
+                                              gain_table_group_region_age['FIA_region_code']
+
+    # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+    gain_table_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.combined).to_dict()
+
+    # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
+    gain_table_dict[0] = 0
+
+
 
 
     # # Creates a single filename pattern to pass to the multiprocessor call
@@ -148,7 +156,7 @@ def main ():
     # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
     # pool = multiprocessing.Pool(count/2)
-    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age=gain_table_group_region_age,
+    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
     #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
     # pool.close()
     # pool.join()
