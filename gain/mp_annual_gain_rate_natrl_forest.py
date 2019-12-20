@@ -1,4 +1,4 @@
-### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
+  ### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
 ### (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to non-mangrove natural forest pixels.
 ### It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies

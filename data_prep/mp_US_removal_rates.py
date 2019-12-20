@@ -39,57 +39,57 @@ def main ():
     count = multiprocessing.cpu_count()
 
 
-    # Counts how many processed FIA region tiles there are on s3 already.
-    FIA_regions_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
-
-    # Only creates FIA region tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    if FIA_regions_tile_count == 16:
-        print "FIA region tiles already created. Copying to s3 now..."
-        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, '.', 'std', tile_id_list)
-
-    else:
-        print "FIA region tiles do not exist. CCreating tiles, then copying to s3 for future use..."
-        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), '.', 'std')
-
-        cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
-        subprocess.check_call(cmd)
-
-        # Converts the region shapefile to Hansen tiles
-        pool = multiprocessing.Pool(count/2)
-        pool.map(US_removal_rates.prep_FIA_regions, tile_id_list)
-
-
-    # List of FIA region tiles on the spot machine. Only these are used for the rest of the script.
-    US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
-    US_tile_id_list = [i[0:8] for i in US_tile_list]
-    print US_tile_id_list
-
-    US_tile_id_list = ['30N_110W']
-
-
-    # Counts how many processed FIA region tiles there are on s3 already.
-    US_age_tile_count = uu.count_tiles_s3(cn.US_forest_age_cat_processed_dir)
-
-    # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
-    if US_age_tile_count == 16:
-        print "Forest age category tiles already created. Copying to spot machine now..."
-        uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
-                                '', 'std', US_tile_id_list)
-
-    else:
-        print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
-        uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
-
-        # Converts the national forest age category raster to Hansen tiles
-        source_raster = cn.name_US_forest_age_cat_raw
-        out_pattern = cn.pattern_US_forest_age_cat_processed
-        dt = 'Int16'
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
-
-        uu.upload_final_set(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed)
-
-
+    # # Counts how many processed FIA region tiles there are on s3 already.
+    # FIA_regions_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
+    #
+    # # Only creates FIA region tiles if they don't already exist on s3. 13 tiles cover the continental US.
+    # if FIA_regions_tile_count == 16:
+    #     print "FIA region tiles already created. Copying to s3 now..."
+    #     uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, '.', 'std', tile_id_list)
+    #
+    # else:
+    #     print "FIA region tiles do not exist. CCreating tiles, then copying to s3 for future use..."
+    #     uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), '.', 'std')
+    #
+    #     cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
+    #     subprocess.check_call(cmd)
+    #
+    #     # Converts the region shapefile to Hansen tiles
+    #     pool = multiprocessing.Pool(count/2)
+    #     pool.map(US_removal_rates.prep_FIA_regions, tile_id_list)
+    #
+    #
+    # # List of FIA region tiles on the spot machine. Only these are used for the rest of the script.
+    # US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
+    # US_tile_id_list = [i[0:8] for i in US_tile_list]
+    # print US_tile_id_list
+    #
+    # US_tile_id_list = ['30N_110W']
+    #
+    #
+    # # Counts how many processed FIA region tiles there are on s3 already.
+    # US_age_tile_count = uu.count_tiles_s3(cn.US_forest_age_cat_processed_dir)
+    #
+    # # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
+    # if US_age_tile_count == 16:
+    #     print "Forest age category tiles already created. Copying to spot machine now..."
+    #     uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
+    #                             '', 'std', US_tile_id_list)
+    #
+    # else:
+    #     print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
+    #     uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
+    #
+    #     # Converts the national forest age category raster to Hansen tiles
+    #     source_raster = cn.name_US_forest_age_cat_raw
+    #     out_pattern = cn.pattern_US_forest_age_cat_processed
+    #     dt = 'Int16'
+    #     pool = multiprocessing.Pool(count/2)
+    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
+    #
+    #     uu.upload_final_set(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed)
+    #
+    #
     # # Counts how many processed FIA region tiles there are on s3 already.
     # FIA_forest_group_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
     #
@@ -115,39 +115,51 @@ def main ():
     #     dir = key
     #     pattern = values[0]
     #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, US_tile_id_list)
-    #
-    #
-    # # If the model run isn't the standard one, the output directory and file names are changed
-    # if sensit_type != 'std':
-    #     print "Changing output directory and file name pattern based on sensitivity analysis"
-    #     output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-    #     output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-    #
-    #
-    #  # Table with IPCC Table 4.9 default gain rates
-    # uu.s3_file_download(os.path.join(cn.US_removal_rate_dir, cn.table_US_removal_rate), '.', 'US_removals')
-    #
-    #
+
+
+
+    # Table with IPCC Table 4.9 default gain rates
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), '.']
+    subprocess.check_call(cmd)
+
+    # Imports the table with the ecozone-continent codes and the carbon gain rates
+    gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
+                               sheet_name="US_rates_for_model")
+
+    # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
+    gain_table_group_region_by_age = pd.melt(gain_table, id_vars=['FIA_region_code', 'forest_group_code'],
+                                      value_vars=['growth_young', 'growth_middle',
+                                                  'growth_old'])
+    gain_table_group_region_by_age = gain_table_group_region_by_age.dropna()
+
+    # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
+    age_dict = {'growth_young': 10000, 'growth_middle': 20000, 'growth_old': 30000}
+
+    # Creates a unique value for each continent-ecozone-age category
+    gain_table_group_region_age = gain_table_group_region_by_age.replace({"variable": age_dict})
+    print gain_table_group_region_age
+
+
     # # Creates a single filename pattern to pass to the multiprocessor call
     # pattern = output_pattern_list[0]
     #
     # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # With processes=30, peak usage was about 350 GB
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=26)
-    # pool.map(partial(US_removal_rates.forest_age_category, gain_table_dict=gain_table_dict,
+    # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age=gain_table_group_region_age,
     #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
     # pool.close()
     # pool.join()
-    # #
-    # # # # For single processor use
-    # # # for tile in tile_id_list:
-    # # #
-    # # #     forest_age_category_natrl_forest.forest_age_category(tile, gain_table_dict, pattern, sensit_type)
-    # #
-    # # # Uploads output tiles to s3
-    # # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+    # # For single processor use
+    # for tile_id in US_tile_id_list:
+    #
+    #     US_removal_rates.annual_gain_rate(tile, sensit_type)
+
+    # Uploads output tiles to s3
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

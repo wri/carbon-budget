@@ -42,8 +42,7 @@ def prep_FIA_regions(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
 
 
-
-def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
+def US_removal_rate_calc(tile_id, gain_table_group_region_age, pattern, sensit_type):
 
     print "Assigning forest age categories:", tile_id
 

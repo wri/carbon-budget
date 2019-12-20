@@ -87,7 +87,7 @@ mangrove_biomass_2000_dir = os.path.join(base_dir, 'mangrove_biomass/processed/2
 ######
 
 # Spreadsheet with annual gain rates
-gain_spreadsheet_dir = os.path.join(base_dir)
+gain_spreadsheet_dir = os.path.join(base_dir, 'removal_rate_tables')
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190903.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
@@ -508,16 +508,17 @@ US_forest_age_cat_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
 US_forest_age_cat_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/processed/20191218/')
 
+table_US_removal_rate = 'US_removal_rates_flux_model_20191220.xlsx.csv'
+US_removal_rate_dir = os.path.join(base_dir, 'removal_rate_tables/')
+
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_US_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20191216/')
+US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20191220/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests using US-specific removal rates
 pattern_US_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191216/')
+US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191220/')
 
-table_US_removal_rate = '.csv'
-US_removal_rate_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/')
 
 
 
