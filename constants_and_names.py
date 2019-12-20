@@ -508,7 +508,7 @@ US_forest_age_cat_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
 US_forest_age_cat_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_age_category/processed/20191218/')
 
-table_US_removal_rate = 'US_removal_rates_flux_model_20191220.xlsx.csv'
+table_US_removal_rate = 'US_removal_rates_flux_model_20191220.xlsx'
 US_removal_rate_dir = os.path.join(base_dir, 'removal_rate_tables/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
