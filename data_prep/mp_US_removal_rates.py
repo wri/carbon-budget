@@ -140,6 +140,8 @@ def main ():
                                               gain_table_group_region_age['forest_group_code']*100 + \
                                               gain_table_group_region_age['FIA_region_code']
 
+    print gain_table_group_region_age
+
     # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
     gain_table_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.combined).to_dict()
 
