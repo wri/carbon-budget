@@ -42,7 +42,7 @@ def prep_FIA_regions(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
 
 
-def US_removal_rate_calc(tile_id, gain_table_group_age_region_dict, gain_table_group_region_dict, output_pattern_list, sensit_type):
+def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict, output_pattern_list, sensit_type):
 
     print "Assigning US removal rates:", tile_id
 
@@ -119,7 +119,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_age_region_dict, gain_table_g
 
             # Applies the dictionary of region-age-group gain rates to the region-age-group array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
-            for key, value in gain_table_group_age_region_dict.iteritems():
+            for key, value in gain_table_group_region_age_dict.iteritems():
                 agb_without_gain_pixel_window[group_region_age_combined_window == key] = value
 
             # print agb_dst_window[0][1:50]

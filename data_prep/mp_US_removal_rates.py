@@ -174,7 +174,7 @@ def main ():
 
     # For single processor use
     for tile_id in US_tile_id_list:
-
+    
         US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
                                               output_pattern_list, sensit_type)
 
