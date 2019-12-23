@@ -135,30 +135,33 @@ def main ():
     # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
     age_dict = {'growth_young': 1000, 'growth_middle': 2000, 'growth_old': 3000}
 
-    # Creates a unique value for each continent-ecozone-age category
+    # Creates a unique value for each forest group-region-age category.
+    # Although these rates are applied to all standard gain model pixels at first, they are not ultimately used for
+    # pixels that have Hansen gain (see below).
     gain_table_group_region_age = gain_table_group_region_by_age.replace({"variable": age_dict})
     gain_table_group_region_age['age_cat'] = gain_table_group_region_age['variable']*10
     gain_table_group_region_age['group_region_age_combined'] = gain_table_group_region_age['age_cat'] + \
                                               gain_table_group_region_age['forest_group_code']*100 + \
                                               gain_table_group_region_age['FIA_region_code']
-    # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+    # Converts the forest group-region-age codes and corresponding gain rates to a dictionary
     gain_table_group_region_age_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.group_region_age_combined).to_dict()
-    # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
+    # Adds a dictionary entry for where the group-region-age code is 0 or 100 (not an assigned combination)
     gain_table_group_region_age_dict[0] = 0
+    gain_table_group_region_age_dict[100] = 100
     print gain_table_group_region_age_dict
 
 
+    # Creates a unique value for each forest group-region category using just young forest rates.
+    # These are assigned to Hansen gain pixels, which automatically get the young forest rate, regardless of the
+    # forest age category raster.
     gain_table_group_region = gain_table_group_region_age.drop(gain_table_group_region_age[gain_table_group_region_age.age_cat != 10000].index)
     gain_table_group_region['group_region_combined'] = gain_table_group_region['forest_group_code']*100 + \
                                                        gain_table_group_region['FIA_region_code']
-    print gain_table_group_region
-
-    # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+    # Converts the forest group-region codes and corresponding gain rates to a dictionary
     gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
-
-    # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
+    # Adds a dictionary entry for where the group-region code is 0 or 100 (not an assigned combination)
     gain_table_group_region_dict[0] = 0
-
+    gain_table_group_region_dict[100] = 100
     print gain_table_group_region_dict
 
 
