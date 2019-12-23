@@ -229,15 +229,15 @@ annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/standard/20191023/')
+annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/standard/20191016/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/standard/20191023/')
+annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/standard/20191016/')
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGB_BGB_all_types = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191223/')
+annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191220/')
 
 
 ### Cumulative carbon dioxide gain rates
@@ -513,11 +513,11 @@ US_removal_rate_dir = os.path.join(base_dir, 'removal_rate_tables/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_US_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20191220/')
+US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20191223/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests using US-specific removal rates
 pattern_US_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191220/')
+US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191223/')
 
 
 
