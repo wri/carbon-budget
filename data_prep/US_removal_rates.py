@@ -86,6 +86,8 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             US_forest_group_window = US_forest_group_src.read(1, window=window)
             US_region_window = US_region_src.read(1, window=window)
 
+            print annual_gain_standard_window[0][1:100]
+
             # Create a 0s array for the output
             dst_data = np.zeros((window.height, window.width), dtype='float32')
             print dst_data[0][1:100]
