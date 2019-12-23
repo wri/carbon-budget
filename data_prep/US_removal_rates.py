@@ -75,6 +75,7 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
 
         # Opens the output tile, giving it the arguments of the input tiles
         dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
+        print pattern
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
