@@ -114,9 +114,9 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
 
             print agb_dst_window[0][1:50]
 
-            bgb_dst_window = bgb_dst_window * cn.biomass_to_c_non_mangrove
+            bgb_dst_calc_window = bgb_dst_window * cn.biomass_to_c_non_mangrove
 
-            print bgb_dst_window[0][1:50]
+            print bgb_dst_calc_window[0][1:50]
 
                 ###### NEED TO ADD IN MAKING ANY HANSEN GAIN PIXEL HAVE THE YOUNG RATE
 
@@ -124,7 +124,7 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
 
             # Writes the output window to the output
             agb_dst.write_band(1, agb_dst_window, window=window)
-            bgb_dst.write_band(1, bgb_dst_window, window=window)
+            bgb_dst.write_band(1, bgb_dst_calc_window, window=window)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])
