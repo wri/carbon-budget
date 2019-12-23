@@ -62,7 +62,7 @@ def main ():
     US_tile_id_list = [i[0:8] for i in US_tile_list]
     print US_tile_id_list
 
-    US_tile_id_list = ['30N_110W']
+    # US_tile_id_list = ['30N_110W']
 
 
     # Counts how many processed FIA region tiles there are on s3 already.
