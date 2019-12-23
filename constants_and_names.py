@@ -508,7 +508,7 @@ FIA_forest_group_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/f
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_group/processed/20191223/')
 
-table_US_removal_rate = 'US_removal_rates_flux_model_20191220.xlsx'
+table_US_removal_rate = 'US_removal_rates_flux_model_20191223.xlsx'
 US_removal_rate_dir = os.path.join(base_dir, 'removal_rate_tables/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests

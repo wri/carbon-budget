@@ -124,7 +124,7 @@ def main ():
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
-                               sheet_name="US_rates_for_model")
+                               sheet_name="US_rates_full_for_model")
 
     # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
     gain_table_group_region_by_age = pd.melt(gain_table, id_vars=['FIA_region_code', 'forest_group_code'],
@@ -138,32 +138,45 @@ def main ():
     # Creates a unique value for each continent-ecozone-age category
     gain_table_group_region_age = gain_table_group_region_by_age.replace({"variable": age_dict})
     gain_table_group_region_age['age_cat'] = gain_table_group_region_age['variable']*10
-    gain_table_group_region_age['combined'] = gain_table_group_region_age['age_cat'] + \
+    gain_table_group_region_age['group_region_age_combined'] = gain_table_group_region_age['age_cat'] + \
                                               gain_table_group_region_age['forest_group_code']*100 + \
                                               gain_table_group_region_age['FIA_region_code']
+    # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+    gain_table_group_region_age_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.group_region_age_combined).to_dict()
+    # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
+    gain_table_group_region_age_dict[0] = 0
+    print gain_table_group_region_age_dict
+
+
+    gain_table_group_region = gain_table_group_region_age.drop(gain_table_group_region_age[gain_table_group_region_age.age_cat != 10000].index)
+    print gain_table_group_region
+    gain_table_group_region['group_region_combined'] = gain_table_group_region['forest_group_code']*100 + \
+                                                       gain_table_group_region['FIA_region_code']
 
     # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
-    gain_table_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.combined).to_dict()
+    gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
 
     # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
-    gain_table_dict[0] = 0
+    gain_table_group_region_dict[0] = 0
 
-    print gain_table_dict
+    print gain_table_group_region_dict
 
 
-    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
-    #                  output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
-    # pool.close()
-    # pool.join()
+    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+    pool = multiprocessing.Pool(count/2)
+    pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
+                     ain_table_group_region_dict=gain_table_group_region_dict,
+                     output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
+    pool.close()
+    pool.join()
 
     # For single processor use
     for tile_id in US_tile_id_list:
 
-        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_type)
+        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
+                                              output_pattern_list, sensit_type)
 
 
     # Uploads output tiles to s3

@@ -42,7 +42,7 @@ def prep_FIA_regions(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
 
 
-def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_type):
+def US_removal_rate_calc(tile_id, gain_table_group_age_region_dict, gain_table_group_region_dict, output_pattern_list, sensit_type):
 
     print "Assigning US removal rates:", tile_id
 
@@ -96,7 +96,7 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
             US_region_window = US_region_src.read(1, window=window)
 
             # Create a 0s array for the AGB output. Don't need to do this for the BGB output.
-            agb_dst_window = np.zeros((window.height, window.width), dtype='float32')
+            agb_without_gain_pixel_window = np.zeros((window.height, window.width), dtype='float32')
             # print agb_dst_window[0][1:50]
 
             # Masks the three input tiles to the pixels with gain
@@ -119,17 +119,22 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
 
             # Applies the dictionary of region-age-group gain rates to the region-age-group array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
-            for key, value in gain_table_dict.iteritems():
-                agb_dst_window[group_region_age_combined_window == key] = value
+            for key, value in gain_table_group_age_region_dict.iteritems():
+                agb_without_gain_pixel_window[group_region_age_combined_window == key] = value
 
             # print agb_dst_window[0][1:50]
+
+            agb_dst_window = np.ma.masked_where(gain_window == 0, agb_without_gain_pixel_window).filled(0)
+
+            # Applies the dictionary of region-age-group gain rates to the region-age-group array to
+            # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
+            for key, value in gain_table_group_region_dict.iteritems():
+                agb_dst_window[agb_dst_window == key] = value
 
             # Calculates BGB removal rate from AGB removal rate
             bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
 
             # print bgb_dst_window[0][1:50]
-
-            ###### NEED TO ADD IN MAKING ANY HANSEN GAIN PIXEL HAVE THE YOUNG RATE
 
             # Writes the output window to the output
             agb_dst.write_band(1, agb_dst_window, window=window)
