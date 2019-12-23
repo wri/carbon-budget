@@ -89,7 +89,7 @@ def main ():
 
 
     # Counts how many processed FIA region tiles there are on s3 already.
-    FIA_forest_group_tile_count = uu.count_tiles_s3(cn.FIA_regions_processed_dir)
+    FIA_forest_group_tile_count = uu.count_tiles_s3(cn.FIA_forest_group_processed_dir)
 
     # Only creates FIA forest group tiles if they don't already exist on s3. 13 tiles cover the continental US.
     if FIA_forest_group_tile_count == 16:
