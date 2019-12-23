@@ -90,9 +90,9 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             dst_data = np.zeros((window.height, window.width), dtype='float32')
             print dst_data[0][1:50]
 
-            age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('unint16')
-            US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('unint16')
-            US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0).astype('unint16')
+            age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
+            US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('uint16')
+            US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0).astype('uint16')
 
             print age_cat_masked_window[0][1:50]
             print US_forest_group_masked_window[0][1:50]
