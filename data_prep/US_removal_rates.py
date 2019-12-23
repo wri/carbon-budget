@@ -121,7 +121,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             for key, value in gain_table_group_region_age_dict.iteritems():
                 agb_without_gain_pixel_window[group_region_age_combined_window == key] = value
 
-            agb_without_gain_pixel_window = np.ma.masked_where(gain_window == 0, agb_without_gain_pixel_window).filled(0)
+            agb_without_gain_pixel_window = np.ma.masked_where(gain_window != 0, agb_without_gain_pixel_window).filled(0)
 
             print agb_without_gain_pixel_window[0][230:260]
 
