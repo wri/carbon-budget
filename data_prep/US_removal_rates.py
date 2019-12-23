@@ -73,6 +73,14 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
         US_forest_group_src = rasterio.open(US_forest_group)
         US_region_src = rasterio.open(US_region)
 
+        # Updates kwargs for the output dataset.
+        kwargs.update(
+            driver='GTiff',
+            count=1,
+            compress='lzw',
+            nodata=0
+        )
+
         # Opens the output tile, giving it the arguments of the input tiles
         agb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]), 'w', **kwargs)
         bgb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]), 'w', **kwargs)
@@ -87,11 +95,11 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
             US_forest_group_window = US_forest_group_src.read(1, window=window)
             US_region_window = US_region_src.read(1, window=window)
 
-            # Create a 0s array for the output
+            # Create a 0s array for the AGB output. Don't need to do this for the BGB output.
             agb_dst_window = np.zeros((window.height, window.width), dtype='float32')
-            bgb_dst_window = np.zeros((window.height, window.width), dtype='float32')
             # print agb_dst_window[0][1:50]
 
+            # Masks the three input tiles to the pixels with gain
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('uint16')
             US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0).astype('uint16')
@@ -100,6 +108,8 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
             # print US_forest_group_masked_window[0][1:50]
             # print US_region_masked_window[0][1:50]
 
+            # Performs the same operation on the three rasters as is done on the values in the table in order to
+            # make the codes match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
             group_region_age_combined_window = age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window
             # print US_forest_group_masked_window * 100
             # print group_region_age_combined_window[0][1:50]
@@ -107,13 +117,14 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
             group_region_age_combined_window = group_region_age_combined_window.astype('float32')
             # print group_region_age_combined_window[0][1:50]
 
-            # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
-            # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+            # Applies the dictionary of region-age-group gain rates to the region-age-group array to
+            # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
             for key, value in gain_table_dict.iteritems():
                 agb_dst_window[group_region_age_combined_window == key] = value
 
             # print agb_dst_window[0][1:50]
 
+            # Calculates BGB removal rate from AGB removal rate
             bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
 
             # print bgb_dst_window[0][1:50]
