@@ -42,7 +42,7 @@ def prep_FIA_regions(tile_id):
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
 
 
-def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
+def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_type):
 
     print "Assigning US removal rates:", tile_id
 
@@ -74,8 +74,9 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
         US_region_src = rasterio.open(US_region)
 
         # Opens the output tile, giving it the arguments of the input tiles
-        dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
-        print pattern
+        agb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]), 'w', **kwargs)
+        bgb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]), 'w', **kwargs)
+        print output_pattern_list[0]
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
@@ -88,8 +89,9 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             US_region_window = US_region_src.read(1, window=window)
 
             # Create a 0s array for the output
-            dst_data = np.zeros((window.height, window.width), dtype='float32')
-            print dst_data[0][1:50]
+            agb_dst_window = np.zeros((window.height, window.width), dtype='float32')
+            bgb_dst_window = np.zeros((window.height, window.width), dtype='float32')
+            print agb_dst_window[0][1:50]
 
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('uint16')
@@ -109,19 +111,21 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
             for key, value in gain_table_dict.iteritems():
-                dst_data[group_region_age_combined_window == key] = value
+                agb_dst_window[group_region_age_combined_window == key] = value
 
-            print dst_data[0][1:50]
+            print agb_dst_window[0][1:50]
+
+            bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
+
+            print bgb_dst_window[0][1:50]
 
                 ###### NEED TO ADD IN MAKING ANY HANSEN GAIN PIXEL HAVE THE YOUNG RATE
 
             os.quit()
 
-
-
-
             # Writes the output window to the output
-            dst.write_band(1, group_region_age_combined_window, window=window)
+            agb_dst.write_band(1, agb_dst_window, window=window)
+            bgb_dst.write_band(1, bgb_dst_window, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])

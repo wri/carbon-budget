@@ -27,8 +27,8 @@ def main ():
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGB_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGB_natrl_forest]
+    output_dir_list = [cn.US_annual_gain_AGB_natrl_forest_dir, cn.US_annual_gain_BGB_natrl_forest_dir]
+    output_pattern_list = [cn.pattern_US_annual_gain_AGB_natrl_forest, cn.pattern_US_annual_gain_BGB_natrl_forest]
 
 
     # By definition, this script is for US-specific removals
@@ -151,23 +151,19 @@ def main ():
     print gain_table_dict
 
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
-
-
     # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
     # pool = multiprocessing.Pool(count/2)
     # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
-    #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
+    #                  output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
     # pool.close()
     # pool.join()
 
     # For single processor use
     for tile_id in US_tile_id_list:
 
-        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type)
+        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_type)
 
 
     # Uploads output tiles to s3
