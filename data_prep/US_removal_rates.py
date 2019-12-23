@@ -125,7 +125,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             # Creates key array for the dictionary that applies to just Hansen gain pixels, then masks the
             # array to just Hansen gain pixels. This is now ready for matching with the dictionary for Hansen gain pixels.
-            agb_with_gain_pixel_window = US_forest_group_masked_window * 100 + US_region_masked_window
+            agb_with_gain_pixel_window = (US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
             agb_with_gain_pixel_window = np.ma.masked_where(gain_window == 0, agb_with_gain_pixel_window).filled(0)
 
             print agb_with_gain_pixel_window[0][230:260]
