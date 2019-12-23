@@ -142,12 +142,8 @@ def main ():
                                               gain_table_group_region_age['forest_group_code']*100 + \
                                               gain_table_group_region_age['FIA_region_code']
 
-    print gain_table_group_region_age
-
     # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
     gain_table_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.combined).to_dict()
-
-    print gain_table_dict
 
     # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
     gain_table_dict[0] = 0
@@ -159,24 +155,24 @@ def main ():
     pattern = output_pattern_list[0]
 
 
-    # # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-    # # pool = multiprocessing.Pool(count/2)
-    # # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
-    # #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
-    # # pool.close()
-    # # pool.join()
-    #
-    # # For single processor use
-    # for tile_id in US_tile_id_list:
-    #
-    #     US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type)
-    #
-    #
-    # # Uploads output tiles to s3
-    # for i in range(0, len(output_dir_list)):
-    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
+    #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
+    # pool.close()
+    # pool.join()
+
+    # For single processor use
+    for tile_id in US_tile_id_list:
+
+        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type)
+
+
+    # Uploads output tiles to s3
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
