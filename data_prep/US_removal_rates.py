@@ -113,6 +113,8 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
 
                 ###### NEED TO ADD IN MAKING ANY HANSEN GAIN PIXEL HAVE THE YOUNG RATE
 
+            os.quit()
+
 
 
 
