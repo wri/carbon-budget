@@ -496,7 +496,7 @@ FIA_regions_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/FIA_re
 pattern_FIA_regions_processed = 'FIA_regions_processed'
 FIA_regions_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/FIA_region/processed/20191216/')
 
-name_FIA_forest_group_raw = 'FIA_forest_group_raw.tif'
+name_FIA_forest_group_raw = 'forest_group_composite_set_no_data_20191223.tif'
 FIA_forest_group_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_group/raw/')
 
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
