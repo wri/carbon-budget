@@ -87,7 +87,7 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             US_region_window = US_region_src.read(1, window=window)
 
             print "annual gain standard"
-            print annual_gain_standard_window[0][0:1000]
+            print np.amax(annual_gain_standard_window)
 
             # Create a 0s array for the output
             dst_data = np.zeros((window.height, window.width), dtype='float32')
