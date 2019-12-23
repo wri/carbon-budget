@@ -149,9 +149,9 @@ def main ():
 
 
     gain_table_group_region = gain_table_group_region_age.drop(gain_table_group_region_age[gain_table_group_region_age.age_cat != 10000].index)
-    print gain_table_group_region
     gain_table_group_region['group_region_combined'] = gain_table_group_region['forest_group_code']*100 + \
                                                        gain_table_group_region['FIA_region_code']
+    print gain_table_group_region
 
     # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
     gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
@@ -162,19 +162,19 @@ def main ():
     print gain_table_group_region_dict
 
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-    pool = multiprocessing.Pool(count/2)
-    pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
-                     gain_table_group_region_dict=gain_table_group_region_dict,
-                     output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
-    pool.close()
-    pool.join()
+    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+    # pool = multiprocessing.Pool(count/2)
+    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
+    #                  gain_table_group_region_dict=gain_table_group_region_dict,
+    #                  output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
+    # pool.close()
+    # pool.join()
 
     # For single processor use
     for tile_id in US_tile_id_list:
-    
+
         US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
                                               output_pattern_list, sensit_type)
 
