@@ -93,84 +93,20 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0)
             US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0)
 
-            # Logic tree for assigning age categories begins here
-            # No change pixels- no loss or gain
-            # If there is no change, biomass (with mangroves and planted forests masked out)
-            # and canopy cover are required to include the pixel in the model
-            if tropics == 0:
+            group_region_age_combined_window = age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window
 
-                dst_data[np.where((biomass_window > 0) & (tcd_window > 0) & (gain_window == 0) & (loss_window == 0))] = 1
+            # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
+            # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+            for key, value in gain_table_dict.iteritems():
+                dst_data[group_region_age_combined_window == key] = value
 
-            if tropics == 1:
+                ###### NEED TO ADD IN MAKING ANY HANSEN GAIN PIXEL HAVE THE YOUNG RATE
 
-                dst_data[np.where((biomass_window > 0) & (tcd_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window != 1))] = 2
-                dst_data[np.where((biomass_window > 0) & (tcd_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window == 1))] = 3
 
-            # Loss-only pixels
-            # If there is only loss, biomass (with mangroves and planted forests masked out) is required to include the pixel in the model.
-            dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window <= gain_20_years))] = 4
-            dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window > gain_20_years))] = 5
-            dst_data[np.where((biomass_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window ==1))] = 6
 
-            # Since the gain-only and loss-and-gain pixels are supposed to exclude mangroves and planted forests.
-            # Need separate conditions to do that since not every tile has mangroves and/or plantations
-            if os.path.exists(mangroves) & os.path.exists(plantations):
-
-                plantations_window = plantations_src.read(1, window=window)
-                mangroves_window = mangroves_src.read(1, window=window)
-
-                # Gain-only pixels
-                # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
-
-                # Pixels with loss and gain
-                # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window >= 13))] = 8
-                dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= 6))] = 9
-                dst_data[np.where((plantations_window == 0) & (mangroves_window == 0) & (gain_window == 1) & (loss_window > 6) & (loss_window < 13))] = 10
-
-            elif os.path.exists(mangroves):
-
-                mangroves_window = mangroves_src.read(1, window=window)
-
-                # Gain-only pixels
-                # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((mangroves_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
-
-                # Pixels with loss and gain
-                # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((mangroves_window == 0) & (gain_window == 1) & (loss_window >= 13))] = 8
-                dst_data[np.where((mangroves_window == 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= 6))] = 9
-                dst_data[np.where((mangroves_window == 0) & (gain_window == 1) & (loss_window > 6) & (loss_window < 13))] = 10
-
-            elif os.path.exists(plantations):
-
-                plantations_window = plantations_src.read(1, window=window)
-
-                # Gain-only pixels
-                # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((plantations_window == 0) & (gain_window == 1) & (loss_window == 0))] = 7
-
-                # Pixels with loss and gain
-                # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((plantations_window == 0) & (gain_window == 1) & (loss_window >= 13))] = 8
-                dst_data[np.where((plantations_window == 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= 6))] = 9
-                dst_data[np.where((plantations_window == 0) & (gain_window == 1) & (loss_window > 6) & (loss_window < 13))] = 10
-
-            else:
-
-                # Gain-only pixels
-                # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((gain_window == 1) & (loss_window == 0))] = 7
-
-                # Pixels with loss and gain
-                # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-                dst_data[np.where((gain_window == 1) & (loss_window >= 13))] = 8
-                dst_data[np.where((gain_window == 1) & (loss_window > 0) & (loss_window <= 6))] = 9
-                dst_data[np.where((gain_window == 1) & (loss_window > 6) & (loss_window < 13))] = 10
 
             # Writes the output window to the output
-            dst.write_band(1, dst_data, window=window)
+            dst.write_band(1, group_region_age_combined_window, window=window)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)
