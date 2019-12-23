@@ -107,6 +107,8 @@ def main ():
         pool = multiprocessing.Pool(count/2)
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
 
+        uu.upload_final_set(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed)
+
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
@@ -157,24 +159,24 @@ def main ():
     pattern = output_pattern_list[0]
 
 
-    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-    # pool = multiprocessing.Pool(count/2)
-    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
-    #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
-    # pool.close()
-    # pool.join()
-
-    # For single processor use
-    for tile_id in US_tile_id_list:
-
-        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type)
-
-
-    # Uploads output tiles to s3
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+    # # pool = multiprocessing.Pool(count/2)
+    # # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_dict=gain_table_dict,
+    # #                  pattern=pattern, sensit_type=sensit_type), US_tile_id_list)
+    # # pool.close()
+    # # pool.join()
+    #
+    # # For single processor use
+    # for tile_id in US_tile_id_list:
+    #
+    #     US_removal_rates.US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type)
+    #
+    #
+    # # Uploads output tiles to s3
+    # for i in range(0, len(output_dir_list)):
+    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
