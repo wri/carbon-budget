@@ -94,6 +94,7 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
             US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0)
 
             group_region_age_combined_window = age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window
+            group_region_age_combined_window = group_region_age_combined_window.astype('float32')
 
             # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
