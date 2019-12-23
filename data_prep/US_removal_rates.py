@@ -139,7 +139,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
-            print agb_with_gain_pixel_window[0][230:260]
+            print agb_dst_window[0][230:260]
 
             # Calculates BGB removal rate from AGB removal rate
             bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
