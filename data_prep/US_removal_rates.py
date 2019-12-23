@@ -88,28 +88,28 @@ def US_removal_rate_calc(tile_id, gain_table_dict, pattern, sensit_type):
 
             # Create a 0s array for the output
             dst_data = np.zeros((window.height, window.width), dtype='float32')
-            print dst_data
+            print dst_data[0][1:100]
 
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0)
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0)
             US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0)
 
-            print age_cat_masked_window
-            print US_forest_group_masked_window
-            print US_region_masked_window
+            print age_cat_masked_window[0][1:100]
+            print US_forest_group_masked_window[0][1:100]
+            print US_region_masked_window[0][1:100]
 
             group_region_age_combined_window = age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window
-            print group_region_age_combined_window
+            print group_region_age_combined_window[0][1:100]
 
             group_region_age_combined_window = group_region_age_combined_window.astype('float32')
-            print group_region_age_combined_window
+            print group_region_age_combined_window[0][1:100]
 
             # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
             for key, value in gain_table_dict.iteritems():
                 dst_data[group_region_age_combined_window == key] = value
 
-            print dst_data
+            print dst_data[0][1:100]
 
                 ###### NEED TO ADD IN MAKING ANY HANSEN GAIN PIXEL HAVE THE YOUNG RATE
 
