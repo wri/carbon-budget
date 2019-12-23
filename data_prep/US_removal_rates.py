@@ -76,7 +76,6 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
         # Opens the output tile, giving it the arguments of the input tiles
         agb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]), 'w', **kwargs)
         bgb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]), 'w', **kwargs)
-        print output_pattern_list[0]
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
@@ -115,7 +114,7 @@ def US_removal_rate_calc(tile_id, gain_table_dict, output_pattern_list, sensit_t
 
             print agb_dst_window[0][1:50]
 
-            bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
+            bgb_dst_window = bgb_dst_window * cn.biomass_to_c_non_mangrove
 
             print bgb_dst_window[0][1:50]
 
