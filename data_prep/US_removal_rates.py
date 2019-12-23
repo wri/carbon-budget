@@ -105,7 +105,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             # print age_cat_masked_window[0][230:260]
             # print US_forest_group_masked_window[0][230:260]
             # print US_region_masked_window[0][230:260]
-            print gain_window[0][230:260]
+            # print gain_window[0][230:260]
 
             # Performs the same operation on the three rasters as is done on the values in the table in order to
             # make the codes match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
@@ -114,7 +114,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             # print group_region_age_combined_window[0][230:260]
 
             group_region_age_combined_window = group_region_age_combined_window.astype('float32')
-            print group_region_age_combined_window[0][230:260]
+            # print group_region_age_combined_window[0][230:260]
 
             # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
@@ -123,32 +123,32 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             agb_without_gain_pixel_window = np.ma.masked_where(gain_window != 0, agb_without_gain_pixel_window).filled(0)
 
-            print agb_without_gain_pixel_window[0][230:260]
+            # print agb_without_gain_pixel_window[0][230:260]
 
             # Creates key array for the dictionary that applies to just Hansen gain pixels, then masks the
             # array to just Hansen gain pixels. This is now ready for matching with the dictionary for Hansen gain pixels.
             agb_with_gain_pixel_window = (US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
             agb_with_gain_pixel_window = np.ma.masked_where(gain_window == 0, agb_with_gain_pixel_window).filled(0)
 
-            print agb_with_gain_pixel_window[0][230:260]
+            # print agb_with_gain_pixel_window[0][230:260]
 
             # Applies the dictionary of region-age-group gain rates to the region-age-group array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
             for key, value in gain_table_group_region_dict.iteritems():
                 agb_with_gain_pixel_window[agb_with_gain_pixel_window == key] = value
 
-            print agb_with_gain_pixel_window[0][230:260]
+            # print agb_with_gain_pixel_window[0][230:260]
 
             agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
-            print agb_dst_window[0][230:260]
+            # print agb_dst_window[0][230:260]
 
             # Calculates BGB removal rate from AGB removal rate
             bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
 
             # print bgb_dst_window[0][230:260]
 
-            os.quit()
+            # os.quit()
 
             # Writes the output window to the output
             agb_dst.write_band(1, agb_dst_window, window=window)
