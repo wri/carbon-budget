@@ -124,12 +124,15 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             # print agb_dst_window[0][1:50]
 
-            agb_dst_window = np.ma.masked_where(gain_window == 0, agb_without_gain_pixel_window).filled(0)
+            agb_with_gain_pixel_window = US_forest_group_masked_window * 100 + US_region_masked_window
+            agb_with_gain_pixel_window = np.ma.masked_where(gain_window == 0, agb_with_gain_pixel_window).filled(0)
 
             # Applies the dictionary of region-age-group gain rates to the region-age-group array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
             for key, value in gain_table_group_region_dict.iteritems():
-                agb_dst_window[agb_dst_window == key] = value
+                agb_with_gain_pixel_window[agb_with_gain_pixel_window == key] = value
+
+            agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
             # Calculates BGB removal rate from AGB removal rate
             bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
