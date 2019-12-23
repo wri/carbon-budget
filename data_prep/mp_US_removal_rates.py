@@ -167,7 +167,7 @@ def main ():
     # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
     pool = multiprocessing.Pool(count/2)
     pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
-                     ain_table_group_region_dict=gain_table_group_region_dict,
+                     gain_table_group_region_dict=gain_table_group_region_dict,
                      output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
     pool.close()
     pool.join()
