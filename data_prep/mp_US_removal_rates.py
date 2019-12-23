@@ -21,7 +21,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_natrl_forest_dir)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-    # tile_id_list = ['30N_110W'] # test tiles
+    tile_id_list = ['30N_110W'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -62,7 +62,7 @@ def main ():
     US_tile_id_list = [i[0:8] for i in US_tile_list]
     print US_tile_id_list
 
-    # US_tile_id_list = ['30N_110W']
+    US_tile_id_list = ['30N_110W']
 
 
     # Counts how many processed FIA region tiles there are on s3 already.
