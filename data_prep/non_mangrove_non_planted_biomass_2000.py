@@ -11,7 +11,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-def mask_biomass(tile_id):
+def mask_biomass(tile_id, pattern, sensit_type):
 
     print "Processing:", tile_id
 
@@ -19,12 +19,12 @@ def mask_biomass(tile_id):
     start = datetime.datetime.now()
 
     # Names of the input files. Creates the names even if the files don't exist.
-    WHRC_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-    mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    planted_forest_gain = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
+    WHRC_biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+    mangrove_biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    planted_forest_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
 
     # Name of the output file
-    WHRC_biomass_non_mang_non_planted = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
+    WHRC_biomass_non_mang_non_planted = '{0}_{1}.tif'.format(tile_id, pattern)
 
     print "Checking if there are mangrove or planted forest tiles for", tile_id
 
@@ -124,15 +124,11 @@ def mask_biomass(tile_id):
 
             # sys.exit()
 
-    # If no mangrove or planted forest tile was found, the original biomass tile is simply copied with a new name
+    # If no mangrove or planted forest tile was found, the original biomass tile is simply duplicated with the output name
     # so it can be copied to s3 with the rest of the outputs.
     else:
-
         print "  No mangrove or planted forest tile found for {}. Copying tile with output pattern...".format(tile_id)
-
         copyfile(WHRC_biomass, WHRC_biomass_non_mang_non_planted)
 
-    end = datetime.datetime.now()
-    elapsed_time = end-start
-
-    print "  Processing time for tile", tile_id, ":", elapsed_time
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, pattern)

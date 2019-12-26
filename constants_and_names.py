@@ -80,7 +80,7 @@ mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2_Tiff.zip'
 
 # Processed mangrove aboveground biomass in the year 2000
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
-mangrove_biomass_2000_dir = os.path.join(base_dir, 'mangrove_biomass/processed/20190220/')
+mangrove_biomass_2000_dir = os.path.join(base_dir, 'mangrove_biomass/processed/20191226/')
 
 
 ### Miscellaneous inputs
