@@ -97,9 +97,10 @@ def main ():
 
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # With processes=30, peak usage was about 350 GB
+    # With processes=30, peak usage was about 350 GB using WHRC AGB.
+    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=38)
+    pool = multiprocessing.Pool(processes=20)
     pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()

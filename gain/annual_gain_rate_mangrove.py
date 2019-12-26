@@ -14,7 +14,7 @@ import universal_util as uu
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
 
-def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
+def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict, gain_below_dict):
 
     print "Processing:", tile_id
 
@@ -22,13 +22,13 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
     start = datetime.datetime.now()
 
     # Name of the input files
-    mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
-    pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+    mangrove_biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    pre_2000_plant = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_plant_pre_2000)
 
     # Names of the output aboveground and belowground mangrove gain rate tiles
-    AGB_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
-    BGB_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
+    AGB_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+    BGB_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
 
     uu.mask_pre_2000_plantation(pre_2000_plant, mangrove_biomass, mangrove_biomass, tile_id)
 
@@ -95,7 +95,7 @@ def annual_gain_rate(tile_id, gain_above_dict, gain_below_dict):
         dst_below.write_band(1, dst_below_data, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_AGB_mangrove)
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])
 
 
 

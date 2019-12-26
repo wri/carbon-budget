@@ -12,69 +12,98 @@
 import multiprocessing
 import annual_gain_rate_planted_forest
 import pandas as pd
+from functools import partial
+import argparse
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-pd.options.mode.chained_assignment = None
+def main ():
 
-tile_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir)
-# tile_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-tile_list = ['00N_110E'] # test tiles: mangrove and planted forest
-print tile_list
-print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
+    pd.options.mode.chained_assignment = None
 
-# For downloading all tiles in the input folders
-download_list = [cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
-                 cn.mangrove_biomass_2000_dir,
-                 cn.plant_pre_2000_processed_dir]
+    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
 
-# for input in download_list:
-#     uu.s3_folder_download(input, '.')
 
-# For copying individual tiles to spot machine for testing
-for tile in tile_list:
+    # Files to download for this script.
+    download_dict = {
+        cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
+        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+    }
 
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-    uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.plant_pre_2000_processed_dir, tile, cn.pattern_plant_pre_2000), '.')
 
-# # For multiprocessing.
-# count = multiprocessing.cpu_count()
-# pool = multiprocessing.Pool(count/3)
-# # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
-# # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
-# pool.map(annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant, tile_list)
-#
-# # Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
-# # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
-# pool.map(annual_gain_rate_planted_forest.create_AGB_rate, tile_list)
-#
-# # Calculates belowground biomass gain rates from aboveground biomass gain rates
-# # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
-# pool.map(annual_gain_rate_planted_forest.create_BGB_rate, tile_list)
-#
-# # Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
-# # This keep them from unnecessarily being stored on s3.
-# pool.map(annual_gain_rate_planted_forest.check_for_planted_forest, tile_list)
-# pool.close()
-# pool.join()
+    tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, sensit_type)
+    # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
+    tile_id_list = ['00N_110E'] # test tiles: mangrove and planted forest
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
-# For single processor use
-for tile in tile_list:
-    annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant(tile)
 
-for tile in tile_list:
-    annual_gain_rate_planted_forest.create_AGB_rate(tile)
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove]
 
-for tile in tile_list:
-    annual_gain_rate_planted_forest.create_BGB_rate(tile)
 
-for tile in tile_list:
-    annual_gain_rate_planted_forest.check_for_planted_forest(tile)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
 
-print "Tiles processed. Uploading to s3 now..."
-uu.upload_final_set(cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
-uu.upload_final_set(cn.annual_gain_BGB_planted_forest_non_mangrove_dir, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
 
+
+    # For multiprocessing.
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/3)
+    # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
+    # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
+    pool.map(partial(annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant, sensit_type=sensit_type),
+             tile_id_list)
+
+    # Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
+    # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
+    pool.map(partial(annual_gain_rate_planted_forest.create_AGB_rate, output_pattern_list=output_pattern_list),
+             tile_id_list)
+
+    # Calculates belowground biomass gain rates from aboveground biomass gain rates
+    # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
+    pool.map(partial(annual_gain_rate_planted_forest.create_BGB_rate, output_pattern_list=output_pattern_list),
+             tile_id_list)
+
+    # Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
+    # This keep them from unnecessarily being stored on s3.
+    pool.map(partial(annual_gain_rate_planted_forest.check_for_planted_forest, output_pattern_list=output_pattern_list),
+             tile_id_list)
+    pool.close()
+    pool.join()
+
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant(tile_id, sensit_type)
+    #
+    # for tile_id in tile_id_list:
+    #     annual_gain_rate_planted_forest.create_AGB_rate(tile_id, output_pattern_list)
+    #
+    # for tile_id in tile_id_list:
+    #     annual_gain_rate_planted_forest.create_BGB_rate(tile_id, output_pattern_list)
+    #
+    # for tile_id in tile_id_list:
+    #     annual_gain_rate_planted_forest.check_for_planted_forest(tile_id, output_pattern_list)
+
+
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+
+if __name__ == '__main__':
+    main()

@@ -16,18 +16,19 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mask_mangroves_and_pre_2000_plant(tile_id):
+def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
 
     # Start time
     start = datetime.datetime.now()
 
     # Names of the unmasked planted forest and mangrove tiles
-    planted_forest_full_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
-    mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    planted_forest_full_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
+    mangrove_biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
 
     # Name of pre-2000 plantation tile
     pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
 
+    # Plantations with pre-2000 masked out keep the same name as the original file
     uu.mask_pre_2000_plantation(pre_2000_plant, planted_forest_full_extent, planted_forest_full_extent, tile_id)
 
     # Name of the planted forest AGC/BGC gain rate tile, with mangroves masked out
@@ -73,7 +74,7 @@ def mask_mangroves_and_pre_2000_plant(tile_id):
 # Converts the combined annual aboveground carbon and belowground carbon gain rates into aboveground biomass rates.
 # This uses the natural forest ratios simply for expediency-- we don't have data on biomass:C or AGB:BGB for most
 # planted forest types.
-def create_AGB_rate(tile_id):
+def create_AGB_rate(tile_id, out_pattern_list):
 
     print "Creating aboveground biomass gain rate for tile {}".format(tile_id)
 
@@ -92,13 +93,13 @@ def create_AGB_rate(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    uu.end_of_fx_summary(start, tile_id, out_pattern_list[0])
 
 
 # Converts the annual aboveground biomass gain rate into belowground biomass gain rate.
 # This uses the natural forest ratios simply for expediency-- we don't have data on AGB:BGB for most
 # planted forest types.
-def create_BGB_rate(tile_id):
+def create_BGB_rate(tile_id, out_pattern_list):
 
     print "Creating belowground biomass gain rate for tile {}".format(tile_id)
 
@@ -117,19 +118,19 @@ def create_BGB_rate(tile_id):
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+    uu.end_of_fx_summary(start, tile_id, out_pattern_list[1])
 
 # Deletes any tiles that don't have data planted forest data in them after the mangroves are masked out.
 # That way, empty tiles aren't copied to s3.
 # Ideally, this would be part of the initial masking function but deleting tiles that later functions expect to
 # iterate through would mess things up, so this is going as a final pre-upload check, not as a way to prevent
 # unnecessary processing.
-def check_for_planted_forest(tile_id):
+def check_for_planted_forest(tile_id, output_pattern_list):
 
     print "Checking whether there is planted forest after masking out mangroves..."
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove))
+    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]))
 
     if stats[0] > 0:
 
@@ -139,5 +140,5 @@ def check_for_planted_forest(tile_id):
 
         print "  No data found. Deleting aboveground and belowground biomass gain rates...".format(tile_id)
 
-        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove))
-        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove))
+        os.remove('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]))
+        os.remove('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]))
