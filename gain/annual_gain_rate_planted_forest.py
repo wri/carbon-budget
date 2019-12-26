@@ -74,7 +74,7 @@ def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
 # Converts the combined annual aboveground carbon and belowground carbon gain rates into aboveground biomass rates.
 # This uses the natural forest ratios simply for expediency-- we don't have data on biomass:C or AGB:BGB for most
 # planted forest types.
-def create_AGB_rate(tile_id, out_pattern_list):
+def create_AGB_rate(tile_id, output_pattern_list):
 
     print "Creating aboveground biomass gain rate for tile {}".format(tile_id)
 
@@ -86,20 +86,20 @@ def create_AGB_rate(tile_id, out_pattern_list):
 
     # Equation converts above+below to just above and carbon to biomass
     AGB_calc = '--calc=A/(1+{})*(1/{})'.format(cn.below_to_above_non_mang, cn.biomass_to_c_non_mangrove)
-    AGB_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
+    AGB_outfilename = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     AGB_outfilearg = '--outfile={}'.format(AGB_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_no_mangrove, AGB_calc, AGB_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, out_pattern_list[0])
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])
 
 
 # Converts the annual aboveground biomass gain rate into belowground biomass gain rate.
 # This uses the natural forest ratios simply for expediency-- we don't have data on AGB:BGB for most
 # planted forest types.
-def create_BGB_rate(tile_id, out_pattern_list):
+def create_BGB_rate(tile_id, output_pattern_list):
 
     print "Creating belowground biomass gain rate for tile {}".format(tile_id)
 
@@ -111,14 +111,14 @@ def create_BGB_rate(tile_id, out_pattern_list):
     # Calculates belowground biomass gain rate from aboveground biomass gain rate
     print "  Creating belowground biomass gain rate for tile {}".format(tile_id)
     above_to_below_calc = '--calc=A*{}'.format(cn.below_to_above_non_mang)
-    below_outfilename = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove)
+    below_outfilename = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_AGB_rate, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, out_pattern_list[1])
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[1])
 
 # Deletes any tiles that don't have data planted forest data in them after the mangroves are masked out.
 # That way, empty tiles aren't copied to s3.
