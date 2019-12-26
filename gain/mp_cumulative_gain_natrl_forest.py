@@ -57,22 +57,18 @@ def main ():
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
-
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(26)
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[1]
+    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
+                     sensit_type=sensit_type), tile_id_list)
 
     # Calculates cumulative belowground carbon gain in non-mangrove planted forests
     # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
     pool = multiprocessing.Pool(26)
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
+                     sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
