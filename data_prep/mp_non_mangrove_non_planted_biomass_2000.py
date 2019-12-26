@@ -23,20 +23,18 @@ def main ():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
+
     # Files to download for this script.
     # Mangrove biomass and full-extent planted forests are used to mask out mangrove and planted forests from the natural forests
     download_dict = {
         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
         cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked]
     }
-
     # Which biomass tiles to download depends on which model run is being performed
     if sensit_type == 'biomass_swap':   # Uses the JPL AGB tiles for the biomass_swap sensitivity analysis
         download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
     else:   # Uses the WHRC AGB tiles for all other model runs
         download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
-
-    print download_dict
 
 
     # tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
@@ -68,16 +66,16 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # # For multiprocessing. count/3 works on an r4.16xlarge machine
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(count/3)
-    # pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
+    # For multiprocessing. count/3 works on an r4.16xlarge machine
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(count/2)
+    pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        non_mangrove_non_planted_biomass_2000.mask_biomass(tile_id, pattern, sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     non_mangrove_non_planted_biomass_2000.mask_biomass(tile_id, pattern, sensit_type)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
