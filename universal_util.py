@@ -443,6 +443,25 @@ def check_for_data(tile):
         return False
 
 
+# Checks if there's data in a tile and, if so, uploads it to s3
+def check_and_upload(tile_id, upload_dir, pattern):
+
+    print "Checking if {} contains any data...".format(tile_id)
+    out_tile = '{0}_{1}.tif'.format(tile_id, pattern)
+
+    no_data = check_for_data(out_tile)
+
+    if no_data:
+
+        print "  No data found. Not copying {}.".format(tile_id)
+
+    else:
+
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        upload_final(upload_dir, tile_id, pattern)
+        print "    Tile copied to s3"
+
+
 # Prints the number of tiles that have been processed so far
 def count_completed_tiles(pattern):
 

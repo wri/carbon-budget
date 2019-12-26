@@ -24,8 +24,8 @@ def main ():
     # By definition, this script is for the biomass swap analysis (replacing WHRC AGB with Saatchi/JPL AGB)
     sensit_type = 'biomass_swap'
 
-    # Downloads the three biomass rasters: Asia, Africa, Americas
-    uu.s3_folder_download(cn.JPL_raw_dir, '.', sensit_type)
+    # # Downloads the three biomass rasters: Asia, Africa, Americas
+    # uu.s3_folder_download(cn.JPL_raw_dir, '.', sensit_type)
 
     # Creates vrt for the Saatchi biomass rasters
     JPL_vrt = 'JPL_AGB.vrt'
@@ -37,26 +37,14 @@ def main ():
     source_raster = JPL_vrt
     out_pattern = cn.pattern_JPL_unmasked_processed
     dt = 'Int16'
-    pool = multiprocessing.Pool(count/2)
+    pool = multiprocessing.Pool(count-10)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
-    # Checks if each tile has no data. Only tiles with data are copied to s3
-    for tile_id in tile_id_list:
 
-        print "Checking if {} contains any data...".format(tile_id)
-        out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+    upload_dir = cn.JPL_processed_dir
+    pattern = cn.pattern_JPL_unmasked_processed
+    pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
-        no_data = uu.check_for_data(out_tile)
-
-        if no_data:
-
-            print "  No data found. Not copying {}.".format(tile_id)
-
-        else:
-
-            print "  Data found in {}. Copying tile to s3...".format(tile_id)
-            uu.upload_final(cn.JPL_processed_dir, tile_id, cn.pattern_JPL_unmasked_processed)
-            print "    Tile copied to s3"
 
 
 if __name__ == '__main__':
