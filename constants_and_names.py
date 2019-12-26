@@ -446,7 +446,6 @@ pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15_biomass_soil'
 net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20191206/')
 
 
-
 ### 10x10 km aggregation tiles for mapping
 ######
 
@@ -457,26 +456,7 @@ pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v
 output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191211/'.format(base_dir)
 
 
-# Tile summary spreadsheets
-tile_stats_pattern = 'tile_stats.csv'
-tile_stats_dir = os.path.join(base_dir, 'tile_stats/')
-
-# The area of each pixel in m^2
-pattern_pixel_area = 'hanson_2013_area'
-pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
-
-# Locations of tsvs from model output
-tsv_output_dir = os.path.join(base_dir, 'model_output_tsv/20181119/')
-
-# Location of raw Hadoop output
-hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
-
-# Location of processed (cumsummed) Hadoop output
-hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
-hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
-
-
-### Misc
+### Sensitivity analysis
 ######
 
 sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
@@ -489,6 +469,8 @@ model_type_arg_help = 'Argument for whether the model is being run in standard f
                       '{6} = Use US-specific removals. {7} = Remove plantations from the model.'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
             sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
+
+## US-specific removals
 
 name_FIA_regions_raw = 'FIA_regions_dissolve_20191210.zip'
 FIA_regions_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/FIA_region/raw/')
@@ -519,7 +501,33 @@ US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_A
 pattern_US_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
 US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191223/')
 
+## Alternative aboveground biomass in 2000 (Sassan Saatchi/JPL 2011)
+
+pattern_JPL_raw = "agb_Mg_ha_250m_2000"
+JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/raw/20191226/'
+
+pattern_JPL_unmasked_processed = "Mg_aboveground_biomass_ha_2000_JPL"
+JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/processed/'
 
 
+### Miscellaneous
+######
 
+# Tile summary spreadsheets
+tile_stats_pattern = 'tile_stats.csv'
+tile_stats_dir = os.path.join(base_dir, 'tile_stats/')
+
+# The area of each pixel in m^2
+pattern_pixel_area = 'hanson_2013_area'
+pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
+
+# Locations of tsvs from model output
+tsv_output_dir = os.path.join(base_dir, 'model_output_tsv/20181119/')
+
+# Location of raw Hadoop output
+hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
+
+# Location of processed (cumsummed) Hadoop output
+hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
+hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 

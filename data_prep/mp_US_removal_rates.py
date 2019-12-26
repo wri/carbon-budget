@@ -1,3 +1,28 @@
+'''
+This script creates Hansen tiles of US-specific AGB and BGB removal rates for non-mangrove, non-planted forests for the
+US removal rate sensitivity analysis. The extent of the output is the same as the non-mangrove, non-planted forests
+for the standard model. These rates are then combined with mangrove and non-mangrove planted forest
+rates from the standard model in mp_merge_cumulative_annual_gain_all_forest_types.py and the model then run like for
+any other sensitivity analysis.
+US-specific removal rates are based on the FIA region, FIA forest group, and forest age category of each pixel. A rate
+table is then applied to each combination of region-group-age to apply the correct rates, just like for the standard
+model (mp_annual_gain_rate_natrl_forest.py).
+The FIA region shapefile is Hansenized in this script.
+The FIA forest group raster is created in ArcMap before this processing and Hansenized in this script. The input forest group
+raster is basically the composite of the original forest group raster and the ArcMap Focal Statistics tool applied to it
+at various rectangular windows, from 3x3 to 400x400. This Focal Statistics process covers the entire CONUS in
+forest group characterization so that any model pixel will be covered by forest group.
+The forest age raster (Pan et al.) is pre-created and then processed in this script the same as the forest group raster.
+The actual age category cutoffs are different for the SE/SC regions and the rest of the US but the age category raster
+as already incorporated that, so the youngest category (1000) means 0-20 years for non-south and 0-10 years for south, etc.
+After Hansenizing region, group, and age category, this script creates two dictionaries: one with removal rates by
+region-group-age combinations and another with the youngest rate for each region-group combination.
+The first dictionary is applied to all standard gain model pixels according to their region-group-age combination
+but then is overwritten for any Hansen gain pixel with the youngest rate for that region-group combination applied
+(using the second dictionary). That is because we can assume that any Hansen gain pixel is in the youngest age category,
+i.e. it is more specific information than the Pan et al. forest age category raster, so we give that info priority.
+'''
+
 import multiprocessing
 from multiprocessing.pool import Pool
 from functools import partial
