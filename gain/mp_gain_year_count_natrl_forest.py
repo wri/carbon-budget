@@ -36,12 +36,12 @@ def main ():
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        cn.loss_dir: ['', 'false'],
-        cn.gain_dir: [cn.pattern_gain, 'false'],
-        cn.tcd_dir: [cn.pattern_tcd, 'false'],
-        cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted, 'false'],
-        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked, 'false'],
-        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000, 'false']
+        cn.loss_dir: [''],
+        cn.gain_dir: [cn.pattern_gain],
+        cn.tcd_dir: [cn.pattern_tcd],
+        cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
+        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
     }
 
 

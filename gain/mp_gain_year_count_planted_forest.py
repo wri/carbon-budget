@@ -34,9 +34,9 @@ def main ():
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        cn.loss_dir: ['', 'false'],
-        cn.gain_dir: [cn.pattern_gain, 'false'],
-        cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, 'false']
+        cn.loss_dir: [''],
+        cn.gain_dir: [cn.pattern_gain],
+        cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove]
     }
     
     
