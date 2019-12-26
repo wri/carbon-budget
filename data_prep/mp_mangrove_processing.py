@@ -4,6 +4,7 @@
 
 import multiprocessing
 import sys
+import argparse
 from functools import partial
 import os
 import subprocess
@@ -14,9 +15,18 @@ import universal_util as uu
 
 def main ():
 
+    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
     # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
     tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
-    tile_id_list = ['00N_000E', '00N_100E', '00N_110E'] # test tile
+    # tile_id_list = ['00N_000E', '00N_100E', '00N_110E'] # test tile
     print tile_id_list
 
     # # Downloads zipped raw mangrove files

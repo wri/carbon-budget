@@ -31,9 +31,21 @@ import universal_util as uu
 
 def main ():
 
-    # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
-    # changed for a sensitivity analysis. This does not need to change based on what run is being done;
-    # this assignment should be true for all sensitivity analyses and the standard model.
+    # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
+    # and which model type is being run (standard or sensitivity analysis)
+    parser = argparse.ArgumentParser(description='Calculate gross emissions')
+    parser.add_argument('--pools-to-use', '-p', required=True,
+                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    pools = args.pools_to_use
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
+
+    # Files to download for this script
     download_dict = {
         cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
         cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
@@ -53,25 +65,11 @@ def main ():
 
 
     # List of tiles to run in the model
-    tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
+    tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
     # tile_id_list = ['30N_140E', '40N_030W']  # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
-
-
-    # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
-    # and which model type is being run (standard or sensitivity analysis)
-    parser = argparse.ArgumentParser(description='Calculate gross emissions')
-    parser.add_argument('--pools-to-use', '-p', required=True,
-                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    pools = args.pools_to_use
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
 
 
     # Checks the validity of the pools argument
@@ -150,11 +148,11 @@ def main ():
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
-    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    # for key, values in download_dict.iteritems():
-    #     dir = key
-    #     pattern = values[0]
-    #     uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, './cpp_util/', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed

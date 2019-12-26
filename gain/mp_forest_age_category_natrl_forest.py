@@ -14,7 +14,7 @@
 import multiprocessing
 from multiprocessing.pool import Pool
 from functools import partial
-import US_removal_rates
+import forest_age_category_natrl_forest
 import pandas as pd
 import argparse
 import subprocess
@@ -25,6 +25,16 @@ import constants_and_names as cn
 import universal_util as uu
 
 def main ():
+
+    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
 
     # Files to download for this script.
     download_dict = {cn.loss_dir: [''],
@@ -38,7 +48,7 @@ def main ():
     }
 
     # List of tiles to run in the model
-    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir)
+    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
     # tile_id_list = ['00N_000E', '80N_030E', '00N_110E'] # test tiles
     print tile_id_list
@@ -48,16 +58,6 @@ def main ():
     # List of output directories and output file name patterns
     output_dir_list = [cn.age_cat_natrl_forest_dir]
     output_pattern_list = [cn.pattern_age_cat_natrl_forest]
-
-
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -99,8 +99,8 @@ def main ():
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # With processes=30, peak usage was about 350 GB
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=26)
-    pool.map(partial(US_removal_rates.forest_age_category, gain_table_dict=gain_table_dict,
+    pool = multiprocessing.Pool(processes=38)
+    pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()

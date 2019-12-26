@@ -33,12 +33,11 @@ def main ():
     # Which biomass tiles to download depends on which model run is being performed
     if sensit_type == 'biomass_swap':   # Uses the JPL AGB tiles for the biomass_swap sensitivity analysis
         download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
-        tile_id_list = uu.tile_list_s3(cn.JPL_processed_dir)
     else:   # Uses the WHRC AGB tiles for all other model runs
         download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
-        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
 
 
+    tile_id_list = uu.tile_list_s3(cn.JPL_processed_dir, sensit_type)
     # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
     # tile_id_list = ['00N_110E']
     print tile_id_list
@@ -68,6 +67,7 @@ def main ():
     pattern = output_pattern_list[0]
 
     # For multiprocessing. count/2 uses more than 470GB of memory for JPL AGB.
+    # processes=26 maxes out at about 420 GB of memory for JPL AGB.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=26)
     pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)

@@ -16,6 +16,17 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+
+# The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+parser.add_argument('--model-type', '-t', required=True,
+                    help='{}'.format(cn.model_type_arg_help))
+args = parser.parse_args()
+sensit_type = args.model_type
+# Checks whether the sensitivity analysis argument is valid
+uu.check_sensit_type(sensit_type)
+
+
 # Iterates through all tiles with aboveground carbon pool emissions (not just WHRC biomass tiles)
 tile_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
 # tile_list = ['60N_020E', '70N_070E'] # test tiles
@@ -24,9 +35,9 @@ print tile_list
 print "There are {} tiles to process".format(str(len(tile_list)))
 
 # Downloads peat layers
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), '.')
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), '.')
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), '.') # Raster of the most likely soil group
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), '.', sensit_type)
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), '.', sensit_type)
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), '.', sensit_type) # Raster of the most likely soil group
 
 # Unzips the Jukka peat shapefile (IDN and MYS)
 cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]

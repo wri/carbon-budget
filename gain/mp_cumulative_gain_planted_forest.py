@@ -12,6 +12,16 @@ import universal_util as uu
 
 def main ():
 
+    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
+
     # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
@@ -33,16 +43,6 @@ def main ():
     # List of output directories and output file name patterns
     output_dir_list = [cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir]
     output_pattern_list = [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove]
-
-
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
