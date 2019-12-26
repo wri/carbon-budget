@@ -22,9 +22,9 @@ def main ():
         cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked]
     }
 
-    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
+    # tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    # tile_id_list = ['00N_000E']
+    tile_id_list = ['00N_110E']
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -61,16 +61,16 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # For multiprocessing. count/3 works on an r4.16xlarge machine
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/3)
-    pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
+    # # For multiprocessing. count/3 works on an r4.16xlarge machine
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(count/3)
+    # pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     non_mangrove_non_planted_WHRC_biomass_2000.mask_biomass(tile_id, pattern, sensit_type)
+    # For single processor use
+    for tile_id in tile_id_list:
+        non_mangrove_non_planted_biomass_2000.mask_biomass(tile_id, pattern, sensit_type)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
