@@ -507,7 +507,7 @@ pattern_JPL_raw = "agb_Mg_ha_250m_2000"
 JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/raw/20191226/'
 
 pattern_JPL_unmasked_processed = "Mg_aboveground_biomass_ha_2000_JPL"
-JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/processed/'
+JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/processed/20191226/'
 
 
 ### Miscellaneous
