@@ -43,7 +43,7 @@ def main ():
 
     tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, sensit_type)
     # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-    tile_id_list = ['00N_110E'] # test tiles: mangrove and planted forest
+    tile_id_list = ['00N_110E', '80N_020E'] # test tiles: mangrove and planted forest
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -61,7 +61,7 @@ def main ():
 
 
 
-    # For multiprocessing.
+    # For multiprocessing
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/3)
     # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
