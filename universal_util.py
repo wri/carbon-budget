@@ -118,9 +118,23 @@ def tile_list_spot_machine(source, pattern):
 
 
 # Creates a list of all tiles found in either two or three s3 folders and removes duplicates from the list
-def create_combined_tile_list(set1, set2, set3=None):
+def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
 
     print "Making a combined tile list..."
+
+    # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
+    # (JPL AGB extent and US extent, respectively).
+    # If the sensitivity analysis is biomass_swap or US_removals, there's no need to merge tile lists because the tile
+    # list is defined by the extent of the sensitivity analysis.
+    if sensit_type == 'biomass_swap':
+        source = cn.JPL_processed_dir
+        tile_list = tile_list_s3(source, sensit_type='std')
+        return tile_list
+    if sensit_type == 'US_removals':
+        source = cn.US_annual_gain_AGB_natrl_forest_dir
+        tile_list = tile_list_s3(source, sensit_type='std')
+        return tile_list
+
 
     out = subprocess.Popen(['aws', 's3', 'ls', set1], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
