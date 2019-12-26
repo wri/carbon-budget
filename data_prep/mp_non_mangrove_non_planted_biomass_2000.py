@@ -14,14 +14,28 @@ import universal_util as uu
 
 def main ():
 
+    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
     # Files to download for this script.
     # Mangrove biomass and full-extent planted forests are used to mask out mangrove and planted forests from the natural forests
     download_dict = {
         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-        cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
-        cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked]   # for all models except biomass_swap model
-        # cn.JPL_processed_dir: [cn.pattern_JPL_unmasked_processed]                  # for biomass_swap model
+        cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked]
     }
+
+    # Which biomass tiles to download depends on which model run is being performed
+    if sensit_type == 'biomass_swap':   # Uses the JPL AGB tiles for the biomass_swap sensitivity analysis
+        download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
+    else:   # Uses the WHRC AGB tiles for all other model runs
+        download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
+
 
     # tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
@@ -33,16 +47,6 @@ def main ():
     # List of output directories and output file name patterns
     output_dir_list = [cn.WHRC_biomass_2000_non_mang_non_planted_dir]
     output_pattern_list = [cn.pattern_WHRC_biomass_2000_non_mang_non_planted]
-
-
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
