@@ -50,11 +50,11 @@ def main ():
     output_pattern_list = [cn.pattern_WHRC_biomass_2000_non_mang_non_planted]
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    # for key, values in download_dict.iteritems():
+    #     dir = key
+    #     pattern = values[0]
+    #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -67,9 +67,9 @@ def main ():
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # For multiprocessing. count/3 works on an r4.16xlarge machine
+    # For multiprocessing. count/2 uses more than 470GB of memory for JPL AGB.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/2)
+    pool = multiprocessing.Pool(count/26)
     pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
