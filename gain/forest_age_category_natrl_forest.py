@@ -41,11 +41,11 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
     loss = '{}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    ifl_primary = '{0}_{1}.tif'.format(tile_id, cn.pattern_ifl_primary)
-    biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
-    cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
-    plantations = '{0}_{1}.tif'.format(tile_id, cn.pattern_planted_forest_type_unmasked)
-    mangroves = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    ifl_primary = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_ifl_primary)
+    biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
+    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    plantations = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_planted_forest_type_unmasked)
+    mangroves = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
 
     print "  Reading input files and evaluating conditions"
 

@@ -19,7 +19,7 @@ import universal_util as uu
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
 
-def annual_gain_rate(tile_id, gain_table_dict):
+def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list):
 
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
@@ -34,8 +34,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
     start = datetime.datetime.now()
 
     # Names of the forest age category and continent-ecozone tiles
-    age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest)
-    cont_eco = '{0}_{1}.tif'.format(tile_id, cn.pattern_cont_eco_processed)
+    age_cat = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_natrl_forest)
+    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
 
     # Name of pre-2000 plantation tile
     pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
@@ -43,8 +43,8 @@ def annual_gain_rate(tile_id, gain_table_dict):
     uu.mask_pre_2000_plantation(pre_2000_plant, age_cat, age_cat, tile_id)
 
     # Names of the output natural forest gain rate tiles (above and belowground)
-    AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
-    BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
+    AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+    BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
 
     print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
 
@@ -103,4 +103,4 @@ def annual_gain_rate(tile_id, gain_table_dict):
         dst_below.write_band(1, gain_rate_BGB, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])

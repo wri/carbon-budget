@@ -90,11 +90,11 @@ def main ():
         pool.map(gain_year_count_natrl_forest.create_gain_year_count_gain_only_standard, tile_id_list)
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
-    # processes/36 maxes out at about 320 GB
+    # processes=36 maxes out at about 320 GB
     pool = multiprocessing.Pool(processes=36)
     pool.map(gain_year_count_natrl_forest.create_gain_year_count_no_change, tile_id_list)
 
-    # processes/36 maxes out at about 220 GB
+    # processes=36 maxes out at about 220 GB
     pool = multiprocessing.Pool(processes=36)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had both loss and gain pixels

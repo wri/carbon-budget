@@ -22,13 +22,11 @@ def main ():
     uu.check_sensit_type(sensit_type)
 
 
-    # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
-    # changed for a sensitivity analysis. This does not need to change based on what run is being done;
-    # this assignment should be true for all sensitivity analyses and the standard model.
+    # Files to download for this script.
     download_dict = {
-        cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest, 'false'],
-        cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest, 'false'],
-        cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest, 'true']
+        cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+        cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
+        cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest]
     }
 
 
