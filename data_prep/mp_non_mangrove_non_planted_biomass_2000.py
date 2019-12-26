@@ -36,6 +36,8 @@ def main ():
     else:   # Uses the WHRC AGB tiles for all other model runs
         download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
 
+    print download_dict
+
 
     # tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
