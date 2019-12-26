@@ -130,15 +130,16 @@ def check_for_planted_forest(tile_id, output_pattern_list):
     print "Checking whether there is planted forest after masking out mangroves..."
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]))
+    out_tile = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+    no_data = uu.check_for_data(out_tile)
 
-    if stats[0] > 0:
-
-        print "  Data found in {}. Keeping tile to copy...".format(tile_id)
-
-    else:
+    if no_data:
 
         print "  No data found. Deleting aboveground and belowground biomass gain rates...".format(tile_id)
 
         os.remove('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]))
         os.remove('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]))
+
+    else:
+
+        print "  Data found in {}. Keeping tile to copy to s3...".format(tile_id)
