@@ -16,11 +16,11 @@ def main ():
 
     # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
     tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
-    tile_id_list = ['00N_000E', '00N_100EW', '00N_110E'] # test tile
+    tile_id_list = ['00N_000E', '00N_100E', '00N_110E'] # test tile
     print tile_id_list
 
     # Downloads zipped raw mangrove files
-    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), '.')
+    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), '.', 'std')
 
     # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
     # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
