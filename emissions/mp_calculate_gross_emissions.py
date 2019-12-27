@@ -67,7 +67,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
     # tile_id_list = ['30N_140E', '40N_030W']  # test tiles
-    tile_id_list = ['00N_000E', '00N_010E'] # test tiles
+    # tile_id_list = ['00N_000E', '00N_010E'] # test tiles
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
@@ -188,17 +188,17 @@ def main ():
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    # for pattern in pattern_list:
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count-10)
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
-    #     pool.close()
-    #     pool.join()
-
-    # For single processor use
     for pattern in pattern_list:
-        for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern, folder, sensit_type)
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count-10)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+        pool.close()
+        pool.join()
+
+    # # For single processor use
+    # for pattern in pattern_list:
+    #     for tile in tile_id_list:
+    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
 
 
     # Calculates gross emissions for each tile
