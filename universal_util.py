@@ -492,7 +492,7 @@ def count_completed_tiles(pattern):
 
     completed = len(glob.glob1('.', '*{}*'.format(pattern)))
 
-    print "Number of completed or in progress tiles:", completed
+    print "Number of completed or in-progress tiles:", completed
 
 
 # Returns the NoData value of a raster
