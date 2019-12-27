@@ -269,7 +269,7 @@ def main ():
 
 
     print "Creating tiles of litter carbon"
-    # processes=16 maxes out at about 420 GB
+    # processes=16 maxes out at about 420-440 GB
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[3]
     count = multiprocessing.cpu_count()
