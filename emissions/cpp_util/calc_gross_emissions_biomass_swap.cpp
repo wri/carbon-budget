@@ -76,11 +76,11 @@ boreal = 2;
 
 // Input files
 // Carbon pools
-string agc_name = infolder + tile_id + "_t_AGC_ha_emis_year.tif";
-string bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year.tif";
-string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
-string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
-string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
+string agc_name = infolder + tile_id + "_t_AGC_ha_emis_year_biomass_swap.tif";
+string bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year_biomass_swap.tif";
+string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000_biomass_swap.tif";
+string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000_biomass_swap.tif";
+string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000_biomass_swap.tif";
 
 // Other inputs
 string loss_name = infolder + tile_id + "_loss_pre_2000_plant_masked.tif";
