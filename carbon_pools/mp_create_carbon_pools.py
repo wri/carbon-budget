@@ -62,7 +62,7 @@ def main ():
     # List of tiles to run in the model
     tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.annual_gain_AGB_mangrove_dir,
-                                             sensit_type
+                                             sensit_type=sensit_type
                                              )
     # tile_id_list = ['30N_080W'] # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
