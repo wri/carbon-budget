@@ -8,9 +8,9 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def create_tile_statistics(tile):
+def create_tile_statistics(tile, sensit_type):
 
-    tile_stats = '{}_{}'.format(uu.date_today, cn.tile_stats_pattern)
+    tile_stats = '{0}_{1}_{2}'.format(uu.date_today, sensit_type, cn.tile_stats_pattern)
 
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)

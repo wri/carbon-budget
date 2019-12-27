@@ -4,6 +4,7 @@
 import multiprocessing
 import tile_statistics
 import subprocess
+from functools import partial
 import argparse
 import os
 import glob
@@ -33,7 +34,7 @@ def main ():
     tile_stats = '{0}_{1}_{2}'.format(uu.date_today, sensit_type, cn.tile_stats_pattern)
 
     # Creates the output text file with the column names
-    with open(cn.tile_stats_pattern, 'w+') as f:
+    with open(tile_stats, 'w+') as f:
         f.write(header_no_brackets  +'\r\n')
     f.close()
 
@@ -114,6 +115,8 @@ def main ():
                     # cn.gross_emis_nodes_soil_only_dir
     }
 
+    os.quit()
+
     # Iterates through each set of tiles and gets statistics of it
     for key, values in download_dict.iteritems():
 
@@ -138,7 +141,7 @@ def main ():
         # processes=9 maxes out at about 340 for gross emissions
         # processes=13 maxes out at above 480 for gross emissions
         # processes=11 maxes out at about 440 for gross emissions
-        pool.map(tile_statistics.create_tile_statistics, tile_list)
+        pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
         # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
