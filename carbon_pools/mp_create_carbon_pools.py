@@ -134,10 +134,10 @@ def main ():
         raise Exception('Extent not valid.')
 
 
-    # for key, values in download_dict.iteritems():
-    #     dir = key
-    #     pattern = values[0]
-    #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
