@@ -325,9 +325,13 @@ def s3_folder_download(source, dest, sensit_type):
         # Counts how many tiles are in that s3 folder
         count = count_tiles_s3(source_sens)
 
+        print count
+
         # If there appears to be a full set of tiles in the sensitivity analysis folder (7 is semi arbitrary),
         # the sensitivity folder is downloaded
         if count > 7:
+
+            print "in here"
 
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
