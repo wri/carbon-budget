@@ -571,56 +571,56 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
-    if os.path.exists('{0}/{1}'.format(folder, file_name)):
+    if os.path.exists(file_name):
         print '{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name))
         return
 
-    # # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
-    # elif os.path.exists(os.path.join(folder, file_name_sens)):
-    #     print '{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens))
-    #     return
-    #
-    # # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
-    # else:
-    #     print '{} does not exist. Creating a blank tile.'.format(file_name)
-    #
-    #     # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
-    #     # (tile extent, resolution, pixel alignment, compression, etc.).
-    #     # If the tile is already on the spot machine, it uses the downloaded tile.
-    #     if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
-    #         print "Hansen loss tile exists for {}.".format(tile_id)
-    #         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-    #                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-    #                '{0}{1}.tif'.format(folder, tile_id)]
-    #         subprocess.check_call(cmd)
-    #
-    #     # If the Hansen loss tile isn't already on the spot machine
-    #     else:
-    #
-    #         # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
-    #         try:
-    #             s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
-    #                              '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
-    #             print "Downloaded Hansen loss tile for", tile_id
-    #
-    #         # If there is no Hansen tile, it downloads the pixel area tile instead
-    #         except:
-    #
-    #             s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-    #                              '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
-    #             print "Downloaded pixel area tile for", tile_id
-    #
-    #         # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
-    #         tile_list= tile_list_spot_machine(folder, pattern)
-    #         full_pattern = get_tile_type(tile_list[0])
-    #
-    #         # Uses either the Hansen loss tile or pixel area tile as a template tile,
-    #         # with the output name corresponding to the model type
-    #         cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-    #                '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, full_pattern),
-    #                '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
-    #         subprocess.check_call(cmd)
-    #         print "Created raster of all 0s for", file_name
+    # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
+    elif os.path.exists(file_name_sens):
+        print '{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens))
+        return
+
+    # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
+    else:
+        print '{} does not exist. Creating a blank tile.'.format(file_name)
+
+        # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
+        # (tile extent, resolution, pixel alignment, compression, etc.).
+        # If the tile is already on the spot machine, it uses the downloaded tile.
+        if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
+            print "Hansen loss tile exists for {}.".format(tile_id)
+            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+                   '{0}{1}.tif'.format(folder, tile_id)]
+            subprocess.check_call(cmd)
+
+        # If the Hansen loss tile isn't already on the spot machine
+        else:
+
+            # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
+            try:
+                s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
+                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
+                print "Downloaded Hansen loss tile for", tile_id
+
+            # If there is no Hansen tile, it downloads the pixel area tile instead
+            except:
+
+                s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
+                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
+                print "Downloaded pixel area tile for", tile_id
+
+            # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
+            tile_list= tile_list_spot_machine(folder, pattern)
+            full_pattern = get_tile_type(tile_list[0])
+
+            # Uses either the Hansen loss tile or pixel area tile as a template tile,
+            # with the output name corresponding to the model type
+            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, full_pattern),
+                   '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
+            subprocess.check_call(cmd)
+            print "Created raster of all 0s for", file_name
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
