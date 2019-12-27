@@ -94,16 +94,16 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_swap.tif";
-string out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_swap.tif";
-string out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_swap.tif";
-string out_name4  = tile_id + "_gross_emis_wildfire_t_CO2e_ha_biomass_swap.tif";
-string out_name5  = tile_id + "_gross_emis_urbanization_t_CO2e_ha_biomass_swap.tif";
-string out_name6  = tile_id + "_gross_emis_no_driver_t_CO2e_ha_biomass_swap.tif";
-string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_t_CO2e_ha_biomass_swap.tif";
-string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomass_swap.tif";
-string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_swap.tif";
-string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_swap.tif";
+string out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name4  = tile_id + "_gross_emis_wildfire_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name5  = tile_id + "_gross_emis_urbanization_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name6  = tile_id + "_gross_emis_no_driver_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil_biomass_swap.tif";
+string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_biomass_swap.tif";
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
