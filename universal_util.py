@@ -91,10 +91,6 @@ def tile_list_s3(source, sensit_type='std'):
 # Lists the tiles on the spot machine
 def tile_list_spot_machine(source, pattern):
 
-    print "now here"
-    print source
-    print pattern
-
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -616,8 +612,6 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
             # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
             tile_list= tile_list_spot_machine(folder, pattern)
-            print pattern
-            print tile_list
             full_pattern = get_tile_type(tile_list[0])
 
             # Uses either the Hansen loss tile or pixel area tile as a template tile,
