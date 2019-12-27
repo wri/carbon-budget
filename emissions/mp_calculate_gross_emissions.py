@@ -175,43 +175,46 @@ def main ():
     # # # For single processor use
     # # for tile in tile_id_list:
     # #       calculate_gross_emissions.mask_pre_2000_plant(tile)
-
-
-    # The C++ code expects a plantations tile for every input 10x10.
-    # However, not all Hansen tiles have plantations.
-    # This function creates "dummy" plantation tiles for all Hansen tiles that do not have plantations.
-    # That way, the C++ script gets all the necessary input files
-    folder = 'cpp_util/'
-
-    print "Making blank tiles for inputs that don't currently exist"
-    # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
-    pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
-                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
-
-    for pattern in pattern_list:
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
+    #
+    #
+    # # The C++ code expects a plantations tile for every input 10x10.
+    # # However, not all Hansen tiles have plantations.
+    # # This function creates "dummy" plantation tiles for all Hansen tiles that do not have plantations.
+    # # That way, the C++ script gets all the necessary input files
+    # folder = 'cpp_util/'
+    #
+    # print "Making blank tiles for inputs that don't currently exist"
+    # # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
+    # pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
+    #                 cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
+    #
     # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(count-10)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    # # # For single processor use
+    # # for pattern in pattern_list:
+    # #     for tile in tile_id_list:
+    # #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
+    #
+    #
+    # # Calculates gross emissions for each tile
+    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
+    #
+    # # # For single processor use
+    # # for tile in tile_id_list:
+    # #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
-    # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
-
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
-
+    print output_dir_list
+    print output_pattern_list
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
     for i in range(0, len(output_dir_list)):

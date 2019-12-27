@@ -57,9 +57,5 @@ def net_calc(tile_id, pattern, sensit_type):
 
         net_flux_dst.write_band(1, dst_data, window=window)
 
-    # # Need to include these or the spot machine will run out of memory otherwise
-    # os.remove(gain_in)
-    # os.remove(loss_in)
-
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)

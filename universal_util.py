@@ -490,8 +490,7 @@ def check_and_upload(tile_id, upload_dir, pattern):
 # Prints the number of tiles that have been processed so far
 def count_completed_tiles(pattern):
 
-    mypath = os.getcwd()
-    completed = len(glob.glob1(mypath, '*{}*'.format(pattern)))
+    completed = len(glob.glob('.', '*{}*'.format(pattern)))
 
     print "Number of completed or in progress tiles:", completed
 
