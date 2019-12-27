@@ -133,8 +133,6 @@ def main ():
         # tile_list = tile_id_list
         print tile_list
 
-        os.quit()
-
         # For multiprocessor use.
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=9)
