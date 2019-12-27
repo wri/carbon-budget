@@ -211,9 +211,18 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     print mangrove_biomass_2000
     print planted_forest_cumul_AGCO2_gain
     print natrl_forest_biomass_2000
+    print mangrove_cumul_AGCO2_gain
+    print planted_forest_cumul_AGCO2_gain
+    print natrl_forest_cumul_AGCO2_gain
+    print mangrove_annual_gain
+    print planted_forest_annual_gain
+    print natrl_forest_annual_gain
+    print loss_year
+    print gain
 
     # Name of output tile
     all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
+    print all_forests_AGC_emis_year
 
     print "  Reading input files for {}...".format(tile_id)
 
