@@ -118,6 +118,7 @@ def main ():
     # Iterates through each set of tiles and gets statistics of it
     for key, values in download_dict.iteritems():
 
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -127,11 +128,8 @@ def main ():
         tile_list = uu.tile_list_spot_machine(".", ".tif")
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
-        # tile_list = ['00N_000E_biomass.tif']
-        # tile_list = ['30N_140E_net_flux_t_CO2e_ha_2001_15_biomass_soil_maxgain.tif',
-        #              '40N_030W_net_flux_t_CO2e_ha_2001_15_biomass_soil_maxgain.tif']  # test tiles
-        # tile_list = tile_id_list
         print tile_list
+        print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
 
         # For multiprocessor use.
         count = multiprocessing.cpu_count()

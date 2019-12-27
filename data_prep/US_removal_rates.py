@@ -109,11 +109,8 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             # Performs the same operation on the three rasters as is done on the values in the table in order to
             # make the codes match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
-            group_region_age_combined_window = age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window
+            group_region_age_combined_window = (age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
             # print US_forest_group_masked_window * 100
-            # print group_region_age_combined_window[0][230:260]
-
-            group_region_age_combined_window = group_region_age_combined_window.astype('float32')
             # print group_region_age_combined_window[0][230:260]
 
             # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
