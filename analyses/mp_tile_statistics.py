@@ -40,7 +40,7 @@ def main ():
 
     # Creates list of tiles to iterate through, for testing
     tile_id_list = 'all'
-    tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
