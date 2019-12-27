@@ -571,13 +571,13 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
-    if os.path.exists(file_name):
-        print '{} exists. Not creating a blank tile.'.format(file_name)
+    if os.path.exists(os.path.join(folder, file_name)):
+        print '{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name))
         return
 
     # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
-    elif os.path.exists(file_name_sens):
-        print '{} exists. Not creating a blank tile.'.format(file_name_sens)
+    elif os.path.exists(os.path.join(folder, file_name_sens)):
+        print '{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens))
         return
 
     # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
