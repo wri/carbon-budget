@@ -329,6 +329,8 @@ def s3_folder_download(source, dest, sensit_type):
         # the sensitivity folder is downloaded
         if count > 7:
 
+            print "Source directory used:", source_sens
+
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             subprocess.check_call(cmd)
@@ -339,6 +341,8 @@ def s3_folder_download(source, dest, sensit_type):
         # This can happen despite it being a sensitivity run because this input file type doesn't have a sensitivity version
         # for this date.
         else:
+
+            print "Source directory used:", source
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
