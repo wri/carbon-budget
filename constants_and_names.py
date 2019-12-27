@@ -453,7 +453,7 @@ pattern_aggreg = '10km_modelv1_1_2'
 pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
 pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
 
-output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191227/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191230/'.format(base_dir)
 
 
 ### Sensitivity analysis
@@ -495,11 +495,11 @@ US_removal_rate_dir = os.path.join(base_dir, 'removal_rate_tables/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_US_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20191227/')
+US_annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20191230/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests using US-specific removal rates
 pattern_US_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191227/')
+US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/US_removals/20191230/')
 
 ## Alternative aboveground biomass in 2000 (Sassan Saatchi/JPL 2011)
 
