@@ -115,8 +115,6 @@ def main ():
                     # cn.gross_emis_nodes_soil_only_dir
     }
 
-    os.quit()
-
     # Iterates through each set of tiles and gets statistics of it
     for key, values in download_dict.iteritems():
 
@@ -134,6 +132,8 @@ def main ():
         #              '40N_030W_net_flux_t_CO2e_ha_2001_15_biomass_soil_maxgain.tif']  # test tiles
         # tile_list = tile_id_list
         print tile_list
+
+        os.quit()
 
         # For multiprocessor use.
         count = multiprocessing.cpu_count()
