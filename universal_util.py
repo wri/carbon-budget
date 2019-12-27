@@ -92,6 +92,8 @@ def tile_list_s3(source, sensit_type='std'):
 def tile_list_spot_machine(source, pattern):
 
     print "now here"
+    print source
+    print pattern
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
