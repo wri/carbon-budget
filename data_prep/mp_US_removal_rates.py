@@ -149,7 +149,7 @@ def main ():
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
-                               sheet_name="US_rates_full_for_model")
+                               sheet_name="US_rates_for_model")
 
     # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
     gain_table_group_region_by_age = pd.melt(gain_table, id_vars=['FIA_region_code', 'forest_group_code'],
