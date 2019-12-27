@@ -195,7 +195,6 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
 
     # Names of the input tiles. Creates the names even if the files don't exist.
     mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    natrl_forest_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     mangrove_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_mangrove)
     planted_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove)
     natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
@@ -204,6 +203,10 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
     loss_year = uu.sensit_tile_rename(sensit_type, tile_id, '')
     gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id)
+    if sensit_type == 'biomass_swap':
+        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+    else:
+        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
 
     print mangrove_biomass_2000
     print planted_forest_cumul_AGCO2_gain
@@ -542,11 +545,14 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
     # If deadwood in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
     mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    WHRC_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
     precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip)
     elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
+    if sensit_type == 'biomass_swap':
+        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+    else:
+        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     if extent == "loss":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
     if extent == "2000":
@@ -575,7 +581,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
 
     # Opens the WHRC biomass tile if it exists
     try:
-        WHRC_biomass_2000_src = rasterio.open(WHRC_biomass_2000)
+        natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
         print "WHRC biomass found for", tile_id
     except:
         print "No WHRC biomass for", tile_id
@@ -622,10 +628,10 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
         elevation_window = elevation_src.read(1, window=window)
 
         # This allows the script to bypass the few tiles that have mangrove biomass but not WHRC biomass
-        if os.path.exists(WHRC_biomass_2000):
+        if os.path.exists(natrl_forest_biomass_2000):
 
             # Reads in the windows of each input file that definitely exist
-            WHRC_biomass_window = WHRC_biomass_2000_src.read(1, window=window)
+            natrl_forest_biomass_window = natrl_forest_biomass_2000_src.read(1, window=window)
 
             # The deadwood conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
             # They depend on the elevation, precipitation, and broad biome category (boreal/temperate/tropical).
@@ -638,7 +644,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
             precip_mask_1 = precip_window <= 1000
             ecozone_mask_1 = bor_tem_trop_window == 1
             condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
-            agb_masked_1 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_1))
+            agb_masked_1 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_1))
             deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_non_mangrove
             deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
@@ -647,7 +653,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
             precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
             ecozone_mask_2 = bor_tem_trop_window == 1
             condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
-            agb_masked_2 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_2))
+            agb_masked_2 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_2))
             deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_non_mangrove
             deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
@@ -656,7 +662,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
             precip_mask_3 = precip_window > 1600
             ecozone_mask_3 = bor_tem_trop_window == 1
             condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
-            agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
+            agb_masked_3 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_3))
             deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_non_mangrove
             deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
@@ -664,14 +670,14 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, pattern, sensit_ty
             elev_mask_4 = elevation_window > 2000
             ecozone_mask_4 = bor_tem_trop_window == 1
             condition_mask_4 = elev_mask_4 & ecozone_mask_4
-            agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
+            agb_masked_4 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_4))
             deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_non_mangrove
             deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
             # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
             ecozone_mask_5 = bor_tem_trop_window != 1
             condition_mask_5 = ecozone_mask_5
-            agb_masked_5 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_5))
+            agb_masked_5 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_5))
             deadwood_masked = agb_masked_5 * 0.08 * cn.biomass_to_c_non_mangrove
             deadwood_output = deadwood_output + deadwood_masked.filled(0)
 
@@ -722,11 +728,14 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
     # If litter in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
     mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    WHRC_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
     precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip)
     elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
+    if sensit_type == 'biomass_swap':
+        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+    else:
+        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     if extent == "loss":
         AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
     if extent == "2000":
@@ -754,7 +763,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
 
     # Opens the WHRC biomass tile if it exists
     try:
-        WHRC_biomass_2000_src = rasterio.open(WHRC_biomass_2000)
+        natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
         print "WHRC biomass found for", tile_id
     except:
         print "No WHRC biomass for", tile_id
@@ -801,10 +810,10 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
         elevation_window = elevation_src.read(1, window=window)
 
         # This allows the script to bypass the few tiles that have mangrove biomass but not WHRC biomass
-        if os.path.exists(WHRC_biomass_2000):
+        if os.path.exists(natrl_forest_biomass_2000):
 
             # Reads in the windows of each input file that definitely exist
-            WHRC_biomass_window = WHRC_biomass_2000_src.read(1, window=window)
+            natrl_forest_biomass_window = natrl_forest_biomass_2000_src.read(1, window=window)
 
             # The litter conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
             # They depend on the elevation, precipitation, and broad biome category (boreal/temperate/tropical).
@@ -817,7 +826,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
             precip_mask_1 = precip_window <= 1000
             ecozone_mask_1 = bor_tem_trop_window == 1
             condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
-            agb_masked_1 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_1))
+            agb_masked_1 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_1))
             litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
             litter_output = litter_output + litter_masked.filled(0)
 
@@ -826,7 +835,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
             precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
             ecozone_mask_2 = bor_tem_trop_window == 1
             condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
-            agb_masked_2 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_2))
+            agb_masked_2 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_2))
             litter_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_non_mangrove_litter
             litter_output = litter_output + litter_masked.filled(0)
 
@@ -835,7 +844,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
             precip_mask_3 = precip_window > 1600
             ecozone_mask_3 = bor_tem_trop_window == 1
             condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
-            agb_masked_3 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_3))
+            agb_masked_3 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_3))
             litter_masked = agb_masked_3 * 0.01 * cn.biomass_to_c_non_mangrove_litter
             litter_output = litter_output + litter_masked.filled(0)
 
@@ -843,14 +852,14 @@ def create_litter(tile_id, mang_litter_AGB_ratio, extent, pattern, sensit_type):
             elev_mask_4 = elevation_window > 2000
             ecozone_mask_4 = bor_tem_trop_window == 1
             condition_mask_4 = elev_mask_4 & ecozone_mask_4
-            agb_masked_4 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_4))
+            agb_masked_4 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_4))
             litter_masked = agb_masked_4 * 0.01 * cn.biomass_to_c_non_mangrove_litter
             litter_output = litter_output + litter_masked.filled(0)
 
             # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
             ecozone_mask_5 = bor_tem_trop_window != 1
             condition_mask_5 = ecozone_mask_5
-            agb_masked_5 = np.ma.array(WHRC_biomass_window, mask=np.invert(condition_mask_5))
+            agb_masked_5 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_5))
             litter_masked = agb_masked_5 * 0.04 * cn.biomass_to_c_non_mangrove_litter
             litter_output = litter_output + litter_masked.filled(0)
 
