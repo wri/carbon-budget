@@ -47,20 +47,20 @@ def main ():
 
     # Files to download for this script
     download_dict = {
-        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
-        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
-        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
-        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
-        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
-        cn.peat_mask_dir: [cn.pattern_peat_mask],
-        cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
-        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
-        cn.drivers_processed_dir: [cn.pattern_drivers],
-        cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
-        cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-        cn.burn_year_dir: [cn.pattern_burn_year],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000],
-        cn.loss_dir: ['']
+        # cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
+        # cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
+        # cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
+        # cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
+        # cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
+        # cn.peat_mask_dir: [cn.pattern_peat_mask],
+        # cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
+        # cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+        # cn.drivers_processed_dir: [cn.pattern_drivers],
+        # cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
+        # cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+        # cn.burn_year_dir: [cn.pattern_burn_year],
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+        # cn.loss_dir: ['']
     }
 
 

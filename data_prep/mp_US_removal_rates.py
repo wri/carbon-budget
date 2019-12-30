@@ -169,7 +169,7 @@ def main ():
                                               gain_table_group_region_age['forest_group_code']*100 + \
                                               gain_table_group_region_age['FIA_region_code']
     # Converts the forest group-region-age codes and corresponding gain rates to a dictionary,
-    # wherethe key is the unique group-region-age code and the value is the AGB removal rate.
+    # where the key is the unique group-region-age code and the value is the AGB removal rate.
     gain_table_group_region_age_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.group_region_age_combined).to_dict()
     print gain_table_group_region_age_dict
 
@@ -180,7 +180,8 @@ def main ():
     gain_table_group_region = gain_table_group_region_age.drop(gain_table_group_region_age[gain_table_group_region_age.age_cat != 10000].index)
     gain_table_group_region['group_region_combined'] = gain_table_group_region['forest_group_code']*100 + \
                                                        gain_table_group_region['FIA_region_code']
-    # Converts the forest group-region codes and corresponding gain rates to a dictionary
+    # Converts the forest group-region codes and corresponding gain rates to a dictionary,
+    # where the key is the unique group-region code (youngest age category) and the value is the AGB removal rate.
     gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
     print gain_table_group_region_dict
 
