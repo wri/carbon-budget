@@ -64,7 +64,7 @@ def main ():
                                              cn.annual_gain_AGB_mangrove_dir,
                                              sensit_type=sensit_type
                                              )
-    # tile_id_list = ['30N_080W'] # test tiles
+    tile_id_list = ['00N_090W'] # test tiles
     # tile_id_list = ['00N_110E'] # test tiles
     print tile_id_list
     print "There are {} unique tiles to process".format(str(len(tile_id_list))) + "\n"
@@ -196,8 +196,6 @@ def main ():
     #     #     create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
     #
     #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    #     # cmd = ['rm *{}*.tif'.format(output_pattern_list[0])]
-    #     # subprocess.check_call(cmd)
     #
     # elif extent == '2000':
     #
@@ -218,8 +216,6 @@ def main ():
     #     #     create_carbon_pools.create_2000_AGC(tile_id, output_pattern_list[0], sensit_type)
     #
     #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    #     # cmd = ['rm *{}*.tif'.format(output_pattern_list[0])]
-    #     # subprocess.check_call(cmd)
     #
     # else:
     #     raise Exception("Extent argument not valid")
@@ -242,8 +238,6 @@ def main ():
     # #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, extent, output_pattern_list[1], sensit_type)
     #
     # uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-    # # cmd = ['rm *{}*.tif'.format(output_pattern_list[1])]
-    # # subprocess.check_call(cmd)
     #
     #
     # print "Creating tiles of deadwood carbon"
@@ -264,73 +258,67 @@ def main ():
     # #     create_carbon_pools.create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, output_pattern_list[2], sensit_type)
     #
     # uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
-    # # cmd = ['rm *{}*.tif'.format(output_pattern_list[2])]
-    # # subprocess.check_call(cmd)
+    #
+    #
+    # print "Creating tiles of litter carbon"
+    # # processes=16 maxes out at about 420-440 GB
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[3]
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=16)
+    # pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
+    #                  extent=extent,
+    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     create_carbon_pools.create_litter(tile_id, mang_litter_AGB_ratio, extent, output_pattern_list[3], sensit_type)
+    #
+    # uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+    #
+    #
+    # if extent == 'loss':
+    #
+    #     print "Creating tiles of soil carbon"
+    #     # Creates a single filename pattern to pass to the multiprocessor call
+    #     pattern = output_pattern_list[4]
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(processes=16)
+    #     pool.map(partial(create_carbon_pools.create_soil,
+    #                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #     # # For single processor use
+    #     # for tile_id in tile_id_list:
+    #     #     create_carbon_pools.create_soil(tile_id, output_pattern_list[4], sensit_type)
+    #
+    #     uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
+    #
+    # elif extent == '2000':
+    #     print "Skipping soil for 2000 carbon pool calculation"
+    #
+    # else:
+    #     raise Exception("Extent argument not valid")
+    #
+    #
+    # print "Creating tiles of total carbon"
+    # # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
+    # # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # pattern = output_pattern_list[5]
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(create_carbon_pools.create_total_C, extent=extent,
+    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-
-    print "Creating tiles of litter carbon"
-    # processes=16 maxes out at about 420-440 GB
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[3]
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=16)
-    pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
-                     extent=extent,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_litter(tile_id, mang_litter_AGB_ratio, extent, output_pattern_list[3], sensit_type)
-
-    uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
-    # cmd = ['rm *{}*.tif'.format(output_pattern_list[3])]
-    # subprocess.check_call(cmd)
-
-
-    if extent == 'loss':
-
-        print "Creating tiles of soil carbon"
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[4]
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=16)
-        pool.map(partial(create_carbon_pools.create_soil,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_soil(tile_id, output_pattern_list[4], sensit_type)
-
-        uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
-        # cmd = ['rm *{}*.tif'.format(output_pattern_list[4])]
-        # subprocess.check_call(cmd)
-
-    elif extent == '2000':
-        print "Skipping soil for 2000 carbon pool calculation"
-
-    else:
-        raise Exception("Extent argument not valid")
-
-
-    print "Creating tiles of total carbon"
-    # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
-    # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[5]
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(create_carbon_pools.create_total_C, extent=extent,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_total_C(tile_id, extent, output_pattern_list[5], sensit_type)
+    # For single processor use
+    for tile_id in tile_id_list:
+        create_carbon_pools.create_total_C(tile_id, extent, output_pattern_list[5], sensit_type)
 
     uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
     # cmd = ['rm *{}*.tif'.format(output_pattern_list[5])]
