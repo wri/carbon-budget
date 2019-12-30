@@ -187,7 +187,7 @@ def main ():
     gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
     # Adds a dictionary entry for where the group-region code is 0 or 100 (not an assigned combination)
     gain_table_group_region_dict[0] = 0
-    gain_table_group_region_dict[100] = 100
+    gain_table_group_region_dict[100] = 50
     print gain_table_group_region_dict
 
 
