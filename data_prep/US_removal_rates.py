@@ -137,17 +137,19 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
+            agb_dst_corrected_window = np.where(agb_dst_window > 20, annual_gain_standard_window, agb_dst_window)
+
             # print agb_dst_window[0][230:260]
 
             # Calculates BGB removal rate from AGB removal rate
-            bgb_dst_window = agb_dst_window * cn.biomass_to_c_non_mangrove
+            bgb_dst_window = agb_dst_corrected_window * cn.biomass_to_c_non_mangrove
 
             # print bgb_dst_window[0][230:260]
 
             # os.quit()
 
             # Writes the output window to the output
-            agb_dst.write_band(1, agb_dst_window, window=window)
+            agb_dst.write_band(1, agb_dst_corrected_window, window=window)
             bgb_dst.write_band(1, bgb_dst_window, window=window)
 
     # Prints information about the tile that was just processed
