@@ -88,7 +88,7 @@ def main ():
     print US_tile_id_list
     print "There are {} tiles to process".format(str(len(US_tile_id_list))) + "\n"
 
-    # US_tile_id_list = ['30N_090W']    # For testing
+    US_tile_id_list = ['40N_130W']    # For testing
 
 
     # Counts how many processed forest age category tiles there are on s3 already. 16 tiles cover the continental US.
