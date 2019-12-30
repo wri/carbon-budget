@@ -635,7 +635,7 @@ def name_aggregated_output(pattern, thresh, sensit_type):
     # print out_pattern
     out_pattern = re.sub('_10km_', '_per_year_10km_', out_pattern)
     # print out_pattern
-    out_pattern = re.sub('all_drivers_t_CO2e', 'all_drivers_t_CO2e_per_year', out_pattern)
+    out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print out_pattern
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y%m%d")
