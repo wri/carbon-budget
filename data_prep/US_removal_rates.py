@@ -137,7 +137,9 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
-            agb_dst_corrected_window = np.where(agb_dst_window > 20, annual_gain_standard_window, agb_dst_window)
+            max_rate = max(gain_table_group_region_age_dict.values())
+
+            agb_dst_corrected_window = np.where(agb_dst_window > (max_rate*1.5), annual_gain_standard_window, agb_dst_window)
 
             # print agb_dst_window[0][230:260]
 
