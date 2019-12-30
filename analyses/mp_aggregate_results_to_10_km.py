@@ -102,6 +102,8 @@ def main():
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
         tile_list = [i for i in tile_list if not ('10km' in i)]
 
+        tile_list = ['00N_070W']  # test tiles
+
         print tile_list
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
         print "Processing:", dir, "; ", pattern
