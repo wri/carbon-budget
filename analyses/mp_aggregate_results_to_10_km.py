@@ -58,7 +58,7 @@ def main():
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    tile_id_list = ['00N_070W'] # test tiles
+    # tile_id_list = ['00N_070W'] # test tiles
     tile_id_list = 'all'
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -83,8 +83,8 @@ def main():
 
         download_pattern_name = download_pattern[0]
 
-        # # Downloads the model output tiles to be processed
-        # uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        # Downloads the model output tiles to be processed
+        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
