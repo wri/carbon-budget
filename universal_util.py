@@ -288,8 +288,8 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
     if tile_id_list == 'all':
         s3_folder_download(source_dir, dest, sensit_type)
 
-    # For downloading test tiles (twenty or fewer). Chose 20 because the US removals sensitivity analysis uses about 16 tiles.
-    elif len(tile_id_list) <= 20:
+    # For downloading test tiles (twenty or fewer). Chose 10 because the US removals sensitivity analysis uses 16 tiles.
+    elif len(tile_id_list) <= 10:
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
