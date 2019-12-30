@@ -89,7 +89,7 @@ def main ():
                     # cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
                     # cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
                     # cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
-                    cn.total_C_emis_year_dir: [cn.pattern_soil_C_emis_year_2000]
+                    cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year]
 
                     # cn.net_flux_dir: [cn.pattern_net_flux],
                     # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
