@@ -386,12 +386,9 @@ def s3_file_download(source, dest, sensit_type):
             # If not already on the spot machine, it downloads the file
             else:
                 source = os.path.join(dir_sens, file_name_sens)
-                try:
-                    cmd = ['aws', 's3', 'cp', source, dest]
-                    subprocess.check_call(cmd)
-                    print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
-                except:
-                    print source, 'does not exist in sensitivity model'
+                cmd = ['aws', 's3', 'cp', source, dest]
+                subprocess.check_call(cmd)
+                print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
 
         # Second attempt is to download the standard version of the file.
         # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
