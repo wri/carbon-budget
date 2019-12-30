@@ -97,7 +97,7 @@ def main ():
     if US_age_tile_count == 16:
         print "Forest age category tiles already created. Copying to spot machine now..."
         uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
-                                '', 'std', 'all')
+                                '', 'std', US_tile_id_list)
 
     else:
         print "Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use..."
