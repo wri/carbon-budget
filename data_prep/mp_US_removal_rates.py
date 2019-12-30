@@ -85,10 +85,9 @@ def main ():
     # List of FIA region tiles on the spot machine. Only this list is used for the rest of the script.
     US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
     US_tile_id_list = [i[0:8] for i in US_tile_list]
+    US_tile_id_list = ['40N_130W']    # For testing
     print US_tile_id_list
     print "There are {} tiles to process".format(str(len(US_tile_id_list))) + "\n"
-
-    US_tile_id_list = ['40N_130W']    # For testing
 
 
     # Counts how many processed forest age category tiles there are on s3 already. 16 tiles cover the continental US.
