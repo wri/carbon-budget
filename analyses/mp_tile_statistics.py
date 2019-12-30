@@ -39,8 +39,8 @@ def main ():
     f.close()
 
     # Creates list of tiles to iterate through, for testing
-    tile_id_list = 'all'
-    tile_id_list = ['00N_090W'] # test tiles
+    tile_id_list = 'all'    # Use this to run all tiles
+    # tile_id_list = ['00N_090W'] # test tiles
     print tile_id_list
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -131,22 +131,22 @@ def main ():
         print tile_list
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
 
-        # # For multiprocessor use.
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(processes=9)
-        # # processes=9 maxes out at about 340 for gross emissions
-        # # processes=13 maxes out at above 480 for gross emissions
-        # # processes=11 maxes out at about 440 for gross emissions
-        # pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+        # For multiprocessor use.
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(processes=9)
+        # processes=9 maxes out at about 340 for gross emissions
+        # processes=13 maxes out at above 480 for gross emissions
+        # processes=11 maxes out at about 440 for gross emissions
+        pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
-        # For single processor use
-        for tile in tile_list:
-            tile_statistics.create_tile_statistics(tile, sensit_type)
+        # # For single processor use
+        # for tile in tile_list:
+        #     tile_statistics.create_tile_statistics(tile, sensit_type)
 
         # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
         print "Deleting tiles..."
