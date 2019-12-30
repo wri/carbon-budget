@@ -49,7 +49,7 @@ def main ():
     # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
     tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_natrl_forest_dir)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-    tile_id_list = ['50N_130W'] # test tiles
+    # tile_id_list = ['50N_130W'] # test tiles
 
 
     # List of output directories and output file name patterns
@@ -85,7 +85,7 @@ def main ():
     # List of FIA region tiles on the spot machine. Only this list is used for the rest of the script.
     US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
     US_tile_id_list = [i[0:8] for i in US_tile_list]
-    US_tile_id_list = ['50N_130W']    # For testing
+    # US_tile_id_list = ['50N_130W']    # For testing
     print US_tile_id_list
     print "There are {} tiles to process".format(str(len(US_tile_id_list))) + "\n"
 
