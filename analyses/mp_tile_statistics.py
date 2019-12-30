@@ -40,7 +40,7 @@ def main ():
 
     # Creates list of tiles to iterate through, for testing
     tile_id_list = 'all'
-    # tile_id_list = ['00N_110E'] # test tiles
+    tile_id_list = ['00N_090W'] # test tiles
     print tile_id_list
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -67,14 +67,14 @@ def main ():
                     # # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir,
                     # # cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir,
                     #
-                    cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
-                    cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest],
-                    cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
-                    # cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
-                    cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
-                    # cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
-                    # cn.annual_gain_AGB_BGB_all_types_dir: [cn.pattern_annual_gain_AGB_BGB_all_types],
-                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+                    # cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+                    # cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest],
+                    # cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+                    # # cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
+                    # cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
+                    # # cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
+                    # # cn.annual_gain_AGB_BGB_all_types_dir: [cn.pattern_annual_gain_AGB_BGB_all_types],
+                    # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
                     #
                     # # cn.elevation_processed_dir,
                     # # cn.precip_processed_dir,
@@ -89,19 +89,19 @@ def main ():
                     # cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
                     # cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
                     # cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
-                    # cn.total_C_emis_year_dir: [cn.pattern_soil_C_emis_year_2000]
+                    cn.total_C_emis_year_dir: [cn.pattern_soil_C_emis_year_2000]
 
-                    cn.net_flux_dir: [cn.pattern_net_flux],
-                    cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
-                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil],
-                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil],
-                    cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil],
-                    cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil],
-                    cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil],
-                    cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil],
-                    cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil],
-                    cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil],
-                    cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil]
+                    # cn.net_flux_dir: [cn.pattern_net_flux],
+                    # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+                    # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil],
+                    # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil],
+                    # cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil],
+                    # cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil],
+                    # cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil],
+                    # cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil],
+                    # cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil],
+                    # cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil],
+                    # cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil]
 
                     # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                     # cn.gross_emis_co2_only_all_drivers_soil_only_dir,
@@ -131,22 +131,22 @@ def main ():
         print tile_list
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
 
-        # For multiprocessor use.
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=9)
-        # processes=9 maxes out at about 340 for gross emissions
-        # processes=13 maxes out at above 480 for gross emissions
-        # processes=11 maxes out at about 440 for gross emissions
-        pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
-        # Added these in response to error12: Cannot allocate memory error.
-        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        pool.close()
-        pool.join()
+        # # For multiprocessor use.
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(processes=9)
+        # # processes=9 maxes out at about 340 for gross emissions
+        # # processes=13 maxes out at above 480 for gross emissions
+        # # processes=11 maxes out at about 440 for gross emissions
+        # pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
+        # # Added these in response to error12: Cannot allocate memory error.
+        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        # pool.close()
+        # pool.join()
 
-        # # For single processor use
-        # for tile in tile_list:
-        #     tile_statistics.create_tile_statistics(tile)
+        # For single processor use
+        for tile in tile_list:
+            tile_statistics.create_tile_statistics(tile, sensit_type)
 
         # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
         print "Deleting tiles..."
