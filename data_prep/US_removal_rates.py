@@ -60,19 +60,19 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
     # Opens standard model gain rate tile
     with rasterio.open(annual_gain_standard) as annual_gain_standard_src:
 
-        # Grabs metadata about the tif, like its location/projection/cellsize
+        # Grabs metadata about the tif, like its location/projection/cell size
         kwargs = annual_gain_standard_src.meta
 
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = annual_gain_standard_src.block_windows(1)
 
-        # Opens gain tile
+        # Opens other necessary tiles
         gain_src = rasterio.open(gain)
         US_age_cat_src = rasterio.open(US_age_cat)
         US_forest_group_src = rasterio.open(US_forest_group)
         US_region_src = rasterio.open(US_region)
 
-        # Updates kwargs for the output dataset.
+        # Updates kwargs for the output dataset
         kwargs.update(
             driver='GTiff',
             count=1,
@@ -80,78 +80,65 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             nodata=0
         )
 
-        # Opens the output tiles (aboveground and belowground), giving it the arguments of the input tiles
+        # Opens the output tiles (aboveground and belowground), giving them the proporties of the standard model removal rate tiles
         agb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]), 'w', **kwargs)
         bgb_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]), 'w', **kwargs)
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
 
-            # Creates windows for each input raster
+            # Creates window for each input raster
             annual_gain_standard_window = annual_gain_standard_src.read(1, window=window)
             gain_window = gain_src.read(1, window=window)
             US_age_cat_window = US_age_cat_src.read(1, window=window)
             US_forest_group_window = US_forest_group_src.read(1, window=window)
             US_region_window = US_region_src.read(1, window=window)
 
-            # Masks the three input tiles to the pixels to the standard gain model extent
+            # Masks the three input tiles (age category, forest group, FIA region) to the pixels to the standard gain model extent
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('uint16')
             US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0).astype('uint16')
 
-            # print age_cat_masked_window[0][230:260]
-            # print US_forest_group_masked_window[0][230:260]
-            # print US_region_masked_window[0][230:260]
-            # print gain_window[0][230:260]
-
             # Performs the same operation on the three rasters as is done on the values in the table in order to
-            # make the codes match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
+            # make the codes (dictionary key) match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
             group_region_age_combined_window = (age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
-            # print group_region_age_combined_window[0][230:260]
 
             # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
             for key, value in gain_table_group_region_age_dict.iteritems():
                 annual_gain_standard_window[group_region_age_combined_window == key] = value
 
-            # print annual_gain_standard_window[0][230:260]
-
             # Replaces all values that have Hansen gain pixels with 0 so that they can be filled with Hansen gain pixel-specific
             # values (rates for youngest forest age category)
             agb_without_gain_pixel_window = np.ma.masked_where(gain_window != 0, annual_gain_standard_window).filled(0)
-
-            # print agb_without_gain_pixel_window[0][230:260]
 
             # Creates key array for the dictionary that applies to just Hansen gain pixels, then masks the
             # array to just Hansen gain pixels. This is now ready for matching with the dictionary for Hansen gain pixels.
             agb_with_gain_pixel_window = (US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
             agb_with_gain_pixel_window = np.ma.masked_where((gain_window == 0) & (annual_gain_standard_window != 0), agb_with_gain_pixel_window).filled(0)
 
-            # print agb_with_gain_pixel_window[0][230:260]
-
             # Applies the dictionary of region-age-group gain rates to the region-age-group array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
             for key, value in gain_table_group_region_dict.iteritems():
                 agb_with_gain_pixel_window[agb_with_gain_pixel_window == key] = value
 
-            # print agb_with_gain_pixel_window[0][230:260]
-
+            # Combines the array of removal rates that has no rates where there are Hansen gain pixels with the array of
+            # removal rates that has has values only where there are Hansen gain pixels
             agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
+            # The maximum rate in the US-specific gain rate dictionary
             max_rate = max(gain_table_group_region_age_dict.values())
 
-            agb_dst_corrected_window = np.where(agb_dst_window > (max_rate*1.5), annual_gain_standard_window, agb_dst_window)
-
-            # print agb_dst_window[0][230:260]
+            # Any pixel that has a rate 1.2x as large as the largest rate in the dictionary gets assigned the standard model's rate
+            # for that pixel. This can occur for pixels that don't have a rate for a given region-group-age or region-group
+            # and therefore the key value gets stuck in the array rather than being replaced by a non-existent rate
+            # from the dictionary.
+            agb_dst_corrected_window = np.where(agb_dst_window > (max_rate*1.2), annual_gain_standard_window, agb_dst_window)
 
             # Calculates BGB removal rate from AGB removal rate
-            bgb_dst_window = agb_dst_corrected_window * cn.biomass_to_c_non_mangrove
+            bgb_dst_window = agb_dst_corrected_window * cn.below_to_above_non_mang
 
-            # print bgb_dst_window[0][230:260]
-
-            # os.quit()
-
-            # Writes the output window to the output
+            # Writes the output windows to the outputs
             agb_dst.write_band(1, agb_dst_corrected_window, window=window)
             bgb_dst.write_band(1, bgb_dst_window, window=window)
 
