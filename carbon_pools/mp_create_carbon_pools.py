@@ -82,19 +82,19 @@ def main ():
         # Files to download for this script
         download_dict = {
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-            cn.precip_processed_dir: [cn.pattern_precip],
-            cn.elevation_processed_dir: [cn.pattern_elevation],
-            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.loss_dir: [''],
-            cn.gain_dir: [cn.pattern_gain],
+            # cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+            # cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+            # cn.precip_processed_dir: [cn.pattern_precip],
+            # cn.elevation_processed_dir: [cn.pattern_elevation],
+            # cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
+            # cn.loss_dir: [''],
+            # cn.gain_dir: [cn.pattern_gain],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
-            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
-            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
-            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
-            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
+            # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
+            # cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
+            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove]
+            # cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
+            # cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
         }
 
         # Adds the correct AGB tiles to the download dictionary depending on the model run
