@@ -415,6 +415,8 @@ def s3_file_download(source, dest, sensit_type):
             return
 
         else:
+
+            print "is it here"
             source = os.path.join(dir, file_name)
             cmd = ['aws', 's3', 'cp', source, dest]
             subprocess.check_call(cmd)
