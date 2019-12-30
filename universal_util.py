@@ -400,9 +400,13 @@ def s3_file_download(source, dest, sensit_type):
 
             else:
                 source = os.path.join(dir, file_name)
-                cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
-                print file_name, "not previously downloaded. Now downloaded." + '\n'
+                try:
+
+                    cmd = ['aws', 's3', 'cp', source, dest]
+                    subprocess.check_call(cmd)
+                    print file_name, "not previously downloaded. Now downloaded." + '\n'
+                except:
+                    print source, 'does not exist in standard model or sensitivity model' + '\n'
 
     # If not a sensitivity run, the standard file is downloaded
     else:
