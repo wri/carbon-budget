@@ -102,7 +102,7 @@ def main():
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
         tile_list = [i for i in tile_list if not ('10km' in i)]
 
-        # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
+        tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
         print tile_list
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
