@@ -185,7 +185,7 @@ def aggregate(tile, thresh):
     aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, tile_type)
+    uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type))
 
 
 # Calculates the percent difference between the standard model's net flux output
