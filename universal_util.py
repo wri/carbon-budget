@@ -720,15 +720,11 @@ def alter_patterns(sensit_type, raw_pattern_list):
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
 def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
-    print '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-
     # Uses whatever name of the tile is found on the spot machine
     if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
         processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-        print "1:", processed_name
     else:
         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-        print "2:", processed_name
 
     return processed_name
 

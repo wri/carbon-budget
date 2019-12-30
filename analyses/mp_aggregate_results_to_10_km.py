@@ -89,11 +89,9 @@ def main():
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
         # lines later.
-        tile_id = '99N_999E'     # a dummy tile id. It is removed later.
+        tile_id = '00N_110E'     # a dummy tile id (but it has to be a real tile id). It is removed later.
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
-        print output_pattern
         pattern = output_pattern[9:-4]
-        print pattern
 
 
         # Lists the tiles of the particular type that is being iterates through.
