@@ -205,7 +205,7 @@ def main ():
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=16)
+        pool = multiprocessing.Pool(processes=14)
         pool.map(partial(create_carbon_pools.create_2000_AGC,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
         pool.close()
