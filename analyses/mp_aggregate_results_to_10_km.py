@@ -61,10 +61,10 @@ def main():
     # tile_id_list = ['00N_110E'] # test tiles
     tile_id_list = 'all'
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # # tree cover density tiles-- necessary for filtering sums by tcd
+    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
@@ -83,15 +83,18 @@ def main():
 
         download_pattern_name = download_pattern[0]
 
-        # Downloads the model output tiles to be processed
-        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        # # Downloads the model output tiles to be processed
+        # uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
         # lines later.
         tile_id = '99N_999E'     # a dummy tile id. It is removed later.
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
+        print output_pattern
         pattern = output_pattern[9:-4]
+        print pattern
+
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files

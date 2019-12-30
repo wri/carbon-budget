@@ -93,10 +93,6 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             US_forest_group_window = US_forest_group_src.read(1, window=window)
             US_region_window = US_region_src.read(1, window=window)
 
-            # Create a 0s array for the AGB output. Don't need to do this for the BGB output.
-            agb_without_gain_pixel_window = np.zeros((window.height, window.width), dtype='float32')
-            # print agb_dst_window[0][230:260]
-
             # Masks the three input tiles to the pixels to the standard gain model extent
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('uint16')
