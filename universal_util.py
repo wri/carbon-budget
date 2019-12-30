@@ -289,7 +289,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
         s3_folder_download(source_dir, dest, sensit_type)
 
     # For downloading test tiles (twenty or fewer). Chose 10 because the US removals sensitivity analysis uses 16 tiles.
-    elif len(tile_id_list) <= 10:
+    elif len(tile_id_list) <= 20:
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
@@ -386,9 +386,12 @@ def s3_file_download(source, dest, sensit_type):
             # If not already on the spot machine, it downloads the file
             else:
                 source = os.path.join(dir_sens, file_name_sens)
-                cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
-                print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
+                try:
+                    cmd = ['aws', 's3', 'cp', source, dest]
+                    subprocess.check_call(cmd)
+                    print file_name_sens, "not previously downloaded. Now downloaded." + '\n'
+                except:
+                    print source, 'does not exist in sensitivity model'
 
         # Second attempt is to download the standard version of the file.
         # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
@@ -400,9 +403,13 @@ def s3_file_download(source, dest, sensit_type):
 
             else:
                 source = os.path.join(dir, file_name)
-                cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
-                print file_name, "not previously downloaded. Now downloaded." + '\n'
+                try:
+
+                    cmd = ['aws', 's3', 'cp', source, dest]
+                    subprocess.check_call(cmd)
+                    print file_name, "not previously downloaded. Now downloaded." + '\n'
+                except:
+                    print source, 'does not exist in standard model or sensitivity model'
 
     # If not a sensitivity run, the standard file is downloaded
     else:
