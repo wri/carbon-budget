@@ -203,11 +203,9 @@ def main():
         aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
         uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
 
-        # print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
-        # aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-        # uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
-        #
-        # os.remove(sensit_aggreg_flux)
+        print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
+        aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
 
 
 if __name__ == '__main__':
