@@ -190,7 +190,7 @@ def main():
 
         try:
             # Identifies the standard model and sensitivity model net flux maps
-            std_aggreg_flux = glob.glob('net_flux*std*')[0]
+            std_aggreg_flux = glob.glob('net_flux*biomass_soil*')[0]
             sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
             print "Standard model net flux:", std_aggreg_flux
