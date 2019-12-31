@@ -192,7 +192,6 @@ def main():
         std_aggreg_flux = os.path.split(std_net_flux)[1]
 
         try:
-
             # Identifies the sensitivity model net flux map
             sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
@@ -204,7 +203,7 @@ def main():
 
         print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
         aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-        # uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
 
         # print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
         # aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
