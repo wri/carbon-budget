@@ -91,6 +91,9 @@ def tile_list_s3(source, sensit_type='std'):
 # Lists the tiles on the spot machine
 def tile_list_spot_machine(source, pattern):
 
+    print source
+    print pattern
+
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
