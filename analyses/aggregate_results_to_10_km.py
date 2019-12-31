@@ -197,6 +197,9 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
+    print std_aggreg_flux
+    print sensit_aggreg_flux
+
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     # This produces errors about dividing by 0. As far as I can tell, those are fine. It's just trying to divide NoData
     # pixels by NoData pixels, and it doesn't affect the output.
