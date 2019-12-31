@@ -188,6 +188,9 @@ def main():
         # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
         uu.s3_file_download(std_net_flux, '.', sensit_type)
 
+        std_aggreg_flux = os.path.split(std_net_flux)[0]
+        print std_aggreg_flux
+
         try:
 
             print glob.glob('net_flux*biomass_soil*')
