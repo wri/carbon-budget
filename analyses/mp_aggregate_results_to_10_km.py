@@ -186,7 +186,7 @@ def main():
     if sensit_type != 'std':
 
         # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
-        uu.s3_file_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
+        uu.s3_file_download(std_net_flux, cn.pattern_aggreg, '.', sensit_type)
 
         try:
             # Identifies the standard model and sensitivity model net flux maps
