@@ -93,8 +93,6 @@ def main():
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
 
-        print pattern
-
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files

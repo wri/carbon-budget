@@ -91,9 +91,6 @@ def tile_list_s3(source, sensit_type='std'):
 # Lists the tiles on the spot machine
 def tile_list_spot_machine(source, pattern):
 
-    print source
-    print pattern
-
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
     out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -729,10 +726,16 @@ def alter_patterns(sensit_type, raw_pattern_list):
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
 def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
+    print sensit_type
+    print tile_id
+    print raw_pattern
+
     # Uses whatever name of the tile is found on the spot machine
     if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
+        print "here 1"
         processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
     else:
+        print "here 2"
         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
 
     return processed_name
