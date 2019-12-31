@@ -189,6 +189,10 @@ def main():
         uu.s3_file_download(std_net_flux, '.', sensit_type)
 
         try:
+
+            print glob.glob('net_flux*biomass_soil*')
+            print glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))
+
             # Identifies the standard model and sensitivity model net flux maps
             std_aggreg_flux = glob.glob('net_flux*biomass_soil*')[0]
             sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
