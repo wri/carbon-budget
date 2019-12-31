@@ -44,7 +44,7 @@ def main():
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
-                        help='The folder of the standard model net flux aggregated map, for comparison with the sensitivity analysis map')
+                        help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     args = parser.parse_args()
     thresh = args.tcd_threshold
     thresh = int(thresh)
@@ -186,7 +186,7 @@ def main():
     if sensit_type != 'std':
 
         # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
-        uu.s3_flexible_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
+        uu.s3_file_download(std_net_flux, cn.pattern_aggreg, '.', 'std', 'all')
 
         try:
             # Identifies the standard model and sensitivity model net flux maps
