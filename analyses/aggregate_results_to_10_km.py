@@ -241,7 +241,7 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
             sensit_window = sensit_src.read(1, window=window)
 
             # Defaults the sign change output raster to 0
-            dst_data = np.zeros((window.height, window.width), dtype='Float64')
+            dst_data = np.zeros((window.height, window.width), dtype='Float32')
 
             # Assigns the output value based on the signs (source, sink) of the standard and sensitivity analysis.
             # No option has both windows equaling 0 because that results in the NoData values getting assigned whatever
