@@ -188,16 +188,12 @@ def main():
         # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
         uu.s3_file_download(std_net_flux, '.', sensit_type)
 
+        # Identifies the standard model net flux map
         std_aggreg_flux = os.path.split(std_net_flux)[1]
-        print std_aggreg_flux
 
         try:
 
-            print glob.glob('net_flux*biomass_soil*')
-            print glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))
-
-            # Identifies the standard model and sensitivity model net flux maps
-            std_aggreg_flux = glob.glob('net_flux*biomass_soil*')[0]
+            # Identifies the sensitivity model net flux map
             sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
             print "Standard model net flux:", std_aggreg_flux
