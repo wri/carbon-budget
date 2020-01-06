@@ -490,7 +490,7 @@ FIA_forest_group_raw_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/f
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(base_dir, 'sensit_analysis_US_removals/forest_group/processed/20191223/')
 
-table_US_removal_rate = 'US_removal_rates_flux_model_20191227.xlsx'
+table_US_removal_rate = 'US_removal_rates_flux_model_20200106.xlsx'
 US_removal_rate_dir = os.path.join(base_dir, 'removal_rate_tables/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
@@ -503,11 +503,11 @@ US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_B
 
 ## Alternative aboveground biomass in 2000 (Sassan Saatchi/JPL 2011)
 
-pattern_JPL_raw = "agb_Mg_ha_250m_2000"
-JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/raw/20191226/'
+pattern_JPL_raw = "agb_1km_2000_Mg_ha"
+JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/raw/20200106/'
 
 pattern_JPL_unmasked_processed = "Mg_aboveground_biomass_ha_2000_JPL"
-JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/250m_2000/processed/20191226/'
+JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/processed/20200106/'
 
 
 ### Miscellaneous
