@@ -49,11 +49,11 @@ def main ():
     output_pattern_list = [cn.pattern_WHRC_biomass_2000_non_mang_non_planted]
 
 
-    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    # for key, values in download_dict.iteritems():
-    #     dir = key
-    #     pattern = values[0]
-    #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
