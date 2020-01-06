@@ -88,7 +88,7 @@ mangrove_biomass_2000_dir = os.path.join(base_dir, 'mangrove_biomass/processed/s
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet_dir = os.path.join(base_dir, 'removal_rate_tables')
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20190903.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200106.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'
@@ -460,15 +460,15 @@ output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191230/'.
 ######
 
 sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
-                    'soil_awap', 'biomass_swap', 'US_removals', 'no_plantations', ]
+                    'biomass_swap', 'US_removals', 'no_primary_gain', ]
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
-                      '{0} = Standard run. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
+                      '{0} = Standard model. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
                       '{3} = Commodity-driven deforestation results in grassland rather than cropland.' \
-                      '{4} = Change soil map. {5} = Replace Baccini AGB map with Saatchi biomass map. ' \
-                      '{6} = Use US-specific removals. {7} = Remove plantations from the model.'\
+                      '{4} = Replace Baccini AGB map with Saatchi biomass map. ' \
+                      '{5} = Use US-specific removals. {6} = Assume primary forests and IFLs have a removal rate of 0.'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
-            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
+            sensitivity_list[5], sensitivity_list[6])
 
 ## US-specific removals
 

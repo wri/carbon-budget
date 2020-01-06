@@ -1,4 +1,4 @@
-  ### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
+### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
 ### (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to non-mangrove natural forest pixels.
 ### It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
 ### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
@@ -70,9 +70,17 @@ def main ():
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
     subprocess.check_call(cmd)
 
-    # Imports the table with the ecozone-continent codes and the carbon gain rates
-    gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name = "natrl fores gain, for model")
+    # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
+    if sensit_type == 'no_primary_gain':
+        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                                   sheet_name = "natrl fores gain, no_prim_gain")
+
+    # All other analyses use the standard removal rates (except US_removals, which has its own script)
+    else:
+        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                                   sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
