@@ -72,7 +72,7 @@ WHRC_biomass_2000_unmasked_dir = 's3://gfw2-data/climate/WHRC_biomass/WHRC_V4/Pr
 
 # Woods Hole aboveground biomass 2000 version 4 tiles without mangrove or planted forest pixels
 pattern_WHRC_biomass_2000_non_mang_non_planted = "t_aboveground_biomass_ha_2000_non_mangrove_non_planted"
-WHRC_biomass_2000_non_mang_non_planted_dir = os.path.join(base_dir, 'biomass_non_mangrove_non_planted/standard/20191226/')
+WHRC_biomass_2000_non_mang_non_planted_dir = os.path.join(base_dir, 'biomass_non_mangrove_non_planted/standard/20190225/')
 
 # Raw Lola Fatoyinbo aboveground mangrove biomass in the year 2000 rasters
 mangrove_biomass_raw_dir = os.path.join(base_dir, 'mangrove_biomass/raw_from_Nathan_Thomas_20190215/')
@@ -201,7 +201,7 @@ gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natur
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20191226/')
+age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20191016/')
 
 
 ### Annual biomass gain rates
