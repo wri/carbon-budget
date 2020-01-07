@@ -56,12 +56,14 @@ def tile_list_s3(source, sensit_type='std'):
 
     # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
     # (JPL AGB extent and US extent, respectively)
-    if sensit_type == 'biomass_swap':
+    if sensit_type == 'std':
+        source = source
+    elif sensit_type == 'biomass_swap':
         source = cn.JPL_processed_dir
-    if sensit_type == 'US_removals':
+    elif sensit_type == 'US_removals':
         source = cn.US_annual_gain_AGB_natrl_forest_dir
     else:
-        source = source
+        source = source.replace('standard', sensit_type)
 
     print source
 
