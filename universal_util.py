@@ -581,9 +581,6 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
     file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
-    print file_name
-    print file_name_sens
-
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
         print '{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name))
@@ -600,6 +597,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
         print file_name
         print folder
+        print '{0}{1}.tif'.format(folder, tile_id)
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
