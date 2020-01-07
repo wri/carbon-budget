@@ -25,16 +25,12 @@ def main ():
     sensit_type = 'biomass_swap'
 
     # Downloads the three biomass rasters: Asia, Africa, Americas
-    uu.s3_folder_download(cn.JPL_raw_dir, '.', sensit_type)
-
-    # Creates vrt for the Saatchi biomass rasters
-    JPL_vrt = 'JPL_AGB.vrt'
-    os.system('gdalbuildvrt {0} *_{1}.tif'.format(JPL_vrt, cn.pattern_JPL_raw))
+    uu.s3_file_download(cn.JPL_raw_dir, cn.JPL_raw_name, sensit_type)
 
     count = multiprocessing.cpu_count()
 
     # Converts the Saatchi AGB vrt to Hansen tiles
-    source_raster = JPL_vrt
+    source_raster = cn.JPL_raw_name
     out_pattern = cn.pattern_JPL_unmasked_processed
     dt = 'Int16'
     pool = multiprocessing.Pool(count-5)  # count-5 peaks at 320GB of memory

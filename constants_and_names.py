@@ -193,7 +193,7 @@ gain_year_count_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'gain_y
 
 # Number of gain years for non-mangrove, non-planted natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest_non_mangrove_non_planted'
-gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/standard/20100106/')
+gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/standard/20200106/')
 
 
 ### Forest age category
@@ -503,11 +503,11 @@ US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_B
 
 ## Alternative aboveground biomass in 2000 (Sassan Saatchi/JPL 2011)
 
-pattern_JPL_raw = "agb_1km_2000_Mg_ha"
-JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/raw/20200106/'
+JPL_raw_name = "Saatchi_JPL_AGB_Mg_ha_1km_2000_non_integer_pixels_20200107.tif"
+JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/raw_combined/'
 
 pattern_JPL_unmasked_processed = "Mg_aboveground_biomass_ha_2000_JPL"
-JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/processed/20200106/'
+JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/processed/20200107/'
 
 
 ### Miscellaneous
