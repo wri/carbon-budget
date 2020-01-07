@@ -187,7 +187,7 @@ def main ():
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
-
+ 
     for pattern in pattern_list:
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count-10)
