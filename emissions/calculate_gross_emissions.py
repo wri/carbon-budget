@@ -50,6 +50,9 @@ def calc_emissions(tile_id, pools, sensit_type):
     elif (pools == 'biomass_soil') & (sensit_type == 'US_removals'):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_US_removals.exe', tile_id]
 
+    elif (pools == 'biomass_soil') & (sensit_type == 'no_primary_gain'):
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_no_primary_gain.exe', tile_id]
+
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
