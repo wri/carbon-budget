@@ -599,6 +599,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         print folder
         print '{0}{1}.tif'.format(folder, tile_id)
 
+        os.quit()
+
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
