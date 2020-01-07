@@ -193,7 +193,7 @@ gain_year_count_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'gain_y
 
 # Number of gain years for non-mangrove, non-planted natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest_non_mangrove_non_planted'
-gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/standard/20200106/')
+gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/standard/20200107/')
 
 
 ### Forest age category
@@ -201,7 +201,7 @@ gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natur
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20200106/')
+age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20200107/')
 
 
 ### Annual biomass gain rates
