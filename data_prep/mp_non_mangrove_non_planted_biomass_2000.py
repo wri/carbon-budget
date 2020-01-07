@@ -69,7 +69,7 @@ def main ():
     # For multiprocessing. count/2 uses more than 470GB of memory for JPL AGB.
     # processes=26 maxes out at about 420 GB of memory for JPL AGB.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=14)
+    pool = multiprocessing.Pool(processes=16)
     pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
