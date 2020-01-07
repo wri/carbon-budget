@@ -71,8 +71,6 @@ def main ():
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
-    os.quit()
-
 
     # Checks the validity of the pools argument
     if (pools not in ['soil_only', 'biomass_soil']):
