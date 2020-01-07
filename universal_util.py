@@ -60,6 +60,10 @@ def tile_list_s3(source, sensit_type='std'):
         source = cn.JPL_processed_dir
     if sensit_type == 'US_removals':
         source = cn.US_annual_gain_AGB_natrl_forest_dir
+    else:
+        source = source
+
+    print source
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
