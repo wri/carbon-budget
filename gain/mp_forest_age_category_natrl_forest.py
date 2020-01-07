@@ -80,7 +80,7 @@ def main ():
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name = "natrl fores gain, for model")
+                               sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
