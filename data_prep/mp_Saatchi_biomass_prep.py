@@ -25,7 +25,7 @@ def main ():
     sensit_type = 'biomass_swap'
 
     # Downloads the three biomass rasters: Asia, Africa, Americas
-    uu.s3_file_download(cn.JPL_raw_dir, cn.JPL_raw_name, sensit_type)
+    # uu.s3_file_download(cn.JPL_raw_dir, cn.JPL_raw_name, sensit_type)
 
     count = multiprocessing.cpu_count()
 
