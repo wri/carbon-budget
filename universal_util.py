@@ -609,10 +609,12 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
                    '{0}{1}.tif'.format(folder, tile_id)]
             subprocess.check_call(cmd)
 
-        os.quit()
+            os.quit()
 
         # If the Hansen loss tile isn't already on the spot machine
         else:
+
+            os.quit()
 
             # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
             try:
