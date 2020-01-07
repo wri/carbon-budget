@@ -503,7 +503,7 @@ US_annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_B
 
 ## Alternative aboveground biomass in 2000 (Sassan Saatchi/JPL 2011)
 
-JPL_raw_name = "Saatchi_JPL_AGB_Mg_ha_1km_2000_non_integer_pixels_20200107_new.tif"
+JPL_raw_name = "Saatchi_JPL_AGB_Mg_ha_1km_2000_non_integer_pixels_20200107.tif"
 JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/raw_combined/'
 
 pattern_JPL_unmasked_processed = "Mg_aboveground_biomass_ha_2000_JPL"

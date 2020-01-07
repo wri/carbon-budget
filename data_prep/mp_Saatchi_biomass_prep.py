@@ -24,15 +24,15 @@ def main ():
     # By definition, this script is for the biomass swap analysis (replacing WHRC AGB with Saatchi/JPL AGB)
     sensit_type = 'biomass_swap'
 
-    # Downloads the three biomass rasters: Asia, Africa, Americas
-    # uu.s3_file_download(cn.JPL_raw_dir, cn.JPL_raw_name, sensit_type)
+    # Downloads a pan-tropical raster that has the erroneous integer values in the oceans removed
+    uu.s3_file_download(cn.JPL_raw_dir, cn.JPL_raw_name, sensit_type)
 
     count = multiprocessing.cpu_count()
 
     # Converts the Saatchi AGB vrt to Hansen tiles
     source_raster = cn.JPL_raw_name
     out_pattern = cn.pattern_JPL_unmasked_processed
-    dt = 'Int16'
+    dt = 'Float32'
     pool = multiprocessing.Pool(count-5)  # count-5 peaks at 320GB of memory
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
