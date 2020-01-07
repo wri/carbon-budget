@@ -128,18 +128,27 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
 
     print "Making a combined tile list..."
 
-    # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
-    # (JPL AGB extent and US extent, respectively).
+    # Changes the directory to list tiles according to the model run.
+    # Ff the model run is the biomass_swap or US_removals sensitivity analyses
+    # (JPL AGB extent and US extent, respectively), particular sets of tiles are designated.
     # If the sensitivity analysis is biomass_swap or US_removals, there's no need to merge tile lists because the tile
     # list is defined by the extent of the sensitivity analysis.
+    # If the model run is standard, the names don't change.
+    # If the model is any other sensitivity run, those tiles are used.
     if sensit_type == 'biomass_swap':
         source = cn.JPL_processed_dir
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
-    if sensit_type == 'US_removals':
+    elif sensit_type == 'US_removals':
         source = cn.US_annual_gain_AGB_natrl_forest_dir
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
+    elif sensit_type == 'std':
+        set1 = set1
+        set2 = set2
+    else:
+        set1 = set1.replace('standard', sensit_type)
+        set2 = set2.replace('standard', sensit_type)
 
 
     out = subprocess.Popen(['aws', 's3', 'ls', set1], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -193,6 +202,11 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
     if set3 != None:
 
         print "Third set of tiles input. Adding to first two sets of tiles..."
+
+        if sensit_type == 'std':
+            set3 = set3
+        else:
+            set3 = set3.replace('standard', sensit_type)
 
         out = subprocess.Popen(['aws', 's3', 'ls', set3], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout3, stderr3 = out.communicate()
