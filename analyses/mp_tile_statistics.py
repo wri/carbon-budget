@@ -69,12 +69,12 @@ def main ():
 
                     # cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
                     # cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest],
-                    # cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
-                    # cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
-                    # cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
-                    # cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
-                    # cn.annual_gain_AGB_BGB_all_types_dir: [cn.pattern_annual_gain_AGB_BGB_all_types],
-                    # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
+                    cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+                    cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
+                    cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
+                    cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
+                    cn.annual_gain_AGB_BGB_all_types_dir: [cn.pattern_annual_gain_AGB_BGB_all_types],
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
                     #
                     # # cn.elevation_processed_dir,
                     # # cn.precip_processed_dir,
@@ -84,12 +84,12 @@ def main ():
                     # # cn.drivers_processed_dir,
                     # # cn.climate_zone_processed_dir
                     #
-                    # cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
+                    cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
                     # cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
                     # cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
                     # cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
                     # cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
-                    # cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year]
+                    cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year],
 
                     cn.net_flux_dir: [cn.pattern_net_flux],
                     cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
