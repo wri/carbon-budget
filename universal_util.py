@@ -3,6 +3,7 @@ import glob
 import constants_and_names as cn
 import datetime
 import rasterio
+from shutil import copyfile
 import os
 import multiprocessing
 from multiprocessing.pool import Pool
@@ -706,7 +707,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
 
         print "No pre-2000 plantation exists for {}. Renaming tile...".format(tile_id)
 
-        os.rename(tile_to_mask, out_name)
+        copyfile(tile_to_mask, out_name)
 
     print "  Pre-2000 plantations for {} complete".format(tile_id)
 
