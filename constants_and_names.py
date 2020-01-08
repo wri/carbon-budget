@@ -269,7 +269,7 @@ cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
-cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20200107/')
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20200106/')
 
 
 ### Non-biomass inputs to carbon pools
@@ -453,7 +453,7 @@ pattern_aggreg = '10km_modelv1_1_2'
 pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
 pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
 
-output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20191230/'.format(base_dir)
+output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20200108/'.format(base_dir)
 
 
 ### Sensitivity analysis
