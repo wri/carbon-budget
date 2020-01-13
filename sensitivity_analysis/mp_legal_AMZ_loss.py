@@ -83,12 +83,11 @@ def main ():
 
         print 'Creating forest extent tiles'
 
-        # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
-        raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')
-        print raw_forest_extent_inputs
+        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
+        # Gets the resolution of a more recent PRODES raster, which has a higher resolution
         raw_forest_extent_input_2019 = glob.glob('*2019_AMZ_warped_*tif')
-        print raw_forest_extent_input_2019
         prodes_2019 = gdal.Open(raw_forest_extent_input_2019[0])
         transform_2019 = prodes_2019.GetGeoTransform()
         pixelSizeX = transform_2019[1]
