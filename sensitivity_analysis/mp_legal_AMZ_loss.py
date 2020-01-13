@@ -4,7 +4,7 @@ import multiprocessing
 from functools import partial
 import glob
 import argparse
-from sensitivity_analysis import legal_AMZ_loss
+import legal_AMZ_loss
 import pandas as pd
 import subprocess
 import os
