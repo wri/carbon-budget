@@ -460,15 +460,16 @@ output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20200108/'.
 ######
 
 sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
-                    'biomass_swap', 'US_removals', 'no_primary_gain', ]
+                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_AMZ_loss']
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
                       '{0} = Standard model. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
                       '{3} = Commodity-driven deforestation results in grassland rather than cropland.' \
                       '{4} = Replace Baccini AGB map with Saatchi biomass map. ' \
-                      '{5} = Use US-specific removals. {6} = Assume primary forests and IFLs have a removal rate of 0.'\
+                      '{5} = Use US-specific removals. {6} = Assume primary forests and IFLs have a removal rate of 0.' \
+                      '{7} = Use Brazilian national loss data from PRODES for the legal Amazon.'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
-            sensitivity_list[5], sensitivity_list[6])
+            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
 
 ## US-specific removals
 
@@ -508,6 +509,16 @@ JPL_raw_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/raw_combined/
 
 pattern_JPL_unmasked_processed = "Mg_aboveground_biomass_ha_2000_JPL"
 JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/processed/20200107/'
+
+## Brazil-specific loss
+
+Brazil_forest_extent_2000_raw_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/raw/2020113/')
+
+Brazil_forest_extent_2000_merged = 'legal_Amazon_forest_extent_2000_merged.tif'
+
+pattern_Brazil_forest_extent_2000_processed = 'legal_Amazon_forest_extent_2000'
+Brazil_forest_extent_2000_processed_dir = os.path.join(base_dir, 'sensit_analysis_Brazil_loss/forest_extent_2000/processed/20200113/')
+
 
 
 ### Miscellaneous

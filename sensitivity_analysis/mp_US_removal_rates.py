@@ -27,10 +27,8 @@ different are the ones that have a region-group-age combination that's in the FI
 '''
 
 import multiprocessing
-from multiprocessing.pool import Pool
 from functools import partial
-import US_removal_rates
-import argparse
+from sensitivity_analysis import US_removal_rates
 import pandas as pd
 import subprocess
 import os

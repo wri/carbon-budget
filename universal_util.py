@@ -756,3 +756,27 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
     return processed_name
 
 
+# Determines what stages should actually be run
+def analysis_stages(stage_list, stage_input, run_through):
+
+    # If user wants all stages, all named stages (i.e. everything except 'all') are returned
+    if stage_input == 'all':
+
+        stage_output = stage_list[1:]
+        return stage_output
+
+    else:
+
+        # If the user wants to run through all stages after the selected one, a new list is created
+        if run_through:
+
+            stage_output = stage_list[stage_list.index(stage_input)+1:]
+            print stage_output
+            return stage_output
+
+        # If the user wants only the named stage, only that is returned
+        else:
+
+            stage_output = stage_input.split()
+            print stage_output
+            return stage_output
