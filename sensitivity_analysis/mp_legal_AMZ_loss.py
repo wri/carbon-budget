@@ -4,6 +4,7 @@ import multiprocessing
 from functools import partial
 import glob
 import argparse
+from osgeo import gdal
 import legal_AMZ_loss
 import pandas as pd
 import subprocess
@@ -83,32 +84,27 @@ def main ():
         print 'Creating forest extent tiles'
 
         # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')
+        print raw_forest_extent_inputs
 
         raw_forest_extent_input_2019 = glob.glob('*2019_AMZ_warped_*tif')
-        raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')
-        print type(raw_forest_extent_inputs)
-        print raw_forest_extent_inputs
-        raw_forest_extent_inputs = raw_forest_extent_inputs.remove(raw_forest_extent_input_2019[0])
-        print raw_forest_extent_input_2019[0]
-
-        print raw_forest_extent_inputs
+        prodes_2019 = gdal.Open(raw_forest_extent_input_2019)
+        transform_2019 = prodes_2019.GetGeoTransform()
+        pixelSizeX = transform_2019[1]
+        pixelSizeY = -transform_2019[5]
 
         cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged,
-               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte',
-               raw_forest_extent_input_2019, raw_forest_extent_inputs[0], raw_forest_extent_inputs[1],
-               raw_forest_extent_inputs[2], raw_forest_extent_inputs[3], raw_forest_extent_inputs[4]]
-        # cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, 'Prodes2014_AMZ_warped_primary2000.tif', 'Prodes2015_AMZ_warped_floresta_only.tif',
-        #        'Prodes2016_AMZ_warped_floresta_only.tif', 'Prodes2017_AMZ_warped_floresta_only.tif',
-        #        'Prodes2018_AMZ_warped_floresta_only.tif', 'Prodes2019_AMZ_warped_floresta_only.tif',
-        #        '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte']
+               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
+               raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
+               raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
         subprocess.check_call(cmd)
-    #
-    #     # Converts the national forest age category raster to Hansen tiles
-    #     source_raster = cn.Brazil_forest_extent_2000_merged
-    #     out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
-    #     dt = 'Byte'
-    #     pool = multiprocessing.Pool(count/2)
-    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+
+        # Converts the national forest age category raster to Hansen tiles
+        source_raster = cn.Brazil_forest_extent_2000_merged
+        out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
+        dt = 'Byte'
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
 
 
