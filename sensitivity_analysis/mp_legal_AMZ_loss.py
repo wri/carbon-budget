@@ -89,13 +89,14 @@ def main ():
         print type(raw_forest_extent_inputs)
         print raw_forest_extent_inputs
         raw_forest_extent_inputs = raw_forest_extent_inputs.remove(raw_forest_extent_input_2019[0])
-        print raw_forest_extent_input_2019
+        print raw_forest_extent_input_2019[0]
 
         print raw_forest_extent_inputs
 
-        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, raw_forest_extent_input_2019, raw_forest_extent_inputs[0],
-               raw_forest_extent_inputs[1], raw_forest_extent_inputs[2], raw_forest_extent_inputs[3], raw_forest_extent_inputs[4],
-               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte']
+        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged,
+               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte',
+               raw_forest_extent_input_2019, raw_forest_extent_inputs[0], raw_forest_extent_inputs[1],
+               raw_forest_extent_inputs[2], raw_forest_extent_inputs[3], raw_forest_extent_inputs[4]]
         # cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, 'Prodes2014_AMZ_warped_primary2000.tif', 'Prodes2015_AMZ_warped_floresta_only.tif',
         #        'Prodes2016_AMZ_warped_floresta_only.tif', 'Prodes2017_AMZ_warped_floresta_only.tif',
         #        'Prodes2018_AMZ_warped_floresta_only.tif', 'Prodes2019_AMZ_warped_floresta_only.tif',
