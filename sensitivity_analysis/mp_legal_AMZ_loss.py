@@ -15,20 +15,15 @@ import universal_util as uu
 
 def main ():
 
-
-
     # Files to download for this script.
     download_dict = {cn.loss_dir: [''],
                      cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked]
     }
 
+
     Brazil_stages = ['all', 'create_forest_extent', 'create_loss',
                      'forest_age_category', 'gain_year_count', 'annual_removals', 'cumulative_removals']
 
-    # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
-    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
-    # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-    # tile_id_list = ['50N_130W'] # test tiles
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
@@ -39,6 +34,7 @@ def main ():
     args = parser.parse_args()
     stage_input = args.stages
     run_through = args.run_through
+
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (stage_input not in Brazil_stages):
@@ -52,6 +48,15 @@ def main ():
 
     actual_stages = uu.analysis_stages(Brazil_stages, stage_input, run_through)
     print actual_stages
+
+
+    # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
+    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
+    # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
+    # tile_id_list = ['50N_130W'] # test tiles
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
 
     # By definition, this script is for US-specific removals
     sensit_type = 'Brazil_loss'
