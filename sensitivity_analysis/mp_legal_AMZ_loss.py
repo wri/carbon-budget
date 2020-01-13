@@ -84,7 +84,8 @@ def main ():
 
         uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
 
-        raw_forest_extent_inputs = glob.glob('*AMZ_warped_*tif').sort()
+        raw_forest_extent_inputs = glob.glob('*AMZ_warped_*tif')
+        raw_forest_extent_inputs = raw_forest_extent_inputs.sort()
 
         print raw_forest_extent_inputs
 
