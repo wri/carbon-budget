@@ -770,7 +770,7 @@ def analysis_stages(stage_list, stage_input, run_through):
         # If the user wants to run through all stages after the selected one, a new list is created
         if run_through == 'true':
 
-            stage_output = stage_list[stage_list.index(stage_input)+1:]
+            stage_output = stage_list[stage_list.index(stage_input):]
             return stage_output
 
         # If the user wants only the named stage, only that is returned
