@@ -87,6 +87,7 @@ def main ():
         raw_forest_extent_input_2019 = glob.glob('*2019_AMZ_warped_*tif')
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')
         print type(raw_forest_extent_inputs)
+        print raw_forest_extent_inputs
         raw_forest_extent_inputs = raw_forest_extent_inputs.remove(raw_forest_extent_input_2019[0])
         print raw_forest_extent_input_2019
 
