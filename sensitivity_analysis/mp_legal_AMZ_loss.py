@@ -84,11 +84,12 @@ def main ():
 
         uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
 
-        raw_forest_extent_inputs = glob.glob('*AMZ_warped_*tif')
+        raw_forest_extent_inputs = glob.glob('*AMZ_warped_*tif').sort()
+
         print raw_forest_extent_inputs
 
-        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, raw_forest_extent_inputs[5], raw_forest_extent_inputs[4],
-               raw_forest_extent_inputs[3], raw_forest_extent_inputs[2], raw_forest_extent_inputs[1], raw_forest_extent_inputs[0],
+        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, raw_forest_extent_inputs[0], raw_forest_extent_inputs[1],
+               raw_forest_extent_inputs[2], raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5],
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte']
         subprocess.check_call(cmd)
     #
