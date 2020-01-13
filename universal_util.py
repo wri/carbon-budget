@@ -771,12 +771,10 @@ def analysis_stages(stage_list, stage_input, run_through):
         if run_through:
 
             stage_output = stage_list[stage_list.index(stage_input)+1:]
-            print stage_output
             return stage_output
 
         # If the user wants only the named stage, only that is returned
         else:
 
             stage_output = stage_input.split()
-            print stage_output
             return stage_output
