@@ -62,14 +62,18 @@ def main ():
     sensit_type = 'Brazil_loss'
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir,
-                       cn.Brazil_forest_age_category_dir, cn.Brazil_gain_year_count_natrl_forest_dir,
-                       cn.Brazil_annual_gain_AGB_natrl_forest_dir, cn.Brazil_annual_gain_BGB_natrl_forest_dir,
-                       cn.Brazil_cumul_gain_AGCO2_natrl_forest_dir, cn.Brazil_cumul_gain_BGCO2_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
-                           cn.pattern_Brazil_forest_age_category, cn.pattern_Again_year_count_natrl_forest,
-                           cn.pattern_Brazil_annual_gain_AGB_natrl_forest, cn.pattern_Brazil_annual_gain_BGB_natrl_forest,
-                           cn.pattern_Brazil_cumul_gain_AGCO2_natrl_forest, cn.pattern_Brazil_cumul_gain_BGCO2_natrl_forest]
+    output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir,
+                       # cn.Brazil_annual_loss_processed_dir,
+                       # cn.Brazil_forest_age_category_dir, cn.Brazil_gain_year_count_natrl_forest_dir,
+                       # cn.Brazil_annual_gain_AGB_natrl_forest_dir, cn.Brazil_annual_gain_BGB_natrl_forest_dir,
+                       # cn.Brazil_cumul_gain_AGCO2_natrl_forest_dir, cn.Brazil_cumul_gain_BGCO2_natrl_forest_dir
+                       ]
+    output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed,
+                           # cn.pattern_Brazil_annual_loss_processed,
+                           # cn.pattern_Brazil_forest_age_category, cn.pattern_Again_year_count_natrl_forest,
+                           # cn.pattern_Brazil_annual_gain_AGB_natrl_forest, cn.pattern_Brazil_annual_gain_BGB_natrl_forest,
+                           # cn.pattern_Brazil_cumul_gain_AGCO2_natrl_forest, cn.pattern_Brazil_cumul_gain_BGCO2_natrl_forest
+                           ]
 
 
     count = multiprocessing.cpu_count()
