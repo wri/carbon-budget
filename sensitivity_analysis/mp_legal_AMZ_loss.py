@@ -82,7 +82,7 @@ def main ():
 
         print 'Creating forest extent tiles'
 
-        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
 
         raw_forest_extent_inputs = glob.glob('*AMZ_warped_*tif')
         print raw_forest_extent_inputs
@@ -90,8 +90,12 @@ def main ():
 
         print raw_forest_extent_inputs
 
-        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, raw_forest_extent_inputs[0], raw_forest_extent_inputs[1],
-               raw_forest_extent_inputs[2], raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5],
+        # cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, raw_forest_extent_inputs[0], raw_forest_extent_inputs[1],
+        #        raw_forest_extent_inputs[2], raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5],
+        #        '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte']
+        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged, 'Prodes2014_AMZ_warped_primary2000.tif', 'Prodes2015_AMZ_warped_floresta_only.tif',
+               'Prodes2016_AMZ_warped_floresta_only.tif', 'Prodes2017_AMZ_warped_floresta_only.tif',
+               'Prodes2018_AMZ_warped_floresta_only.tif', 'Prodes2019_AMZ_warped_floresta_only.tif',
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte']
         subprocess.check_call(cmd)
     #
