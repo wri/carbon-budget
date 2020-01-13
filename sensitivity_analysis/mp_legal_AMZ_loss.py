@@ -88,7 +88,8 @@ def main ():
         print raw_forest_extent_inputs
 
         raw_forest_extent_input_2019 = glob.glob('*2019_AMZ_warped_*tif')
-        prodes_2019 = gdal.Open(raw_forest_extent_input_2019)
+        print raw_forest_extent_input_2019
+        prodes_2019 = gdal.Open(raw_forest_extent_input_2019[0])
         transform_2019 = prodes_2019.GetGeoTransform()
         pixelSizeX = transform_2019[1]
         pixelSizeY = -transform_2019[5]
