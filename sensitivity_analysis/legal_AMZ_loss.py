@@ -68,7 +68,7 @@ def legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern):
             biomass_window = biomass_src.read(1, window=window)
 
             # Create a 0s array for the output
-            dst_data = np.zeros((window.height, window.width), dtype='byte')
+            dst_data = np.zeros((window.height, window.width), dtype='uint8')
 
             # No change pixels (no loss or gain)
             dst_data[np.where((biomass_window > 0) & (extent_window == 1) & (loss_window == 0))] = 3  # primary forest
