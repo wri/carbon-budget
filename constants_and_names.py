@@ -201,7 +201,7 @@ gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natur
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20200107/')
+age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20200114/')
 
 
 ### Annual biomass gain rates
@@ -514,16 +514,16 @@ JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/process
 
 Brazil_forest_extent_2000_raw_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/raw/2020113/')
 
-Brazil_forest_extent_2000_merged_pattern = 'legal_Amazon_forest_extent_2000_merged'
-dir_Brazil_forest_extent_2000_merged = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/processed/combined/20200113/')
+pattern_Brazil_forest_extent_2000_merged = 'legal_Amazon_forest_extent_2000_merged'
+Brazil_forest_extent_2000_merged_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/processed/combined/20200113/')
 
 pattern_Brazil_forest_extent_2000_processed = 'legal_Amazon_forest_extent_2000'
 Brazil_forest_extent_2000_processed_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/processed/tiles/20200114/')
 
 Brazil_annual_loss_raw_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/raw/20200114/')
 
-Brazil_annual_loss_merged_pattern = 'legal_Amazon_annual_loss_2001_2015_merged'
-dir_Brazil_annual_loss_merged = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/combined/20200114/')
+pattern_Brazil_annual_loss_merged = 'legal_Amazon_annual_loss_2001_2015_merged'
+Brazil_annual_loss_merged_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/combined/20200114/')
 
 pattern_Brazil_annual_loss_processed = 'legal_Amazon_annual_loss_2001_2015'
 Brazil_annual_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/tiles/20200114/')

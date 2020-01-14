@@ -96,17 +96,17 @@ def main ():
 
         # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
         # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
-        cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern),
+        cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_forest_extent_2000_merged),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
                raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
         subprocess.check_call(cmd)
 
         # Uploads the merged forest extent raster to s3 for future reference
-        uu.upload_final_set(cn.dir_Brazil_forest_extent_2000_merged, cn.Brazil_forest_extent_2000_merged_pattern)
+        uu.upload_final_set(cn.Brazil_forest_extent_2000_merged_dir, cn.pattern_Brazil_forest_extent_2000_merged)
 
         # Creates legal Amazon extent 2000 tiles
-        source_raster = '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern)
+        source_raster = '{}.tif'.format(cn.pattern_Brazil_forest_extent_2000_merged)
         out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(count/2)
@@ -141,16 +141,16 @@ def main ():
         # This merges both loss rasters together, so it takes a lot of memory and time. It seems to max out
         # at about 150 GB. Loss from PRODES2014 needs to go second so that its loss years get priority over PRODES2017,
         # which seems to have a preponderance of 2007 loss that appears to often be earlier loss years.
-        cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern),
+        cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                'Prodes2017_annual_loss_2007_2015.tif', 'Prodes2014_annual_loss_2001_2006.tif']
         subprocess.check_call(cmd)
 
         # Uploads the merged loss raster to s3 for future reference
-        uu.upload_final_set(cn.dir_Brazil_annual_loss_merged, cn.Brazil_annual_loss_merged_pattern)
+        uu.upload_final_set(cn.Brazil_annual_loss_merged_dir, cn.pattern_Brazil_annual_loss_merged)
 
         # Creates annual loss 2001-2015 tiles
-        source_raster = '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern)
+        source_raster = '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged)
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(count/2)
@@ -169,9 +169,57 @@ def main ():
 
         print 'Creating forest age category tiles'
 
+        # Files to download for this script.
+        download_dict = {cn.loss_dir: [''],
+                         cn.gain_dir: [cn.pattern_gain],
+                         cn.WHRC_biomass_2000_non_mang_non_planted_dir: [
+                             cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
+                         cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+                         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+                         cn.Brazil_forest_extent_2000_processed_dir: [cn.pattern_Brazil_forest_extent_2000_processed]
+                         }
+
+
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        for key, values in download_dict.iteritems():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+            print "Changing output directory and file name pattern based on sensitivity analysis"
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+
+        output_pattern = output_pattern_list[2]
+
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        # With processes=30, peak usage was about 350 GB using WHRC AGB.
+        # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(legal_AMZ_loss.legal_Amazon_forest_age_category,
+                         sensit_type=sensit_type, output_pattern=output_pattern), tile_id_list)
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile_id in tile_id_list:
+        #
+        #     legal_AMZ_loss.legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern)
+
+        # Uploads output tiles to s3
+        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+
+
 
 
 
