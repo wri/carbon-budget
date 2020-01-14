@@ -97,7 +97,7 @@ def legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern):
 def tile_names(tile_id, sensit_type):
 
     # Names of the input files
-    loss = '{0}_{1|.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_forest_extent_2000_processed)
     biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
