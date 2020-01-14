@@ -88,9 +88,14 @@ def main ():
 
         out_pattern = 'merged_forest_extent_2000'
         dt = 'Byte'
-        pool = multiprocessing.Pool(count / 2)
-        pool.map(partial(legal_AMZ_loss.merge_warp_forest_extent_tiles, raw_forest_extent_inputs=raw_forest_extent_inputs, out_pattern=out_pattern, dt=dt),
-                 tile_id_list)
+        # pool = multiprocessing.Pool(count / 2)
+        # pool.map(partial(legal_AMZ_loss.merge_warp_forest_extent_tiles, raw_forest_extent_inputs=raw_forest_extent_inputs, out_pattern=out_pattern, dt=dt),
+        #          tile_id_list)
+
+        # For single processor testing
+        for tile_id in tile_id_list:
+
+            legal_AMZ_loss.merge_warp_forest_extent_tiles(tile_id, raw_forest_extent_inputs, out_pattern, dt)
 
         # Uploads output tiles to s3
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
