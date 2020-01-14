@@ -126,6 +126,9 @@ def main ():
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
+        uu.s3_flexible_download(cn.Brazil_forest_extent_2000_processed_dir,
+                                cn.pattern_Brazil_forest_extent_2000_processed, '.', sensit_type, tile_id_list)
+
         # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
         raw_forest_loss_inputs = glob.glob('Prodes*_annual_loss_*tif')   # The list of tiles to merge
         print raw_forest_loss_inputs
