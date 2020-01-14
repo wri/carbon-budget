@@ -201,20 +201,20 @@ def main ():
 
         output_pattern = output_pattern_list[2]
 
-        # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-        # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-        # # With processes=30, peak usage was about 350 GB using WHRC AGB.
-        # # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(partial(legal_AMZ_loss.legal_Amazon_forest_age_category,
-        #                  sensit_type=sensit_type, output_pattern=output_pattern), tile_id_list)
-        # pool.close()
-        # pool.join()
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        # With processes=30, peak usage was about 350 GB using WHRC AGB.
+        # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(legal_AMZ_loss.legal_Amazon_forest_age_category,
+                         sensit_type=sensit_type, output_pattern=output_pattern), tile_id_list)
+        pool.close()
+        pool.join()
 
-        # For single processor use
-        for tile_id in tile_id_list:
-
-            legal_AMZ_loss.legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern)
+        # # For single processor use
+        # for tile_id in tile_id_list:
+        #
+        #     legal_AMZ_loss.legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern)
 
         # Uploads output tiles to s3
         uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
@@ -265,18 +265,22 @@ def main ():
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
                  tile_id_list)
 
-        pool = multiprocessing.Pool(count / 6)
+        pool = multiprocessing.Pool(count/3)
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
 
-        # Intermediate output tiles for checking outputs
-        uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
-        uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
-        uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
-        uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
+        # # Intermediate output tiles for checking outputs
+        # uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
+        # uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
+        # uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
+        # uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
 
         # This is the final output used later in the model
         uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
 
+
+    if 'annual_removals' in actual_stages:
+
+        print 'Creating annual removals for natural forest'
 
 
 if __name__ == '__main__':
