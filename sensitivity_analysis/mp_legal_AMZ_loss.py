@@ -180,7 +180,7 @@ def main ():
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-        tile_id_list = ['00N_050W']
+        # tile_id_list = ['00N_050W']
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 

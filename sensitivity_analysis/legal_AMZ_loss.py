@@ -140,10 +140,10 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
     # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0 (so that oceans aren't included)
-    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*(D>0)*{}'.format(cn.loss_years)
+    no_change_calc = '--calc=(A==0)*(B==0)*(C==1)*(D>0)*{}'.format(cn.loss_years)
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, '-D', biomass, no_change_calc,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', extent, '-D', biomass, no_change_calc,
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
     subprocess.check_call(cmd)
 
@@ -163,10 +163,10 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
     # Pixels with both loss and gain
-    loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
+    loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', extent, loss_and_gain_calc,
            loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
     subprocess.check_call(cmd)
 
