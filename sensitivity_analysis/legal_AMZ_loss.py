@@ -2,6 +2,7 @@ import numpy as np
 import datetime
 import rasterio
 import os
+import subprocess
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -80,51 +81,28 @@ def legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern):
 
             if os.path.exists(mangroves):
                 mangroves_window = mangroves_src.read(1, window=window)
-                dst_data = np.ma.masked_where(mangroves_window == 0, dst_data).filled(0)
+                dst_data = np.ma.masked_where(mangroves_window != 0, dst_data).filled(0).astype('uint8')
 
             if os.path.exists(plantations):
                 plantations_window = plantations_src.read(1, window=window)
-                dst_data = np.ma.masked_where(plantations_window == 0, dst_data).filled(0)
+                dst_data = np.ma.masked_where(plantations_window != 0, dst_data).filled(0).astype('uint8')
 
             # Writes the output window to the output
             dst.write_band(1, dst_data, window=window)
 
-            # # Since the gain-only and loss-and-gain pixels are supposed to exclude mangroves and planted forests.
-            # # Need separate conditions to do that since not every tile has mangroves and/or plantations
-            # if os.path.exists(mangroves) & os.path.exists(plantations):
-            #
-            #     plantations_window = plantations_src.read(1, window=window)
-            #     mangroves_window = mangroves_src.read(1, window=window)
-            #
-            #     # Pixels with loss and gain
-            #     # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-            #     dst_data[np.where((extent_window == 1) & (plantations_window == 0) & (mangroves_window == 0)
-            #                       & (gain_window == 1) & (loss_window > 0))] = 8
-            #
-            # elif os.path.exists(mangroves):
-            #
-            #     mangroves_window = mangroves_src.read(1, window=window)
-            #
-            #     # Pixels with loss and gain
-            #     # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-            #     dst_data[np.where((extent_window == 1) & (mangroves_window == 0) & (gain_window == 1) & (loss_window > 0))] = 8
-            #
-            # elif os.path.exists(plantations):
-            #
-            #     plantations_window = plantations_src.read(1, window=window)
-            #
-            #     # Pixels with loss and gain
-            #     # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-            #     dst_data[np.where((extent_window == 1) & (plantations_window == 0) & (gain_window == 1) & (loss_window > 0))] = 8
-            #
-            # else:
-            #
-            #     # Pixels with loss and gain
-            #     # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-            #     dst_data[np.where((extent_window == 1) & (gain_window == 1) & (loss_window > 0))] = 8
-
-
     uu.end_of_fx_summary(start, tile_id, output_pattern)
+
+
+# Gets the names of the input tiles
+def tile_names(tile_id, sensit_type):
+
+    # Names of the input files
+    loss = '{0}_{1|.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_forest_extent_2000_processed)
+    biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)
+
+    return loss, gain, extent, biomass
 
 
 # Creates gain year count tiles for pixels that only had loss
@@ -133,16 +111,16 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
     print "Gain year count for loss only pixels:", tile_id
 
     # Names of the input tiles
-    loss, gain, tcd, biomass = tile_names(tile_id, sensit_type)
+    loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
     # start time
     start = datetime.datetime.now()
 
     # Pixels with loss only
-    loss_calc = '--calc=(A>0)*(B==0)*(A-1)'
+    loss_calc = '--calc=(A>0)*(B==0)*(C==1)*(A-1)'
     loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_calc, loss_outfilearg,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', extent, loss_calc, loss_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
     subprocess.check_call(cmd)
 
@@ -159,7 +137,7 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, tcd, biomass = tile_names(tile_id, sensit_type)
+    loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
     # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0 (so that oceans aren't included)
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*(D>0)*{}'.format(cn.loss_years)
@@ -182,7 +160,7 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
     start = datetime.datetime.now()
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, tcd, biomass = tile_names(tile_id, sensit_type)
+    loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
     # Pixels with both loss and gain
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)

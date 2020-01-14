@@ -268,6 +268,15 @@ def main ():
         pool = multiprocessing.Pool(count / 6)
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
 
+        # Intermediate output tiles for checking outputs
+        uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
+        uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
+        uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
+        uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
+
+        # This is the final output used later in the model
+        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+
 
 
 if __name__ == '__main__':
