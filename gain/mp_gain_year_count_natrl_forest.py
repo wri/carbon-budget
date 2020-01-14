@@ -120,22 +120,22 @@ def main ():
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     gain_year_count_natrl_forest.create_gain_year_count_loss_only(tile_id)
+    #     gain_year_count_natrl_forest.create_gain_year_count_loss_only(tile_id, sensit_type)
     #
     # for tile_id in tile_id_list:
     #     if sensit_type == 'maxgain':
-    #         gain_year_count_natrl_forest.create_gain_year_count_gain_only_maxgain(tile_id)
+    #         gain_year_count_natrl_forest.create_gain_year_count_gain_only_maxgain(tile_id, sensit_type)
     #     else:
-    #         gain_year_count_natrl_forest.create_gain_year_count_gain_only_standard(tile_id)
+    #         gain_year_count_natrl_forest.create_gain_year_count_gain_only_standard(tile_id, sensit_type)
     #
     # for tile_id in tile_id_list:
-    #     gain_year_count_natrl_forest.create_gain_year_count_no_change(tile_id)
+    #     gain_year_count_natrl_forest.create_gain_year_count_no_change(tile_id, sensit_type)
     #
     # for tile_id in tile_id_list:
     #     if sensit_type == 'maxgain':
-    #         gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+    #         gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain_maxgain(tile_id, sensit_type)
     #     else:
-    #         gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain_standard(tile_id)
+    #         gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type)
     #
     # for tile_id in tile_id_list:
     #     gain_year_count_natrl_forest.create_gain_year_count_merge(tile_id, output_pattern_list[0])
