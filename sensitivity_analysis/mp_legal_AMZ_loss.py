@@ -51,14 +51,6 @@ def main ():
     print actual_stages
 
 
-    # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
-    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
-    # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-    # tile_id_list = ['50N_130W'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-
-
     # By definition, this script is for US-specific removals
     sensit_type = 'Brazil_loss'
 
@@ -82,6 +74,13 @@ def main ():
     if 'create_forest_extent' in actual_stages:
 
         print 'Creating forest extent tiles'
+
+        # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
+        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
+        # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
+        # tile_id_list = ['50N_130W'] # test tiles
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
         # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
@@ -129,6 +128,7 @@ def main ():
 
         # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
         raw_forest_loss_inputs = glob.glob('Prodes*_annual_loss_*tif')   # The list of tiles to merge
+        print raw_forest_loss_inputs
 
         # Gets the resolution of a more recent PRODES raster, which has a higher resolution. The merged output matches that.
         raw_forest_extent_input_2019 = glob.glob('Prodes2017_*tif')
@@ -154,7 +154,7 @@ def main ():
         dt = 'Byte'
         pool = multiprocessing.Pool(count/2)
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
- 
+
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         upload_dir = output_dir_list[1]
         pattern = output_pattern_list[1]
