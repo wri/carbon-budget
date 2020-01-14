@@ -256,7 +256,7 @@ def main ():
 
         output_pattern = output_pattern_list[3]
 
-        pool = multiprocessing.Pool(count/2)
+        pool = multiprocessing.Pool(count/3)
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
                  tile_id_list)
 
@@ -266,7 +266,7 @@ def main ():
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
                  tile_id_list)
 
-        pool = multiprocessing.Pool(count/3)
+        pool = multiprocessing.Pool(count/5)
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
 
         # # For single processor use
