@@ -95,13 +95,15 @@ def main ():
         print pixelSizeX
         print pixelSizeY
 
-        # # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
-        # # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
-        # cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern),
-        #        '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
-        #        raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
-        #        raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
-        # subprocess.check_call(cmd)
+        # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
+        # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
+        cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern),
+               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
+               raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
+               raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
+        subprocess.check_call(cmd)
+
+        uu.upload_final_set(cn.dir_Brazil_forest_extent_2000_merged, cn.Brazil_forest_extent_2000_merged_pattern)
 
         # Creates legal Amazon extent 2000 tiles
         source_raster = '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern)
@@ -120,6 +122,44 @@ def main ():
     if 'create_loss' in actual_stages:
 
         print 'Creating annual loss tiles'
+
+        tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+        # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        raw_forest_loss_inputs = glob.glob('Prodes*_annual_loss_*tif')   # The list of tiles to merge
+
+        # Gets the resolution of a more recent PRODES raster, which has a higher resolution. The merged output matches that.
+        raw_forest_extent_input_2019 = glob.glob('Prodes2017_*tif')
+        prodes_2017 = gdal.Open(raw_forest_extent_input_2019[0])
+        transform_2017 = prodes_2017.GetGeoTransform()
+        pixelSizeX = transform_2017[1]
+        pixelSizeY = -transform_2017[5]
+        print pixelSizeX
+        print pixelSizeY
+
+        # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
+        # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
+        cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern),
+               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
+               raw_forest_loss_inputs[0], raw_forest_loss_inputs[1]]
+        subprocess.check_call(cmd)
+
+        uu.upload_final_set(cn.dir_Brazil_forest_extent_2000_merged, cn.Brazil_annual_loss_merged_pattern)
+
+        # Creates legal Amazon extent 2000 tiles
+        source_raster = '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern)
+        out_pattern = cn.pattern_Brazil_annual_loss_processed
+        dt = 'Byte'
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+
+        # Checks if each tile has data in it. Only tiles with data are uploaded.
+        upload_dir = output_dir_list[1]
+        pattern = output_pattern_list[1]
+        pool = multiprocessing.Pool(count - 5)
+        pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 
 
