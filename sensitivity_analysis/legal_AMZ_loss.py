@@ -14,6 +14,8 @@ def merge_warp_forest_extent_tiles(tile_id, raw_forest_extent_inputs, out_patter
     # Start time
     start = datetime.datetime.now()
 
+    print start
+
     tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
 
     cmd = ['gdal_merge.py', '-o', tile,
@@ -23,19 +25,19 @@ def merge_warp_forest_extent_tiles(tile_id, raw_forest_extent_inputs, out_patter
            raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
     subprocess.check_call(cmd)
 
-    print "Checking if {} contains any data...".format(tile_id)
+    print "Checking if {} contains any data...".format(tile)
     no_data = uu.check_for_data(tile)
 
     if no_data:
 
-        print "  No data found. Deleting {}.".format(tile_id)
+        print "  No data found. Deleting {}.".format(tile)
         os.remove(tile)
 
     else:
 
-        print "  Data found in {}. Warping to Hansen tile...".format(tile_id)
+        print "  Data found in {}. Warping to Hansen tile...".format(tile)
 
-        print "Getting extent of", tile_id
+        print "Getting extent of", tile
         xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
         uu.warp_to_Hansen(tile, '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_forest_extent_2000_processed),

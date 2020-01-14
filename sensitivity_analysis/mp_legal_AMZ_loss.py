@@ -100,6 +100,8 @@ def main ():
 
         print 'Creating annual loss tiles'
 
+        # tile_id_list = uu.tile_list_spot_machine('.', )
+    #
 
 
 
