@@ -143,7 +143,7 @@ def main ():
         # which seems to have a preponderance of 2007 loss that appears to often be earlier loss years.
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
-               'Prodes2014_annual_loss_2007_2015.tif', 'Prodes2014_annual_loss_2001_2006.tif']
+               'Prodes2017_annual_loss_2007_2015.tif', 'Prodes2014_annual_loss_2001_2006.tif']
         subprocess.check_call(cmd)
 
         # Uploads the merged loss raster to s3 for future reference
