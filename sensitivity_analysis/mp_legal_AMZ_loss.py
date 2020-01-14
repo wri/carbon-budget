@@ -180,6 +180,7 @@ def main ():
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
+        tile_id_list = '00N_050W'
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -217,6 +218,42 @@ def main ():
 
         # Uploads output tiles to s3
         uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+
+    # Creates tiles of the number of years of removals
+    if 'gain_year_count' in actual_stages:
+
+        print 'Creating gain year count tiles for natural forest'
+
+        # Files to download for this script.
+        download_dict = {
+            cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
+            cn.gain_dir: [cn.pattern_gain],
+            cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
+            cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
+        }
+
+
+        tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        for key, values in download_dict.iteritems():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+            print "Changing output directory and file name pattern based on sensitivity analysis"
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+
+        output_pattern = output_pattern_list[2]
 
 
 
