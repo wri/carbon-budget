@@ -154,7 +154,7 @@ def main ():
         dt = 'Byte'
         pool = multiprocessing.Pool(count/2)
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-
+ 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         upload_dir = output_dir_list[1]
         pattern = output_pattern_list[1]
