@@ -83,30 +83,44 @@ def main ():
 
         print 'Creating forest extent tiles'
 
-        # uu.s3_flexible_download(cn.Brazil_forest_extent_2000_raw_dir, 'AMZ_warped', '.', sensit_type, 'all')
+        # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
-        out_pattern = 'merged_forest_extent_2000'
+        # Gets the resolution of a more recent PRODES raster, which has a higher resolution. The merged output matches that.
+        raw_forest_extent_input_2019 = glob.glob('*2019_AMZ_warped_*tif')
+        prodes_2019 = gdal.Open(raw_forest_extent_input_2019[0])
+        transform_2019 = prodes_2019.GetGeoTransform()
+        pixelSizeX = transform_2019[1]
+        pixelSizeY = -transform_2019[5]
+        print pixelSizeX
+        print pixelSizeY
+
+        # # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
+        # # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
+        # cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern),
+        #        '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
+        #        raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
+        #        raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
+        # subprocess.check_call(cmd)
+
+        # Creates legal Amazon extent 2000 tiles
+        source_raster = '{}.tif'.format(cn.Brazil_forest_extent_2000_merged_pattern)
+        out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
         dt = 'Byte'
-        # pool = multiprocessing.Pool(count / 2)
-        # pool.map(partial(legal_AMZ_loss.merge_warp_forest_extent_tiles, raw_forest_extent_inputs=raw_forest_extent_inputs, out_pattern=out_pattern, dt=dt),
-        #          tile_id_list)
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
-        # For single processor testing
-        for tile_id in tile_id_list:
-
-            legal_AMZ_loss.merge_warp_forest_extent_tiles(tile_id, raw_forest_extent_inputs, out_pattern, dt)
-
-        # Uploads output tiles to s3
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+        # Checks if each tile has data in it. Only tiles with data are uploaded.
+        upload_dir = output_dir_list[0]
+        pattern = output_pattern_list[0]
+        pool = multiprocessing.Pool(count - 5)
+        pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 
     if 'create_loss' in actual_stages:
 
         print 'Creating annual loss tiles'
 
-        # tile_id_list = uu.tile_list_spot_machine('.', )
-    #
 
 
 

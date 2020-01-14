@@ -514,8 +514,11 @@ JPL_processed_dir = 's3://gfw2-data/climate/Saatchi_JPL_biomass/1km_2000/process
 
 Brazil_forest_extent_2000_raw_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/raw/2020113/')
 
+Brazil_forest_extent_2000_merged_pattern = 'legal_Amazon_forest_extent_2000_merged'
+dir_Brazil_forest_extent_2000_merged = os.path.join(base_dir, 'sensit_analysis_Brazil_loss/forest_extent_2000/processed/combined/20200113/')
+
 pattern_Brazil_forest_extent_2000_processed = 'legal_Amazon_forest_extent_2000'
-Brazil_forest_extent_2000_processed_dir = os.path.join(base_dir, 'sensit_analysis_Brazil_loss/forest_extent_2000/processed/tiles/20200114/')
+Brazil_forest_extent_2000_processed_dir = os.path.join(base_dir, 'sensit_analysis_Brazil_loss/forest_extent_2000/processed/tiles/2020011/')
 
 Brazil_annual_loss_raw_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/raw/2020114/')
 
