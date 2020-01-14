@@ -53,8 +53,6 @@ def get_tile_dir(tile):
 # Lists the tiles in a folder in s3
 def tile_list_s3(source, sensit_type='std'):
 
-    print "Creating list of tiles..."
-
     # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
     # (JPL AGB extent and US extent, respectively)
     if sensit_type == 'std':
@@ -66,7 +64,7 @@ def tile_list_s3(source, sensit_type='std'):
     else:
         source = source.replace('standard', sensit_type)
 
-    print source
+    print "Creating list of tiles in", source
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
