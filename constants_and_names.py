@@ -460,7 +460,7 @@ output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20200108/'.
 ######
 
 sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
-                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_AMZ_loss']
+                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_Amazon_loss']
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
                       '{0} = Standard model. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
