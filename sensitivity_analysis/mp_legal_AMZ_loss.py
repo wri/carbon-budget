@@ -131,6 +131,7 @@ def main ():
         # Downloads input rasters and lists them
         uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, '.', sensit_type)
         raw_forest_loss_inputs = glob.glob('Prodes*_annual_loss_*tif')   # The list of tiles to merge
+        print raw_forest_loss_inputs
 
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
         raw_forest_extent_input_2017 = glob.glob('Prodes2017_*tif')
@@ -143,11 +144,11 @@ def main ():
         # at about 150 GB.
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
-               raw_forest_loss_inputs[0], raw_forest_loss_inputs[1]]
+               'Prodes2014_annual_loss_2007_2015.tif', 'Prodes2014_annual_loss_2001_2006.tif']
         subprocess.check_call(cmd)
 
         # Uploads the merged loss raster to s3 for future reference
-        uu.upload_final_set(cn.dir_Brazil_forest_extent_2000_merged, cn.Brazil_annual_loss_merged_pattern)
+        uu.upload_final_set(cn.dir_Brazil_annual_loss_merged, cn.Brazil_annual_loss_merged_pattern)
 
         # Creates annual loss 2001-2015 tiles
         source_raster = '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern)
@@ -163,6 +164,8 @@ def main ():
         pool = multiprocessing.Pool(count - 5)
         pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
+
+    # Creates forest age category tiles
     if 'forest_age_category' in actual_stages:
 
         print 'Creating forest age category tiles'
