@@ -64,13 +64,13 @@ def main ():
 
     # List of output directories and output file name patterns
     output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir,
-                       # cn.Brazil_annual_loss_processed_dir,
+                       cn.Brazil_annual_loss_processed_dir,
                        # cn.Brazil_forest_age_category_dir, cn.Brazil_gain_year_count_natrl_forest_dir,
                        # cn.Brazil_annual_gain_AGB_natrl_forest_dir, cn.Brazil_annual_gain_BGB_natrl_forest_dir,
                        # cn.Brazil_cumul_gain_AGCO2_natrl_forest_dir, cn.Brazil_cumul_gain_BGCO2_natrl_forest_dir
                        ]
     output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed,
-                           # cn.pattern_Brazil_annual_loss_processed,
+                           cn.pattern_Brazil_annual_loss_processed,
                            # cn.pattern_Brazil_forest_age_category, cn.pattern_Again_year_count_natrl_forest,
                            # cn.pattern_Brazil_annual_gain_AGB_natrl_forest, cn.pattern_Brazil_annual_gain_BGB_natrl_forest,
                            # cn.pattern_Brazil_cumul_gain_AGCO2_natrl_forest, cn.pattern_Brazil_cumul_gain_BGCO2_natrl_forest
@@ -83,28 +83,23 @@ def main ():
 
         print 'Creating forest extent tiles'
 
-        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
-        # Gets the resolution of a more recent PRODES raster, which has a higher resolution
-        raw_forest_extent_input_2019 = glob.glob('*2019_AMZ_warped_*tif')
-        prodes_2019 = gdal.Open(raw_forest_extent_input_2019[0])
-        transform_2019 = prodes_2019.GetGeoTransform()
-        pixelSizeX = transform_2019[1]
-        pixelSizeY = -transform_2019[5]
-
-        cmd = ['gdal_merge.py', '-o', cn.Brazil_forest_extent_2000_merged,
-               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
-               raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
-               raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
-        subprocess.check_call(cmd)
-
-        # Converts the national forest age category raster to Hansen tiles
-        source_raster = cn.Brazil_forest_extent_2000_merged
-        out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
+        out_pattern = 'merged_forest_extent_2000'
         dt = 'Byte'
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool = multiprocessing.Pool(count / 2)
+        pool.map(partial(legal_AMZ_loss.merge_warp_forest_extent_tiles, raw_forest_extent_inputs=raw_forest_extent_inputs, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
+
+        # Uploads output tiles to s3
+        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+
+    if 'create_loss' in actual_stages:
+
+        print 'Creating annual loss tiles'
+
 
 
 
