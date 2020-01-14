@@ -14,10 +14,10 @@ def merge_warp_forest_extent_tiles(tile_id, raw_forest_extent_inputs, out_patter
     # Start time
     start = datetime.datetime.now()
 
+    tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
+
     print "Getting extent of", tile
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
 
     cmd = ['gdal_merge.py', '-o', tile,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', dt,
