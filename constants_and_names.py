@@ -522,10 +522,10 @@ Brazil_forest_extent_2000_processed_dir = os.path.join(base_dir, 'sensit_analysi
 
 Brazil_annual_loss_raw_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/raw/20200114/')
 
-Brazil_annual_loss_merged_pattern = 'legal_Amazon_annual_loss_merged'
+Brazil_annual_loss_merged_pattern = 'legal_Amazon_annual_loss_2001_2015_merged'
 dir_Brazil_annual_loss_merged = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/combined/20200114/')
 
-pattern_Brazil_annual_loss_processed = 'legal_Amazon_annual_loss'
+pattern_Brazil_annual_loss_processed = 'legal_Amazon_annual_loss_2001_2015'
 Brazil_annual_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/tiles/20200114/')
 
 

@@ -130,8 +130,6 @@ def main ():
 
         # Downloads input rasters and lists them
         uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, '.', sensit_type)
-        raw_forest_loss_inputs = glob.glob('Prodes*_annual_loss_*tif')   # The list of tiles to merge
-        print raw_forest_loss_inputs
 
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
         raw_forest_extent_input_2017 = glob.glob('Prodes2017_*tif')
@@ -141,7 +139,8 @@ def main ():
         pixelSizeY = -transform_2017[5]
 
         # This merges both loss rasters together, so it takes a lot of memory and time. It seems to max out
-        # at about 150 GB.
+        # at about 150 GB. Loss from PRODES2014 needs to go second so that its loss years get priority over PRODES2017,
+        # which seems to have a preponderance of 2007 loss that appears to often be earlier loss years.
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.Brazil_annual_loss_merged_pattern),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                'Prodes2014_annual_loss_2007_2015.tif', 'Prodes2014_annual_loss_2001_2006.tif']
