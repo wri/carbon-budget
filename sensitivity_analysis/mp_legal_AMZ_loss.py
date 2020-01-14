@@ -83,7 +83,7 @@ def main ():
 
         print 'Creating forest extent tiles'
 
-        # uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
         out_pattern = 'merged_forest_extent_2000'
