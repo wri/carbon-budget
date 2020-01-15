@@ -396,10 +396,10 @@ def main ():
         pool.close()
         pool.join()
 
-        # For single processor use
-        for tile in tile_id_list:
-
-            annual_gain_rate_natrl_forest.annual_gain_rate(tile, sensit_type, gain_table_dict, stage_output_pattern_list)
+        # # For single processor use
+        # for tile in tile_id_list:
+        #
+        #     annual_gain_rate_natrl_forest.annual_gain_rate(tile, sensit_type, gain_table_dict, stage_output_pattern_list)
 
 
         # Uploads outputs from this stage
