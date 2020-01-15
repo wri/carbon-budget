@@ -51,6 +51,8 @@ string tile_id = argv[1]; // The tile id comes from the second argument. The fir
 string sensit_type = argv[2] // For standard model or sensitivity analyses that use the standard emissions model.
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
 
+cout << sensit_type << endl;
+
 string infolder = "cpp_util/";
 
 // Model constants
@@ -85,7 +87,7 @@ string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 
-if (sensit_type != 'std') {
+if (sensit_type ! 'std') {
     agc_name = infolder + tile_id + "_t_AGC_ha_emis_year_" + sensit_type +".tif";
     bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year_" + sensit_type +".tif";
     dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
@@ -117,7 +119,7 @@ string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomas
 string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil.tif";
 string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil.tif";
 
-if (sensit_type != 'std') {
+if (sensit_type ! 'std') {
     out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
     out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
     out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
