@@ -186,6 +186,10 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     # no reason to run the function.
     if os.path.exists('{}.tif'.format(tile_id)):
         print "Loss tile found for {}. Processing...".format(tile_id)
+        loss_year = '{}.tif'.format(tile_id)
+    elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)):
+        print "Brazil-specific loss tile found for {}. Processing...".format(tile_id)
+        loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     else:
         print "No loss tile for {}. Not processing.".format(tile_id)
         return
@@ -201,7 +205,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove)
     planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
     natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
-    loss_year = '{}.tif'.format(tile_id)
+
     gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id)
     if sensit_type == 'biomass_swap':
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)

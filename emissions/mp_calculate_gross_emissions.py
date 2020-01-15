@@ -103,16 +103,27 @@ def main ():
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
 
-        if sensit_type == 'std':
-            if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
-                print "C++ for biomass+soil already compiled."
-            else:
-                raise Exception('Must compile standard biomass+soil model C++...')
-        else:
+        if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
             if os.path.exists('./cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-                print 'C++ for {} already compiled.'.format(sensit_type)
+                print "C++ for {} already compiled.".format(sensit_type)
             else:
-                raise Exception('Must compile {} model C++...'.format(sensit_type))
+                raise Exception('Must compile standard {} model C++...'.format(sensit_type))
+        else:
+            if os.path.exists('./cpp_util/calc_gross_emissions_generic.exe'):
+                print "C++ for generic emissions already compiled."
+            else:
+                raise Exception('Must compile generic emissions C++...')
+
+        # if sensit_type == 'std':
+        #     if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
+        #         print "C++ for biomass+soil already compiled."
+        #     else:
+        #         raise Exception('Must compile standard biomass+soil model C++...')
+        # else:
+        #     if os.path.exists('./cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+        #         print 'C++ for {} already compiled.'.format(sensit_type)
+        #     else:
+        #         raise Exception('Must compile {} model C++...'.format(sensit_type))
 
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
