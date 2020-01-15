@@ -48,7 +48,7 @@ if (argc != 3){cout << "Use <program name> <tile id><sensit_type>" << endl; retu
 
 // Input arguments
 string tile_id = argv[1]; // The tile id comes from the second argument. The first argument is the name of this code.
-string sensit_type = argv[2] // For standard model or sensitivity analyses that use the standard emissions model.
+string sensit_type = argv[2]; // For standard model or sensitivity analyses that use the standard emissions model.
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
 
 cout << sensit_type << endl;
