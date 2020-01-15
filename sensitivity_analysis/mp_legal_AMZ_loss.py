@@ -348,6 +348,8 @@ def main ():
         gain_table_con_eco_only['value'] = 0
         gain_table_con_eco_only['cont_eco_age'] = gain_table_con_eco_only['gainEcoCon']
 
+        print gain_table_con_eco_only
+
         # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
         age_dict = {'growth_primary': 10000, 'growth_secondary_greater_20': 20000, 'growth_secondary_less_20': 30000}
 
@@ -356,8 +358,12 @@ def main ():
         gain_table_cont_eco_age['cont_eco_age'] = gain_table_cont_eco_age['gainEcoCon'] + gain_table_cont_eco_age[
             'variable']
 
+        print gain_table_cont_eco_age
+
         # Merges the table of just continent-ecozone codes and the table of  continent-ecozone-age codes
         gain_table_all_combos = pd.concat([gain_table_con_eco_only, gain_table_cont_eco_age])
+
+        print gain_table_all_combos
 
         # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
         gain_table_dict = pd.Series(gain_table_all_combos.value.values,
