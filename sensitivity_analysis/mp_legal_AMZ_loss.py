@@ -16,6 +16,10 @@ import universal_util as uu
 
 def main ():
 
+    Brazil_stages = ['all', 'create_forest_extent', 'create_loss',
+                     'forest_age_category', 'gain_year_count', 'annual_removals', 'cumulative_removals']
+
+
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--stages', '-s', required=True,
