@@ -57,13 +57,13 @@ def main ():
                        cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
                        cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
                        cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
-                       cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.annual_gain_AGB_BGB_all_types_dir
+                       cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir
                        ]
     output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
                            cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
                            cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
                            cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
-                           cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_annual_gain_AGB_BGB_all_types
+                           cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types
                            ]
 
 
@@ -520,7 +520,7 @@ def main ():
         pool.map(
             partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
                     sensit_type=sensit_type), tile_id_list)
- 
+
         # # For single processor use
         # for tile_id in tile_id_list:
         #     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list, sensit_type)
