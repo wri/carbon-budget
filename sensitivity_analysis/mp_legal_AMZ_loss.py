@@ -555,7 +555,6 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
             cn.gain_dir: [cn.pattern_gain],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
@@ -565,12 +564,17 @@ def main ():
             cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
         }
 
-
         # Adds the correct AGB tiles to the download dictionary depending on the model run
         if sensit_type == 'biomass_swap':
             download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
         else:
             download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
+
+        # Adds the correct loss tile to the download dictionary depending on the model run
+        if sensit_type == 'legal_Amazon_loss':
+            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        else:
+            download_dict[cn.loss_dir] = ['']
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)

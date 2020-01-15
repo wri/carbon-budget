@@ -87,7 +87,6 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.loss_dir: [''],
             cn.gain_dir: [cn.pattern_gain],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
@@ -102,6 +101,12 @@ def main ():
             download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
         else:
             download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
+
+        # Adds the correct loss tile to the download dictionary depending on the model run
+        if sensit_type == 'legal_Amazon_loss':
+            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        else:
+            download_dict[cn.loss_dir] = ['']
 
     # Output files and patterns and files to download if carbon pools for 2000 are being generated
     elif extent == '2000':
@@ -120,7 +125,6 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.loss_dir: [''],
             cn.gain_dir: [cn.pattern_gain],
         }
 
@@ -130,14 +134,20 @@ def main ():
         else:
             download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
 
+        # Adds the correct loss tile to the download dictionary depending on the model run
+        if sensit_type == 'legal_Amazon_loss':
+            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        else:
+            download_dict[cn.loss_dir] = ['']
+
     else:
         raise Exception('Extent not valid.')
 
 
-    # for key, values in download_dict.iteritems():
-    #     dir = key
-    #     pattern = values[0]
-    #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
