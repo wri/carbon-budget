@@ -179,7 +179,7 @@ def main ():
     # There are only 8 tiles to process, so count/2 will cover all of them in one go.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/2)
-    pool.map(calculate_gross_emissions.mask_pre_2000_plant, tile_id_list)
+    pool.map(partial(calculate_gross_emissions.mask_pre_2000_plant, sensit_type=sensit_type), tile_id_list)
 
     # # For single processor use
     # for tile in tile_id_list:

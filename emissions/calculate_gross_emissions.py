@@ -13,12 +13,15 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calls the function to mask pre-2000 plantations from the loss tiles before calculating emissions from them
-def mask_pre_2000_plant(tile_id):
+def mask_pre_2000_plant(tile_id, sensit_type):
 
     print "Masking pre-2000 plantations for {}".format(tile_id)
 
     pre_2000_plant = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
-    loss_tile = './cpp_util/{}.tif'.format(tile_id)
+    if sensit_type == 'legal_Amazon_loss':
+        loss_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    else:
+        loss_tile = './cpp_util/{}.tif'.format(tile_id)
     out_tile = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked)
 
     uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, out_tile, tile_id)
