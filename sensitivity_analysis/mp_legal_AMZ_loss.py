@@ -348,7 +348,7 @@ def main ():
         gain_table_con_eco_only['value'] = 0
         gain_table_con_eco_only['cont_eco_age'] = gain_table_con_eco_only['gainEcoCon']
 
-        print gain_table_con_eco_only
+        print gain_table_con_eco_only.head(100)
 
         # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
         age_dict = {'growth_primary': 10000, 'growth_secondary_greater_20': 20000, 'growth_secondary_less_20': 30000}
