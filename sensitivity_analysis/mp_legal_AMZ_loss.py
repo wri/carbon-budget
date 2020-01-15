@@ -574,7 +574,7 @@ def main ():
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-        tile_id_list = ['00N_050W']
+        # tile_id_list = ['00N_050W']
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -626,7 +626,7 @@ def main ():
             # 14 processors maxes out at 410-415 GB
             # Creates a single filename pattern to pass to the multiprocessor call
             pattern = stage_output_pattern_list[0]
-            pool = multiprocessing.Pool(count/3)
+            pool = multiprocessing.Pool(count/4)
             pool.map(partial(create_carbon_pools.create_emitted_AGC,
                              pattern=pattern, sensit_type=sensit_type), tile_id_list)
             pool.close()
@@ -682,7 +682,7 @@ def main ():
         # processes=16 maxes out at about 430 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[2]
-        pool = multiprocessing.Pool(processes=16)
+        pool = multiprocessing.Pool(count/4)
         pool.map(
             partial(create_carbon_pools.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
                     extent=extent,
@@ -699,7 +699,7 @@ def main ():
         print "Creating tiles of litter carbon"
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[3]
-        pool = multiprocessing.Pool(processes=16)
+        pool = multiprocessing.Pool(count/4)
         pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
                          extent=extent,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -717,7 +717,7 @@ def main ():
             print "Creating tiles of soil carbon"
             # Creates a single filename pattern to pass to the multiprocessor call
             pattern = stage_output_pattern_list[4]
-            pool = multiprocessing.Pool(count/4)
+            pool = multiprocessing.Pool(count/3)
             pool.map(partial(create_carbon_pools.create_soil,
                              pattern=pattern, sensit_type=sensit_type), tile_id_list)
             pool.close()

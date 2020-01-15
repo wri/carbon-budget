@@ -5,9 +5,12 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
 From carbon-budget/emissions/, do:
-c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
-(for the biomass_soil pools and standard model version).
-calc_emissions_v3_biomass_soil.exe should appear in the directory.
+c++ ./cpp_util/calc_gross_emissions_generic.cpp -o ./cpp_util/calc_gross_emissions_generic.exe -lgdal
+(for the standard model and some sensitivity analysis versions).
+calc_gross_emissions_generic.exe should appear in the directory.
+For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
+and convert_to_grassland), do:
+c++ ./cpp_util/calc_gross_emissions_<sensit_type>.cpp -o ./cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
 Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE].
 The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
@@ -59,9 +62,14 @@ def main ():
         cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
         cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
         cn.burn_year_dir: [cn.pattern_burn_year],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000],
-        cn.loss_dir: ['']
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
+
+    # Special loss tiles for the Brazil sensitivity analysis
+    if sensit_type == 'legal_Amazon_loss':
+        download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+    else:
+        download_dict[cn.loss_dir] = ['']
 
 
     # List of tiles to run in the model
@@ -103,6 +111,8 @@ def main ():
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
 
+        # Some sensitivity analyses have specific gross emissions scripts.
+        # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
             if os.path.exists('./cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
                 print "C++ for {} already compiled.".format(sensit_type)
@@ -113,18 +123,6 @@ def main ():
                 print "C++ for generic emissions already compiled."
             else:
                 raise Exception('Must compile generic emissions C++...')
-
-        # if sensit_type == 'std':
-        #     if os.path.exists('./cpp_util/calc_gross_emissions_biomass_soil.exe'):
-        #         print "C++ for biomass+soil already compiled."
-        #     else:
-        #         raise Exception('Must compile standard biomass+soil model C++...')
-        # else:
-        #     if os.path.exists('./cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-        #         print 'C++ for {} already compiled.'.format(sensit_type)
-        #     else:
-        #         raise Exception('Must compile {} model C++...'.format(sensit_type))
-
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('./cpp_util/calc_gross_emissions_soil_only.exe'):
@@ -216,16 +214,14 @@ def main ():
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
+    # pool = multiprocessing.Pool(processes=18)
+    pool = multiprocessing.Pool(processes=9)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
     # # For single processor use
     # for tile in tile_id_list:
     #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
-
-    print output_dir_list
-    print output_pattern_list
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
     for i in range(0, len(output_dir_list)):

@@ -31,27 +31,18 @@ def calc_emissions(tile_id, pools, sensit_type):
 
     start = datetime.datetime.now()
 
-    # Runs the correct c++ script given the pools (biomass+soil or soil_only) and model type selected
-    if (pools == 'biomass_soil') & (sensit_type == 'std'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_soil.exe', tile_id]
-
-    elif (pools == 'soil_only') & (sensit_type == 'std'):
+    # Runs the correct c++ script given the pools (biomass+soil or soil_only) and model type selected.
+    # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
+    # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
+    if (pools == 'soil_only') & (sensit_type == 'std'):
         emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
 
-    elif (pools == 'biomass_soil') & (sensit_type == 'no_shifting_ag'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_no_shifting_ag.exe', tile_id]
+    elif (pools == 'biomass_soil') & (sensit_type in ['convert_to_grassland', 'no_shifting_ag']):
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type), tile_id]
 
-    elif (pools == 'biomass_soil') & (sensit_type == 'convert_to_grassland'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_convert_to_grassland.exe', tile_id]
-
-    elif (pools == 'biomass_soil') & (sensit_type == 'biomass_swap'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_biomass_swap.exe', tile_id]
-
-    elif (pools == 'biomass_soil') & (sensit_type == 'US_removals'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_US_removals.exe', tile_id]
-
-    elif (pools == 'biomass_soil') & (sensit_type == 'no_primary_gain'):
-        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_no_primary_gain.exe', tile_id]
+    # This C++ script has an extra argument that names the input carbon pools and output emissions correctly
+    elif (pools == 'biomass_soil') & (sensit_type not in ['no_shifting_ag', 'convert_to_grassland']):
+        emissions_tiles_cmd = ['cpp_util/calc_gross_emissions_generic.exe', tile_id, sensit_type]
 
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')

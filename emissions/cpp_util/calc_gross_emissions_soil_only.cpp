@@ -45,7 +45,6 @@ int main(int argc, char* argv[])
 if (argc != 2){cout << "Use <program name> <tile id>" << endl; return 1;}
 
 // Input arguments
-string agb_name=argv[1];
 string tile_id = argv[1]; // The tile id comes from the second argument. The first argument is the name of this code.
 
 string infolder = "cpp_util/";
