@@ -341,6 +341,8 @@ def main ():
                                                       'growth_secondary_less_20'])
         gain_table_cont_eco_age = gain_table_cont_eco_age.dropna()
 
+        print gain_table_cont_eco_age
+
         # Creates a table that has just the continent-ecozone combinations for adding to the dictionary.
         # These will be used whenever there is just a continent-ecozone pixel without a forest age pixel
         gain_table_con_eco_only = gain_table_cont_eco_age
@@ -348,7 +350,7 @@ def main ():
         gain_table_con_eco_only['value'] = 0
         gain_table_con_eco_only['cont_eco_age'] = gain_table_con_eco_only['gainEcoCon']
 
-        print gain_table_con_eco_only.head(100)
+        print gain_table_con_eco_only
 
         # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
         age_dict = {'growth_primary': 10000, 'growth_secondary_greater_20': 20000, 'growth_secondary_less_20': 30000}
