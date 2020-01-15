@@ -311,7 +311,7 @@ def main ():
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[4:5])
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[4:6])
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
@@ -325,6 +325,8 @@ def main ():
         # Table with IPCC Table 4.9 default gain rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
         subprocess.check_call(cmd)
+
+        pd.options.mode.chained_assignment = None
 
         # Imports the table with the ecozone-continent codes and the carbon gain rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
