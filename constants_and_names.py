@@ -302,7 +302,7 @@ base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 ## Carbon pools in loss year
 
 # Date to include in the output directory for all emissions year carbon pools
-emis_pool_run_date = '20200107'
+emis_pool_run_date = '20200115'
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
@@ -370,7 +370,7 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/standard/{1}/'.format(base_carbo
 ## Emissions from biomass and soil (all carbon pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20200107'
+emis_run_date_biomass_soil = '20200115'
 
 pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_t_CO2e_ha_biomass_soil'
 gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
