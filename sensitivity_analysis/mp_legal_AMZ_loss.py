@@ -56,7 +56,7 @@ def main ():
     sensit_type = 'legal_Amazon_loss'
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir,
+    master_output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir,
                        cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
                        cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
                        cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
@@ -65,7 +65,7 @@ def main ():
                        cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir
                        ]
 
-    output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
+    master_output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
                            cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
                            cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
                            cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
@@ -121,8 +121,8 @@ def main ():
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
-        upload_dir = output_dir_list[0]
-        pattern = output_pattern_list[0]
+        upload_dir = master_output_dir_list[0]
+        pattern = master_output_pattern_list[0]
         pool = multiprocessing.Pool(count - 5)
         pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
@@ -166,8 +166,8 @@ def main ():
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         # In practice, every Amazon tile has loss in it but I figured I'd do this just to be thorough.
-        upload_dir = output_dir_list[1]
-        pattern = output_pattern_list[1]
+        upload_dir = master_output_dir_list[1]
+        pattern = master_output_pattern_list[1]
         pool = multiprocessing.Pool(count - 5)
         pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
@@ -203,11 +203,11 @@ def main ():
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+            stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
 
-        output_pattern = output_pattern_list[2]
+        output_pattern = stage_output_pattern_list[2]
 
         # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
         # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
@@ -225,7 +225,7 @@ def main ():
         #     legal_AMZ_loss.legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern)
 
         # Uploads output from this stage
-        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+        uu.upload_final_set(stage_output_dir_list[2], stage_output_pattern_list[2])
 
 
     # Creates tiles of the number of years of removals
@@ -260,11 +260,11 @@ def main ():
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+            stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
 
-        output_pattern = output_pattern_list[3]
+        output_pattern = stage_output_pattern_list[3]
 
         pool = multiprocessing.Pool(count/3)
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
@@ -293,13 +293,13 @@ def main ():
             # legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
 
         # Intermediate output tiles for checking outputs
-        uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
-        uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
-        uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
-        uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
+        uu.upload_final_set(stage_output_dir_list[3], "growth_years_loss_only")
+        uu.upload_final_set(stage_output_dir_list[3], "growth_years_gain_only")
+        uu.upload_final_set(stage_output_dir_list[3], "growth_years_no_change")
+        uu.upload_final_set(stage_output_dir_list[3], "growth_years_loss_and_gain")
 
         # Uploads output from this stage
-        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+        uu.upload_final_set(stage_output_dir_list[3], stage_output_pattern_list[3])
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
@@ -326,8 +326,8 @@ def main ():
         # This adapts just the relevant items in the output directory and pattern lists (annual removals).
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[4:6])
-            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[4:6])
+            stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[4:6])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[4:6])
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -439,8 +439,8 @@ def main ():
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[6:8])
-            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[6:8])
+            stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[6:8])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[6:8])
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -511,8 +511,8 @@ def main ():
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[8:10])
-            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[8:10])
+            stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[8:10])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[8:10])
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -538,57 +538,86 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
 
 
-    # # Creates carbon pools in loss year
-    # if 'carbon pools' in actual_stages:
-    #
-    #     print 'Creating emissions year carbon pools'
-    #
-    #     # Specifies that carbon pools are created for loss year rather than in 2000
-    #     extent = 'loss'
-    #
-    #
-    #     # Files to download for this script
-    #     download_dict = {
-    #         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-    #         cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-    #         cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-    #         cn.precip_processed_dir: [cn.pattern_precip],
-    #         cn.elevation_processed_dir: [cn.pattern_elevation],
-    #         cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-    #         cn.loss_dir: [''],
-    #         cn.gain_dir: [cn.pattern_gain],
-    #         cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
-    #         cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
-    #         cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
-    #         cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
-    #         cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
-    #         cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
-    #     }
-    #
-    #
-    #     # Adds the correct AGB tiles to the download dictionary depending on the model run
-    #     if sensit_type == 'biomass_swap':
-    #         download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
-    #     else:
-    #         download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
-    #
-    #
-    #     tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-    #     # tile_id_list = ['00N_050W']
-    #     print tile_id_list
-    #     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-    #
-    #     # for key, values in download_dict.iteritems():
-    #     #     dir = key
-    #     #     pattern = values[0]
-    #     #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
-    #
-    #     # If the model run isn't the standard one, the output directory and file names are changed
-    #     if sensit_type != 'std':
-    #         print "Changing output directory and file name pattern based on sensitivity analysis"
-    #         stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[10:15])
-    #         stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[10:15])
-    #
+    # Creates carbon pools in loss year
+    if 'carbon pools' in actual_stages:
+
+        print 'Creating emissions year carbon pools'
+
+        # Specifies that carbon pools are created for loss year rather than in 2000
+        extent = 'loss'
+
+
+        # Files to download for this script
+        download_dict = {
+            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+            cn.precip_processed_dir: [cn.pattern_precip],
+            cn.elevation_processed_dir: [cn.pattern_elevation],
+            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
+            cn.loss_dir: [''],
+            cn.gain_dir: [cn.pattern_gain],
+            cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
+            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
+            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
+            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
+            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
+            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
+        }
+
+
+        # Adds the correct AGB tiles to the download dictionary depending on the model run
+        if sensit_type == 'biomass_swap':
+            download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
+        else:
+            download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
+
+
+        tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
+        # tile_id_list = ['00N_050W']
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+        # for key, values in download_dict.iteritems():
+        #     dir = key
+        #     pattern = values[0]
+        #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+            print "Changing output directory and file name pattern based on sensitivity analysis"
+            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[10:15])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[10:15])
+
+
+        # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+        subprocess.check_call(cmd)
+
+        pd.options.mode.chained_assignment = None
+
+        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                                   sheet_name="mangrove gain, for model")
+
+        # Removes rows with duplicate codes (N. and S. America for the same ecozone)
+        gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+        mang_BGB_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                          cn.below_to_above_trop_dry_mang,
+                                                                          cn.below_to_above_trop_wet_mang,
+                                                                          cn.below_to_above_subtrop_mang)
+
+        mang_deadwood_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                               cn.deadwood_to_above_trop_dry_mang,
+                                                                               cn.deadwood_to_above_trop_wet_mang,
+                                                                               cn.deadwood_to_above_subtrop_mang)
+
+        mang_litter_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
+                                                                             cn.litter_to_above_trop_dry_mang,
+                                                                             cn.litter_to_above_trop_wet_mang,
+                                                                             cn.litter_to_above_subtrop_mang)
+
 
 if __name__ == '__main__':
     main()
