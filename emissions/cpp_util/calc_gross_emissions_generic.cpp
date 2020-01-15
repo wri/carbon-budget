@@ -77,8 +77,8 @@ temperate = 3;
 int boreal;         // The ecozone code for the boreal zone
 boreal = 2;
 
-int std = sensit_type.compare('std');
-cout << std << endl;
+//int std = sensit_type.compare("std");
+//cout << std << endl;
 
 // Input files
 // Carbon pools
@@ -90,7 +90,8 @@ string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 
-if (std == 0) {
+if (sensit_type != "std") {
+//if (std == 0) {
     agc_name = infolder + tile_id + "_t_AGC_ha_emis_year_" + sensit_type +".tif";
     bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year_" + sensit_type +".tif";
     dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
