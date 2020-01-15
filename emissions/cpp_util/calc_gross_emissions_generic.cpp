@@ -77,9 +77,6 @@ temperate = 3;
 int boreal;         // The ecozone code for the boreal zone
 boreal = 2;
 
-//int std = sensit_type.compare("std");
-//cout << std << endl;
-
 // Input files
 // Carbon pools
 
@@ -91,7 +88,6 @@ string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 
 if (sensit_type != "std") {
-//if (std == 0) {
     agc_name = infolder + tile_id + "_t_AGC_ha_emis_year_" + sensit_type +".tif";
     bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year_" + sensit_type +".tif";
     dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
@@ -123,7 +119,7 @@ string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomas
 string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil.tif";
 string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil.tif";
 
-if (std == 0) {
+if (sensit_type != "std") {
     out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
     out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
     out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
