@@ -15,6 +15,7 @@ import constants_and_names as cn
 import universal_util as uu
 sys.path.append('../gain')
 import annual_gain_rate_natrl_forest
+import cumulative_gain_natrl_forest
 
 def main ():
 
@@ -280,16 +281,18 @@ def main ():
         # for tile_id in tile_id_list:
             # legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
 
-        # # Intermediate output tiles for checking outputs
-        # uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
-        # uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
-        # uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
-        # uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
-        #
-        # # This is the final output used later in the model
-        # uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+        # Intermediate output tiles for checking outputs
+        uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
+        uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
+        uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
+        uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
+
+        # This is the final output used later in the model
+        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
 
 
+    # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
+    # removal function
     if 'annual_removals' in actual_stages:
 
         print 'Creating annual removals for natural forest'
@@ -308,11 +311,12 @@ def main ():
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
-        # If the model run isn't the standard one, the output directory and file names are changed
+        # If the model run isn't the standard one, the output directory and file names are changed.
+        # This adapts just the relevant items in the output directory and pattern lists (annual removals).
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
-            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[4:6])
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[4:6])
+            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[4:6])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[4:6])
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -357,7 +361,7 @@ def main ():
         gain_table_cont_eco_age['cont_eco_age'] = gain_table_cont_eco_age['gainEcoCon'] + gain_table_cont_eco_age[
             'variable']
 
-        # Merges the table of just continent-ecozone codes and the table of  continent-ecozone-age codes
+        # Merges the table of just continent-ecozone codes and the table of continent-ecozone-age codes
         gain_table_all_combos = pd.concat([gain_table_con_eco_only, gain_table_cont_eco_age])
 
         # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
@@ -380,6 +384,7 @@ def main ():
         # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
         # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
         # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+        output_pattern_list = stage_output_pattern_list
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(count/2)
         pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type,
@@ -395,8 +400,66 @@ def main ():
 
 
         # This is the final output used later in the model
-        uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
-        uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+        uu.upload_final_set(stage_output_dir_list[0], stage_output_dir_list[1])
+        uu.upload_final_set(stage_output_pattern_list[0], stage_output_pattern_list[1])
+
+
+    # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
+    # removal function
+    if 'cumulative_removals' in actual_stages:
+
+        print 'Creating cumulative removals for natural forest'
+
+
+        # Files to download for this script.
+        download_dict = {
+            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+            cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
+            cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest]
+        }
+
+
+        tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
+        tile_id_list = ['00N_050W']
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+
+        # If the model run isn't the standard one, the output directory and file names are changed.
+        # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
+        if sensit_type != 'std':
+            print "Changing output directory and file name pattern based on sensitivity analysis"
+            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[6:8])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[6:8])
+
+
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        for key, values in download_dict.iteritems():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+
+
+        # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
+        # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
+                         sensit_type=sensit_type), tile_id_list)
+
+        # Calculates cumulative belowground carbon gain in non-mangrove planted forests
+        # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
+                         sensit_type=sensit_type), tile_id_list)
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile_id in tile_id_list:
+        #     cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
+        #
+        # for tile_id in tile_id_list:
+        #     cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
 
 
 if __name__ == '__main__':
