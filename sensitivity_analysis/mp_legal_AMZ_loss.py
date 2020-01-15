@@ -539,7 +539,7 @@ def main ():
 
 
     # Creates carbon pools in loss year
-    if 'carbon pools' in actual_stages:
+    if 'carbon_pools' in actual_stages:
 
         print 'Creating emissions year carbon pools'
 
