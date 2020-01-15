@@ -140,10 +140,10 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
     # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0 (so that oceans aren't included)
-    no_change_calc = '--calc=(A==0)*(B==0)*(C==1)*(D>0)*{}'.format(cn.loss_years)
+    no_change_calc = '--calc=(A==0)*(B==1)*(C>0)*{}'.format(cn.loss_years)
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', extent, '-D', biomass, no_change_calc,
+    cmd = ['gdal_calc.py', '-A', loss, '-B', extent, '-C', biomass, no_change_calc,
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
     subprocess.check_call(cmd)
 
@@ -184,13 +184,12 @@ def legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern):
 
     # The four rasters from above that are to be merged
     loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
-    gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
 
     # All four components are merged together to the final output raster
     age_outfile = '{}_{}.tif'.format(tile_id, output_pattern)
-    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
+    cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
     subprocess.check_call(cmd)
 

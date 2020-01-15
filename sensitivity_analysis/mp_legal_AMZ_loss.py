@@ -219,6 +219,7 @@ def main ():
         # Uploads output tiles to s3
         uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
 
+
     # Creates tiles of the number of years of removals
     if 'gain_year_count' in actual_stages:
 
@@ -235,7 +236,7 @@ def main ():
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-        # tile_id_list = ['00N_050W']
+        tile_id_list = ['00N_050W']
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -282,11 +283,11 @@ def main ():
         # for tile_id in tile_id_list:
         #     legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
 
-        # # Intermediate output tiles for checking outputs
-        # uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
-        # uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
-        # uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
-        # uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
+        # Intermediate output tiles for checking outputs
+        uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
+        uu.upload_final_set(output_dir_list[3], "growth_years_gain_only")
+        uu.upload_final_set(output_dir_list[3], "growth_years_no_change")
+        uu.upload_final_set(output_dir_list[3], "growth_years_loss_and_gain")
 
         # This is the final output used later in the model
         uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
