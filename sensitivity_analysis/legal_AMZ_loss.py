@@ -139,11 +139,14 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
+    loss_vrt = '{}_loss.vrt'.format(tile_id)
+    os.system('gdalbuildvrt -vrtnodata None {0} {1}'.format(loss_vrt, loss))
+
     # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0 (so that oceans aren't included)
     no_change_calc = '--calc=(A==0)*(B==1)*(C>0)*{}'.format(cn.loss_years)
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', extent, '-C', biomass, no_change_calc,
+    cmd = ['gdal_calc.py', '-A', loss_vrt, '-B', extent, '-C', biomass, no_change_calc,
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
     subprocess.check_call(cmd)
 

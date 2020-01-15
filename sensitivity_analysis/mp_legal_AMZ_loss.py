@@ -253,14 +253,14 @@ def main ():
         output_pattern = output_pattern_list[3]
 
         pool = multiprocessing.Pool(count/3)
-        pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
-                 tile_id_list)
+        # pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
+        #          tile_id_list)
 
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_no_change, sensit_type=sensit_type),
                  tile_id_list)
 
-        pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
-                 tile_id_list)
+        # pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
+        #          tile_id_list)
 
         pool = multiprocessing.Pool(count/5)
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
@@ -322,17 +322,9 @@ def main ():
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
         subprocess.check_call(cmd)
 
-        # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
-        if sensit_type == 'no_primary_gain':
-            # Imports the table with the ecozone-continent codes and the carbon gain rates
-            gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                       sheet_name="natrl fores gain, no_prim_gain")
-
-        # All other analyses use the standard removal rates (except US_removals, which has its own script)
-        else:
-            # Imports the table with the ecozone-continent codes and the carbon gain rates
-            gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                       sheet_name="natrl fores gain, for std model")
+        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                                   sheet_name="natrl fores gain, for std model")
 
         # Removes rows with duplicate codes (N. and S. America for the same ecozone)
         gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -374,6 +366,22 @@ def main ():
 
         # Converts all the keys (continent-ecozone-age codes) to float type
         gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
+
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(processes=24)
+        pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type,
+                         gain_table_dict=gain_table_dict,
+                         output_pattern_list=output_pattern_list), tile_id_list)
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile in tile_id_list:
+        #
+        #     annual_gain_rate_natrl_forest.annual_gain_rate(tile, gain_table_dict)
 
 
         # This is the final output used later in the model
