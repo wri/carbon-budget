@@ -90,7 +90,8 @@ def main ():
     gain_table_cont_eco_age = gain_table_cont_eco_age.dropna()
 
     # Creates a table that has just the continent-ecozone combinations for adding to the dictionary.
-    # These will be used whenever there is just a continent-ecozone pixel without a forest age pixel
+    # These will be used whenever there is just a continent-ecozone pixel without a forest age pixel.
+    # Assigns removal rate of 0 when there's no age category.
     gain_table_con_eco_only = gain_table_cont_eco_age
     gain_table_con_eco_only = gain_table_con_eco_only.drop_duplicates(subset='gainEcoCon', keep='first')
     gain_table_con_eco_only['value'] = 0
