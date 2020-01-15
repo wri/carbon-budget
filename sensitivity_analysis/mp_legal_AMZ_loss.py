@@ -555,7 +555,7 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.loss_dir: [''],
+            cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
             cn.gain_dir: [cn.pattern_gain],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
