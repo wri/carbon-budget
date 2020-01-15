@@ -16,11 +16,12 @@ import universal_util as uu
 sys.path.append('../gain')
 import annual_gain_rate_natrl_forest
 import cumulative_gain_natrl_forest
+import merge_cumulative_annual_gain_all_forest_types
 
 def main ():
 
     Brazil_stages = ['all', 'create_forest_extent', 'create_loss',
-                     'forest_age_category', 'gain_year_count', 'annual_removals', 'cumulative_removals']
+                     'forest_age_category', 'gain_year_count', 'annual_removals', 'cumulative_removals', 'removals_merged']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -55,12 +56,14 @@ def main ():
     output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir,
                        cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
                        cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
-                       cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir
+                       cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
+                       cn.cumul_gain_AGCO2_BGCO2_all_types_dir, cn.annual_gain_AGB_BGB_all_types_dir
                        ]
     output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
                            cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
                            cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
-                           cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest
+                           cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
+                           cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_annual_gain_AGB_BGB_all_types
                            ]
 
 
@@ -306,7 +309,7 @@ def main ():
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-        tile_id_list = ['00N_050W']
+        # tile_id_list = ['00N_050W']
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -319,84 +322,84 @@ def main ():
             stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[4:6])
 
 
-        # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-        # for key, values in download_dict.iteritems():
-        #     dir = key
-        #     pattern = values[0]
-        #     uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
-        #
-        #
-        # # Table with IPCC Table 4.9 default gain rates
-        # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
-        # subprocess.check_call(cmd)
-        #
-        # pd.options.mode.chained_assignment = None
-        #
-        # # Imports the table with the ecozone-continent codes and the carbon gain rates
-        # gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-        #                            sheet_name="natrl fores gain, for std model")
-        #
-        # # Removes rows with duplicate codes (N. and S. America for the same ecozone)
-        # gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
-        #
-        # # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
-        # gain_table_cont_eco_age = pd.melt(gain_table_simplified, id_vars=['gainEcoCon'],
-        #                                   value_vars=['growth_primary', 'growth_secondary_greater_20',
-        #                                               'growth_secondary_less_20'])
-        # gain_table_cont_eco_age = gain_table_cont_eco_age.dropna()
-        #
-        # # Creates a table that has just the continent-ecozone combinations for adding to the dictionary.
-        # # These will be used whenever there is just a continent-ecozone pixel without a forest age pixel.
-        # # Assigns removal rate of 0 when there's no age category.
-        # gain_table_con_eco_only = gain_table_cont_eco_age
-        # gain_table_con_eco_only = gain_table_con_eco_only.drop_duplicates(subset='gainEcoCon', keep='first')
-        # gain_table_con_eco_only['value'] = 0
-        # gain_table_con_eco_only['cont_eco_age'] = gain_table_con_eco_only['gainEcoCon']
-        #
-        # # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
-        # age_dict = {'growth_primary': 10000, 'growth_secondary_greater_20': 20000, 'growth_secondary_less_20': 30000}
-        #
-        # # Creates a unique value for each continent-ecozone-age category
-        # gain_table_cont_eco_age = gain_table_cont_eco_age.replace({"variable": age_dict})
-        # gain_table_cont_eco_age['cont_eco_age'] = gain_table_cont_eco_age['gainEcoCon'] + gain_table_cont_eco_age[
-        #     'variable']
-        #
-        # # Merges the table of just continent-ecozone codes and the table of continent-ecozone-age codes
-        # gain_table_all_combos = pd.concat([gain_table_con_eco_only, gain_table_cont_eco_age])
-        #
-        # # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
-        # gain_table_dict = pd.Series(gain_table_all_combos.value.values,
-        #                             index=gain_table_all_combos.cont_eco_age).to_dict()
-        #
-        # # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
-        # gain_table_dict[0] = 0
-        #
-        # # Adds a dictionary entry for each forest age code for pixels that have forest age but no continent-ecozone
-        # for key, value in age_dict.iteritems():
-        #     gain_table_dict[value] = 0
-        #
-        # # Converts all the keys (continent-ecozone-age codes) to float type
-        # gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
-        #
-        # print gain_table_dict
-        #
-        #
-        # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-        # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-        # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-        # output_pattern_list = stage_output_pattern_list
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type,
-        #                  gain_table_dict=gain_table_dict,
-        #                  output_pattern_list=output_pattern_list), tile_id_list)
-        # pool.close()
-        # pool.join()
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        for key, values in download_dict.iteritems():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
 
-        # # For single processor use
-        # for tile in tile_id_list:
-        #
-        #     annual_gain_rate_natrl_forest.annual_gain_rate(tile, sensit_type, gain_table_dict, stage_output_pattern_list)
+
+        # Table with IPCC Table 4.9 default gain rates
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+        subprocess.check_call(cmd)
+
+        pd.options.mode.chained_assignment = None
+
+        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                                   sheet_name="natrl fores gain, for std model")
+
+        # Removes rows with duplicate codes (N. and S. America for the same ecozone)
+        gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+        # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
+        gain_table_cont_eco_age = pd.melt(gain_table_simplified, id_vars=['gainEcoCon'],
+                                          value_vars=['growth_primary', 'growth_secondary_greater_20',
+                                                      'growth_secondary_less_20'])
+        gain_table_cont_eco_age = gain_table_cont_eco_age.dropna()
+
+        # Creates a table that has just the continent-ecozone combinations for adding to the dictionary.
+        # These will be used whenever there is just a continent-ecozone pixel without a forest age pixel.
+        # Assigns removal rate of 0 when there's no age category.
+        gain_table_con_eco_only = gain_table_cont_eco_age
+        gain_table_con_eco_only = gain_table_con_eco_only.drop_duplicates(subset='gainEcoCon', keep='first')
+        gain_table_con_eco_only['value'] = 0
+        gain_table_con_eco_only['cont_eco_age'] = gain_table_con_eco_only['gainEcoCon']
+
+        # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
+        age_dict = {'growth_primary': 10000, 'growth_secondary_greater_20': 20000, 'growth_secondary_less_20': 30000}
+
+        # Creates a unique value for each continent-ecozone-age category
+        gain_table_cont_eco_age = gain_table_cont_eco_age.replace({"variable": age_dict})
+        gain_table_cont_eco_age['cont_eco_age'] = gain_table_cont_eco_age['gainEcoCon'] + gain_table_cont_eco_age[
+            'variable']
+
+        # Merges the table of just continent-ecozone codes and the table of continent-ecozone-age codes
+        gain_table_all_combos = pd.concat([gain_table_con_eco_only, gain_table_cont_eco_age])
+
+        # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+        gain_table_dict = pd.Series(gain_table_all_combos.value.values,
+                                    index=gain_table_all_combos.cont_eco_age).to_dict()
+
+        # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
+        gain_table_dict[0] = 0
+
+        # Adds a dictionary entry for each forest age code for pixels that have forest age but no continent-ecozone
+        for key, value in age_dict.iteritems():
+            gain_table_dict[value] = 0
+
+        # Converts all the keys (continent-ecozone-age codes) to float type
+        gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
+
+        print gain_table_dict
+
+
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+        output_pattern_list = stage_output_pattern_list
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type,
+                         gain_table_dict=gain_table_dict,
+                         output_pattern_list=output_pattern_list), tile_id_list)
+        pool.close()
+        pool.join()
+
+        # For single processor use
+        for tile in tile_id_list:
+
+            annual_gain_rate_natrl_forest.annual_gain_rate(tile, sensit_type, gain_table_dict, stage_output_pattern_list)
 
 
         # Uploads outputs from this stage
@@ -410,7 +413,6 @@ def main ():
 
         print 'Creating cumulative removals for natural forest'
 
-
         # Files to download for this script.
         download_dict = {
             cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
@@ -420,7 +422,7 @@ def main ():
 
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-        tile_id_list = ['00N_050W']
+        # tile_id_list = ['00N_050W']
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
@@ -464,6 +466,69 @@ def main ():
         # Uploads outputs from this stage
         for i in range(0, len(stage_output_dir_list)):
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
+
+
+    # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
+    if 'removals_merged' in actual_stages:
+
+        print 'Creating annual and cumulative removals for all forest types combined (above + belowground)'
+
+        # Files to download for this script
+        download_dict = {
+            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
+            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
+            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+
+            cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
+            cn.annual_gain_BGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_BGB_planted_forest_non_mangrove],
+            cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
+
+            cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
+            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
+            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
+
+            cn.cumul_gain_BGCO2_mangrove_dir: [cn.pattern_cumul_gain_BGCO2_mangrove],
+            cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove],
+            cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest]
+        }
+
+
+        tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
+        # tile_id_list = ['00N_050W']
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+
+        # If the model run isn't the standard one, the output directory and file names are changed.
+        # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
+        if sensit_type != 'std':
+            print "Changing output directory and file name pattern based on sensitivity analysis"
+            stage_output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[8:10])
+            stage_output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[8:10])
+
+
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        for key, values in download_dict.iteritems():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+
+
+        # For multiprocessing
+        output_pattern_list = stage_output_pattern_list
+        pool = multiprocessing.Pool(count/3)
+        pool.map(
+            partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
+                    sensit_type=sensit_type), tile_id_list)
+
+        # # For single processor use
+        # for tile_id in tile_id_list:
+        #     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list, sensit_type)
+
+        # Uploads output tiles to s3
+        for i in range(0, len(stage_output_dir_list)):
+            uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
+
 
 if __name__ == '__main__':
     main()
