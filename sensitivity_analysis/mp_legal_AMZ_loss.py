@@ -312,7 +312,7 @@ def main ():
         if sensit_type != 'std':
             print "Changing output directory and file name pattern based on sensitivity analysis"
             output_dir_list = uu.alter_dirs(sensit_type, output_dir_list[4:6])
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list[4:6])
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
