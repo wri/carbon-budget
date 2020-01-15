@@ -135,7 +135,7 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 # loss-and-gain covers the loss pixel side of things.
 def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 
-    print "No change pixel processing:", tile_id
+    print "Gain year count for non-loss pixels:", tile_id
 
     # start time
     start = datetime.datetime.now()
@@ -163,7 +163,7 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that had both loss and gain
 def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type):
 
-    print "Loss and gain pixel processing using standard function:", tile_id
+    print "Gain year count for loss and gain pixels:", tile_id
 
     # start time
     start = datetime.datetime.now()
