@@ -252,18 +252,18 @@ def main ():
 
         output_pattern = output_pattern_list[3]
 
-        pool = multiprocessing.Pool(count/3)
-        pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
-                 tile_id_list)
-
-        pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_no_change, sensit_type=sensit_type),
-                 tile_id_list)
-
-        pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
-                 tile_id_list)
-
-        pool = multiprocessing.Pool(count/5)
-        pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
+        # pool = multiprocessing.Pool(count/3)
+        # pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
+        #          tile_id_list)
+        #
+        # pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_no_change, sensit_type=sensit_type),
+        #          tile_id_list)
+        #
+        # pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
+        #          tile_id_list)
+        #
+        # pool = multiprocessing.Pool(count/5)
+        # pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
 
         # # For single processor use
         # for tile_id in tile_id_list:
@@ -275,8 +275,8 @@ def main ():
         # for tile_id in tile_id_list:
         #     legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type)
         #
-        # for tile_id in tile_id_list:
-        #     legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
+        for tile_id in tile_id_list:
+            legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
 
         # Intermediate output tiles for checking outputs
         uu.upload_final_set(output_dir_list[3], "growth_years_loss_only")
