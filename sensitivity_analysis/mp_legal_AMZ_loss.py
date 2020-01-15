@@ -401,9 +401,6 @@ def main ():
 
         # Uploads outputs from this stage
         for i in range(0, len(stage_output_dir_list)):
-            print stage_output_dir_list
-            print stage_output_dir_list[i]
-            print stage_output_pattern_list[i]
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
 
 
