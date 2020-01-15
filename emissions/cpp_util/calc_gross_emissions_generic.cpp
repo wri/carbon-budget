@@ -78,7 +78,7 @@ int boreal;         // The ecozone code for the boreal zone
 boreal = 2;
 
 int std = sensit_type.compare('std');
-cout << int x << endl;
+cout << std << endl;
 
 // Input files
 // Carbon pools
