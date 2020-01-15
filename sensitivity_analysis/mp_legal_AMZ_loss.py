@@ -520,7 +520,7 @@ def main ():
         pool.map(
             partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
                     sensit_type=sensit_type), tile_id_list)
-
+ 
         # # For single processor use
         # for tile_id in tile_id_list:
         #     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list, sensit_type)
