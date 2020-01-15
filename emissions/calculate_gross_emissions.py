@@ -19,7 +19,7 @@ def mask_pre_2000_plant(tile_id, sensit_type):
 
     pre_2000_plant = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
     if sensit_type == 'legal_Amazon_loss':
-        loss_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+        loss_tile = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     else:
         loss_tile = './cpp_util/{}.tif'.format(tile_id)
     out_tile = './cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked)
