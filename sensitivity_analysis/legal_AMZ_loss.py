@@ -116,7 +116,7 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with loss only
+    # Pixels with loss only, in PRODES forest 2000
     loss_calc = '--calc=(A>0)*(B==0)*(C==1)*(A-1)'
     loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
@@ -128,7 +128,11 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
 
 
-# Creates gain year count tiles for pixels that had neither loss not gain
+# Creates gain year count tiles for pixels that had no loss. It doesn't matter if there was gain in these pixels because
+# gain without loss in PRODES extent is being ignored for this analysis (as in, there can't be canopy gain in PRODES
+# extent without loss because it's already dense primary forest).
+# Making the condition for "no change" be "no loss" covers the rest of the loss-gain space, since loss-only and
+# loss-and-gain covers the loss pixel side of things.
 def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 
     print "No change pixel processing:", tile_id
@@ -139,10 +143,12 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
+    # For unclear reasons, gdal_calc doesn't register the 0 (NoData) pixels in the loss tile, so I have to convert it
+    # to a vrt so that the 0 pixels are recognized.
     loss_vrt = '{}_loss.vrt'.format(tile_id)
     os.system('gdalbuildvrt -vrtnodata None {0} {1}'.format(loss_vrt, loss))
 
-    # Pixels with neither loss nor gain but in areas with tree cover density >0 and biomass >0 (so that oceans aren't included)
+    # Pixels with loss but in areas with PRODES forest 2000 and biomass >0 (same as standard model)
     no_change_calc = '--calc=(A==0)*(B==1)*(C>0)*{}'.format(cn.loss_years)
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
@@ -165,7 +171,7 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
     # Names of the loss, gain and tree cover density tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
-    # Pixels with both loss and gain
+    # Pixels with both loss and gain, and in PRODES forest 2000
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
