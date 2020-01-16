@@ -83,7 +83,7 @@ def main():
 
         download_pattern_name = download_pattern[0]
 
-        print download_pattern_name
+        print "dl pattern", download_pattern_name
 
         # Downloads the model output tiles to be processed
         uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
@@ -95,7 +95,7 @@ def main():
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
 
-        print pattern
+        print "fixed pattern", pattern
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files
