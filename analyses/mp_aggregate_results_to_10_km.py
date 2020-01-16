@@ -88,10 +88,13 @@ def main():
         # Downloads the model output tiles to be processed
         uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
+        local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
+        sample_tile_id = uu.get_tile_id(local_tile_list[0])
+
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
         # lines later.
-        tile_id = '30N_090W'     # a dummy tile id (but it has to be a real tile id). It is removed later.
+        tile_id = sample_tile_id    # a dummy tile id (but it has to be a real tile id). It is removed later.
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
 
