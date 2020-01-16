@@ -83,6 +83,8 @@ def main():
 
         download_pattern_name = download_pattern[0]
 
+        print download_pattern_name
+
         # Downloads the model output tiles to be processed
         uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
@@ -95,11 +97,9 @@ def main():
 
         print pattern
 
-
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files
         tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
-        print tile_list
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
