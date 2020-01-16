@@ -750,8 +750,10 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
     # Uses whatever name of the tile is found on the spot machine
     if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
         processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+        print "up top"
     else:
         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
+        print "down below"
 
     return processed_name
 
