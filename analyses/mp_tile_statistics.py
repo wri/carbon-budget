@@ -74,7 +74,7 @@ def main ():
                     cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
                     cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
                     cn.annual_gain_AGB_BGB_all_types_dir: [cn.pattern_annual_gain_AGB_BGB_all_types],
-                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
                     #
                     # # cn.elevation_processed_dir,
                     # # cn.precip_processed_dir,
