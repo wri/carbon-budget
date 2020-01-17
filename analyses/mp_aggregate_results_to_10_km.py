@@ -190,7 +190,7 @@ def main():
 
         print std_net_flux
 
-        if std_net_flux in locals():
+        if std_net_flux in globals():
 
             print "Standard aggregated flux results provided. Creating comparison maps."
 
