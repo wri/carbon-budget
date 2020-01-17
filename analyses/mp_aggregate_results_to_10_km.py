@@ -61,10 +61,10 @@ def main():
     # tile_id_list = ['00N_070W'] # test tiles
     tile_id_list = 'all'
 
-    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # # tree cover density tiles-- necessary for filtering sums by tcd
-    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # tree cover density tiles-- necessary for filtering sums by tcd
+    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
