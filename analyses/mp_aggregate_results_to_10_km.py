@@ -188,9 +188,7 @@ def main():
     # code below should work.
     if sensit_type != 'std':
 
-        print std_net_flux
-
-        if std_net_flux in globals():
+        if std_net_flux:
 
             print "Standard aggregated flux results provided. Creating comparison maps."
 
