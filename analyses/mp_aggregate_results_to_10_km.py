@@ -78,105 +78,107 @@ def main():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
 
 
-    # # Iterates through the types of tiles to be processed
-    # for dir, download_pattern in download_dict.items():
-    #
-    #     download_pattern_name = download_pattern[0]
-    #
-    #     # Downloads the model output tiles to be processed
-    #     uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
-    #
-    #     # Gets an actual tile id to use as a dummy in creating the actual tile pattern
-    #     local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
-    #     sample_tile_id = uu.get_tile_id(local_tile_list[0])
-    #
-    #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-    #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-    #     # lines later.
-    #     tile_id = sample_tile_id    # a dummy tile id (but it has to be a real tile id). It is removed later.
-    #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
-    #     pattern = output_pattern[9:-4]
-    #
-    #     # Lists the tiles of the particular type that is being iterates through.
-    #     # Excludes all intermediate files
-    #     tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
-    #     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
-    #     tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
-    #     tile_list = [i for i in tile_list if not ('rewindow' in i)]
-    #     tile_list = [i for i in tile_list if not ('10km' in i)]
-    #
-    #     # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
-    #
-    #     print tile_list
-    #     print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
-    #     print "Processing:", dir, "; ", pattern
-    #
-    #     # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
-    #     # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-    #     # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count/2)
-    #     pool.map(aggregate_results_to_10_km.rewindow, tile_list)
-    #     # Added these in response to error12: Cannot allocate memory error.
-    #     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    #     # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    #     pool.close()
-    #     pool.join()
-    #
-    #     # # For single processor use
-    #     # for tile in tile_list:
-    #     #
-    #     #     aggregate_results_to_10_km.rewindow(tile)
-    #
-    #     # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-    #     # and sums those values in each 400x400 pixel window.
-    #     # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
-    #     # 0.1x0.1 degree resolution (approximately 10m in the tropics).
-    #     # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-    #     # The 0.1x0.1 degree tile is output.
-    #     # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-    #     count = multiprocessing.cpu_count()
-    #     pool = multiprocessing.Pool(count/2)
-    #     pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-    #     # Added these in response to error12: Cannot allocate memory error.
-    #     # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-    #     # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-    #     pool.close()
-    #     pool.join()
-    #
-    #     # # For single processor use
-    #     # for tile in tile_list:
-    #     #
-    #     #     aggregate_results_to_10_km.aggregate(tile, thresh)
-    #
-    #     # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-    #     out_vrt = "{}_10km.vrt".format(pattern)
-    #     os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
-    #
-    #     # Creates the output name for the 10km map
-    #     out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
-    #     print out_pattern
-    #
-    #     # Produces a single raster of all the 10x10 tiles (10 km resolution)
-    #     cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-    #            '-tr', '0.1', '0.1',
-    #            out_vrt, '{}.tif'.format(out_pattern)]
-    #     subprocess.check_call(cmd)
-    #
-    #     print "Tiles processed. Uploading to s3 now..."
-    #
-    #     # Uploads all output tiles to s3
-    #     uu.upload_final_set(output_dir_list[0], out_pattern)
-    #
-    #     # # Cleans up the folder before starting on the next raster type
-    #     # vrtList = glob.glob('*vrt')
-    #     # for vrt in vrtList:
-    #     #     os.remove(vrt)
-    #     #
-    #     # for tile_id in tile_list:
-    #     #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-    #     #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-    #     #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+    # Iterates through the types of tiles to be processed
+    for dir, download_pattern in download_dict.items():
+
+        download_pattern_name = download_pattern[0]
+
+        # Downloads the model output tiles to be processed
+        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+
+        # Gets an actual tile id to use as a dummy in creating the actual tile pattern
+        local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
+        sample_tile_id = uu.get_tile_id(local_tile_list[0])
+
+        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+        # lines later.
+        tile_id = sample_tile_id    # a dummy tile id (but it has to be a real tile id). It is removed later.
+        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
+        pattern = output_pattern[9:-4]
+
+        # Lists the tiles of the particular type that is being iterates through.
+        # Excludes all intermediate files
+        tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
+        # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
+        tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
+        tile_list = [i for i in tile_list if not ('rewindow' in i)]
+        tile_list = [i for i in tile_list if not ('10km' in i)]
+
+        # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
+
+        print tile_list
+        print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
+        print "Processing:", dir, "; ", pattern
+
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+        # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
+        # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile in tile_list:
+        #
+        #     aggregate_results_to_10_km.rewindow(tile)
+
+        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # and sums those values in each 400x400 pixel window.
+        # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # The 0.1x0.1 degree tile is output.
+        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile in tile_list:
+        #
+        #     aggregate_results_to_10_km.aggregate(tile, thresh)
+
+        # Makes a vrt of all the output 10x10 tiles (10 km resolution)
+        out_vrt = "{}_10km.vrt".format(pattern)
+        os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
+
+        # Creates the output name for the 10km map
+        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
+        print out_pattern
+
+        # Produces a single raster of all the 10x10 tiles (10 km resolution)
+        cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
+               '-tr', '0.1', '0.1',
+               out_vrt, '{}.tif'.format(out_pattern)]
+        subprocess.check_call(cmd)
+
+        print "Tiles processed. Uploading to s3 now..."
+
+        # Uploads all output tiles to s3
+        uu.upload_final_set(output_dir_list[0], out_pattern)
+
+        # # Cleans up the folder before starting on the next raster type
+        # vrtList = glob.glob('*vrt')
+        # for vrt in vrtList:
+        #     os.remove(vrt)
+        #
+        # for tile_id in tile_list:
+        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+
+
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
@@ -188,29 +190,37 @@ def main():
     # code below should work.
     if sensit_type != 'std':
 
-        # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
-        uu.s3_file_download(std_net_flux, '.', sensit_type)
+        if std_net_flux in locals():
 
-        # Identifies the standard model net flux map
-        std_aggreg_flux = os.path.split(std_net_flux)[1]
+            print "Standard aggregated flux results provided. Creating comparison maps."
 
-        try:
-            # Identifies the sensitivity model net flux map
-            sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
+            # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
+            uu.s3_file_download(std_net_flux, '.', sensit_type)
 
-            print "Standard model net flux:", std_aggreg_flux
-            print "Sensitivity model net flux:", sensit_aggreg_flux
+            # Identifies the standard model net flux map
+            std_aggreg_flux = os.path.split(std_net_flux)[1]
 
-        except:
-            print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
+            try:
+                # Identifies the sensitivity model net flux map
+                sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
-        print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
-        aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+                print "Standard model net flux:", std_aggreg_flux
+                print "Sensitivity model net flux:", sensit_aggreg_flux
 
-        print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
-        aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-        uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+            except:
+                print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
+
+            print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
+            aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+            uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+
+            print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
+            aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+            uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+            
+        else:
+
+            print "No standard aggregated flux results provided. Not creating comparison maps."
 
 
 if __name__ == '__main__':
