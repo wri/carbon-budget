@@ -61,10 +61,10 @@ def main():
     # tile_id_list = ['00N_070W'] # test tiles
     tile_id_list = 'all'
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # # tree cover density tiles-- necessary for filtering sums by tcd
+    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
@@ -78,38 +78,38 @@ def main():
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
 
 
-    # Iterates through the types of tiles to be processed
-    for dir, download_pattern in download_dict.items():
-
-        download_pattern_name = download_pattern[0]
-
-        # Downloads the model output tiles to be processed
-        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
-
-        # Gets an actual tile id to use as a dummy in creating the actual tile pattern
-        local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
-        sample_tile_id = uu.get_tile_id(local_tile_list[0])
-
-        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-        # lines later.
-        tile_id = sample_tile_id    # a dummy tile id (but it has to be a real tile id). It is removed later.
-        output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
-        pattern = output_pattern[9:-4]
-
-        # Lists the tiles of the particular type that is being iterates through.
-        # Excludes all intermediate files
-        tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
-        # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
-        tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
-        tile_list = [i for i in tile_list if not ('rewindow' in i)]
-        tile_list = [i for i in tile_list if not ('10km' in i)]
-
-        # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
-
-        print tile_list
-        print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
-        print "Processing:", dir, "; ", pattern
+    # # Iterates through the types of tiles to be processed
+    # for dir, download_pattern in download_dict.items():
+    #
+    #     download_pattern_name = download_pattern[0]
+    #
+    #     # Downloads the model output tiles to be processed
+    #     uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+    #
+    #     # Gets an actual tile id to use as a dummy in creating the actual tile pattern
+    #     local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
+    #     sample_tile_id = uu.get_tile_id(local_tile_list[0])
+    #
+    #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+    #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+    #     # lines later.
+    #     tile_id = sample_tile_id    # a dummy tile id (but it has to be a real tile id). It is removed later.
+    #     output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
+    #     pattern = output_pattern[9:-4]
+    #
+    #     # Lists the tiles of the particular type that is being iterates through.
+    #     # Excludes all intermediate files
+    #     tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
+    #     # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
+    #     tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
+    #     tile_list = [i for i in tile_list if not ('rewindow' in i)]
+    #     tile_list = [i for i in tile_list if not ('10km' in i)]
+    #
+    #     # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
+    #
+    #     print tile_list
+    #     print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
+    #     print "Processing:", dir, "; ", pattern
 
         # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
@@ -187,6 +187,8 @@ def main():
     # Then, manually upload the clipped US_removals and biomass_swap net flux rasters to the spot machine and the
     # code below should work.
     if sensit_type != 'std':
+
+        print std_net_flux
 
         if std_net_flux in locals():
 
