@@ -65,10 +65,10 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list):
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
+    #     cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile_id, output_pattern_list, sensit_type)
     #
     # for tile_id in tile_id_list:
-    #     cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
+    #     cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile_id, output_pattern_list, sensit_type)
 
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
