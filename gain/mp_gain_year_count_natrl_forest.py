@@ -144,16 +144,18 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list):
 if __name__ == '__main__':
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
     args = parser.parse_args()
     sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+    tile_id_list = args.tile_id_list
 
-    # List of tiles to run in the model
-    tile_id_list = 'all'  # for running the full set of tiles
-    # tile_id_list = ['00N_110E'] # test tiles
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_gain_year_count_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list)

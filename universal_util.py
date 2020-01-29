@@ -782,3 +782,21 @@ def analysis_stages(stage_list, stage_input, run_through):
 
             stage_output = stage_input.split()
             return stage_output
+
+
+def tile_id_list_check(tile_id_list):
+
+    # Checks tile list input validity
+    if tile_id_list == 'all':
+        print "All tiles will be run through model. Actual list of tiles will be listed for each model stage as it begins..."
+        return tile_id_list
+    else:
+        possible_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
+        tile_id_list = list(tile_id_list.split(" "))
+
+        for tile_id in tile_id_list:
+            if tile_id not in possible_tile_list:
+                raise Exception('Tile_id not valid')
+        else:
+            print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
+            return tile_id_list
