@@ -10,16 +10,17 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main ():
+def mp_net_flux(sensit_type, tile_id_list):
 
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                                                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
+                                                    sensit_type=sensit_type)
+
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
     # Files to download for this script
@@ -27,16 +28,6 @@ def main ():
         cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
     }
-
-
-    # List of tiles to run in the model
-    tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                                                cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
-                                                sensit_type=sensit_type)
-    # tile_id_list = ['30N_140E', '40N_030W'] # test tiles
-    # tile_id_list = ['00N_110E'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
     # List of output directories and output file name patterns
@@ -102,4 +93,20 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    tile_id_list = args.tile_id_list
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_net_flux(sensit_type=sensit_type, tile_id_list=tile_id_list)

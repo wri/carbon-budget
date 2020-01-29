@@ -9,12 +9,13 @@ from gain.mp_cumulative_gain_natrl_forest import mp_cumulative_gain_natrl_forest
 from gain.mp_merge_cumulative_annual_gain_all_forest_types import mp_merge_cumulative_annual_gain_all_forest_types
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
+from analyses.mp_net_flux import mp_net_flux
 
 def main ():
 
     model_stages = ['all', 'forest_age_category_natrl_forest', 'gain_year_count_natrl_forest',
                     'annual_gain_rate_natrl_forest', 'cumulative_gain_natrl_forest',
-                     'removals_merged', 'carbon_pools', 'gross_emissions']
+                     'removals_merged', 'carbon_pools', 'gross_emissions', 'net_flux']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -68,7 +69,8 @@ def main ():
                        cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
                        cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
                        cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
-                       cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir
+                       cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir,
+                       cn.net_flux_dir
                        ]
 
     raw_output_pattern_list = [
@@ -77,7 +79,8 @@ def main ():
                            cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
                            cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
                            cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
-                           cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year
+                           cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year,
+                           cn.pattern_net_flux
                            ]
 
 
@@ -173,7 +176,6 @@ def main ():
         print ":::::Processing time for carbon_pools:", elapsed_time, "\n"
 
 
-
     if 'gross_emissions' in actual_stages:
 
         print 'Creating gross emissions tiles'
@@ -186,8 +188,16 @@ def main ():
         print ":::::Processing time for gross_emissions:", elapsed_time, "\n"
 
 
+    if 'net_flux' in actual_stages:
 
+        print 'Creating net flux tiles'
+        start = datetime.datetime.now()
 
+        mp_net_flux(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for net_flux:", elapsed_time, "\n"
 
 
 

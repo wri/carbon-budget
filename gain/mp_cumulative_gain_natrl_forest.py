@@ -21,7 +21,6 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list):
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
-
     # Files to download for this script.
     download_dict = {
         cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
