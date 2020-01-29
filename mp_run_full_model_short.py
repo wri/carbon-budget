@@ -111,7 +111,7 @@ def main ():
     # Creates forest age category tiles
     if 'forest_age_category_natrl_forest' in actual_stages:
 
-        print 'Creating forest age category tiles'
+        print 'Creating forest age category for natural forest tiles'
 
         mp_forest_age_category_natrl_forest(sensit_type, tile_id_list)
 

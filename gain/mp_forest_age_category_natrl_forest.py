@@ -26,6 +26,15 @@ import universal_util as uu
 
 def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list):
 
+    if tile_id_list == 'all':
+
+        # List of tiles to run in the model
+        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
+        
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+
     # Files to download for this script.
     download_dict = {cn.loss_dir: [''],
                      cn.gain_dir: [cn.pattern_gain],
