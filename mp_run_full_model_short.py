@@ -8,10 +8,9 @@ import os
 import constants_and_names as cn
 import universal_util as uu
 import sys
-sys.path.append('../gain')
-import mp_forest_age_category_natrl_forest
+# sys.path.append('../gain')
+import gain.mp_forest_age_category_natrl_forest
 import mp_gain_year_count_natrl_forest
-import mp_forest_age_category_natrl_forest
 import mp_annual_gain_rate_natrl_forest
 import mp_cumulative_gain_natrl_forest
 import mp_merge_cumulative_annual_gain_all_forest_types
@@ -112,7 +111,7 @@ def main ():
 
         print 'Creating forest age category tiles'
 
-        mp_forest_age_category_natrl_forest(sensit_type)
+        gain.mp_forest_age_category_natrl_forest(sensit_type)
 
 
     # Creates tiles of the number of years of removals
@@ -851,6 +850,7 @@ def main ():
         # Uploads emissions to appropriate directory for the carbon pools chosen
         for i in range(0, len(output_dir_list)):
             uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
 
 if __name__ == '__main__':
     main()
