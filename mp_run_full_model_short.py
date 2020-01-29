@@ -74,6 +74,9 @@ def main ():
         possible_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
         tile_id_list = list(tile_id_list.split(" "))
 
+        print possible_tile_list
+        print tile_id_list
+
         if tile_id_list not in possible_tile_list:
             raise Exception('Tile not valid')
         else:
