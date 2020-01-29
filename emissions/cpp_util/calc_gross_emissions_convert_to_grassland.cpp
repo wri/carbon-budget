@@ -14,7 +14,7 @@
 // Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N20), each model endpoint has a CO2-only and
 // a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
 // Compile with:
-// c++ ./cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o ./cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
+// c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
 
 
 #include <iostream>

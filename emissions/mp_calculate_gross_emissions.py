@@ -5,7 +5,7 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
 From carbon-budget/emissions/, do:
-c++ ./cpp_util/calc_gross_emissions_generic.cpp -o ./cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o ../carbon-budget/emissions/cpp_util//calc_gross_emissions_generic.exe -lgdal
 (for the standard model and some sensitivity analysis versions).
 calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
@@ -177,7 +177,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
     # However, not all Hansen tiles have plantations.
     # This function creates "dummy" plantation tiles for all Hansen tiles that do not have plantations.
     # That way, the C++ script gets all the necessary input files
-    folder = 'cpp_util/'
+    folder = '../carbon-budget/emissions/cpp_util/'
 
     print "Making blank tiles for inputs that don't currently exist"
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
