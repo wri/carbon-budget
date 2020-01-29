@@ -102,7 +102,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time
+        print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n"
 
 
     # Creates tiles of the number of years of removals
@@ -115,7 +115,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for gain_year_count_natrl_forest:", elapsed_time
+        print ":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n"
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
@@ -129,7 +129,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time
+        print ":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n"
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
@@ -143,7 +143,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time
+        print ":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n"
 
 
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
@@ -156,7 +156,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for removals_merged:", elapsed_time
+        print ":::::Processing time for removals_merged:", elapsed_time, "\n"
 
 
 
@@ -170,7 +170,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for carbon_pools:", elapsed_time
+        print ":::::Processing time for carbon_pools:", elapsed_time, "\n"
 
 
 
@@ -183,7 +183,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for gross_emissions:", elapsed_time
+        print ":::::Processing time for gross_emissions:", elapsed_time, "\n"
 
 
 
