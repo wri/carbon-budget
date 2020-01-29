@@ -202,7 +202,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=18)
-    pool = multiprocessing.Pool(processes=1)
+    pool = multiprocessing.Pool(processes=9)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
     # # For single processor use

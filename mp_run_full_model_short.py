@@ -7,7 +7,7 @@ from gain.mp_annual_gain_rate_natrl_forest import mp_annual_gain_rate_natrl_fore
 from gain.mp_cumulative_gain_natrl_forest import mp_cumulative_gain_natrl_forest
 from gain.mp_merge_cumulative_annual_gain_all_forest_types import mp_merge_cumulative_annual_gain_all_forest_types
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
-# import mp_calculate_gross_emissions
+from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 
 def main ():
 
@@ -145,6 +145,8 @@ def main ():
     if 'gross_emissions' in actual_stages:
 
         print 'Creating gross emissions tiles'
+
+        mp_calculate_gross_emissions(sensit_type, tile_id_list, pools)
 
 
 
