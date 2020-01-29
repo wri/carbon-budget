@@ -63,17 +63,17 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list):
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # For multiprocessing
-    # Count/4 seems to pretty consistently use about 390 GB memory on an r4.16xlarge (not so much of an initial peak).
-    # processes=18 maxes out at about 440 GB memory
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
-                     sensit_type=sensit_type), tile_id_list)
+    # # For multiprocessing
+    # # Count/4 seems to pretty consistently use about 390 GB memory on an r4.16xlarge (not so much of an initial peak).
+    # # processes=18 maxes out at about 440 GB memory
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=18)
+    # pool.map(partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
+    #                  sensit_type=sensit_type), tile_id_list)
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list, sensit_type)
+    # For single processor use
+    for tile_id in tile_id_list:
+        merge_cumulative_annual_gain_all_forest_types.gain_merge(tile_id, output_pattern_list, sensit_type)
 
 
     # Uploads output tiles to s3
