@@ -10,7 +10,17 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main (sensit_type):
+def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list):
+
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
+
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+
 
     # Files to download for this script.
     download_dict = {
@@ -19,14 +29,6 @@ def main (sensit_type):
         cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest]
     }
 
-
-    # List of tiles to run in the model
-    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
-    # tile_id_list = ['20S_110E', '30S_110E'] # test tiles
-    # tile_id_list = ['00N_110E'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-    
     
     # List of output directories and output file name patterns
     output_dir_list = [cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir]
@@ -83,3 +85,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
+
+    # List of tiles to run in the model
+    tile_id_list = 'all'  # for running the full set of tiles
+    # tile_id_list = ['00N_110E'] # test tiles
+
+    mp_cumulative_gain_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list)
