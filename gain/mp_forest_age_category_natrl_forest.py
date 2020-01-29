@@ -116,5 +116,5 @@ if __name__ == '__main__':
     print tile_id_list
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
-    mp_forest_age_category_natrl_forest(sensit_type=sensit_type)
+    mp_forest_age_category_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list)
 
