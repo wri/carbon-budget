@@ -24,7 +24,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main (sensit_type=sensit_type):
+def main (sensit_type):
 
     # Files to download for this script.
     download_dict = {cn.loss_dir: [''],
@@ -85,21 +85,21 @@ def main (sensit_type=sensit_type):
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # With processes=30, peak usage was about 350 GB using WHRC AGB.
-    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=20)
-    pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
+    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # # With processes=30, peak usage was about 350 GB using WHRC AGB.
+    # # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=20)
+    # pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
+    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #
-    #     forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
+    # For single processor use
+    for tile_id in tile_id_list:
+
+        forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
