@@ -68,11 +68,16 @@ def main ():
     print actual_stages
 
 
-    if tile_id_list:
-        print tile_id_list
-        print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
+    if tile_id_list == 'all':
+        print "All tiles will be run through model. Actual list of tiles will be listed for each model stage as it begins..."
     else:
-        tile_id_list = 'all'
+        possible_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
+        tile_id_list = list(tile_id_list.split(" "))
+
+        if tile_id_list not in possible_tile_list:
+            raise Exception('Tile not valid')
+        else:
+            print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
 
 
     # List of output directories and output file name patterns
