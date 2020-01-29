@@ -9,16 +9,16 @@ import constants_and_names as cn
 import universal_util as uu
 import sys
 sys.path.append('../gain')
-import forest_age_category_natrl_forest
-import gain_year_count_natrl_forest
-import forest_age_category_natrl_forest
-import annual_gain_rate_natrl_forest
-import cumulative_gain_natrl_forest
-import merge_cumulative_annual_gain_all_forest_types
+import mp_forest_age_category_natrl_forest
+import mp_gain_year_count_natrl_forest
+import mp_forest_age_category_natrl_forest
+import mp_annual_gain_rate_natrl_forest
+import mp_cumulative_gain_natrl_forest
+import mp_merge_cumulative_annual_gain_all_forest_types
 sys.path.append('../carbon_pools')
-import create_carbon_pools
+import mp_create_carbon_pools
 sys.path.append('../emissions')
-import calculate_gross_emissions
+import mp_calculate_gross_emissions
 
 def main ():
 
@@ -112,74 +112,7 @@ def main ():
 
         print 'Creating forest age category tiles'
 
-        # Files to download for this script.
-        download_dict = {cn.loss_dir: [''],
-                         cn.gain_dir: [cn.pattern_gain],
-                         cn.tcd_dir: [cn.pattern_tcd],
-                         cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
-                         cn.WHRC_biomass_2000_non_mang_non_planted_dir: [
-                             cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
-                         cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-                         cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
-                         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
-                         }
-
-
-        if tile_id_list:
-            print tile_id_list
-            print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-        else:
-            tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
-            # tile_id_list = ['00N_050W']
-            print tile_id_list
-            print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-
-
-        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-        for key, values in download_dict.iteritems():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
-
-
-        # Table with IPCC Table 4.9 default gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
-        subprocess.check_call(cmd)
-
-        # Imports the table with the ecozone-continent codes and the carbon gain rates
-        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores gain, for std model")
-
-        # Removes rows with duplicate codes (N. and S. America for the same ecozone)
-        gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
-
-        # Converts the continent-ecozone codes and young forest gain rates to a dictionary
-        gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,
-                                    index=gain_table_simplified.gainEcoCon).to_dict()
-
-        # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
-        gain_table_dict[0] = 0
-
-
-        pattern = master_output_pattern_list[0]
-
-        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-        # With processes=30, peak usage was about 350 GB using WHRC AGB.
-        # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-        pool = multiprocessing.Pool(count/2)
-        pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #
-        #     forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
-
-        # Uploads output from this stage
-        uu.upload_final_set(master_output_dir_list[0], master_output_pattern_list[0])
+        mp_forest_age_category_natrl_forest(sensit_type)
 
 
     # Creates tiles of the number of years of removals
