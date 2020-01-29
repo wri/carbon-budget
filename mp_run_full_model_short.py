@@ -77,8 +77,9 @@ def main ():
         print possible_tile_list
         print tile_id_list
 
-        if tile_id_list not in possible_tile_list:
-            raise Exception('Tile not valid')
+        for tile_id in tile_id_list:
+            if tile_id not in possible_tile_list:
+                raise Exception('Tile not valid')
         else:
             print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
 
