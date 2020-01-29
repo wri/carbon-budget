@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import constants_and_names as cn
 import universal_util as uu
 from gain.mp_forest_age_category_natrl_forest import mp_forest_age_category_natrl_forest
@@ -95,16 +96,26 @@ def main ():
     if 'forest_age_category_natrl_forest' in actual_stages:
 
         print 'Creating forest age category for natural forest tiles'
+        start = datetime.datetime.now()
 
         mp_forest_age_category_natrl_forest(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time
 
 
     # Creates tiles of the number of years of removals
     if 'gain_year_count_natrl_forest' in actual_stages:
 
         print 'Creating gain year count tiles for natural forest'
+        start = datetime.datetime.now()
 
         mp_gain_year_count_natrl_forest(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for gain_year_count_natrl_forest:", elapsed_time
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
@@ -112,8 +123,13 @@ def main ():
     if 'annual_gain_rate_natrl_forest' in actual_stages:
 
         print 'Creating annual removals for natural forest'
+        start = datetime.datetime.now()
 
         mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
@@ -121,16 +137,26 @@ def main ():
     if 'cumulative_gain_natrl_forest' in actual_stages:
 
         print 'Creating cumulative removals for natural forest'
+        start = datetime.datetime.now()
 
         mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time
 
 
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
     if 'removals_merged' in actual_stages:
 
         print 'Creating annual and cumulative removals for all forest types combined (above + belowground)'
+        start = datetime.datetime.now()
 
         mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for removals_merged:", elapsed_time
 
 
 
@@ -138,15 +164,27 @@ def main ():
     if 'carbon_pools' in actual_stages:
 
         print 'Creating emissions year carbon pools'
+        start = datetime.datetime.now()
 
         mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for carbon_pools:", elapsed_time
+
 
 
     if 'gross_emissions' in actual_stages:
 
         print 'Creating gross emissions tiles'
+        start = datetime.datetime.now()
 
         mp_calculate_gross_emissions(sensit_type, tile_id_list, pools)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for gross_emissions:", elapsed_time
+
 
 
 
