@@ -24,7 +24,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main (sensit_type):
+def mp_forest_age_category_natrl_forest (sensit_type):
 
     # Files to download for this script.
     download_dict = {cn.loss_dir: [''],

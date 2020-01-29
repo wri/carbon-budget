@@ -9,7 +9,7 @@ import constants_and_names as cn
 import universal_util as uu
 import sys
 # sys.path.append('../gain')
-import gain.mp_forest_age_category_natrl_forest
+from gain.mp_forest_age_category_natrl_forest import mp_forest_age_category_natrl_forest
 # import mp_gain_year_count_natrl_forest
 # import mp_annual_gain_rate_natrl_forest
 # import mp_cumulative_gain_natrl_forest
@@ -111,7 +111,7 @@ def main ():
 
         print 'Creating forest age category tiles'
 
-        gain.mp_forest_age_category_natrl_forest(sensit_type)
+        mp_forest_age_category_natrl_forest(sensit_type)
 
 
     # Creates tiles of the number of years of removals
