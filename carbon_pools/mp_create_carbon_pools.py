@@ -43,20 +43,20 @@ def main ():
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
-    parser.add_argument('--extent', '-e', required=True,
+    parser.add_argument('--carbon_pool_extent', '-e', required=True,
                         help='Extent over which carbon pools should be calculated: loss or 2000')
     args = parser.parse_args()
     sensit_type = args.model_type
-    extent = args.extent     # Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
+    carbon_pool_extent = args.carbon_pool_extent     # Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    if (sensit_type != 'std') & (extent != 'loss'):
+    if (sensit_type != 'std') & (carbon_pool_extent != 'loss'):
         raise Exception("Sensitivity analysis run must use 'loss' extent")
 
-    # Checks the validity of the extent argument
-    if (extent not in ['loss', '2000']):
-        raise Exception("Invalid extent input. Please choose loss or 2000.")
+    # Checks the validity of the carbon_pool_extent argument
+    if (carbon_pool_extent not in ['loss', '2000']):
+        raise Exception("Invalid carbon_pool_extent input. Please choose loss or 2000.")
 
 
     # List of tiles to run in the model
@@ -71,7 +71,7 @@ def main ():
 
 
     # Output files and patterns and files to download if carbon pools for loss year are being generated
-    if extent == 'loss':
+    if carbon_pool_extent == 'loss':
 
         # List of output directories and output file name patterns
         output_dir_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
@@ -109,7 +109,7 @@ def main ():
             download_dict[cn.loss_dir] = ['']
 
     # Output files and patterns and files to download if carbon pools for 2000 are being generated
-    elif extent == '2000':
+    elif carbon_pool_extent == '2000':
 
         # List of output directories and output file name patterns
         output_dir_list = [cn.AGC_2000_dir, cn.BGC_2000_dir, cn.deadwood_2000_dir,
@@ -187,7 +187,7 @@ def main ():
                                                                                             cn.litter_to_above_subtrop_mang)
 
 
-    if extent == 'loss':
+    if carbon_pool_extent == 'loss':
 
         print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
         # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
@@ -207,7 +207,7 @@ def main ():
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
-    elif extent == '2000':
+    elif carbon_pool_extent == '2000':
 
         print "Creating tiles of aboveground carbon in 2000"
         # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
@@ -238,14 +238,14 @@ def main ():
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=20)
     pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
-                     extent=extent,
+                     carbon_pool_extent=carbon_pool_extent,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, extent, output_pattern_list[1], sensit_type)
+    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, output_pattern_list[1], sensit_type)
 
     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
@@ -258,14 +258,14 @@ def main ():
     pool = multiprocessing.Pool(processes=16)
     pool.map(
         partial(create_carbon_pools.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
-                extent=extent,
+                carbon_pool_extent=carbon_pool_extent,
                 pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_deadwood(tile_id, mang_deadwood_AGB_ratio, extent, output_pattern_list[2], sensit_type)
+    #     create_carbon_pools.create_deadwood(tile_id, mang_deadwood_AGB_ratio, carbon_pool_extent, output_pattern_list[2], sensit_type)
 
     uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
 
@@ -277,19 +277,19 @@ def main ():
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=16)
     pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
-                     extent=extent,
+                     carbon_pool_extent=carbon_pool_extent,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_litter(tile_id, mang_litter_AGB_ratio, extent, output_pattern_list[3], sensit_type)
+    #     create_carbon_pools.create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, output_pattern_list[3], sensit_type)
 
     uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
 
 
-    if extent == 'loss':
+    if carbon_pool_extent == 'loss':
 
         print "Creating tiles of soil carbon"
         # Creates a single filename pattern to pass to the multiprocessor call
@@ -307,7 +307,7 @@ def main ():
 
         uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
 
-    elif extent == '2000':
+    elif carbon_pool_extent == '2000':
         print "Skipping soil for 2000 carbon pool calculation"
 
     else:
@@ -321,14 +321,14 @@ def main ():
     pattern = output_pattern_list[5]
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=18)
-    pool.map(partial(create_carbon_pools.create_total_C, extent=extent,
+    pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_total_C(tile_id, extent, output_pattern_list[5], sensit_type)
+    #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent, output_pattern_list[5], sensit_type)
 
     uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
 
