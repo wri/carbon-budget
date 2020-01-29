@@ -121,8 +121,6 @@ if __name__ == '__main__':
     # List of tiles to run in the model
     tile_id_list = 'all'  # for running the full set of tiles
     # tile_id_list = ['00N_110E'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
     mp_forest_age_category_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list)
 
