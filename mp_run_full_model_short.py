@@ -33,8 +33,8 @@ def main ():
                         help='Stages of creating Brazil legal Amazon-specific gross cumulative removals. Options are {}'.format(model_stages))
     parser.add_argument('--run_through', '-r', required=True,
                         help='Options: true or false. true: run named stage and following stages. false: run only named stage.')
-    parser.add_argument('--tile_id_list', '-l', required=False,
-                        help='Optional list of tile ids to use in the model, best used for testing. Should be of form 00N_110E')
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
     parser.add_argument('--carbon-pool-extent', '-ce', required=False,
                         help='Extent over which carbon pools should be calculated: loss or 2000')
     parser.add_argument('--pools-to-use', '-p', required=True,
