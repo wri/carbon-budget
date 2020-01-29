@@ -10,14 +10,14 @@ import universal_util as uu
 import sys
 # sys.path.append('../gain')
 import gain.mp_forest_age_category_natrl_forest
-import mp_gain_year_count_natrl_forest
-import mp_annual_gain_rate_natrl_forest
-import mp_cumulative_gain_natrl_forest
-import mp_merge_cumulative_annual_gain_all_forest_types
-sys.path.append('../carbon_pools')
-import mp_create_carbon_pools
-sys.path.append('../emissions')
-import mp_calculate_gross_emissions
+# import mp_gain_year_count_natrl_forest
+# import mp_annual_gain_rate_natrl_forest
+# import mp_cumulative_gain_natrl_forest
+# import mp_merge_cumulative_annual_gain_all_forest_types
+# sys.path.append('../carbon_pools')
+# import mp_create_carbon_pools
+# sys.path.append('../emissions')
+# import mp_calculate_gross_emissions
 
 def main ():
 
