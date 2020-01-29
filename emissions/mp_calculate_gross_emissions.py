@@ -32,20 +32,15 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main ():
+def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
 
-    # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
-    # and which model type is being run (standard or sensitivity analysis)
-    parser = argparse.ArgumentParser(description='Calculate gross emissions')
-    parser.add_argument('--pools-to-use', '-p', required=True,
-                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    pools = args.pools_to_use
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
+
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
     # Files to download for this script
@@ -70,14 +65,6 @@ def main ():
         download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
     else:
         download_dict[cn.loss_dir] = ['']
-
-
-    # List of tiles to run in the model
-    tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
-    # tile_id_list = ['30N_140E', '40N_030W']  # test tiles
-    # tile_id_list = ['00N_000E'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + '\n'
 
 
     # Checks the validity of the pools argument
@@ -215,7 +202,7 @@ def main ():
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=18)
-    pool = multiprocessing.Pool(processes=9)
+    pool = multiprocessing.Pool(processes=1)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type), tile_id_list)
 
     # # For single processor use
@@ -229,4 +216,25 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
+    # and which model type is being run (standard or sensitivity analysis)
+    parser = argparse.ArgumentParser(description='Calculate gross emissions')
+    parser.add_argument('--pools-to-use', '-p', required=True,
+                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    tile_id_list = args.tile_id_list
+    pools = args.pools_to_use
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_calculate_gross_emissions(sensit_type=sensit_type, tile_id_list=tile_id_list, pools=pools)
