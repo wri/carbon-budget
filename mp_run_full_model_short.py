@@ -71,6 +71,8 @@ def main ():
     if tile_id_list:
         print tile_id_list
         print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
+    else:
+        tile_id_list = 'all'
 
 
     # List of output directories and output file name patterns
@@ -111,7 +113,7 @@ def main ():
 
         print 'Creating forest age category tiles'
 
-        mp_forest_age_category_natrl_forest(sensit_type)
+        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list)
 
 
     # Creates tiles of the number of years of removals

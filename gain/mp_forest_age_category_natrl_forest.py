@@ -24,7 +24,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_forest_age_category_natrl_forest (sensit_type):
+def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list):
 
     # Files to download for this script.
     download_dict = {cn.loss_dir: [''],
@@ -36,13 +36,6 @@ def mp_forest_age_category_natrl_forest (sensit_type):
                      cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
                      cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
     }
-
-    # List of tiles to run in the model
-    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
-    # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-    # tile_id_list = ['00N_000E', '80N_030E', '00N_110E'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
     # List of output directories and output file name patterns
@@ -116,5 +109,12 @@ if __name__ == '__main__':
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    main(sensit_type=sensit_type)
+    # List of tiles to run in the model
+    # tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
+    # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
+    mp_forest_age_category_natrl_forest(sensit_type=sensit_type)
 
