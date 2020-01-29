@@ -10,12 +10,14 @@ from gain.mp_merge_cumulative_annual_gain_all_forest_types import mp_merge_cumul
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
+from analyses.mp_aggregate_results_to_10_km import mp_aggregate_results_to_10_km
 
 def main ():
 
     model_stages = ['all', 'forest_age_category_natrl_forest', 'gain_year_count_natrl_forest',
-                    'annual_gain_rate_natrl_forest', 'cumulative_gain_natrl_forest',
-                     'removals_merged', 'carbon_pools', 'gross_emissions', 'net_flux']
+                    'annual_gain_rate_natrl_forest', 'cumulative_gain_natrl_forest', 'removals_merged',
+                    'carbon_pools', 'gross_emissions',
+                    'net_flux', 'aggregate']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -84,17 +86,6 @@ def main ():
                            ]
 
 
-    # If the model run isn't the standard one, the output directory and file names are changed.
-    # Otherwise, they stay standard.
-    if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
-        master_output_dir_list = uu.alter_dirs(sensit_type, raw_output_dir_list)
-        master_output_pattern_list = uu.alter_patterns(sensit_type, raw_output_pattern_list)
-    else:
-        master_output_dir_list = raw_output_dir_list
-        master_output_pattern_list = raw_output_pattern_list
-
-
     # Creates forest age category tiles
     if 'forest_age_category_natrl_forest' in actual_stages:
 
@@ -111,7 +102,7 @@ def main ():
     # Creates tiles of the number of years of removals
     if 'gain_year_count_natrl_forest' in actual_stages:
 
-        print 'Creating gain year count tiles for natural forest'
+        print 'Creating gain year count for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_gain_year_count_natrl_forest(sensit_type, tile_id_list)
@@ -125,7 +116,7 @@ def main ():
     # removal function
     if 'annual_gain_rate_natrl_forest' in actual_stages:
 
-        print 'Creating annual removals for natural forest'
+        print 'Creating annual removals for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list)
@@ -139,7 +130,7 @@ def main ():
     # removal function
     if 'cumulative_gain_natrl_forest' in actual_stages:
 
-        print 'Creating cumulative removals for natural forest'
+        print 'Creating cumulative removals for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list)
@@ -152,7 +143,7 @@ def main ():
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
     if 'removals_merged' in actual_stages:
 
-        print 'Creating annual and cumulative removals for all forest types combined (above + belowground)'
+        print 'Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'
         start = datetime.datetime.now()
 
         mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list)
@@ -162,11 +153,10 @@ def main ():
         print ":::::Processing time for removals_merged:", elapsed_time, "\n"
 
 
-
     # Creates carbon pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        print 'Creating emissions year carbon pools'
+        print 'Creating emissions year carbon pools tiles'
         start = datetime.datetime.now()
 
         mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent)
@@ -199,6 +189,17 @@ def main ():
         elapsed_time = end - start
         print ":::::Processing time for net_flux:", elapsed_time, "\n"
 
+
+    if 'aggregate' in actual_stages:
+
+        print 'Creating 10km aggregate maps'
+        start = datetime.datetime.now()
+
+        mp_aggregate_results_to_10_km(sensit_type, tile_id_list)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for aggregate:", elapsed_time, "\n"
 
 
 if __name__ == '__main__':

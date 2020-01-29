@@ -48,27 +48,27 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list):
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
-    # # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(26)
-    # pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
-    #                  sensit_type=sensit_type), tile_id_list)
+    # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
+    # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(26)
+    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
+                     sensit_type=sensit_type), tile_id_list)
+
+    # Calculates cumulative belowground carbon gain in non-mangrove planted forests
+    # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
+    pool = multiprocessing.Pool(26)
+    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
+                     sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
     #
-    # # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-    # # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
-    # pool = multiprocessing.Pool(26)
-    # pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
-    #                  sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
-
-    # For single processor use
-    for tile_id in tile_id_list:
-        cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
-
-    for tile_id in tile_id_list:
-        cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
+    # for tile_id in tile_id_list:
+    #     cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
 
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
