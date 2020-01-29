@@ -93,7 +93,7 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
 
     # List of tiles to run in the model
-    tile_id_list = 'all'  # for running the full set of tiles
-    # tile_id_list = ['00N_110E'] # test tiles
+    # tile_id_list = 'all'  # for running the full set of tiles
+    tile_id_list = ['00N_110E'] # test tiles
 
     mp_merge_cumulative_annual_gain_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list)
