@@ -69,8 +69,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         download_pattern_name = download_pattern[0]
 
-        # Downloads the model output tiles to be processed
-        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        # # Downloads the model output tiles to be processed
+        # uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
         # Gets an actual tile id to use as a dummy in creating the actual tile pattern
         local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
