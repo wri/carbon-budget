@@ -44,8 +44,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    tile_id_list = ['40N_090W', '00N_110E'] # test tiles
-    # tile_id_list = 'all'
+    # tile_id_list = ['40N_090W', '00N_110E'] # test tiles
+    tile_id_list = 'all'
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
@@ -108,12 +108,12 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
         # pool.close()
         # pool.join()
+
+        # # For single processor use
+        # for tile in tile_list:
         #
-        # # # For single processor use
-        # # for tile in tile_list:
-        # #
-        # #     aggregate_results_to_10_km.rewindow(tile)
-        #
+        #     aggregate_results_to_10_km.rewindow(tile)
+
         # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
         # # and sums those values in each 400x400 pixel window.
         # # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
@@ -130,10 +130,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # pool.close()
         # pool.join()
 
-        # # For single processor use
-        # for tile in tile_list:
-        #
-        #     aggregate_results_to_10_km.aggregate(tile, thresh)
+        # For single processor use
+        for tile in tile_list:
+
+            aggregate_results_to_10_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_0_4deg.vrt".format(pattern)
