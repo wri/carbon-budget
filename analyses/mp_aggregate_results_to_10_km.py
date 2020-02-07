@@ -32,8 +32,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
-             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+             # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
              cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
@@ -137,7 +137,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
-        os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
+        os.system('gdalbuildvrt -tr 0.05 0.05 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
         # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
@@ -145,7 +145,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-               '-tr', '0.1', '0.1',
+               '-tr', '0.05', '0.05',
                out_vrt, '{}.tif'.format(out_pattern)]
         subprocess.check_call(cmd)
 
