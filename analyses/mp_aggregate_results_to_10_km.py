@@ -69,8 +69,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         download_pattern_name = download_pattern[0]
 
-        # # Downloads the model output tiles to be processed
-        # uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        # Downloads the model output tiles to be processed
+        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
 
         # Gets an actual tile id to use as a dummy in creating the actual tile pattern
         local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
@@ -97,22 +97,22 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
         print "Processing:", dir, "; ", pattern
 
-        # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
-        # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-        # # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(count/2)
-        # pool.map(aggregate_results_to_10_km.rewindow, tile_list)
-        # # Added these in response to error12: Cannot allocate memory error.
-        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        # pool.close()
-        # pool.join()
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+        # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
+        # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(count/2)
+        pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+        # Added these in response to error12: Cannot allocate memory error.
+        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.close()
+        pool.join()
 
-        # For single processor use
-        for tile in tile_list:
-
-            aggregate_results_to_10_km.rewindow(tile)
+        # # For single processor use
+        # for tile in tile_list:
+        #
+        #     aggregate_results_to_10_km.rewindow(tile)
 
         # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
         # and sums those values in each 400x400 pixel window.
