@@ -159,10 +159,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # for vrt in vrtList:
         #     os.remove(vrt)
         #
-        # for tile_id in tile_list:
-        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        for tile_id in tile_list:
+            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
