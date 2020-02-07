@@ -44,13 +44,13 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    # tile_id_list = ['00N_070W'] # test tiles
-    tile_id_list = 'all'
+    tile_id_list = ['40N_090W', '00N_110E'] # test tiles
+    # tile_id_list = 'all'
 
-    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # # tree cover density tiles-- necessary for filtering sums by tcd
-    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # tree cover density tiles-- necessary for filtering sums by tcd
+    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
@@ -101,7 +101,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
+        pool = multiprocessing.Pool(count/4)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
