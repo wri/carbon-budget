@@ -89,7 +89,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
-        tile_list = [i for i in tile_list if not ('10km' in i)]
+        tile_list = [i for i in tile_list if not ('0_4deg' in i)]
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
@@ -137,7 +137,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_10km.vrt".format(pattern)
-        os.system('gdalbuildvrt -tr 0.05 0.05 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
+        os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
 
         # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
@@ -145,7 +145,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-               '-tr', '0.05', '0.05',
+               '-tr', '0.04', '0.04',
                out_vrt, '{}.tif'.format(out_pattern)]
         subprocess.check_call(cmd)
 

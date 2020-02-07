@@ -449,11 +449,11 @@ net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/bio
 ### 10x10 km aggregation tiles for mapping
 ######
 
-pattern_aggreg = '5km_modelv1_1_2'
+pattern_aggreg = '0_4deg_modelv1_1_2'
 pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
 pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
 
-output_aggreg_dir = '{}5km_output_aggregation/biomass_soil/standard/20200206/'.format(base_dir)
+output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200206/'.format(base_dir)
 
 
 ### Sensitivity analysis
