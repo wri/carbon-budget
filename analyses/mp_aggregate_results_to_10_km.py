@@ -52,7 +52,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # tree cover density tiles-- necessary for filtering sums by tcd
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
-    print "Model outputs to process are:", download_dict
+    print "Model outputs to process are:", download_dict 
 
     # List of output directories. Modified later for sensitivity analysis.
     # Output pattern is determined later.
