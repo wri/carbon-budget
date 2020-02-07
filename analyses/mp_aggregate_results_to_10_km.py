@@ -122,7 +122,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
+        pool = multiprocessing.Pool(count/4)
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
