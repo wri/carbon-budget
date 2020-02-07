@@ -44,8 +44,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    tile_id_list = ['30N_090W', '40N_090W', '30N_100W', '40N_100W', '40N_080W', '30N_110W', '40N_110W'] # test tiles
-    # tile_id_list = 'all'
+    # tile_id_list = ['30N_090W', '40N_090W', '30N_100W', '40N_100W', '40N_080W', '30N_110W', '40N_110W'] # test tiles
+    tile_id_list = 'all'
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
@@ -130,10 +130,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         pool.close()
         pool.join()
 
-        # For single processor use
-        for tile in tile_list:
-
-            aggregate_results_to_10_km.aggregate(tile, thresh)
+        # # For single processor use
+        # for tile in tile_list:
+        #
+        #     aggregate_results_to_10_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_0_4deg.vrt".format(pattern)
