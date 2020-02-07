@@ -47,10 +47,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # tile_id_list = ['00N_070W'] # test tiles
     tile_id_list = 'all'
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # # tree cover density tiles-- necessary for filtering sums by tcd
+    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
@@ -97,22 +97,22 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
         print "Processing:", dir, "; ", pattern
 
-        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
-        # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-        # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
-        pool.map(aggregate_results_to_10_km.rewindow, tile_list)
-        # Added these in response to error12: Cannot allocate memory error.
-        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
-        pool.close()
-        pool.join()
+        # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+        # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
+        # # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(count/2)
+        # pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+        # # Added these in response to error12: Cannot allocate memory error.
+        # # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
+        # # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        # pool.close()
+        # pool.join()
 
-        # # For single processor use
-        # for tile in tile_list:
-        #
-        #     aggregate_results_to_10_km.rewindow(tile)
+        # For single processor use
+        for tile in tile_list:
+
+            aggregate_results_to_10_km.rewindow(tile)
 
         # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
         # and sums those values in each 400x400 pixel window.
