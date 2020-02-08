@@ -163,7 +163,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
             tile_id = uu.get_tile_id(tile_name)
             os.remove('{0}_{1}.tif'.format(tile_id, pattern))
             os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
