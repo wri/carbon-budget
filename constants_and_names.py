@@ -443,15 +443,15 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15_biomass_soil'
-net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20191106/')
+net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20191121/')
 
 
 ### 10x10 km aggregation tiles for mapping
 ######
 
 pattern_aggreg = '0_4deg_modelv1_1_2'
-pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
-pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
+pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv1_1_2_perc_diff_std_v'
+pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv1_1_2_sign_change_std_v'
 
 output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200207/'.format(base_dir)
 
