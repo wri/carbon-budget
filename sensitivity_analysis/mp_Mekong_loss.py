@@ -3,7 +3,7 @@
 
 import multiprocessing
 from functools import partial
-from sensitivity_analysis import Mekong_loss
+import Mekong_loss
 import subprocess
 import os
 import glob
