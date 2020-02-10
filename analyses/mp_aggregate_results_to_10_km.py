@@ -33,8 +33,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
              # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
-             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
-             cn.net_flux_dir: [cn.pattern_net_flux]
+             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
+             # cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
     # Checks whether the canopy cover argument is valid
@@ -45,6 +45,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     uu.check_sensit_type(sensit_type)
 
     # tile_id_list = ['30N_090W', '40N_090W', '30N_100W', '40N_100W', '40N_080W', '30N_110W', '40N_110W'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
     tile_id_list = 'all'
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
