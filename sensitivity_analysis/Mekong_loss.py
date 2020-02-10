@@ -12,10 +12,10 @@ def recode_tiles(annual_loss):
 
     print "Recoding loss tile by year"
 
-    year = int(annual_loss[-6:-4])
+    year = int(annual_loss[-8:-4])
     print year
 
-    if year < 1 or year > cn.loss_years:
+    if year < 2001 or year > (2000 + cn.loss_years):
 
         print "Skipping {} because outside of model range".format(year)
         return
