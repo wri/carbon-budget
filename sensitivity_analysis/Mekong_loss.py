@@ -12,7 +12,7 @@ def recode_tiles(annual_loss):
 
     print "Recoding loss tile by year"
 
-    year = annual_loss[-6:-4]
+    year = int(annual_loss[-6:-4])
     print year
 
     if year < 1 or year > cn.loss_years:
