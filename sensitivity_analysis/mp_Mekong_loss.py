@@ -25,8 +25,8 @@ def main ():
     sensit_type = 'Mekong_loss'
 
 
-    # Downloads the Mekong loss folder. Each year of loss has its own raster
-    uu.s3_folder_download(cn.Mekong_loss_raw_dir, '.', sensit_type)
+    # # Downloads the Mekong loss folder. Each year of loss has its own raster
+    # uu.s3_folder_download(cn.Mekong_loss_raw_dir, '.', sensit_type)
 
     count = multiprocessing.cpu_count()
 
@@ -37,28 +37,30 @@ def main ():
     print "Creating first year of loss Hansen tiles for Mekong region..."
     # Recodes raw loss rasters with their loss year (for model years only)
     pool = multiprocessing.Pool(count/2)
-    pool.map(Mekong_loss.recode_tiles, annual_loss_list)
-
-    # Makes a single raster of all first loss year pixels in the Mekong (i.e. where loss occurred in multiple years,
-    # the earlier loss gets)
-    print "Merging all loss years within model range..."
-    loss_composite = "Mekong_loss_2001_2015.tif"
-    cmd = ['gdal_merge.py', '-o', loss_composite, '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte',
-           "Mekong_loss_recoded_2015.tif", "Mekong_loss_recoded_2014.tif", "Mekong_loss_recoded_2013.tif",
-           "Mekong_loss_recoded_2012.tif", "Mekong_loss_recoded_2011.tif", "Mekong_loss_recoded_2010.tif",
-           "Mekong_loss_recoded_2009.tif", "Mekong_loss_recoded_2008.tif", "Mekong_loss_recoded_2007.tif",
-           "Mekong_loss_recoded_2006.tif", "Mekong_loss_recoded_2005.tif", "Mekong_loss_recoded_2004.tif",
-           "Mekong_loss_recoded_2003.tif", "Mekong_loss_recoded_2002.tif", "Mekong_loss_recoded_2001.tif"]
-    subprocess.check_call(cmd)
-
-    # Creates Hansen tiles out of the composite Mekong loss
-    source_raster = loss_composite
-    out_pattern = cn.pattern_Mekong_loss_processed
-    dt = 'Byte'
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(Mekong_loss.recode_tiles, annual_loss_list)
+    #
+    # # Makes a single raster of all first loss year pixels in the Mekong (i.e. where loss occurred in multiple years,
+    # # the earlier loss gets)
+    # print "Merging all loss years within model range..."
+    # loss_composite = "Mekong_loss_2001_2015.tif"
+    # cmd = ['gdal_merge.py', '-o', loss_composite, '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte',
+    #        "Mekong_loss_recoded_2015.tif", "Mekong_loss_recoded_2014.tif", "Mekong_loss_recoded_2013.tif",
+    #        "Mekong_loss_recoded_2012.tif", "Mekong_loss_recoded_2011.tif", "Mekong_loss_recoded_2010.tif",
+    #        "Mekong_loss_recoded_2009.tif", "Mekong_loss_recoded_2008.tif", "Mekong_loss_recoded_2007.tif",
+    #        "Mekong_loss_recoded_2006.tif", "Mekong_loss_recoded_2005.tif", "Mekong_loss_recoded_2004.tif",
+    #        "Mekong_loss_recoded_2003.tif", "Mekong_loss_recoded_2002.tif", "Mekong_loss_recoded_2001.tif"]
+    # subprocess.check_call(cmd)
+    #
+    # # Creates Hansen tiles out of the composite Mekong loss
+    # source_raster = loss_composite
+    # out_pattern = cn.pattern_Mekong_loss_processed
+    # dt = 'Byte'
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # Only uploads tiles that actually have Mekong loss in them
-    uu.check_and_upload(tile_id_list, cn.Mekong_loss_processed_dir, cn.pattern_Mekong_loss_processed)
+    upload_dir = cn.Mekong_loss_processed_dir
+    pattern = cn.pattern_Mekong_loss_processed
+    pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 
 if __name__ == '__main__':
