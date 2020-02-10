@@ -36,7 +36,7 @@ def main ():
     #
     # print "Creating first year of loss Hansen tiles for Mekong region..."
     # # Recodes raw loss rasters with their loss year (for model years only)
-    # pool = multiprocessing.Pool(count/2)
+    pool = multiprocessing.Pool(count/2)
     # pool.map(Mekong_loss.recode_tiles, annual_loss_list)
     #
     # # Makes a single raster of all first loss year pixels in the Mekong (i.e. where loss occurred in multiple years,
@@ -52,7 +52,10 @@ def main ():
     # subprocess.check_call(cmd)
 
     # Creates Hansen tiles out of the composite Mekong loss
-    uu.mp_warp_to_Hansen(tile_id_list, loss_composite, cn.pattern_Mekong_loss_processed, 'Byte')
+    source_raster = loss_composite
+    out_pattern = cn.pattern_Mekong_loss_processed
+    dt = 'Byte'
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster,out_pattern, dt=dt), tile_id_list)
 
     # Only uploads tiles that actually have Mekong loss in them
     uu.check_and_upload(tile_id_list, cn.Mekong_loss_processed_dir, cn.pattern_Mekong_loss_processed)

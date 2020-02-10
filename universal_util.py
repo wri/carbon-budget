@@ -546,8 +546,6 @@ def end_of_fx_summary(start, tile_id, pattern):
 # Warps raster to Hansen tiles using multiple processors
 def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
 
-    print tile_id
-
     # Start time
     start = datetime.datetime.now()
 
