@@ -55,7 +55,7 @@ def main ():
     source_raster = loss_composite
     out_pattern = cn.pattern_Mekong_loss_processed
     dt = 'Byte'
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster,out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # Only uploads tiles that actually have Mekong loss in them
     uu.check_and_upload(tile_id_list, cn.Mekong_loss_processed_dir, cn.pattern_Mekong_loss_processed)
