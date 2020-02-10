@@ -29,7 +29,7 @@ def main ():
     sensit_type = 'Mekong_loss'
 
 
-    uu.s3_folder_download(cn.Mekong_loss_raw_dir, '.')
+    uu.s3_folder_download(cn.Mekong_loss_raw_dir, '.', sensit_type)
 
     count = multiprocessing.cpu_count()
 
