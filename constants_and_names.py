@@ -531,7 +531,7 @@ Brazil_annual_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_legal
 
 ## Mekong loss (Hansen v2.0)
 
-Mekong_loss_raw_dir = os.path.join(base_dir, 'gfw2-data/forest_change/mekong_2_0/')
+Mekong_loss_raw_dir = os.path.join('s3://gfw2-data/forest_change/mekong_2_0/')
 pattern_Mekong_loss_raw = 'Loss_20'
 
 Mekong_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_Mekong_loss/processed/20200210/')
