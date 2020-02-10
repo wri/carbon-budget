@@ -23,7 +23,7 @@ def recode_tiles(annual_loss):
 
     else:
 
-        calc = '--calc={}*(A==100)'.format(year)
+        calc = '--calc={}*(A==100)'.format(int((year-2000)))
         recoded_output = "Mekong_loss_recoded_{}.tif".format(year)
         outfile = '--outfile={}'.format(recoded_output)
 
