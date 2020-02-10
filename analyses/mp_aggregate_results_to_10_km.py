@@ -32,9 +32,9 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
-             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
-             cn.net_flux_dir: [cn.pattern_net_flux]
+             # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
+             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
+             # cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
     # Checks whether the canopy cover argument is valid
@@ -44,7 +44,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    # tile_id_list = ['00N_070W'] # test tiles
+    # tile_id_list = ['30N_090W', '40N_090W', '30N_100W', '40N_100W', '40N_080W', '30N_110W', '40N_110W'] # test tiles
+    tile_id_list = ['00N_110E'] # test tiles
     tile_id_list = 'all'
 
     # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -89,7 +90,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
-        tile_list = [i for i in tile_list if not ('10km' in i)]
+        tile_list = [i for i in tile_list if not ('0_4deg' in i)]
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
@@ -136,8 +137,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         #     aggregate_results_to_10_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-        out_vrt = "{}_10km.vrt".format(pattern)
-        os.system('gdalbuildvrt -tr 0.1 0.1 {0} *{1}_10km*.tif'.format(out_vrt, pattern))
+        out_vrt = "{}_0_4deg.vrt".format(pattern)
+        os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_0_4deg*.tif'.format(out_vrt, pattern))
 
         # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
@@ -145,7 +146,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
-               '-tr', '0.1', '0.1',
+               '-tr', '0.04', '0.04',
                out_vrt, '{}.tif'.format(out_pattern)]
         subprocess.check_call(cmd)
 
@@ -159,10 +160,11 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux):
         # for vrt in vrtList:
         #     os.remove(vrt)
         #
-        # for tile_id in tile_list:
-        #     os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_10km.tif'.format(tile_id, pattern))
+        for tile_name in tile_list:
+            tile_id = uu.get_tile_id(tile_name)
+            os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
