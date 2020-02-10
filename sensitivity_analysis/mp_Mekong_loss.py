@@ -28,7 +28,7 @@ def main ():
     # # Downloads the Mekong loss folder. Each year of loss has its own raster
     # uu.s3_folder_download(cn.Mekong_loss_raw_dir, '.', sensit_type)
     #
-    # count = multiprocessing.cpu_count()
+    count = multiprocessing.cpu_count()
     #
     # # The list of all annual loss rasters
     # annual_loss_list = glob.glob('Loss_20*tif')
