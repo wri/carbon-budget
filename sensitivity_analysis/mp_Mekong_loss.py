@@ -18,7 +18,7 @@ def main ():
     download_dict = {cn.Mekong_loss_raw_dir: [cn.pattern_Mekong_loss_raw]}
 
     # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
-    tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_natrl_forest_dir)
+    tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
     # tile_id_list = ['50N_130W'] # test tiles
     print tile_id_list
@@ -29,12 +29,7 @@ def main ():
     sensit_type = 'Mekong_loss'
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
-
+    uu.s3_folder_download(cn.Mekong_loss_raw_dir, '.')
 
     count = multiprocessing.cpu_count()
 
