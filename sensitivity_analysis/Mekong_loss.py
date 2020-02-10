@@ -8,6 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+# Replaces the default loss value of 100 with the year of loss for each loss year raster
 def recode_tiles(annual_loss):
 
     print "Recoding loss tile by year"
