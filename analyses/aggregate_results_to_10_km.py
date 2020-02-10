@@ -206,8 +206,10 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     perc_diff_calc = '--calc=(A-B)/absolute(B)*100'.format(sensit_aggreg_flux, std_aggreg_flux)
     perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
     perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
+    # cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
+    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+           '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
