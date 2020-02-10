@@ -34,6 +34,7 @@ def main ():
     count = multiprocessing.cpu_count()
 
     annual_loss_list = glob.glob('Loss_20*tif')
+    print annual_loss_list
 
     print "Creating first year of loss Hansen tiles for Mekong region..."
     # Converts the region shapefile to Hansen tiles
