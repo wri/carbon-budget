@@ -460,7 +460,7 @@ output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200207/
 ######
 
 sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
-                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_Amazon_loss']
+                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_Amazon_loss', 'Mekong_loss']
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
                       '{0} = Standard model. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
@@ -468,8 +468,9 @@ model_type_arg_help = 'Argument for whether the model is being run in standard f
                       '{4} = Replace Baccini AGB map with Saatchi biomass map. ' \
                       '{5} = Use US-specific removals. {6} = Assume primary forests and IFLs have a removal rate of 0.' \
                       '{7} = Use Brazilian national loss data from PRODES for the legal Amazon.'\
+                      '{8} = Use Hansen v2.0 loss data for the Mekong (first loss year only).'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
-            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
+            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7], sensitivity_list[8])
 
 ## US-specific removals
 
@@ -527,6 +528,16 @@ Brazil_annual_loss_merged_dir = os.path.join(base_dir, 'sensit_analysis_legal_Am
 
 pattern_Brazil_annual_loss_processed = 'legal_Amazon_annual_loss_2001_2015'
 Brazil_annual_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/tiles/20200117/')
+
+## Mekong loss (Hansen v2.0)
+
+Mekong_loss_raw_dir = os.path.join(base_dir, 'gfw2-data/forest_change/mekong_2_0/')
+pattern_Mekong_loss_raw = 'Loss_20'
+
+Mekong_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_Mekong_loss/processed/20200210/')
+pattern_Mekong_loss_processed = 'Mekong_loss_2001_15'
+
+
 
 
 
