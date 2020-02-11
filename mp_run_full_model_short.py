@@ -68,7 +68,8 @@ def main ():
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
-    tile_id_list = uu.tile_id_list_check(tile_id_list)
+    else:
+        tile_id_list = uu.tile_id_list_check(tile_id_list)
 
 
     # List of output directories and output file name patterns
