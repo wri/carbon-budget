@@ -241,6 +241,7 @@ if __name__ == '__main__':
 
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
+        print tile_id_list
 
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
