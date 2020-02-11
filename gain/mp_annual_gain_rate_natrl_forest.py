@@ -116,20 +116,20 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list):
     gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
 
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=24)
-    pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
-                     output_pattern_list=output_pattern_list), tile_id_list)
-    pool.close()
-    pool.join()
+    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=24)
+    # pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
+    #                  output_pattern_list=output_pattern_list), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #
-    #     annual_gain_rate_natrl_forest.annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
+    # For single processor use
+    for tile_id in tile_id_list:
+
+        annual_gain_rate_natrl_forest.annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
 
     for i in range(0, len(output_dir_list)):
