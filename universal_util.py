@@ -386,7 +386,10 @@ def s3_file_download(source, dest, sensit_type):
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
     file_name = get_tile_name(source)
+    print file_name
+
     file_name = os.path.join(dest, file_name)
+    print file_name
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
@@ -395,8 +398,6 @@ def s3_file_download(source, dest, sensit_type):
         # Creates directory and file names according to sensitivity analysis type
         dir_sens = dir.replace('standard', sensit_type)
         file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
-
-        print file_name_sens
 
         # First attempt is to try to download the sensitivity analysis version
         try:
