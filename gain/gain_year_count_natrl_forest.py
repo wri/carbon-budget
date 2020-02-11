@@ -64,6 +64,10 @@ def create_gain_year_count_gain_only_standard(tile_id, sensit_type):
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, tcd, biomass = tile_names(tile_id, sensit_type)
+    print loss
+    print gain
+    print tcd
+    print biomass
 
     # Pixels with gain only
     gain_calc = '--calc=(A==0)*(B==1)*({}/2)'.format(cn.gain_years)
