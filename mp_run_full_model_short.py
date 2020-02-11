@@ -61,6 +61,8 @@ def main ():
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through)
     print actual_stages
 
+
+    # If the tile_list argument is an s3 folder, the list of tiles in it is created
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
         print tile_id_list
