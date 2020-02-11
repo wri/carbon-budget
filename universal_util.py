@@ -701,6 +701,10 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
                calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
+    elif tile_to_mask == out_name:
+        
+        return
+
     else:
 
         print "No pre-2000 plantation exists for {}. Tile done.".format(tile_id)
