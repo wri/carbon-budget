@@ -61,6 +61,11 @@ def main ():
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through)
     print actual_stages
 
+    if 's3://' in tile_id_list:
+        tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
+        print tile_id_list
+        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
 
