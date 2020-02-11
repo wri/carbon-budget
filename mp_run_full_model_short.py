@@ -38,6 +38,10 @@ def main ():
                         help='Extent over which carbon pools should be calculated: loss or 2000')
     parser.add_argument('--pools-to-use', '-p', required=True,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
+    parser.add_argument('--tcd-threshold', '-tcd', required=False,
+                        help='Tree cover density threshold above which pixels will be included in the aggregation.')
+    parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
+                        help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     args = parser.parse_args()
     sensit_type = args.model_type
     stage_input = args.stages
@@ -45,6 +49,9 @@ def main ():
     carbon_pool_extent = args.carbon_pool_extent
     pools = args.pools_to_use
     tile_id_list = args.tile_id_list
+    thresh = args.tcd_threshold
+    thresh = int(thresh)
+    std_net_flux = args.std_net_flux_aggreg
 
 
     # Checks whether the sensitivity analysis argument is valid
@@ -236,7 +243,7 @@ def main ():
         print ':::::Creating 10km aggregate maps'
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_10_km(sensit_type, tile_id_list)
+        mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
