@@ -1,4 +1,5 @@
 import argparse
+import os
 import datetime
 import constants_and_names as cn
 import universal_util as uu
@@ -60,6 +61,33 @@ def main ():
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through)
     print actual_stages
+
+    # Checks if the correct c++ script has been compiled for the pool option selected.
+    # Does this up front so that the user can compile the C++ before the script runs too long.
+    if 'gross_emissions' in actual_stages:
+
+        if pools == 'biomass_soil':
+            # Some sensitivity analyses have specific gross emissions scripts.
+            # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
+            if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
+                if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+                    print "C++ for {} already compiled.".format(sensit_type)
+                else:
+                    raise Exception('Must compile standard {} model C++...'.format(sensit_type))
+            else:
+                if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe'):
+                    print "C++ for generic emissions already compiled."
+                else:
+                    raise Exception('Must compile generic emissions C++...')
+
+        elif (pools == 'soil_only') & (sensit_type == 'std'):
+            if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
+                print "C++ for soil_only already compiled."
+            else:
+                raise Exception('Must compile soil_only C++...')
+
+        else:
+            raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
