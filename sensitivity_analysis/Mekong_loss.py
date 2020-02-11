@@ -29,3 +29,13 @@ def recode_tiles(annual_loss):
 
         cmd = ['gdal_calc.py', '-A', annual_loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
+
+def reset_nodata(tile_id):
+
+    print "Changing 0 from NoData to actual value for tile", tile_id
+
+    tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+
+    cmd = ['gdal_edit.py', '-unsetnodata', tile]
+
+    print "Tile processed"
