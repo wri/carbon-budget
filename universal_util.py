@@ -395,6 +395,8 @@ def s3_file_download(source, dest, sensit_type):
         dir_sens = dir.replace('standard', sensit_type)
         file_name_sens = os.path.join(source, file_name[:-4] + '_' + sensit_type + '.tif')
 
+        print file_name_sens
+
         # First attempt is to try to download the sensitivity analysis version
         try:
             # Doesn't download the tile if it's already on the spot machine
