@@ -388,8 +388,8 @@ def s3_file_download(source, dest, sensit_type):
     file_name = get_tile_name(source)
     print file_name
 
-    file_name = os.path.join(dest, file_name)
-    print file_name
+    local_file_path = os.path.join(dest, file_name)
+    print "local path:", local_file_path
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
