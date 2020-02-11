@@ -38,7 +38,6 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
     print "  Tile in tropics:", tropics
 
     # Names of the input tiles
-    loss = '{}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     ifl_primary = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_ifl_primary)
@@ -46,6 +45,11 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
     plantations = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_planted_forest_type_unmasked)
     mangroves = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
+
+    if sensit_type == 'Mekong_loss':
+        loss = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+    else:
+        loss = '{}.tif'.format(tile_id)
 
     print "  Reading input files and evaluating conditions"
 

@@ -20,6 +20,8 @@ def mask_pre_2000_plant(tile_id, sensit_type):
     pre_2000_plant = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
     if sensit_type == 'legal_Amazon_loss':
         loss_tile = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    elif sensit_type == 'Mekong_loss':
+        loss_tile = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
         loss_tile = '../carbon-budget/emissions/cpp_util/{}.tif'.format(tile_id)
     out_tile = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked)

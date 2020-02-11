@@ -93,8 +93,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent):
         # Adds the correct loss tile to the download dictionary depending on the model run
         if sensit_type == 'legal_Amazon_loss':
             download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        elif sensit_type == 'Mekong_loss':
+            download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
         else:
             download_dict[cn.loss_dir] = ['']
+
 
     # Output files and patterns and files to download if carbon pools for 2000 are being generated
     elif carbon_pool_extent == '2000':
@@ -125,6 +128,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent):
         # Adds the correct loss tile to the download dictionary depending on the model run
         if sensit_type == 'legal_Amazon_loss':
             download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        elif sensit_type == 'Mekong_loss':
+            download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
         else:
             download_dict[cn.loss_dir] = ['']
 

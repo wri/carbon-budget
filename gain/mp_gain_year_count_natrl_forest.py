@@ -33,13 +33,20 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list):
 
     # Files to download for this script
     download_dict = {
-        cn.loss_dir: [''],
         cn.gain_dir: [cn.pattern_gain],
         cn.tcd_dir: [cn.pattern_tcd],
         cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
         cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
     }
+
+    # Adds the correct loss tile to the download dictionary depending on the model run
+    if sensit_type == 'legal_Amazon_loss':
+        download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+    elif sensit_type == 'Mekong_loss':
+        download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
+    else:
+        download_dict[cn.loss_dir] = ['']
 
 
     # List of output directories and output file name patterns

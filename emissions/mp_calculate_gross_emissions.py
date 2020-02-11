@@ -60,9 +60,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
         cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
 
-    # Special loss tiles for the Brazil sensitivity analysis
+    # Special loss tiles for the Brazil and Mekong sensitivity analyses
     if sensit_type == 'legal_Amazon_loss':
         download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+    if sensit_type == 'Mekong_loss':
+        download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
     else:
         download_dict[cn.loss_dir] = ['']
 
