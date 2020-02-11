@@ -36,9 +36,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
-    if 's3://' in tile_id_list:
-        tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
-
     if tile_id_list == 'all':
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
@@ -241,6 +238,10 @@ if __name__ == '__main__':
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
+
+    if 's3://' in tile_id_list:
+        tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
+
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_calculate_gross_emissions(sensit_type=sensit_type, tile_id_list=tile_id_list, pools=pools)
