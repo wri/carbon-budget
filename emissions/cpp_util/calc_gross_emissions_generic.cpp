@@ -53,7 +53,7 @@ string sensit_type = argv[2]; // For standard model or sensitivity analyses that
 
 cout << sensit_type << endl;
 
-string infolder = "../carbon-budget/";
+string infolder = "cpp_util/";
 
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4

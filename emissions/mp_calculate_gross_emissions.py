@@ -150,8 +150,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
-        # uu.s3_flexible_download(dir, pattern, '../emissions/cpp_util/', sensit_type, tile_id_list)
-        uu.s3_flexible_download(dir, pattern, './', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, '../emissions/cpp_util/', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -180,8 +179,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
     # However, not all Hansen tiles have plantations.
     # This function creates "dummy" plantation tiles for all Hansen tiles that do not have plantations.
     # That way, the C++ script gets all the necessary input files
-    # folder = '../carbon-budget/emissions/cpp_util/'
-    folder = './'
+    folder = '../carbon-budget/emissions/cpp_util/'
 
     print "Making blank tiles for inputs that don't currently exist"
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
