@@ -702,7 +702,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         subprocess.check_call(cmd)
 
     elif tile_to_mask == out_name:
-        
+
         return
 
     else:
