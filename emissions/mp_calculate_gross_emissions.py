@@ -241,8 +241,8 @@ if __name__ == '__main__':
 
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
-        print tile_id_list
 
-    tile_id_list = uu.tile_id_list_check(tile_id_list)
+    else:
+        tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_calculate_gross_emissions(sensit_type=sensit_type, tile_id_list=tile_id_list, pools=pools)
