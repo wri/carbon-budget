@@ -397,7 +397,8 @@ def s3_file_download(source, dest, sensit_type):
 
         # Creates directory and file names according to sensitivity analysis type
         dir_sens = dir.replace('standard', sensit_type)
-        file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
+        # file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
+        file_name_sens = local_file_path[:-4] + '_' + sensit_type + '.tif'
 
         # First attempt is to try to download the sensitivity analysis version
         try:
