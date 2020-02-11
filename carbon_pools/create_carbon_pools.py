@@ -190,6 +190,9 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)):
         print "Brazil-specific loss tile found for {}. Processing...".format(tile_id)
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)):
+        print "Mekong-specific loss tile found for {}. Processing...".format(tile_id)
+        loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
         print "No loss tile for {}. Not processing.".format(tile_id)
         return

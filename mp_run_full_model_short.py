@@ -1,3 +1,7 @@
+'''
+c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o ../carbon-budget/emissions/cpp_util//calc_gross_emissions_generic.exe -lgdal
+'''
+
 import argparse
 import os
 import datetime
