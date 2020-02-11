@@ -19,8 +19,10 @@ def tile_names(tile_id, sensit_type):
 
     # Names of the input files
 
-    if sensit_type == 'Mekong_loss':
-        loss = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+    if sensit_type == 'legan_Amazon_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    elif sensit_type == 'Mekong_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
         loss = '{}.tif'.format(tile_id)
 
