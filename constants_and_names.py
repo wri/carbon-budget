@@ -48,9 +48,6 @@ deadwood_to_above_subtrop_mang = 0.258
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
-# 10km res
-aggreg_res = 0.096342599
-
 # m2 per hectare
 m2_per_ha = 100 * 100
 
@@ -453,7 +450,7 @@ pattern_aggreg = '0_4deg_modelv1_1_2'
 pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv1_1_2_perc_diff_std_v'
 pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv1_1_2_sign_change_std_v'
 
-output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200207/'.format(base_dir)
+output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200211/'.format(base_dir)
 
 
 ### Sensitivity analysis

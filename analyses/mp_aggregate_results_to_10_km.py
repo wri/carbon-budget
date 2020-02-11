@@ -48,10 +48,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux = None):
     # tile_id_list = ['00N_110E'] # test tiles
     tile_id_list = 'all'
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
-    # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    # # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    # uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    # # tree cover density tiles-- necessary for filtering sums by tcd
+    # uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
     print "Model outputs to process are:", download_dict
 
@@ -200,9 +200,9 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux = None):
             aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
 
-            # print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
-            # aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-            # uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+            print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
+            aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+            uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
 
         else:
 
