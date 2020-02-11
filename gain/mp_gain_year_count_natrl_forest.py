@@ -68,13 +68,13 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list):
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
 
-    # Creates gain year count tiles using only pixels that had only loss
-    # count/3 uses about 220 GB on an r4.16xlarge machine
-    # count/2 uses about 330 GB on an r4.16xlarge machine
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=36)
-    pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_loss_only, sensit_type=sensit_type),
-             tile_id_list)
+    # # Creates gain year count tiles using only pixels that had only loss
+    # # count/3 uses about 220 GB on an r4.16xlarge machine
+    # # count/2 uses about 330 GB on an r4.16xlarge machine
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=36)
+    # pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_loss_only, sensit_type=sensit_type),
+    #          tile_id_list)
 
     # processes=36 maxes out at about 200 GB
     pool = multiprocessing.Pool(processes=36)

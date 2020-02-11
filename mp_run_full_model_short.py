@@ -130,7 +130,7 @@ def main ():
     # Creates forest age category tiles
     if 'forest_age_category_natrl_forest' in actual_stages:
 
-        print 'Creating forest age category for natural forest tiles'
+        print ':::::Creating forest age category for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_forest_age_category_natrl_forest(sensit_type, tile_id_list)
@@ -143,7 +143,7 @@ def main ():
     # Creates tiles of the number of years of removals
     if 'gain_year_count_natrl_forest' in actual_stages:
 
-        print 'Creating gain year count for natural forest tiles'
+        print ':::::Creating gain year count for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_gain_year_count_natrl_forest(sensit_type, tile_id_list)
@@ -157,7 +157,7 @@ def main ():
     # removal function
     if 'annual_gain_rate_natrl_forest' in actual_stages:
 
-        print 'Creating annual removals for natural forest tiles'
+        print ':::::Creating annual removals for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list)
@@ -171,7 +171,7 @@ def main ():
     # removal function
     if 'cumulative_gain_natrl_forest' in actual_stages:
 
-        print 'Creating cumulative removals for natural forest tiles'
+        print ':::::Creating cumulative removals for natural forest tiles'
         start = datetime.datetime.now()
 
         mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list)
@@ -184,7 +184,7 @@ def main ():
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
     if 'removals_merged' in actual_stages:
 
-        print 'Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'
+        print ':::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'
         start = datetime.datetime.now()
 
         mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list)
@@ -197,7 +197,7 @@ def main ():
     # Creates carbon pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        print 'Creating emissions year carbon pools tiles'
+        print ':::::Creating emissions year carbon pools tiles'
         start = datetime.datetime.now()
 
         mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent)
@@ -209,7 +209,7 @@ def main ():
 
     if 'gross_emissions' in actual_stages:
 
-        print 'Creating gross emissions tiles'
+        print ':::::Creating gross emissions tiles'
         start = datetime.datetime.now()
 
         mp_calculate_gross_emissions(sensit_type, tile_id_list, pools)
@@ -221,7 +221,7 @@ def main ():
 
     if 'net_flux' in actual_stages:
 
-        print 'Creating net flux tiles'
+        print ':::::Creating net flux tiles'
         start = datetime.datetime.now()
 
         mp_net_flux(sensit_type, tile_id_list)
@@ -233,7 +233,7 @@ def main ():
 
     if 'aggregate' in actual_stages:
 
-        print 'Creating 10km aggregate maps'
+        print ':::::Creating 10km aggregate maps'
         start = datetime.datetime.now()
 
         mp_aggregate_results_to_10_km(sensit_type, tile_id_list)
