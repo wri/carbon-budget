@@ -78,6 +78,9 @@ def main ():
     print "Analysis stages to run:", actual_stages
 
 
+    if 'carbon_pools' in actual_stages and carbon_pool_extent not in ['loss', '2000']:
+        raise Exception('Carbon pool year not specified for carbon pool creation step')
+
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
     if 'gross_emissions' in actual_stages:
