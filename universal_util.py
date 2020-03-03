@@ -447,7 +447,6 @@ def s3_file_download(source, dest, sensit_type):
 def upload_final_set(upload_dir, pattern):
 
     cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern), '--recursive']
-    print cmd
 
     try:
         subprocess.check_call(cmd)
