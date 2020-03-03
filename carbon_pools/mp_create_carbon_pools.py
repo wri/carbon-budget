@@ -37,7 +37,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent):
+def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None):
 
     if (sensit_type != 'std') & (carbon_pool_extent != 'loss'):
         raise Exception("Sensitivity analysis run must use 'loss' extent")
@@ -149,6 +149,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent):
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
+    # If the script is called from the full model run script, a date is provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates

@@ -32,7 +32,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
+def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = None):
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
@@ -147,11 +147,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
-    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    # for key, values in download_dict.iteritems():
-    #     dir = key
-    #     pattern = values[0]
-    #     uu.s3_flexible_download(dir, pattern, '../emissions/cpp_util/', sensit_type, tile_id_list)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.iteritems():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, '../emissions/cpp_util/', sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -161,6 +161,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools):
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         print output_dir_list
         print output_pattern_list
+
+    # If the script is called from the full model run script, a date is provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."

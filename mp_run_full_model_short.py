@@ -145,7 +145,7 @@ def main ():
         print ':::::Creating forest age category for natural forest tiles'
         start = datetime.datetime.now()
 
-        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date  = run_date)
+        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -158,7 +158,7 @@ def main ():
         print ':::::Creating gain year count for natural forest tiles'
         start = datetime.datetime.now()
 
-        mp_gain_year_count_natrl_forest(sensit_type, tile_id_list)
+        mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -172,7 +172,7 @@ def main ():
         print ':::::Creating annual removals for natural forest tiles'
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list)
+        mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -186,7 +186,7 @@ def main ():
         print ':::::Creating cumulative removals for natural forest tiles'
         start = datetime.datetime.now()
 
-        mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list)
+        mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -199,7 +199,7 @@ def main ():
         print ':::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'
         start = datetime.datetime.now()
 
-        mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list)
+        mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -212,7 +212,7 @@ def main ():
         print ':::::Creating emissions year carbon pools tiles'
         start = datetime.datetime.now()
 
-        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent)
+        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -224,7 +224,7 @@ def main ():
         print ':::::Creating gross emissions tiles'
         start = datetime.datetime.now()
 
-        mp_calculate_gross_emissions(sensit_type, tile_id_list, pools)
+        mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -236,7 +236,7 @@ def main ():
         print ':::::Creating net flux tiles'
         start = datetime.datetime.now()
 
-        mp_net_flux(sensit_type, tile_id_list)
+        mp_net_flux(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -248,7 +248,7 @@ def main ():
         print ':::::Creating 10km aggregate maps'
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux)
+        mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start

@@ -20,7 +20,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list):
+def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -66,6 +66,11 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list):
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+    # If the script is called from the full model run script, a date is provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
     # Creates gain year count tiles using only pixels that had only loss
