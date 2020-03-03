@@ -38,7 +38,7 @@ def main ():
                         help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
     parser.add_argument('--carbon-pool-extent', '-ce', required=False,
                         help='Extent over which carbon pools should be calculated: loss or 2000')
-    parser.add_argument('--pools-to-use', '-p', required=True,
+    parser.add_argument('--pools-to-use', '-p', required=False,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
     parser.add_argument('--tcd-threshold', '-tcd', required=False,
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
@@ -53,7 +53,8 @@ def main ():
     pools = args.pools_to_use
     tile_id_list = args.tile_id_list
     thresh = args.tcd_threshold
-    thresh = int(thresh)
+    if thresh is not None:
+        thresh = int(thresh)
     std_net_flux = args.std_net_flux_aggreg
 
 
