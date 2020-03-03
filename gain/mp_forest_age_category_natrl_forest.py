@@ -72,13 +72,10 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-
-    # Replaces the date specified in constants_and_names with the date provided by the model run-through
-    if run_date:
-        print run_date
-        print "Changing output directory date based on date provided with model run-through"
-        output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
-        print output_dir_list
+    # If the script is called from the full model run script, a date is provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
      # Table with IPCC Table 4.9 default gain rates

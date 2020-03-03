@@ -788,6 +788,7 @@ def analysis_stages(stage_list, stage_input, run_through):
             return stage_output
 
 
+# Checks whether the tile ids provided are valid
 def tile_id_list_check(tile_id_list):
 
     # Checks tile list input validity
@@ -804,3 +805,12 @@ def tile_id_list_check(tile_id_list):
         else:
             print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
             return tile_id_list
+
+
+# Replaces the date specified in constants_and_names with the date provided by the model run-through
+def replace_output_dir_date(output_dir_list, run_date):
+
+    print "Changing output directory date based on date provided with model run-through"
+    output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
+    print output_dir_list
+    return output_dir_list
