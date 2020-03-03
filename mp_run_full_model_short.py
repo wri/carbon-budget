@@ -32,6 +32,8 @@ def main ():
                         help='Stages of creating Brazil legal Amazon-specific gross cumulative removals. Options are {}'.format(model_stages))
     parser.add_argument('--run_through', '-r', required=True,
                         help='Options: true or false. true: run named stage and following stages. false: run only named stage.')
+    parser.add_argument('--run_date', '-d', required=True,
+                        help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
     parser.add_argument('--carbon-pool-extent', '-ce', required=False,
@@ -46,6 +48,7 @@ def main ():
     sensit_type = args.model_type
     stage_input = args.stages
     run_through = args.run_through
+    run_date = args.run_date
     carbon_pool_extent = args.carbon_pool_extent
     pools = args.pools_to_use
     tile_id_list = args.tile_id_list
@@ -71,10 +74,11 @@ def main ():
 
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through)
-    print actual_stages
+    print "Analysis stages to run:", actual_stages
+
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
-    # Does this up front so that the user can compile the C++ before the script runs too long.
+    # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
     if 'gross_emissions' in actual_stages:
 
         if pools == 'biomass_soil':
@@ -134,20 +138,20 @@ def main ():
                            ]
 
 
-    # Creates forest age category tiles
+    # Creates age category tiles for natural forests
     if 'forest_age_category_natrl_forest' in actual_stages:
 
         print ':::::Creating forest age category for natural forest tiles'
         start = datetime.datetime.now()
 
-        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list)
+        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date  = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n"
 
 
-    # Creates tiles of the number of years of removals
+    # Creates tiles of the number of years of removals for natural forests
     if 'gain_year_count_natrl_forest' in actual_stages:
 
         print ':::::Creating gain year count for natural forest tiles'

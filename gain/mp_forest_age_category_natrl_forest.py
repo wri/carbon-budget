@@ -24,7 +24,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list):
+def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -59,7 +59,6 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list):
     output_dir_list = [cn.age_cat_natrl_forest_dir]
     output_pattern_list = [cn.pattern_age_cat_natrl_forest]
 
-
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
         dir = key
@@ -72,6 +71,13 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list):
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+
+    # Replaces the date specified in constants_and_names with the date provided by the model run-through
+    if run_date:
+        print "Changing output directory date based on date provided with model run-through"
+        output_dir_list = [output_dir.replace(output_dir_list[-9:-1], run_date) for output_dir in output_dir_list]
+        print output_dir_list
 
 
      # Table with IPCC Table 4.9 default gain rates
