@@ -58,10 +58,6 @@ def main ():
     std_net_flux = args.std_net_flux_aggreg
 
 
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
-
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (stage_input not in model_stages):
         raise Exception('Invalid stage selection. Please provide a stage from {}.'.format(model_stages))
@@ -72,12 +68,16 @@ def main ():
     else:
         pass
 
-
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through)
     print "Analysis stages to run:", actual_stages
 
 
+    # Checks whether the sensitivity analysis argument is valid
+    uu.check_sensit_type(sensit_type)
+
+    # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
+    # Does this up front so the user knows before the run begins that information is missing.
     if 'carbon_pools' in actual_stages and carbon_pool_extent not in ['loss', '2000']:
         raise Exception('Carbon pool year not specified for carbon pool creation step')
 
@@ -106,15 +106,20 @@ def main ():
                 raise Exception('Must compile soil_only C++...')
 
         else:
-            raise Exception('Pool and/or sensitivity analysis option not valid')
+            raise Exception('Pool and/or sensitivity analysis option not valid for gross emissions')
 
+    # Checks whether the canopy cover argument is valid up front.
+    if 'aggregate' in actual_stages:
+        if thresh < 0 or thresh > 99:
+            raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
+        else:
+            pass
 
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
         print tile_id_list
         print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-
     # Otherwise, check that the tile list argument is valid
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
