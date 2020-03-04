@@ -62,7 +62,7 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
     if (pools == 'biomass_soil') & (sensit_type == 'std'):
         pattern = pattern
 
-    if (pools == 'biomass_soil') & (sensit_type != 'std'):
+    elif (pools == 'biomass_soil') & (sensit_type != 'std'):
         pattern = pattern + "_" + sensit_type
         print pattern
 
