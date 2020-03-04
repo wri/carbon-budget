@@ -47,9 +47,9 @@ if (argc != 4){cout << "Use <program name> <tile id><sensit_type><folder>" << en
 
 // Input arguments
 string tile_id = argv[1];    // The tile id comes from the second argument. The first argument is the name of this code.
-string infolder = argv[2];   // For standard model or sensitivity analyses that use the standard emissions model.
+string sensit_type = argv[2];   // For standard model or sensitivity analyses that use the standard emissions model.
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
-string folder = argv[3];     // The folder which has all the input files
+string infolder = argv[3];     // The folder which has all the input files
 
 cout << sensit_type << endl;
 cout << infolder << endl;
