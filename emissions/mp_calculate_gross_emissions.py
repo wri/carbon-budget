@@ -117,7 +117,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                 raise Exception('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
-        if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
+        if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
@@ -175,7 +175,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     if working_dir is not None:
         folder = working_dir        # When emissions are calculated as part of the full model run
     else:
-        folder = '../carbon-budget/emissions/cpp_util'     # When emissions are calculated on their own
+        folder = '/home/ubuntu/carbon-budget/emissions/cpp_util'     # When emissions are calculated on their own
 
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
