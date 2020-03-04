@@ -591,8 +591,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     # Creates tile names for standard and sensitivity analyses.
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
     # Thus, it has to be prepared for either one.
-    file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
-    file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
+    file_name = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, pattern))
+    file_name_sens = os.path.join(folder, '{0}_{1}_{2}.tif'.format(tile_id, pattern, sensit_type))
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
