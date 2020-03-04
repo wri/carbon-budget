@@ -66,7 +66,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         pattern = download_pattern[0]
 
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count-10)
+        pool = multiprocessing.Pool(processes=54)
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()
@@ -84,7 +84,6 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=24)
     pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
