@@ -58,6 +58,9 @@ def main ():
         thresh = int(thresh)
     std_net_flux = args.std_net_flux_aggreg
 
+    # Working directory
+    working_dir = os.getcwd()
+
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (stage_input not in model_stages):
@@ -232,9 +235,6 @@ def main ():
 
         print ':::::Creating gross emissions tiles'
         start = datetime.datetime.now()
-
-        working_dir = os.getcwd()
-        print working_dir
 
         mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = run_date, working_dir = working_dir)
 

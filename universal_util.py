@@ -812,5 +812,5 @@ def replace_output_dir_date(output_dir_list, run_date):
 
     print "Changing output directory date based on date provided with model run-through"
     output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
-    print output_dir_list
+    print output_dir_list + "\n"
     return output_dir_list
