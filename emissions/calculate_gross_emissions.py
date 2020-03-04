@@ -17,14 +17,14 @@ def mask_pre_2000_plant(tile_id, sensit_type):
 
     print "Masking pre-2000 plantations for {}".format(tile_id)
 
-    pre_2000_plant = '../emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+    pre_2000_plant = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
     if sensit_type == 'legal_Amazon_loss':
-        loss_tile = '../emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+        loss_tile = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     elif sensit_type == 'Mekong_loss':
-        loss_tile = '../emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+        loss_tile = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
-        loss_tile = '../emissions/cpp_util/{}.tif'.format(tile_id)
-    out_tile = '../emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked)
+        loss_tile = '../carbon-budget/emissions/cpp_util/{}.tif'.format(tile_id)
+    out_tile = '../carbon-budget/emissions/cpp_util/{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked)
 
     uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, out_tile, tile_id)
 
@@ -40,14 +40,14 @@ def calc_emissions(tile_id, pools, sensit_type):
     # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
     if (pools == 'soil_only') & (sensit_type == 'std'):
-        emissions_tiles_cmd = ['../emissions/cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
+        emissions_tiles_cmd = ['../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe', tile_id]
 
     elif (pools == 'biomass_soil') & (sensit_type in ['convert_to_grassland', 'no_shifting_ag']):
-        emissions_tiles_cmd = ['../emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type), tile_id]
+        emissions_tiles_cmd = ['../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type), tile_id]
 
     # This C++ script has an extra argument that names the input carbon pools and output emissions correctly
     elif (pools == 'biomass_soil') & (sensit_type not in ['no_shifting_ag', 'convert_to_grassland']):
-        emissions_tiles_cmd = ['../emissions/cpp_util/calc_gross_emissions_generic.exe', tile_id, sensit_type]
+        emissions_tiles_cmd = ['../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe', tile_id, sensit_type]
 
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
