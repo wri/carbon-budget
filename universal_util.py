@@ -430,7 +430,7 @@ def s3_file_download(source, dest, sensit_type):
 
     # If not a sensitivity run, the standard file is downloaded
     else:
-        if os.path.exists(file_name):
+        if os.path.exists(os.path.join(dest, file_name)):
 
             print file_name, "already downloaded" + "\n"
             return
