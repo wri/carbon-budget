@@ -18,7 +18,19 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main (sensit_type):
+def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
+
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
+        # calculating mangrove gain
+        mangrove_biomass_tile_list = uu.tile_list_s3(cn.mangrove_biomass_2000_dir)
+        ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
+        tile_id_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
+
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
 
     # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
@@ -35,16 +47,6 @@ def main (sensit_type):
     output_pattern_list = [cn.pattern_gain_year_count_mangrove]
 
 
-    # Lists the tiles that have both mangrove biomass and FAO ecozone information because both of these are necessary for
-    # calculating mangrove gain
-    mangrove_biomass_tile_list = uu.tile_list_s3(cn.mangrove_biomass_2000_dir)
-    ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
-    tile_id_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
-    # tile_id_list = ['00N_110E'] # test tiles
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
-
-
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
         dir = key
@@ -54,10 +56,14 @@ def main (sensit_type):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+    # If the script is called from the full model run script, a date is provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
     # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
@@ -135,10 +141,18 @@ def main (sensit_type):
 if __name__ == '__main__':
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
     args = parser.parse_args()
     sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
+    tile_id_list = args.tile_id_list
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_gain_year_count_mangrove(sensit_type=sensit_type, tile_id_list=tile_id_list)
