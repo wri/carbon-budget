@@ -104,7 +104,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         # Some sensitivity analyses have specific gross emissions scripts.
         # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
-            if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+            # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+            if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
                 print "C++ for {} already compiled.".format(sensit_type)
             else:
                 raise Exception('Must compile standard {} model C++...'.format(sensit_type))
