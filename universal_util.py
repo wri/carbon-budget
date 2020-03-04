@@ -781,22 +781,16 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
             stage_output = stage_input.split()
 
-    print stage_output
-
     # Flags to include mangroves and/or planted forests in the stages to run
     if include_plantations == 'true':
         stage_output.insert(0, 'gain_year_count_planted_forest')
         stage_output.insert(1, 'annual_gain_rate_planted_forest')
         stage_output.insert(2, 'cumulative_gain_planted_forest')
 
-    print stage_output
-
     if include_mangroves == 'true':
         stage_output.insert(0, 'gain_year_count_mangrove')
-        stage_output.insert(1, 'annual_gain_rate_natrl_forest')
+        stage_output.insert(1, 'annual_gain_rate_mangrove')
         stage_output.insert(2, 'cumulative_gain_mangrove')
-
-    print stage_output
 
     return stage_output
 
