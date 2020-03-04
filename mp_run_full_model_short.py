@@ -267,7 +267,7 @@ def main ():
         print ':::::Creating 10km aggregate maps'
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux, run_date = run_date)
+        mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
