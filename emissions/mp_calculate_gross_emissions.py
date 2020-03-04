@@ -109,8 +109,9 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
             else:
                 raise Exception('Must compile standard {} model C++...'.format(sensit_type))
         else:
-            if os.path.exists('~/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe'):
+            if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe'):
                 print "C++ for generic emissions already compiled."
+                print "here"
             else:
                 raise Exception('Must compile generic emissions C++...')
 
