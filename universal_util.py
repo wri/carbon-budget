@@ -787,7 +787,7 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
         stage_output = stage_output.insert(1, 'annual_gain_rate_natrl_forest')
         stage_output = stage_output.insert(2, 'cumulative_gain_mangrove')
 
-    if include_plantations is not True:
+    if include_plantations is True:
         stage_output = stage_output.insert(0, 'gain_year_count_planted_forest')
         stage_output = stage_output.insert(1, 'annual_gain_rate_planted_forest')
         stage_output = stage_output.insert(2, 'cumulative_gain_planted_forest')
