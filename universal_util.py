@@ -614,8 +614,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         if os.path.exists(os.path.join(folder, '{0}.tif'.format(tile_id))):
             print "Hansen loss tile exists for {}.".format(tile_id)
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}{1}.tif'.format(folder, tile_id)]
+                   '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
+                   '{0}/{1}.tif'.format(folder, tile_id)]
             subprocess.check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine
@@ -641,8 +641,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             # Uses either the Hansen loss tile or pixel area tile as a template tile,
             # with the output name corresponding to the model type
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, full_pattern),
-                   '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
+                   '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, full_pattern),
+                   '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             subprocess.check_call(cmd)
             print "Created raster of all 0s for", file_name
 
