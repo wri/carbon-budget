@@ -53,9 +53,9 @@ def main ():
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', required=False,
-                        help='Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. True or False.')
+                        help='Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
     parser.add_argument('--plantations', '-pl', required=False,
-                        help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. True or False.')
+                        help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
     args = parser.parse_args()
     sensit_type = args.model_type
     stage_input = args.stages
