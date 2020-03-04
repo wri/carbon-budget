@@ -40,20 +40,19 @@
 using namespace std;
 
 //to compile:  c++ calc_gross_emissions.cpp -o calc_gross_emissions.exe -lgdal
-// to compile on MINGW:  g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
 // If code is run other than <program name> <tile id> , it will raise this error.
-if (argc != 3){cout << "Use <program name> <tile id><sensit_type>" << endl; return 1;}
+if (argc != 4){cout << "Use <program name> <tile id><sensit_type><folder>" << endl; return 1;}
 
 // Input arguments
-string tile_id = argv[1]; // The tile id comes from the second argument. The first argument is the name of this code.
-string sensit_type = argv[2]; // For standard model or sensitivity analyses that use the standard emissions model.
+string tile_id = argv[1];    // The tile id comes from the second argument. The first argument is the name of this code.
+string infolder = argv[2];   // For standard model or sensitivity analyses that use the standard emissions model.
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
+string folder = argv[3];     // The folder which has all the input files
 
 cout << sensit_type << endl;
-
-string infolder = "cpp_util/";
+cout << infolder << endl;
 
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
