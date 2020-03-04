@@ -781,6 +781,10 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
             stage_output = stage_input.split()
 
+
+    print include_mangroves
+    print include_plantations
+
     # Flags to include mangroves and/or planted forests in the stages to run
     if include_mangroves is True:
         print "mangroves now"
