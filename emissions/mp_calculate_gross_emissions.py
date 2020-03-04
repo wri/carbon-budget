@@ -198,16 +198,16 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
-    for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=50)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
     # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder, sensit_type, working_dir)
+    #     pool = multiprocessing.Pool(processes=50)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+
+    # For single processor use
+    for pattern in pattern_list:
+        for tile in tile_id_list:
+            uu.make_blank_tile(tile, pattern, folder, sensit_type)
 
 
     # Calculates gross emissions for each tile
