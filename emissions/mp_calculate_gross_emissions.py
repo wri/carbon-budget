@@ -32,7 +32,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = None):
+def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = None, working_dir = None):
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
@@ -104,7 +104,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         # Some sensitivity analyses have specific gross emissions scripts.
         # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
-            if os.path.exists('../emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+            if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
                 print "C++ for {} already compiled.".format(sensit_type)
             else:
                 raise Exception('Must compile standard {} model C++...'.format(sensit_type))
@@ -115,7 +115,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                 raise Exception('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
-        if os.path.exists('../emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
+        if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
@@ -140,6 +140,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                                    cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
                                    cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
                                    cn.pattern_gross_emis_nodes_soil_only]
+
         else:
             raise Exception('Must compile soil_only C++...')
 
@@ -151,7 +152,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '../carbon-budget/emissions/cpp_util/', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, working_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
