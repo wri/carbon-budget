@@ -169,18 +169,6 @@ def main ():
                            ]
 
 
-    # Creates age category tiles for natural forests
-    if 'forest_age_category_natrl_forest' in actual_stages:
-
-        print ':::::Creating forest age category for natural forest tiles'
-        start = datetime.datetime.now()
-
-        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n"
-
 
     # Creates tiles of the number of years of removals for mangroves
     if 'gain_year_count_mangrove' in actual_stages:
@@ -262,6 +250,19 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         print ":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n"
+
+
+    # Creates age category tiles for natural forests
+    if 'forest_age_category_natrl_forest' in actual_stages:
+
+        print ':::::Creating forest age category for natural forest tiles'
+        start = datetime.datetime.now()
+
+        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n"
 
 
     # Creates tiles of the number of years of removals for natural forests
