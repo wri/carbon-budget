@@ -13,18 +13,18 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calls the function to mask pre-2000 plantations from the loss tiles before calculating emissions from them
-def mask_pre_2000_plant(tile_id, sensit_type, working_dir):
+def mask_pre_2000_plant(tile_id, sensit_type, folder):
 
     print "Masking pre-2000 plantations for {}".format(tile_id)
 
-    pre_2000_plant = os.path.join(working_dir, '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+    pre_2000_plant = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
     if sensit_type == 'legal_Amazon_loss':
-        loss_tile = os.path.join(working_dir, '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed))
+        loss_tile = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed))
     elif sensit_type == 'Mekong_loss':
-        loss_tile = os.path.join(working_dir, '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed))
+        loss_tile = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed))
     else:
-        loss_tile = os.path.join(working_dir, '{}.tif'.format(tile_id))
-    out_tile = os.path.join(working_dir, '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
+        loss_tile = os.path.join(folder, '{}.tif'.format(tile_id))
+    out_tile = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
 
     uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, out_tile, tile_id)
 

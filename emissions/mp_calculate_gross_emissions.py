@@ -169,25 +169,30 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
+    # Assigns the working folder based on whether emissions is being calculated as part of the full model run or not
+    if working_dir is not None:
+        folder = working_dir        # When emissions are calculated as part of the full model run
+    else:
+        folder = '../carbon-budget/emissions/cpp_util/'     # When emissions are calculated on their own
+
+
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
     # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
     # Pre-2000 plantations have not previously been masked, so that is done here.
     # There are only 8 tiles to process, so count/2 will cover all of them in one go.
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(count/2)
-    pool.map(partial(calculate_gross_emissions.mask_pre_2000_plant, sensit_type=sensit_type, working_dir=working_dir), tile_id_list)
+    pool.map(partial(calculate_gross_emissions.mask_pre_2000_plant, sensit_type=sensit_type, folder=folder), tile_id_list)
 
     # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.mask_pre_2000_plant(tile)
+    # for tile_id in tile_id_list:
+    #       calculate_gross_emissions.mask_pre_2000_plant(tile, sensit_type, working_dir)
 
 
-    # The C++ code expects a plantations tile for every input 10x10.
-    # However, not all Hansen tiles have plantations.
-    # This function creates "dummy" plantation tiles for all Hansen tiles that do not have plantations.
-    # That way, the C++ script gets all the necessary input files
-    folder = '../emissions/cpp_util/'
-
+    # The C++ code expects certain tiles for every input 10x10.
+    # However, not all Hansen tiles have all of these inputs.
+    # This function creates "dummy" tiles for all Hansen tiles that currently have non-existent tiles.
+    # That way, the C++ script gets all the necessary input files.
     print "Making blank tiles for inputs that don't currently exist"
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
@@ -202,7 +207,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # # For single processor use
     # for pattern in pattern_list:
     #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
+    #         uu.make_blank_tile(tile, pattern, folder, sensit_type, working_dir)
 
 
     # Calculates gross emissions for each tile

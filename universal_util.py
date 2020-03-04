@@ -704,15 +704,12 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
     # Basically, does nothing if there is no pre-2000 plantation and the output name is the same as the
     # input name
     elif tile_to_mask == out_name:
-
         return
 
     else:
-
         print "No pre-2000 plantation exists for {}. Tile done.".format(tile_id)
-
-        print tile_to_mask
-        print out_name
+        # print tile_to_mask
+        # print out_name
         copyfile(tile_to_mask, out_name)
 
     print "  Pre-2000 plantations for {} complete".format(tile_id)
