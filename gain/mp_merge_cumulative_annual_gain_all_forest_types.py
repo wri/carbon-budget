@@ -88,9 +88,10 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
 
 if __name__ == '__main__':
 
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
+    # The arguments for what kind of model run is being run (standard conditions or a sensitivity analysis) and
+    # the tiles to include
     parser = argparse.ArgumentParser(
-        description='Create tiles of the number of years of carbon gain for mangrove forests')
+        description='Create tiles all annual AGB+BGB gain rates and cumulative AGCO2+BGCO2 removals for all forest types (gross removals)')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,

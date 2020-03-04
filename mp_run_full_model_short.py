@@ -67,6 +67,9 @@ def main ():
     # Working directory
     working_dir = os.getcwd()
 
+    # Start time for script
+    script_start = datetime.datetime.now()
+
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (stage_input not in model_stages):
@@ -136,7 +139,8 @@ def main ():
         tile_id_list = uu.tile_id_list_check(tile_id_list)
 
 
-    # List of output directories and output file name patterns
+    # List of output directories and output file name patterns.
+    # Not actually used in the script-- here just for reference.
     raw_output_dir_list = [
                        cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
                        cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
@@ -238,6 +242,7 @@ def main ():
         print ":::::Processing time for carbon_pools:", elapsed_time, "\n"
 
 
+    # Creates gross emissions tiles by driver, gas, and all emissions combined
     if 'gross_emissions' in actual_stages:
 
         print ':::::Creating gross emissions tiles'
@@ -250,6 +255,7 @@ def main ():
         print ":::::Processing time for gross_emissions:", elapsed_time, "\n"
 
 
+    # Creates net flux tiles (gross emissions - gross removals)
     if 'net_flux' in actual_stages:
 
         print ':::::Creating net flux tiles'
@@ -262,6 +268,8 @@ def main ():
         print ":::::Processing time for net_flux:", elapsed_time, "\n"
 
 
+    # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
+    # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
     if 'aggregate' in actual_stages:
 
         print ':::::Creating 10km aggregate maps'
@@ -273,6 +281,10 @@ def main ():
         elapsed_time = end - start
         print ":::::Processing time for aggregate:", elapsed_time, "\n"
 
+
+    script_end = datetime.datetime.now()
+    script_elapsed_time = script_end - script_start
+    print ":::::Processing time for entire process:", script_elapsed_time, "\n"
 
 if __name__ == '__main__':
     main()
