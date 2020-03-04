@@ -5,7 +5,7 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
 From carbon-budget/emissions/, do:
-c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ ./cpp_util/calc_gross_emissions_generic.cpp -o ./cpp_util/calc_gross_emissions_generic.exe -lgdal
 (for the standard model and some sensitivity analysis versions).
 calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
@@ -115,7 +115,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                 raise Exception('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
-        if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
+        if os.path.exists('~/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
             print "C++ for soil_only already compiled."
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
