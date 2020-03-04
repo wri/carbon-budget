@@ -26,7 +26,16 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux = None, run_date = None):
+def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None):
+
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
+
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+
 
     # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
@@ -44,9 +53,6 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, std_net_flux = None, run_
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 
-    # tile_id_list = ['30N_090W', '40N_090W', '30N_100W', '40N_100W', '40N_080W', '30N_110W', '40N_110W'] # test tiles
-    # tile_id_list = ['00N_110E'] # test tiles
-    tile_id_list = 'all'
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
@@ -221,17 +227,20 @@ if __name__ == '__main__':
         description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
     parser.add_argument('--tcd-threshold', '-tcd', required=True,
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     args = parser.parse_args()
+    sensit_type = args.model_type
+    tile_id_list = args.tile_id_list
+    std_net_flux = args.std_net_flux_aggreg
     thresh = args.tcd_threshold
     thresh = int(thresh)
-    sensit_type = args.model_type
-    std_net_flux = args.std_net_flux_aggreg
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
 
-    mp_aggregate_results_to_10_km(sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux)
+    mp_aggregate_results_to_10_km(sensit_type=sensit_type, tile_id_list=tile_id_list, thresh=thresh, std_net_flux=std_net_flux)

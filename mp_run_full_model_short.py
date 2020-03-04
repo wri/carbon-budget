@@ -45,6 +45,10 @@ def main ():
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
+    parser.add_argument('--mangroves', '-ma', required=False,
+                        help='Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. True or False.')
+    parser.add_argument('--plantations', '-pl', required=False,
+                        help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. True or False.')
     args = parser.parse_args()
     sensit_type = args.model_type
     stage_input = args.stages
@@ -57,6 +61,8 @@ def main ():
     if thresh is not None:
         thresh = int(thresh)
     std_net_flux = args.std_net_flux_aggreg
+    include_mangroves = args.mangroves
+    include_plantations = args.plantations
 
     # Working directory
     working_dir = os.getcwd()
@@ -73,7 +79,8 @@ def main ():
         pass
 
     # Generates the list of stages to run
-    actual_stages = uu.analysis_stages(model_stages, stage_input, run_through)
+    actual_stages = uu.analysis_stages(model_stages, stage_input, run_through,
+                                       include_mangroves = include_mangroves, include_plantations = include_plantations)
     print "Analysis stages to run:", actual_stages
 
 

@@ -49,7 +49,6 @@ string sensit_type = argv[2];   // For standard model or sensitivity analyses th
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
 string infolder = argv[3];     // The folder which has all the input files
 
-cout << sensit_type << endl;
 cout << infolder << endl;
 
 // Model constants
