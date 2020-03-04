@@ -116,7 +116,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile
     # count/6 maxes out at about 230 GB
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/6)
+    pool = multiprocessing.Pool(count/3)
     pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_merge, pattern=pattern), tile_id_list)
     pool.close()
     pool.join()
