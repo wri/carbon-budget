@@ -166,7 +166,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
-
+ 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
