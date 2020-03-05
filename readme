@@ -39,7 +39,12 @@ resolution and reported as per hectare values (as opposed to per pixel values), 
 Intermediate outputs include the annual aboveground and belowground biomass removal rates
 for all three kinds of forests, the carbon pool stocks in 2000, and carbon pools in the year of
 tree cover loss. These are not accessible on the Global Forest Watch web platform but the
-10 x 10 degrees rasters are available for download and some of these are queryable through the API.
+10 x 10 degrees rasters are available for download and some of these are queryable through 
+zonal statistics tables in the API.
+
+#### Running the model
+
+There are two ways to run the model: as a series of individual scripts and from a master script.
 
 
 #### Contact information
