@@ -335,6 +335,8 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     print pattern
     # The number of tiles with the given pattern on the spot machine
     local_tile_count = len(glob.glob(pattern))
+    if pattern == '':
+        local_tile_count = 50
     print "There are", local_tile_count, "tiles on the spot machine with the pattern", pattern
 
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
