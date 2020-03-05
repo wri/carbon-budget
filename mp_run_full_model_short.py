@@ -1,4 +1,5 @@
 '''
+spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
 c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 python mp_run_full_model_short.py -t std -s all -r true -d 20200303 -l 00N_000E -ce loss -p biomass_soil -tcd 30
 '''
@@ -43,7 +44,7 @@ def main ():
     parser.add_argument('--run_date', '-d', required=True,
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--tile_id_list', '-l', required=True,
-                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--carbon-pool-extent', '-ce', required=False,
                         help='Extent over which carbon pools should be calculated: loss or 2000')
     parser.add_argument('--pools-to-use', '-p', required=False,

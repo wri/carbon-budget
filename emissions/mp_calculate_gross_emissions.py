@@ -238,7 +238,7 @@ if __name__ == '__main__':
     parser.add_argument('--pools-to-use', '-p', required=True,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
     parser.add_argument('--tile_id_list', '-l', required=True,
-                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     args = parser.parse_args()

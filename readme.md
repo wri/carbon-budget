@@ -50,7 +50,7 @@ the main part of the model from start to finish in one go.
 
 ##### Individual scripts
 The flux model is comprised of many separate scripts, each of which can be run separately and
-has its own inputs and output(s). Combined, these comprise the flux model.
+has its own inputs and output(s). Combined, these comprise the flux model. 
 
 ##### Master script 
 

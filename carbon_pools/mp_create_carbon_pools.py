@@ -338,7 +338,7 @@ if __name__ == '__main__':
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
-                        help='List of tile ids to use in the model. Should be of form 00N_110E or all.')
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--carbon_pool_extent', '-e', required=True,
                         help='Extent over which carbon pools should be calculated: loss or 2000')
     args = parser.parse_args()
