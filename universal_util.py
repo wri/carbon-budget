@@ -804,7 +804,7 @@ def tile_id_list_check(tile_id_list):
         return tile_id_list
     else:
         possible_tile_list = tile_list_s3(cn.pixel_area_dir)
-        tile_id_list = list(tile_id_list.split(" "))
+        tile_id_list = list(tile_id_list.split(","))
 
         for tile_id in tile_id_list:
             if tile_id not in possible_tile_list:
