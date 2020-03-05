@@ -150,6 +150,13 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         raise Exception('Pool and/or sensitivity analysis option not valid')
 
 
+    # Assigns the working folder based on whether emissions is being calculated as part of the full model run or not
+    if working_dir is not None:
+        folder = working_dir        # When emissions are calculated as part of the full model run
+    else:
+        folder = '/home/ubuntu/carbon-budget/emissions/cpp_util'     # When emissions are calculated on their own
+
+
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
         dir = key
@@ -169,13 +176,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # This replaces the date in constants_and_names.
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
-
-
-    # Assigns the working folder based on whether emissions is being calculated as part of the full model run or not
-    if working_dir is not None:
-        folder = working_dir        # When emissions are calculated as part of the full model run
-    else:
-        folder = '/home/ubuntu/carbon-budget/emissions/cpp_util'     # When emissions are calculated on their own
 
 
     print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
