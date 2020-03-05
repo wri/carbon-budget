@@ -32,7 +32,7 @@ def mask_pre_2000_plant(tile_id, sensit_type, folder):
 # Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id, pools, sensit_type, folder):
 
-    print "Calculating gross emissions for", tile_id, "using", sensit_type, ":"
+    print "Calculating gross emissions for", tile_id, "using", sensit_type, "model type..."
 
     start = datetime.datetime.now()
 
@@ -40,14 +40,14 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
     # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
     if (pools == 'soil_only') & (sensit_type == 'std'):
-        emissions_tiles_cmd = ['../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe', tile_id, folder]
+        emissions_tiles_cmd = ['/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe', tile_id, folder]
 
     elif (pools == 'biomass_soil') & (sensit_type in ['convert_to_grassland', 'no_shifting_ag']):
-        emissions_tiles_cmd = ['../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type), tile_id, folder]
+        emissions_tiles_cmd = ['/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type), tile_id, folder]
 
     # This C++ script has an extra argument that names the input carbon pools and output emissions correctly
     elif (pools == 'biomass_soil') & (sensit_type not in ['no_shifting_ag', 'convert_to_grassland']):
-        emissions_tiles_cmd = ['../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe', tile_id, sensit_type, folder]
+        emissions_tiles_cmd = ['/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe', tile_id, sensit_type, folder]
 
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
