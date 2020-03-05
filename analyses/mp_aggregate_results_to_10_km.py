@@ -242,5 +242,6 @@ if __name__ == '__main__':
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_aggregate_results_to_10_km(sensit_type=sensit_type, tile_id_list=tile_id_list, thresh=thresh, std_net_flux=std_net_flux)

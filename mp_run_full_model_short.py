@@ -362,7 +362,7 @@ def main ():
     # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
     if 'aggregate' in actual_stages:
 
-        print ':::::Creating 10km aggregate maps'
+        print ':::::Creating 5km aggregate maps'
         start = datetime.datetime.now()
 
         mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
@@ -374,7 +374,7 @@ def main ():
 
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
-    print ":::::Processing time for entire process:", script_elapsed_time, "\n"
+    print ":::::Processing time for entire run:", script_elapsed_time, "\n"
 
 if __name__ == '__main__':
     main()

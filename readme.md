@@ -43,8 +43,16 @@ tree cover loss. These are not accessible on the Global Forest Watch web platfor
 zonal statistics tables in the API.
 
 #### Running the model
-
 There are two ways to run the model: as a series of individual scripts and from a master script.
+Which one to use depends on what you are trying to do. Generally, the individual scripts are
+more appropriate for more development and testing, while the master script is better for running
+the main part of the model from start to finish in one go. 
+
+##### Individual scripts
+The flux model is comprised of many separate scripts, each of which can be run separately and
+has its own inputs and output(s). Combined, these comprise the flux model.
+
+##### Master script 
 
 
 #### Contact information
