@@ -332,6 +332,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_folder_download(source, dest, sensit_type, pattern = None):
 
+    print pattern
     # The number of tiles with the given pattern on the spot machine
     local_tile_count = len(glob.glob(pattern))
     print "There are", local_tile_count, "tiles on the spot machine with the pattern", pattern
@@ -345,7 +346,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print "Attempting to change source directory {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
-        # Counts how many tiles are in that s3 folder
+        # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source_sens)
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
@@ -379,7 +380,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     # For the standard model, the standard folder is downloaded.
     else:
 
-        # Counts how many tiles are in that s3 folder
+        # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source)
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
