@@ -161,7 +161,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     for key, values in download_dict.iteritems():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, working_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, folder, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
