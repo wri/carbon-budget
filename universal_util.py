@@ -278,12 +278,11 @@ def count_tiles_s3(source):
     #         pass
     # return i + 1
 
-    i = 0
     with open(tile_list_name) as f:
         reader=csv.reader(f)
-        tif_rows = [row for idx, row in enumerate(reader) if '.tif' in row]
+        tif_rows = [row for idx, row in enumerate(reader)]
     print tif_rows
-    i = len(tif_rows)
+    i = len(tif_rows)+1
     return i
 
 
