@@ -292,6 +292,7 @@ def count_tiles_s3(source):
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
+    print "internal file list:", file_list
     return len(file_list)
 
 
