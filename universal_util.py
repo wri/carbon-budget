@@ -278,12 +278,22 @@ def count_tiles_s3(source):
     #         pass
     # return i + 1
 
-    with open(tile_list_name) as f:
-        reader=csv.reader(f)
-        tif_rows = [row for idx, row in enumerate(reader)]
-    print tif_rows
-    i = len(tif_rows)+1
-    return i
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open("tiles.txt", 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
+
+                tile_id = get_tile_id(tile_name)
+                file_list.append(tile_id)
+
+    return len(file_list)
+
 
 
 # Gets the bounding coordinates of a tile
