@@ -351,7 +351,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         for tile in all_local_tiles:
 
             if regexPattern.findall(tile):
-                local_tile_count =+ 1
+                local_tile_count = local_tile_count + 1
                 print local_tile_count
 
 
