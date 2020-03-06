@@ -363,7 +363,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         print "Attempting to change source directory {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
         # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source_sens)-1
+        s3_count = count_tiles_s3(source_sens)
         print "There are", s3_count, "tiles on s3 with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
@@ -399,7 +399,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     else:
 
         # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source)-1
+        s3_count = count_tiles_s3(source)
         print "There are", s3_count, "tiles on s3 with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
