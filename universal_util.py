@@ -271,13 +271,6 @@ def count_tiles_s3(source):
     tile_file.write(stdout)
     tile_file.close()
 
-    # # Counts the number of rows in the csv
-    # i=0
-    # with open(tile_list_name) as f:
-    #     for i, l in enumerate(f):
-    #         pass
-    # return i + 1
-
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
@@ -292,7 +285,7 @@ def count_tiles_s3(source):
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
-    # print "s3 file list:", file_list
+    # Count of tiles (ends in *tif)
     return len(file_list)+1
 
 
@@ -387,7 +380,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
-            print "Tiles with pattern", pattern, "are already on spot machine. Not downloading."
+            print "Tiles with pattern", pattern, "are already on spot machine. Not downloading.", '\n'
             return
 
         # If there appears to be a full set of tiles in the sensitivity analysis folder (7 is semi arbitrary),
@@ -423,7 +416,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
-            print "Tiles with pattern", pattern, "are already on spot machine. Not downloading."
+            print "Tiles with pattern", pattern, "are already on spot machine. Not downloading.", '\n'
             return
 
         print "Tiles with pattern", pattern, "are not on spot machine. Downloading..."
@@ -807,7 +800,7 @@ def alter_patterns(sensit_type, raw_pattern_list):
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
 def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
-    print '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+    # print '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
 
     # Uses whatever name of the tile is found on the spot machine
     if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
@@ -840,13 +833,13 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
     # Flags to include mangroves and/or planted forests in the stages to run
     if include_plantations == 'true':
-        stage_output.insert(0, 'gain_year_count_planted_forest')
-        stage_output.insert(1, 'annual_gain_rate_planted_forest')
+        stage_output.insert(0, 'annual_gain_rate_planted_forest')
+        stage_output.insert(1, 'gain_year_count_planted_forest')
         stage_output.insert(2, 'cumulative_gain_planted_forest')
 
     if include_mangroves == 'true':
-        stage_output.insert(0, 'gain_year_count_mangrove')
-        stage_output.insert(1, 'annual_gain_rate_mangrove')
+        stage_output.insert(0, 'annual_gain_rate_mangrove')
+        stage_output.insert(1, 'gain_year_count_mangrove')
         stage_output.insert(2, 'cumulative_gain_mangrove')
 
     return stage_output
