@@ -261,7 +261,7 @@ def count_tiles_s3(source):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['aws', 's3', 'ls', source, '--exclude', '*', '--include', '*tif'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -399,7 +399,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     else:
 
         # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source)
+        s3_count = count_tiles_s3(source)-1
         print "There are", s3_count, "tiles on s3 with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
