@@ -261,7 +261,7 @@ def count_tiles_s3(source):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source, '--exclude', '*', '--include', '*tif'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.Popen(['aws', 's3', 'ls', source, '--exclude', '*', '--include', '*.tif'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -274,6 +274,7 @@ def count_tiles_s3(source):
     i=0
     with open(tile_list_name) as f:
         for i, l in enumerate(f):
+            print f
             pass
     return i + 1
 
