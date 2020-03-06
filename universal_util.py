@@ -3,6 +3,7 @@ import glob
 import constants_and_names as cn
 import datetime
 import rasterio
+import csv
 from shutil import copyfile
 import os
 import multiprocessing
@@ -270,13 +271,20 @@ def count_tiles_s3(source):
     tile_file.write(stdout)
     tile_file.close()
 
-    # Counts the number of rows in the csv
-    i=0
+    # # Counts the number of rows in the csv
+    # i=0
+    # with open(tile_list_name) as f:
+    #     for i, l in enumerate(f):
+    #         pass
+    # return i + 1
+
+    i = 0
     with open(tile_list_name) as f:
-        for i, l in enumerate(f):
-            print f
-            pass
-    return i + 1
+        reader=csv.reader(f)
+        tif_rows = [row for idx, row in enumerate(reader) if '.tif' in row]
+    print tif_rows
+    i = len(tif_rows)
+    return i
 
 
 # Gets the bounding coordinates of a tile
