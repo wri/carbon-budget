@@ -337,22 +337,23 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
     print pattern
 
-    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine 
+    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine
     # needs to be handled separately.
     if pattern == '':
-        
+
         print "loss tiles"
 
         local_tile_count = 0
 
         all_local_tiles = glob.glob('*tif')
+        all_local_tiles = [tile[:-4] for tile in tile_list]
         regexPattern = re.compile('[0-9]{2}[A-Z]_[0-9]{3}[A-Z].tif')
 
         for tile in all_local_tiles:
 
             if regexPattern.findall(tile):
                 local_tile_count = local_tile_count + 1
-                print local_tile_count
+
 
 
         # loss_tiles = [regexPattern.findall(tile) for tile in all_local_tiles]
