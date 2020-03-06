@@ -170,20 +170,6 @@ def main ():
                            ]
 
 
-
-    # Creates tiles of the number of years of removals for mangroves
-    if 'gain_year_count_mangrove' in actual_stages:
-
-        print ':::::Creating gain year count for mangrove tiles'
-        start = datetime.datetime.now()
-
-        mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        print ":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n"
-
-
     # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
     # removal function
     if 'annual_gain_rate_mangrove' in actual_stages:
@@ -196,6 +182,19 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         print ":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n"
+
+
+    # Creates tiles of the number of years of removals for mangroves
+    if 'gain_year_count_mangrove' in actual_stages:
+
+        print ':::::Creating gain year count for mangrove tiles'
+        start = datetime.datetime.now()
+
+        mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = run_date)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n"
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for mangroves using the standard model
@@ -212,19 +211,6 @@ def main ():
         print ":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n"
 
 
-    # Creates tiles of the number of years of removals for non-mangrove planted forests
-    if 'gain_year_count_planted_forest' in actual_stages:
-
-        print ':::::Creating gain year count for planted forest tiles'
-        start = datetime.datetime.now()
-
-        mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        print ":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n"
-
-
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove planted forests using the standard model
     # removal function
     if 'annual_gain_rate_planted_forest' in actual_stages:
@@ -237,6 +223,19 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         print ":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n"
+
+
+    # Creates tiles of the number of years of removals for non-mangrove planted forests
+    if 'gain_year_count_planted_forest' in actual_stages:
+
+        print ':::::Creating gain year count for planted forest tiles'
+        start = datetime.datetime.now()
+
+        mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = run_date)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        print ":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n"
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove planted forests using the standard model
