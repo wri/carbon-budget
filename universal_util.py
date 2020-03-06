@@ -332,10 +332,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_folder_download(source, dest, sensit_type, pattern = None):
 
-    print pattern
     # The number of tiles with the given pattern on the spot machine
-    print glob.glob('*{}*.tif'.format(pattern))
-
     local_tile_count = len(glob.glob('*{}*.tif'.format(pattern)))
 
     # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine 

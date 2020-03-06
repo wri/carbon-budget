@@ -36,9 +36,9 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
-        # cn.loss_dir: [''],
-        # cn.gain_dir: [cn.pattern_gain]
+        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+        cn.loss_dir: [''],
+        cn.gain_dir: [cn.pattern_gain]
     }
 
 
@@ -100,7 +100,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
     # (e.g., about 450 GB out of 480 GB).
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/6)
+    pool = multiprocessing.Pool(count/5)
     pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), tile_id_list)
     pool.close()
     pool.join()
