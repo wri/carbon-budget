@@ -287,12 +287,12 @@ def count_tiles_s3(source):
             tile_name = line.strip('\n').split(" ")[num - 1]
 
             # Only tifs will be in the tile list
-            if '.tif' in tile_name:
+            if tile_name.endswith('.tif'):
 
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
-    print "internal file list:", file_list
+    # print "s3 file list:", file_list
     return len(file_list)+1
 
 
