@@ -357,7 +357,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source_sens)
-        print "There are", s3_count, "tiles on the spot machine with the pattern", pattern
+        print "There are", s3_count, "tiles on s3 with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
@@ -393,7 +393,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source)
-        print "There are", s3_count, "tiles on the spot machine with the pattern", pattern
+        print "There are", s3_count, "tiles on s3 with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
