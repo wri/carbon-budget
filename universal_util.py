@@ -346,19 +346,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         local_tile_count = 0
 
         all_local_tiles = glob.glob('*tif')
-        all_local_tiles = [tile[:-4] for tile in tile_list]
-        regexPattern = re.compile('[0-9]{2}[A-Z]_[0-9]{3}[A-Z].tif')
 
         for tile in all_local_tiles:
 
-            if regexPattern.findall(tile):
+            if len(tile) == 12:
                 local_tile_count = local_tile_count + 1
 
-
-
-        # loss_tiles = [regexPattern.findall(tile) for tile in all_local_tiles]
-        # print loss_tiles
-        # local_tile_count = len([regexPattern.findall(tile) for tile in all_local_tiles])
 
     print "There are", local_tile_count, "tiles on the spot machine with the pattern", pattern
 
