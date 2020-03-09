@@ -390,7 +390,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print "Source directory used:", source_sens
 
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '-only-show-errors']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--only-show-errors']
             subprocess.check_call(cmd)
             print '\n'
 
@@ -403,7 +403,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print "Source directory used:", source
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '-only-show-errors']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--only-show-errors']
             subprocess.check_call(cmd)
             print '\n'
 
@@ -422,7 +422,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         print "Tiles with pattern", pattern, "are not on spot machine. Downloading..."
 
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '-only-show-errors']
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--only-show-errors']
         subprocess.check_call(cmd)
         print '\n'
 
