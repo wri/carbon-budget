@@ -390,7 +390,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print "Source directory used:", source_sens
 
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--only-show-errors']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             subprocess.check_call(cmd)
             print '\n'
 
@@ -403,7 +403,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print "Source directory used:", source
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--only-show-errors']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             subprocess.check_call(cmd)
             print '\n'
 
@@ -422,7 +422,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         print "Tiles with pattern", pattern, "are not on spot machine. Downloading..."
 
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--only-show-errors']
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
         subprocess.check_call(cmd)
         print '\n'
 
@@ -496,7 +496,8 @@ def s3_file_download(source, dest, sensit_type):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern), '--recursive']
+    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
+           '--recursive', '--no-progress']
 
     try:
         subprocess.check_call(cmd)
@@ -510,7 +511,7 @@ def upload_final(upload_dir, tile_id, pattern):
     file = '{}_{}.tif'.format(tile_id, pattern)
 
     print "Uploading {}".format(file)
-    cmd = ['aws', 's3', 'cp', file, upload_dir]
+    cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
 
     try:
         subprocess.check_call(cmd)
