@@ -50,10 +50,58 @@ the main part of the model from start to finish in one go.
 
 ##### Individual scripts
 The flux model is comprised of many separate scripts, each of which can be run separately and
-has its own inputs and output(s). Combined, these comprise the flux model. 
+has its own inputs and output(s). Combined, these comprise the flux model. There are several data preparation
+scripts, several for the removals (sequestration) model, a few to generate carbon pools, one for calculating
+gross emissions, one for calculating net flux, and one for aggregating key results into coarser 
+resolution rasters for mapping. The order in which these must be run is complex; many scripts depend on 
+the outputs of other scripts. Looking at the files that must be downloaded to the spot machine for the 
+script to run will show what files must already be created and therefore what scripts must have already been
+run. The date component of the output directory on s3 must be changed in constants_and_names.py 
+for each output file. 
+
+Each script can be run either using multiple processors or one processor. The former is for full model runs,
+while the latter is for model development. The user can switch between these two versions by commenting out
+the appropriate code chunks. 
 
 ##### Master script 
+A master script will run through all of the non-preparatory scripts in the model: gross removals, carbon
+pool generation, gross emissions, net flux, and aggregation. It includes all the arguments needed to run
+every script. The user can control what model components are run to some extent and set the date part of 
+the output directories. 
 
+`python run_full_model.py -t std -s all -r true -d 20200309 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true`
+
+
+#### Running the emissions model
+The gross emissions script is the only part that uses C++. Thus, it must be manually compiled before running.
+There are a few different versions of the emissions script: one for the standard model and a few other for
+sensitivitity analyses.
+The command for compiling the C++ script is (subbing in the actual file name): 
+
+`c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_[VERSION].cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_[VERSION].exe -lgdal`
+
+| Argument | Required/Optional | Description | 
+| -------- | ----------- | ------ |
+| `model-type` | Required | Standard model (std) or a sensitivity analysis. Refer to constants_and_names.py for latest list of analyses. |
+| `stages` | Required | Stages of creating Brazil legal Amazon-specific gross cumulative removals |
+| `run-through` | Required | Options: true or false. true: run named stage and following stages. false: run only named stage. |
+| `run-date` | Required | Date of run. Must be format YYYYMMDD. |
+| `tile-id-list` | Required | List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all |
+| `carbon-pool-extent` | Optional | Extent over which carbon pools should be calculated: loss or 2000 |
+| `pools-to-use` | Optional | Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
+| `tcd-threshold` | Optional | Tree cover density threshold above which pixels will be included in the aggregation. |
+| `std-net-flux-aggreg` | Optional | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
+| `mangroves` | Optional | Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. true or false |
+| `plantations` | Optional | Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. true or false |
+
+#### Sensitivity analysis
+
+
+
+#### Dependencies
+This is designed to run on a particular AMI of EC2 machines on Amazon AWS that runs Linux and has various
+Python packages and PostGIS installed. It will not be easy to run in other environments. There is currently
+no master list of system requirements or package dependencies for this model. 
 
 #### Contact information
 
