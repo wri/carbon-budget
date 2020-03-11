@@ -15,7 +15,6 @@
 ### pixels are outside the continent-ecozone pixels and can't have gain rates assigned to them.
 ### This maneuver provides the necessary continent-ecozone information to assign gain rates.
 
-import utilities
 import rasterio
 import numpy as np
 import datetime
@@ -43,7 +42,7 @@ def create_continent_ecozone_tiles(tile_id):
     # to improve assigning pixels without continent-ecozone codes to a continent-ecozone code.
     # This way, pixels without continent-ecozone are assigned a code based on what's in a window nearby, rather
     # than a window that spans the entire 10x10 degree tile.
-    utilities.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
+    uu.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
                                               cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
 
     # Opens continent-ecozone tile.
