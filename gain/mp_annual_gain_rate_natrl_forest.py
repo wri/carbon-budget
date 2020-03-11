@@ -35,9 +35,9 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
 
     # Files to download for this script.
     download_dict = {
-        cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
-        cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+        cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest]
+        # cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+        # cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
 
 
