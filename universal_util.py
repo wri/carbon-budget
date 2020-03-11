@@ -273,7 +273,7 @@ def count_tiles_s3(source):
 
     file_list = []
 
-    print source
+    # print source
 
     # Iterates through the text file to get the names of the tiles and appends them to list
     with open("tiles.txt", 'r') as tile:
@@ -281,7 +281,7 @@ def count_tiles_s3(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            print tile_name
+            # print tile_name
 
             # Only tifs will be in the tile list
             if tile_name.endswith('.tif'):
@@ -289,8 +289,8 @@ def count_tiles_s3(source):
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
-                print tile_id
-                print file_list
+                # print tile_id
+                # print file_list
 
     # Count of tiles (ends in *tif)
     return len(file_list)+1
@@ -379,7 +379,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source_sens)
-        print "There are", s3_count, "tiles on s3 with the pattern", pattern
+        print "There are", s3_count, "tiles at", source_sens, "with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
@@ -415,7 +415,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source)-1
-        print "There are", s3_count, "tiles on s3 with the pattern", pattern
+        print "There are", s3_count, "tiles at", source, "with the pattern", pattern
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
