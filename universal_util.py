@@ -273,17 +273,24 @@ def count_tiles_s3(source):
 
     file_list = []
 
+    print source
+
     # Iterates through the text file to get the names of the tiles and appends them to list
     with open("tiles.txt", 'r') as tile:
         for line in tile:
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
+            print tile_name
+
             # Only tifs will be in the tile list
             if tile_name.endswith('.tif'):
 
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
+
+                print tile_id
+                print file_list
 
     # Count of tiles (ends in *tif)
     return len(file_list)+1
@@ -315,12 +322,8 @@ def coords(tile_id):
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
-    # For downloading all tiles in a folder when the list of tiles can't be specified
-    if tile_id_list == 'all':
-        s3_folder_download(source_dir, dest, sensit_type, pattern)
-
     # For downloading test tiles (twenty or fewer). Chose 10 because the US removals sensitivity analysis uses 16 tiles.
-    elif len(tile_id_list) <= 20:
+    if len(tile_id_list) <= 20:
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
