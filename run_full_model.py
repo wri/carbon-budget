@@ -338,7 +338,7 @@ def main ():
 
         # print tiles_to_delete
 
-        for tile_to_delete in tiles_to_delete:
+        for tile_to_delete in tiles_to_delete[0]:
             os.remove(tile_to_delete)
         print ':::::Deleted unneeded tiles'
 
