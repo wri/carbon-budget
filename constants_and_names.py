@@ -48,9 +48,6 @@ deadwood_to_above_subtrop_mang = 0.258
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
-# 10km res
-aggreg_res = 0.096342599
-
 # m2 per hectare
 m2_per_ha = 100 * 100
 
@@ -193,7 +190,7 @@ gain_year_count_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'gain_y
 
 # Number of gain years for non-mangrove, non-planted natural forests
 pattern_gain_year_count_natrl_forest = 'gain_year_count_natural_forest_non_mangrove_non_planted'
-gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/standard/20200117/')
+gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natural_forest/standard/20200311/')
 
 
 ### Forest age category
@@ -201,7 +198,7 @@ gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natur
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20200117/')
+age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20191016/')
 
 
 ### Annual biomass gain rates
@@ -229,15 +226,15 @@ annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'annual
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/standard/20200117/')
+annual_gain_AGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_AGB_natural_forest/standard/20191016/')
 
 # Annual belowground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted'
-annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/standard/20200117/')
+annual_gain_BGB_natrl_forest_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_natural_forest/standard/20191016/')
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGB_BGB_all_types = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20200117/')
+annual_gain_AGB_BGB_all_types_dir = os.path.join(base_dir, 'annual_gain_rate_all_forest_types/standard/20191016/')
 
 
 ### Cumulative carbon dioxide gain rates
@@ -261,15 +258,15 @@ cumul_gain_BGCO2_planted_forest_non_mangrove_dir = os.path.join(base_dir, 'cumul
 
 # Cumulative aboveground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_AGCO2_natrl_forest = 'cumul_gain_AGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20200117/')
+cumul_gain_AGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_natural_forest/standard/20191016/')
 
 # Cumulative belowground gain for non-mangrove, non-planted natural forests
 pattern_cumul_gain_BGCO2_natrl_forest = 'cumul_gain_BGCO2_t_ha_natural_forest_non_mangrove_non_planted_2001_15'
-cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/standard/20200117/')
+cumul_gain_BGCO2_natrl_forest_dir = os.path.join(base_dir, 'cumulative_gain_BGCO2_natural_forest/standard/20191016/')
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15'
-cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20200117/')
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20191016/')
 
 
 ### Non-biomass inputs to carbon pools
@@ -302,7 +299,7 @@ base_carbon_pool_dir = os.path.join(base_dir, 'carbon_pools/')
 ## Carbon pools in loss year
 
 # Date to include in the output directory for all emissions year carbon pools
-emis_pool_run_date = '20200117'
+emis_pool_run_date = '20200311'
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "t_AGC_ha_emis_year"
@@ -370,7 +367,7 @@ total_C_2000_dir = '{0}total_carbon/extent_2000/standard/{1}/'.format(base_carbo
 ## Emissions from biomass and soil (all carbon pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20200117'
+emis_run_date_biomass_soil = '20200311'
 
 pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_t_CO2e_ha_biomass_soil'
 gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/standard/{1}/'.format(base_dir, emis_run_date_biomass_soil)
@@ -443,24 +440,24 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon pools
 pattern_net_flux = 'net_flux_t_CO2e_ha_2001_15_biomass_soil'
-net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20200117/')
+net_flux_dir = os.path.join(base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/20200311/')
 
 
 ### 10x10 km aggregation tiles for mapping
 ######
 
-pattern_aggreg = '10km_modelv1_1_2'
-pattern_aggreg_sensit_perc_diff = 'net_flux_10km_modelv1_1_2_perc_diff_std_v'
-pattern_aggreg_sensit_sign_change = 'net_flux_10km_modelv1_1_2_sign_change_std_v'
+pattern_aggreg = '0_4deg_modelv1_1_2'
+pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv1_1_2_perc_diff_std_v'
+pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv1_1_2_sign_change_std_v'
 
-output_aggreg_dir = '{}10km_output_aggregation/biomass_soil/standard/20200118/'.format(base_dir)
+output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200311/'.format(base_dir)
 
 
 ### Sensitivity analysis
 ######
 
 sensitivity_list = ['std', 'maxgain', 'no_shifting_ag', 'convert_to_grassland',
-                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_Amazon_loss']
+                    'biomass_swap', 'US_removals', 'no_primary_gain', 'legal_Amazon_loss', 'Mekong_loss']
 
 model_type_arg_help = 'Argument for whether the model is being run in standard form or as a sensitivity analysis run. ' \
                       '{0} = Standard model. {1} = Maximize gain years. {2} = Shifting agriculture is treated as commodity-driven deforestation. ' \
@@ -468,8 +465,9 @@ model_type_arg_help = 'Argument for whether the model is being run in standard f
                       '{4} = Replace Baccini AGB map with Saatchi biomass map. ' \
                       '{5} = Use US-specific removals. {6} = Assume primary forests and IFLs have a removal rate of 0.' \
                       '{7} = Use Brazilian national loss data from PRODES for the legal Amazon.'\
+                      '{8} = Use Hansen v2.0 loss data for the Mekong (first loss year only).'\
     .format(sensitivity_list[0], sensitivity_list[1], sensitivity_list[2], sensitivity_list[3], sensitivity_list[4],
-            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7])
+            sensitivity_list[5], sensitivity_list[6], sensitivity_list[7], sensitivity_list[8])
 
 ## US-specific removals
 
@@ -527,6 +525,16 @@ Brazil_annual_loss_merged_dir = os.path.join(base_dir, 'sensit_analysis_legal_Am
 
 pattern_Brazil_annual_loss_processed = 'legal_Amazon_annual_loss_2001_2015'
 Brazil_annual_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/tiles/20200117/')
+
+## Mekong loss (Hansen v2.0)
+
+Mekong_loss_raw_dir = os.path.join('s3://gfw2-data/forest_change/mekong_2_0/')
+pattern_Mekong_loss_raw = 'Loss_20'
+
+Mekong_loss_processed_dir = os.path.join(base_dir, 'sensit_analysis_Mekong_loss/processed/20200210/')
+pattern_Mekong_loss_processed = 'Mekong_loss_2001_15'
+
+
 
 
 

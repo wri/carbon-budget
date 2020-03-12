@@ -14,7 +14,7 @@
 // Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N20), each model endpoint has a CO2-only and
 // a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
 // Compile with:
-// c++ ./cpp_util/calc_gross_emissions_biomass_soil.cpp -o ./cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
+// c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_soil.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
 
 
 #include <iostream>
@@ -40,20 +40,18 @@
 using namespace std;
 
 //to compile:  c++ calc_gross_emissions.cpp -o calc_gross_emissions.exe -lgdal
-// to compile on MINGW:  g++ calc_emissions_v3.cpp -o calc_emissions_v3.exe -I /usr/local/include -L /usr/local/lib -lgdal
 int main(int argc, char* argv[])
 {
 // If code is run other than <program name> <tile id> , it will raise this error.
-if (argc != 3){cout << "Use <program name> <tile id><sensit_type>" << endl; return 1;}
+if (argc != 4){cout << "Use <program name> <tile id><sensit_type><folder>" << endl; return 1;}
 
 // Input arguments
-string tile_id = argv[1]; // The tile id comes from the second argument. The first argument is the name of this code.
-string sensit_type = argv[2]; // For standard model or sensitivity analyses that use the standard emissions model.
+string tile_id = argv[1];    // The tile id comes from the second argument. The first argument is the name of this code.
+string sensit_type = argv[2];   // For standard model or sensitivity analyses that use the standard emissions model.
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
+string infolder = argv[3];     // The folder which has all the input files
 
-cout << sensit_type << endl;
-
-string infolder = "cpp_util/";
+cout << infolder << endl;
 
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
@@ -81,29 +79,29 @@ boreal = 2;
 // Carbon pools
 
 // Carbon pools default to the standard model names
-string agc_name = infolder + tile_id + "_t_AGC_ha_emis_year.tif";
-string bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year.tif";
-string dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
-string litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
-string soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
+string agc_name = infolder + "/" + tile_id + "_t_AGC_ha_emis_year.tif";
+string bgc_name = infolder + "/" + tile_id + "_t_BGC_ha_emis_year.tif";
+string dead_name = infolder + "/" + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
+string litter_name = infolder + "/" + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
+string soil_name = infolder + "/" + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 
 if (sensit_type != "std") {
-    agc_name = infolder + tile_id + "_t_AGC_ha_emis_year_" + sensit_type +".tif";
-    bgc_name = infolder + tile_id + "_t_BGC_ha_emis_year_" + sensit_type +".tif";
-    dead_name = infolder + tile_id + "_t_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
-    litter_name = infolder + tile_id + "_t_litter_C_ha_emis_year_2000_" + sensit_type +".tif";
-    soil_name = infolder + tile_id + "_t_soil_C_ha_emis_year_2000_" + sensit_type +".tif";
+    agc_name = infolder + "/" + tile_id + "_t_AGC_ha_emis_year_" + sensit_type +".tif";
+    bgc_name = infolder + "/" + tile_id + "_t_BGC_ha_emis_year_" + sensit_type +".tif";
+    dead_name = infolder + "/" + tile_id + "_t_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
+    litter_name = infolder + "/" + tile_id + "_t_litter_C_ha_emis_year_2000_" + sensit_type +".tif";
+    soil_name = infolder + "/" + tile_id + "_t_soil_C_ha_emis_year_2000_" + sensit_type +".tif";
 }
 
 // Other inputs
-string loss_name = infolder + tile_id + "_loss_pre_2000_plant_masked.tif";
-string burn_name = infolder + tile_id + "_burnyear.tif";
-string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
-string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
-string drivermodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
-string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
-string ifl_primary_name = infolder + tile_id + "_ifl_2000_primary_2001_merged.tif";
-string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+string loss_name = infolder + "/" + tile_id + "_loss_pre_2000_plant_masked.tif";
+string burn_name = infolder + "/" + tile_id + "_burnyear.tif";
+string ecozone_name = infolder + "/" + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
+string climate_name = infolder + "/" + tile_id + "_climate_zone_processed.tif";
+string drivermodel_name = infolder + "/" + tile_id + "_tree_cover_loss_driver_processed.tif";
+string peat_name = infolder + "/" + tile_id + "_peat_mask_processed.tif";
+string ifl_primary_name = infolder + "/" + tile_id + "_ifl_2000_primary_2001_merged.tif";
+string plant_name = infolder + "/" + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions

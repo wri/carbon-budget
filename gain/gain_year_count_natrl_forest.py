@@ -18,7 +18,14 @@ import universal_util as uu
 def tile_names(tile_id, sensit_type):
 
     # Names of the input files
-    loss = '{0}.tif'.format(tile_id)
+
+    if sensit_type == 'legan_Amazon_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    elif sensit_type == 'Mekong_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+    else:
+        loss = '{}.tif'.format(tile_id)
+
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_non_mang_non_planted)

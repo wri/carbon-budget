@@ -3,6 +3,7 @@ import glob
 import constants_and_names as cn
 import datetime
 import rasterio
+import csv
 from shutil import copyfile
 import os
 import multiprocessing
@@ -270,12 +271,23 @@ def count_tiles_s3(source):
     tile_file.write(stdout)
     tile_file.close()
 
-    # Counts the number of rows in the csv
-    i=0
-    with open(tile_list_name) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open("tiles.txt", 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            # Only tifs will be in the tile list
+            if tile_name.endswith('.tif'):
+
+                tile_id = get_tile_id(tile_name)
+                file_list.append(tile_id)
+
+    # Count of tiles (ends in *tif)
+    return len(file_list)+1
+
 
 
 # Gets the bounding coordinates of a tile
@@ -303,12 +315,8 @@ def coords(tile_id):
 # General download utility. Can download individual tiles or entire folders depending on how many are in the input list
 def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
-    # For downloading all tiles in a folder when the list of tiles can't be specified
-    if tile_id_list == 'all':
-        s3_folder_download(source_dir, dest, sensit_type)
-
     # For downloading test tiles (twenty or fewer). Chose 10 because the US removals sensitivity analysis uses 16 tiles.
-    elif len(tile_id_list) <= 20:
+    if len(tile_id_list) <= 20:
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
@@ -323,14 +331,44 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
     # For downloading full sets of tiles
     else:
-        s3_folder_download(source_dir, dest, sensit_type)
+        s3_folder_download(source_dir, dest, sensit_type, pattern)
 
 
 # Downloads all tiles in an s3 folder, adpating to sensitivity analysis type
 # Source=source file on s3
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
-def s3_folder_download(source, dest, sensit_type):
+def s3_folder_download(source, dest, sensit_type, pattern = None):
+
+    # The number of tiles with the given pattern on the spot machine.
+    # Special cases are below.
+    local_tile_count = len(glob.glob('*{}.tif'.format(pattern)))
+
+    # For tile types that have the tild_id after the pattern
+    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+
+        local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
+
+
+    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine
+    # needs to be handled separately.
+    if pattern == '':
+
+        print "loss tiles"
+
+        local_tile_count = 0
+
+        all_local_tiles = glob.glob('*tif')
+
+        for tile in all_local_tiles:
+
+            # Loss tiles are 12 characters long (just [tile_id].tif). Only tiles with that length name are counted.
+            # Using regex to identify the loss tiles would be better but I couldn't get that to work.
+            if len(tile) == 12:
+                local_tile_count = local_tile_count + 1
+
+
+    print "There are", local_tile_count, "tiles on the spot machine with the pattern", pattern
 
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
@@ -339,19 +377,25 @@ def s3_folder_download(source, dest, sensit_type):
         # Creates the appropriate path for getting sensitivity analysis tiles
         source_sens = source.replace('standard', sensit_type)
 
-        print "Attempting to change name {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
+        print "Attempting to change source directory {0} to {1} to reflect sensitivity analysis".format(source, source_sens)
 
-        # Counts how many tiles are in that s3 folder
-        count = count_tiles_s3(source_sens)
+        # Counts how many tiles are in the source s3 folder
+        s3_count = count_tiles_s3(source_sens)
+        print "There are", s3_count, "tiles at", source_sens, "with the pattern", pattern
+
+        # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
+        if local_tile_count == s3_count:
+            print "Tiles with pattern", pattern, "are already on spot machine. Not downloading.", '\n'
+            return
 
         # If there appears to be a full set of tiles in the sensitivity analysis folder (7 is semi arbitrary),
         # the sensitivity folder is downloaded
-        if count > 7:
+        if s3_count > 7:
 
             print "Source directory used:", source_sens
 
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             subprocess.check_call(cmd)
             print '\n'
 
@@ -364,15 +408,26 @@ def s3_folder_download(source, dest, sensit_type):
             print "Source directory used:", source
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             subprocess.check_call(cmd)
             print '\n'
 
     # For the standard model, the standard folder is downloaded.
     else:
 
+        # Counts how many tiles are in the source s3 folder
+        s3_count = count_tiles_s3(source)-1
+        print "There are", s3_count, "tiles at", source, "with the pattern", pattern
+
+        # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
+        if local_tile_count == s3_count:
+            print "Tiles with pattern", pattern, "are already on spot machine. Not downloading.", '\n'
+            return
+
+        print "Tiles with pattern", pattern, "are not on spot machine. Downloading..."
+
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
         subprocess.check_call(cmd)
         print '\n'
 
@@ -428,9 +483,9 @@ def s3_file_download(source, dest, sensit_type):
 
     # If not a sensitivity run, the standard file is downloaded
     else:
-        if os.path.exists(file_name):
-            print file_name, "already downloaded" + "\n"
+        if os.path.exists(os.path.join(dest, file_name)):
 
+            print file_name, "already downloaded" + "\n"
             return
 
         else:
@@ -446,7 +501,8 @@ def s3_file_download(source, dest, sensit_type):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern), '--recursive']
+    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
+           '--recursive', '--no-progress']
 
     try:
         subprocess.check_call(cmd)
@@ -460,7 +516,7 @@ def upload_final(upload_dir, tile_id, pattern):
     file = '{}_{}.tif'.format(tile_id, pattern)
 
     print "Uploading {}".format(file)
-    cmd = ['aws', 's3', 'cp', file, upload_dir]
+    cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
 
     try:
         subprocess.check_call(cmd)
@@ -591,8 +647,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     # Creates tile names for standard and sensitivity analyses.
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
     # Thus, it has to be prepared for either one.
-    file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
-    file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
+    file_name = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, pattern))
+    file_name_sens = os.path.join(folder, '{0}_{1}_{2}.tif'.format(tile_id, pattern, sensit_type))
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
@@ -611,11 +667,11 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
-        if os.path.exists('{0}{1}.tif'.format(folder, tile_id)):
+        if os.path.exists(os.path.join(folder, '{0}.tif'.format(tile_id))):
             print "Hansen loss tile exists for {}.".format(tile_id)
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}{1}.tif'.format(folder, tile_id)]
+                   '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
+                   '{0}/{1}.tif'.format(folder, tile_id)]
             subprocess.check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine
@@ -624,14 +680,14 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
             try:
                 s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
-                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
+                                 os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
                 print "Downloaded Hansen loss tile for", tile_id
 
             # If there is no Hansen tile, it downloads the pixel area tile instead
             except:
 
                 s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-                                 '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template'), 'std')
+                                 os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
                 print "Downloaded pixel area tile for", tile_id
 
             # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
@@ -641,8 +697,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             # Uses either the Hansen loss tile or pixel area tile as a template tile,
             # with the output name corresponding to the model type
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, full_pattern),
-                   '{0}{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
+                   '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, full_pattern),
+                   '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             subprocess.check_call(cmd)
             print "Created raster of all 0s for", file_name
 
@@ -701,12 +757,15 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
                calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
         subprocess.check_call(cmd)
 
+    # Basically, does nothing if there is no pre-2000 plantation and the output name is the same as the
+    # input name
+    elif tile_to_mask == out_name:
+        return
+
     else:
-
         print "No pre-2000 plantation exists for {}. Tile done.".format(tile_id)
-
-        print tile_to_mask
-        print out_name
+        # print tile_to_mask
+        # print out_name
         copyfile(tile_to_mask, out_name)
 
     print "  Pre-2000 plantations for {} complete".format(tile_id)
@@ -747,27 +806,24 @@ def alter_patterns(sensit_type, raw_pattern_list):
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
 def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
-    print '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
+    # print '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
 
     # Uses whatever name of the tile is found on the spot machine
     if os.path.exists('{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)):
         processed_name = '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-        print "up top"
     else:
         processed_name = '{0}_{1}.tif'.format(tile_id, raw_pattern)
-        print "down below"
 
     return processed_name
 
 
 # Determines what stages should actually be run
-def analysis_stages(stage_list, stage_input, run_through):
+def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None, include_plantations = None):
 
     # If user wants all stages, all named stages (i.e. everything except 'all') are returned
     if stage_input == 'all':
 
         stage_output = stage_list[1:]
-        return stage_output
 
     else:
 
@@ -775,10 +831,50 @@ def analysis_stages(stage_list, stage_input, run_through):
         if run_through == 'true':
 
             stage_output = stage_list[stage_list.index(stage_input):]
-            return stage_output
 
         # If the user wants only the named stage, only that is returned
         else:
 
             stage_output = stage_input.split()
-            return stage_output
+
+    # Flags to include mangroves and/or planted forests in the stages to run
+    if include_plantations == 'true':
+        stage_output.insert(0, 'annual_gain_rate_planted_forest')
+        stage_output.insert(1, 'gain_year_count_planted_forest')
+        stage_output.insert(2, 'cumulative_gain_planted_forest')
+
+    if include_mangroves == 'true':
+        stage_output.insert(0, 'annual_gain_rate_mangrove')
+        stage_output.insert(1, 'gain_year_count_mangrove')
+        stage_output.insert(2, 'cumulative_gain_mangrove')
+
+    return stage_output
+
+
+# Checks whether the tile ids provided are valid
+def tile_id_list_check(tile_id_list):
+
+    # Checks tile list input validity
+    if tile_id_list == 'all':
+        print "All tiles will be run through model. Actual list of tiles will be listed for each model stage as it begins..."
+        return tile_id_list
+    else:
+        possible_tile_list = tile_list_s3(cn.pixel_area_dir)
+        tile_id_list = list(tile_id_list.split(","))
+
+        for tile_id in tile_id_list:
+            if tile_id not in possible_tile_list:
+                raise Exception('Tile_id not valid')
+        else:
+            print "{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n"
+            return tile_id_list
+
+
+# Replaces the date specified in constants_and_names with the date provided by the model run-through
+def replace_output_dir_date(output_dir_list, run_date):
+
+    print "Changing output directory date based on date provided with model run-through"
+    output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
+    print output_dir_list
+    print ""
+    return output_dir_list

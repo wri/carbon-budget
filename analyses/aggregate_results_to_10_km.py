@@ -29,7 +29,7 @@ def rewindow(tile):
     # start time
     start = datetime.datetime.now()
 
-    print "Rewindowing {} to 400x400 pixel windows (0.1 degree x 0.1 degree)...". format(tile)
+    print "Rewindowing {} to 200x200 pixel windows (0.04 degree x 0.04 degree)...". format(tile)
 
     # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
@@ -52,7 +52,7 @@ def rewindow(tile):
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tile, input_rewindow]
         subprocess.check_call(cmd)
 
@@ -62,7 +62,7 @@ def rewindow(tile):
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tcd_tile, tcd_rewindow]
         subprocess.check_call(cmd)
 
@@ -76,7 +76,7 @@ def rewindow(tile):
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=400', '-co', 'BLOCKYSIZE=400',
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                area_tile, pixel_area_rewindow]
         subprocess.check_call(cmd)
 
@@ -119,8 +119,8 @@ def aggregate(tile, thresh):
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    #2D array in which the 0.1x0.1 deg aggregated sums will be stored
-    sum_array = np.zeros([100,100], 'float32')
+    #2D array in which the 0.05x0.05 deg aggregated sums will be stored
+    sum_array = np.zeros([250,250], 'float32')
 
     # Iterates across the windows (400x400 30m pixels) of the input tile
     for idx, window in windows:
@@ -177,15 +177,15 @@ def aggregate(tile, thresh):
     # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
-    aggregated = rasterio.open("{0}_{1}_10km.tif".format(tile_id, tile_type), 'w',
+    aggregated = rasterio.open("{0}_{1}_0_4deg.tif".format(tile_id, tile_type), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
-                                height=100, width=100,
-                                crs='EPSG:4326', transform=from_origin(xmin,ymax,0.1,0.1))
+                                height=250, width=250,
+                                crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04))
     aggregated.write(sum_array,1)
     aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_10km'.format(tile_type))
+    uu.end_of_fx_summary(start, tile_id, '{}_0_4deg'.format(tile_type))
 
 
 # Calculates the percent difference between the standard model's net flux output
@@ -206,8 +206,10 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     perc_diff_calc = '--calc=(A-B)/absolute(B)*100'.format(sensit_aggreg_flux, std_aggreg_flux)
     perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
     perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
+    # cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
+    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
     cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+           '--overwrite', '--co', 'COMPRESS=LZW']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -244,7 +246,7 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
             sensit_window = sensit_src.read(1, window=window)
 
             # Defaults the sign change output raster to 0
-            dst_data = np.zeros((window.height, window.width), dtype='Float64')
+            dst_data = np.zeros((window.height, window.width), dtype='Float32')
 
             # Assigns the output value based on the signs (source, sink) of the standard and sensitivity analysis.
             # No option has both windows equaling 0 because that results in the NoData values getting assigned whatever

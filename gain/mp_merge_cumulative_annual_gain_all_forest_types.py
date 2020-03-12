@@ -10,17 +10,18 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main ():
+def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, run_date = None):
 
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+                                                    cn.annual_gain_AGB_mangrove_dir,
+                                                    set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
+                                                    sensit_type=sensit_type
+                                                    )
+    print tile_id_list
+    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
     # Files to download for this script
     download_dict = {
@@ -47,16 +48,6 @@ def main ():
     output_pattern_list = [cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
 
 
-    tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
-                                             cn.annual_gain_AGB_mangrove_dir,
-                                             set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
-                                             sensit_type=sensit_type
-                                             )
-    # tile_id_list = ['00N_110E'] # test tiles
-    print tile_id_list
-    print "There are {} unique tiles to process".format(str(len(tile_id_list))) + '\n'
-
-
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.iteritems():
         dir = key
@@ -70,6 +61,11 @@ def main ():
         print "Changing output directory and file name pattern based on sensitivity analysis"
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+    # If the script is called from the full model run script, a date is provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
     # For multiprocessing
@@ -91,4 +87,21 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    # The arguments for what kind of model run is being run (standard conditions or a sensitivity analysis) and
+    # the tiles to include
+    parser = argparse.ArgumentParser(
+        description='Create tiles all annual AGB+BGB gain rates and cumulative AGCO2+BGCO2 removals for all forest types (gross removals)')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    tile_id_list = args.tile_id_list
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_merge_cumulative_annual_gain_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list)
