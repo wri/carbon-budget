@@ -340,7 +340,8 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_folder_download(source, dest, sensit_type, pattern = None):
 
-    # The number of tiles with the given pattern on the spot machine
+    # The number of tiles with the given pattern on the spot machine.
+    # Special cases are below.
     local_tile_count = len(glob.glob('*{}.tif'.format(pattern)))
 
     # For tile types that have the tild_id after the pattern
@@ -361,6 +362,8 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         for tile in all_local_tiles:
 
+            # Loss tiles are 12 characters long (just [tile_id].tif). Only tiles with that length name are counted.
+            # Using regex to identify the loss tiles would be better but I couldn't get that to work.
             if len(tile) == 12:
                 local_tile_count = local_tile_count + 1
 

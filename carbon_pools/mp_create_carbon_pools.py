@@ -187,20 +187,20 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if carbon_pool_extent == 'loss':
 
         print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
-        # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # 14 processors maxes out at 410-415 GB
-        # Creates a single filename pattern to pass to the multiprocessor call
-        # pattern = output_pattern_list[0]
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(processes=14)
-        # pool.map(partial(create_carbon_pools.create_emitted_AGC,
-        #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        # pool.close()
-        # pool.join()
+        16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
+        14 processors maxes out at 410-415 GB
+        Creates a single filename pattern to pass to the multiprocessor call
+        pattern = output_pattern_list[0]
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(processes=14)
+        pool.map(partial(create_carbon_pools.create_emitted_AGC,
+                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
+        pool.close()
+        pool.join()
 
-        # For single processor use
-        for tile_id in tile_id_list:
-            create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
+        # # For single processor use
+        # for tile_id in tile_id_list:
+        #     create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
