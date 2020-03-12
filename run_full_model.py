@@ -7,6 +7,7 @@ python run_full_model.py -t std -s all -r true -d 20200309 -l all -ce loss -p bi
 
 import argparse
 import os
+import glob
 import datetime
 import constants_and_names as cn
 import universal_util as uu
@@ -323,6 +324,21 @@ def main ():
     # Creates carbon pools in loss year
     if 'carbon_pools' in actual_stages:
 
+        print ':::::Freeing up memory for carbon pool creation by deleting unneeded tiles'
+        tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
+        tiles_to_delete.append(glob.glob('*gain_year_count*tif'))        # Any forest type
+        tiles_to_delete.append(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
+        tiles_to_delete.append(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_tcd)))
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        print ':::::Deleted unneeded tiles'
+
         print ':::::Creating emissions year carbon pools tiles'
         start = datetime.datetime.now()
 
@@ -335,6 +351,20 @@ def main ():
 
     # Creates gross emissions tiles by driver, gas, and all emissions combined
     if 'gross_emissions' in actual_stages:
+
+        print ':::::Freeing up memory for carbon pool creation by deleting unneeded tiles'
+        tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
+        tiles_to_delete.append(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
+        tiles_to_delete.append(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
+        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        print ':::::Deleted unneeded tiles'
 
         print ':::::Creating gross emissions tiles'
         start = datetime.datetime.now()
