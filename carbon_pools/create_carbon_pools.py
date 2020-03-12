@@ -215,7 +215,6 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     else:
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
 
-    print natrl_forest_biomass_2000
 
     print mangrove_biomass_2000
     print planted_forest_cumul_AGCO2_gain
