@@ -326,6 +326,7 @@ def main ():
 
         print ':::::Freeing up memory for carbon pool creation by deleting unneeded tiles'
         tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
+        print tiles_to_delete
         tiles_to_delete.append(glob.glob('*gain_year_count*tif'))        # Any forest type
         tiles_to_delete.append(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
         tiles_to_delete.append(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
@@ -335,7 +336,7 @@ def main ():
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_tcd)))
 
-        print tiles_to_delete
+        # print tiles_to_delete
 
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
