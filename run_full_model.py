@@ -334,9 +334,9 @@ def main ():
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_tcd)))
+        print "  Deleting", len(tiles_to_delete[0]), "tiles..."
 
         for tile_to_delete in tiles_to_delete[0]:
-            print "  Deleting", len(tiles_to_delete[0]), "tiles..."
             os.remove(tile_to_delete)
         print ':::::Deleted unneeded tiles'
 
@@ -362,9 +362,9 @@ def main ():
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+        print "  Deleting", len(tiles_to_delete[0]), "tiles..."
 
         for tile_to_delete in tiles_to_delete[0]:
-            print "  Deleting", len(tiles_to_delete[0]), "tiles..."
             os.remove(tile_to_delete)
         print ':::::Deleted unneeded tiles'
 
