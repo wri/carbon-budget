@@ -335,6 +335,8 @@ def main ():
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_tcd)))
 
+        print tiles_to_delete
+
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
         print ':::::Deleted unneeded tiles'
