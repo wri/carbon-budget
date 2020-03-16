@@ -28,13 +28,13 @@ def main ():
     # tile_id_list = ['00N_000E', '00N_100E', '00N_110E'] # test tile
     print tile_id_list
 
-    # # Downloads zipped raw mangrove files
-    # uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), '.', 'std')
-    #
-    # # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
-    # # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
-    # cmd = ['unzip', '-o', '-j', cn.mangrove_biomass_raw_file]
-    # subprocess.check_call(cmd)
+    # Downloads zipped raw mangrove files
+    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), '.', 'std')
+
+    # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
+    # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
+    cmd = ['unzip', '-o', '-j', cn.mangrove_biomass_raw_file]
+    subprocess.check_call(cmd)
 
     # Creates vrt for the Saatchi biomass rasters
     mangrove_vrt = 'mangrove_biomass.vrt'
@@ -42,12 +42,12 @@ def main ():
 
     count = multiprocessing.cpu_count()
 
-    # # Converts the mangrove AGB vrt into Hansen tiles
-    # source_raster = mangrove_vrt
-    # out_pattern = cn.pattern_mangrove_biomass_2000
-    # dt = 'float32'
-    # pool = multiprocessing.Pool(count/4)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # Converts the mangrove AGB vrt into Hansen tiles
+    source_raster = mangrove_vrt
+    out_pattern = cn.pattern_mangrove_biomass_2000
+    dt = 'float32'
+    pool = multiprocessing.Pool(count/4)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # # For single processor use, for testing purposes
     # for tile_id in tile_id_list:

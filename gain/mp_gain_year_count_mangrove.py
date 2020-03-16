@@ -32,9 +32,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
 
 
-    # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
-    # changed for a sensitivity analysis. This does not need to change based on what run is being done;
-    # this assignment should be true for all sensitivity analyses and the standard model.
+    # Files to download for this script
     download_dict = {
         cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
         cn.loss_dir: [''],
