@@ -3,7 +3,6 @@ This script creates the three inputs used for creating the carbon pools besides 
 It takes several hours to run.
 '''
 
-import utilities
 import datetime
 import rasterio
 import numpy as np

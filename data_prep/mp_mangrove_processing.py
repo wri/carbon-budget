@@ -8,7 +8,6 @@ import argparse
 from functools import partial
 import os
 import subprocess
-import utilities
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
