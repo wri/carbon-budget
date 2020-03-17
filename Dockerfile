@@ -45,4 +45,4 @@ RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_uti
 # In AWS batch we will then mount host's /tmp directory as docker volume /tmp
 WORKDIR /tmp
 
-ENTRYPOINT ["python run_full_model.py"]
+ENTRYPOINT ["python", "${DIR}/run_full_model.py"]
