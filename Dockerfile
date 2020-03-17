@@ -19,6 +19,7 @@ RUN apt-get update -y && apt-get install -y \
     postgresql-contrib-10 \
     postgresql-10-postgis-2.4 \
     python3-pip \
+    wget \
     && apt-get clean all
 
 
@@ -34,15 +35,15 @@ RUN pip3 install -r requirements.txt
 RUN cd /usr/include && ln -s ./ gdal
 
 # Compile C++ scripts
-RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_util/calc_gross_emissions_generic -lgdal && \
-    g++ emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o emissions/cpp_util/calc_gross_emissions_soil_only -lgdal && \
-    g++ emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o emissions/cpp_util/calc_gross_emissions_no_shifting_ag -lgdal && \
-    g++ emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o emissions/cpp_util/calc_gross_emissions_convert_to_grassland -lgdal
+RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
+    g++ emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
+    g++ emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
+    g++ emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
 
 
-# Set current work directory to /tmp. This is important when running as AWS Batch job
-# When using the ephemeral-storage launch template /tmp will be the mounting point for the external storage
-# In AWS batch we will then mount host's /tmp directory as docker volume /tmp
-WORKDIR /tmp
-
-ENTRYPOINT ["python", "${DIR}/run_full_model.py"]
+### Set current work directory to /tmp. This is important when running as AWS Batch job
+### When using the ephemeral-storage launch template /tmp will be the mounting point for the external storage
+### In AWS batch we will then mount host's /tmp directory as docker volume /tmp
+##WORKDIR /tmp
+#
+#ENTRYPOINT ["python", "${DIR}/run_full_model.py"]
