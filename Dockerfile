@@ -3,6 +3,7 @@ FROM osgeo/gdal:ubuntu-small-3.0.4
 
 ENV DIR=/usr/local/app
 ENV DEBIAN_FRONTEND=noninteractive
+ENV SECRETS_PATH /usr/secrets
 
 # set timezone fo tzdata
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
@@ -28,6 +29,10 @@ RUN mkdir -p ${DIR}
 WORKDIR ${DIR}
 COPY . .
 
+# set environment variables
+ENV AWS_SHARED_CREDENTIALS_FILE $SECRETS_PATH/.aws/credentials
+ENV AWS_CONFIG_FILE $SECRETS_PATH/.aws/config
+
 # Install missing python dependencies
 RUN pip3 install -r requirements.txt
 
@@ -40,10 +45,5 @@ RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_uti
     g++ emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
     g++ emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
 
-
-### Set current work directory to /tmp. This is important when running as AWS Batch job
-### When using the ephemeral-storage launch template /tmp will be the mounting point for the external storage
-### In AWS batch we will then mount host's /tmp directory as docker volume /tmp
-##WORKDIR /tmp
-#
-#ENTRYPOINT ["python", "${DIR}/run_full_model.py"]
+# Opens the Docker shell
+ENTRYPOINT ["/bin/bash"]

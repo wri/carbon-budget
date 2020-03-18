@@ -94,7 +94,7 @@ def main ():
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through,
                                        include_mangroves = include_mangroves, include_plantations = include_plantations)
-    print "Analysis stages to run:", actual_stages
+    print("Analysis stages to run:", actual_stages)
 
 
     # Checks whether the sensitivity analysis argument is valid
@@ -114,18 +114,18 @@ def main ():
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
             if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
                 if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-                    print "C++ for {} already compiled.".format(sensit_type)
+                    print("C++ for {} already compiled.".format(sensit_type))
                 else:
                     raise Exception('Must compile standard {} model C++...'.format(sensit_type))
             else:
                 if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe'):
-                    print "C++ for generic emissions already compiled."
+                    print("C++ for generic emissions already compiled.")
                 else:
                     raise Exception('Must compile generic emissions C++...')
 
         elif (pools == 'soil_only') & (sensit_type == 'std'):
             if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
-                print "C++ for soil_only already compiled."
+                print("C++ for soil_only already compiled.")
             else:
                 raise Exception('Must compile soil_only C++...')
 
@@ -142,8 +142,8 @@ def main ():
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
-        print tile_id_list
-        print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+        print(tile_id_list)
+        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
     # Otherwise, check that the tile list argument is valid
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
