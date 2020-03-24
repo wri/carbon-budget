@@ -23,8 +23,8 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
 # tile_list = ['20N_100E','10N_100E','00N_110E', '10S_110E', '20S_110E','30S_170E', '40S_170E'] # test tiles
 # tile_list = ['30N_100E']
 # tile_list = ['80N_020E', '30N_080W', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-print tile_list
-print "There are {} unique tiles to process".format(str(len(tile_list)))
+print(tile_list)
+print("There are {} unique tiles to process".format(str(len(tile_list))))
 
 # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
 uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.', 'std')
@@ -46,8 +46,7 @@ cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(
 subprocess.check_call(cmd)
 
 # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count-7)
+pool = multiprocessing.Pool(cn.count-7)
 pool.map(prep_other_inputs.data_prep, tile_list)
 
 # # For single processor use
@@ -60,9 +59,8 @@ primary_vrt = 'primary_2001.vrt'
 os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
 # count/3 uses about 300GB, so there's room for more processors on an r4.16xlarge
-print "Creating primary forest tiles..."
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count/3)
+print("Creating primary forest tiles...")
+pool = multiprocessing.Pool(cn.count/3)
 pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_list)
 
 # # For single processor use
@@ -71,9 +69,8 @@ pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt)
 #       prep_other_inputs.create_primary_tile(tile, primary_vrt)
 
 # Uses very little memory since it's just file renaming
-print "Assigning each tile to ifl2000 or primary forest..."
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(count-5)
+print("Assigning each tile to ifl2000 or primary forest...")
+pool = multiprocessing.Pool(cn.count-5)
 pool.map(prep_other_inputs.create_combined_ifl_primary, tile_list)
 
 # # For single processor use

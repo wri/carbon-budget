@@ -19,7 +19,7 @@ def stack_ba_hv(hv_tile):
         if len(hdf_files) > 0:
             array_list = []
             for hdf in hdf_files:
-                print "converting hdf to array"
+                print("converting hdf to array")
                 array = utilities.hdf_to_array(hdf)
                 array_list.append(array)
 

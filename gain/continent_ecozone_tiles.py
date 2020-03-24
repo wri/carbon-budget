@@ -26,15 +26,15 @@ import universal_util as uu
 
 def create_continent_ecozone_tiles(tile_id):
 
-    print "Processing:", tile_id
+    print("Processing:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    print "Extent of", tile_id, "-- ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin
+    print("Extent of", tile_id, "-- ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin)
 
-    print "Rasterizing ecozone to extent of biomass tile {}".format(tile_id)
+    print("Rasterizing ecozone to extent of biomass tile {}".format(tile_id))
 
     cont_eco_raw = "{0}_{1}".format(tile_id, cn.pattern_cont_eco_raw)
 

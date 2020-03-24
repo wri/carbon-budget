@@ -54,8 +54,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
                                                     cn.annual_gain_AGB_mangrove_dir,
                                                     sensit_type=sensit_type
                                                     )
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Output files and patterns and files to download if carbon pools for loss year are being generated
@@ -137,7 +137,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         raise Exception('Extent not valid.')
 
 
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -145,7 +145,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -186,12 +186,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     if carbon_pool_extent == 'loss':
 
-        print "Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)"
+        print("Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)")
         # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
         # 14 processors maxes out at 410-415 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=14)
         pool.map(partial(create_carbon_pools.create_emitted_AGC,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -206,12 +205,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     elif carbon_pool_extent == '2000':
 
-        print "Creating tiles of aboveground carbon in 2000"
+        print("Creating tiles of aboveground carbon in 2000")
         # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
         # 14 processors maxes out at 415 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=14)
         pool.map(partial(create_carbon_pools.create_2000_AGC,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -228,11 +226,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         raise Exception("Extent argument not valid")
 
 
-    print "Creating tiles of belowground carbon"
+    print("Creating tiles of belowground carbon")
     # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[1]
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=20)
     pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
                      carbon_pool_extent=carbon_pool_extent,
@@ -247,11 +244,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
 
-    print "Creating tiles of deadwood carbon"
+    print("Creating tiles of deadwood carbon")
     # processes=16 maxes out at about 430 GB
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[2]
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=16)
     pool.map(
         partial(create_carbon_pools.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
@@ -267,11 +263,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
 
 
-    print "Creating tiles of litter carbon"
+    print("Creating tiles of litter carbon")
     # processes=16 maxes out at about 420-440 GB
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[3]
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=16)
     pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
                      carbon_pool_extent=carbon_pool_extent,
@@ -288,10 +283,9 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     if carbon_pool_extent == 'loss':
 
-        print "Creating tiles of soil carbon"
+        print("Creating tiles of soil carbon")
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[4]
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=16)
         pool.map(partial(create_carbon_pools.create_soil,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -305,18 +299,17 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
 
     elif carbon_pool_extent == '2000':
-        print "Skipping soil for 2000 carbon pool calculation"
+        print("Skipping soil for 2000 carbon pool calculation")
 
     else:
         raise Exception("Extent argument not valid")
 
 
-    print "Creating tiles of total carbon"
+    print("Creating tiles of total carbon")
     # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
     # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[5]
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=18)
     pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)

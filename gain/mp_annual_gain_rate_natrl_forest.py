@@ -29,8 +29,8 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -48,7 +48,7 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -59,7 +59,7 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -113,18 +113,17 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
     gain_table_dict[0] = 0
 
     # Adds a dictionary entry for each forest age code for pixels that have forest age but no continent-ecozone
-    for key, value in age_dict.iteritems():
+    for key, value in age_dict.items():
 
         gain_table_dict[value] = 0
 
     # Converts all the keys (continent-ecozone-age codes) to float type
-    gain_table_dict = {float(key): value for key, value in gain_table_dict.iteritems()}
+    gain_table_dict = {float(key): value for key, value in gain_table_dict.items()}
 
 
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=24)
     pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
                      output_pattern_list=output_pattern_list), tile_id_list)

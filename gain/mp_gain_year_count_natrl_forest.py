@@ -27,8 +27,8 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -55,7 +55,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -63,7 +63,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -76,7 +76,6 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
     # Creates gain year count tiles using only pixels that had only loss
     # count/3 uses about 220 GB on an r4.16xlarge machine
     # count/2 uses about 330 GB on an r4.16xlarge machine
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=36)
     pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_loss_only, sensit_type=sensit_type),
              tile_id_list)
@@ -115,8 +114,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile
     # count/6 maxes out at about 230 GB
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/3)
+    pool = multiprocessing.Pool(cn.count/3)
     pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_merge, pattern=pattern), tile_id_list)
     pool.close()
     pool.join()

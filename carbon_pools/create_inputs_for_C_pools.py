@@ -18,19 +18,19 @@ def create_input_files(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    print "Getting extent of", tile_id
+    print("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
 
     #### NOTE FOR FUTURE REVISIONS: CHANGE TO USE MP_WARP_TO_HANSEN
-    print "Clipping srtm for", tile_id
+    print("Clipping srtm for", tile_id)
     uu.warp_to_Hansen('srtm.vrt', '{0}_{1}.tif'.format(tile_id, cn.pattern_elevation), xmin, ymin, xmax, ymax, 'Int16')
 
     #### NOTE FOR FUTURE REVISIONS: CHANGE TO USE MP_WARP_TO_HANSEN
-    print "Clipping precipitation for", tile_id
+    print("Clipping precipitation for", tile_id)
     uu.warp_to_Hansen('add_30s_precip.tif', '{0}_{1}.tif'.format(tile_id, cn.pattern_precip), xmin, ymin, xmax, ymax, 'Int32')
 
-    print "Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id
+    print("Rasterizing ecozone into boreal-temperate-tropical categories for", tile_id)
     uu.rasterize('fao_ecozones_bor_tem_tro.shp',
                    "{0}_{1}.tif".format(tile_id, cn.pattern_bor_tem_trop_intermediate),
                         xmin, ymin, xmax, ymax, '.00025', 'Int16', 'recode', '0')

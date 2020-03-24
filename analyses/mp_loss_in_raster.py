@@ -17,8 +17,8 @@ import universal_util as uu
 tile_list = uu.tile_list_s3(cn.loss_dir, sensit_type)
 # tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-print tile_list
-print "There are {} tiles to process".format(str(len(tile_list)))
+print(tile_list)
+print("There are {} tiles to process".format(str(len(tile_list))))
 
 parser = argparse.ArgumentParser(description='Create rasters of loss masked by some other raster')
 parser.add_argument('--raster-of-interest', '-r', required=True,
@@ -48,7 +48,7 @@ valid_masks = ['True', 'False']
 
 # If the mask argument isn't valid, the script terminates
 if mask not in valid_masks:
-    print "Mask argument is not valid. Use either True or False."
+    print("Mask argument is not valid. Use either True or False.")
     sys.exit()
 
 # For downloading all tiles in the input folders
@@ -75,7 +75,7 @@ pool.join()
 #
 #     loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat, mask)
 
-print "Tiles processed. Uploading to s3 now..."
+print("Tiles processed. Uploading to s3 now...")
 
 # Uploads all output tiles to s3
 uu.upload_final_set('s3://gfw2-data/climate/carbon_model/loss_in_peat/20190917/', output_name)

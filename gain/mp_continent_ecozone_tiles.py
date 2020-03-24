@@ -38,15 +38,14 @@ if not os.path.exists(cn.cont_eco_zip):
 biomass_tile_list = uu.create_combined_tile_list(cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir)
 # biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
 # biomass_tile_list = ['20S_110E'] # test tile
-print biomass_tile_list
-print "There are {} tiles to process".format(str(len(biomass_tile_list)))
+print(biomass_tile_list)
+print("There are {} tiles to process".format(str(len(biomass_tile_list))))
 
 # For multiprocessor use
-count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/4)
 pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
 
-print "Done processing tiles. Now uploading them to s3..."
+print("Done processing tiles. Now uploading them to s3...")
 
 # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
 # These are not used for the model. They are for reference and completeness.

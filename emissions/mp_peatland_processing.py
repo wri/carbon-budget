@@ -31,8 +31,8 @@ uu.check_sensit_type(sensit_type)
 tile_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
 # tile_list = ['60N_020E', '70N_070E'] # test tiles
 # tile_list = ['60N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
-print tile_list
-print "There are {} tiles to process".format(str(len(tile_list)))
+print(tile_list)
+print("There are {} tiles to process".format(str(len(tile_list))))
 
 # Downloads peat layers
 uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), '.', sensit_type)
@@ -53,7 +53,6 @@ subprocess.check_call(cmd)
 
 # For multiprocessor use
 # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
-count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count-10)
 pool.map(peatland_processing.create_peat_mask_tiles, tile_list)
 
@@ -62,5 +61,5 @@ pool.map(peatland_processing.create_peat_mask_tiles, tile_list)
 #
 #     peatland_processing.create_peat_mask_tiles(tile)
 
-print "Uploading output files"
+print("Uploading output files")
 uu.upload_final_set(cn.peat_mask_dir, '{}'.format(cn.pattern_peat_mask))

@@ -18,8 +18,8 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_mangrove_dir)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -36,7 +36,7 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -44,7 +44,7 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -61,7 +61,6 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
     # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
     # count/2 peaks above 480 GB
     # processes=26 peaks at about 400 GB
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=26)
     pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 

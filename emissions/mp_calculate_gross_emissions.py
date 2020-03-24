@@ -40,8 +40,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -106,19 +106,19 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
             # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
             if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-                print "C++ for {} already compiled.".format(sensit_type)
+                print("C++ for {} already compiled.".format(sensit_type))
             else:
                 raise Exception('Must compile standard {} model C++...'.format(sensit_type))
         else:
             if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe'):
-                print "C++ for generic emissions already compiled."
+                print("C++ for generic emissions already compiled.")
             else:
-                print "here"
+                print("here")
                 raise Exception('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
-            print "C++ for soil_only already compiled."
+            print("C++ for soil_only already compiled.")
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
             output_dir_list = [cn.gross_emis_commod_soil_only_dir,
@@ -158,7 +158,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, folder, sensit_type, tile_id_list)
@@ -166,11 +166,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        print output_dir_list
-        print output_pattern_list
+        print(output_dir_list)
+        print(output_pattern_list)
 
     # If the script is called from the full model run script, a date is provided.
     # This replaces the date in constants_and_names.
@@ -178,12 +178,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    print "Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000..."
+    print("Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000...")
     # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
     # Pre-2000 plantations have not previously been masked, so that is done here.
     # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/2)
+    pool = multiprocessing.Pool(cn.count/2)
     pool.map(partial(calculate_gross_emissions.mask_pre_2000_plant, sensit_type=sensit_type, folder=folder), tile_id_list)
 
     # # For single processor use
@@ -195,7 +194,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # However, not all Hansen tiles have all of these inputs.
     # This function creates "dummy" tiles for all Hansen tiles that currently have non-existent tiles.
     # That way, the C++ script gets all the necessary input files.
-    print "Making blank tiles for inputs that don't currently exist"
+    print("Making blank tiles for inputs that don't currently exist")
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
@@ -215,7 +214,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # Calculates gross emissions for each tile
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=18)
     pool = multiprocessing.Pool(processes=9)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type, folder=folder), tile_id_list)

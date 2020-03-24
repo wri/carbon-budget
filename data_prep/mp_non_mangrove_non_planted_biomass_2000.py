@@ -40,8 +40,8 @@ def main ():
     tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir, sensit_type)
     # tile_id_list = ['80N_020E', '00N_000E', '00N_020E', '00N_110E'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
     # tile_id_list = ['00N_110E']
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # List of output directories and output file name patterns
@@ -50,7 +50,7 @@ def main ():
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -58,7 +58,7 @@ def main ():
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -68,7 +68,6 @@ def main ():
 
     # For multiprocessing. count/2 uses more than 470GB of memory for JPL AGB.
     # processes=26 maxes out at about 420 GB of memory for JPL AGB.
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=16)
     pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()

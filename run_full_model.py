@@ -94,7 +94,7 @@ def main ():
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through,
                                        include_mangroves = include_mangroves, include_plantations = include_plantations)
-    print("Analysis stages to run:", actual_stages)
+    print(("Analysis stages to run:", actual_stages))
 
 
     # Checks whether the sensitivity analysis argument is valid
@@ -114,7 +114,7 @@ def main ():
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
             if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
                 if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-                    print("C++ for {} already compiled.".format(sensit_type))
+                    print(("C++ for {} already compiled.".format(sensit_type)))
                 else:
                     raise Exception('Must compile standard {} model C++...'.format(sensit_type))
             else:
@@ -143,7 +143,7 @@ def main ():
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
         print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        print(("There are {} tiles to process".format(str(len(tile_id_list))) + "\n"))
     # Otherwise, check that the tile list argument is valid
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
@@ -176,155 +176,155 @@ def main ():
     # removal function
     if 'annual_gain_rate_mangrove' in actual_stages:
 
-        print ':::::Creating annual removals for mangrove tiles'
+        print(':::::Creating annual removals for mangrove tiles')
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n"
+        print(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
 
 
     # Creates tiles of the number of years of removals for mangroves
     if 'gain_year_count_mangrove' in actual_stages:
 
-        print ':::::Creating gain year count for mangrove tiles'
+        print(':::::Creating gain year count for mangrove tiles')
         start = datetime.datetime.now()
 
         mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n"
+        print(":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n")
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for mangroves using the standard model
     # removal function
     if 'cumulative_gain_mangrove' in actual_stages:
 
-        print ':::::Creating cumulative removals for mangrove tiles'
+        print(':::::Creating cumulative removals for mangrove tiles')
         start = datetime.datetime.now()
 
         mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n"
+        print(":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n")
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove planted forests using the standard model
     # removal function
     if 'annual_gain_rate_planted_forest' in actual_stages:
 
-        print ':::::Creating annual removals for planted forest tiles'
+        print(':::::Creating annual removals for planted forest tiles')
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n"
+        print(":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n")
 
 
     # Creates tiles of the number of years of removals for non-mangrove planted forests
     if 'gain_year_count_planted_forest' in actual_stages:
 
-        print ':::::Creating gain year count for planted forest tiles'
+        print(':::::Creating gain year count for planted forest tiles')
         start = datetime.datetime.now()
 
         mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n"
+        print(":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n")
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove planted forests using the standard model
     # removal function
     if 'cumulative_gain_planted_forest' in actual_stages:
 
-        print ':::::Creating cumulative removals for planted forest tiles'
+        print(':::::Creating cumulative removals for planted forest tiles')
         start = datetime.datetime.now()
 
         mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n"
+        print(":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n")
 
 
     # Creates age category tiles for natural forests
     if 'forest_age_category_natrl_forest' in actual_stages:
 
-        print ':::::Creating forest age category for natural forest tiles'
+        print(':::::Creating forest age category for natural forest tiles')
         start = datetime.datetime.now()
 
         mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n"
+        print(":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n")
 
 
     # Creates tiles of the number of years of removals for natural forests
     if 'gain_year_count_natrl_forest' in actual_stages:
 
-        print ':::::Creating gain year count for natural forest tiles'
+        print(':::::Creating gain year count for natural forest tiles')
         start = datetime.datetime.now()
 
         mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n"
+        print(":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n")
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
     # removal function
     if 'annual_gain_rate_natrl_forest' in actual_stages:
 
-        print ':::::Creating annual removals for natural forest tiles'
+        print(':::::Creating annual removals for natural forest tiles')
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n"
+        print(":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n")
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
     # removal function
     if 'cumulative_gain_natrl_forest' in actual_stages:
 
-        print ':::::Creating cumulative removals for natural forest tiles'
+        print(':::::Creating cumulative removals for natural forest tiles')
         start = datetime.datetime.now()
 
         mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n"
+        print(":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n")
 
 
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
     if 'removals_merged' in actual_stages:
 
-        print ':::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'
+        print(':::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles')
         start = datetime.datetime.now()
 
         mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for removals_merged:", elapsed_time, "\n"
+        print(":::::Processing time for removals_merged:", elapsed_time, "\n")
 
 
     # Creates carbon pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        print ':::::Freeing up memory for carbon pool creation by deleting unneeded tiles'
+        print(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
         tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
         tiles_to_delete.append(glob.glob('*gain_year_count*tif'))        # Any forest type
         tiles_to_delete.append(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
@@ -334,26 +334,26 @@ def main ():
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
-        print "  Deleting", len(tiles_to_delete[0]), "tiles..."
+        print("  Deleting", len(tiles_to_delete[0]), "tiles...")
 
         for tile_to_delete in tiles_to_delete[0]:
             os.remove(tile_to_delete)
-        print ':::::Deleted unneeded tiles'
+        print(':::::Deleted unneeded tiles')
 
-        print ':::::Creating emissions year carbon pools tiles'
+        print(':::::Creating emissions year carbon pools tiles')
         start = datetime.datetime.now()
 
         mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for carbon_pools:", elapsed_time, "\n"
+        print(":::::Processing time for carbon_pools:", elapsed_time, "\n")
 
 
     # Creates gross emissions tiles by driver, gas, and all emissions combined
     if 'gross_emissions' in actual_stages:
 
-        print ':::::Freeing up memory for carbon pool creation by deleting unneeded tiles'
+        print(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
         tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
         tiles_to_delete.append(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
@@ -362,52 +362,52 @@ def main ():
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
         tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-        print "  Deleting", len(tiles_to_delete[0]), "tiles..."
+        print("  Deleting", len(tiles_to_delete[0]), "tiles...")
 
         for tile_to_delete in tiles_to_delete[0]:
             os.remove(tile_to_delete)
-        print ':::::Deleted unneeded tiles'
+        print(':::::Deleted unneeded tiles')
 
-        print ':::::Creating gross emissions tiles'
+        print(':::::Creating gross emissions tiles')
         start = datetime.datetime.now()
 
         mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = run_date, working_dir = working_dir)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for gross_emissions:", elapsed_time, "\n"
+        print(":::::Processing time for gross_emissions:", elapsed_time, "\n")
 
 
     # Creates net flux tiles (gross emissions - gross removals)
     if 'net_flux' in actual_stages:
 
-        print ':::::Creating net flux tiles'
+        print(':::::Creating net flux tiles')
         start = datetime.datetime.now()
 
         mp_net_flux(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for net_flux:", elapsed_time, "\n"
+        print(":::::Processing time for net_flux:", elapsed_time, "\n")
 
 
     # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
     # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
     if 'aggregate' in actual_stages:
 
-        print ':::::Creating 5km aggregate maps'
+        print(':::::Creating 5km aggregate maps')
         start = datetime.datetime.now()
 
         mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        print ":::::Processing time for aggregate:", elapsed_time, "\n"
+        print(":::::Processing time for aggregate:", elapsed_time, "\n")
 
 
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
-    print ":::::Processing time for entire run:", script_elapsed_time, "\n"
+    print(":::::Processing time for entire run:", script_elapsed_time, "\n")
 
 if __name__ == '__main__':
     main()

@@ -33,8 +33,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
@@ -59,7 +59,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
     # tree cover density tiles-- necessary for filtering sums by tcd
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
 
-    print "Model outputs to process are:", download_dict
+    print("Model outputs to process are:", download_dict)
 
     # List of output directories. Modified later for sensitivity analysis.
     # Output pattern is determined later.
@@ -67,7 +67,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
     # If the model run isn't the standard one, the output directory is changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
 
     # If the script is called from the full model run script, a date is provided.
@@ -77,7 +77,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
 
     # Iterates through the types of tiles to be processed
-    for dir, download_pattern in download_dict.items():
+    for dir, download_pattern in list(download_dict.items()):
 
         download_pattern_name = download_pattern[0]
 
@@ -105,15 +105,14 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        print tile_list
-        print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
-        print "Processing:", dir, "; ", pattern
+        print(tile_list)
+        print("There are {} tiles to process".format(str(len(tile_list))) + "\n")
+        print("Processing:", dir, "; ", pattern)
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
+        pool = multiprocessing.Pool(cn.count/2)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -133,8 +132,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(count/2)
+        pool = multiprocessing.Pool(cn.count/2)
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -153,7 +151,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
         # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
-        print out_pattern
+        print(out_pattern)
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
@@ -161,7 +159,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
                out_vrt, '{}.tif'.format(out_pattern)]
         subprocess.check_call(cmd)
 
-        print "Tiles processed. Uploading to s3 now..."
+        print("Tiles processed. Uploading to s3 now...")
 
         # Uploads all output tiles to s3
         uu.upload_final_set(output_dir_list[0], out_pattern)
@@ -189,7 +187,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
         if std_net_flux:
 
-            print "Standard aggregated flux results provided. Creating comparison maps."
+            print("Standard aggregated flux results provided. Creating comparison maps.")
 
             # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
             uu.s3_file_download(std_net_flux, '.', sensit_type)
@@ -201,23 +199,23 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
                 # Identifies the sensitivity model net flux map
                 sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
-                print "Standard model net flux:", std_aggreg_flux
-                print "Sensitivity model net flux:", sensit_aggreg_flux
+                print("Standard model net flux:", std_aggreg_flux)
+                print("Sensitivity model net flux:", sensit_aggreg_flux)
 
             except:
-                print 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.'
+                print('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
 
-            print "Creating map of percent difference between standard and {} net flux".format(sensit_type)
+            print("Creating map of percent difference between standard and {} net flux".format(sensit_type))
             aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
 
-            print "Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type)
+            print("Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type))
             aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
 
         else:
 
-            print "No standard aggregated flux results provided. Not creating comparison maps."
+            print("No standard aggregated flux results provided. Not creating comparison maps.")
 
 
 if __name__ == '__main__':

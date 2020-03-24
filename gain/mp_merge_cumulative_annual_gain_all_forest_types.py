@@ -20,8 +20,8 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
                                                     set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
                                                     sensit_type=sensit_type
                                                     )
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
     # Files to download for this script
     download_dict = {
@@ -49,7 +49,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -58,7 +58,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
 
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -71,7 +71,6 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
     # For multiprocessing
     # Count/4 seems to pretty consistently use about 390 GB memory on an r4.16xlarge (not so much of an initial peak).
     # processes=18 maxes out at about 440 GB memory
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=18)
     pool.map(partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
                      sensit_type=sensit_type), tile_id_list)

@@ -1,8 +1,12 @@
 import os
+import multiprocessing
 
 ########     ########
 ##### Constants #####
 ########     ########
+
+# Number of processors on the machine being used
+count = multiprocessing.cpu_count()
 
 # Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.
 loss_years = 15
@@ -198,7 +202,7 @@ gain_year_count_natrl_forest_dir = os.path.join(base_dir, 'gain_year_count_natur
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
-age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20191016/')
+age_cat_natrl_forest_dir = os.path.join(base_dir, 'forest_age_category_natural_forest/standard/20200323/')
 
 
 ### Annual biomass gain rates

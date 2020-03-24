@@ -17,7 +17,7 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_plant
                                          )
 # tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
-print tile_list
+print(tile_list)
 
 # Downloads two of the raw input files for creating carbon pools
 input_files = [
@@ -28,18 +28,17 @@ input_files = [
 for input in input_files:
     uu.s3_file_download('{}'.format(input), '.')
 
-print "Unzipping boreal/temperate/tropical file (from FAO ecozones)"
+print("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
 unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', '.']
 subprocess.check_call(unzip_zones)
 
-print "Copying elevation (srtm) files"
+print("Copying elevation (srtm) files")
 uu.s3_folder_download(cn.srtm_raw_dir, './srtm')
 
-print "Making elevation (srtm) vrt"
+print("Making elevation (srtm) vrt")
 subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
 # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
-count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count / 2)
 pool.map(create_inputs_for_C_pools.create_input_files, tile_list)
 
@@ -48,9 +47,9 @@ pool.map(create_inputs_for_C_pools.create_input_files, tile_list)
 #
 #     create_inputs_for_C_pools.create_input_files(tile)
 
-print "Done creating inputs for carbon pool tile generation"
+print("Done creating inputs for carbon pool tile generation")
 
-print "Uploading output files"
+print("Uploading output files")
 uu.upload_final_set(cn.bor_tem_trop_processed_dir, cn.pattern_bor_tem_trop_processed)
 uu.upload_final_set(cn.elevation_processed_dir, cn.pattern_elevation)
 uu.upload_final_set(cn.precip_processed_dir, cn.pattern_precip)

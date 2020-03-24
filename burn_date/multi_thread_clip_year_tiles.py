@@ -10,7 +10,7 @@ import utilities
 # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
 for year in range(2018, 2019):
 
-    print "Processing", year
+    print("Processing", year)
 
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
@@ -22,13 +22,13 @@ for year in range(2018, 2019):
     year_tifs_folder = "{}_year_tifs".format(year)
     utilities.makedir(year_tifs_folder)
 
-    print "Downloading MODIS burn date files from s3..."
+    print("Downloading MODIS burn date files from s3...")
 
     cmd = ['aws', 's3', 'cp', modis_burnyear_dir, year_tifs_folder]
     cmd += ['--recursive', '--exclude', "*", '--include', include]
     subprocess.check_call(cmd)
 
-    print "Creating vrt of MODIS files..."
+    print("Creating vrt of MODIS files...")
 
     # build list of vrt files (command wont take folder/*.tif)
     vrt_name = "global_vrt_{}.vrt".format(year)
@@ -43,7 +43,7 @@ for year in range(2018, 2019):
     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
     subprocess.check_call(cmd)
 
-    print "Reprojecting vrt..."
+    print("Reprojecting vrt...")
 
     # # build new vrt and virtually project it
     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
@@ -53,19 +53,18 @@ for year in range(2018, 2019):
     # clip vrt to hansen tile extent
     tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')
     tile_list = tile_list[1:]
-    print tile_list
-    print "There are {} Hansen tiles to process".format(str(len(tile_list)))
+    print(tile_list)
+    print("There are {} Hansen tiles to process".format(str(len(tile_list))))
     # create a list of lists, with year and tile id to send to multi processor
     tile_year_list = []
     for tile_id in tile_list:
         tile_year_list.append([tile_id, year])
 
     if __name__ == '__main__':
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=40)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
-    print "Multiprocessing for year done. Moving to next year."
+    print("Multiprocessing for year done. Moving to next year.")
 
     year_tifs_folder = "{}_year_tifs".format(year)
     shutil.rmtree(year_tifs_folder)

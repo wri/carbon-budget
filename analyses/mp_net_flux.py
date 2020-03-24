@@ -19,8 +19,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
                                                     cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
                                                     sensit_type=sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -36,7 +36,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -44,7 +44,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -58,14 +58,13 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
     folder = './'
-    for download_dir, download_pattern in download_dict.iteritems():
+    for download_dir, download_pattern in download_dict.items():
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
         # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
         # lines later.
         pattern = download_pattern[0]
 
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=54)
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
         pool.close()

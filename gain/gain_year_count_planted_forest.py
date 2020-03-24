@@ -30,7 +30,7 @@ def tile_names(tile_id):
 # Creates gain year count tiles for pixels that only had loss
 def create_gain_year_count_loss_only(tile_id):
 
-    print "Gain year count for loss only pixels:", tile_id
+    print("Gain year count for loss only pixels:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -53,7 +53,7 @@ def create_gain_year_count_loss_only(tile_id):
 # Creates gain year count tiles for pixels that only had gain
 def create_gain_year_count_gain_only_standard(tile_id):
 
-    print "Gain year count for gain only pixels using standard function:", tile_id
+    print("Gain year count for gain only pixels using standard function:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -76,7 +76,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
 # Creates gain year count tiles for pixels that only had gain
 def create_gain_year_count_gain_only_maxgain(tile_id):
 
-    print "Gain year count for gain only pixels using maxgain function:", tile_id
+    print("Gain year count for gain only pixels using maxgain function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, planted_forest = tile_names(tile_id)
@@ -99,7 +99,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
 # Creates gain year count tiles for pixels that had neither loss not gain
 def create_gain_year_count_no_change(tile_id):
 
-    print "Gain year count for pixels with neither loss nor gain:", tile_id
+    print("Gain year count for pixels with neither loss nor gain:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, planted_forest = tile_names(tile_id)
@@ -122,7 +122,7 @@ def create_gain_year_count_no_change(tile_id):
 # Creates gain year count tiles for pixels that had both loss and gain
 def create_gain_year_count_loss_and_gain_standard(tile_id):
 
-    print "Loss and gain pixel processing using standard function:", tile_id
+    print("Loss and gain pixel processing using standard function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, planted_forest = tile_names(tile_id)
@@ -145,7 +145,7 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
 # Creates gain year count tiles for pixels that had both loss and gain
 def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 
-    print "Loss and gain pixel processing using maxgain function:", tile_id
+    print("Loss and gain pixel processing using maxgain function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
     loss, gain, planted_forest = tile_names(tile_id)
@@ -168,7 +168,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 # Merges the four gain year count tiles above to create a single gain year count tile
 def create_gain_year_count_merge(tile_id, pattern):
 
-    print "Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id)
+    print("Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id))
 
     # start time
     start = datetime.datetime.now()

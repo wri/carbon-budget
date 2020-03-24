@@ -21,6 +21,9 @@ RUN apt-get update -y && apt-get install -y \
     postgresql-10-postgis-2.4 \
     python3-pip \
     wget \
+    nano \
+    htop \
+    tmux \
     && apt-get clean all
 
 
@@ -39,11 +42,11 @@ RUN pip3 install -r requirements.txt
 # Link gdal libraries
 RUN cd /usr/include && ln -s ./ gdal
 
-# Compile C++ scripts
-RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
-    g++ emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
-    g++ emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
-    g++ emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
+## Compile C++ scripts
+#RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
+#    g++ emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
+#    g++ emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
+#    g++ emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
 
 # Opens the Docker shell
 ENTRYPOINT ["/bin/bash"]

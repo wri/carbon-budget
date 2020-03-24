@@ -26,7 +26,7 @@ def main ():
     # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
     tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
     # tile_id_list = ['00N_000E', '00N_100E', '00N_110E'] # test tile
-    print tile_id_list
+    print(tile_id_list)
 
     # Downloads zipped raw mangrove files
     uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), '.', 'std')
@@ -40,13 +40,11 @@ def main ():
     mangrove_vrt = 'mangrove_biomass.vrt'
     os.system('gdalbuildvrt {} *.tif'.format(mangrove_vrt))
 
-    count = multiprocessing.cpu_count()
-
     # Converts the mangrove AGB vrt into Hansen tiles
     source_raster = mangrove_vrt
     out_pattern = cn.pattern_mangrove_biomass_2000
     dt = 'float32'
-    pool = multiprocessing.Pool(count/4)
+    pool = multiprocessing.Pool(cn.count/4)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # # For single processor use, for testing purposes
@@ -57,7 +55,7 @@ def main ():
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.mangrove_biomass_2000_dir
     pattern = cn.pattern_mangrove_biomass_2000
-    pool = multiprocessing.Pool(count - 5)
+    pool = multiprocessing.Pool(cn.count - 5)
     pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 

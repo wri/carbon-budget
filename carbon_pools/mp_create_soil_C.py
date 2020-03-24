@@ -28,13 +28,13 @@ tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_plant
                                          )
 # tile_list = ['30N_080W'] # test tiles
 # tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
-print tile_list
-print "There are {} unique tiles to process".format(str(len(tile_list)))
+print(tile_list)
+print("There are {} unique tiles to process".format(str(len(tile_list))))
 
-print "Downloading mangrove soil C rasters"
+print("Downloading mangrove soil C rasters")
 uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
 
-print "Downloading mineral soil C raster"
+print("Downloading mineral soil C raster")
 uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), '.')
 
 # For downloading all tiles in the input folders.
@@ -63,19 +63,18 @@ for input in input_files:
 # cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
 # subprocess.check_call(cmd)
 
-print "Unzipping mangrove soil C images..."
+print("Unzipping mangrove soil C images...")
 unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', '.']
 subprocess.check_call(unzip_zones)
 
 # Mangrove soil receives precedence over mineral soil
-print "Making mangrove soil C vrt..."
+print("Making mangrove soil C vrt...")
 subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *dSOCS_0_100cm*.tif', shell=True)
-print "Done making mangrove soil C vrt"
+print("Done making mangrove soil C vrt")
 
-print "Making mangrove soil C tiles..."
+print("Making mangrove soil C tiles...")
 
 # count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
-count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/3)
 pool.map(create_soil_C.create_mangrove_soil_C, tile_list)
 
@@ -84,18 +83,17 @@ pool.map(create_soil_C.create_mangrove_soil_C, tile_list)
 #
 #     create_soil_C.create_mangrove_soil_C(tile)
 
-print "Done making mangrove soil C tiles"
+print("Done making mangrove soil C tiles")
 
-print "Uploading mangrove output soil"
+print("Uploading mangrove output soil")
 
 # Mangrove soil receives precedence over mineral soil
-print "Making mineral soil C vrt..."
+print("Making mineral soil C vrt...")
 subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C), shell=True)
-print "Done making mineral soil C vrt"
+print("Done making mineral soil C vrt")
 
-print "Making mineral soil C tiles..."
+print("Making mineral soil C tiles...")
 
-count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/2)
 pool.map(create_soil_C.create_mineral_soil_C, tile_list)
 
@@ -104,12 +102,11 @@ pool.map(create_soil_C.create_mineral_soil_C, tile_list)
 #
 #     create_soil_C.create_mineral_soil_C(tile)
 
-print "Done making mineral soil C tiles"
+print("Done making mineral soil C tiles")
 
-print "Making combined soil C tiles..."
+print("Making combined soil C tiles...")
 
 # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
-count = multiprocessing.cpu_count()
 pool = multiprocessing.Pool(processes=count/2)
 pool.map(create_soil_C.create_combined_soil_C, tile_list)
 
@@ -118,7 +115,7 @@ pool.map(create_soil_C.create_combined_soil_C, tile_list)
 #
 #     create_soil_C.create_combined_soil_C(tile)
 
-print "Done making combined soil C tiles"
+print("Done making combined soil C tiles")
 
-print "Uploading output files"
+print("Uploading output files")
 uu.upload_final_set(cn.soil_C_full_extent_2000_dir, cn.pattern_soil_C_full_extent_2000)

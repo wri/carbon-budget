@@ -16,7 +16,7 @@ np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict, gain_below_dict):
 
-    print "Processing:", tile_id
+    print("Processing:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -32,7 +32,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
     uu.mask_pre_2000_plantation(pre_2000_plant, mangrove_biomass, mangrove_biomass, tile_id)
 
-    print "  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id)
+    print("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
 
     cont_eco_src = rasterio.open(cont_eco)
     mangrove_AGB_src = rasterio.open(mangrove_biomass)
@@ -76,7 +76,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
         # Applies the dictionary of continent-ecozone aboveground gain rates to the continent-ecozone array to
         # get annual aboveground gain rates (metric tons aboveground biomass/yr) for each pixel
-        for key, value in gain_above_dict.iteritems():
+        for key, value in gain_above_dict.items():
             cont_eco_above[cont_eco_above == key] = value
 
         # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
@@ -87,7 +87,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
 
         # Same as above but for belowground gain rates
-        for key, value in gain_below_dict.iteritems():
+        for key, value in gain_below_dict.items():
             cont_eco_below[cont_eco_below == key] = value
 
         dst_below_data = cont_eco_below * mangrove_AGB

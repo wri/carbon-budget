@@ -29,8 +29,8 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -52,7 +52,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -60,8 +60,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
 
 
     # For multiprocessing
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(count/3)
+    pool = multiprocessing.Pool(cn.count/3)
     # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
     # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
     pool.map(partial(annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant, sensit_type=sensit_type),

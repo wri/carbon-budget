@@ -17,8 +17,8 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -35,7 +35,7 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
@@ -43,7 +43,7 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print "Changing output directory and file name pattern based on sensitivity analysis"
+        print("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -55,7 +55,6 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(26)
     pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
                      sensit_type=sensit_type), tile_id_list)

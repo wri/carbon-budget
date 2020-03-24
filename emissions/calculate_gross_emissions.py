@@ -15,7 +15,7 @@ import universal_util as uu
 # Calls the function to mask pre-2000 plantations from the loss tiles before calculating emissions from them
 def mask_pre_2000_plant(tile_id, sensit_type, folder):
 
-    print "Masking pre-2000 plantations for {}".format(tile_id)
+    print("Masking pre-2000 plantations for {}".format(tile_id))
 
     pre_2000_plant = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
     if sensit_type == 'legal_Amazon_loss':
@@ -32,7 +32,7 @@ def mask_pre_2000_plant(tile_id, sensit_type, folder):
 # Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id, pools, sensit_type, folder):
 
-    print "Calculating gross emissions for", tile_id, "using", sensit_type, "model type..."
+    print("Calculating gross emissions for", tile_id, "using", sensit_type, "model type...")
 
     start = datetime.datetime.now()
 
@@ -62,7 +62,7 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
 
     elif (pools == 'biomass_soil') & (sensit_type != 'std'):
         pattern = pattern + "_" + sensit_type
-        print pattern
+        print(pattern)
 
     elif pools == 'soil_only':
         pattern = pattern.replace('biomass_soil', 'soil_only')

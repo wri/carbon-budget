@@ -8,7 +8,7 @@ import subprocess
 def hansen_burnyear(tile_id):
 
     tile_id = tile_id[0:8]
-    print "Processing", tile_id
+    print("Processing", tile_id)
 
     input_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year_10x10_clip/'
     output_tiles = 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year_with_Hansen_loss/'
@@ -29,20 +29,20 @@ def hansen_burnyear(tile_id):
     array_list = []
     ba_tifs = glob.glob(burn_tiles_dir + '/*{}*'.format(tile_id))
     for ba_tif in ba_tifs:
-        print "creating array with {}".format(ba_tif)
+        print("creating array with {}".format(ba_tif))
         array = utilities.raster_to_array(ba_tif)
         array_list.append(array)
 
     # stack arrays
-    print "stacking arrays"
+    print("stacking arrays")
     stacked_year_array = utilities.stack_arrays(array_list)
 
     # download hansen tile
     loss_tile = utilities.wgetloss(tile_id)
-    print loss_tile
+    print(loss_tile)
 
     # convert hansen tile to array
-    print "creating loss year array"
+    print("creating loss year array")
     loss_array = utilities.raster_to_array('{}.tif'.format(tile_id))
 
     lossarray_min1 = np.subtract(loss_array, 1)
@@ -64,7 +64,7 @@ def hansen_burnyear(tile_id):
 
 tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')
 tile_list = tile_list[1:]
-print "Tile list: ", tile_list
+print("Tile list: ", tile_list)
 
 for tile_id in tile_list:
     hansen_burnyear(tile_id)

@@ -153,7 +153,7 @@ def main ():
 
     # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
     total_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
-    print "Number of possible 10x10 tiles to evaluate:", len(total_tile_list)
+    print("Number of possible 10x10 tiles to evaluate:", len(total_tile_list))
 
     # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
     # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
@@ -167,8 +167,8 @@ def main ():
     planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
     # planted_lat_tile_list = ['10N_080W']
 
-    print planted_lat_tile_list
-    print "Number of 10x10 tiles to evaluate after extreme latitudes have been removed:", len(planted_lat_tile_list)
+    print(planted_lat_tile_list)
+    print("Number of 10x10 tiles to evaluate after extreme latitudes have been removed:", len(planted_lat_tile_list))
 
 
     # If a planted forest extent 1x1 tile index shapefile isn't supplied
@@ -179,7 +179,7 @@ def main ():
         # This runs the process from the very beginning and will take a few days.
         if 'None' in args.gadm_tile_index:
 
-            print "No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch..."
+            print("No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch...")
 
             # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
             uu.s3_file_download(cn.gadm_path, '.')
@@ -190,7 +190,7 @@ def main ():
             # This limits creation of 1x1 rasters of land area on the countries that have planted forests rather than on all countries.
             # NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
             # in constants_and_names.py must be updated, too.
-            print "Creating shapefile of countries with planted forests..."
+            print("Creating shapefile of countries with planted forests...")
             os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
 
             # Creates 1x1 degree tiles of countries that have planted forests in them.
@@ -224,8 +224,8 @@ def main ():
 
             # List of all 1x1 degree countey extent tiles created
             gadm_list_1x1 = uu.tile_list_spot_machine(".", "GADM_")
-            print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1
-            print len(gadm_list_1x1)
+            print("List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1)
+            print(len(gadm_list_1x1))
 
         ### Entry point 2:
         # If a shapefile of the boundaries of 1x1 degree tiles of countries with planted forests is supplied,
@@ -234,9 +234,9 @@ def main ():
         # in the shapefile.
         elif cn.gadm_plant_1x1_index_dir in args.gadm_tile_index:
 
-            print "Country extent 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles..."
+            print("Country extent 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles...")
 
-            print '{}/'.format(gadm_index_path)
+            print('{}/'.format(gadm_index_path))
 
             # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
             cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
@@ -252,8 +252,8 @@ def main ():
             # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
             gadm_list_1x1 = df['location'].tolist()
             gadm_list_1x1 = [str(y) for y in gadm_list_1x1]
-            print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1
-            print "There are", len(gadm_list_1x1), "1x1 country extent tiles to iterate through."
+            print("List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1)
+            print("There are", len(gadm_list_1x1), "1x1 country extent tiles to iterate through.")
 
         # In case some other arguments are provided
         else:
@@ -290,7 +290,7 @@ def main ():
     # This is the part that actually creates the sequestration rate and forest type tiles.
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
-        print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
+        print("Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles...")
 
         # Copies the shapefile of 1x1 tiles of extent of planted forests
         cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), '.', '--recursive', '--exclude', '*', '--include',
@@ -307,8 +307,8 @@ def main ():
         # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
         planted_list_1x1 = df['location'].tolist()
         planted_list_1x1 = [str(y) for y in planted_list_1x1]
-        print "List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1
-        print "There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through."
+        print("List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", planted_list_1x1)
+        print("There are", len(planted_list_1x1), "1x1 planted forest extent tiles to iterate through.")
 
         # Creates 1x1 degree tiles of plantation growth and type wherever there are plantations.
         # Because this is iterating through only 1x1 tiles that are known to have planted forests (from a previous run
@@ -343,7 +343,7 @@ def main ():
     plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
 
     # Creates a mosaic of all the 1x1 plantation gain rate tiles
-    print "Creating vrt of 1x1 plantation gain rate tiles"
+    print("Creating vrt of 1x1 plantation gain rate tiles")
     os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
 
     # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
@@ -367,7 +367,7 @@ def main ():
     plant_type_1x1_vrt = 'plant_type_1x1.vrt'
 
     # Creates a mosaic of all the 1x1 plantation type tiles
-    print "Creating vrt of 1x1 plantation type tiles"
+    print("Creating vrt of 1x1 plantation type tiles")
     os.system('gdalbuildvrt {} plant_type_*.tif'.format(plant_type_1x1_vrt))
 
     # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied

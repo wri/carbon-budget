@@ -41,7 +41,7 @@ def main ():
     # Creates list of tiles to iterate through, for testing
     tile_id_list = 'all'    # Use this to run all tiles
     # tile_id_list = ['00N_090W'] # test tiles
-    print tile_id_list
+    print(tile_id_list)
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', 'std', tile_id_list)
@@ -116,7 +116,7 @@ def main ():
     }
 
     # Iterates through each set of tiles and gets statistics of it
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         dir = key
@@ -128,11 +128,10 @@ def main ():
         tile_list = uu.tile_list_spot_machine(".", ".tif")
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
-        print tile_list
-        print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
+        print(tile_list)
+        print("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=9)
         # processes=9 maxes out at about 340 for gross emissions
         # processes=13 maxes out at above 480 for gross emissions
@@ -149,13 +148,13 @@ def main ():
         #     tile_statistics.create_tile_statistics(tile, sensit_type)
 
         # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
-        print "Deleting tiles..."
+        print("Deleting tiles...")
         for tile in tile_list:
             os.remove(tile)
             tile_short = tile[:-4]
             outname = '{0}_value_per_pixel.tif'.format(tile_short)
             os.remove(outname)
-            print "  Tiles deleted"
+            print("  Tiles deleted")
 
         # Copies the text file to the tile statistics folder on s3
         cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]

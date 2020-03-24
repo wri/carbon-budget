@@ -11,7 +11,7 @@ import universal_util as uu
 # Calculates cumulative aboveground CO2 gain in non-mangrove, non-planted forests
 def cumulative_gain_AGCO2(tile_id, output_pattern_list, sensit_type):
 
-    print "Calculating cumulative aboveground CO2 gain:", tile_id
+    print("Calculating cumulative aboveground CO2 gain:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -34,7 +34,7 @@ def cumulative_gain_AGCO2(tile_id, output_pattern_list, sensit_type):
 # Calculates cumulative belowground CO2 gain in non-mangrove, non-planted forests
 def cumulative_gain_BGCO2(tile_id, output_pattern_list, sensit_type):
 
-    print "Calculating cumulative belowground CO2 gain:", tile_id
+    print("Calculating cumulative belowground CO2 gain:", tile_id)
 
     # Start time
     start = datetime.datetime.now()

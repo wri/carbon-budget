@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  carbon-budget:
+    build:
+      context: .
+    volumes:
+      - ./:/usr/local/app
+      - $HOME/.aws:/root/.aws:ro
+      - C:/GIS/Carbon_model/test_tiles/docker_output/:/model_output
+    working_dir: /usr/local/app
+    entrypoint: /bin/bash
