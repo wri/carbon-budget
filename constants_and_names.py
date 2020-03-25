@@ -67,7 +67,7 @@ s3_base_dir = 's3://gfw2-data/climate/carbon_model/'
 docker_base_dir = '/usr/local/tiles/'
 # docker_base_dir = '/usr/local/tmp/'
 
-docker_tmp = '/usr/local/tmp'
+docker_tmp = '/usr/local/tmp'  
 
 ### Biomass tiles
 ######
