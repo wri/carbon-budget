@@ -12,7 +12,6 @@
 ### Uses an r4.16xlarge spot machine.
 
 import multiprocessing
-from multiprocessing.pool import Pool
 from functools import partial
 import forest_age_category_natrl_forest
 import pandas as pd
@@ -25,6 +24,8 @@ import constants_and_names as cn
 import universal_util as uu
 
 def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = None):
+
+    os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -63,7 +64,7 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -79,7 +80,7 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
 
      # Table with IPCC Table 4.9 default gain rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     subprocess.check_call(cmd)
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates

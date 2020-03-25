@@ -28,6 +28,8 @@ import universal_util as uu
 
 def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None):
 
+    os.chdir(cn.docker_base_dir)
+
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
@@ -55,9 +57,9 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list)
     # tree cover density tiles-- necessary for filtering sums by tcd
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, '.', sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
 
     print("Model outputs to process are:", download_dict)
 
@@ -82,10 +84,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         download_pattern_name = download_pattern[0]
 
         # Downloads the model output tiles to be processed
-        uu.s3_flexible_download(dir, download_pattern_name, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
 
         # Gets an actual tile id to use as a dummy in creating the actual tile pattern
-        local_tile_list = uu.tile_list_spot_machine('.', download_pattern_name)
+        local_tile_list = uu.tile_list_spot_machine(cn.docker_base_dir, download_pattern_name)
         sample_tile_id = uu.get_tile_id(local_tile_list[0])
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
@@ -190,7 +192,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
             print("Standard aggregated flux results provided. Creating comparison maps.")
 
             # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
-            uu.s3_file_download(std_net_flux, '.', sensit_type)
+            uu.s3_file_download(std_net_flux, cn.docker_base_dir, sensit_type)
 
             # Identifies the standard model net flux map
             std_aggreg_flux = os.path.split(std_net_flux)[1]

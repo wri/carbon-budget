@@ -29,6 +29,8 @@ from analyses.mp_aggregate_results_to_10_km import mp_aggregate_results_to_10_km
 
 def main ():
 
+    os.chdir(cn.docker_base_dir)
+
     # List of possible model stages to run (not including mangrove and planted forest stages)
     model_stages = ['all', 'forest_age_category_natrl_forest', 'gain_year_count_natrl_forest',
                     'annual_gain_rate_natrl_forest', 'cumulative_gain_natrl_forest', 'removals_merged',

@@ -2,6 +2,8 @@
 FROM osgeo/gdal:ubuntu-small-3.0.4
 
 ENV DIR=/usr/local/app
+ENV TMP=/usr/local/tmp
+ENV TILES=/usr/local/tiles
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SECRETS_PATH /usr/secrets
 
@@ -29,6 +31,8 @@ RUN apt-get update -y && apt-get install -y \
 
 # Create local app directory and copy repo
 RUN mkdir -p ${DIR}
+RUN mkdir -p ${TMP}
+RUN mkdir -p ${TILES}
 WORKDIR ${DIR}
 COPY . .
 

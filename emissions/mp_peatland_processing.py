@@ -16,6 +16,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+os.chdir(cn.docker_base_dir)
 
 # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
 parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
@@ -35,9 +36,9 @@ print(tile_list)
 print("There are {} tiles to process".format(str(len(tile_list))))
 
 # Downloads peat layers
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), '.', sensit_type)
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), '.', sensit_type)
-uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), '.', sensit_type) # Raster of the most likely soil group
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), cn.docker_base_dir, sensit_type)
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), cn.docker_base_dir, sensit_type)
+uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), cn.docker_base_dir, sensit_type) # Raster of the most likely soil group
 
 # Unzips the Jukka peat shapefile (IDN and MYS)
 cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]

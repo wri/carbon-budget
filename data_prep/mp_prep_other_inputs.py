@@ -15,6 +15,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+os.chdir(cn.docker_base_dir)
+
 tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                          cn.mangrove_biomass_2000_dir,
                                          set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
@@ -27,11 +29,11 @@ print(tile_list)
 print("There are {} unique tiles to process".format(str(len(tile_list))))
 
 # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
-uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), '.', 'std')
-uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), '.', 'std')
-uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), '.', 'std')
-uu.s3_folder_download(cn.primary_raw_dir, '.', 'std')
-uu.s3_folder_download(cn.ifl_dir, '.', 'std')
+uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), cn.docker_base_dir, 'std')
+uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), cn.docker_base_dir, 'std')
+uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), cn.docker_base_dir, 'std')
+uu.s3_folder_download(cn.primary_raw_dir, cn.docker_base_dir, 'std')
+uu.s3_folder_download(cn.ifl_dir, cn.docker_base_dir, 'std')
 
 cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
 subprocess.check_call(cmd)

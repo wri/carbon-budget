@@ -39,6 +39,8 @@ import universal_util as uu
 
 def main ():
 
+    os.chdir(cn.docker_base_dir)
+
     # Files to download for this script.
     download_dict = {cn.gain_dir: [cn.pattern_gain],
                      cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
@@ -64,11 +66,11 @@ def main ():
     # Only creates FIA region tiles if they don't already exist on s3.
     if FIA_regions_tile_count == 16:
         print("FIA region tiles already created. Copying to s3 now...")
-        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, '.', 'std', 'all')
+        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, cn.docker_base_dir, 'std', 'all')
 
     else:
         print("FIA region tiles do not exist. Creating tiles, then copying to s3 for future use...")
-        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), '.', 'std')
+        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, 'std')
 
         cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
         subprocess.check_call(cmd)
@@ -79,7 +81,7 @@ def main ():
 
 
     # List of FIA region tiles on the spot machine. Only this list is used for the rest of the script.
-    US_tile_list = uu.tile_list_spot_machine('.', '{}.tif'.format(cn.pattern_FIA_regions_processed))
+    US_tile_list = uu.tile_list_spot_machine(cn.docker_base_dir, '{}.tif'.format(cn.pattern_FIA_regions_processed))
     US_tile_id_list = [i[0:8] for i in US_tile_list]
     # US_tile_id_list = ['50N_130W']    # For testing
     print(US_tile_id_list)
@@ -97,7 +99,7 @@ def main ():
 
     else:
         print("Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use...")
-        uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), '.', 'std')
+        uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), cn.docker_base_dir, 'std')
 
         # Converts the national forest age category raster to Hansen tiles
         source_raster = cn.name_US_forest_age_cat_raw
@@ -119,7 +121,7 @@ def main ():
 
     else:
         print("FIA forest group tiles do not exist. Creating tiles, then copying to s3 for future use...")
-        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), '.', 'std')
+        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_base_dir, 'std')
 
         # Converts the national forest group raster to Hansen forest group tiles
         source_raster = cn.name_FIA_forest_group_raw
@@ -135,12 +137,12 @@ def main ():
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, US_tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, US_tile_id_list)
 
 
 
     # Table with US-specific removal rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), '.']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
     subprocess.check_call(cmd)
 
     # Imports the table with the region-group-age AGB removal rates

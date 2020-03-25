@@ -14,6 +14,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+os.chdir(cn.docker_base_dir)
+
 tile_list = uu.tile_list_s3(cn.loss_dir, sensit_type)
 # tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
@@ -55,13 +57,13 @@ if mask not in valid_masks:
 download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 
 for input in download_list:
-    uu.s3_folder_download('{}'.format(input), '.')
+    uu.s3_folder_download('{}'.format(input), cn.docker_base_dir)
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
 #
-#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
-#     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
+#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), cn.docker_base_dir)  # loss tiles
+#     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), cn.docker_base_dir)  # raster of interest
 
 # 14 processors maxed out at about 70 GB on an m4.16xlarge for  peat mask processing.
 num_of_processes = 45

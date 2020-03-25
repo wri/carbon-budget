@@ -74,14 +74,14 @@ def tile_list_s3(source, sensit_type='std'):
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
-    biomass_tiles = open(os.path.join('../tmp', 'tiles.txt'), "wb")
+    biomass_tiles = open(os.path.join(cn.docker_tmp, 'tiles.txt'), "wb")
     biomass_tiles.write(stdout)
     biomass_tiles.close()
 
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
-    with open(os.path.join('../tmp', 'tiles.txt'), 'r') as tile:
+    with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
         for line in tile:
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
@@ -104,14 +104,14 @@ def tile_list_spot_machine(source, pattern):
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
-    tiles = open(os.path.join('../tmp', 'tiles.txt'), "wb")
+    tiles = open(os.path.join(cn.docker_tmp, 'tiles.txt'), "wb")
     tiles.write(stdout)
     tiles.close()
 
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
-    with open(os.path.join('../tmp', 'tiles.txt'), 'r') as tile:
+    with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
         for line in tile:
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
@@ -506,7 +506,7 @@ def s3_file_download(source, dest, sensit_type):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
-    cmd = ['aws', 's3', 'cp', '.', upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
+    cmd = ['aws', 's3', 'cp', cn.docker_base_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
            '--recursive', '--no-progress']
 
     try:
@@ -576,7 +576,7 @@ def check_and_upload(tile_id, upload_dir, pattern):
 # Prints the number of tiles that have been processed so far
 def count_completed_tiles(pattern):
 
-    completed = len(glob.glob1('.', '*{}*'.format(pattern)))
+    completed = len(glob.glob1(cn.docker_base_dir, '*{}*'.format(pattern)))
 
     print("Number of completed or in-progress tiles:", completed)
 

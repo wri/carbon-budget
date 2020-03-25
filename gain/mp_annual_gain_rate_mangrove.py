@@ -16,6 +16,7 @@ import universal_util as uu
 
 def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
+    os.chdir(cn.docker_base_dir)
     pd.options.mode.chained_assignment = None
 
 
@@ -52,11 +53,11 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     subprocess.check_call(cmd)
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates

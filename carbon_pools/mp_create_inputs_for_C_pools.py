@@ -11,6 +11,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+os.chdir(cn.docker_base_dir)
+
 tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
                                          cn.annual_gain_AGB_mangrove_dir,
                                          set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
@@ -26,10 +28,10 @@ input_files = [
     ]
 
 for input in input_files:
-    uu.s3_file_download('{}'.format(input), '.')
+    uu.s3_file_download('{}'.format(input), cn.docker_base_dir)
 
 print("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
-unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', '.']
+unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
 subprocess.check_call(unzip_zones)
 
 print("Copying elevation (srtm) files")

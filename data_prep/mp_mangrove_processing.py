@@ -14,6 +14,8 @@ import universal_util as uu
 
 def main ():
 
+    os.chdir(cn.docker_base_dir)
+
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
@@ -29,7 +31,7 @@ def main ():
     print(tile_id_list)
 
     # Downloads zipped raw mangrove files
-    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), '.', 'std')
+    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), cn.docker_base_dir, 'std')
 
     # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
     # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.

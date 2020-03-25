@@ -22,6 +22,8 @@ import create_carbon_pools
 
 def main ():
 
+    os.chdir(cn.docker_base_dir)
+
     Brazil_stages = ['all', 'create_forest_extent', 'create_loss',
                      'forest_age_category', 'gain_year_count', 'annual_removals', 'cumulative_removals', 'removals_merged',
                      'carbon_pools']
@@ -88,7 +90,7 @@ def main ():
         print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
-        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, '.', sensit_type)
+        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_base_dir, sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
         # Gets the resolution of a more recent PRODES raster, which has a higher resolution. The merged output matches that.
@@ -135,7 +137,7 @@ def main ():
         print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
-        uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, '.', sensit_type)
+        uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, cn.docker_base_dir, sensit_type)
 
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
         raw_forest_extent_input_2017 = glob.glob('Prodes2017_*tif')
@@ -195,7 +197,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
         # If the model run isn't the standard one, the output directory and file names are changed
@@ -252,7 +254,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
         # If the model run isn't the standard one, the output directory and file names are changed
@@ -332,11 +334,11 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
         # Table with IPCC Table 4.9 default gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
         subprocess.check_call(cmd)
 
         pd.options.mode.chained_assignment = None
@@ -444,7 +446,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
         # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
@@ -516,7 +518,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
         # For multiprocessing
@@ -584,7 +586,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
@@ -594,7 +596,7 @@ def main ():
 
 
         # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
         subprocess.check_call(cmd)
 
         pd.options.mode.chained_assignment = None

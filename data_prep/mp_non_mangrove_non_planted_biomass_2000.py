@@ -14,6 +14,8 @@ import universal_util as uu
 
 def main ():
 
+    os.chdir(cn.docker_base_dir)
+
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
@@ -53,7 +55,7 @@ def main ():
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed

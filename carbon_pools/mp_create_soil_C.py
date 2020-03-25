@@ -23,6 +23,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+os.chdir(cn.docker_base_dir)
+
 tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
                                          cn.annual_gain_AGB_mangrove_dir
                                          )
@@ -32,10 +34,10 @@ print(tile_list)
 print("There are {} unique tiles to process".format(str(len(tile_list))))
 
 print("Downloading mangrove soil C rasters")
-uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
+uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), cn.docker_base_dir)
 
 print("Downloading mineral soil C raster")
-uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), '.')
+uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), cn.docker_base_dir)
 
 # For downloading all tiles in the input folders.
 input_files = [
@@ -43,13 +45,13 @@ input_files = [
     ]
 
 for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
+    uu.s3_folder_download('{}'.format(input), cn.docker_base_dir)
 
 # # For copying individual tiles to spot machine for testing.
 # for tile in tile_list:
 #
 #     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
+#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), cn.docker_base_dir)
 #     except:
 #         print "No mangrove biomass in", tile
 
@@ -64,7 +66,7 @@ for input in input_files:
 # subprocess.check_call(cmd)
 
 print("Unzipping mangrove soil C images...")
-unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', '.']
+unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', cn.docker_base_dir]
 subprocess.check_call(unzip_zones)
 
 # Mangrove soil receives precedence over mineral soil

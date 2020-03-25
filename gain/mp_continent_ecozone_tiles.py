@@ -28,8 +28,10 @@ import universal_util as uu
 # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
 if not os.path.exists(cn.cont_eco_zip):
 
+    os.chdir(cn.docker_base_dir)
+
     # Downloads ecozone shapefile
-    uu.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
+    uu.s3_file_download('{}'.format(cn.cont_eco_s3_zip), cn.docker_base_dir, )
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]

@@ -117,6 +117,8 @@ import universal_util as uu
 
 def main ():
 
+    os.chdir(cn.docker_base_dir)
+
     parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
     parser.add_argument('--gadm-tile-index', '-gi', required=True,
                         help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
@@ -182,7 +184,7 @@ def main ():
             print("No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch...")
 
             # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-            uu.s3_file_download(cn.gadm_path, '.')
+            uu.s3_file_download(cn.gadm_path, cn.docker_base_dir)
             cmd = ['unzip', cn.gadm_zip]
             subprocess.check_call(cmd)
 
@@ -211,12 +213,12 @@ def main ():
 
             # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
             os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_today))
-            cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
+            cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
             subprocess.check_call(cmd)
 
             # # Saves the 1x1 country extent tiles to s3
             # # Only use if the entire process can't run in one go on the spot machine
-            # cmd = ['aws', 's3', 'cp', '.', 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
+            # cmd = ['aws', 's3', 'cp', cn.docker_base_dir, 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
             # subprocess.check_call(cmd)
 
             # Delete the aux.xml files
@@ -239,7 +241,7 @@ def main ():
             print('{}/'.format(gadm_index_path))
 
             # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
-            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), '.', '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
+            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), cn.docker_base_dir, '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
             subprocess.check_call(cmd)
 
             # Gets the attribute table of the country extent 1x1 tile shapefile
@@ -282,7 +284,7 @@ def main ():
         # Creates a shapefile in which each feature is the extent of a plantation extent tile.
         # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
         os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
-        cmd = ['aws', 's3', 'cp', '.', cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
+        cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
         subprocess.check_call(cmd)
 
     ### Entry point 3
@@ -293,7 +295,7 @@ def main ():
         print("Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles...")
 
         # Copies the shapefile of 1x1 tiles of extent of planted forests
-        cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), '.', '--recursive', '--exclude', '*', '--include',
+        cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), cn.docker_base_dir, '--recursive', '--exclude', '*', '--include',
                '{}*'.format(planted_index_shp), '--recursive']
         subprocess.check_call(cmd)
 

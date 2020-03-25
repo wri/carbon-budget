@@ -4,6 +4,7 @@
 import multiprocessing
 import merge_cumulative_annual_gain_all_forest_types
 import argparse
+import os
 from functools import partial
 import sys
 sys.path.append('../')
@@ -11,6 +12,8 @@ import constants_and_names as cn
 import universal_util as uu
 
 def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, run_date = None):
+
+    os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -52,7 +55,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed

@@ -34,6 +34,8 @@ import universal_util as uu
 
 def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = None, working_dir = None):
 
+    os.chdir(cn.docker_base_dir)
+
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
     if tile_id_list == 'all':
