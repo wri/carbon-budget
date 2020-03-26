@@ -49,7 +49,7 @@ def create_mangrove_soil_C(tile_id):
 
         print("Masking mangrove soil to mangrove biomass for", tile_id)
         cmd = ['gdal_calc.py', '-A', mangrove_soil, '-B', mangrove_biomass,
-               calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype]
+               calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
         subprocess.check_call(cmd)
 
     else:

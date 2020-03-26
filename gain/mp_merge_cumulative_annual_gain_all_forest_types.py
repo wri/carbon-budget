@@ -65,7 +65,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-    # If the script is called from the full model run script, a date is provided.
+    # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
@@ -93,17 +93,21 @@ if __name__ == '__main__':
     # The arguments for what kind of model run is being run (standard conditions or a sensitivity analysis) and
     # the tiles to include
     parser = argparse.ArgumentParser(
-        description='Create tiles all annual AGB+BGB gain rates and cumulative AGCO2+BGCO2 removals for all forest types (gross removals)')
+        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    parser.add_argument('--run-date', '-d', required=False,
+                        help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
+    run_date = args.run_date
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_merge_cumulative_annual_gain_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list)
+    mp_merge_cumulative_annual_gain_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list,
+                                                     run_date=run_date)

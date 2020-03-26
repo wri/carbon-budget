@@ -42,7 +42,7 @@ def clip_year_tiles(tile_year_list):
     recoded_output = "ba_{0}_{1}.tif".format(year, tile_id)
     outfile = '--outfile={}'.format(recoded_output)
 
-    cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--quiet']
     subprocess.check_call(cmd)
 
     # upload file

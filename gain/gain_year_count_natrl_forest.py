@@ -49,7 +49,7 @@ def create_gain_year_count_loss_only(tile_id, sensit_type):
     loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_calc, loss_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -72,7 +72,7 @@ def create_gain_year_count_gain_only_standard(tile_id, sensit_type):
     gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -95,7 +95,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id, sensit_type):
     gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, gain_calc, gain_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -118,7 +118,7 @@ def create_gain_year_count_no_change(tile_id, sensit_type):
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', tcd, '-D', biomass, no_change_calc,
-           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
+           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -141,7 +141,7 @@ def create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type):
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
-           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
+           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -164,7 +164,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id, sensit_type):
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, loss_and_gain_calc,
-           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
+           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed

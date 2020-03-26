@@ -115,30 +115,9 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-def main ():
+def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
     os.chdir(cn.docker_base_dir)
-
-    parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
-    parser.add_argument('--gadm-tile-index', '-gi', required=True,
-                        help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
-    parser.add_argument('--planted-tile-index', '-pi', required=True,
-                        help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
-    # # This is the beginning of adding a way to have the model run on a selected area, rather than globally. I didn't finish implementing it, though.
-    # parser.add_argument('--bounding-box', '-bb', required=False, type=int, nargs='+',
-    #                     help='The bounding box of the tiles to be update, supplied in the order min-x, max-x, min-y, max-y. They must be at 10 degree increments.')
-
-    args = parser.parse_args()
-
-    # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
-    gadm_index = os.path.split(args.gadm_tile_index)
-    gadm_index_path = gadm_index[0]
-    gadm_index_shp = gadm_index[1]
-    gadm_index_shp = gadm_index_shp[:-4]
-    planted_index = os.path.split(args.planted_tile_index)
-    planted_index_path = planted_index[0]
-    planted_index_shp = planted_index[1]
-    planted_index_shp = planted_index_shp[:-4]
 
     # ## Not actually using this but leaving it here in case I want to add this functionality eventually. This
     # # was to allow users to run plantations for a select (contiguous) area rather than for the whole planet.
@@ -392,4 +371,26 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
+    parser.add_argument('--gadm-tile-index', '-gi', required=True,
+                        help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
+    parser.add_argument('--planted-tile-index', '-pi', required=True,
+                        help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
+    # # This is the beginning of adding a way to have the model run on a selected area, rather than globally. I didn't finish implementing it, though.
+    # parser.add_argument('--bounding-box', '-bb', required=False, type=int, nargs='+',
+    #                     help='The bounding box of the tiles to be update, supplied in the order min-x, max-x, min-y, max-y. They must be at 10 degree increments.')
+
+    args = parser.parse_args()
+
+    # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
+    gadm_index = os.path.split(args.gadm_tile_index)
+    gadm_index_path = gadm_index[0]
+    gadm_index_shp = gadm_index[1]
+    gadm_index_shp = gadm_index_shp[:-4]
+    planted_index = os.path.split(args.planted_tile_index)
+    planted_index_path = planted_index[0]
+    planted_index_shp = planted_index[1]
+    planted_index_shp = planted_index_shp[:-4]
+
+    mp_plantation_preparation(gadm_index_shp=gadm_index_shp, planted_index_shp=planted_index_shp)

@@ -12,23 +12,19 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main ():
+def mp_mangrove_processing(tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
+    sensit_type = 'std'
 
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
-    # Iterates through all possible tiles (not just WHRC biomass tiles) to create mangrove biomass tiles that don't have analogous WHRC tiles
-    tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
-    # tile_id_list = ['00N_000E', '00N_100E', '00N_110E'] # test tile
     print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+
 
     # Downloads zipped raw mangrove files
     uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), cn.docker_base_dir, 'std')
@@ -62,4 +58,15 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    parser.add_argument('--run-date', '-d', required=False,
+                        help='Date of run. Must be format YYYYMMDD.')
+    args = parser.parse_args()
+    tile_id_list = args.tile_id_list
+    run_date = args.run_date
+
+    mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date)

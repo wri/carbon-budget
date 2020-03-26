@@ -759,7 +759,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         calc = '--calc=A*(B==0)'
         loss_outfilearg = '--outfile={}'.format(out_name)
         cmd = ['gdal_calc.py', '-A', tile_to_mask, '-B', pre_2000_vrt,
-               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
         subprocess.check_call(cmd)
 
     # Basically, does nothing if there is no pre-2000 plantation and the output name is the same as the

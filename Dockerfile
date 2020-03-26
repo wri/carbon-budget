@@ -46,6 +46,10 @@ RUN pip3 install -r requirements.txt
 # Link gdal libraries
 RUN cd /usr/include && ln -s ./ gdal
 
+# Somehow, this makes gdal_calc.py accessible from anywhere in the Docker
+#https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
 ## Compile C++ scripts
 #RUN g++ emissions/cpp_util/calc_gross_emissions_generic.cpp -o emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
 #    g++ emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \

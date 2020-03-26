@@ -40,7 +40,7 @@ def create_peat_mask_tiles(tile_id):
         calc = '--calc=(A>=61)*(A<=65)'
         AGC_accum_outfilearg = '--outfile={}'.format(out_tile)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, AGC_accum_outfilearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte']
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
         subprocess.check_call(cmd)
 
         print("{} created.".format(tile_id))

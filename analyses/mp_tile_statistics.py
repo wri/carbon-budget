@@ -13,19 +13,9 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main ():
+def mp_tile_statistics(sensit_type, tile_id_list):
 
     os.chdir(cn.docker_base_dir)
-
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
 
     # The column names for the tile summary statistics.
     # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
@@ -40,9 +30,6 @@ def main ():
         f.write(header_no_brackets  +'\r\n')
     f.close()
 
-    # Creates list of tiles to iterate through, for testing
-    tile_id_list = 'all'    # Use this to run all tiles
-    # tile_id_list = ['00N_090W'] # test tiles
     print(tile_id_list)
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -164,4 +151,19 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    tile_id_list = args.tile_id_list
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_tile_statistics(sensit_type=sensit_type, tile_id_list=tile_id_list)

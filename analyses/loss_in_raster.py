@@ -47,7 +47,7 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
 
         print("Masking loss in {} by raster of interest...".format(tile_id))
         cmd = ['gdal_calc.py', '-A', loss_tile, '-B', raster_of_interest, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-               '--overwrite']
+               '--overwrite', '--quiet']
         subprocess.check_call(cmd)
         print("{} masked".format(tile_id))
 

@@ -53,7 +53,7 @@ def create_tile_statistics(tile, sensit_type):
 
     print("Converting {} from /ha to /pixel...".format(tile))
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-           '--overwrite']
+           '--overwrite', '--quiet']
     subprocess.check_call(cmd)
     print("{} converted to /pixel".format(tile))
 

@@ -24,7 +24,8 @@ def cumulative_gain_AGCO2(tile_id, output_pattern_list, sensit_type):
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     AGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     AGCO2_accum_outfilearg = '--outfile={}'.format(AGCO2_accum_outfilename)
-    cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -47,7 +48,8 @@ def cumulative_gain_BGCO2(tile_id, output_pattern_list, sensit_type):
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     BGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     BGCO2_accum_outfilearg = '--outfile={}'.format(BGCO2_accum_outfilename)
-    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed

@@ -27,7 +27,7 @@ def recode_tiles(annual_loss):
         recoded_output = "Mekong_loss_recoded_{}.tif".format(year)
         outfile = '--outfile={}'.format(recoded_output)
 
-        cmd = ['gdal_calc.py', '-A', annual_loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW']
+        cmd = ['gdal_calc.py', '-A', annual_loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--quiet']
         subprocess.check_call(cmd)
 
 def reset_nodata(tile_id):
