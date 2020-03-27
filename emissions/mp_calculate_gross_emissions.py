@@ -108,19 +108,19 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
             # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-            if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
+            if os.path.exists('/usr/local/app/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
                 print("C++ for {} already compiled.".format(sensit_type))
             else:
-                raise Exception('Must compile standard {} model C++...'.format(sensit_type))
+                raise Exception('Must compile {} model C++...'.format(sensit_type))
         else:
-            if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe'):
+            if os.path.exists('/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe'):
                 print("C++ for generic emissions already compiled.")
             else:
                 print("here")
                 raise Exception('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
-        if os.path.exists('/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
+        if os.path.exists('/usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe'):
             print("C++ for soil_only already compiled.")
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
@@ -157,7 +157,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     if working_dir is not None:
         folder = working_dir        # When emissions are calculated as part of the full model run
     else:
-        folder = '/home/ubuntu/carbon-budget/emissions/cpp_util'     # When emissions are calculated on their own
+        folder = '/usr/local/app/emissions/cpp_util'     # When emissions are calculated on their own
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
