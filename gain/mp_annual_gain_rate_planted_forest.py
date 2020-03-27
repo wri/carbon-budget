@@ -10,7 +10,7 @@
 
 
 import multiprocessing
-import annual_gain_rate_planted_forest
+import gain.annual_gain_rate_planted_forest as annual_gain_rate_planted_forest
 import pandas as pd
 from functools import partial
 import argparse

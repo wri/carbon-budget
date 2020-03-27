@@ -13,7 +13,7 @@
 
 import multiprocessing
 from functools import partial
-import forest_age_category_natrl_forest
+import gain.forest_age_category_natrl_forest as forest_age_category_natrl_forest
 import pandas as pd
 import argparse
 import subprocess

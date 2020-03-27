@@ -15,7 +15,7 @@ sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_a
 
 
 import multiprocessing
-import aggregate_results_to_10_km
+import analyses.aggregate_results_to_10_km as aggregate_results_to_10_km
 import subprocess
 from functools import partial
 import argparse

@@ -3,7 +3,7 @@
 ### by to the C to CO2 conversion.
 
 import multiprocessing
-import cumulative_gain_mangrove
+import gain.cumulative_gain_mangrove as cumulative_gain_mangrove
 import argparse
 import os
 from functools import partial

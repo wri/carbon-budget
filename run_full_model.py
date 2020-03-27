@@ -2,6 +2,7 @@
 git clone https://github.com/wri/carbon-budget
 spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
 c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 python run_full_model.py -t std -s all -r true -d 20200309 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true
 '''
 

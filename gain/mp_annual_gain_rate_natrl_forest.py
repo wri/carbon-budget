@@ -9,7 +9,7 @@
 
 import multiprocessing
 from functools import partial
-import annual_gain_rate_natrl_forest
+import gain.annual_gain_rate_natrl_forest as annual_gain_rate_natrl_forest
 import argparse
 import pandas as pd
 import subprocess

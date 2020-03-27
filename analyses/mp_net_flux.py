@@ -2,7 +2,7 @@
 ### This only uses gross emissions from biomass+soil (doesn't run with gross emissions from soil_only).
 
 import multiprocessing
-import net_flux
+import analyses.net_flux as net_flux
 import argparse
 import os
 from functools import partial

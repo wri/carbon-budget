@@ -2,7 +2,7 @@
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and C to CO2 conversion.
 
 import multiprocessing
-import cumulative_gain_planted_forest
+import gain.cumulative_gain_planted_forest as cumulative_gain_planted_forest
 import argparse
 import os
 from functools import partial

@@ -2,7 +2,7 @@
 ### plantations) into combined tiles. It does the same for cumulative CO2 gain over the study period (above and belowground).
 
 import multiprocessing
-import merge_cumulative_annual_gain_all_forest_types
+import gain.merge_cumulative_annual_gain_all_forest_types as merge_cumulative_annual_gain_all_forest_types
 import argparse
 import os
 from functools import partial

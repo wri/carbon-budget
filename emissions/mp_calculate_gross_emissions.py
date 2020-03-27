@@ -25,7 +25,7 @@ These codes are summarized in carbon-budget/emissions/node_codes.txt
 import multiprocessing
 import argparse
 import os
-import calculate_gross_emissions
+import emissions.calculate_gross_emissions as calculate_gross_emissions
 from functools import partial
 import sys
 sys.path.append('../')

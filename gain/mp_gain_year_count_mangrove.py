@@ -10,7 +10,7 @@
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the year count constants in constants_and_names.py must be changed.
 
 import multiprocessing
-import gain_year_count_mangrove
+import gain.gain_year_count_mangrove as gain_year_count_mangrove
 import argparse
 import os
 from functools import partial

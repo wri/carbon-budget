@@ -4,7 +4,7 @@
 
 import multiprocessing
 from functools import partial
-import annual_gain_rate_mangrove
+import gain.annual_gain_rate_mangrove as annual_gain_rate_mangrove
 import argparse
 import pandas as pd
 import subprocess
