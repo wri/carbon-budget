@@ -329,14 +329,14 @@ def main ():
 
         print(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
         tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
-        tiles_to_delete.append(glob.glob('*gain_year_count*tif'))        # Any forest type
-        tiles_to_delete.append(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
-        tiles_to_delete.append(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
+        tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
+        tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
+        tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
         print("  Deleting", len(tiles_to_delete[0]), "tiles...")
 
         for tile_to_delete in tiles_to_delete[0]:
@@ -358,16 +358,15 @@ def main ():
 
         print(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
         tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
-        tiles_to_delete.append(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
-        tiles_to_delete.append(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
-        tiles_to_delete.append(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-        print("  Deleting", len(tiles_to_delete[0]), "tiles...")
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
+        tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
+        tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+        print("  Deleting", len(tiles_to_delete), "tiles...")
 
-        for tile_to_delete in tiles_to_delete[0]:
+        for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
         print(':::::Deleted unneeded tiles')
 
