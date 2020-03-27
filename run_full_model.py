@@ -337,9 +337,9 @@ def main ():
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
-        print("  Deleting", len(tiles_to_delete[0]), "tiles...")
+        print("  Deleting", len(tiles_to_delete), "tiles...")
 
-        for tile_to_delete in tiles_to_delete[0]:
+        for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
         print(':::::Deleted unneeded tiles')
 
