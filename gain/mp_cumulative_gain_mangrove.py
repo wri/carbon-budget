@@ -3,11 +3,12 @@
 ### by to the C to CO2 conversion.
 
 import multiprocessing
-import gain.cumulative_gain_mangrove as cumulative_gain_mangrove
 import argparse
 import os
 from functools import partial
 import sys
+sys.path.append('/usr/local/app/gain/')
+import cumulative_gain_mangrove
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

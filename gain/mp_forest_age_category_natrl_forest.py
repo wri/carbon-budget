@@ -13,15 +13,17 @@
 
 import multiprocessing
 from functools import partial
-import gain.forest_age_category_natrl_forest as forest_age_category_natrl_forest
 import pandas as pd
 import argparse
 import subprocess
 import os
 import sys
+sys.path.append('/usr/local/app/gain/')
+import forest_age_category_natrl_forest
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+
 
 def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = None):
 

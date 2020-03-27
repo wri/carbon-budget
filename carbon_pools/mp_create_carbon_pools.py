@@ -25,7 +25,6 @@ Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgib
 '''
 
 
-import carbon_pools.create_carbon_pools as create_carbon_pools
 import multiprocessing
 import pandas as pd
 import subprocess
@@ -33,6 +32,8 @@ import os
 import argparse
 from functools import partial
 import sys
+sys.path.append('/usr/local/app/carbon_pools/')
+import create_carbon_pools
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

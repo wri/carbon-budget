@@ -15,13 +15,14 @@ sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_a
 
 
 import multiprocessing
-import analyses.aggregate_results_to_10_km as aggregate_results_to_10_km
 import subprocess
 from functools import partial
 import argparse
 import os
 import glob
 import sys
+sys.path.append('/usr/local/app/analyses/')
+import aggregate_results_to_10_km
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

@@ -2,11 +2,12 @@
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and C to CO2 conversion.
 
 import multiprocessing
-import gain.cumulative_gain_natrl_forest as cumulative_gain_natrl_forest
 import argparse
 import os
 from functools import partial
 import sys
+sys.path.append('/usr/local/app/gain/')
+import cumulative_gain_natrl_forest
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

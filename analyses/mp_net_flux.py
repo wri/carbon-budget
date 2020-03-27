@@ -2,11 +2,12 @@
 ### This only uses gross emissions from biomass+soil (doesn't run with gross emissions from soil_only).
 
 import multiprocessing
-import analyses.net_flux as net_flux
 import argparse
 import os
 from functools import partial
 import sys
+sys.path.append('/usr/local/app/analyses/')
+import net_flux
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

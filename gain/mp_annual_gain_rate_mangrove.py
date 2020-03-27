@@ -4,12 +4,13 @@
 
 import multiprocessing
 from functools import partial
-import gain.annual_gain_rate_mangrove as annual_gain_rate_mangrove
 import argparse
 import pandas as pd
 import subprocess
 import os
 import sys
+sys.path.append('/usr/local/app/gain/')
+import annual_gain_rate_mangrove
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

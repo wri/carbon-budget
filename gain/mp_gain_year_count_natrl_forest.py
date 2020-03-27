@@ -12,11 +12,12 @@
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_natrl_forest.py must be changed.
 
 import multiprocessing
-import gain.gain_year_count_natrl_forest as gain_year_count_natrl_forest
 import argparse
 import os
 from functools import partial
 import sys
+sys.path.append('/usr/local/app/gain/')
+import gain_year_count_natrl_forest
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu

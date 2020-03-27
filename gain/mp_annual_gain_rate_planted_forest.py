@@ -10,11 +10,13 @@
 
 
 import multiprocessing
-import gain.annual_gain_rate_planted_forest as annual_gain_rate_planted_forest
 import pandas as pd
 from functools import partial
 import argparse
+import os
 import sys
+sys.path.append('/usr/local/app/gain/')
+import annual_gain_rate_planted_forest
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
