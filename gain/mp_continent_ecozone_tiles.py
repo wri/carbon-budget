@@ -59,7 +59,7 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
 
     # For multiprocessor use
-    pool = multiprocessing.Pool(processes=cn.count/4)
+    pool = multiprocessing.Pool(processes=int(cn.count/4))
     pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, tile_id_list)
 
 

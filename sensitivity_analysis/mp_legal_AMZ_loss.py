@@ -117,7 +117,7 @@ def main ():
         source_raster = '{}.tif'.format(cn.pattern_Brazil_forest_extent_2000_merged)
         out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
         dt = 'Byte'
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
@@ -161,7 +161,7 @@ def main ():
         source_raster = '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged)
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
@@ -213,7 +213,7 @@ def main ():
         # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
         # With processes=30, peak usage was about 350 GB using WHRC AGB.
         # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(legal_AMZ_loss.legal_Amazon_forest_age_category,
                          sensit_type=sensit_type, output_pattern=output_pattern), tile_id_list)
         pool.close()
@@ -266,7 +266,7 @@ def main ():
 
         output_pattern = stage_output_pattern_list[3]
 
-        pool = multiprocessing.Pool(cn.count/3)
+        pool = multiprocessing.Pool(int(cn.count/3))
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_only, sensit_type=sensit_type),
                  tile_id_list)
 
@@ -276,7 +276,7 @@ def main ():
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type),
                  tile_id_list)
 
-        pool = multiprocessing.Pool(cn.count/8)  # count/5 uses more than 160GB of memory. count/8 uses about 120GB of memory.
+        pool = multiprocessing.Pool(int(cn.count/8))  # count/5 uses more than 160GB of memory. count/8 uses about 120GB of memory.
         pool.map(partial(legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge, output_pattern=output_pattern), tile_id_list)
 
         # # For single processor use
@@ -396,7 +396,7 @@ def main ():
         # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
         # processes=24 peaks at about 440 GB of memory on an r4.16xlarge machine
         output_pattern_list = stage_output_pattern_list
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type,
                          gain_table_dict=gain_table_dict,
                          output_pattern_list=output_pattern_list), tile_id_list)
@@ -451,12 +451,12 @@ def main ():
 
         # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
         output_pattern_list = stage_output_pattern_list
-        pool = multiprocessing.Pool(cn.count/3)
+        pool = multiprocessing.Pool(int(cn.count/3))
         pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
                          sensit_type=sensit_type), tile_id_list)
 
         # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-        pool = multiprocessing.Pool(cn.count/3)
+        pool = multiprocessing.Pool(int(cn.count/3))
         pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
                          sensit_type=sensit_type), tile_id_list)
         pool.close()
@@ -523,7 +523,7 @@ def main ():
 
         # For multiprocessing
         output_pattern_list = stage_output_pattern_list
-        pool = multiprocessing.Pool(cn.count/3)
+        pool = multiprocessing.Pool(int(cn.count/3))
         pool.map(
             partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
                     sensit_type=sensit_type), tile_id_list)
@@ -631,7 +631,7 @@ def main ():
             # 14 processors maxes out at 410-415 GB
             # Creates a single filename pattern to pass to the multiprocessor call
             pattern = stage_output_pattern_list[0]
-            pool = multiprocessing.Pool(cn.count/4)
+            pool = multiprocessing.Pool(int(cn.count/4))
             pool.map(partial(create_carbon_pools.create_emitted_AGC,
                              pattern=pattern, sensit_type=sensit_type), tile_id_list)
             pool.close()
@@ -669,7 +669,7 @@ def main ():
         # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[1]
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
                          extent=extent,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -686,7 +686,7 @@ def main ():
         # processes=16 maxes out at about 430 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[2]
-        pool = multiprocessing.Pool(cn.count/4)
+        pool = multiprocessing.Pool(int(cn.count/4))
         pool.map(
             partial(create_carbon_pools.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
                     extent=extent,
@@ -703,7 +703,7 @@ def main ():
         print("Creating tiles of litter carbon")
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[3]
-        pool = multiprocessing.Pool(cn.count/4)
+        pool = multiprocessing.Pool(int(cn.count/4))
         pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
                          extent=extent,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -721,7 +721,7 @@ def main ():
             print("Creating tiles of soil carbon")
             # Creates a single filename pattern to pass to the multiprocessor call
             pattern = stage_output_pattern_list[4]
-            pool = multiprocessing.Pool(cn.count/3)
+            pool = multiprocessing.Pool(int(cn.count/3))
             pool.map(partial(create_carbon_pools.create_soil,
                              pattern=pattern, sensit_type=sensit_type), tile_id_list)
             pool.close()
@@ -744,7 +744,7 @@ def main ():
         # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[5]
-        pool = multiprocessing.Pool(cn.count/4)
+        pool = multiprocessing.Pool(int(cn.count/4))
         pool.map(partial(create_carbon_pools.create_total_C, extent=extent,
                          pattern=pattern, sensit_type=sensit_type), tile_id_list)
         pool.close()

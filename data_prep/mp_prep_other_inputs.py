@@ -87,7 +87,7 @@ def mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date):
 
     # count/3 uses about 300GB, so there's room for more processors on an r4.16xlarge
     print("Creating primary forest tiles...")
-    pool = multiprocessing.Pool(cn.count/3)
+    pool = multiprocessing.Pool(int(cn.count/3))
     pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_id_list)
 
     # # For single processor use

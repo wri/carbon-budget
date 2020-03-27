@@ -69,10 +69,10 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
 
     # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, tile_id_list)
 
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain, tile_id_list)
@@ -82,11 +82,11 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     # count/3 maxes out at 250 GB
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, tile_id_list)
 
     # count/3 maxes out at 255 GB
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had both loss and gain pixels
         pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain, tile_id_list)
@@ -100,7 +100,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
     # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
     # (e.g., about 450 GB out of 480 GB).
-    pool = multiprocessing.Pool(cn.count/5)
+    pool = multiprocessing.Pool(int(cn.count/5))
     pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), tile_id_list)
     pool.close()
     pool.join()

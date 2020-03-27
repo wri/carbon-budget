@@ -42,7 +42,7 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     source_raster = mangrove_vrt
     out_pattern = cn.pattern_mangrove_biomass_2000
     dt = 'float32'
-    pool = multiprocessing.Pool(cn.count/4)
+    pool = multiprocessing.Pool(int(cn.count/4))
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # # For single processor use, for testing purposes

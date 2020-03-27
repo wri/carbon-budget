@@ -76,7 +76,7 @@ def main ():
         subprocess.check_call(cmd)
 
         # Converts the region shapefile to Hansen tiles
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(US_removal_rates.prep_FIA_regions, tile_id_list)
 
 
@@ -105,7 +105,7 @@ def main ():
         source_raster = cn.name_US_forest_age_cat_raw
         out_pattern = cn.pattern_US_forest_age_cat_processed
         dt = 'Int16'
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
 
         uu.upload_final_set(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed)
@@ -127,7 +127,7 @@ def main ():
         source_raster = cn.name_FIA_forest_group_raw
         out_pattern = cn.pattern_FIA_forest_group_processed
         dt = 'Byte'
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
 
         uu.upload_final_set(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed)
@@ -185,7 +185,7 @@ def main ():
 
 
     # count/2 on a m4.16xlarge maxes out at about 230 GB of memory (processing 16 tiles at once), so it's okay on an m4.16xlarge
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
                      gain_table_group_region_dict=gain_table_group_region_dict,
                      output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)

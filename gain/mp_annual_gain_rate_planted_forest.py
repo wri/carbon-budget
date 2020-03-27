@@ -63,7 +63,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
 
 
     # For multiprocessing
-    pool = multiprocessing.Pool(cn.count/3)
+    pool = multiprocessing.Pool(int(cn.count/3))
     # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
     # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
     pool.map(partial(annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant, sensit_type=sensit_type),

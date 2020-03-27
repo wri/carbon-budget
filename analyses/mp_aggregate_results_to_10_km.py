@@ -115,7 +115,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -135,7 +135,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        pool = multiprocessing.Pool(cn.count/2)
+        pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool

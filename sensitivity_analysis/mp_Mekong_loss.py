@@ -32,7 +32,7 @@ def main ():
 
     print("Creating first year of loss Hansen tiles for Mekong region...")
     # Recodes raw loss rasters with their loss year (for model years only)
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     pool.map(Mekong_loss.recode_tiles, annual_loss_list)
 
     # Makes a single raster of all first loss year pixels in the Mekong (i.e. where loss occurred in multiple years,

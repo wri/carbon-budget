@@ -185,7 +185,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
     # Pre-2000 plantations have not previously been masked, so that is done here.
     # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    pool = multiprocessing.Pool(cn.count/2)
+    pool = multiprocessing.Pool(int(cn.count/2))
     pool.map(partial(calculate_gross_emissions.mask_pre_2000_plant, sensit_type=sensit_type, folder=folder), tile_id_list)
 
     # # For single processor use
