@@ -356,7 +356,7 @@ def main ():
     # Creates gross emissions tiles by driver, gas, and all emissions combined
     if 'gross_emissions' in actual_stages:
 
-        print(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
+        print(':::::Freeing up memory for gross emissions creation by deleting unneeded tiles')
         tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
