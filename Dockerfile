@@ -26,6 +26,8 @@ RUN apt-get update -y && apt-get install -y \
     nano \
     htop \
     tmux \
+    git \
+    vim \
     && apt-get clean all
 
 

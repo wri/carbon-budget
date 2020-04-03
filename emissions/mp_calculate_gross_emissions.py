@@ -157,7 +157,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     if working_dir is not None:
         folder = working_dir        # When emissions are calculated as part of the full model run
     else:
-        folder = '/usr/local/app/emissions/cpp_util'     # When emissions are calculated on their own
+        folder = cn.docker_base_dir     # When emissions are calculated on their own
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
