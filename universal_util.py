@@ -459,7 +459,7 @@ def s3_file_download(source, dest, sensit_type):
         try:
             # Doesn't download the tile if it's already on the spot machine
             if os.path.exists(file_name_sens):
-                print(file_name, "already downloaded" + "\n")
+                print(file_name_sens, "already downloaded" + "\n")
                 return
 
             # If not already on the spot machine, it downloads the file
