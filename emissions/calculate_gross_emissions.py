@@ -15,7 +15,7 @@ import universal_util as uu
 # Calls the function to mask pre-2000 plantations from the loss tiles before calculating emissions from them
 def mask_pre_2000_plant(tile_id, sensit_type, folder):
 
-    print "Masking pre-2000 plantations for {}".format(tile_id)
+    print("Masking pre-2000 plantations for {}".format(tile_id))
 
     pre_2000_plant = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
     if sensit_type == 'legal_Amazon_loss':
@@ -32,7 +32,7 @@ def mask_pre_2000_plant(tile_id, sensit_type, folder):
 # Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id, pools, sensit_type, folder):
 
-    print "Calculating gross emissions for", tile_id, "using", sensit_type, "model type..."
+    print("Calculating gross emissions for", tile_id, "using", sensit_type, "model type...")
 
     start = datetime.datetime.now()
 
@@ -40,14 +40,14 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
     # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
     if (pools == 'soil_only') & (sensit_type == 'std'):
-        emissions_tiles_cmd = ['/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.exe', tile_id, folder]
+        emissions_tiles_cmd = ['{0}/calc_gross_emissions_soil_only.exe'.format(cn.docker_tmp), tile_id, sensit_type, folder]
 
     elif (pools == 'biomass_soil') & (sensit_type in ['convert_to_grassland', 'no_shifting_ag']):
-        emissions_tiles_cmd = ['/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type), tile_id, folder]
+        emissions_tiles_cmd = ['{0}/calc_gross_emissions_{1}.exe'.format(cn.docker_tmp, sensit_type), tile_id, sensit_type, folder]
 
     # This C++ script has an extra argument that names the input carbon pools and output emissions correctly
     elif (pools == 'biomass_soil') & (sensit_type not in ['no_shifting_ag', 'convert_to_grassland']):
-        emissions_tiles_cmd = ['/home/ubuntu/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe', tile_id, sensit_type, folder]
+        emissions_tiles_cmd = ['{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp), tile_id, sensit_type, folder]
 
     else:
         raise Exception('Pool and/or sensitivity analysis option not valid')
@@ -62,7 +62,7 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
 
     elif (pools == 'biomass_soil') & (sensit_type != 'std'):
         pattern = pattern + "_" + sensit_type
-        print pattern
+        print(pattern)
 
     elif pools == 'soil_only':
         pattern = pattern.replace('biomass_soil', 'soil_only')

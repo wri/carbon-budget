@@ -4,18 +4,20 @@
 
 import multiprocessing
 from functools import partial
-import annual_gain_rate_mangrove
 import argparse
 import pandas as pd
 import subprocess
 import os
 import sys
+sys.path.append('/usr/local/app/gain/')
+import annual_gain_rate_mangrove
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
+    os.chdir(cn.docker_base_dir)
     pd.options.mode.chained_assignment = None
 
 
@@ -27,8 +29,8 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
         ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
         tile_id_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 
-    print tile_id_list
-    print "There are {} tiles to process".format(str(len(tile_id_list))) + "\n"
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     download_dict = {
@@ -42,21 +44,21 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     output_dir_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir]
     output_pattern_list = [cn.pattern_annual_gain_AGB_mangrove, cn.pattern_annual_gain_BGB_mangrove]
 
-    # If the script is called from the full model run script, a date is provided.
+    # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), '.']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     subprocess.check_call(cmd)
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
@@ -71,7 +73,7 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
     # keys in this dictionary would need to change accordingly.
     type_ratio_dict = {'1': cn.below_to_above_trop_dry_mang, '2'  :cn.below_to_above_trop_wet_mang, '3': cn.below_to_above_subtrop_mang}
-    type_ratio_dict_final = {int(k):float(v) for k,v in type_ratio_dict.items()}
+    type_ratio_dict_final = {int(k):float(v) for k,v in list(type_ratio_dict.items())}
 
     # Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
     # a column of belowground annual gain rates by mangrove type
@@ -87,13 +89,12 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     gain_below_dict[0] = 0
 
     # Converts all the keys (continent-ecozone codes) to float type
-    gain_above_dict = {float(key): value for key, value in gain_above_dict.iteritems()}
-    gain_below_dict = {float(key): value for key, value in gain_below_dict.iteritems()}
+    gain_above_dict = {float(key): value for key, value in gain_above_dict.items()}
+    gain_below_dict = {float(key): value for key, value in gain_below_dict.items()}
 
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
-    count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=18)
     pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, sensit_type=sensit_type, output_pattern_list=output_pattern_list,
                      gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), tile_id_list)
@@ -121,12 +122,15 @@ if __name__ == '__main__':
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    parser.add_argument('--run-date', '-d', required=False,
+                        help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
+    run_date = args.run_date
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_annual_gain_rate_mangrove(sensit_type=sensit_type, tile_id_list=tile_id_list)
+    mp_annual_gain_rate_mangrove(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)

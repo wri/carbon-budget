@@ -9,7 +9,7 @@ import universal_util as uu
 # Calculates a range of tile statistics
 def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
 
-    print "Calculating loss area for tile id {0}...".format(tile_id)
+    print("Calculating loss area for tile id {0}...".format(tile_id))
 
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
@@ -28,7 +28,7 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
     # Only processes the tile if it is inside the latitude band (north of the specified latitude)
     if ymax > lat and os.path.exists(raster_of_interest):
 
-        print "{} inside latitude band and peat tile exists. Processing tile.".format(tile_id)
+        print("{} inside latitude band and peat tile exists. Processing tile.".format(tile_id))
 
         # If the user has asked to create just a mask of loss as opposed to the actual output values
         if mask == "True":
@@ -45,15 +45,15 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
         # Argument for outputting file
         out = '--outfile={}'.format(outname)
 
-        print "Masking loss in {} by raster of interest...".format(tile_id)
+        print("Masking loss in {} by raster of interest...".format(tile_id))
         cmd = ['gdal_calc.py', '-A', loss_tile, '-B', raster_of_interest, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-               '--overwrite']
+               '--overwrite', '--quiet']
         subprocess.check_call(cmd)
-        print "{} masked".format(tile_id)
+        print("{} masked".format(tile_id))
 
     else:
 
-        print "{} outside of latitude band. Skipped tile.".format(tile_id)
+        print("{} outside of latitude band. Skipped tile.".format(tile_id))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_name)

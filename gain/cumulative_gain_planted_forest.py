@@ -11,7 +11,7 @@ import universal_util as uu
 # Calculates cumulative aboveground carbon dioxide gain in non-mangrove planted forests
 def cumulative_gain_AGC(tile_id, pattern, sensit_type):
 
-    print "Calculating cumulative aboveground CO2 gain:", tile_id
+    print("Calculating cumulative aboveground CO2 gain:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -24,7 +24,8 @@ def cumulative_gain_AGC(tile_id, pattern, sensit_type):
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     AGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, pattern)
     AGCO2_accum_outfilearg = '--outfile={}'.format(AGCO2_accum_outfilename)
-    cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed
@@ -34,7 +35,7 @@ def cumulative_gain_AGC(tile_id, pattern, sensit_type):
 # Calculates cumulative belowground carbon gain in non-mangrove planted forests
 def cumulative_gain_BGC(tile_id, pattern, sensit_type):
 
-    print "Calculating cumulative belowground CO2 gain:", tile_id
+    print("Calculating cumulative belowground CO2 gain:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -47,7 +48,8 @@ def cumulative_gain_BGC(tile_id, pattern, sensit_type):
     accum_calc = '--calc=A*B*{0}*{1}'.format(cn.biomass_to_c_non_mangrove, cn.c_to_co2)
     BGCO2_accum_outfilename = '{0}_{1}.tif'.format(tile_id, pattern)
     BGCO2_accum_outfilearg = '--outfile={}'.format(BGCO2_accum_outfilename)
-    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW']
+    cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     subprocess.check_call(cmd)
 
     # Prints information about the tile that was just processed

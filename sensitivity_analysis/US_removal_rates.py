@@ -10,33 +10,33 @@ import universal_util as uu
 # Creates Hansen tiles out of FIA region shapefile
 def prep_FIA_regions(tile_id):
 
-    print "Creating Hansen tile for FIA regions"
+    print("Creating Hansen tile for FIA regions")
 
     # Start time
     start = datetime.datetime.now()
 
-    print "Getting extent of", tile_id
+    print("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
 
-    print "Rasterizing FIA region shapefile", tile_id
+    print("Rasterizing FIA region shapefile", tile_id)
     uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
                    "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
                         xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
 
-    print "Checking if {} contains any data...".format(tile_id)
+    print("Checking if {} contains any data...".format(tile_id))
     no_data = uu.check_for_data("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     if no_data:
 
-        print "  No data found. Deleting {}.".format(tile_id)
+        print("  No data found. Deleting {}.".format(tile_id))
         os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     else:
 
-        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        print("  Data found in {}. Copying tile to s3...".format(tile_id))
         uu.upload_final(cn.FIA_regions_processed_dir, tile_id, cn.pattern_FIA_regions_processed)
-        print "    Tile copied to s3"
+        print("    Tile copied to s3")
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
@@ -45,7 +45,7 @@ def prep_FIA_regions(tile_id):
 # Creates annual AGB and BGB removal rate rasters for US using US-specific removal rates
 def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict, output_pattern_list, sensit_type):
 
-    print "Assigning US removal rates:", tile_id
+    print("Assigning US removal rates:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -105,7 +105,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
-            for key, value in gain_table_group_region_age_dict.iteritems():
+            for key, value in gain_table_group_region_age_dict.items():
                 annual_gain_standard_window[group_region_age_combined_window == key] = value
 
             # Replaces all values that have Hansen gain pixels with 0 so that they can be filled with Hansen gain pixel-specific
@@ -119,7 +119,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             # Applies the dictionary of region-age-group gain rates to the region-age-group array to
             # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
-            for key, value in gain_table_group_region_dict.iteritems():
+            for key, value in gain_table_group_region_dict.items():
                 agb_with_gain_pixel_window[agb_with_gain_pixel_window == key] = value
 
             # Combines the array of removal rates that has no rates where there are Hansen gain pixels with the array of

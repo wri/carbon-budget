@@ -13,17 +13,9 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def main ():
+def mp_tile_statistics(sensit_type, tile_id_list):
 
-    # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
-    parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
-    args = parser.parse_args()
-    sensit_type = args.model_type
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
+    os.chdir(cn.docker_base_dir)
 
     # The column names for the tile summary statistics.
     # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
@@ -38,13 +30,10 @@ def main ():
         f.write(header_no_brackets  +'\r\n')
     f.close()
 
-    # Creates list of tiles to iterate through, for testing
-    tile_id_list = 'all'    # Use this to run all tiles
-    # tile_id_list = ['00N_090W'] # test tiles
-    print tile_id_list
+    print(tile_id_list)
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, '.', 'std', tile_id_list)
+    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, 'std', tile_id_list)
 
     # For downloading all tiles in selected folders
     download_dict = {
@@ -116,23 +105,22 @@ def main ():
     }
 
     # Iterates through each set of tiles and gets statistics of it
-    for key, values in download_dict.iteritems():
+    for key, values in download_dict.items():
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, '.', sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
         # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
         # (in case this script was already run on this spot machine and created output from gdal_calc)
         tile_list = uu.tile_list_spot_machine(".", ".tif")
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
-        print tile_list
-        print "There are {} tiles to process".format(str(len(tile_list))) + "\n"
+        print(tile_list)
+        print("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
-        count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=9)
         # processes=9 maxes out at about 340 for gross emissions
         # processes=13 maxes out at above 480 for gross emissions
@@ -149,13 +137,13 @@ def main ():
         #     tile_statistics.create_tile_statistics(tile, sensit_type)
 
         # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
-        print "Deleting tiles..."
+        print("Deleting tiles...")
         for tile in tile_list:
             os.remove(tile)
             tile_short = tile[:-4]
             outname = '{0}_value_per_pixel.tif'.format(tile_short)
             os.remove(outname)
-            print "  Tiles deleted"
+            print("  Tiles deleted")
 
         # Copies the text file to the tile statistics folder on s3
         cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
@@ -163,4 +151,19 @@ def main ():
 
 
 if __name__ == '__main__':
-    main()
+
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+    parser.add_argument('--model-type', '-t', required=True,
+                        help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    args = parser.parse_args()
+    sensit_type = args.model_type
+    tile_id_list = args.tile_id_list
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_tile_statistics(sensit_type=sensit_type, tile_id_list=tile_id_list)

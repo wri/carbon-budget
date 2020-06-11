@@ -87,7 +87,6 @@ config/hot_export_token.txt
 *.txt.zml
 *.tif
 *.csv
-*.txt
 *.zip
 *.exe
 
@@ -96,4 +95,7 @@ config/hot_export_token.txt
 *.ipynb
 *.xlsx
 debug.py
+
+tmp/
+model_output/
 

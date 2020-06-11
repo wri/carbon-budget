@@ -17,108 +17,124 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 import subprocess
 import create_soil_C
 import multiprocessing
+import argparse
 import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-tile_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
-                                         cn.annual_gain_AGB_mangrove_dir
-                                         )
-# tile_list = ['30N_080W'] # test tiles
-# tile_list = ['80N_020E', '00N_020E', '30N_080W', '00N_110E'] # test tiles
-print tile_list
-print "There are {} unique tiles to process".format(str(len(tile_list)))
+def mp_create_soil_C(tile_id_list, run_date = None):
 
-print "Downloading mangrove soil C rasters"
-uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), '.')
+    os.chdir(cn.docker_base_dir)
+    sensit_type = 'std'
 
-print "Downloading mineral soil C raster"
-uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), '.')
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+                                             cn.annual_gain_AGB_mangrove_dir
+                                             )
 
-# For downloading all tiles in the input folders.
-input_files = [
-    cn.mangrove_biomass_2000_dir
-    ]
+    print(tile_id_list)
+    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
-for input in input_files:
-    uu.s3_folder_download('{}'.format(input), '.')
 
-# # For copying individual tiles to spot machine for testing.
-# for tile in tile_list:
-#
-#     try:
-#         uu.s3_file_download('{0}{1}_{2}.tif'.format(cn.mangrove_biomass_2000_dir, tile, cn.pattern_mangrove_biomass_2000), '.')
-#     except:
-#         print "No mangrove biomass in", tile
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.soil_C_full_extent_2000_dir]
+    output_pattern_list = [cn.pattern_soil_C_full_extent_2000]
 
-# # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
-# # zip file if it is downloaded using wget but it does work if it comes from s3.
-# print "Downloading soil grids 250 raster"
-# cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
-# subprocess.check_call(cmd)
-#
-# print "Downloading mangrove soil C raster"
-# cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
-# subprocess.check_call(cmd)
 
-print "Unzipping mangrove soil C images..."
-unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', '.']
-subprocess.check_call(unzip_zones)
+    print("Downloading mangrove soil C rasters")
+    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), cn.docker_base_dir, sensit_type)
 
-# Mangrove soil receives precedence over mineral soil
-print "Making mangrove soil C vrt..."
-subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *dSOCS_0_100cm*.tif', shell=True)
-print "Done making mangrove soil C vrt"
+    print("Downloading mineral soil C raster")
+    uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), cn.docker_base_dir, sensit_type)
 
-print "Making mangrove soil C tiles..."
+    # For downloading all tiles in the input folders.
+    input_files = [cn.mangrove_biomass_2000_dir]
 
-# count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/3)
-pool.map(create_soil_C.create_mangrove_soil_C, tile_list)
+    for input in input_files:
+        uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#     create_soil_C.create_mangrove_soil_C(tile)
+    # # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
+    # # zip file if it is downloaded using wget but it does work if it comes from s3.
+    # print "Downloading soil grids 250 raster"
+    # cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
+    # subprocess.check_call(cmd)
+    #
+    # print "Downloading mangrove soil C raster"
+    # cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
+    # subprocess.check_call(cmd)
 
-print "Done making mangrove soil C tiles"
 
-print "Uploading mangrove output soil"
+    print("Unzipping mangrove soil C images...")
+    unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', cn.docker_base_dir]
+    subprocess.check_call(unzip_zones)
 
-# Mangrove soil receives precedence over mineral soil
-print "Making mineral soil C vrt..."
-subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C), shell=True)
-print "Done making mineral soil C vrt"
+    # Mangrove soil receives precedence over mineral soil
+    print("Making mangrove soil C vrt...")
+    subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *dSOCS_0_100cm*.tif', shell=True)
+    print("Done making mangrove soil C vrt")
 
-print "Making mineral soil C tiles..."
+    print("Making mangrove soil C tiles...")
 
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/2)
-pool.map(create_soil_C.create_mineral_soil_C, tile_list)
+    # count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
+    pool = multiprocessing.Pool(processes=int(cn.count/3))
+    pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
 
-# # For single processor use
-# for tile in tile_list:
-#
-#     create_soil_C.create_mineral_soil_C(tile)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #
+    #     create_soil_C.create_mangrove_soil_C(tile_id)
 
-print "Done making mineral soil C tiles"
+    print("Done making mangrove soil C tiles")
+    print("Uploading mangrove output soil")
 
-print "Making combined soil C tiles..."
+    # Mangrove soil receives precedence over mineral soil
+    print("Making mineral soil C vrt...")
+    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C), shell=True)
+    print("Done making mineral soil C vrt")
 
-# With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/2)
-pool.map(create_soil_C.create_combined_soil_C, tile_list)
+    print("Making mineral soil C tiles...")
 
-# # For single processor use
-# for tile in tile_list:
-#
-#     create_soil_C.create_combined_soil_C(tile)
+    pool = multiprocessing.Pool(processes=int(cn.count/2))
+    pool.map(create_soil_C.create_mineral_soil_C, tile_id_list)
 
-print "Done making combined soil C tiles"
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #
+    #     create_soil_C.create_mineral_soil_C(tile_id)
 
-print "Uploading output files"
-uu.upload_final_set(cn.soil_C_full_extent_2000_dir, cn.pattern_soil_C_full_extent_2000)
+    print("Done making mineral soil C tiles")
+
+    print("Making combined soil C tiles...")
+
+    # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
+    pool = multiprocessing.Pool(processes=int(cn.count/2))
+    pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
+
+    # # For single processor use
+    # for tile in tile_list:
+    #
+    #     create_soil_C.create_combined_soil_C(tile_id)
+
+    print("Done making combined soil C tiles")
+
+    print("Uploading output files")
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    parser.add_argument('--run-date', '-d', required=False,
+                        help='Date of run. Must be format YYYYMMDD.')
+    args = parser.parse_args()
+    tile_id_list = args.tile_id_list
+    run_date = args.run_date
+
+    mp_create_soil_C(tile_id_list=tile_id_list, run_date=run_date)
