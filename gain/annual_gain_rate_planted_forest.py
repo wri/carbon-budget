@@ -34,24 +34,24 @@ def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
     # Name of the planted forest AGC/BGC gain rate tile, with mangroves masked out
     planted_forest_no_mangrove = '{0}_no_mang_AGC_BGC.tif'.format(tile_id)
 
-    print("Evaluating whether to mask mangroves from planted forests for {}".format(tile_id))
+    uu.print_log("Evaluating whether to mask mangroves from planted forests for {}".format(tile_id))
 
     # If there is a mangrove tile, mangrove pixels are masked from the planted forest raster
     if os.path.exists(mangrove_biomass):
 
-        print("  Mangrove found for {}. Masking out mangrove...".format(tile_id))
+        uu.print_log("  Mangrove found for {}. Masking out mangrove...".format(tile_id))
 
         # Name for mangrove biomass tiles that have the nodata pixels removed
         mangrove_reclass = '{0}_reclass_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
         # Removes the nodata values in the mangrove biomass rasters because having nodata values in the mangroves didn't work
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
-        print("    Removing nodata values in mangrove biomass raster {}".format(tile_id))
+        uu.print_log("    Removing nodata values in mangrove biomass raster {}".format(tile_id))
         cmd = ['gdal_translate', '-a_nodata', 'none', '-co', 'COMPRESS=LZW', mangrove_biomass, mangrove_reclass]
         subprocess.check_call(cmd)
 
         # Masks out the mangrove biomass from the planted forest gain rate
-        print("    Masking mangroves from aboveground gain rate for planted forest tile {}...".format(tile_id))
+        uu.print_log("    Masking mangroves from aboveground gain rate for planted forest tile {}...".format(tile_id))
         mangrove_mask_calc = '--calc=A*(B==0)'
         mask_outfilename = planted_forest_no_mangrove
         mask_outfilearg = '--outfile={}'.format(mask_outfilename)
@@ -63,7 +63,7 @@ def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
     # the masking option
     else:
 
-        print("  No mangrove found for {}. Renaming file.".format(tile_id))
+        uu.print_log("  No mangrove found for {}. Renaming file.".format(tile_id))
 
         os.rename(planted_forest_full_extent, planted_forest_no_mangrove)
 
@@ -76,7 +76,7 @@ def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
 # planted forest types.
 def create_AGB_rate(tile_id, output_pattern_list):
 
-    print("Creating aboveground biomass gain rate for tile {}".format(tile_id))
+    uu.print_log("Creating aboveground biomass gain rate for tile {}".format(tile_id))
 
     # Start time
     start = datetime.datetime.now()
@@ -101,7 +101,7 @@ def create_AGB_rate(tile_id, output_pattern_list):
 # planted forest types.
 def create_BGB_rate(tile_id, output_pattern_list):
 
-    print("Creating belowground biomass gain rate for tile {}".format(tile_id))
+    uu.print_log("Creating belowground biomass gain rate for tile {}".format(tile_id))
 
     # Start time
     start = datetime.datetime.now()
@@ -109,7 +109,7 @@ def create_BGB_rate(tile_id, output_pattern_list):
     planted_forest_AGB_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
 
     # Calculates belowground biomass gain rate from aboveground biomass gain rate
-    print("  Creating belowground biomass gain rate for tile {}".format(tile_id))
+    uu.print_log("  Creating belowground biomass gain rate for tile {}".format(tile_id))
     above_to_below_calc = '--calc=A*{}'.format(cn.below_to_above_non_mang)
     below_outfilename = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     below_outfilearg = '--outfile={}'.format(below_outfilename)
@@ -127,19 +127,19 @@ def create_BGB_rate(tile_id, output_pattern_list):
 # unnecessary processing.
 def check_for_planted_forest(tile_id, output_pattern_list):
 
-    print("Checking whether there is planted forest after masking out mangroves...")
+    uu.print_log("Checking whether there is planted forest after masking out mangroves...")
 
-    print("Checking if {} contains any data...".format(tile_id))
+    uu.print_log("Checking if {} contains any data...".format(tile_id))
     out_tile = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     no_data = uu.check_for_data(out_tile)
 
     if no_data:
 
-        print("  No data found. Deleting aboveground and belowground biomass gain rates...".format(tile_id))
+        uu.print_log("  No data found. Deleting aboveground and belowground biomass gain rates...".format(tile_id))
 
         os.remove('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]))
         os.remove('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]))
 
     else:
 
-        print("  Data found in {}. Keeping tile to copy to s3...".format(tile_id))
+        uu.print_log("  Data found in {}. Keeping tile to copy to s3...".format(tile_id))

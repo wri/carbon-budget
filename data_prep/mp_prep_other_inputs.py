@@ -29,8 +29,8 @@ def mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date):
                                              set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
                                              )
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # List of output directories and output file name patterns
@@ -42,7 +42,7 @@ def mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date):
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
 
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -86,7 +86,7 @@ def mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date):
     os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
 
     # count/3 uses about 300GB, so there's room for more processors on an r4.16xlarge
-    print("Creating primary forest tiles...")
+    uu.print_log("Creating primary forest tiles...")
     pool = multiprocessing.Pool(int(cn.count/3))
     pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_id_list)
 
@@ -96,7 +96,7 @@ def mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date):
     #       prep_other_inputs.create_primary_tile(tile_id, primary_vrt)
 
     # Uses very little memory since it's just file renaming
-    print("Assigning each tile to ifl2000 or primary forest...")
+    uu.print_log("Assigning each tile to ifl2000 or primary forest...")
     pool = multiprocessing.Pool(cn.count-5)
     pool.map(prep_other_inputs.create_combined_ifl_primary, tile_id_list)
 

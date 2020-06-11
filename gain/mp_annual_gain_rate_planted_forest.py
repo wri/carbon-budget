@@ -32,8 +32,8 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.

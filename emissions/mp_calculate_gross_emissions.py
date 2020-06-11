@@ -43,8 +43,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -109,19 +109,19 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
             # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
             if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.docker_tmp, sensit_type)):
-                print("C++ for {} already compiled.".format(sensit_type))
+                uu.print_log("C++ for {} already compiled.".format(sensit_type))
             else:
                 raise Exception('Must compile {} model C++...'.format(sensit_type))
         else:
             if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp)):
-                print("C++ for generic emissions already compiled.")
+                uu.print_log("C++ for generic emissions already compiled.")
             else:
-                print("here")
+                uu.print_log("here")
                 raise Exception('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.docker_tmp)):
-            print("C++ for soil_only already compiled.")
+            uu.print_log("C++ for soil_only already compiled.")
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
             output_dir_list = [cn.gross_emis_commod_soil_only_dir,
@@ -169,11 +169,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        print(output_dir_list)
-        print(output_pattern_list)
+        uu.print_log(output_dir_list)
+        uu.print_log(output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
@@ -181,7 +181,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    print("Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000...")
+    uu.print_log("Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000...")
     # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
     # Pre-2000 plantations have not previously been masked, so that is done here.
     # There are only 8 tiles to process, so count/2 will cover all of them in one go.
@@ -197,7 +197,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # However, not all Hansen tiles have all of these inputs.
     # This function creates "dummy" tiles for all Hansen tiles that currently have non-existent tiles.
     # That way, the C++ script gets all the necessary input files.
-    print("Making blank tiles for inputs that don't currently exist")
+    uu.print_log("Making blank tiles for inputs that don't currently exist")
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]

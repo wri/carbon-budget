@@ -28,7 +28,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     # The key in the dictionary is the forest age category decision tree endpoints.
     age_dict = {0: 0, 1: 20000, 2: 20000, 3: 10000, 4: 30000, 5: 20000, 6: 10000, 7: 30000, 8: 30000, 9: 30000, 10: 30000}
 
-    print("Processing:", tile_id)
+    uu.print_log("Processing:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -46,7 +46,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
 
-    print("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
+    uu.print_log("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
 
     # Opens the continent-ecozone and natural forest age category tiles
     cont_eco_src = rasterio.open(cont_eco)

@@ -34,8 +34,8 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -71,7 +71,7 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -117,8 +117,8 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     #
     #     forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
 
-    # Uploads output tiles to s3
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # # Uploads output tiles to s3
+    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':

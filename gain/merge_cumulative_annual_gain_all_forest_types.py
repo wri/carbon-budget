@@ -12,7 +12,7 @@ import universal_util as uu
 
 def gain_merge(tile_id, output_pattern_list, sensit_type):
 
-    print("Calculating annual biomass and cumulative CO2 removals for all forest types:", tile_id)
+    uu.print_log("Calculating annual biomass and cumulative CO2 removals for all forest types:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -44,7 +44,7 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
     # (The only reason there wouldn't be cumulative AGC and BGC tiles is if all the annual AGB/BGB pixels in the tile
     # had a gain year count of 1, so there was no accumulation. That is highly unlikely but theoretically possible.)
     if os.path.exists(annual_gain_AGB_mangrove):
-        print("{} has mangroves.".format(tile_id))
+        uu.print_log("{} has mangroves.".format(tile_id))
 
         gain_AGB_mangrove_src = rasterio.open(annual_gain_AGB_mangrove)
         gain_BGB_mangrove_src = rasterio.open(annual_gain_BGB_mangrove)
@@ -59,7 +59,7 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
 
     # Same as above but for non-mangrove planted forests
     if os.path.exists(annual_gain_AGB_planted_forest):
-        print("{} has non-mangrove planted forest.".format(tile_id))
+        uu.print_log("{} has non-mangrove planted forest.".format(tile_id))
 
         gain_AGB_planted_forest_src = rasterio.open(annual_gain_AGB_planted_forest)
         gain_BGB_planted_forest_src = rasterio.open(annual_gain_BGB_planted_forest)
@@ -71,7 +71,7 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
 
     # Same as above except for non-mangrove non-planted forests
     if os.path.exists(annual_gain_AGB_natrl_forest):
-        print("{} has non-mangrove, non-planted forest.".format(tile_id))
+        uu.print_log("{} has non-mangrove, non-planted forest.".format(tile_id))
 
         gain_AGB_natrl_forest_src = rasterio.open(annual_gain_AGB_natrl_forest)
         gain_BGB_natrl_forest_src = rasterio.open(annual_gain_BGB_natrl_forest)

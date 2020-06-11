@@ -27,8 +27,8 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # List of output directories and output file name patterns
@@ -69,7 +69,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     #
     #     peatland_processing.create_peat_mask_tiles(tile_id)
 
-    print("Uploading output files")
+    uu.print_log("Uploading output files")
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 

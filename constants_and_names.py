@@ -1,5 +1,7 @@
 import os
 import multiprocessing
+import universal_util as uu
+import datetime
 
 ########     ########
 ##### Constants #####
@@ -67,7 +69,14 @@ s3_base_dir = 's3://gfw2-data/climate/carbon_model/'
 docker_base_dir = '/usr/local/tiles/'
 # docker_base_dir = '/usr/local/tmp/'
 
-docker_tmp = '/usr/local/tmp'  
+docker_tmp = '/usr/local/tmp'
+
+docker_app = '/usr/local/app'
+
+# Model log
+model_log_dir = 's3://gfw2-data/climate/carbon_model/model_logs/v1.1.2/'
+model_log = "flux_model_log_{}.txt".format(uu.date_today)
+
 
 ### Biomass tiles
 ######
@@ -488,13 +497,14 @@ pattern_FIA_regions_processed = 'FIA_regions_processed'
 FIA_regions_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/FIA_region/processed/20191216/')
 
 name_US_forest_age_cat_raw = 'stand_age_category_all_US_reclass_focal_composite_set_no_data_20191218.tif'
-US_forest_age_cat_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_age_category/raw/')
+# noinspection PyInterpreter,PyInterpreter
+US_forest_age_cat_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_age_category/intermediate/')
 
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
 US_forest_age_cat_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_age_category/processed/20191218/')
 
 name_FIA_forest_group_raw = 'forest_group_composite_set_no_data_20191223.tif'
-FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_group/raw/')
+FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_group/intermediate/')
 
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_group/processed/20191223/')

@@ -13,7 +13,7 @@ import universal_util as uu
 
 def mask_biomass(tile_id, pattern, sensit_type):
 
-    print("Processing:", tile_id)
+    uu.print_log("Processing:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -29,12 +29,12 @@ def mask_biomass(tile_id, pattern, sensit_type):
     # Name of the output file
     biomass_non_mang_non_planted = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("Checking if there are mangrove or planted forest tiles for", tile_id)
+    uu.print_log("Checking if there are mangrove or planted forest tiles for", tile_id)
 
     # Doing this avoids unnecessarily processing biomass tiles
     if os.path.exists(mangrove_biomass) or os.path.exists(planted_forest_gain):
 
-        print("  Mangrove or planted forest tiles found for {}. Masking biomass using them...".format(tile_id))
+        uu.print_log("  Mangrove or planted forest tiles found for {}. Masking biomass using them...".format(tile_id))
 
         # Opens the unmasked WHRC/JPL biomass 2000
         regular_biomass_src = rasterio.open(regular_biomass)
@@ -48,15 +48,15 @@ def mask_biomass(tile_id, pattern, sensit_type):
         # Checks whether there are mangrove or planted forest tiles. If so, they are opened.
         try:
             mangrove_src = rasterio.open(mangrove_biomass)
-            print("    Mangrove tile found for {}".format(tile_id))
+            uu.print_log("    Mangrove tile found for {}".format(tile_id))
         except:
-            print("    No mangrove tile for {}".format(tile_id))
+            uu.print_log("    No mangrove tile for {}".format(tile_id))
 
         try:
             planted_forest_src = rasterio.open(planted_forest_gain)
-            print("    Planted forest tile found for {}".format(tile_id))
+            uu.print_log("    Planted forest tile found for {}".format(tile_id))
         except:
-            print("    No planted forest tile for {}".format(tile_id))
+            uu.print_log("    No planted forest tile for {}".format(tile_id))
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -130,7 +130,7 @@ def mask_biomass(tile_id, pattern, sensit_type):
     # If no mangrove or planted forest tile was found, the original biomass tile is simply duplicated with the output name
     # so it can be copied to s3 with the rest of the outputs.
     else:
-        print("  No mangrove or planted forest tile found for {}. Copying tile with output pattern...".format(tile_id))
+        uu.print_log("  No mangrove or planted forest tile found for {}. Copying tile with output pattern...".format(tile_id))
         copyfile(regular_biomass, biomass_non_mang_non_planted)
 
     # Prints information about the tile that was just processed

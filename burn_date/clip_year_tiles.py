@@ -23,13 +23,13 @@ def clip_year_tiles(tile_year_list):
     vrt_name = "global_vrt_{}_wgs84.vrt".format(year)
 
     # get coords of hansen tile
-    print("Getting coordinates of", tile_id)
+    uu.print_log("Getting coordinates of", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # clip vrt to tile extent
     clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
 
-    print("Clipping burn year vrt to", tile_id)
+    uu.print_log("Clipping burn year vrt to", tile_id)
 
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     cmd += [vrt_name, clipped_raster, '-tr', '.00025', '.00025']
@@ -52,9 +52,9 @@ def clip_year_tiles(tile_year_list):
     subprocess.check_call(cmd)
 
     # remove files
-    print("Removing files")
+    uu.print_log("Removing files")
     files_to_remove = [clipped_raster, recoded_output]
     utilities.remove_list_files(files_to_remove)
 
-    print("Done removing individual files")
+    uu.print_log("Done removing individual files")
 

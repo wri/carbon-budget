@@ -18,16 +18,16 @@ def create_peat_mask_tiles(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    print("Getting bounding coordinates for tile", tile_id)
+    uu.print_log("Getting bounding coordinates for tile", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    print("  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin)
+    uu.print_log("  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin)
 
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_peat_mask)
 
     # If the tile is outside the band covered by the CIFOR peat raster, SoilGrids250m is used
     if ymax > 40 or ymax < -60:
 
-        print("{} is outside CIFOR band. Using SoilGrids250m organic soil mask...".format(tile_id))
+        uu.print_log("{} is outside CIFOR band. Using SoilGrids250m organic soil mask...".format(tile_id))
 
         out_intermediate = '{0}_intermediate.tif'.format(tile_id, cn.pattern_peat_mask)
 
@@ -43,7 +43,7 @@ def create_peat_mask_tiles(tile_id):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
         subprocess.check_call(cmd)
 
-        print("{} created.".format(tile_id))
+        uu.print_log("{} created.".format(tile_id))
 
     # If the tile is inside the band covered by CIFOR, CIFOR is used (and Jukka in the tiles where it occurs).
     # For some reason, the CIFOR raster has a color scheme that makes it symbolized from 0 to 255. This carries
@@ -51,7 +51,7 @@ def create_peat_mask_tiles(tile_id):
     # gdalinfo shows that the min and max values are 1, as they should be, and it visualizes correctly in ArcMap.
     else:
 
-        print("{} is inside CIFOR band. Using CIFOR/Jukka combination...".format(tile_id))
+        uu.print_log("{} is inside CIFOR band. Using CIFOR/Jukka combination...".format(tile_id))
 
         # Combines CIFOR and Jukka (if it occurs there)
         cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
@@ -59,20 +59,20 @@ def create_peat_mask_tiles(tile_id):
                '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile]
 
         subprocess.check_call(cmd)
-        print("{} created.".format(tile_id))
+        uu.print_log("{} created.".format(tile_id))
 
 
 
-    print("Checking if {} contains any data...".format(tile_id))
+    uu.print_log("Checking if {} contains any data...".format(tile_id))
     stats = uu.check_for_data(out_tile)
 
     if stats[0] > 0:
 
-        print("  Data found in {}. Keeping file...".format(tile_id))
+        uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
 
     else:
 
-        print("  No data found. Deleting {}...".format(tile_id))
+        uu.print_log("  No data found. Deleting {}...".format(tile_id))
         os.remove(out_tile)
 
     # Prints information about the tile that was just processed

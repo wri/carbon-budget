@@ -29,8 +29,8 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
         ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
         tile_id_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     download_dict = {

@@ -44,14 +44,14 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     for input in input_files:
         uu.s3_file_download('{}'.format(input), cn.docker_base_dir, sensit_type)
 
-    print("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
+    uu.print_log("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
     unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
     subprocess.check_call(unzip_zones)
 
-    print("Copying elevation (srtm) files")
+    uu.print_log("Copying elevation (srtm) files")
     uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
 
-    print("Making elevation (srtm) vrt")
+    uu.print_log("Making elevation (srtm) vrt")
     subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
 
     # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
@@ -63,7 +63,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     #
     #     create_inputs_for_C_pools.create_input_files(tile_id)
 
-    print("Uploading output files")
+    uu.print_log("Uploading output files")
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 

@@ -30,7 +30,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         f.write(header_no_brackets  +'\r\n')
     f.close()
 
-    print(tile_id_list)
+    uu.print_log(tile_id_list)
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, 'std', tile_id_list)
@@ -117,8 +117,8 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         tile_list = uu.tile_list_spot_machine(".", ".tif")
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i or 'value_per_pixel' in i)]
-        print(tile_list)
-        print("There are {} tiles to process".format(str(len(tile_list))) + "\n")
+        uu.print_log(tile_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
         pool = multiprocessing.Pool(processes=9)
@@ -137,13 +137,13 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         #     tile_statistics.create_tile_statistics(tile, sensit_type)
 
         # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
-        print("Deleting tiles...")
+        uu.print_log("Deleting tiles...")
         for tile in tile_list:
             os.remove(tile)
             tile_short = tile[:-4]
             outname = '{0}_value_per_pixel.tif'.format(tile_short)
             os.remove(outname)
-            print("  Tiles deleted")
+            uu.print_log("  Tiles deleted")
 
         # Copies the text file to the tile statistics folder on s3
         cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]

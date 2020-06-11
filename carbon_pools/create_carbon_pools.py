@@ -82,7 +82,7 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
     # Name of output tile
     all_forests_AGC_2000 = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # Opens the input tiles if they exist. Any of these could not exist for a given Hansen tile.
     # Either mangrove biomass or WHRC biomass should exist for each tile, though. Thus, kwargs and windows should be
@@ -93,9 +93,9 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
         kwargs = mangrove_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = mangrove_biomass_2000_src.block_windows(1)
-        print("Mangrove biomass found for", tile_id)
+        uu.print_log("Mangrove biomass found for", tile_id)
     except:
-        print("No mangrove biomass for", tile_id)
+        uu.print_log("No mangrove biomass for", tile_id)
 
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
@@ -103,9 +103,9 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
         kwargs = natrl_forest_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = natrl_forest_biomass_2000_src.block_windows(1)
-        print("WHRC biomass found for", tile_id)
+        uu.print_log("WHRC biomass found for", tile_id)
     except:
-        print("No WHRC biomass found for", tile_id)
+        uu.print_log("No WHRC biomass found for", tile_id)
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional gain rates
@@ -120,7 +120,7 @@ def create_2000_AGC(tile_id, pattern, sensit_type):
     # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_AGC_2000 = rasterio.open(all_forests_AGC_2000, 'w', **kwargs)
 
-    print("  Creating aboveground carbon density in 2000 for {}...".format(tile_id))
+    uu.print_log("  Creating aboveground carbon density in 2000 for {}...".format(tile_id))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -185,16 +185,16 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     # Only proceeds with running the function if there is a loss tile. Without a loss tile, there will be no output, so there's
     # no reason to run the function.
     if os.path.exists('{}.tif'.format(tile_id)):
-        print("Loss tile found for {}. Processing...".format(tile_id))
+        uu.print_log("Loss tile found for {}. Processing...".format(tile_id))
         loss_year = '{}.tif'.format(tile_id)
     elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)):
-        print("Brazil-specific loss tile found for {}. Processing...".format(tile_id))
+        uu.print_log("Brazil-specific loss tile found for {}. Processing...".format(tile_id))
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)):
-        print("Mekong-specific loss tile found for {}. Processing...".format(tile_id))
+        uu.print_log("Mekong-specific loss tile found for {}. Processing...".format(tile_id))
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
-        print("No loss tile for {}. Not processing.".format(tile_id))
+        uu.print_log("No loss tile for {}. Not processing.".format(tile_id))
         return
 
     # Start time
@@ -216,14 +216,14 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
 
 
-    print(mangrove_biomass_2000)
-    print(planted_forest_cumul_AGCO2_gain)
-    print(natrl_forest_biomass_2000)
+    uu.print_log(mangrove_biomass_2000)
+    uu.print_log(planted_forest_cumul_AGCO2_gain)
+    uu.print_log(natrl_forest_biomass_2000)
 
     # Name of output tile
     all_forests_AGC_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # Opens the input tiles if they exist. Any of these could not exist for a given Hansen tile.
     # Either mangrove biomass or WHRC biomass should exist for each tile, though. Thus, kwargs and windows should be
@@ -236,16 +236,16 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
         kwargs = mangrove_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = mangrove_biomass_2000_src.block_windows(1)
-        print("Mangrove tile found for", tile_id)
+        uu.print_log("Mangrove tile found for", tile_id)
     except:
-        print("No mangrove tile for", tile_id)
+        uu.print_log("No mangrove tile for", tile_id)
 
     try:
         planted_forest_cumul_AGCO2_gain_src = rasterio.open(planted_forest_cumul_AGCO2_gain)
         planted_forest_annual_gain_src = rasterio.open(planted_forest_annual_gain)
-        print("Non-mangrove planted carbon accumulation found for", tile_id)
+        uu.print_log("Non-mangrove planted carbon accumulation found for", tile_id)
     except:
-        print("No non-mangrove planted carbon accumulation for", tile_id)
+        uu.print_log("No non-mangrove planted carbon accumulation for", tile_id)
 
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
@@ -255,14 +255,14 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
         kwargs = natrl_forest_biomass_2000_src.meta
         # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
         windows = natrl_forest_biomass_2000_src.block_windows(1)
-        print("Natural forest found for", tile_id)
+        uu.print_log("Natural forest found for", tile_id)
     except:
-        print("No natural forest found for", tile_id)
+        uu.print_log("No natural forest found for", tile_id)
 
     try:
         gain_src = rasterio.open(gain)
     except:
-        print("No gain tile found for", tile_id)
+        uu.print_log("No gain tile found for", tile_id)
 
     # Due to the check earlier in this function, there should always be a loss year tile
     loss_year_src = rasterio.open(loss_year)
@@ -280,7 +280,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     # The output file: aboveground carbon density in the year of tree cover loss for pixels with tree cover loss
     dst_AGC_emis_year = rasterio.open(all_forests_AGC_emis_year, 'w', **kwargs)
 
-    print("  Creating aboveground carbon density in the year of loss for {}...".format(tile_id))
+    uu.print_log("  Creating aboveground carbon density in the year of loss for {}...".format(tile_id))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -448,7 +448,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, pattern, sensit_
     # The BGC name depends on whether carbon in 2000 or in the emission year is being created.
     BGC = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # Both of these tiles should exist and thus be able to be opened
     AGC_src = rasterio.open(AGC)   # This will be either the AGC 2000 or AGC loss year tile
@@ -457,9 +457,9 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, pattern, sensit_
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        print("Mangrove biomass found for", tile_id)
+        uu.print_log("Mangrove biomass found for", tile_id)
     except:
-        print("No mangrove biomass for", tile_id)
+        uu.print_log("No mangrove biomass for", tile_id)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = AGC_src.meta
@@ -479,7 +479,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, pattern, sensit_
     # The output file: belowground carbon density
     dst_BGC = rasterio.open(BGC, 'w', **kwargs)
 
-    print("  Creating belowground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log("  Creating belowground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -570,7 +570,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, carbon_pool_extent, patter
     # The output name depends on whether carbon in 2000 or in the emission year is being created.
     deadwood = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
 
     # These tiles should exist and thus be able to be opened
@@ -583,16 +583,16 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, carbon_pool_extent, patter
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        print("Mangrove biomass found for", tile_id)
+        uu.print_log("Mangrove biomass found for", tile_id)
     except:
-        print("No mangrove biomass for", tile_id)
+        uu.print_log("No mangrove biomass for", tile_id)
 
     # Opens the WHRC biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        print("WHRC biomass found for", tile_id)
+        uu.print_log("WHRC biomass found for", tile_id)
     except:
-        print("No WHRC biomass for", tile_id)
+        uu.print_log("No WHRC biomass for", tile_id)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = AGC_src.meta
@@ -612,7 +612,7 @@ def create_deadwood(tile_id, mang_deadwood_AGB_ratio, carbon_pool_extent, patter
     # The output file: deadwood carbon density
     dst_deadwood = rasterio.open(deadwood, 'w', **kwargs)
 
-    print("  Creating deadwood carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log("  Creating deadwood carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -753,7 +753,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, pattern, s
     # The output name depends on whether carbon in 2000 or in the emission year is being created.
     litter = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # These tiles should exist and thus be able to be opened
     AGC_src = rasterio.open(AGC)
@@ -765,16 +765,16 @@ def create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, pattern, s
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        print("Mangrove biomass found for", tile_id)
+        uu.print_log("Mangrove biomass found for", tile_id)
     except:
-        print("No mangrove biomass for", tile_id)
+        uu.print_log("No mangrove biomass for", tile_id)
 
     # Opens the WHRC biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        print("WHRC biomass found for", tile_id)
+        uu.print_log("WHRC biomass found for", tile_id)
     except:
-        print("No WHRC biomass for", tile_id)
+        uu.print_log("No WHRC biomass for", tile_id)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
     kwargs = AGC_src.meta
@@ -794,7 +794,7 @@ def create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, pattern, s
     # The output file: litter carbon density
     dst_litter = rasterio.open(litter, 'w', **kwargs)
 
-    print("  Creating litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log("  Creating litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -919,7 +919,7 @@ def create_soil(tile_id, pattern, sensit_type):
     # Name of output tile
     soil_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # Both of these tiles should exist and thus be able to be opened
     soil_full_extent_src = rasterio.open(soil_full_extent)
@@ -943,7 +943,7 @@ def create_soil(tile_id, pattern, sensit_type):
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
     dst_soil_emis_year = rasterio.open(soil_emis_year, 'w', **kwargs)
 
-    print("  Creating soil carbon density for loss pixels in {}...".format(tile_id))
+    uu.print_log("  Creating soil carbon density for loss pixels in {}...".format(tile_id))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -993,7 +993,7 @@ def create_total_C(tile_id, carbon_pool_extent, pattern, sensit_type):
     # The output name depends on whether carbon in 2000 or in the emission year is being created.
     total_C = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    print("  Reading input files for {}...".format(tile_id))
+    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # All of these tiles should exist and thus be able to be opened
     AGC_src = rasterio.open(AGC)
@@ -1025,7 +1025,7 @@ def create_total_C(tile_id, carbon_pool_extent, pattern, sensit_type):
     # The output file: total carbon density
     dst_total_C = rasterio.open(total_C, 'w', **kwargs)
 
-    print("  Creating total carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log("  Creating total carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:

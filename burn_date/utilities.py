@@ -20,7 +20,7 @@ def makedir(folder):
 
 
 def wgetloss(tile_id):
-    print("download hansen loss tile")
+    uu.print_log("download hansen loss tile")
 
     hansen_tile = '{}_loss.tif'.format(tile_id)
     # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
@@ -146,14 +146,14 @@ def download_df(year, hv_tile, output_dir):
 def remove_list_files(file_list):
     for file in file_list:
         try:
-            print("Removing ", file)
+            uu.print_log("Removing ", file)
             os.remove(file)
         except:
             pass
 
 def get_extent(tif):
 
-    print("Getting extent of", tif)
+    uu.print_log("Getting extent of", tif)
 
     data = gdal.Open(tif, GA_ReadOnly)
     geoTransform = data.GetGeoTransform()
@@ -161,7 +161,7 @@ def get_extent(tif):
     maxy = geoTransform[3]
     maxx = minx + geoTransform[1] * data.RasterXSize
     miny = maxy + geoTransform[5] * data.RasterYSize
-    print([minx, miny, maxx, maxy])
+    uu.print_log([minx, miny, maxx, maxy])
     data = None
 
     return minx, miny, maxx, maxy

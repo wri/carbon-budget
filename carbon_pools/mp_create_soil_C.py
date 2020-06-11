@@ -36,8 +36,8 @@ def mp_create_soil_C(tile_id_list, run_date = None):
                                              cn.annual_gain_AGB_mangrove_dir
                                              )
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # List of output directories and output file name patterns
@@ -45,10 +45,10 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     output_pattern_list = [cn.pattern_soil_C_full_extent_2000]
 
 
-    print("Downloading mangrove soil C rasters")
+    uu.print_log("Downloading mangrove soil C rasters")
     uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), cn.docker_base_dir, sensit_type)
 
-    print("Downloading mineral soil C raster")
+    uu.print_log("Downloading mineral soil C raster")
     uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), cn.docker_base_dir, sensit_type)
 
     # For downloading all tiles in the input folders.
@@ -68,16 +68,16 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     # subprocess.check_call(cmd)
 
 
-    print("Unzipping mangrove soil C images...")
+    uu.print_log("Unzipping mangrove soil C images...")
     unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', cn.docker_base_dir]
     subprocess.check_call(unzip_zones)
 
     # Mangrove soil receives precedence over mineral soil
-    print("Making mangrove soil C vrt...")
+    uu.print_log("Making mangrove soil C vrt...")
     subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *dSOCS_0_100cm*.tif', shell=True)
-    print("Done making mangrove soil C vrt")
+    uu.print_log("Done making mangrove soil C vrt")
 
-    print("Making mangrove soil C tiles...")
+    uu.print_log("Making mangrove soil C tiles...")
 
     # count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
     pool = multiprocessing.Pool(processes=int(cn.count/3))
@@ -88,15 +88,15 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     #
     #     create_soil_C.create_mangrove_soil_C(tile_id)
 
-    print("Done making mangrove soil C tiles")
-    print("Uploading mangrove output soil")
+    uu.print_log("Done making mangrove soil C tiles")
+    uu.print_log("Uploading mangrove output soil")
 
     # Mangrove soil receives precedence over mineral soil
-    print("Making mineral soil C vrt...")
+    uu.print_log("Making mineral soil C vrt...")
     subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C), shell=True)
-    print("Done making mineral soil C vrt")
+    uu.print_log("Done making mineral soil C vrt")
 
-    print("Making mineral soil C tiles...")
+    uu.print_log("Making mineral soil C tiles...")
 
     pool = multiprocessing.Pool(processes=int(cn.count/2))
     pool.map(create_soil_C.create_mineral_soil_C, tile_id_list)
@@ -106,9 +106,9 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     #
     #     create_soil_C.create_mineral_soil_C(tile_id)
 
-    print("Done making mineral soil C tiles")
+    uu.print_log("Done making mineral soil C tiles")
 
-    print("Making combined soil C tiles...")
+    uu.print_log("Making combined soil C tiles...")
 
     # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
     pool = multiprocessing.Pool(processes=int(cn.count/2))
@@ -119,9 +119,9 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     #
     #     create_soil_C.create_combined_soil_C(tile_id)
 
-    print("Done making combined soil C tiles")
+    uu.print_log("Done making combined soil C tiles")
 
-    print("Uploading output files")
+    uu.print_log("Uploading output files")
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 

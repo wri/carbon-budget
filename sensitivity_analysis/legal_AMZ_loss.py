@@ -37,15 +37,15 @@ def legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern):
         # Checks whether there are mangrove or planted forest tiles. If so, they are opened.
         try:
             plantations_src = rasterio.open(plantations)
-            print("    Planted forest tile found for {}".format(tile_id))
+            uu.print_log("    Planted forest tile found for {}".format(tile_id))
         except:
-            print("    No planted forest tile for {}".format(tile_id))
+            uu.print_log("    No planted forest tile for {}".format(tile_id))
 
         try:
             mangroves_src = rasterio.open(mangroves)
-            print("    Mangrove tile found for {}".format(tile_id))
+            uu.print_log("    Mangrove tile found for {}".format(tile_id))
         except:
-            print("    No mangrove tile for {}".format(tile_id))
+            uu.print_log("    No mangrove tile for {}".format(tile_id))
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -108,7 +108,7 @@ def tile_names(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that only had loss
 def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 
-    print("Gain year count for loss only pixels:", tile_id)
+    uu.print_log("Gain year count for loss only pixels:", tile_id)
 
     # Names of the input tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
@@ -135,7 +135,7 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 # loss-and-gain covers the loss pixel side of things.
 def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 
-    print("Gain year count for non-loss pixels:", tile_id)
+    uu.print_log("Gain year count for non-loss pixels:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -163,7 +163,7 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that had both loss and gain
 def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type):
 
-    print("Gain year count for loss and gain pixels:", tile_id)
+    uu.print_log("Gain year count for loss and gain pixels:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -186,7 +186,7 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
 # Merges the four gain year count tiles above to create a single gain year count tile
 def legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern):
 
-    print("Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id))
+    uu.print_log("Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id))
 
     # start time
     start = datetime.datetime.now()
