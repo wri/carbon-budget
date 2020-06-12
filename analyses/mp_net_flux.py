@@ -117,8 +117,7 @@ if __name__ == '__main__':
     run_date = args.run_date
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

@@ -41,8 +41,7 @@ import universal_util as uu
 def main ():
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log()
 
     os.chdir(cn.docker_base_dir)
 

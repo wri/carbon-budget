@@ -164,8 +164,7 @@ if __name__ == '__main__':
     tile_id_list = args.tile_id_list
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log(sensit_type=sensit_type, tile_id_list=tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

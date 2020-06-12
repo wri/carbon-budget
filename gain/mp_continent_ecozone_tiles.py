@@ -83,7 +83,6 @@ if __name__ == '__main__':
     run_date = args.run_date
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
 
     mp_continent_ecozone_tiles(tile_id_list=tile_id_list, run_date=run_date)

@@ -394,7 +394,6 @@ if __name__ == '__main__':
     planted_index_shp = planted_index_shp[:-4]
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log()
 
     mp_plantation_preparation(gadm_index_shp=gadm_index_shp, planted_index_shp=planted_index_shp)

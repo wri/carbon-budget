@@ -98,7 +98,6 @@ if __name__ == '__main__':
     run_date = args.run_date
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
 
     mp_non_mangrove_non_planted_biomass_2000(tile_id_list=tile_id_list, run_date=run_date)

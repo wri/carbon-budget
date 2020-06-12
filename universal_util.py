@@ -20,7 +20,7 @@ d = datetime.datetime.today()
 date_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 # date_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
 
-# Uploads the output log to the designated s3 location
+# Uploads the output log to the designated s3 folder
 def upload_log():
 
     cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
@@ -28,12 +28,11 @@ def upload_log():
 
 
 # Creates the log with a starting line
-def initiate_log(sensit_type, stage_input, run_through, run_date, tile_id_list, carbon_pool_extent=None, pools=None,
-                    thresh=None, std_net_flux=None,
-                    include_mangroves=None, include_plantations=None):
+def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
+                 pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None):
 
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
-                        datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.DEBUG)
+                        datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.INFO)
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
     logging.info("Model stages to run: {}".format(stage_input))
@@ -47,6 +46,10 @@ def initiate_log(sensit_type, stage_input, run_through, run_date, tile_id_list, 
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
     logging.info("")
+
+    # Suppresses logging from rasterio and botocore below ERROR level for the entire model
+    logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
+    logging.getLogger("botocore").setLevel(logging.ERROR)  # "Found credentials in environment variables." is logged by botocore: https://github.com/boto/botocore/issues/1841
 
 
 # Prints the output statement in the console and adds it to the log. It can handle an indefinite number of string to print
@@ -81,12 +84,33 @@ def exception_log(*args):
     # Adds the exception to the log txt
     logging.debug(full_statement, stack_info=True)
 
-    # Need to upload to s3 before printing to console so that version saved on s3 has the fatal error
+    # Need to upload log before the exception stops the script
     upload_log()
 
     # Prints to console, ending the program
     raise Exception(full_statement)
 
+
+# Adds the subprocess output to the log and the console
+# Solution is from second answer at this page: https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+def log_subprocess_output(pipe):
+
+    # Reads all the output into a string
+    for full_out in iter(pipe.readline, b''): # b'\n'-separated lines
+
+        # Separates the string into an array, where each entry is one line of output
+        line_array = full_out.splitlines()
+
+        # For reasons I don't know, the array is backwards, so this prints it out in reverse (i.e. correct) order
+        for line in reversed(line_array):
+            logging.info(line.decode("utf-8")) #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+            print(line.decode("utf-8"))        #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+
+        logging.info("\n")
+        print("\n")
+
+    # After the subprocess finishes, the log is uploaded to s3
+    upload_log()
 
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
@@ -135,7 +159,7 @@ def tile_list_s3(source, sensit_type='std'):
     else:
         source = source.replace('standard', sensit_type)
 
-    print_log("Creating list of tiles in ", source)
+    print_log("Creating list of tiles in", source)
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -536,7 +560,7 @@ def s3_file_download(source, dest, sensit_type):
                 source = os.path.join(dir_sens, file_name_sens)
                 cmd = ['aws', 's3', 'cp', source, dest]
                 subprocess.check_call(cmd)
-                print_log(file_name_sens, "not previously downloaded. Now downloaded." + '\n')
+                print_log(file_name_sens, "not previously downloaded. Now downloaded to", dest, '\n')
 
         # Second attempt is to download the standard version of the file.
         # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
@@ -551,7 +575,7 @@ def s3_file_download(source, dest, sensit_type):
                 try:
                     cmd = ['aws', 's3', 'cp', source, dest]
                     subprocess.check_call(cmd)
-                    print_log(file_name, "not previously downloaded. Now downloaded." + '\n')
+                    print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
                 except:
                     print_log(source, 'does not exist in standard model or sensitivity model' + '\n')
 
@@ -567,7 +591,7 @@ def s3_file_download(source, dest, sensit_type):
             try:
                 cmd = ['aws', 's3', 'cp', source, dest]
                 subprocess.check_call(cmd)
-                print_log(file_name, "not previously downloaded. Now downloaded." + '\n')
+                print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
             except:
                 print_log(source, 'does not exist-- check if this is expected to exist' + '\n')
 

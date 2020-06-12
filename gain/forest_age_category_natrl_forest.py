@@ -11,6 +11,7 @@ import datetime
 import numpy as np
 import os
 import rasterio
+import logging
 import sys
 sys.path.append('../')
 import constants_and_names as cn

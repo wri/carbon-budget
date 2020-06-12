@@ -3,7 +3,7 @@ This script creates the three inputs used for creating the carbon pools besides 
 It takes several hours to run.
 '''
 
-import subprocess
+from subprocess import check_call, Popen, PIPE, STDOUT
 import os
 import argparse
 import datetime
@@ -46,27 +46,31 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
         uu.s3_file_download('{}'.format(input), cn.docker_base_dir, sensit_type)
 
     uu.print_log("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
-    unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
-    subprocess.check_call(unzip_zones)
+    cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
 
-    uu.print_log("Copying elevation (srtm) files")
-    uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
-    uu.print_log("Making elevation (srtm) vrt")
-    subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
-
-    # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
-    pool = multiprocessing.Pool(processes=cn.count / 2)
-    pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
+    # uu.print_log("Copying elevation (srtm) files")
+    # uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
     #
-    #     create_inputs_for_C_pools.create_input_files(tile_id)
-
-    uu.print_log("Uploading output files")
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # uu.print_log("Making elevation (srtm) vrt")
+    # check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)  # I don't know how to convert this to output to the pipe, so just leaving as is
+    #
+    # # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
+    # pool = multiprocessing.Pool(processes=cn.count / 2)
+    # pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #
+    # #     create_inputs_for_C_pools.create_input_files(tile_id)
+    #
+    # uu.print_log("Uploading output files")
+    # for i in range(0, len(output_dir_list)):
+    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
@@ -82,7 +86,6 @@ if __name__ == '__main__':
     run_date = args.run_date
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log(tile_id_list, run_date=run_date)
 
-    mp_create_inputs_for_C_pools(tile_id_list=tile_id_list, run_date=run_date)
+    mp_create_inputs_for_C_pools(tile_id_list, run_date=run_date)

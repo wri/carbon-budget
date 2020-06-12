@@ -243,8 +243,7 @@ if __name__ == '__main__':
     thresh = int(thresh)
 
     # Create the output log
-    script_start = datetime.datetime.now()
-    uu.initiate_log(script_start)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
