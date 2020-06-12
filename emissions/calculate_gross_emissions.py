@@ -50,7 +50,7 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
         emissions_tiles_cmd = ['{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp), tile_id, sensit_type, folder]
 
     else:
-        raise Exception('Pool and/or sensitivity analysis option not valid')
+        uu.exception_log('Pool and/or sensitivity analysis option not valid')
 
     subprocess.check_call(emissions_tiles_cmd)
 
@@ -68,7 +68,7 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
         pattern = pattern.replace('biomass_soil', 'soil_only')
 
     else:
-        raise Exception('Pool option not valid')
+        uu.exception_log('Pool option not valid')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)

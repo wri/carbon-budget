@@ -76,7 +76,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
 
     # Checks the validity of the pools argument
     if (pools not in ['soil_only', 'biomass_soil']):
-        raise Exception('Invalid pool input. Please choose soil_only or biomass_soil.')
+        uu.exception_log('Invalid pool input. Please choose soil_only or biomass_soil.')
 
 
     # Checks if the correct c++ script has been compiled for the pool option selected
@@ -112,13 +112,13 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
             if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.docker_tmp, sensit_type)):
                 uu.print_log("C++ for {} already compiled.".format(sensit_type))
             else:
-                raise Exception('Must compile {} model C++...'.format(sensit_type))
+                uu.exception_log('Must compile {} model C++...'.format(sensit_type))
         else:
             if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
                 uu.print_log("here")
-                raise Exception('Must compile generic emissions C++...')
+                uu.exception_log('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
         if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.docker_tmp)):
@@ -148,10 +148,10 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                                    cn.pattern_gross_emis_nodes_soil_only]
 
         else:
-            raise Exception('Must compile soil_only C++...')
+            uu.exception_log('Must compile soil_only C++...')
 
     else:
-        raise Exception('Pool and/or sensitivity analysis option not valid')
+        uu.exception_log('Pool and/or sensitivity analysis option not valid')
 
 
     # Assigns the working folder based on whether emissions is being calculated as part of the full model run or not

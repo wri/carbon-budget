@@ -52,7 +52,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
     # Checks whether the canopy cover argument is valid
     if thresh < 0 or thresh > 99:
-        raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
+        uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
 
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)

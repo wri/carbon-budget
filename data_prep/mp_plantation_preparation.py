@@ -127,11 +127,11 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     # # Checks if bounding box coordinates are in multiples of 10 (10 degree tiles). If they're not, the script stops.
     # for bound in bound_list:
     #     if bound%10:
-    #         raise Exception(bound, 'not a multiple of 10. Please make bounding box coordinates are multiples of 10.')
+    #         uu.exception_log(bound, 'not a multiple of 10. Please make bounding box coordinates are multiples of 10.')
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
-        raise Exception('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
+        uu.exception_log('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
 
     # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
     total_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
@@ -239,8 +239,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
         # In case some other arguments are provided
         else:
-
-            raise Exception('Invalid GADM tile index shapefile provided. Please provide a valid shapefile.')
+            uu.exception_log('Invalid GADM tile index shapefile provided. Please provide a valid shapefile.')
 
         # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
         # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks

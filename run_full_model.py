@@ -10,6 +10,7 @@ import argparse
 import os
 import glob
 import datetime
+import logging
 import constants_and_names as cn
 import universal_util as uu
 from gain.mp_forest_age_category_natrl_forest import mp_forest_age_category_natrl_forest
@@ -63,13 +64,14 @@ def main ():
     parser.add_argument('--plantations', '-pl', required=False,
                         help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
     args = parser.parse_args()
+
     sensit_type = args.model_type
     stage_input = args.stages
     run_through = args.run_through
     run_date = args.run_date
+    tile_id_list = args.tile_id_list
     carbon_pool_extent = args.carbon_pool_extent
     pools = args.pools_to_use
-    tile_id_list = args.tile_id_list
     thresh = args.tcd_threshold
     if thresh is not None:
         thresh = int(thresh)
@@ -84,16 +86,18 @@ def main ():
     script_start = datetime.datetime.now()
 
     # Create the output log
-    uu.initiate_log(script_start)
+    uu.initiate_log(sensit_type, stage_input, run_through, run_date, tile_id_list, carbon_pool_extent=carbon_pool_extent,
+                    pools=pools, thresh=thresh, std_net_flux=std_net_flux,
+                    include_mangroves=include_mangroves, include_plantations=include_plantations)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (stage_input not in model_stages):
-        raise Exception('Invalid stage selection. Please provide a stage from {}.'.format(model_stages))
+        uu.exception_log('Invalid stage selection. Please provide a stage from', model_stages)
     else:
         pass
     if (run_through not in ['true', 'false']):
-        raise Exception('Invalid run through option. Please enter true or false.')
+        uu.exception_log('Invalid run through option. Please enter true or false.')
     else:
         pass
 
@@ -109,7 +113,7 @@ def main ():
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
     if 'carbon_pools' in actual_stages and carbon_pool_extent not in ['loss', '2000']:
-        raise Exception('Carbon pool year not specified for carbon pool creation step')
+        uu.exception_log('Carbon pool year not specified for carbon pool creation step')
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
@@ -122,26 +126,26 @@ def main ():
                 if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.docker_tmp, sensit_type)):
                     uu.print_log("C++ for {} already compiled.".format(sensit_type))
                 else:
-                    raise Exception('Must compile standard {} model C++...'.format(sensit_type))
+                    uu.exception_log('Must compile standard {} model C++...'.format(sensit_type))
             else:
                 if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp)):
                     uu.print_log("C++ for generic emissions already compiled.")
                 else:
-                    raise Exception('Must compile generic emissions C++...')
+                    uu.exception_log('Must compile generic emissions C++...')
 
         elif (pools == 'soil_only') & (sensit_type == 'std'):
             if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.docker_tmp)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
-                raise Exception('Must compile soil_only C++...')
+                uu.exception_log('Must compile soil_only C++...')
 
         else:
-            raise Exception('Pool and/or sensitivity analysis option not valid for gross emissions')
+            uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
 
     # Checks whether the canopy cover argument is valid up front.
     if 'aggregate' in actual_stages:
         if thresh < 0 or thresh > 99:
-            raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
+            uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
         else:
             pass
 
@@ -178,241 +182,241 @@ def main ():
                            ]
 
 
-    # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
-    # removal function
-    if 'annual_gain_rate_mangrove' in actual_stages:
-
-        uu.print_log(":::::Creating annual removals for mangrove tiles")
-        start = datetime.datetime.now()
-
-        mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
-
-
-    # Creates tiles of the number of years of removals for mangroves
-    if 'gain_year_count_mangrove' in actual_stages:
-
-        uu.print_log(":::::Creating gain year count for mangrove tiles")
-        start = datetime.datetime.now()
-
-        mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n")
-
-
-    # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for mangroves using the standard model
-    # removal function
-    if 'cumulative_gain_mangrove' in actual_stages:
-
-        uu.print_log(":::::Creating cumulative removals for mangrove tiles")
-        start = datetime.datetime.now()
-
-        mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n")
-
-
-    # Creates tiles of annual AGB and BGB gain rate for non-mangrove planted forests using the standard model
-    # removal function
-    if 'annual_gain_rate_planted_forest' in actual_stages:
-
-        uu.print_log(":::::Creating annual removals for planted forest tiles")
-        start = datetime.datetime.now()
-
-        mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n")
-
-
-    # Creates tiles of the number of years of removals for non-mangrove planted forests
-    if 'gain_year_count_planted_forest' in actual_stages:
-
-        uu.print_log(":::::Creating gain year count for planted forest tiles")
-        start = datetime.datetime.now()
-
-        mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n")
-
-
-    # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove planted forests using the standard model
-    # removal function
-    if 'cumulative_gain_planted_forest' in actual_stages:
-
-        uu.print_log(":::::Creating cumulative removals for planted forest tiles")
-        start = datetime.datetime.now()
-
-        mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n")
-
-
-    # Creates age category tiles for natural forests
-    if 'forest_age_category_natrl_forest' in actual_stages:
-
-        uu.print_log(":::::Creating forest age category for natural forest tiles")
-        start = datetime.datetime.now()
-
-        mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n")
-
-
-    # Creates tiles of the number of years of removals for natural forests
-    if 'gain_year_count_natrl_forest' in actual_stages:
-
-        uu.print_log(":::::Creating gain year count for natural forest tiles")
-        start = datetime.datetime.now()
-
-        mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n")
-
-
-    # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
-    # removal function
-    if 'annual_gain_rate_natrl_forest' in actual_stages:
-
-        uu.print_log(":::::Creating annual removals for natural forest tiles")
-        start = datetime.datetime.now()
-
-        mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n")
-
-
-    # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
-    # removal function
-    if 'cumulative_gain_natrl_forest' in actual_stages:
-
-        uu.print_log(":::::Creating cumulative removals for natural forest tiles")
-        start = datetime.datetime.now()
-
-        mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n")
-
-
-    # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
-    if 'removals_merged' in actual_stages:
-
-        uu.print_log(":::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'")
-        start = datetime.datetime.now()
-
-        mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for removals_merged:", elapsed_time, "\n")
-
-
-    # Creates carbon pools in loss year
-    if 'carbon_pools' in actual_stages:
-
-        uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
-        tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
-        tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
-        tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
-        tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
-        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-
-        for tile_to_delete in tiles_to_delete:
-            os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted unneeded tiles")
-
-        uu.print_log(":::::Creating emissions year carbon pools tiles")
-        start = datetime.datetime.now()
-
-        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for carbon_pools:", elapsed_time, "\n")
-
-
-    # Creates gross emissions tiles by driver, gas, and all emissions combined
-    if 'gross_emissions' in actual_stages:
-
-        uu.print_log(":::::Freeing up memory for gross emissions creation by deleting unneeded tiles")
-        tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
-        tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
-        tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-
-        for tile_to_delete in tiles_to_delete:
-            os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted unneeded tiles")
-
-        uu.print_log(":::::Creating gross emissions tiles")
-        start = datetime.datetime.now()
-
-        mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = run_date, working_dir = working_dir)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n")
-
-
-    # Creates net flux tiles (gross emissions - gross removals)
-    if 'net_flux' in actual_stages:
-
-        uu.print_log(":::::Creating net flux tiles")
-        start = datetime.datetime.now()
-
-        mp_net_flux(sensit_type, tile_id_list, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n")
-
-
-    # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
-    # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
-    if 'aggregate' in actual_stages:
-
-        uu.print_log(":::::Creating 5km aggregate maps")
-        start = datetime.datetime.now()
-
-        mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n")
-
-
-    script_end = datetime.datetime.now()
-    script_elapsed_time = script_end - script_start
-    uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
+    # # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
+    # # removal function
+    # if 'annual_gain_rate_mangrove' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating annual removals for mangrove tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of the number of years of removals for mangroves
+    # if 'gain_year_count_mangrove' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating gain year count for mangrove tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for mangroves using the standard model
+    # # removal function
+    # if 'cumulative_gain_mangrove' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating cumulative removals for mangrove tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of annual AGB and BGB gain rate for non-mangrove planted forests using the standard model
+    # # removal function
+    # if 'annual_gain_rate_planted_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating annual removals for planted forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of the number of years of removals for non-mangrove planted forests
+    # if 'gain_year_count_planted_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating gain year count for planted forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove planted forests using the standard model
+    # # removal function
+    # if 'cumulative_gain_planted_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating cumulative removals for planted forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates age category tiles for natural forests
+    # if 'forest_age_category_natrl_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating forest age category for natural forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of the number of years of removals for natural forests
+    # if 'gain_year_count_natrl_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating gain year count for natural forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
+    # # removal function
+    # if 'annual_gain_rate_natrl_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating annual removals for natural forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
+    # # removal function
+    # if 'cumulative_gain_natrl_forest' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating cumulative removals for natural forest tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n")
+    #
+    #
+    # # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
+    # if 'removals_merged' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for removals_merged:", elapsed_time, "\n")
+    #
+    #
+    # # Creates carbon pools in loss year
+    # if 'carbon_pools' in actual_stages:
+    #
+    #     uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
+    #     tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
+    #     uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    #
+    #     for tile_to_delete in tiles_to_delete:
+    #         os.remove(tile_to_delete)
+    #     uu.print_log(":::::Deleted unneeded tiles")
+    #
+    #     uu.print_log(":::::Creating emissions year carbon pools tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for carbon_pools:", elapsed_time, "\n")
+    #
+    #
+    # # Creates gross emissions tiles by driver, gas, and all emissions combined
+    # if 'gross_emissions' in actual_stages:
+    #
+    #     uu.print_log(":::::Freeing up memory for gross emissions creation by deleting unneeded tiles")
+    #     tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+    #     uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    #
+    #     for tile_to_delete in tiles_to_delete:
+    #         os.remove(tile_to_delete)
+    #     uu.print_log(":::::Deleted unneeded tiles")
+    #
+    #     uu.print_log(":::::Creating gross emissions tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = run_date, working_dir = working_dir)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n")
+    #
+    #
+    # # Creates net flux tiles (gross emissions - gross removals)
+    # if 'net_flux' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating net flux tiles")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_net_flux(sensit_type, tile_id_list, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n")
+    #
+    #
+    # # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
+    # # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
+    # if 'aggregate' in actual_stages:
+    #
+    #     uu.print_log(":::::Creating 5km aggregate maps")
+    #     start = datetime.datetime.now()
+    #
+    #     mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
+    #
+    #     end = datetime.datetime.now()
+    #     elapsed_time = end - start
+    #     uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n")
+    #
+    #
+    # script_end = datetime.datetime.now()
+    # script_elapsed_time = script_end - script_start
+    # uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
 
 
 if __name__ == '__main__':

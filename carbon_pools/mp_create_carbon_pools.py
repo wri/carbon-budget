@@ -44,11 +44,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     os.chdir(cn.docker_base_dir)
 
     if (sensit_type != 'std') & (carbon_pool_extent != 'loss'):
-        raise Exception("Sensitivity analysis run must use 'loss' extent")
+        uu.exception_log("Sensitivity analysis run must use 'loss' extent")
 
     # Checks the validity of the carbon_pool_extent argument
     if (carbon_pool_extent not in ['loss', '2000']):
-        raise Exception("Invalid carbon_pool_extent input. Please choose loss or 2000.")
+        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss or 2000.")
 
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
@@ -138,7 +138,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             download_dict[cn.loss_dir] = ['']
 
     else:
-        raise Exception('Extent not valid.')
+        uu.exception_log('Extent not valid.')
 
 
     for key, values in download_dict.items():
@@ -227,7 +227,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
     else:
-        raise Exception("Extent argument not valid")
+        uu.exception_log("Extent argument not valid")
 
 
     uu.print_log("Creating tiles of belowground carbon")
@@ -306,7 +306,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.print_log("Skipping soil for 2000 carbon pool calculation")
 
     else:
-        raise Exception("Extent argument not valid")
+        uu.exception_log("Extent argument not valid")
 
 
     uu.print_log("Creating tiles of total carbon")

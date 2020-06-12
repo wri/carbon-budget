@@ -3,6 +3,7 @@ import glob
 import constants_and_names as cn
 import datetime
 import rasterio
+import logging
 import csv
 from shutil import copyfile
 import os
@@ -25,12 +26,28 @@ def upload_log():
     cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
     subprocess.check_call(cmd)
 
-# Creates the log with a starting line
-def initiate_log(script_start):
 
-    model_log_initiator = open(os.path.join(cn.docker_app, cn.model_log), "w+")
-    model_log_initiator.write("This is the start of the log. The log starts at {}".format(script_start) + "\n")
-    model_log_initiator.close()
+# Creates the log with a starting line
+def initiate_log(sensit_type, stage_input, run_through, run_date, tile_id_list, carbon_pool_extent=None, pools=None,
+                    thresh=None, std_net_flux=None,
+                    include_mangroves=None, include_plantations=None):
+
+    logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
+                        datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.DEBUG)
+    logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
+    logging.info("Sensitivity analysis type: {}".format(sensit_type))
+    logging.info("Model stages to run: {}".format(stage_input))
+    logging.info("Run through model: {}".format(run_through))
+    logging.info("Run date: {}".format(run_date))
+    logging.info("Tile ID list: {}".format(tile_id_list))
+    logging.info("Carbon pools to generate (optional): {}".format(carbon_pool_extent))
+    logging.info("Emissions pools (optional): {}".format(pools))
+    logging.info("TCD threshold for aggregated map (optional): {}".format(thresh))
+    logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
+    logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
+    logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
+    logging.info("")
+
 
 # Prints the output statement in the console and adds it to the log. It can handle an indefinite number of string to print
 def print_log(*args):
@@ -42,17 +59,33 @@ def print_log(*args):
     for arg in args:
         full_statement = full_statement + str(arg) + " "
 
+    logging.info(full_statement)
+
     # Prints to console
     print("LOG: " + full_statement)
 
-    # Prints to the log. Line break must be added.
-    model_log_writer = open(os.path.join(cn.docker_app, cn.model_log), "a+")
-    model_log_writer.write(full_statement)
-    model_log_writer.write("\n")
-    model_log_writer.close()
-
     # Every time a line is added to the log, it is copied to s3
     upload_log()
+
+
+# Logs fatal errors to the log txt, uploads to s3, and then terminates the program with an exception in the console
+def exception_log(*args):
+
+    # Empty string
+    full_statement = str(object='')
+
+    # Concatenates all individuals strings to the complete line to print
+    for arg in args:
+        full_statement = full_statement + str(arg) + " "
+
+    # Adds the exception to the log txt
+    logging.debug(full_statement, stack_info=True)
+
+    # Need to upload to s3 before printing to console so that version saved on s3 has the fatal error
+    upload_log()
+
+    # Prints to console, ending the program
+    raise Exception(full_statement)
 
 
 # Gets the tile id from the full tile name using a regular expression
@@ -817,7 +850,7 @@ def check_sensit_type(sensit_type):
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (sensit_type not in cn.sensitivity_list):
-        raise Exception('Invalid model type. Please provide a model type from {}.'.format(cn.sensitivity_list))
+        exception_log('Invalid model type. Please provide a model type from {}.'.format(cn.sensitivity_list))
     else:
         pass
 
@@ -905,7 +938,7 @@ def tile_id_list_check(tile_id_list):
 
         for tile_id in tile_id_list:
             if tile_id not in possible_tile_list:
-                raise Exception('Tile_id not valid')
+                exception_log('Tile_id {} not valid'.format(tile_id))
         else:
             print_log("{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n")
             return tile_id_list
