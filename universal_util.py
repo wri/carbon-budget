@@ -19,31 +19,41 @@ d = datetime.datetime.today()
 date_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 # date_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
 
+# Uploads the output log to the designated s3 location
+def upload_log():
+
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
+    subprocess.check_call(cmd)
+
+# Creates the log with a starting line
 def initiate_log(script_start):
 
     model_log_initiator = open(os.path.join(cn.docker_app, cn.model_log), "w+")
     model_log_initiator.write("This is the start of the log. The log starts at {}".format(script_start) + "\n")
     model_log_initiator.close()
 
-
+# Prints the output statement in the console and adds it to the log. It can handle an indefinite number of string to print
 def print_log(*args):
 
+    # Empty string
     full_statement = str(object='')
+
+    # Concatenates all individuals strings to the complete line to print
     for arg in args:
         full_statement = full_statement + str(arg) + " "
 
+    # Prints to console
     print("LOG: " + full_statement)
 
+    # Prints to the log. Line break must be added.
     model_log_writer = open(os.path.join(cn.docker_app, cn.model_log), "a+")
     model_log_writer.write(full_statement)
     model_log_writer.write("\n")
     model_log_writer.close()
 
+    # Every time a line is added to the log, it is copied to s3
+    upload_log()
 
-def upload_log():
-
-    cmd = ['aws', 's3', 'cp', cn.model_log, cn.model_log_dir]
-    subprocess.check_call(cmd)
 
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):

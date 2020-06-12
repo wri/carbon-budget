@@ -83,6 +83,7 @@ def main ():
     # Start time for script
     script_start = datetime.datetime.now()
 
+    # Create the output log
     uu.initiate_log(script_start)
 
 

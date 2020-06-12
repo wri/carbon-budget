@@ -17,6 +17,7 @@ sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_a
 import multiprocessing
 import subprocess
 from functools import partial
+import datetime
 import argparse
 import os
 import glob
@@ -240,6 +241,10 @@ if __name__ == '__main__':
     std_net_flux = args.std_net_flux_aggreg
     thresh = args.tcd_threshold
     thresh = int(thresh)
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

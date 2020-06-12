@@ -4,6 +4,7 @@
 import multiprocessing
 from functools import partial
 import Mekong_loss
+import datetime
 import subprocess
 import os
 import glob
@@ -13,6 +14,10 @@ import constants_and_names as cn
 import universal_util as uu
 
 def main ():
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     os.chdir(cn.docker_base_dir)
 

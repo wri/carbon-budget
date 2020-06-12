@@ -28,6 +28,7 @@ Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgib
 import multiprocessing
 import pandas as pd
 import subprocess
+import datetime
 import os
 import argparse
 from functools import partial
@@ -344,6 +345,10 @@ if __name__ == '__main__':
     tile_id_list = args.tile_id_list
     carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

@@ -11,6 +11,7 @@ import multiprocessing
 from functools import partial
 import argparse
 import pandas as pd
+import datetime
 import subprocess
 import os
 import sys
@@ -160,6 +161,10 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

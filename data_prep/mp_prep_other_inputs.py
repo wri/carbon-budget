@@ -7,6 +7,7 @@ and combining IFL2000 (extratropics) and primary forests (tropics) into a single
 import subprocess
 import argparse
 import multiprocessing
+import datetime
 from functools import partial
 import sys
 import os
@@ -16,7 +17,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date):
+def mp_prep_other_inputs(tile_id_list, run_date):
 
     os.chdir(cn.docker_base_dir)
     sensit_type='std'
@@ -122,5 +123,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date)

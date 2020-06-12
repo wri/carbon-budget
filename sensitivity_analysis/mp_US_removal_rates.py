@@ -28,6 +28,7 @@ different are the ones that have a region-group-age combination that's in the FI
 
 import multiprocessing
 from functools import partial
+import datetime
 from sensitivity_analysis import US_removal_rates
 import pandas as pd
 import subprocess
@@ -38,6 +39,10 @@ import constants_and_names as cn
 import universal_util as uu
 
 def main ():
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     os.chdir(cn.docker_base_dir)
 

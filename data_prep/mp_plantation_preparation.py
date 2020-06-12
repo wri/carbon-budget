@@ -105,6 +105,7 @@ import plantation_preparation
 from multiprocessing.pool import Pool
 from functools import partial
 import glob
+import datetime
 import subprocess
 import argparse
 import os
@@ -392,5 +393,9 @@ if __name__ == '__main__':
     planted_index_path = planted_index[0]
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_plantation_preparation(gadm_index_shp=gadm_index_shp, planted_index_shp=planted_index_shp)

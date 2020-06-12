@@ -4,6 +4,7 @@ There is no Saatchi_biomass_prep.py because this script just uses the utility wa
 '''
 
 import multiprocessing
+import datetime
 from multiprocessing.pool import Pool
 from functools import partial
 import os
@@ -13,6 +14,10 @@ import constants_and_names as cn
 import universal_util as uu
 
 def main ():
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     os.chdir(cn.docker_base_dir)
 

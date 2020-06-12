@@ -4,6 +4,7 @@
 import multiprocessing
 import argparse
 import os
+import datetime
 from functools import partial
 import sys
 sys.path.append('/usr/local/app/gain/')
@@ -98,6 +99,10 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

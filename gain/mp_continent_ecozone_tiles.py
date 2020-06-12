@@ -19,6 +19,7 @@
 import multiprocessing
 import continent_ecozone_tiles
 import subprocess
+import datetime
 import argparse
 import os
 import sys
@@ -80,5 +81,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_continent_ecozone_tiles(tile_id_list=tile_id_list, run_date=run_date)

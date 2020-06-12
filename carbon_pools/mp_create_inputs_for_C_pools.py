@@ -6,6 +6,7 @@ It takes several hours to run.
 import subprocess
 import os
 import argparse
+import datetime
 import create_inputs_for_C_pools
 import multiprocessing
 import sys
@@ -79,5 +80,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_create_inputs_for_C_pools(tile_id_list=tile_id_list, run_date=run_date)

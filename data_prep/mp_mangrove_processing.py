@@ -5,6 +5,7 @@
 import multiprocessing
 import sys
 import argparse
+import datetime
 from functools import partial
 import os
 import subprocess
@@ -68,5 +69,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date)

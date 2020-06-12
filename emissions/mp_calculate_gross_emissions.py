@@ -24,6 +24,7 @@ These codes are summarized in carbon-budget/emissions/node_codes.txt
 
 import multiprocessing
 import argparse
+import datetime
 import os
 from functools import partial
 import sys
@@ -249,6 +250,11 @@ if __name__ == '__main__':
     tile_id_list = args.tile_id_list
     pools = args.pools_to_use
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
+
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
 

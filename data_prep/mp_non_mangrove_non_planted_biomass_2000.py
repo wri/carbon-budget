@@ -5,6 +5,7 @@ import multiprocessing
 from functools import partial
 import non_mangrove_non_planted_biomass_2000
 import argparse
+import datetime
 import os
 import pandas as pd
 import sys
@@ -95,5 +96,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_non_mangrove_non_planted_biomass_2000(tile_id_list=tile_id_list, run_date=run_date)

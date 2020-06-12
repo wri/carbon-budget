@@ -3,6 +3,7 @@
 import multiprocessing
 from functools import partial
 import glob
+import datetime
 import argparse
 from osgeo import gdal
 import legal_AMZ_loss
@@ -21,6 +22,10 @@ sys.path.append('../carbon_pools')
 import create_carbon_pools
 
 def main ():
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     os.chdir(cn.docker_base_dir)
 

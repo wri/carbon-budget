@@ -17,6 +17,7 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 import subprocess
 import create_soil_C
 import multiprocessing
+import datetime
 import argparse
 import os
 import sys
@@ -136,5 +137,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    script_start = datetime.datetime.now()
+    uu.initiate_log(script_start)
 
     mp_create_soil_C(tile_id_list=tile_id_list, run_date=run_date)
