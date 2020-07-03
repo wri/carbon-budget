@@ -7,7 +7,7 @@ from functools import partial
 import argparse
 import datetime
 import pandas as pd
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')

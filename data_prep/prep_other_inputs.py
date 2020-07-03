@@ -4,7 +4,7 @@ At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000
 '''
 
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import rasterio
 import os
 import numpy as np
@@ -39,7 +39,10 @@ def data_prep(tile_id):
            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', 'Byte', '-overwrite',
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
            cn.climate_zone_raw, '{0}_{1}.tif'.format(tile_id, "climate_zone_intermediate")]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Fills in empty pixels in the climate zone raster with whatever value is most common (mode) in its 1024x1024 pixel window.
     # That is, any 1024x1024 processing window that has >=1 climate zone pixel in it will have its empty pixels filled in

@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 from osgeo import gdal
 import utilities
 import glob

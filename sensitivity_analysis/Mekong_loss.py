@@ -2,7 +2,7 @@ import datetime
 import numpy as np
 import os
 import rasterio
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -28,7 +28,10 @@ def recode_tiles(annual_loss):
         outfile = '--outfile={}'.format(recoded_output)
 
         cmd = ['gdal_calc.py', '-A', annual_loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--quiet']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
 def reset_nodata(tile_id):
 

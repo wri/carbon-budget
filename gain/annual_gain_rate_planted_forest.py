@@ -9,7 +9,7 @@
 ### separate above and below annual biomass gain rate files, so this brings planted forests into line with them.
 
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('../')
@@ -48,7 +48,10 @@ def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
         # in gdal_calc. The gdal_calc expression didn't know how to evaluate nodata values, so I had to remove them.
         uu.print_log("    Removing nodata values in mangrove biomass raster {}".format(tile_id))
         cmd = ['gdal_translate', '-a_nodata', 'none', '-co', 'COMPRESS=LZW', mangrove_biomass, mangrove_reclass]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         # Masks out the mangrove biomass from the planted forest gain rate
         uu.print_log("    Masking mangroves from aboveground gain rate for planted forest tile {}...".format(tile_id))
@@ -57,7 +60,10 @@ def mask_mangroves_and_pre_2000_plant(tile_id, sensit_type):
         mask_outfilearg = '--outfile={}'.format(mask_outfilename)
         cmd = ['gdal_calc.py', '-A', planted_forest_full_extent, '-B', mangrove_reclass, mangrove_mask_calc, mask_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     # If there is no mangrove tile, the planted forest AGC/BGC tile is renamed to have the same name as comes out of
     # the masking option
@@ -90,7 +96,10 @@ def create_AGB_rate(tile_id, output_pattern_list):
     AGB_outfilearg = '--outfile={}'.format(AGB_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_no_mangrove, AGB_calc, AGB_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])
@@ -115,7 +124,10 @@ def create_BGB_rate(tile_id, output_pattern_list):
     below_outfilearg = '--outfile={}'.format(below_outfilename)
     cmd = ['gdal_calc.py', '-A', planted_forest_AGB_rate, above_to_below_calc, below_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern_list[1])

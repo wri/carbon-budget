@@ -12,7 +12,7 @@ from functools import partial
 import argparse
 import pandas as pd
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')

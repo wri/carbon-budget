@@ -12,7 +12,7 @@ The user has to supply a tcd threshold for which forest pixels to include in the
 '''
 
 import numpy as np
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import rasterio
 from rasterio.transform import from_origin
@@ -54,7 +54,10 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tile, input_rewindow]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     if not os.path.exists(tcd_rewindow):
 
@@ -64,7 +67,10 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tcd_tile, tcd_rewindow]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     else:
 
@@ -78,7 +84,10 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                area_tile, pixel_area_rewindow]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     else:
 
@@ -210,7 +219,10 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
            '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)

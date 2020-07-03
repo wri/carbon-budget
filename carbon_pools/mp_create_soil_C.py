@@ -14,7 +14,7 @@ getting mineral soil C values out.
 So, I switched to this somewhat more convoluted method that uses both gdal and rasterio/numpy.
 '''
 
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import create_soil_C
 import multiprocessing
 import datetime
@@ -62,16 +62,25 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     # # zip file if it is downloaded using wget but it does work if it comes from s3.
     # print "Downloading soil grids 250 raster"
     # cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
-    # subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
     #
     # print "Downloading mangrove soil C raster"
     # cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
-    # subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
 
 
     uu.print_log("Unzipping mangrove soil C images...")
-    unzip_zones = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', cn.docker_base_dir]
-    subprocess.check_call(unzip_zones)
+    cmd = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', cn.docker_base_dir]
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mangrove soil C vrt...")

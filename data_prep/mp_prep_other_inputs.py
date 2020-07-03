@@ -4,7 +4,7 @@ At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000
 and combining IFL2000 (extratropics) and primary forests (tropics) into a single layer.
 '''
 
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import argparse
 import multiprocessing
 import datetime
@@ -62,16 +62,25 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     uu.s3_folder_download(cn.ifl_dir, cn.docker_base_dir, sensit_type)
 
     cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_drivers_raw)]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Converts the IDN/MYS pre-2000 plantation shp to a raster
     cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0',
           '{}.shp'.format(cn.pattern_plant_pre_2000_raw), '{}.tif'.format(cn.pattern_plant_pre_2000_raw)]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
     pool = multiprocessing.Pool(cn.count-7)

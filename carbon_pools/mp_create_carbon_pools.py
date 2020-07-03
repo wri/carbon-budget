@@ -27,7 +27,7 @@ Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgib
 
 import multiprocessing
 import pandas as pd
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import os
 import argparse

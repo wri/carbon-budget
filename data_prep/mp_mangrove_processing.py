@@ -8,7 +8,7 @@ import argparse
 import datetime
 from functools import partial
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -33,7 +33,10 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
     # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
     cmd = ['unzip', '-o', '-j', cn.mangrove_biomass_raw_file]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Creates vrt for the Saatchi biomass rasters
     mangrove_vrt = 'mangrove_biomass.vrt'

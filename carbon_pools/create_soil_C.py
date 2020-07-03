@@ -14,7 +14,7 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import numpy as np
 import rasterio
 import os
@@ -50,7 +50,10 @@ def create_mangrove_soil_C(tile_id):
         uu.print_log("Masking mangrove soil to mangrove biomass for", tile_id)
         cmd = ['gdal_calc.py', '-A', mangrove_soil, '-B', mangrove_biomass,
                calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     else:
 

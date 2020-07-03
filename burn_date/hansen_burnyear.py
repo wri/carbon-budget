@@ -2,7 +2,7 @@ import os
 import utilities
 import glob
 import numpy as np
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import sys
 sys.path.append('../')
 import constants_and_names as cn

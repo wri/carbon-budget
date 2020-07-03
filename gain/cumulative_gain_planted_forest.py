@@ -2,7 +2,7 @@
 ### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and C to CO2 conversion.
 
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -26,7 +26,10 @@ def cumulative_gain_AGC(tile_id, pattern, sensit_type):
     AGCO2_accum_outfilearg = '--outfile={}'.format(AGCO2_accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_AGB, '-B', gain_year_count, accum_calc, AGCO2_accum_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)
@@ -50,7 +53,10 @@ def cumulative_gain_BGC(tile_id, pattern, sensit_type):
     BGCO2_accum_outfilearg = '--outfile={}'.format(BGCO2_accum_outfilename)
     cmd = ['gdal_calc.py', '-A', gain_rate_BGB, '-B', gain_year_count, accum_calc, BGCO2_accum_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)

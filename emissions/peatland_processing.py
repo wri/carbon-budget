@@ -5,7 +5,7 @@ Outside that band (>40N, since there are no tiles at >60S), SoilGrids250m is use
 Any pixel that is marked as most likely being a histosol subgroup is classified as peat.
 '''
 
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import datetime
 import sys
@@ -41,7 +41,10 @@ def create_peat_mask_tiles(tile_id):
         AGC_accum_outfilearg = '--outfile={}'.format(out_tile)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, AGC_accum_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         uu.print_log("{} created.".format(tile_id))
 
@@ -58,7 +61,11 @@ def create_peat_mask_tiles(tile_id):
                '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
                '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile]
 
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
+
         uu.print_log("{} created.".format(tile_id))
 
 

@@ -15,7 +15,7 @@ sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_a
 
 
 import multiprocessing
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 from functools import partial
 import datetime
 import argparse
@@ -161,7 +161,10 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
                '-tr', '0.04', '0.04',
                out_vrt, '{}.tif'.format(out_pattern)]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         uu.print_log("Tiles processed. Uploading to s3 now...")
 

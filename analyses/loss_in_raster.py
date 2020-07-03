@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import os
 import sys
@@ -48,7 +48,11 @@ def loss_in_raster(tile_id, raster_type, output_name, lat, mask):
         uu.print_log("Masking loss in {} by raster of interest...".format(tile_id))
         cmd = ['gdal_calc.py', '-A', loss_tile, '-B', raster_of_interest, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
                '--overwrite', '--quiet']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
+
         uu.print_log("{} masked".format(tile_id))
 
     else:

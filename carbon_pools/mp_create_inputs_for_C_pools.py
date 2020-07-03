@@ -3,7 +3,7 @@ This script creates the three inputs used for creating the carbon pools besides 
 It takes several hours to run.
 '''
 
-from subprocess import check_call, Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import argparse
 import datetime

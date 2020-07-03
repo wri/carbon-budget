@@ -31,7 +31,7 @@ from functools import partial
 import datetime
 from sensitivity_analysis import US_removal_rates
 import pandas as pd
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('../')
@@ -77,7 +77,10 @@ def main ():
         uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, 'std')
 
         cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         # Converts the region shapefile to Hansen tiles
         pool = multiprocessing.Pool(int(cn.count/2))

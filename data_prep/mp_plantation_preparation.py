@@ -106,7 +106,7 @@ from multiprocessing.pool import Pool
 from functools import partial
 import glob
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import argparse
 import os
 from simpledbf import Dbf5
@@ -166,7 +166,10 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
             # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
             uu.s3_file_download(cn.gadm_path, cn.docker_base_dir)
             cmd = ['unzip', cn.gadm_zip]
-            subprocess.check_call(cmd)
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                uu.log_subprocess_output(process.stdout)
 
             # Creates a new GADM shapefile with just the countries that have planted forests in them.
             # This limits creation of 1x1 rasters of land area on the countries that have planted forests rather than on all countries.

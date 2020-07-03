@@ -13,10 +13,10 @@
 
 import multiprocessing
 from functools import partial
-import pandas as pd
+import pandas as pdmp
 import datetime
 import argparse
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')

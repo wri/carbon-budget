@@ -1,6 +1,6 @@
 import multiprocessing
 import clip_year_tiles
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import glob
 import shutil
 
@@ -26,7 +26,10 @@ for year in range(2018, 2019):
 
     cmd = ['aws', 's3', 'cp', modis_burnyear_dir, year_tifs_folder]
     cmd += ['--recursive', '--exclude', "*", '--include', include]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     uu.print_log("Creating vrt of MODIS files...")
 
@@ -41,14 +44,20 @@ for year in range(2018, 2019):
 
     # create vrt with wgs84 modis tiles
     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     uu.print_log("Reprojecting vrt...")
 
     # # build new vrt and virtually project it
     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
     cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite', vrt_name, vrt_wgs84]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # clip vrt to hansen tile extent
     tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')

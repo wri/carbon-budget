@@ -7,7 +7,7 @@
 ### This is one of the mangrove inputs for the carbon gain model.
 ### If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the constants in create_gain_year_count_mangrove.py must be changed.
 
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import sys
 sys.path.append('../')
@@ -42,7 +42,10 @@ def create_gain_year_count_loss_only(tile_id):
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_calc, loss_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
@@ -65,7 +68,10 @@ def create_gain_year_count_gain_only_standard(tile_id):
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg, '--NoDataValue=0',
            '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
@@ -88,7 +94,10 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, gain_calc, gain_outfilearg, '--NoDataValue=0',
            '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
@@ -112,7 +121,10 @@ def create_gain_year_count_no_change(tile_id):
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, no_change_calc, no_change_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
@@ -135,7 +147,10 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc, loss_and_gain_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
@@ -158,7 +173,10 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', mangrove, loss_and_gain_calc, loss_and_gain_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
@@ -182,7 +200,10 @@ def create_gain_year_count_merge(tile_id, pattern):
     age_outfile = '{}_{}.tif'.format(tile_id, pattern)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, gain_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)

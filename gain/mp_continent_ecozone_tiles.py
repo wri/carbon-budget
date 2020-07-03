@@ -18,7 +18,7 @@
 
 import multiprocessing
 import continent_ecozone_tiles
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import argparse
 import os
@@ -45,7 +45,10 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
 
     # List of output directories and output file name patterns

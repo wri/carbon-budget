@@ -13,7 +13,7 @@ import argparse
 import datetime
 import sys
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -50,15 +50,20 @@ def mp_peatland_processing(tile_id_list, run_date = None):
 
     # Unzips the Jukka peat shapefile (IDN and MYS)
     cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     jukka_tif = 'jukka_peat.tif'
 
     # Converts the Jukka peat shapefile to a raster
     cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
-
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # For multiprocessor use
     # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.

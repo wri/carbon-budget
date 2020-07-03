@@ -3,7 +3,7 @@
 
 import multiprocessing
 import tile_statistics
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 from functools import partial
 import argparse

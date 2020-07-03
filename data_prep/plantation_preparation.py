@@ -1,5 +1,5 @@
 
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import psycopg2
 import sys
@@ -37,7 +37,10 @@ def rasterize_gadm_1x1(tile_id):
             cmd = ['gdal_rasterize', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
                    '-co', 'COMPRESS=LZW', '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
                    '-burn', '1', '-a_nodata', '0', cn.gadm_iso, tile_1x1]
-            subprocess.check_call(cmd)
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                uu.log_subprocess_output(process.stdout)
 
             # Only keeps 1x1 GADM tiles if they actually include a country; many 1x1 tiles created out of 10x10 tiles
             # don't actually include a country.
@@ -99,12 +102,18 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
         # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
         # For plantation gain rate
         cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
         # For plantation type
         cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_type_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'type_reclass', '-a_nodata', '0']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     # If no features in the PostGIS table were intersected with the 1x1 GADM tile, nothing happens.
     else:
@@ -130,8 +139,13 @@ def create_1x1_plantation_growth_from_1x1_planted(tile_1x1):
     uu.print_log("There are plantations in {}. Converting to raster...".format(tile_1x1))
 
     # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
-    cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
-    subprocess.check_call(cmd)
+    cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW',
+           'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
+           str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
 
 # Creates 1x1 degree tiles for the entire extent of planted forest using the supplied forest types
@@ -157,7 +171,10 @@ def create_1x1_plantation_type_from_1x1_planted(tile_1x1):
            '-l', 'all_plant', 'plant_type_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1),
            '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
            '-a', 'type_reclass', '-a_nodata', '0', '-ot', 'Byte']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
 
 # Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
@@ -172,7 +189,10 @@ def create_10x10_plantation_gain(tile_id, plant_gain_1x1_vrt):
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_gain_1x1_vrt, tile_10x10]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     uu.print_log("Checking if {} contains any data...".format(tile_id))
     stats = uu.check_for_data(tile_10x10)
@@ -200,7 +220,10 @@ def create_10x10_plantation_type(tile_id, plant_type_1x1_vrt):
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Byte', plant_type_1x1_vrt, tile_10x10]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     uu.print_log("Checking if {} contains any data...".format(tile_id))
     stats = uu.check_for_data(tile_10x10)

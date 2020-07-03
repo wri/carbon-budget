@@ -1,6 +1,6 @@
 
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import numpy as np
 from osgeo import gdal
 from gdalconst import GA_ReadOnly
@@ -27,11 +27,12 @@ def wgetloss(tile_id):
     uu.print_log("download hansen loss tile")
 
     hansen_tile = '{}_loss.tif'.format(tile_id)
-    # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
-    #       '-O', hansen_tile]
     cmd = ['wget', r'https://glad.umd.edu/Potapov/GFW_2018/forest_loss_2018/{}.tif'.format(tile_id)]
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
-    subprocess.check_call(cmd)    
     return hansen_tile
 
 

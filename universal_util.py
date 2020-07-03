@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import glob
 import constants_and_names as cn
 import datetime
@@ -24,7 +24,7 @@ date_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 def upload_log():
 
     cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
-    subprocess.check_call(cmd)
+    check_call(cmd)
 
 
 # Creates the log with a starting line
@@ -163,7 +163,7 @@ def tile_list_s3(source, sensit_type='std'):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -193,7 +193,7 @@ def tile_list_spot_machine(source, pattern):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = subprocess.Popen(['ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = Popen(['ls', source], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -245,14 +245,14 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         set2 = set2.replace('standard', sensit_type)
 
 
-    out = subprocess.Popen(['aws', 's3', 'ls', set1], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
     # Writes the output string to a text file for easier interpretation
     set1_tiles = open("set1.txt", "wb")
     set1_tiles.write(stdout)
     set1_tiles.close()
 
-    out = subprocess.Popen(['aws', 's3', 'ls', set2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
     stdout2, stderr2 = out.communicate()
     # Writes the output string to a text file for easier interpretation
     set2_tiles = open("set2.txt", "wb")
@@ -302,7 +302,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         else:
             set3 = set3.replace('standard', sensit_type)
 
-        out = subprocess.Popen(['aws', 's3', 'ls', set3], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        out = Popen(['aws', 's3', 'ls', set3], stdout=PIPE, stderr=STDOUT)
         stdout3, stderr3 = out.communicate()
         # Writes the output string to a text file for easier interpretation
         set3_tiles = open("set3.txt", "wb")
@@ -356,7 +356,7 @@ def count_tiles_s3(source):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -516,7 +516,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
             process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
             with process.stdout:
-                uu.log_subprocess_output(process.stdout)
+                log_subprocess_output(process.stdout)
 
             print_log('\n')
 
@@ -540,7 +540,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+            log_subprocess_output(process.stdout)
 
         print_log('\n')
 
@@ -578,7 +578,7 @@ def s3_file_download(source, dest, sensit_type):
                 # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                 process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
                 with process.stdout:
-                    uu.log_subprocess_output(process.stdout)
+                    log_subprocess_output(process.stdout)
 
                 print_log(file_name_sens, "not previously downloaded. Now downloaded to", dest, '\n')
 
@@ -598,7 +598,7 @@ def s3_file_download(source, dest, sensit_type):
                     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
                     with process.stdout:
-                        uu.log_subprocess_output(process.stdout)
+                        log_subprocess_output(process.stdout)
 
                     print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
                 except:
@@ -619,7 +619,7 @@ def s3_file_download(source, dest, sensit_type):
                 # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                 process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
                 with process.stdout:
-                    uu.log_subprocess_output(process.stdout)
+                    log_subprocess_output(process.stdout)
 
                 print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
             except:
@@ -636,7 +636,7 @@ def upload_final_set(upload_dir, pattern):
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+            log_subprocess_output(process.stdout)
     except:
         print_log("Error uploading output tile")
 
@@ -653,7 +653,7 @@ def upload_final(upload_dir, tile_id, pattern):
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+            log_subprocess_output(process.stdout)
     except:
         print_log("Error uploading output tile")
 
@@ -746,7 +746,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_file]
-    subprocess.check_call(cmd)
+    check_call(cmd)
 
     end_of_fx_summary(start, tile_id, out_pattern)
 
@@ -755,7 +755,7 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
-    subprocess.check_call(cmd)
+    check_call(cmd)
 
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
@@ -768,7 +768,7 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_
            '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
            anodata, in_shape, out_tif]
 
-    subprocess.check_call(cmd)
+    check_call(cmd)
 
     return out_tif
 
@@ -806,7 +806,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
                    '{0}/{1}.tif'.format(folder, tile_id)]
-            subprocess.check_call(cmd)
+            check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine
         else:
@@ -833,7 +833,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, full_pattern),
                    '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
-            subprocess.check_call(cmd)
+            check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
 
@@ -881,7 +881,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         # Only the pre-2000 plantation raster needed to be converted to a vrt; the loss raster did not.
         cmd = ['gdal_translate', '-of', 'VRT', pre_2000_plant,
                '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
-        subprocess.check_call(cmd)
+        check_call(cmd)
 
         # Removes the pre-2000 plantation pixels from the loss tile
         pre_2000_vrt = '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000)
@@ -889,7 +889,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         loss_outfilearg = '--outfile={}'.format(out_name)
         cmd = ['gdal_calc.py', '-A', tile_to_mask, '-B', pre_2000_vrt,
                calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-        subprocess.check_call(cmd)
+        check_call(cmd)
 
     # Basically, does nothing if there is no pre-2000 plantation and the output name is the same as the
     # input name

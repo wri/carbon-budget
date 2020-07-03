@@ -5,7 +5,7 @@ import multiprocessing
 from functools import partial
 import Mekong_loss
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import glob
 import sys
@@ -49,7 +49,10 @@ def main ():
            "Mekong_loss_recoded_2009.tif", "Mekong_loss_recoded_2008.tif", "Mekong_loss_recoded_2007.tif",
            "Mekong_loss_recoded_2006.tif", "Mekong_loss_recoded_2005.tif", "Mekong_loss_recoded_2004.tif",
            "Mekong_loss_recoded_2003.tif", "Mekong_loss_recoded_2002.tif", "Mekong_loss_recoded_2001.tif"]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Creates Hansen tiles out of the composite Mekong loss
     source_raster = loss_composite
