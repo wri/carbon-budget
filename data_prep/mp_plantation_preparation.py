@@ -194,12 +194,22 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
             # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
             os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_today))
             cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
-            subprocess.check_call(cmd)
+
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                uu.log_subprocess_output(process.stdout)
+
 
             # # Saves the 1x1 country extent tiles to s3
             # # Only use if the entire process can't run in one go on the spot machine
             # cmd = ['aws', 's3', 'cp', cn.docker_base_dir, 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
-            # subprocess.check_call(cmd)
+
+            # # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            # with process.stdout:
+            #     uu.log_subprocess_output(process.stdout)
+
 
             # Delete the aux.xml files
             os.system('''rm GADM*.tif.*''')
@@ -222,7 +232,11 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
             # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
             cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), cn.docker_base_dir, '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
-            subprocess.check_call(cmd)
+
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                uu.log_subprocess_output(process.stdout)
 
             # Gets the attribute table of the country extent 1x1 tile shapefile
             gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
@@ -264,7 +278,11 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
         os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
         cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     ### Entry point 3
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
@@ -276,7 +294,12 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         # Copies the shapefile of 1x1 tiles of extent of planted forests
         cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), cn.docker_base_dir, '--recursive', '--exclude', '*', '--include',
                '{}*'.format(planted_index_shp), '--recursive']
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
+
 
         # Gets the attribute table of the planted forest extent 1x1 tile shapefile
         gadm = glob.glob('{}*.dbf'.format(cn.pattern_plant_1x1_index))[0]

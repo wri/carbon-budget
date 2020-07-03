@@ -147,7 +147,11 @@ def main ():
 
     # Table with US-specific removal rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Imports the table with the region-group-age AGB removal rates
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),

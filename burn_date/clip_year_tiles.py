@@ -49,7 +49,10 @@ def clip_year_tiles(tile_year_list):
     cmd = ['aws', 's3', 'mv', recoded_output,
            's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/burn_year_10x10_clip/']
 
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # remove files
     uu.print_log("Removing files")

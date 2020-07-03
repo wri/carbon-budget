@@ -343,7 +343,11 @@ def main ():
 
         # Table with IPCC Table 4.9 default gain rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         pd.options.mode.chained_assignment = None
 
@@ -601,7 +605,12 @@ def main ():
 
         # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
+
 
         pd.options.mode.chained_assignment = None
 

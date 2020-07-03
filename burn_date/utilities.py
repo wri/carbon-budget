@@ -4,6 +4,10 @@ import subprocess
 import numpy as np
 from osgeo import gdal
 from gdalconst import GA_ReadOnly
+import sys
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
 
 
 def hdf_to_array(hdf):
@@ -140,7 +144,11 @@ def download_df(year, hv_tile, output_dir):
         include = '*A{0}*{1}*'.format(year, hv_tile)
         cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/raw_hdf/', output_dir, '--recursive', '--exclude',
                "*", '--include', include]
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
 
 def remove_list_files(file_list):

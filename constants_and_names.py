@@ -497,7 +497,6 @@ pattern_FIA_regions_processed = 'FIA_regions_processed'
 FIA_regions_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/FIA_region/processed/20191216/')
 
 name_US_forest_age_cat_raw = 'stand_age_category_all_US_reclass_focal_composite_set_no_data_20191218.tif'
-# noinspection PyInterpreter,PyInterpreter
 US_forest_age_cat_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_age_category/intermediate/')
 
 pattern_US_forest_age_cat_processed = 'US_forest_age_category_processed'
@@ -509,7 +508,7 @@ FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removal
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_US_removals/forest_group/processed/20191223/')
 
-table_US_removal_rate = 'US_removal_rates_flux_model_20200106.xlsx'
+table_US_removal_rate = 'US_removal_rates_flux_model_20200623.xlsx'
 US_removal_rate_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests

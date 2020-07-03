@@ -72,7 +72,11 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
 
     # Table with IPCC Table 4.9 default gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
     if sensit_type == 'no_primary_gain':

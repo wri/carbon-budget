@@ -494,7 +494,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-            subprocess.check_call(cmd)
+
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                log_subprocess_output(process.stdout)
+
             print_log('\n')
 
         # If there are fewer than 7 files in the sensitivity folder (i.e., either folder doesn't exist or it just has
@@ -507,7 +512,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-            subprocess.check_call(cmd)
+
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                uu.log_subprocess_output(process.stdout)
+
             print_log('\n')
 
     # For the standard model, the standard folder is downloaded.
@@ -526,7 +536,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
+
         print_log('\n')
 
 
@@ -559,7 +574,12 @@ def s3_file_download(source, dest, sensit_type):
             else:
                 source = os.path.join(dir_sens, file_name_sens)
                 cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
+
+                # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+                process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+                with process.stdout:
+                    uu.log_subprocess_output(process.stdout)
+
                 print_log(file_name_sens, "not previously downloaded. Now downloaded to", dest, '\n')
 
         # Second attempt is to download the standard version of the file.
@@ -574,7 +594,12 @@ def s3_file_download(source, dest, sensit_type):
                 source = os.path.join(dir, file_name)
                 try:
                     cmd = ['aws', 's3', 'cp', source, dest]
-                    subprocess.check_call(cmd)
+
+                    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+                    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+                    with process.stdout:
+                        uu.log_subprocess_output(process.stdout)
+
                     print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
                 except:
                     print_log(source, 'does not exist in standard model or sensitivity model' + '\n')
@@ -590,7 +615,12 @@ def s3_file_download(source, dest, sensit_type):
             source = os.path.join(dir, file_name)
             try:
                 cmd = ['aws', 's3', 'cp', source, dest]
-                subprocess.check_call(cmd)
+
+                # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+                process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+                with process.stdout:
+                    uu.log_subprocess_output(process.stdout)
+
                 print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
             except:
                 print_log(source, 'does not exist-- check if this is expected to exist' + '\n')
@@ -603,7 +633,10 @@ def upload_final_set(upload_dir, pattern):
            '--recursive', '--no-progress']
 
     try:
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
     except:
         print_log("Error uploading output tile")
 
@@ -617,7 +650,10 @@ def upload_final(upload_dir, tile_id, pattern):
     cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
 
     try:
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
     except:
         print_log("Error uploading output tile")
 

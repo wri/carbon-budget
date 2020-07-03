@@ -3,6 +3,10 @@ import utilities
 import glob
 import numpy as np
 import subprocess
+import sys
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
 
 
 def hansen_burnyear(tile_id):
@@ -23,7 +27,11 @@ def hansen_burnyear(tile_id):
     if not os.path.exists(burn_tiles_dir):
         os.mkdir(burn_tiles_dir)
     cmd = ['aws', 's3', 'cp', input_tiles, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # for each year tile, convert to array and stack them
     array_list = []
@@ -56,7 +64,11 @@ def hansen_burnyear(tile_id):
 
     utilities.array_to_raster_simple(lossyear_burn_array, outname, '{}.tif'.format(tile_id))
     cmd = ['aws', 's3', 'mv', outname, output_tiles]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # clean up files
     os.remove('{}.tif'.format(tile_id))
