@@ -100,7 +100,9 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
-    pool = multiprocessing.Pool(processes=18)
+    processes = 18
+    uu.print_log('Mangrove annual gain rate max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, sensit_type=sensit_type, output_pattern_list=output_pattern_list,
                      gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), tile_id_list)
     pool.close()
