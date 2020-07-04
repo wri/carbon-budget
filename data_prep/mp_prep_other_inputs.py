@@ -83,7 +83,9 @@ def mp_prep_other_inputs(tile_id_list, run_date):
         uu.log_subprocess_output(process.stdout)
 
     # Used about 250 GB of memory. count-7 worked fine (with memory to spare) on an r4.16xlarge machine.
-    pool = multiprocessing.Pool(cn.count-7)
+    processes=cn.count-7
+    uu.print_log('Data prep max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(prep_other_inputs.data_prep, tile_id_list)
 
     # # For single processor use
@@ -97,7 +99,9 @@ def mp_prep_other_inputs(tile_id_list, run_date):
 
     # count/3 uses about 300GB, so there's room for more processors on an r4.16xlarge
     uu.print_log("Creating primary forest tiles...")
-    pool = multiprocessing.Pool(int(cn.count/3))
+    processes=int(cn.count/3)
+    uu.print_log('Primary forest tile prep max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(prep_other_inputs.create_primary_tile, primary_vrt=primary_vrt), tile_id_list)
 
     # # For single processor use
@@ -107,7 +111,9 @@ def mp_prep_other_inputs(tile_id_list, run_date):
 
     # Uses very little memory since it's just file renaming
     uu.print_log("Assigning each tile to ifl2000 or primary forest...")
-    pool = multiprocessing.Pool(cn.count-5)
+    processes=cn.count-5
+    uu.print_log('Assigning tiles to ifl2000 or primary forest max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(prep_other_inputs.create_combined_ifl_primary, tile_id_list)
 
     # # For single processor use

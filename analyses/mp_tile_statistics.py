@@ -122,7 +122,9 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
-        pool = multiprocessing.Pool(processes=9)
+        processes=9
+        uu.print_log('Tile statistics max processors=', processes)
+        pool = multiprocessing.Pool(processes)
         # processes=9 maxes out at about 340 for gross emissions
         # processes=13 maxes out at above 480 for gross emissions
         # processes=11 maxes out at about 440 for gross emissions

@@ -63,7 +63,9 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 360 GB on an r4.16xlarge
-    pool = multiprocessing.Pool(processes=26)
+    processes = 26
+    uu.print_log('Cumulative gain AGC rate planted max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(cumulative_gain_planted_forest.cumulative_gain_AGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # Creates a single filename pattern to pass to the multiprocessor call
@@ -71,7 +73,9 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # Calculates cumulative belowground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 320 GB on an r4.16xlarge
-    pool = multiprocessing.Pool(processes=26)
+    processes = 26
+    uu.print_log('Cumulative gain BGC rate planted max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(cumulative_gain_planted_forest.cumulative_gain_BGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()

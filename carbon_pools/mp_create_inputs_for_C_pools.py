@@ -53,24 +53,26 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     with process.stdout:
         uu.log_subprocess_output(process.stdout)
 
-    # uu.print_log("Copying elevation (srtm) files")
-    # uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
+    uu.print_log("Copying elevation (srtm) files")
+    uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
+
+    uu.print_log("Making elevation (srtm) vrt")
+    check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)  # I don't know how to convert this to output to the pipe, so just leaving as is
+
+    # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
+    processes = int(cn.count/2)
+    uu.print_log('Inputs for C pools max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
     #
-    # uu.print_log("Making elevation (srtm) vrt")
-    # check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)  # I don't know how to convert this to output to the pipe, so just leaving as is
-    #
-    # # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
-    # pool = multiprocessing.Pool(processes=cn.count / 2)
-    # pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #
-    # #     create_inputs_for_C_pools.create_input_files(tile_id)
-    #
-    # uu.print_log("Uploading output files")
-    # for i in range(0, len(output_dir_list)):
-    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    #     create_inputs_for_C_pools.create_input_files(tile_id)
+
+    uu.print_log("Uploading output files")
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

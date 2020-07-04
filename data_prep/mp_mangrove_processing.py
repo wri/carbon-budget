@@ -46,7 +46,9 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     source_raster = mangrove_vrt
     out_pattern = cn.pattern_mangrove_biomass_2000
     dt = 'float32'
-    pool = multiprocessing.Pool(int(cn.count/4))
+    processes=int(cn.count/4)
+    uu.print_log('Mangrove preprocessing max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # # For single processor use, for testing purposes
@@ -57,7 +59,9 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.mangrove_biomass_2000_dir
     pattern = cn.pattern_mangrove_biomass_2000
-    pool = multiprocessing.Pool(cn.count - 5)
+    processes=int(cn.count-5)
+    uu.print_log('Mangrove check for data max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 

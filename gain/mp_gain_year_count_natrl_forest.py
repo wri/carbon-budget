@@ -81,12 +81,16 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
     # Creates gain year count tiles using only pixels that had only loss
     # count/3 uses about 220 GB on an r4.16xlarge machine
     # count/2 uses about 330 GB on an r4.16xlarge machine
-    pool = multiprocessing.Pool(processes=36)
+    processes=36
+    uu.print_log('Natural forest gain year count loss only pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_loss_only, sensit_type=sensit_type),
              tile_id_list)
 
     # processes=36 maxes out at about 200 GB
-    pool = multiprocessing.Pool(processes=36)
+    processes=36
+    uu.print_log('Natural forest gain year count gain only pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         # count/2 uses about 200 GB on an r4.16xlarge machine
@@ -99,12 +103,14 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     # processes=36 maxes out at about 320 GB
-    pool = multiprocessing.Pool(processes=36)
+    processes=36
+    uu.print_log('Natural forest gain year count no change pixels max processors=', processes)
     pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_no_change, sensit_type=sensit_type),
              tile_id_list)
 
     # processes=36 maxes out at about 220 GB
-    pool = multiprocessing.Pool(processes=36)
+    processes=36
+    uu.print_log('Natural gain year count loss & gain pixels max processors=', processes)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had both loss and gain pixels
         pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_loss_and_gain_maxgain, sensit_type=sensit_type),
@@ -120,7 +126,9 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile
     # count/6 maxes out at about 230 GB
     # pool = multiprocessing.Pool(int(cn.count/3))
-    pool = multiprocessing.Pool(processes=16)
+    processes=16
+    uu.print_log('Natural forest gain year count gain merge all combos max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_natrl_forest.create_gain_year_count_merge, pattern=pattern), tile_id_list)
     pool.close()
     pool.join()

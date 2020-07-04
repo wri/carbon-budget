@@ -7,6 +7,10 @@ import datetime
 ##### Constants #####
 ########     ########
 
+# Model version
+version = 'v1.1.2'
+
+
 # Number of processors on the machine being used
 count = multiprocessing.cpu_count()
 
@@ -74,8 +78,11 @@ docker_tmp = '/usr/local/tmp'
 docker_app = '/usr/local/app'
 
 # Model log
-model_log_dir = 's3://gfw2-data/climate/carbon_model/model_logs/v1.1.2/'
-model_log = "flux_model_log_{}.txt".format(uu.date_today)
+start = datetime.datetime.now()
+date = datetime.datetime.now()
+date_formatted = date.strftime("%Y_%m_%d_%h_%m_%s")
+model_log_dir = 's3://gfw2-data/climate/carbon_model/model_logs/{}/'.format(version)
+model_log = "flux_model_log_{}.txt".format(date_formatted)
 
 
 ### Biomass tiles

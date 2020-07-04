@@ -45,6 +45,15 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
+    cmd = ['curl http://169.254.169.254/latest/meta-data/instance-type']   #https://stackoverflow.com/questions/51486405/aws-ec2-command-line-display-instance-type
+    try:
+        logging.info("AWS ec2 instance type:")
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            log_subprocess_output(process.stdout)
+    except:
+        logging.info("Not running on AWS ec2 instance")
+    logging.info("Available processors: {}".format(cn.count))
     logging.info("")
 
     # Suppresses logging from rasterio and botocore below ERROR level for the entire model
@@ -106,8 +115,8 @@ def log_subprocess_output(pipe):
             logging.info(line.decode("utf-8")) #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
             print(line.decode("utf-8"))        #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
 
-        logging.info("\n")
-        print("\n")
+        # logging.info("\n")
+        # print("\n")
 
     # After the subprocess finishes, the log is uploaded to s3
     upload_log()

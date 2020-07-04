@@ -90,7 +90,9 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     uu.print_log("Making mangrove soil C tiles...")
 
     # count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
-    pool = multiprocessing.Pool(processes=int(cn.count/3))
+    processes = int(cn.count/3)
+    uu.print_log('Mangrove soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
 
     # # For single processor use
@@ -108,7 +110,9 @@ def mp_create_soil_C(tile_id_list, run_date = None):
 
     uu.print_log("Making mineral soil C tiles...")
 
-    pool = multiprocessing.Pool(processes=int(cn.count/2))
+    processes = int(cn.count/2)
+    uu.print_log('Mineral soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(create_soil_C.create_mineral_soil_C, tile_id_list)
 
     # # For single processor use
@@ -121,7 +125,9 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     uu.print_log("Making combined soil C tiles...")
 
     # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
-    pool = multiprocessing.Pool(processes=int(cn.count/2))
+    processes = int(cn.count/2)
+    uu.print_log('Combined soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
 
     # # For single processor use

@@ -182,8 +182,9 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
             # I think this can handle using 50 processors because it's not trying to upload files to s3 and the tiles are small.
             # This takes several days to run because it iterates through at least 250 10x10 tiles.
             # For multiprocessor use.
-            num_of_processes = 50
-            pool = Pool(num_of_processes)
+            processes = 50
+            uu.print_log('Rasterize GADM 1x1 max processors=', processes)
+            pool = Pool(processes)
             pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
             pool.close()
             pool.join()
@@ -265,8 +266,9 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         # 55 processors seems to use about 350 GB of memory, which seems fine. But there was some error about "PQconnectdb failed-- sorry, too many clients already".
         # So, moved the number of processors down to 48.
         # For multiprocessor use
-        num_of_processes = 48
-        pool = Pool(num_of_processes)
+        processes = 48
+        uu.print_log('Create 1x1 plantation from 1x1 gadm max processors=', processes)
+        pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
         pool.close()
         pool.join()
@@ -328,15 +330,17 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
         # For multiprocessor use
         # processes=40 uses about 360 GB of memory. Works on r4.16xlarge with space to spare
-        num_of_processes = 40
-        pool = Pool(num_of_processes)
+        processes = 40
+        uu.print_log('Create 1x1 plantation gain rate max processors=', processes)
+        pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
 
         # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
-        num_of_processes = 50
-        pool = Pool(num_of_processes)
+        processes = 50
+        uu.print_log('Create 1x1 plantation type max processors=', processes)
+        pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_type_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
@@ -356,8 +360,9 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
-    num_of_processes = 20
-    pool = Pool(num_of_processes)
+    processes = 20
+    uu.print_log('Create 10x10 plantation gain rate max processors=', processes)
+    pool = Pool(processes)
     pool.map(partial(plantation_preparation.create_10x10_plantation_gain, plant_gain_1x1_vrt=plant_gain_1x1_vrt), planted_lat_tile_list)
     pool.close()
     pool.join()
@@ -380,8 +385,9 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
-    num_of_processes = 20
-    pool = Pool(num_of_processes)
+    processes = 20
+    uu.print_log('Create 10x10 plantation type max processors=', processes)
+    pool = Pool(processes)
     pool.map(partial(plantation_preparation.create_10x10_plantation_type, plant_type_1x1_vrt=plant_type_1x1_vrt),
              planted_lat_tile_list)
     pool.close()

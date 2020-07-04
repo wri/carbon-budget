@@ -70,7 +70,9 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         # lines later.
         pattern = download_pattern[0]
 
-        pool = multiprocessing.Pool(processes=54)
+        processes=54
+        uu.print_log('Net flux max processors=', processes)
+        pool = multiprocessing.Pool(processes)
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()

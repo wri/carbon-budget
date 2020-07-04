@@ -206,7 +206,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for mangroves using the standard model
@@ -220,7 +220,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove planted forests using the standard model
@@ -234,7 +234,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of the number of years of removals for non-mangrove planted forests
@@ -247,7 +247,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove planted forests using the standard model
@@ -261,7 +261,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates age category tiles for natural forests
@@ -274,7 +274,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of the number of years of removals for natural forests
@@ -287,7 +287,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
@@ -301,7 +301,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
@@ -315,7 +315,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n", "\n")
 
 
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
@@ -328,7 +328,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for removals_merged:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for removals_merged:", elapsed_time, "\n", "\n")
 
 
     # Creates carbon pools in loss year
@@ -342,7 +342,6 @@ def main ():
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
@@ -357,7 +356,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for carbon_pools:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for carbon_pools:", elapsed_time, "\n", "\n")
 
 
     # Creates gross emissions tiles by driver, gas, and all emissions combined
@@ -384,7 +383,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n", "\n")
 
 
     # Creates net flux tiles (gross emissions - gross removals)
@@ -397,7 +396,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n", "\n")
 
 
     # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
@@ -411,7 +410,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
-        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n")
+        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
 
 
     script_end = datetime.datetime.now()

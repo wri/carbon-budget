@@ -1,0 +1,63 @@
+#!/bin/bash
+yum install -y rsync git nano htop tmux
+
+#######################################
+# Mount the ephemeral storage
+#######################################
+mkfs.ext4 /dev/nvme1n1
+mkdir -p /mnt/ext
+mount -t ext4 /dev/nvme1n1 /mnt/ext
+
+# make temp directory for containers usage
+# should be used in the Batch job definition (MountPoints)
+mkdir /mnt/ext/tmp
+rsync -avPHSX /tmp/ /mnt/ext/tmp/ 
+
+mkdir -p /var/lib/docker
+mkdir -p /mnt/ext/docker
+
+# modify fstab to mount /tmp on the new storage.
+sed -i '$ a /mnt/ext/tmp  /tmp  none  bind  0 0' /etc/fstab
+sed -i '$ a /mnt/ext/docker /var/lib/docker none  bind  0 0' /etc/fstab
+mount -a
+
+# make /tmp usable by everyone
+chmod 777 /mnt/ext/tmp
+
+#######################################
+# Install docker and docker-compose, per https://acloudxpert.com/how-to-install-docker-compose-on-amazon-linux-ami/
+#######################################
+
+yum install -y docker
+
+curl -L https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null
+chmod +x /usr/local/bin/docker-compose
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+docker-compose --version
+
+#############################
+# Copy latest flux model repo to the home folder
+#############################
+cd /home/ec2-user
+git clone https://github.com/wri/carbon-budget
+cd carbon-budget
+git checkout docker
+
+#######################################
+# Starts the docker service
+#######################################
+sudo service docker start
+
+######################################
+# Gives the user (ec2-user) various permissions, such as ability to git pull.
+#Based on https://techoverflow.net/2019/05/07/how-to-fix-git-error-cannot-open-git-fetch_head-permission-denied/
+######################################
+cd /
+sudo chown -R ec2-user: .
+
+######################################
+# Replaces htop config file with my preferred configuration
+######################################
+mkdir -p /home/ec2-user/.config/htop/
+cp /home/ec2-user/carbon-budget/htoprc /home/ec2-user/.config/htop/htoprc
+cd /home/ec2-user/carbon-budget/

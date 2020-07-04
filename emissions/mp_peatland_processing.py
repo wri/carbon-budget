@@ -67,7 +67,9 @@ def mp_peatland_processing(tile_id_list, run_date = None):
 
     # For multiprocessor use
     # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
-    pool = multiprocessing.Pool(processes=cn.count-10)
+    processes=cn.count-10
+    uu.print_log('Peatland preprocessing max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
 
     # # For single processor use, for testing purposes
