@@ -80,7 +80,7 @@ docker_app = '/usr/local/app'
 # Model log
 start = datetime.datetime.now()
 date = datetime.datetime.now()
-date_formatted = date.strftime("%Y_%m_%d_%h_%m_%s")
+date_formatted = date.strftime("%Y_%m_%d__%I_%M_%S")
 model_log_dir = 's3://gfw2-data/climate/carbon_model/model_logs/{}/'.format(version)
 model_log = "flux_model_log_{}.txt".format(date_formatted)
 
