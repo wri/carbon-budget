@@ -573,7 +573,7 @@ def s3_file_download(source, dest, sensit_type):
             # If not already on the spot machine, it downloads the file
             else:
                 source = os.path.join(dir_sens, file_name_sens)
-                cmd = ['aws', 's3', 'cp', source, dest]
+                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
 
                 # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                 process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -593,7 +593,7 @@ def s3_file_download(source, dest, sensit_type):
             else:
                 source = os.path.join(dir, file_name)
                 try:
-                    cmd = ['aws', 's3', 'cp', source, dest]
+                    cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
 
                     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -614,7 +614,7 @@ def s3_file_download(source, dest, sensit_type):
         else:
             source = os.path.join(dir, file_name)
             try:
-                cmd = ['aws', 's3', 'cp', source, dest]
+                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
 
                 # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                 process = Popen(cmd, stdout=PIPE, stderr=STDOUT)

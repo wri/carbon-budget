@@ -13,7 +13,7 @@
 
 import multiprocessing
 from functools import partial
-import pandas as pdmp
+import pandas as pd
 import datetime
 import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call

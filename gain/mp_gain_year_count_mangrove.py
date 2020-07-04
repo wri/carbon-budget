@@ -98,35 +98,35 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
-    # # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
-    # # (e.g., about 450 GB out of 480 GB).
-    # pool = multiprocessing.Pool(int(cn.count/5))
-    # pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), tile_id_list)
-    # pool.close()
-    # pool.join()
+    # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
+    # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
+    # (e.g., about 450 GB out of 480 GB).
+    pool = multiprocessing.Pool(int(cn.count/5))
+    pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
     #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #     gain_year_count_mangrove.create_gain_year_count_loss_only(tile_id)
-    # #
-    # # for tile_id in tile_id_list:
-    # #     if sensit_type == 'maxgain':
-    # #         gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
-    # #     else:
-    # #         gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
-    # #
-    # # for tile_id in tile_id_list:
-    # #     gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
-    # #
-    # # for tile_id in tile_id_list:
-    # #     if sensit_type == 'maxgain':
-    # #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
-    # #     else:
-    # #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
-    # #
-    # # for tile_id in tile_id_list:
-    # #     gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
+    # for tile_id in tile_id_list:
+    #     if sensit_type == 'maxgain':
+    #         gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain(tile_id)
+    #     else:
+    #         gain_year_count_mangrove.create_gain_year_count_gain_only_standard(tile_id)
+    #
+    # for tile_id in tile_id_list:
+    #     gain_year_count_mangrove.create_gain_year_count_no_change(tile_id)
+    #
+    # for tile_id in tile_id_list:
+    #     if sensit_type == 'maxgain':
+    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+    #     else:
+    #         gain_year_count_mangrove.create_gain_year_count_loss_and_gain_standard(tile_id)
+    #
+    # for tile_id in tile_id_list:
+    #     gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
     uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
