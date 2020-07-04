@@ -182,6 +182,8 @@ def main ():
                            ]
 
 
+    uu.check_storage()
+
     # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
     # removal function
     if 'annual_gain_rate_mangrove' in actual_stages:
@@ -193,6 +195,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
 
 
@@ -206,6 +209,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for gain_year_count_mangrove:", elapsed_time, "\n", "\n")
 
 
@@ -220,6 +224,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for cumulative_gain_mangrove:", elapsed_time, "\n", "\n")
 
 
@@ -234,6 +239,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for annual_gain_rate_planted_forest:", elapsed_time, "\n", "\n")
 
 
@@ -247,6 +253,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for gain_year_count_planted_forest:", elapsed_time, "\n", "\n")
 
 
@@ -261,6 +268,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for cumulative_gain_planted_forest:", elapsed_time, "\n", "\n")
 
 
@@ -274,6 +282,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for forest_age_category_natrl_forest:", elapsed_time, "\n", "\n")
 
 
@@ -287,6 +296,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for gain_year_count_natrl_forest:", elapsed_time, "\n", "\n")
 
 
@@ -301,6 +311,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for annual_gain_rate_natrl_forest:", elapsed_time, "\n", "\n")
 
 
@@ -315,6 +326,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for cumulative_gain_natrl_forest:", elapsed_time, "\n", "\n")
 
 
@@ -328,6 +340,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for removals_merged:", elapsed_time, "\n", "\n")
 
 
@@ -348,6 +361,7 @@ def main ():
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
         uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
 
         uu.print_log(":::::Creating emissions year carbon pools tiles")
         start = datetime.datetime.now()
@@ -356,6 +370,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for carbon_pools:", elapsed_time, "\n", "\n")
 
 
@@ -375,6 +390,7 @@ def main ():
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
         uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
 
         uu.print_log(":::::Creating gross emissions tiles")
         start = datetime.datetime.now()
@@ -383,6 +399,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n", "\n")
 
 
@@ -396,6 +413,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n", "\n")
 
 
@@ -410,6 +428,7 @@ def main ():
 
         end = datetime.datetime.now()
         elapsed_time = end - start
+        uu.check_storage()
         uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
 
 

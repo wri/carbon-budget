@@ -121,6 +121,17 @@ def log_subprocess_output(pipe):
     # After the subprocess finishes, the log is uploaded to s3
     upload_log()
 
+
+def check_storage():
+
+    df_output_lines = [s.split() for s in os.popen("df -h").read().splitlines()]
+    available_storage = df_output_lines[6][1]
+    used_storage = df_output_lines[6][3]
+    percent_storage_used = df_output_lines[6][4]
+    print_log("Available storage:", available_storage, "; Storage used:", used_storage,
+                 "; Percent storage used:", percent_storage_used)
+
+
 # Gets the tile id from the full tile name using a regular expression
 def get_tile_id(tile_name):
 
