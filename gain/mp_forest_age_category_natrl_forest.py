@@ -114,19 +114,19 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     processes = 20
     uu.print_log('Natural forest age category max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
-    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
+                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
     #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #
-    # #     forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
-    #
-    # # Uploads output tiles to s3
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #     forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
+
+    # Uploads output tiles to s3
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
