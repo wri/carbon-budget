@@ -125,9 +125,9 @@ def log_subprocess_output(pipe):
 def check_storage():
 
     df_output_lines = [s.split() for s in os.popen("df -h").read().splitlines()]
-    available_storage = df_output_lines[6][1]
-    used_storage = df_output_lines[6][3]
-    percent_storage_used = df_output_lines[6][4]
+    available_storage = df_output_lines[5][1]
+    used_storage = df_output_lines[5][3]
+    percent_storage_used = df_output_lines[5][4]
     print_log("Available storage:", available_storage, "; Storage used:", used_storage,
                  "; Percent storage used:", percent_storage_used)
 
