@@ -29,10 +29,12 @@ def upload_log():
 
 # Creates the log with a starting line
 def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
-                 pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None):
+                 pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None,
+                 log_note=None):
 
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
                         datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.INFO)
+    logging.info("Log notes: {}".format(log_note))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
     logging.info("Model stages to run: {}".format(stage_input))
@@ -45,9 +47,9 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
-    cmd = ['curl http://169.254.169.254/latest/meta-data/instance-type']   #https://stackoverflow.com/questions/51486405/aws-ec2-command-line-display-instance-type
+    logging.info("AWS ec2 instance type:")
     try:
-        logging.info("AWS ec2 instance type:")
+        cmd = ['curl http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/51486405/aws-ec2-command-line-display-instance-type
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
             log_subprocess_output(process.stdout)
@@ -101,7 +103,7 @@ def exception_log(*args):
 
 
 # Adds the subprocess output to the log and the console
-# Solution is from second answer at this page: https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+# Solution is from second answer (jfs' answer) at this page: https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
 def log_subprocess_output(pipe):
 
     # Reads all the output into a string
@@ -122,6 +124,8 @@ def log_subprocess_output(pipe):
     upload_log()
 
 
+# Checks the OS for how much storage is available in the system, what's being used, and what percent is being used
+# https://stackoverflow.com/questions/12027237/selecting-specific-columns-from-df-h-output-in-python
 def check_storage():
 
     df_output_lines = [s.split() for s in os.popen("df -h").read().splitlines()]
@@ -381,14 +385,14 @@ def count_tiles_s3(source):
 
     # Writes the output string to a text file for easier interpretation
     tile_list_name = "tiles.txt"
-    tile_file = open(os.path.join('tmp', tile_list_name), "wb")
+    tile_file = open(os.path.join(cn.docker_tmp, tile_list_name), "wb")
     tile_file.write(stdout)
     tile_file.close()
 
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
-    with open(os.path.join('tmp', 'tiles.txt'), 'r') as tile:
+    with open(os.path.join(cn.docker_tmp, tile_list_name), 'r') as tile:
         for line in tile:
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]

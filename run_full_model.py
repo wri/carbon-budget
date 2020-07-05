@@ -2,7 +2,7 @@
 git clone https://github.com/wri/carbon-budget
 spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-python run_full_model.py -t std -s forest_age_category_natrl_forest -r false -d 20200327 -l 00N_000E -ce loss -p biomass_soil -tcd 30
+python run_full_model.py -t std -s forest_age_category_natrl_forest -r false -d 20209999 -l 00N_000E -ce loss -p biomass_soil -tcd 30
 python run_full_model.py -t std -s all -r true -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true
 '''
 
@@ -63,6 +63,8 @@ def main ():
                         help='Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
     parser.add_argument('--plantations', '-pl', required=False,
                         help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
+    parser.add_argument('--log-note', '-ln', required=False,
+                        help='Note to append to log file name for easy reference. Must use _ instead of spaces.')
     args = parser.parse_args()
 
     sensit_type = args.model_type
@@ -78,6 +80,7 @@ def main ():
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
     include_plantations = args.plantations
+    log_note = args.log_note
 
     # Working directory
     working_dir = os.getcwd()
@@ -88,7 +91,7 @@ def main ():
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, stage_input=stage_input, run_through=run_through,
                     carbon_pool_extent=carbon_pool_extent, pools=pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, include_plantations=include_plantations)
+                    include_mangroves=include_mangroves, include_plantations=include_plantations, log_note=log_note)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
@@ -106,6 +109,8 @@ def main ():
                                        include_mangroves = include_mangroves, include_plantations = include_plantations)
     uu.print_log("Analysis stages to run:", actual_stages)
 
+    # Reports how much storage is being used with files
+    uu.check_storage()
 
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
@@ -160,29 +165,91 @@ def main ():
 
 
     # List of output directories and output file name patterns.
-    # Not actually used in the script-- here just for reference.
-    raw_output_dir_list = [
-                       cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
-                       cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
-                       cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
-                       cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
-                       cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
-                       cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir,
-                       cn.net_flux_dir
-                       ]
+    # The directory list is only used for counting tiles in output folders at the end of the model
+    output_dir_list = [
+        cn.gain_year_count_mangrove_dir,
+        cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir,
+        cn.cumul_gain_AGCO2_mangrove_dir, cn.cumul_gain_BGCO2_mangrove_dir,
+        cn.gain_year_count_planted_forest_non_mangrove_dir,
+        cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
+        cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir,
+        cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
+        cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
+        cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
+        cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
+        cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
+        cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir
+    ]
 
-    raw_output_pattern_list = [
-                           cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
-                           cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
-                           cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
-                           cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
-                           cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
-                           cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year,
-                           cn.pattern_net_flux
-                           ]
+    # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
+    if pools == 'biomass_soil':
+        output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
+                           cn.gross_emis_shifting_ag_biomass_soil_dir,
+                           cn.gross_emis_forestry_biomass_soil_dir,
+                           cn.gross_emis_wildfire_biomass_soil_dir,
+                           cn.gross_emis_urban_biomass_soil_dir,
+                           cn.gross_emis_no_driver_biomass_soil_dir,
+                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_nodes_biomass_soil_dir]
 
+    else:
+        output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
+                               cn.gross_emis_shifting_ag_soil_only_dir,
+                               cn.gross_emis_forestry_soil_only_dir,
+                               cn.gross_emis_wildfire_soil_only_dir,
+                               cn.gross_emis_urban_soil_only_dir,
+                               cn.gross_emis_no_driver_soil_only_dir,
+                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                               cn.gross_emis_nodes_soil_only_dir]
 
-    uu.check_storage()
+    output_dir_list = output_dir_list + [cn.net_flux_dir]
+
+    # Output patterns aren't actually used in the script-- here just for reference.
+    output_pattern_list = [
+        cn.pattern_gain_year_count_mangrove,
+        cn.pattern_annual_gain_AGB_mangrove, cn.pattern_annual_gain_BGB_mangrove,
+        cn.pattern_cumul_gain_AGCO2_mangrove, cn.pattern_cumul_gain_BGCO2_mangrove,
+        cn.pattern_gain_year_count_planted_forest_non_mangrove,
+        cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove,
+        cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove,
+        cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
+        cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
+        cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
+        cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
+        cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
+        cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year
+    ]
+
+    # Adds the biomass_soil output patterns or the soil_only output directories depending on the model run
+    if pools == 'biomass_soil':
+        output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_biomass_soil,
+                                                  cn.pattern_gross_emis_shifting_ag_biomass_soil,
+                                                  cn.pattern_gross_emis_forestry_biomass_soil,
+                                                  cn.pattern_gross_emis_wildfire_biomass_soil,
+                                                  cn.pattern_gross_emis_urban_biomass_soil,
+                                                  cn.pattern_gross_emis_no_driver_biomass_soil,
+                                                  cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+                                                  cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+                                                  cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
+
+    else:
+        output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_soil_only,
+                                   cn.pattern_gross_emis_shifting_ag_soil_only,
+                                   cn.pattern_gross_emis_forestry_soil_only,
+                                   cn.pattern_gross_emis_wildfire_soil_only,
+                                   cn.pattern_gross_emis_urban_soil_only,
+                                   cn.pattern_gross_emis_no_driver_soil_only,
+                                   cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+                                   cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
+                                   cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
+                                   cn.pattern_gross_emis_nodes_soil_only]
+
+        output_pattern_list = output_pattern_list + [cn.pattern_net_flux]
+
 
     # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
     # removal function
@@ -435,6 +502,24 @@ def main ():
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
     uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
+
+
+    # Modifies output directory names to make them match those used during the model run.
+    # The tiles in each of these directories and counted and logged.
+
+    # If the model run isn't the standard one, the output directory and file names are changed
+    if sensit_type != 'std':
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+
+    # Changes the date in the output directories. This date was used during the model run.
+    # This replaces the date in constants_and_names.
+    output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+
+    for output in output_dir_list:
+
+        tile_count = uu.count_tiles_s3(output)-1
+        uu.print_log("Total tiles in", output, ": ", tile_count)
 
 
 if __name__ == '__main__':
