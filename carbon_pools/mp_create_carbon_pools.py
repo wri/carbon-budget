@@ -212,6 +212,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         #     create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+        uu.check_storage()
 
     elif carbon_pool_extent == '2000':
 
@@ -233,6 +234,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         #     create_carbon_pools.create_2000_AGC(tile_id, output_pattern_list[0], sensit_type)
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+        uu.check_storage()
 
     else:
         uu.exception_log("Extent argument not valid")
@@ -256,6 +258,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, output_pattern_list[1], sensit_type)
 
     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    uu.check_storage()
 
 
     uu.print_log("Creating tiles of deadwood carbon")
@@ -277,6 +280,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     create_carbon_pools.create_deadwood(tile_id, mang_deadwood_AGB_ratio, carbon_pool_extent, output_pattern_list[2], sensit_type)
 
     uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+    uu.check_storage()
 
 
     uu.print_log("Creating tiles of litter carbon")
@@ -297,6 +301,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     create_carbon_pools.create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, output_pattern_list[3], sensit_type)
 
     uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
+    uu.check_storage()
 
 
     if carbon_pool_extent == 'loss':
@@ -317,6 +322,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         #     create_carbon_pools.create_soil(tile_id, output_pattern_list[4], sensit_type)
 
         uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
+        uu.check_storage()
 
     elif carbon_pool_extent == '2000':
         uu.print_log("Skipping soil for 2000 carbon pool calculation")

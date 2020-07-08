@@ -417,12 +417,15 @@ def main ():
         uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
         tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
         tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
+        tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_natrl_forest)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again. But need to free up space now.
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
         for tile_to_delete in tiles_to_delete:
