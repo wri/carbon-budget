@@ -67,7 +67,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
     # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
     # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
     if cn.count == 96:
-        processes = 48   # 31 processors = 390 GB peak; 56 processors = maxed out
+        processes = 42   # 31 processors = 390 GB peak; 56 processors = maxed out; 48 processors = maxed out
     else:
         processes = 26
     uu.print_log('Mangrove masking max processors=', processes)
@@ -78,7 +78,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
     # Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
     # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
     if cn.count == 96:
-        processes = 50   # 31 processors = 400 GB peak
+        processes = 44   # 31 processors = 400 GB peak; XXX processors = XXX GB peak
     else:
         processes = 26
     uu.print_log('AGC+BGC/yr to AGB/yr max processors=', processes)
@@ -88,7 +88,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
     # Calculates belowground biomass gain rates from aboveground biomass gain rates
     # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
     if cn.count == 96:
-        processes = 50   # 31 processors = 400 GB peak
+        processes = 44   # 31 processors = 400 GB peak; XXX processors = XXX GB peak
     else:
         processes = 26
     uu.print_log('AGB/yr to BGB/yr max processors=', processes)
@@ -98,7 +98,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
     # Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
     # This keep them from unnecessarily being stored on s3.
     if cn.count == 96:
-        processes = 50   # 31 processors = 380 GB peak
+        processes = 50   # 31 processors = 380 GB peak; XXX processors = XXX GB peak
     else:
         processes = 26
     uu.print_log('Delete empty tiles max processors=', processes)
