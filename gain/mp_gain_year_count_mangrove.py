@@ -71,7 +71,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
     if cn.count == 96:
-        processes = 60   # 48 processors = 580 GB peak
+        processes = 62   # 48 processors = 580 GB peak; 60 processors = 640 GB peak; 62 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count loss only pixels max processors=', processes)
@@ -79,7 +79,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, tile_id_list)
 
     if cn.count == 96:
-        processes = 60   # 48 processors = 580 GB peak
+        processes = 62   # 48 processors = 580 GB peak; 60 processors = 640 GB peak; 62 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count gain only pixels max processors=', processes)
@@ -94,7 +94,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     # count/3 maxes out at 250 GB
     if cn.count == 96:
-        processes = 60   # 48 processors = 580 GB peak
+        processes = 62   # 48 processors = 580 GB peak; 60 processors = 640 GB peak; 62 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count no change pixels max processors=', processes)
@@ -103,7 +103,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # count/3 maxes out at 255 GB
     if cn.count == 96:
-        processes = 60   # 48 processors = 580 GB peak
+        processes = 62   # 48 processors = 580 GB peak; 60 processors = 640 GB peak; 62 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count loss & gain pixels max processors=', processes)
@@ -122,7 +122,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
     # (e.g., about 450 GB out of 480 GB).
     if cn.count == 96:
-        processes = 25   # 15 processors = 450 GB peak
+        processes = 27   # 15 processors = 450 GB peak; 25 processors = 570 GB peak; 27 processors = XXX GB peak
     else:
         processes = int(cn.count/5)
     uu.print_log('Mangrove gain year count gain merge all combos max processors=', processes)
