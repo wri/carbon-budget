@@ -70,12 +70,18 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
 
     # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
-    processes=int(cn.count/2)
+    if cn.count == 96:
+        processes = 60   # 48 processors = 580 GB peak
+    else:
+        processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count loss only pixels max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, tile_id_list)
 
-    processes=int(cn.count/2)
+    if cn.count == 96:
+        processes = 60   # 48 processors = 580 GB peak
+    else:
+        processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count gain only pixels max processors=', processes)
     pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
@@ -87,13 +93,19 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     # count/3 maxes out at 250 GB
-    processes=int(cn.count/2)
+    if cn.count == 96:
+        processes = 60   # 48 processors = 580 GB peak
+    else:
+        processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count no change pixels max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, tile_id_list)
 
     # count/3 maxes out at 255 GB
-    processes=int(cn.count/2)
+    if cn.count == 96:
+        processes = 60   # 48 processors = 580 GB peak
+    else:
+        processes = int(cn.count/2)
     uu.print_log('Mangrove gain year count loss & gain pixels max processors=', processes)
     pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
@@ -109,7 +121,10 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
     # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
     # (e.g., about 450 GB out of 480 GB).
-    processes=int(cn.count/5)
+    if cn.count == 96:
+        processes = 25   # 15 processors = 450 GB peak
+    else:
+        processes = int(cn.count/5)
     uu.print_log('Mangrove gain year count gain merge all combos max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), tile_id_list)

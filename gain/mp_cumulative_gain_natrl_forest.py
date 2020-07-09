@@ -60,6 +60,7 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
+    ### 26 processors =  GB peak (r5d.24xlarge)
     processes = 26
     uu.print_log('Cumulative gain AGC rate natural forest max processors=', processes)
     pool = multiprocessing.Pool(processes)

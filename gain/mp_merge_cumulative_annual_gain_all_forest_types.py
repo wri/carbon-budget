@@ -76,6 +76,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
     # For multiprocessing
     # Count/4 seems to pretty consistently use about 390 GB memory on an r4.16xlarge (not so much of an initial peak).
     # processes=18 maxes out at about 440 GB memory
+    ### 18 processors = 680 GB peak (r5d.24xlarge)
     processes=18
     uu.print_log('Cumulative gain all forest types max processors=', processes)
     pool = multiprocessing.Pool(processes)

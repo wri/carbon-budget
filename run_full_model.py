@@ -2,8 +2,8 @@
 git clone https://github.com/wri/carbon-budget
 spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-python run_full_model.py -t std -s forest_age_category_natrl_forest -r false -d 20209999 -l 00N_000E -ce loss -p biomass_soil -tcd 30
-python run_full_model.py -t std -s all -r true -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true
+python run_full_model.py -t std -s forest_age_category_natrl_forest -r false -d 20209999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "This is a log note"
+python run_full_model.py -t std -s all -r true -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true -ln "This is a log note"
 '''
 
 import argparse
@@ -64,7 +64,7 @@ def main ():
     parser.add_argument('--plantations', '-pl', required=False,
                         help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
     parser.add_argument('--log-note', '-ln', required=False,
-                        help='Note to append to log file name for easy reference. Must use _ instead of spaces.')
+                        help='Note to include in log header about model run.')
     args = parser.parse_args()
 
     sensit_type = args.model_type

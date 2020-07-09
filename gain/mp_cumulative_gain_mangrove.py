@@ -66,7 +66,10 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
     # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
     # count/2 peaks above 480 GB
     # processes=26 peaks at about 400 GB
-    processes = 26
+    if cn.count == 96:
+        processes = 46   # 26 processors = 380 GB peak
+    else:
+        processes = 26
     uu.print_log('Cumulative gain AGC rate mangrove max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -76,7 +79,10 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Calculates cumulative belowground carbon gain in mangroves
     # count/3 maxes out at about 320 GB
-    processes = 26
+    if cn.count == 96:
+        processes = 46   # 26 processors = 380 GB peak
+    else:
+        processes = 26
     uu.print_log('Cumulative gain BGC rate mangrove max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
