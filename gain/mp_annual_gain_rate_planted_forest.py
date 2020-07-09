@@ -67,7 +67,7 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
     # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
     # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
     if cn.count == 96:
-        processes = 42   # 31 processors = 390 GB peak; 56 processors = maxed out; 48 processors = maxed out
+        processes = 37   # 31 processors = 390 GB peak; 56 = maxed out; 48 = maxed out; 42 = maxed out; 37 =
     else:
         processes = 26
     uu.print_log('Mangrove masking max processors=', processes)
