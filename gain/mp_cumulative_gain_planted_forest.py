@@ -64,7 +64,7 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 360 GB on an r4.16xlarge
     if cn.count == 96:
-        processes = 52   # 26 processors = 370 GB peak
+        processes = 42   # 26 processors = 370 GB peak; 52 = 740 GB peak; 42 = XXX GB peak
     else:
         processes = 26
     uu.print_log('Cumulative gain AGC rate planted max processors=', processes)
@@ -77,7 +77,7 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
     # Calculates cumulative belowground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 320 GB on an r4.16xlarge
     if cn.count == 96:
-        processes = 52   # 26 processors = 370 GB peak
+        processes = 44   # 26 processors = 370 GB peak; 52 = 720 GB peak; 44 = XXX GB peak
     else:
         processes = 26
     uu.print_log('Cumulative gain BGC rate planted max processors=', processes)

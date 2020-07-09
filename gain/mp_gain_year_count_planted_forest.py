@@ -67,9 +67,8 @@ def mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # Creates gain year count tiles using only pixels that had only loss
     # count/3 maxes out at about 300 GB
-    ### count/2 processors = 580 GB peak (r5d.24xlarge)
     if cn.count == 96:
-        processes = 62   # 48 processors = 580 GB peak
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Planted forest gain year count loss only pixels max processors=', processes)
@@ -77,7 +76,7 @@ def mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = None
     pool.map(gain_year_count_planted_forest.create_gain_year_count_loss_only, tile_id_list)
 
     if cn.count == 96:
-        processes = 62   # 48 processors = 580 GB peak
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Planted forest gain year count gain only pixels max processors=', processes)
@@ -91,7 +90,7 @@ def mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     if cn.count == 96:
-        processes = 62   # 48 processors = 580 GB peak
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Planted forest gain year count no change pixels max processors=', processes)
@@ -99,7 +98,7 @@ def mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = None
     pool.map(gain_year_count_planted_forest.create_gain_year_count_no_change, tile_id_list)
 
     if cn.count == 96:
-        processes = 62   # 48 processors = 580 GB peak
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Planted forest gain year count loss & gain pixels max processors=', processes)
@@ -117,7 +116,7 @@ def mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = None
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile
     # Count/6 maxes out at about 220 GB (doesn't increase all the way through GDAL process for some reason)
     if cn.count == 96:
-        processes = 24   # XXXX processors = XXX GB peak
+        processes = 28   # 24 processors = 570 GB peak; 28 = XXX GB peak
     else:
         processes = int(cn.count/6)
     uu.print_log('Planted forest gain year count gain merge all combos max processors=', processes)
@@ -149,10 +148,10 @@ def mp_gain_year_count_planted_forest(sensit_type, tile_id_list, run_date = None
     #     gain_year_count_planted_forest.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only_planted_forest")
+    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only_planted_forest")
+    uu.upload_final_set(output_dir_list[0], "growth_years_no_change_planted_forest")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain_planted_forest")
 
     # This is the final output used later in the model
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

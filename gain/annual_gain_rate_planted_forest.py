@@ -118,7 +118,6 @@ def create_BGB_rate(tile_id, output_pattern_list):
     planted_forest_AGB_rate = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
 
     # Calculates belowground biomass gain rate from aboveground biomass gain rate
-    uu.print_log("  Creating belowground biomass gain rate for tile {}".format(tile_id))
     above_to_below_calc = '--calc=A*{}'.format(cn.below_to_above_non_mang)
     below_outfilename = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     below_outfilearg = '--outfile={}'.format(below_outfilename)

@@ -40,7 +40,7 @@ def create_gain_year_count_loss_only(tile_id):
 
     # Pixels with loss only
     loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
-    loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
+    loss_outfilename = '{}_growth_years_loss_only_planted_forest.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', planted_forest, loss_calc, loss_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
@@ -50,7 +50,7 @@ def create_gain_year_count_loss_only(tile_id):
         uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only_planted_forest')
 
 
 # Creates gain year count tiles for pixels that only had gain
@@ -66,7 +66,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
 
     # Pixels with gain only
     gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({}/2)'.format(cn.gain_years)
-    gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
+    gain_outfilename = '{}_growth_years_gain_only_planted_forest.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', planted_forest, gain_calc, gain_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
@@ -76,7 +76,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
         uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only_planted_forest')
 
 
 # Creates gain year count tiles for pixels that only had gain
@@ -92,7 +92,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
 
     # Pixels with gain only
     gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({})'.format(cn.loss_years)
-    gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
+    gain_outfilename = '{}_growth_years_gain_only_planted_forest.tif'.format(tile_id)
     gain_outfilearg = '--outfile={}'.format(gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', planted_forest, gain_calc, gain_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
@@ -102,7 +102,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
         uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only_planted_forest')
 
 
 # Creates gain year count tiles for pixels that had neither loss not gain
@@ -118,7 +118,7 @@ def create_gain_year_count_no_change(tile_id):
 
     # Pixels with neither loss nor gain
     no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
-    no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
+    no_change_outfilename = '{}_growth_years_no_change_planted_forest.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', planted_forest, no_change_calc,
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
@@ -128,7 +128,7 @@ def create_gain_year_count_no_change(tile_id):
         uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change_planted_forest')
 
 
 # Creates gain year count tiles for pixels that had both loss and gain
@@ -144,7 +144,7 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
 
     # Pixels with both loss and gain
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+floor(({}+1-A)/2)))'.format(cn.loss_years)
-    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
+    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain_planted_forest.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', planted_forest, loss_and_gain_calc,
            loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
@@ -154,7 +154,7 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
         uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain_planted_forest')
 
 
 # Creates gain year count tiles for pixels that had both loss and gain
@@ -170,7 +170,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 
     # Pixels with both loss and gain
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*({}-1))'.format(cn.loss_years)
-    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
+    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain_planted_forest.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', planted_forest, loss_and_gain_calc,
            loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
@@ -180,7 +180,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
         uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain_planted_forest')
 
 
 # Merges the four gain year count tiles above to create a single gain year count tile
@@ -192,10 +192,10 @@ def create_gain_year_count_merge(tile_id, pattern):
     start = datetime.datetime.now()
 
     # The four rasters from above that are to be merged
-    loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
-    gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
-    no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
-    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
+    loss_outfilename = '{}_growth_years_loss_only_planted_forest.tif'.format(tile_id)
+    gain_outfilename = '{}_growth_years_gain_only_planted_forest.tif'.format(tile_id)
+    no_change_outfilename = '{}_growth_years_no_change_planted_forest.tif'.format(tile_id)
+    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain_planted_forest.tif'.format(tile_id)
 
     # All four components are merged together to the final output raster
     age_outfile = '{}_{}.tif'.format(tile_id, pattern)

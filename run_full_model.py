@@ -417,7 +417,6 @@ def main ():
         uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
         tiles_to_delete = glob.glob('*growth_years*tif')                 # Any forest type
         tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
-        tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGCO2*tif')) # Any forest type
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))

@@ -101,7 +101,7 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
     if cn.count == 96:
-        processes = 28    #18 processors = 480 GB peak; 25 processors = 630 GB peak; 28 processors = 710 GB peak
+        processes = 28    #18 processors = 480 GB peak; 25 = 630 GB peak; 28 = 710 GB peak
     else:
         processes = 18
     uu.print_log('Mangrove annual gain rate max processors=', processes)
