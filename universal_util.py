@@ -476,8 +476,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     # needs to be handled separately.
     if pattern == '':
 
-        print_log("loss tiles")
-
         local_tile_count = 0
 
         all_local_tiles = glob.glob('*tif')
