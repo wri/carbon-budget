@@ -196,11 +196,12 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
         uu.print_log("Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)")
         # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # 14 processors maxes out at 410-415 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
-        ### 14 processors = XXX GB peak (r5d.24xlarge)
-        processes=14
+        if cn.count == 96:
+            processes = 12  # 14 processors = "~420" GB peak
+        else:
+            processes = 8
         uu.print_log('AGC loss year max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_carbon_pools.create_emitted_AGC,
@@ -218,12 +219,12 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     elif carbon_pool_extent == '2000':
 
         uu.print_log("Creating tiles of aboveground carbon in 2000")
-        # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # 14 processors maxes out at 415 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
-        ### 14 processors = XXX GB peak (r5d.24xlarge)
-        processes=14
+        if cn.count == 96:
+            processes = 12  # 14 processors = XXX GB peak
+        else:
+            processes = 8
         uu.print_log('AGC 2000 max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_carbon_pools.create_2000_AGC,
@@ -243,11 +244,12 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
 
     uu.print_log("Creating tiles of belowground carbon")
-    # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[1]
-    ### 20 processors = XXX GB peak (r5d.24xlarge)
-    processes = 20
+    if cn.count == 96:
+        processes = 16  # 18 processors = "~400" GB peak
+    else:
+        processes = 8
     uu.print_log('BGC loss year max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
@@ -268,8 +270,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # processes=16 maxes out at about 430 GB
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[2]
-    ### 16 processors = XXX GB peak (r5d.24xlarge)
-    processes = 16
+    if cn.count == 96:
+        processes = 16  # 16 processors = "~430" GB peak
+    else:
+        processes = 8
     uu.print_log('Deadwood loss year max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(
@@ -288,11 +292,12 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
 
     uu.print_log("Creating tiles of litter carbon")
-    # processes=16 maxes out at about 420-440 GB
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[3]
-    ### 16 processors = XXX GB peak (r5d.24xlarge)
-    processes = 16
+    if cn.count == 96:
+        processes = 16  # 16 processors = "~440" GB peak
+    else:
+        processes = 8
     uu.print_log('Litter loss year max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
@@ -314,8 +319,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.print_log("Creating tiles of soil carbon")
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[4]
-        ### 16 processors = XXX GB peak (r5d.24xlarge)
-        processes=16
+        if cn.count == 96:
+            processes = 16  # 16 processors = XXX GB peak
+        else:
+            processes = 8
         uu.print_log('Soil carbon loss year max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_carbon_pools.create_soil,
@@ -342,8 +349,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[5]
-    ### 18 processors = XXX GB peak (r5d.24xlarge)
-    processes = 18
+    if cn.count == 96:
+        processes = 14  # 14 processors = XXX GB peak
+    else:
+        processes = 8
     uu.print_log('Total carbon loss year max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent,

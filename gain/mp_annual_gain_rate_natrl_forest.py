@@ -133,7 +133,7 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
-        processes = 36   # 24 processors = 450 GB peak; 36 = XXX GB peak
+        processes = 36   # 24 processors = 450 GB peak; 36 = 690 GB peak
     else:
         processes = 24
     uu.print_log('Annual gain rate natural forest max processors=', processes)

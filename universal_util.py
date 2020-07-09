@@ -35,6 +35,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
                         datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.INFO)
     logging.info("Log notes: {}".format(log_note))
+    logging.info("Model version: {}".format(cn.version))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
     logging.info("Model stages to run: {}".format(stage_input))
@@ -376,7 +377,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
 
 
 # Counts the number of tiles in a folder in s3
-def count_tiles_s3(source):
+def count_tiles_s3(source, pattern=None):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -397,9 +398,15 @@ def count_tiles_s3(source):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            # Only tifs will be in the tile list
-            if tile_name.endswith('.tif'):
+            # If the counted tiles have to have a specific pattern
+            if pattern != None:
+                if tile_name.endswith('{}.tif'.format(pattern)):
+                    tile_id = get_tile_id(tile_name)
+                    file_list.append(tile_id)
 
+            # If the counted tiles just have to be tifs
+            else:
+                tile_name.endswith('.tif')
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
@@ -546,7 +553,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     else:
 
         # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source)-1
+        s3_count = count_tiles_s3(source, pattern=pattern)-1
         print_log("There are", s3_count, "tiles at", source, "with the pattern", pattern)
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded

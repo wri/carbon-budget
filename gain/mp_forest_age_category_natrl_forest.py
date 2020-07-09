@@ -115,7 +115,8 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     if cn.count == 96:
         processes = 30
         # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
-        # 32=stopped at 730 peak (stops @ 686 for a while, then increases slowly)
+        # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
+        # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
     else:
         processes = 26
     uu.print_log('Natural forest age category max processors=', processes)
