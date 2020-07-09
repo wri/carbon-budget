@@ -419,7 +419,7 @@ def main ():
         tiles_to_delete.extend(glob.glob('*gain_year_count*tif'))        # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
         tiles_to_delete.extend(glob.glob('*cumul_gain_BGCO2*tif')) # Any forest type
-        tiles_to_delete.extend(glob.glob('*{}*tif').format(cn.ifl_primary_processed_dir))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.ifl_primary_processed_dir)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
