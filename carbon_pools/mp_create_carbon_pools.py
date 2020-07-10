@@ -199,7 +199,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
         if cn.count == 96:
-            processes = 12  # 14 processors = "~420" GB peak
+            processes = 14  # 12 processors = 580 GB peak (stays there for a while); 14 = XXX GB peak
         else:
             processes = 8
         uu.print_log('AGC loss year max processors=', processes)
@@ -247,7 +247,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[1]
     if cn.count == 96:
-        processes = 16  # 18 processors = "~400" GB peak
+        processes = 24  # 16 processors = 400 GB peak; 24 = XXX GB peak
     else:
         processes = 8
     uu.print_log('BGC loss year max processors=', processes)
@@ -271,7 +271,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[2]
     if cn.count == 96:
-        processes = 16  # 16 processors = "~430" GB peak
+        processes = 16  # 16 processors = 700 GB peak
     else:
         processes = 8
     uu.print_log('Deadwood loss year max processors=', processes)
@@ -295,7 +295,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[3]
     if cn.count == 96:
-        processes = 16  # 16 processors = "~440" GB peak
+        processes = 16  # 16 processors = 700 GB peak
     else:
         processes = 8
     uu.print_log('Litter loss year max processors=', processes)

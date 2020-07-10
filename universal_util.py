@@ -398,8 +398,14 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            if pattern == cn.pattern_gain:
-               if tile_name.endswith('.tif'):
+            if pattern == '':   # For Hansen loss tiles
+                if tile_name.endswith('.tif'):
+                        tile_id = get_tile_id(tile_name)
+                        file_list.append(tile_id)
+
+            # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
+            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+                if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
 
@@ -810,7 +816,7 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_
 # Creates a tile of all 0s for any tile passed to it.
 # Uses the pixel area tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
-def make_blank_tile(tile_id, pattern, folder, sensit_type):
+def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
 
     # Creates tile names for standard and sensitivity analyses.
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
@@ -832,11 +838,13 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     else:
         print_log('{} does not exist. Creating a blank tile.'.format(file_name))
 
+        created_tile_list = created_tile_list.append('{0}_{1}.tif'.format(tile_id, pattern))
+
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
         if os.path.exists(os.path.join(folder, '{0}.tif'.format(tile_id))):
-            print_log("Hansen loss tile exists for {}.".format(tile_id))
+            print_log("Hansen loss tile exists for {}. Using that as template for blank tile.".format(tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
                    '{0}/{1}.tif'.format(folder, tile_id)]
@@ -869,6 +877,10 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
                    '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
+
+        print_log("List of created blank tiles (inside function):", created_tile_list)
+
+        return created_tile_list
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names

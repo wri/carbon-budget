@@ -59,10 +59,13 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
+    # Stores the tile names for blank tiles
+    created_tile_list = []
+
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
-    folder = './'
+    folder = os.getcwd()
     for download_dir, download_pattern in download_dict.items():
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
@@ -71,11 +74,14 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         pattern = download_pattern[0]
 
         processes=54
-        uu.print_log('Net flux max processors=', processes)
+        uu.print_log('Blank tile creation max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+        created_tile_list = pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
+                                             sensit_type=sensit_type, created_tile_list=created_tile_list), tile_id_list)
         pool.close()
         pool.join()
+
+        print_log("List of created blank tiles (outside function):", created_tile_list)
 
     # # For single processor use
     # folder = './'
@@ -97,6 +103,10 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # for tile_id in tile_id_list:
     #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
+    for created_tile in created_tile_list:
+
+        uu.print_log("Deleting blank created tile", created_tile)
+        os.remove(created_tile)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

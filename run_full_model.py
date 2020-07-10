@@ -420,13 +420,13 @@ def main ():
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_BGB*tif'))   # Any forest type
         tiles_to_delete.extend(glob.glob('*cumul_gain_BGCO2*tif')) # Any forest type
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.ifl_primary_processed_dir)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)))   # This is used for net flux, so it'll have to be downloaded again. But need to free up space now.
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_natrl_forest)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again. But need to free up space now.
+        # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_tcd)))  # This is used again for aggregating results, so it'll have to be downloaded again. But need to free up space now.
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
