@@ -225,7 +225,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     if cn.count == 96:
-        processes = 16   # 9 processors = 350 GB peak; 16 = XXX GB peak
+        processes = 20   # 9 processors = 350 GB peak; 16 = 610 GB peak
     else:
         processes = 9
     uu.print_log('Gross emissions max processors=', processes)
