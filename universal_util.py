@@ -878,7 +878,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
-            created_tile_list = created_tile_list.append('{0}_{1}.tif'.format(tile_id, full_pattern))
+            print_log(created_tile_list)
+            created_tile_list = created_tile_list + '{0}_{1}.tif'.format(tile_id, full_pattern)
             print_log("List of created blank tiles (inside function):", created_tile_list)
             return created_tile_list
 
