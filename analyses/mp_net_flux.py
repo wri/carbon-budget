@@ -59,7 +59,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Stores the tile names for blank tiles
+    # Stores the tile names for blank tiles. These tiles will be deleted at the end of the script so that they
+    # don't get counted as actual tiles of this type
     created_tile_list = []
 
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
@@ -81,7 +82,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         pool.close()
         pool.join()
 
-        uu.print_log("List of created blank tiles (outside function):", created_tile_list)
+        created_tile_list = created_tile_list[0]
+        uu.print_log("List of created blank tiles:", created_tile_list)
 
     # # For single processor use
     # folder = './'

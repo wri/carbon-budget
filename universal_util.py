@@ -827,18 +827,18 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name)))
-        return
+        return created_tile_list
 
     # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
     elif os.path.exists(file_name_sens):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens)))
-        return
+        return created_tile_list
 
     # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
     else:
         print_log('{} does not exist. Creating a blank tile.'.format(file_name))
 
-        created_tile_list = created_tile_list.append('{0}_{1}.tif'.format(tile_id, pattern))
+        created_tile_list = created_tile_list + ['{0}_{1}.tif'.format(tile_id, pattern)]
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
@@ -878,9 +878,6 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
-            print_log(created_tile_list)
-            created_tile_list = created_tile_list + '{0}_{1}.tif'.format(tile_id, full_pattern)
-            print_log("List of created blank tiles (inside function):", created_tile_list)
             return created_tile_list
 
 
