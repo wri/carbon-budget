@@ -398,12 +398,17 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
+            if pattern == cn.pattern_gain:
+                tile_name.endswith('.tif')
+                tile_id = get_tile_id(tile_name)
+                file_list.append(tile_id)
+
             # If the counted tiles have to have a specific pattern
-            if pattern != None:
+            elif pattern != None:
                 if tile_name.endswith('{}.tif'.format(pattern)):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
-
+               
             # If the counted tiles just have to be tifs
             else:
                 tile_name.endswith('.tif')
