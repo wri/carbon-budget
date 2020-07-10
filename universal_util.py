@@ -857,14 +857,14 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
             try:
                 s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
                                  os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
-                print_log("Downloaded Hansen loss tile for", tile_id)
+                print_log("Downloaded Hansen loss tile for", tile_id, "to create a blank tile")
 
             # If there is no Hansen tile, it downloads the pixel area tile instead
             except:
 
                 s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
                                  os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
-                print_log("Downloaded pixel area tile for", tile_id)
+                print_log("Downloaded pixel area tile for", tile_id, "to create a blank tile")
 
             # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
             tile_list= tile_list_spot_machine(folder, pattern)
@@ -877,6 +877,8 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
                    '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
+
+            created_tile_list = created_tile_list.append('{0}_{1}.tif'.format(tile_id, full_pattern))
 
         print_log("List of created blank tiles (inside function):", created_tile_list)
 

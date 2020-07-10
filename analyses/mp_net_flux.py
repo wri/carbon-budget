@@ -81,7 +81,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         pool.close()
         pool.join()
 
-        print_log("List of created blank tiles (outside function):", created_tile_list)
+        uu.print_log("List of created blank tiles (outside function):", created_tile_list)
 
     # # For single processor use
     # folder = './'

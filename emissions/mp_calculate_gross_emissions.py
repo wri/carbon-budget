@@ -207,13 +207,13 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     created_tile_list = []
 
     for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=50)
+        pool = multiprocessing.Pool(processes=60)
         created_tile_list = pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
                                              sensit_type=sensit_type, created_tile_list=created_tile_list), tile_id_list)
         pool.close()
         pool.join()
 
-        print_log("List of created blank tiles (outside function):", created_tile_list)
+        uu.print_log("List of created blank tiles (outside function):", created_tile_list)
 
     # # For single processor use
     # for pattern in pattern_list:
@@ -224,8 +224,10 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # Calculates gross emissions for each tile
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    # pool = multiprocessing.Pool(processes=18)
-    processes=9
+    if cn.count == 96:
+        processes = 16   # 9 processors = 350 GB peak; 16 = XXX GB peak
+    else:
+        processes = 9
     uu.print_log('Gross emissions max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type, folder=folder), tile_id_list)
