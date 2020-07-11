@@ -838,6 +838,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
     else:
         print_log('{} does not exist. Creating a blank tile.'.format(file_name))
 
+        print_log("inside list", created_tile_list)
         created_tile_list = created_tile_list + ['{0}_{1}.tif'.format(tile_id, pattern)]
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
