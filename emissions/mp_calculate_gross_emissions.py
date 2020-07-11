@@ -204,6 +204,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
 
+    # textfile that stores the names of the blank tiles that are created for processing.
+    # This will be iterated through to delete the tiles at the end of the script.
     uu.create_blank_tile_txt()
 
     for pattern in pattern_list:
@@ -213,8 +215,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         pool.close()
         pool.join()
 
-        # created_tile_list = created_tile_list[0]
-        # uu.print_log("List of created blank tiles:", created_tile_list)
+    uu.list_and_delete_blank_tiles()
 
     # # For single processor use
     # for pattern in pattern_list:
@@ -236,6 +237,9 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # # For single processor use
     # for tile in tile_id_list:
     #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
+
+
+    # uu.print_log("List of created blank tiles:", created_tile_list)
 
     # for created_tile in created_tile_list:
     #

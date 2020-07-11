@@ -879,12 +879,21 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
-
+# Creates a txt that will have blank dummy tiles listed in it for certain scripts that need those
 def create_blank_tile_txt():
 
     blank_tiles = open(os.path.join(cn.docker_tmp, cn.blank_tile_txt), "wb")
     blank_tiles.close()
 
+
+def list_and_delete_blank_tiles():
+
+    blank_tiles_list = open(os.path.join(cn.docker_tmp, cn.blank_tile_txt)).read().splitlines()
+    print_log("Blank tile list:", blank_tiles_list)
+
+    print_log("Deleting blank tiles...")
+    for blank_tile in blank_tiles_list:
+        os.remove(blank_tile)
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
 def name_aggregated_output(pattern, thresh, sensit_type):
