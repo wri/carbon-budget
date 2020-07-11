@@ -78,8 +78,6 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         pool.close()
         pool.join()
 
-        created_tile_list = created_tile_list[0]
-        uu.print_log("List of created blank tiles:", created_tile_list)
 
     # # For single processor use
     # folder = './'
@@ -101,10 +99,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # for tile_id in tile_id_list:
     #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
-    for created_tile in created_tile_list:
-
-        uu.print_log("Deleting blank created tile", created_tile)
-        os.remove(created_tile)
+    # Print the list of blank created tiles, delete the tiles, and delete their text file
+    uu.list_and_delete_blank_tiles()
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

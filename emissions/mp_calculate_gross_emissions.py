@@ -237,6 +237,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
+    # Print the list of blank created tiles, delete the tiles, and delete their text file
     uu.list_and_delete_blank_tiles()
 
 
