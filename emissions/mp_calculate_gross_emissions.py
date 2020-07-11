@@ -215,8 +215,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         pool.close()
         pool.join()
 
-    uu.list_and_delete_blank_tiles()
-
     # # For single processor use
     # for pattern in pattern_list:
     #     for tile in tile_id_list:
@@ -239,12 +237,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
 
 
-    # uu.print_log("List of created blank tiles:", created_tile_list)
-
-    # for created_tile in created_tile_list:
-    #
-    #     uu.print_log("Deleting blank created tile", created_tile)
-    #     os.remove(created_tile)
+    uu.list_and_delete_blank_tiles()
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen

@@ -895,6 +895,10 @@ def list_and_delete_blank_tiles():
     for blank_tile in blank_tiles_list:
         os.remove(blank_tile)
 
+    print_log("Deleting blank tile textfile...")
+    os.remove(os.path.join(cn.docker_tmp, cn.blank_tile_txt))
+    
+
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
 def name_aggregated_output(pattern, thresh, sensit_type):
 
