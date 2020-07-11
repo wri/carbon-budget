@@ -881,7 +881,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
-            return created_tile_list
+        return created_tile_list
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
