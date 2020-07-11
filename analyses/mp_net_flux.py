@@ -93,7 +93,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
     if cn.count == 96:
-        processes = 24   # 9 processors = XXX GB peak
+        processes = 36   # 24 processors = 440 GB peak; 36 = XXX GB peak
     else:
         processes = 9
     pool = multiprocessing.Pool(processes)
