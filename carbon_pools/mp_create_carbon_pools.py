@@ -199,7 +199,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = output_pattern_list[0]
         if cn.count == 96:
-            processes = 14  # 12 processors = 580 GB peak (stays there for a while); 14 = XXX GB peak
+            processes = 12  # 12 processors = 580 GB peak (stays there for a while); 14 = >740 GB peak
         else:
             processes = 8
         uu.print_log('AGC loss year max processors=', processes)
