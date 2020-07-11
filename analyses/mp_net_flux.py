@@ -59,10 +59,6 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Stores the tile names for blank tiles. These tiles will be deleted at the end of the script so that they
-    # don't get counted as actual tiles of this type
-    created_tile_list = []
-
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
@@ -77,8 +73,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         processes=54
         uu.print_log('Blank tile creation max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        created_tile_list = pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
-                                             sensit_type=sensit_type, created_tile_list=created_tile_list), tile_id_list)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
+                                             sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()
 

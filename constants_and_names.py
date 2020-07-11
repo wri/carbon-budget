@@ -85,6 +85,12 @@ model_log_dir = 's3://gfw2-data/climate/carbon_model/model_logs/{}/'.format(vers
 model_log = "flux_model_log_{}.txt".format(date_formatted)
 
 
+# Blank created tile list txt
+# Stores the tile names for blank tiles. These tiles will be deleted at the end of the script so that they
+# don't get counted as actual tiles of this type
+blank_tile_txt = "blank_tiles.txt"
+
+
 ### Biomass tiles
 ######
 

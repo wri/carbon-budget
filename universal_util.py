@@ -816,7 +816,7 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_
 # Creates a tile of all 0s for any tile passed to it.
 # Uses the pixel area tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
-def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
+def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
     # Creates tile names for standard and sensitivity analyses.
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
@@ -827,21 +827,16 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name)))
-        return created_tile_list
 
     # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
     elif os.path.exists(file_name_sens):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens)))
-        return created_tile_list
 
     # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
     else:
         print_log('{} does not exist. Creating a blank tile.'.format(file_name))
 
-        print_log("inside list 1", created_tile_list)
-        print_log('{0}_{1}.tif'.format(tile_id, pattern))
-        created_tile_list = created_tile_list + ['{0}_{1}.tif'.format(tile_id, pattern)]
-        print_log("inside list 2", created_tile_list)
+        cn.blank_tile_txt.write('{0}_{1}.tif'.format(tile_id, pattern))
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
@@ -881,7 +876,11 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type, created_tile_list):
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
-        return created_tile_list
+
+def create_blank_tile_txt():
+
+    blank_tiles = open(os.path.join(cn.docker_tmp, cn.blank_tile_txt), "wb")
+    blank_tiles.close()
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
