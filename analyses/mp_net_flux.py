@@ -92,12 +92,17 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    pool = multiprocessing.Pool(processes=24)
+    if cn.count == 96:
+        processes = 24   # 9 processors = XXX GB peak
+    else:
+        processes = 9
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # # For single processor use
     # for tile_id in tile_id_list:
     #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+
 
     # Print the list of blank created tiles, delete the tiles, and delete their text file
     uu.list_and_delete_blank_tiles()
