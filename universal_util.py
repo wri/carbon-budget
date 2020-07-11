@@ -838,6 +838,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
         with open(os.path.join(cn.docker_tmp, cn.blank_tile_txt), 'a') as f:
             f.write('{0}_{1}.tif'.format(tile_id, pattern))
+            f.write("\n")
             f.close()
 
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
