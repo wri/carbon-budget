@@ -204,7 +204,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
 
 
-    uu.create_blank_tile_txt()
+    # uu.create_blank_tile_txt()
 
     for pattern in pattern_list:
         pool = multiprocessing.Pool(processes=60)
