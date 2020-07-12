@@ -50,14 +50,15 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
     logging.info("AWS ec2 instance type and AMI id:")
     try:
+        logging.info("here")
         cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
             log_subprocess_output(process.stdout)
-            cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                log_subprocess_output(process.stdout)
+        cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            log_subprocess_output(process.stdout)
     except:
         logging.info("Not running on AWS ec2 instance")
     logging.info("Available processors: {}".format(cn.count))
