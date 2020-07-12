@@ -50,7 +50,6 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
     logging.info("AWS ec2 instance type and AMI id:")
     try:
-        logging.info("here")
         cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
@@ -111,6 +110,8 @@ def exception_log(*args):
 # Adds the subprocess output to the log and the console
 # Solution is from second answer (jfs' answer) at this page: https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
 def log_subprocess_output(pipe):
+
+    logging.info("here")
 
     # Reads all the output into a string
     for full_out in iter(pipe.readline, b''): # b'\n'-separated lines
