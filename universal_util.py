@@ -111,8 +111,6 @@ def exception_log(*args):
 # Solution is from second answer (jfs' answer) at this page: https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
 def log_subprocess_output(pipe):
 
-    logging.info("here")
-
     # Reads all the output into a string
     for full_out in iter(pipe.readline, b''): # b'\n'-separated lines
 

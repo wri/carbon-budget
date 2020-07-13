@@ -108,7 +108,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     if cn.count == 96:
-        processes = 60   # 36 processors = 350 GB peak; 54 = 490 GB peak; 60 = XXX GB peak
+        processes = 60   # 36 processors = 350 GB peak; 54 = 490 GB peak; 60 = XXX GB peak (didn't see but ran fine)
     else:
         processes = 24
     uu.print_log('Natural forest gain year count no change pixels max processors=', processes)
@@ -116,7 +116,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
              tile_id_list)
 
     if cn.count == 96:
-        processes = 62   # 36 processors = 220 GB peak; 54 = 260 GB peak; 62 = XXX GB peak
+        processes = 70   # 36 processors = 220 GB peak; 54 = 260 GB peak; 62 = 300 GB peak; 70 = XXX GB peak
     else:
         processes = 24
     uu.print_log('Natural gain year count loss & gain pixels max processors=', processes)
@@ -135,7 +135,7 @@ def mp_gain_year_count_natrl_forest(sensit_type, tile_id_list, run_date = None):
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile
     # count/6 maxes out at about 230 GB
     if cn.count == 96:
-        processes = 28   # 16 processors = 370 GB peak; 28 = 640 GB peak
+        processes = 30   # 16 processors = 370 GB peak; 28 = 640 GB peak; 30 = XXX GB peak
     else:
         processes = int(cn.count/6)
     uu.print_log('Natural forest gain year count gain merge all combos max processors=', processes)

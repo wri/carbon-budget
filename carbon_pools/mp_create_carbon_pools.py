@@ -201,7 +201,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         if cn.count == 96:
             processes = 10  # 12 processors = 580 GB peak (stays there for a while); 14 = >740 GB peak; 12 = >740 GB peak
         else:
-            processes = 8
+            processes = 2
         uu.print_log('AGC loss year max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_carbon_pools.create_emitted_AGC,
