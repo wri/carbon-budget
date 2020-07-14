@@ -478,6 +478,26 @@ def main ():
     # Creates net flux tiles (gross emissions - gross removals)
     if 'net_flux' in actual_stages:
 
+        uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
+        tiles_to_delete = glob.glob('*{}*tif'.format(cn.gross_emis_non_co2_all_drivers_biomass_soil_dir))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_commod_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_shifting_ag_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_forestry_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_wildfire_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_urban_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_burn_year)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_emis_year)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_emis_year)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_deadwood_emis_year_2000)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_litter_emis_year_2000)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_emis_year_2000)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_total_C_emis_year)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_peat_mask)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
         uu.print_log(":::::Creating net flux tiles")
         start = datetime.datetime.now()
 
