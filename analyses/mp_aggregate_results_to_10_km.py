@@ -117,7 +117,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         if cn.count == 96:
-            processes = 20  # 20 processors = XXX GB peak
+            processes = 14  # 14 processors = XXX GB peak; 20 = >750 GB (maxed out)
         else:
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
@@ -142,7 +142,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         if cn.count == 96:
-            processes = 20  # 20 processors = XXX GB peak
+            processes = 14  # 14 processors = XXX GB peak; 20 = >750 GB (maxed out)
         else:
             processes = 8
         uu.print_log('Conversion to per pixel and aggregate max processors=', processes)
