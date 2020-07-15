@@ -3,6 +3,7 @@
 
 import multiprocessing
 import argparse
+import datetime
 import os
 from functools import partial
 import sys
@@ -21,8 +22,8 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_planted_forest_non_mangrove_dir)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -47,7 +48,7 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -62,7 +63,12 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 360 GB on an r4.16xlarge
-    pool = multiprocessing.Pool(processes=26)
+    if cn.count == 96:
+        processes = 42   # 26 processors = 370 GB peak; 52 = 740 GB peak; 42 = XXX GB peak
+    else:
+        processes = 26
+    uu.print_log('Cumulative gain AGC rate planted max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(cumulative_gain_planted_forest.cumulative_gain_AGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
 
     # Creates a single filename pattern to pass to the multiprocessor call
@@ -70,7 +76,12 @@ def mp_cumulative_gain_planted_forest(sensit_type, tile_id_list, run_date = None
 
     # Calculates cumulative belowground carbon gain in non-mangrove planted forests
     # count/3 maxes out at 320 GB on an r4.16xlarge
-    pool = multiprocessing.Pool(processes=26)
+    if cn.count == 96:
+        processes = 44   # 26 processors = 370 GB peak; 52 = 720 GB peak; 44 = XXX GB peak
+    else:
+        processes = 26
+    uu.print_log('Cumulative gain BGC rate planted max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(cumulative_gain_planted_forest.cumulative_gain_BGC, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
@@ -102,6 +113,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

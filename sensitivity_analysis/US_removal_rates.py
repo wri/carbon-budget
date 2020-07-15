@@ -10,33 +10,33 @@ import universal_util as uu
 # Creates Hansen tiles out of FIA region shapefile
 def prep_FIA_regions(tile_id):
 
-    print("Creating Hansen tile for FIA regions")
+    uu.print_log("Creating Hansen tile for FIA regions")
 
     # Start time
     start = datetime.datetime.now()
 
-    print("Getting extent of", tile_id)
+    uu.print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
 
-    print("Rasterizing FIA region shapefile", tile_id)
+    uu.print_log("Rasterizing FIA region shapefile", tile_id)
     uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
                    "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
                         xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
 
-    print("Checking if {} contains any data...".format(tile_id))
+    uu.print_log("Checking if {} contains any data...".format(tile_id))
     no_data = uu.check_for_data("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     if no_data:
 
-        print("  No data found. Deleting {}.".format(tile_id))
+        uu.print_log("  No data found. Deleting {}.".format(tile_id))
         os.remove("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))
 
     else:
 
-        print("  Data found in {}. Copying tile to s3...".format(tile_id))
+        uu.print_log("  Data found in {}. Copying tile to s3...".format(tile_id))
         uu.upload_final(cn.FIA_regions_processed_dir, tile_id, cn.pattern_FIA_regions_processed)
-        print("    Tile copied to s3")
+        uu.print_log("    Tile copied to s3")
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_FIA_regions_processed)
@@ -45,7 +45,7 @@ def prep_FIA_regions(tile_id):
 # Creates annual AGB and BGB removal rate rasters for US using US-specific removal rates
 def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict, output_pattern_list, sensit_type):
 
-    print("Assigning US removal rates:", tile_id)
+    uu.print_log("Assigning US removal rates:", tile_id)
 
     # Start time
     start = datetime.datetime.now()

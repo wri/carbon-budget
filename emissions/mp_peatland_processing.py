@@ -10,9 +10,10 @@ Between 40N and 60S, SoilGrids250m is not used.
 import multiprocessing
 import peatland_processing
 import argparse
+import datetime
 import sys
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -27,8 +28,8 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # List of output directories and output file name patterns
@@ -49,19 +50,26 @@ def mp_peatland_processing(tile_id_list, run_date = None):
 
     # Unzips the Jukka peat shapefile (IDN and MYS)
     cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     jukka_tif = 'jukka_peat.tif'
 
     # Converts the Jukka peat shapefile to a raster
     cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
-
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # For multiprocessor use
     # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
-    pool = multiprocessing.Pool(processes=cn.count-10)
+    processes=cn.count-10
+    uu.print_log('Peatland preprocessing max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
 
     # # For single processor use, for testing purposes
@@ -69,7 +77,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     #
     #     peatland_processing.create_peat_mask_tiles(tile_id)
 
-    print("Uploading output files")
+    uu.print_log("Uploading output files")
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
@@ -84,5 +92,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
 
     mp_peatland_processing(tile_id_list=tile_id_list, run_date=run_date)

@@ -1,6 +1,6 @@
 from osgeo import gdal
 import numpy as np
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import sys
 sys.path.append('../')
@@ -15,7 +15,7 @@ def create_tile_statistics(tile, sensit_type):
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)
 
-    print("Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id))
+    uu.print_log("Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id))
 
     # start time
     start = datetime.datetime.now()
@@ -25,7 +25,7 @@ def create_tile_statistics(tile, sensit_type):
     focus_tile = gdal.Open(tile)
 
     nodata = uu.get_raster_nodata_value(tile)
-    print("NoData value =", nodata)
+    uu.print_log("NoData value =", nodata)
 
     # Turns the raster into a numpy array
     tile_array = np.array(focus_tile.GetRasterBand(1).ReadAsArray())
@@ -51,13 +51,17 @@ def create_tile_statistics(tile, sensit_type):
     # Argument for outputting file
     out = '--outfile={}'.format(outname)
 
-    print("Converting {} from /ha to /pixel...".format(tile))
+    uu.print_log("Converting {} from /ha to /pixel...".format(tile))
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
            '--overwrite', '--quiet']
-    subprocess.check_call(cmd)
-    print("{} converted to /pixel".format(tile))
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
-    print("Converting value/pixel tile {} to numpy array...".format(tile))
+    uu.print_log("{} converted to /pixel".format(tile))
+
+    uu.print_log("Converting value/pixel tile {} to numpy array...".format(tile))
     # Opens raster with value per pixel
     value_per_pixel = gdal.Open(outname)
 
@@ -67,7 +71,7 @@ def create_tile_statistics(tile, sensit_type):
     # Flattens the pixel area numpy array to a single dimension
     value_per_pixel_array_flat = value_per_pixel_array.flatten()
 
-    print("Converted {} to numpy array".format(tile))
+    uu.print_log("Converted {} to numpy array".format(tile))
 
     # Empty statistics list
     stats = [None] * 13
@@ -107,7 +111,7 @@ def create_tile_statistics(tile, sensit_type):
 
     stats_no_brackets = ', '.join(map(str, stats))
 
-    print(stats_no_brackets)
+    uu.print_log(stats_no_brackets)
 
     # Adds the tile's statistics to the txt file
     with open(tile_stats, 'a+') as f:

@@ -12,6 +12,7 @@
 import multiprocessing
 import argparse
 import os
+import datetime
 from functools import partial
 import sys
 sys.path.append('/usr/local/app/gain/')
@@ -32,8 +33,8 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
         ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
         tile_id_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -58,7 +59,7 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -69,10 +70,20 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
 
     # Creates gain year count tiles using only pixels that had only loss. Worked on a r4.16xlarge machine.
-    pool = multiprocessing.Pool(int(cn.count/2))
+    if cn.count == 96:
+        processes = 62   # 48 processors = 580 GB peak; 60 = 640 GB peak; 62 = 660 GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Mangrove gain year count loss only pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(gain_year_count_mangrove.create_gain_year_count_loss_only, tile_id_list)
 
-    pool = multiprocessing.Pool(int(cn.count/2))
+    if cn.count == 96:
+        processes = 62   # 48 processors = 580 GB peak; 60 = 640 GB peak; 62 = 660 GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Mangrove gain year count gain only pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(gain_year_count_mangrove.create_gain_year_count_gain_only_maxgain, tile_id_list)
@@ -82,11 +93,21 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     # count/3 maxes out at 250 GB
-    pool = multiprocessing.Pool(int(cn.count/2))
+    if cn.count == 96:
+        processes = 62   # 48 processors = 580 GB peak; 60 = 640 GB peak; 62 = 660 GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Mangrove gain year count no change pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(gain_year_count_mangrove.create_gain_year_count_no_change, tile_id_list)
 
     # count/3 maxes out at 255 GB
-    pool = multiprocessing.Pool(int(cn.count/2))
+    if cn.count == 96:
+        processes = 62   # 48 processors = 580 GB peak; 60 = 640 GB peak; 62 = 660 GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Mangrove gain year count loss & gain pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had both loss and gain pixels
         pool.map(gain_year_count_mangrove.create_gain_year_count_loss_and_gain_maxgain, tile_id_list)
@@ -100,7 +121,12 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     # Merges the four above gain year count tiles for each Hansen tile into a single output tile.
     # Using a r4.16xlarge machine, calling one sixth of the processors uses just about all the memory without going over
     # (e.g., about 450 GB out of 480 GB).
-    pool = multiprocessing.Pool(int(cn.count/5))
+    if cn.count == 96:
+        processes = 27   # 15 processors = 450 GB peak; 25 = 570 GB peak; 27 = 610 GB peak
+    else:
+        processes = int(cn.count/5)
+    uu.print_log('Mangrove gain year count gain merge all combos max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_mangrove.create_gain_year_count_merge, pattern=pattern), tile_id_list)
     pool.close()
     pool.join()
@@ -128,10 +154,10 @@ def mp_gain_year_count_mangrove(sensit_type, tile_id_list, run_date = None):
     #     gain_year_count_mangrove.create_gain_year_count_merge(tile_id, output_pattern_list[0])
 
     # Intermediate output tiles for checking outputs
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only_mangrove")
+    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only_mangrove")
+    uu.upload_final_set(output_dir_list[0], "growth_years_no_change_mangrove")
+    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain_mangrove")
 
     # Uploads final output tiles to s3
     for i in range(0, len(output_dir_list)):
@@ -154,6 +180,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

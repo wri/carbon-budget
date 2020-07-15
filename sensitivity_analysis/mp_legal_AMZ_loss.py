@@ -3,11 +3,12 @@
 import multiprocessing
 from functools import partial
 import glob
+import datetime
 import argparse
 from osgeo import gdal
 import legal_AMZ_loss
 import pandas as pd
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('../')
@@ -21,6 +22,9 @@ sys.path.append('../carbon_pools')
 import create_carbon_pools
 
 def main ():
+
+    # Create the output log
+    uu.initiate_log()
 
     os.chdir(cn.docker_base_dir)
 
@@ -42,16 +46,16 @@ def main ():
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (stage_input not in Brazil_stages):
-        raise Exception('Invalid stage selection. Please provide a stage from {}.'.format(Brazil_stages))
+        uu.exception_log('Invalid stage selection. Please provide a stage from', Brazil_stages)
     else:
         pass
     if (run_through not in ['true', 'false']):
-        raise Exception('Invalid run through option. Please enter true or false.')
+        uu.exception_log('Invalid run through option. Please enter true or false.')
     else:
         pass
 
     actual_stages = uu.analysis_stages(Brazil_stages, stage_input, run_through)
-    print(actual_stages)
+    uu.print_log(actual_stages)
 
 
     # By definition, this script is for US-specific removals
@@ -80,14 +84,14 @@ def main ():
     # Creates forest extent 2000 raster from multiple PRODES forest extent rasters
     if 'create_forest_extent' in actual_stages:
 
-        print('Creating forest extent tiles')
+        uu.print_log('Creating forest extent tiles')
 
         # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
         # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
         # tile_id_list = ['50N_130W'] # test tiles
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
         uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_base_dir, sensit_type)
@@ -99,8 +103,8 @@ def main ():
         transform_2019 = prodes_2019.GetGeoTransform()
         pixelSizeX = transform_2019[1]
         pixelSizeY = -transform_2019[5]
-        print(pixelSizeX)
-        print(pixelSizeY)
+        uu.print_log(pixelSizeX)
+        uu.print_log(pixelSizeY)
 
         # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
         # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
@@ -108,7 +112,10 @@ def main ():
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
                raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         # Uploads the merged forest extent raster to s3 for future reference
         uu.upload_final_set(cn.Brazil_forest_extent_2000_merged_dir, cn.pattern_Brazil_forest_extent_2000_merged)
@@ -130,11 +137,11 @@ def main ():
     # Creates annual loss raster for 2001-2015 from multiples PRODES rasters
     if 'create_loss' in actual_stages:
 
-        print('Creating annual loss tiles')
+        uu.print_log('Creating annual loss tiles')
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
         uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, cn.docker_base_dir, sensit_type)
@@ -152,7 +159,10 @@ def main ():
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                'Prodes2017_annual_loss_2008_2015.tif', 'Prodes2014_annual_loss_2001_2007.tif']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         # Uploads the merged loss raster to s3 for future reference
         uu.upload_final_set(cn.Brazil_annual_loss_merged_dir, cn.pattern_Brazil_annual_loss_merged)
@@ -175,7 +185,7 @@ def main ():
     # Creates forest age category tiles
     if 'forest_age_category' in actual_stages:
 
-        print('Creating forest age category tiles')
+        uu.print_log('Creating forest age category tiles')
 
         # Files to download for this script.
         download_dict = {cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
@@ -189,8 +199,8 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -202,7 +212,7 @@ def main ():
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            print("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
@@ -231,7 +241,7 @@ def main ():
     # Creates tiles of the number of years of removals
     if 'gain_year_count' in actual_stages:
 
-        print('Creating gain year count tiles for natural forest')
+        uu.print_log('Creating gain year count tiles for natural forest')
 
         # Files to download for this script.
         download_dict = {
@@ -246,8 +256,8 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -259,7 +269,7 @@ def main ():
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            print("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
@@ -306,7 +316,7 @@ def main ():
     # removal function
     if 'annual_removals' in actual_stages:
 
-        print('Creating annual removals for natural forest')
+        uu.print_log('Creating annual removals for natural forest')
 
         # Files to download for this script.
         download_dict = {
@@ -318,14 +328,14 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (annual removals).
         if sensit_type != 'std':
-            print("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[4:6])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[4:6])
 
@@ -339,7 +349,11 @@ def main ():
 
         # Table with IPCC Table 4.9 default gain rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         pd.options.mode.chained_assignment = None
 
@@ -389,7 +403,7 @@ def main ():
         # Converts all the keys (continent-ecozone-age codes) to float type
         gain_table_dict = {float(key): value for key, value in gain_table_dict.items()}
 
-        print(gain_table_dict)
+        uu.print_log(gain_table_dict)
 
 
         # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
@@ -418,7 +432,7 @@ def main ():
     # removal function
     if 'cumulative_removals' in actual_stages:
 
-        print('Creating cumulative removals for natural forest')
+        uu.print_log('Creating cumulative removals for natural forest')
 
         # Files to download for this script.
         download_dict = {
@@ -430,14 +444,14 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
-            print("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[6:8])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[6:8])
 
@@ -478,7 +492,7 @@ def main ():
     # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
     if 'removals_merged' in actual_stages:
 
-        print('Creating annual and cumulative removals for all forest types combined (above + belowground)')
+        uu.print_log('Creating annual and cumulative removals for all forest types combined (above + belowground)')
 
         # Files to download for this script
         download_dict = {
@@ -502,14 +516,14 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
-            print("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[8:10])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[8:10])
 
@@ -542,7 +556,7 @@ def main ():
     # Creates carbon pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        print('Creating emissions year carbon pools')
+        uu.print_log('Creating emissions year carbon pools')
 
         # Specifies that carbon pools are created for loss year rather than in 2000
         extent = 'loss'
@@ -580,8 +594,8 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
-        print(tile_id_list)
-        print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         for key, values in download_dict.items():
             dir = key
@@ -590,14 +604,19 @@ def main ():
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            print("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[10:16])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[10:16])
 
 
         # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
+
 
         pd.options.mode.chained_assignment = None
 
@@ -626,7 +645,7 @@ def main ():
 
         if extent == 'loss':
 
-            print("Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)")
+            uu.print_log("Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)")
             # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
             # 14 processors maxes out at 410-415 GB
             # Creates a single filename pattern to pass to the multiprocessor call
@@ -645,7 +664,7 @@ def main ():
 
         elif extent == '2000':
 
-            print("Creating tiles of aboveground carbon in 2000")
+            uu.print_log("Creating tiles of aboveground carbon in 2000")
             # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
             # 14 processors maxes out at 415 GB
             # Creates a single filename pattern to pass to the multiprocessor call
@@ -663,9 +682,9 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[0], stage_output_pattern_list[0])
 
         else:
-            raise Exception("Extent argument not valid")
+            uu.exception_log("Extent argument not valid")
 
-        print("Creating tiles of belowground carbon")
+        uu.print_log("Creating tiles of belowground carbon")
         # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[1]
@@ -682,7 +701,7 @@ def main ():
 
         uu.upload_final_set(stage_output_dir_list[1], stage_output_pattern_list[1])
 
-        print("Creating tiles of deadwood carbon")
+        uu.print_log("Creating tiles of deadwood carbon")
         # processes=16 maxes out at about 430 GB
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[2]
@@ -700,7 +719,7 @@ def main ():
 
         uu.upload_final_set(stage_output_dir_list[2], stage_output_pattern_list[2])
 
-        print("Creating tiles of litter carbon")
+        uu.print_log("Creating tiles of litter carbon")
         # Creates a single filename pattern to pass to the multiprocessor call
         pattern = stage_output_pattern_list[3]
         pool = multiprocessing.Pool(int(cn.count/4))
@@ -718,7 +737,7 @@ def main ():
 
         if extent == 'loss':
 
-            print("Creating tiles of soil carbon")
+            uu.print_log("Creating tiles of soil carbon")
             # Creates a single filename pattern to pass to the multiprocessor call
             pattern = stage_output_pattern_list[4]
             pool = multiprocessing.Pool(int(cn.count/3))
@@ -734,12 +753,12 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[4], stage_output_pattern_list[4])
 
         elif extent == '2000':
-            print("Skipping soil for 2000 carbon pool calculation")
+            uu.print_log("Skipping soil for 2000 carbon pool calculation")
 
         else:
-            raise Exception("Extent argument not valid")
+            uu.exception_log("Extent argument not valid")
 
-        print("Creating tiles of total carbon")
+        uu.print_log("Creating tiles of total carbon")
         # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
         # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
         # Creates a single filename pattern to pass to the multiprocessor call

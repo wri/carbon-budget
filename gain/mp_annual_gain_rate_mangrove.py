@@ -5,8 +5,9 @@
 import multiprocessing
 from functools import partial
 import argparse
+import datetime
 import pandas as pd
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')
@@ -29,8 +30,8 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
         ecozone_tile_list = uu.tile_list_s3(cn.cont_eco_dir)
         tile_id_list = list(set(mangrove_biomass_tile_list).intersection(ecozone_tile_list))
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     download_dict = {
@@ -59,7 +60,11 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
@@ -95,7 +100,12 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
-    pool = multiprocessing.Pool(processes=18)
+    if cn.count == 96:
+        processes = 26    #18 processors = 480 GB peak; 25 = 630 GB peak; 28 = 710 GB peak; 28 = >750 GB peak (froze)
+    else:
+        processes = 18
+    uu.print_log('Mangrove annual gain rate max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, sensit_type=sensit_type, output_pattern_list=output_pattern_list,
                      gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), tile_id_list)
     pool.close()
@@ -128,6 +138,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

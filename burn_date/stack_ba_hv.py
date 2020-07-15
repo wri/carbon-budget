@@ -1,4 +1,4 @@
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 from osgeo import gdal
 import utilities
 import glob
@@ -19,7 +19,7 @@ def stack_ba_hv(hv_tile):
         if len(hdf_files) > 0:
             array_list = []
             for hdf in hdf_files:
-                print("converting hdf to array")
+                print_log("converting hdf to array")
                 array = utilities.hdf_to_array(hdf)
                 array_list.append(array)
 
@@ -37,7 +37,11 @@ def stack_ba_hv(hv_tile):
 
             # upload to somewhere on s3
             cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/20190322/']
-            subprocess.check_call(cmd)
+
+            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+            with process.stdout:
+                uu.log_subprocess_output(process.stdout)
 
             # remove files
             shutil.rmtree(output_dir)

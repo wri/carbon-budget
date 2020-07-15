@@ -28,9 +28,10 @@ different are the ones that have a region-group-age combination that's in the FI
 
 import multiprocessing
 from functools import partial
+import datetime
 from sensitivity_analysis import US_removal_rates
 import pandas as pd
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('../')
@@ -38,6 +39,9 @@ import constants_and_names as cn
 import universal_util as uu
 
 def main ():
+
+    # Create the output log
+    uu.initiate_log()
 
     os.chdir(cn.docker_base_dir)
 
@@ -65,15 +69,18 @@ def main ():
 
     # Only creates FIA region tiles if they don't already exist on s3.
     if FIA_regions_tile_count == 16:
-        print("FIA region tiles already created. Copying to s3 now...")
+        uu.print_log("FIA region tiles already created. Copying to s3 now...")
         uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, cn.docker_base_dir, 'std', 'all')
 
     else:
-        print("FIA region tiles do not exist. Creating tiles, then copying to s3 for future use...")
+        uu.print_log("FIA region tiles do not exist. Creating tiles, then copying to s3 for future use...")
         uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, 'std')
 
         cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
         # Converts the region shapefile to Hansen tiles
         pool = multiprocessing.Pool(int(cn.count/2))
@@ -84,8 +91,8 @@ def main ():
     US_tile_list = uu.tile_list_spot_machine(cn.docker_base_dir, '{}.tif'.format(cn.pattern_FIA_regions_processed))
     US_tile_id_list = [i[0:8] for i in US_tile_list]
     # US_tile_id_list = ['50N_130W']    # For testing
-    print(US_tile_id_list)
-    print("There are {} tiles to process".format(str(len(US_tile_id_list))) + "\n")
+    uu.print_log(US_tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(US_tile_id_list))) + "\n")
 
 
     # Counts how many processed forest age category tiles there are on s3 already. 16 tiles cover the continental US.
@@ -93,12 +100,12 @@ def main ():
 
     # Only creates FIA forest age category tiles if they don't already exist on s3.
     if US_age_tile_count == 16:
-        print("Forest age category tiles already created. Copying to spot machine now...")
+        uu.print_log("Forest age category tiles already created. Copying to spot machine now...")
         uu.s3_flexible_download(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed,
                                 '', 'std', US_tile_id_list)
 
     else:
-        print("Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use...")
+        uu.print_log("Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use...")
         uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), cn.docker_base_dir, 'std')
 
         # Converts the national forest age category raster to Hansen tiles
@@ -116,11 +123,11 @@ def main ():
 
     # Only creates FIA forest group tiles if they don't already exist on s3.
     if FIA_forest_group_tile_count == 16:
-        print("FIA forest group tiles already created. Copying to spot machine now...")
+        uu.print_log("FIA forest group tiles already created. Copying to spot machine now...")
         uu.s3_flexible_download(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed, '', 'std', US_tile_id_list)
 
     else:
-        print("FIA forest group tiles do not exist. Creating tiles, then copying to s3 for future use...")
+        uu.print_log("FIA forest group tiles do not exist. Creating tiles, then copying to s3 for future use...")
         uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_base_dir, 'std')
 
         # Converts the national forest group raster to Hansen forest group tiles
@@ -143,7 +150,11 @@ def main ():
 
     # Table with US-specific removal rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Imports the table with the region-group-age AGB removal rates
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
@@ -169,7 +180,7 @@ def main ():
     # Converts the forest group-region-age codes and corresponding gain rates to a dictionary,
     # where the key is the unique group-region-age code and the value is the AGB removal rate.
     gain_table_group_region_age_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.group_region_age_combined).to_dict()
-    print(gain_table_group_region_age_dict)
+    uu.print_log(gain_table_group_region_age_dict)
 
 
     # Creates a unique value for each forest group-region category using just young forest rates.
@@ -181,7 +192,7 @@ def main ():
     # Converts the forest group-region codes and corresponding gain rates to a dictionary,
     # where the key is the unique group-region code (youngest age category) and the value is the AGB removal rate.
     gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
-    print(gain_table_group_region_dict)
+    uu.print_log(gain_table_group_region_dict)
 
 
     # count/2 on a m4.16xlarge maxes out at about 230 GB of memory (processing 16 tiles at once), so it's okay on an m4.16xlarge

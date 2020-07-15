@@ -15,8 +15,9 @@ sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_a
 
 
 import multiprocessing
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 from functools import partial
+import datetime
 import argparse
 import os
 import glob
@@ -36,8 +37,8 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
@@ -51,7 +52,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
     # Checks whether the canopy cover argument is valid
     if thresh < 0 or thresh > 99:
-        raise Exception('Invalid tcd. Please provide an integer between 0 and 99.')
+        uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
 
     # Checks whether the sensitivity analysis argument is valid
     uu.check_sensit_type(sensit_type)
@@ -62,7 +63,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
     # tree cover density tiles-- necessary for filtering sums by tcd
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
 
-    print("Model outputs to process are:", download_dict)
+    uu.print_log("Model outputs to process are:", download_dict)
 
     # List of output directories. Modified later for sensitivity analysis.
     # Output pattern is determined later.
@@ -70,7 +71,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
     # If the model run isn't the standard one, the output directory is changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
@@ -108,14 +109,19 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        print(tile_list)
-        print("There are {} tiles to process".format(str(len(tile_list))) + "\n")
-        print("Processing:", dir, "; ", pattern)
+        uu.print_log(tile_list)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
+        uu.print_log("Processing:", dir, "; ", pattern)
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
-        pool = multiprocessing.Pool(int(cn.count/2))
+        if cn.count == 96:
+            processes = 14  # 14 processors = XXX GB peak; 20 = >750 GB (maxed out)
+        else:
+            processes = 8
+        uu.print_log('Rewindow max processors=', processes)
+        pool = multiprocessing.Pool(processes)
         pool.map(aggregate_results_to_10_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -135,7 +141,12 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        pool = multiprocessing.Pool(int(cn.count/2))
+        if cn.count == 96:
+            processes = 14  # 14 processors = XXX GB peak; 20 = >750 GB (maxed out)
+        else:
+            processes = 8
+        uu.print_log('Conversion to per pixel and aggregate max processors=', processes)
+        pool = multiprocessing.Pool(processes)
         pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -154,15 +165,18 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
         # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
-        print(out_pattern)
+        uu.print_log(out_pattern)
 
         # Produces a single raster of all the 10x10 tiles (10 km resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
                '-tr', '0.04', '0.04',
                out_vrt, '{}.tif'.format(out_pattern)]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
-        print("Tiles processed. Uploading to s3 now...")
+        uu.print_log("Tiles processed. Uploading to s3 now...")
 
         # Uploads all output tiles to s3
         uu.upload_final_set(output_dir_list[0], out_pattern)
@@ -190,7 +204,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
 
         if std_net_flux:
 
-            print("Standard aggregated flux results provided. Creating comparison maps.")
+            uu.print_log("Standard aggregated flux results provided. Creating comparison maps.")
 
             # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
             uu.s3_file_download(std_net_flux, cn.docker_base_dir, sensit_type)
@@ -202,23 +216,23 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
                 # Identifies the sensitivity model net flux map
                 sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(sensit_type))[0]
 
-                print("Standard model net flux:", std_aggreg_flux)
-                print("Sensitivity model net flux:", sensit_aggreg_flux)
+                uu.print_log("Standard model net flux:", std_aggreg_flux)
+                uu.print_log("Sensitivity model net flux:", sensit_aggreg_flux)
 
             except:
-                print('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
+                uu.print_log('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
 
-            print("Creating map of percent difference between standard and {} net flux".format(sensit_type))
+            uu.print_log("Creating map of percent difference between standard and {} net flux".format(sensit_type))
             aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
 
-            print("Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type))
+            uu.print_log("Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type))
             aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
 
         else:
 
-            print("No standard aggregated flux results provided. Not creating comparison maps.")
+            uu.print_log("No standard aggregated flux results provided. Not creating comparison maps.")
 
 
 if __name__ == '__main__':
@@ -240,6 +254,9 @@ if __name__ == '__main__':
     std_net_flux = args.std_net_flux_aggreg
     thresh = args.tcd_threshold
     thresh = int(thresh)
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

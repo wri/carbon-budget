@@ -1,6 +1,6 @@
 import multiprocessing
 import clip_year_tiles
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import glob
 import shutil
 
@@ -10,7 +10,7 @@ import utilities
 # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
 for year in range(2018, 2019):
 
-    print("Processing", year)
+    uu.print_log("Processing", year)
 
     # Input files
     # modis_burnyear_dir = 's3://gfw-files/sam/carbon_budget/burn_year_modisproj/'  ## previous location
@@ -22,13 +22,16 @@ for year in range(2018, 2019):
     year_tifs_folder = "{}_year_tifs".format(year)
     utilities.makedir(year_tifs_folder)
 
-    print("Downloading MODIS burn date files from s3...")
+    uu.print_log("Downloading MODIS burn date files from s3...")
 
     cmd = ['aws', 's3', 'cp', modis_burnyear_dir, year_tifs_folder]
     cmd += ['--recursive', '--exclude', "*", '--include', include]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
-    print("Creating vrt of MODIS files...")
+    uu.print_log("Creating vrt of MODIS files...")
 
     # build list of vrt files (command wont take folder/*.tif)
     vrt_name = "global_vrt_{}.vrt".format(year)
@@ -41,20 +44,26 @@ for year in range(2018, 2019):
 
     # create vrt with wgs84 modis tiles
     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
-    print("Reprojecting vrt...")
+    uu.print_log("Reprojecting vrt...")
 
     # # build new vrt and virtually project it
     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
     cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite', vrt_name, vrt_wgs84]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # clip vrt to hansen tile extent
     tile_list = utilities.list_tiles('s3://gfw2-data/forest_change/hansen_2018/')
     tile_list = tile_list[1:]
-    print(tile_list)
-    print("There are {} Hansen tiles to process".format(str(len(tile_list))))
+    uu.print_log(tile_list)
+    uu.print_log("There are {} Hansen tiles to process".format(str(len(tile_list))))
     # create a list of lists, with year and tile id to send to multi processor
     tile_year_list = []
     for tile_id in tile_list:
@@ -64,7 +73,7 @@ for year in range(2018, 2019):
         pool = multiprocessing.Pool(processes=40)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
 
-    print("Multiprocessing for year done. Moving to next year.")
+    uu.print_log("Multiprocessing for year done. Moving to next year.")
 
     year_tifs_folder = "{}_year_tifs".format(year)
     shutil.rmtree(year_tifs_folder)

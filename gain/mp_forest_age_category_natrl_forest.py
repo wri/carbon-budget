@@ -14,8 +14,9 @@
 import multiprocessing
 from functools import partial
 import pandas as pd
+import datetime
 import argparse
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')
@@ -34,8 +35,8 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -71,7 +72,7 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -83,7 +84,12 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
      # Table with IPCC Table 4.9 default gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-    subprocess.check_call(cmd)
+
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
+
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
@@ -106,7 +112,15 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     # With processes=30, peak usage was about 350 GB using WHRC AGB.
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-    pool = multiprocessing.Pool(processes=20)
+    if cn.count == 96:
+        processes = 30
+        # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
+        # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
+        # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
+    else:
+        processes = 26
+    uu.print_log('Natural forest age category max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
@@ -137,6 +151,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

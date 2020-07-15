@@ -16,7 +16,7 @@ np.set_printoptions(threshold=np.nan)
 
 def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict, gain_below_dict):
 
-    print("Processing:", tile_id)
+    uu.print_log("Processing:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -32,7 +32,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
     uu.mask_pre_2000_plantation(pre_2000_plant, mangrove_biomass, mangrove_biomass, tile_id)
 
-    print("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
+    uu.print_log("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
 
     cont_eco_src = rasterio.open(cont_eco)
     mangrove_AGB_src = rasterio.open(mangrove_biomass)

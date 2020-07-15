@@ -12,6 +12,7 @@
 import multiprocessing
 import pandas as pd
 from functools import partial
+import datetime
 import argparse
 import os
 import sys
@@ -32,8 +33,8 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -61,26 +62,46 @@ def mp_annual_gain_rate_planted_forest(sensit_type, tile_id_list, run_date = Non
         uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
-
     # For multiprocessing
-    pool = multiprocessing.Pool(int(cn.count/3))
+
     # Masks mangroves out of planted forests where they overlap and pre-2000 plantation pixels
     # count/3 maxes out at about 370 GB on an r4.16xlarge. Could use more processors.
+    if cn.count == 96:
+        processes = 34   # 31 processors = 390 GB peak; 42 = maxed out; 37 = 720 GB peak (on 2nd or 3rd wave)
+    else:
+        processes = int(cn.count/3)
+    uu.print_log('Mangrove masking max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_planted_forest.mask_mangroves_and_pre_2000_plant, sensit_type=sensit_type),
              tile_id_list)
 
     # Converts annual above+belowground carbon gain rates into aboveground biomass gain rates
     # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
+    if cn.count == 96:
+        processes = 50   # 31 processors = 400 GB peak; 44 = 470 GB peak; 50 = XXX GB peak
+    else:
+        processes = int(cn.count/3)
+    uu.print_log('AGC+BGC/yr to AGB/yr max processors=', processes)
     pool.map(partial(annual_gain_rate_planted_forest.create_AGB_rate, output_pattern_list=output_pattern_list),
              tile_id_list)
 
     # Calculates belowground biomass gain rates from aboveground biomass gain rates
     # count/3 maxes out at about 260 GB on an r4.16xlarge. Could use more processors.
+    if cn.count == 96:
+        processes = 50   # 31 processors = 400 GB peak; 44 = 470 GB peak; 50 = XXX GB peak
+    else:
+        processes = int(cn.count/3)
+    uu.print_log('AGB/yr to BGB/yr max processors=', processes)
     pool.map(partial(annual_gain_rate_planted_forest.create_BGB_rate, output_pattern_list=output_pattern_list),
              tile_id_list)
 
     # Deletes any planted forest annual gain rate tiles that have no planted forest in them after being masked by mangroves.
     # This keep them from unnecessarily being stored on s3.
+    if cn.count == 96:
+        processes = 60   # 31 processors = 380 GB peak; 50  = 500 GB peak; 60 = XXX GB peak
+    else:
+        processes = 26
+    uu.print_log('Delete empty tiles max processors=', processes)
     pool.map(partial(annual_gain_rate_planted_forest.check_for_planted_forest, output_pattern_list=output_pattern_list),
              tile_id_list)
     pool.close()
@@ -121,6 +142,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

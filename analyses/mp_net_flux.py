@@ -4,6 +4,7 @@
 import multiprocessing
 import argparse
 import os
+import datetime
 from functools import partial
 import sys
 sys.path.append('/usr/local/app/analyses/')
@@ -23,8 +24,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
                                                     cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
                                                     sensit_type=sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script
@@ -48,7 +49,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -61,7 +62,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
     # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
-    folder = './'
+    folder = os.getcwd()
     for download_dir, download_pattern in download_dict.items():
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
@@ -69,10 +70,14 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         # lines later.
         pattern = download_pattern[0]
 
-        pool = multiprocessing.Pool(processes=54)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder, sensit_type=sensit_type), tile_id_list)
+        processes=54
+        uu.print_log('Blank tile creation max processors=', processes)
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
+                                             sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()
+
 
     # # For single processor use
     # folder = './'
@@ -87,13 +92,23 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
-    pool = multiprocessing.Pool(processes=24)
+    if cn.count == 96:
+        processes = 40   # 24 processors = 440 GB peak; 36 = 660 GB peak; 40 = 720 GB peak
+    else:
+        processes = 9
+    uu.print_log('Net flux max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
     #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
+
+    # Print the list of blank created tiles, delete the tiles, and delete their text file
+    uu.list_and_delete_blank_tiles()
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
@@ -114,6 +129,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

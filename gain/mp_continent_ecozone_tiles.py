@@ -18,7 +18,8 @@
 
 import multiprocessing
 import continent_ecozone_tiles
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
+import datetime
 import argparse
 import os
 import sys
@@ -35,8 +36,8 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.create_combined_tile_list(cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
@@ -44,7 +45,10 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
 
     # List of output directories and output file name patterns
@@ -59,7 +63,8 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
 
     # For multiprocessor use
-    pool = multiprocessing.Pool(processes=int(cn.count/4))
+    processes = int(cn.count/4)
+    uu.print_log('Continent-ecozone tile creation max processors=', processes)
     pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, tile_id_list)
 
 
@@ -80,5 +85,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
 
     mp_continent_ecozone_tiles(tile_id_list=tile_id_list, run_date=run_date)

@@ -11,6 +11,7 @@ import datetime
 import numpy as np
 import os
 import rasterio
+import logging
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -18,14 +19,14 @@ import universal_util as uu
 
 def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
-    print("Assigning forest age categories:", tile_id)
+    uu.print_log("Assigning forest age categories:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
 
     # Gets the bounding coordinates of each tile. Needed to determine if the tile is in the tropics (within 30 deg of the equator)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    print("  ymax:", ymax)
+    uu.print_log("  ymax:", ymax)
 
     # Default value is that the tile is not in the tropics
     tropics = 0
@@ -35,7 +36,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
         tropics = 1
 
-    print("  Tile in tropics:", tropics)
+    uu.print_log("  Tile in tropics:", tropics)
 
     # Names of the input tiles
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
@@ -51,7 +52,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
     else:
         loss = '{}.tif'.format(tile_id)
 
-    print("  Reading input files and evaluating conditions")
+    uu.print_log("  Reading input files and evaluating conditions")
 
     # Opens biomass tile
     with rasterio.open(loss) as loss_src:
@@ -72,15 +73,15 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         # Checks whether there are mangrove or planted forest tiles. If so, they are opened.
         try:
             plantations_src = rasterio.open(plantations)
-            print("    Planted forest tile found for {}".format(tile_id))
+            uu.print_log("    Planted forest tile found for {}".format(tile_id))
         except:
-            print("    No planted forest tile for {}".format(tile_id))
+            uu.print_log("    No planted forest tile for {}".format(tile_id))
 
         try:
             mangroves_src = rasterio.open(mangroves)
-            print("    Mangrove tile found for {}".format(tile_id))
+            uu.print_log("    Mangrove tile found for {}".format(tile_id))
         except:
-            print("    No mangrove tile for {}".format(tile_id))
+            uu.print_log("    No mangrove tile for {}".format(tile_id))
 
 
         # Updates kwargs for the output dataset

@@ -14,7 +14,7 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 import datetime
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import numpy as np
 import rasterio
 import os
@@ -32,12 +32,12 @@ def create_mangrove_soil_C(tile_id):
     # Checks if mangrove biomass exists. If not, it won't create a mangrove soil C tile.
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
-        print("Mangrove aboveground biomass tile found for", tile_id)
+        uu.print_log("Mangrove aboveground biomass tile found for", tile_id)
 
-        print("Getting extent of", tile_id)
+        uu.print_log("Getting extent of", tile_id)
         xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-        print("Clipping mangrove soil C from mangrove soil vrt for", tile_id)
+        uu.print_log("Clipping mangrove soil C from mangrove soil vrt for", tile_id)
         uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove_full_extent.tif'.format(tile_id), xmin, ymin, xmax, ymax, 'Int16')
 
         mangrove_soil = '{0}_mangrove_full_extent.tif'.format(tile_id)
@@ -47,14 +47,17 @@ def create_mangrove_soil_C(tile_id):
         calc = '--calc=A*(B>0)'
         datatype = '--type={}'.format('Int16')
 
-        print("Masking mangrove soil to mangrove biomass for", tile_id)
+        uu.print_log("Masking mangrove soil to mangrove biomass for", tile_id)
         cmd = ['gdal_calc.py', '-A', mangrove_soil, '-B', mangrove_biomass,
                calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     else:
 
-        print("No mangrove aboveground biomass tile for", tile_id)
+        uu.print_log("No mangrove aboveground biomass tile for", tile_id)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
@@ -66,10 +69,10 @@ def create_mineral_soil_C(tile_id):
     # Start time
     start = datetime.datetime.now()
 
-    print("Getting extent of", tile_id)
+    uu.print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print("Clipping mineral soil C for", tile_id)
+    uu.print_log("Clipping mineral soil C for", tile_id)
     uu.warp_to_Hansen('mineral_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, 'mineral_soil'), xmin, ymin, xmax, ymax, 'Int16')
 
     # Prints information about the tile that was just processed
@@ -92,7 +95,7 @@ def create_combined_soil_C(tile_id):
     # Checks if mangrove AGB tile exists. If not, mangrove soil C is not combined with mineral soil C.
     if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
 
-        print("Mangrove aboveground biomass tile found for", tile_id)
+        uu.print_log("Mangrove aboveground biomass tile found for", tile_id)
 
         mangrove_soil_src = rasterio.open(mangrove_soil)
         # Grabs metadata for one of the input tiles, like its location/projection/cellsize
@@ -114,7 +117,7 @@ def create_combined_soil_C(tile_id):
         # The output file: soil C with mangrove soil C taking precedence over mineral soil C
         dst_combined_soil = rasterio.open(combined_soil, 'w', **kwargs)
 
-        print("Replacing mineral soil C pixels with mangrove soil C pixels for", tile_id)
+        uu.print_log("Replacing mineral soil C pixels with mangrove soil C pixels for", tile_id)
 
         # Iterates across the windows (1 pixel strips) of the input tiles
         for idx, window in windows:
@@ -128,7 +131,7 @@ def create_combined_soil_C(tile_id):
 
     else:
 
-        print("No mangrove aboveground biomass tile for", tile_id)
+        uu.print_log("No mangrove aboveground biomass tile for", tile_id)
 
         # If there is no mangrove soil C tile, the final output of the mineral soil function needs to receive the
         # correct final name.

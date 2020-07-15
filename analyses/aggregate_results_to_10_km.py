@@ -12,7 +12,7 @@ The user has to supply a tcd threshold for which forest pixels to include in the
 '''
 
 import numpy as np
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import rasterio
 from rasterio.transform import from_origin
@@ -29,7 +29,7 @@ def rewindow(tile):
     # start time
     start = datetime.datetime.now()
 
-    print("Rewindowing {} to 200x200 pixel windows (0.04 degree x 0.04 degree)...". format(tile))
+    uu.print_log("Rewindowing {} to 200x200 pixel windows (0.04 degree x 0.04 degree)...". format(tile))
 
     # Extracts the tile id, tile type, and bounding box for the tile
     tile_id = uu.get_tile_id(tile)
@@ -54,7 +54,10 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tile, input_rewindow]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     if not os.path.exists(tcd_rewindow):
 
@@ -64,11 +67,14 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tcd_tile, tcd_rewindow]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     else:
 
-        print("Canopy cover for {} already rewindowed.".format(tile_id))
+        uu.print_log("Canopy cover for {} already rewindowed.".format(tile_id))
 
     if not os.path.exists(pixel_area_rewindow):
 
@@ -78,11 +84,14 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                area_tile, pixel_area_rewindow]
-        subprocess.check_call(cmd)
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
     else:
 
-        print("Pixel area for {} already rewindowed.".format(tile_id))
+        uu.print_log("Pixel area for {} already rewindowed.".format(tile_id))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type))
@@ -104,7 +113,7 @@ def aggregate(tile, thresh):
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    print("  Converting {} to per-pixel values...".format(tile))
+    uu.print_log("  Converting {} to per-pixel values...".format(tile))
 
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
@@ -169,7 +178,7 @@ def aggregate(tile, thresh):
     if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
-    print("  Creating aggregated tile for {}...".format(tile))
+    uu.print_log("  Creating aggregated tile for {}...".format(tile))
 
     # Converts array to the same output type as the raster that is created below
     sum_array = np.float32(sum_array)
@@ -197,8 +206,8 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    print(std_aggreg_flux)
-    print(sensit_aggreg_flux)
+    uu.print_log(std_aggreg_flux)
+    uu.print_log(sensit_aggreg_flux)
 
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     # This produces errors about dividing by 0. As far as I can tell, those are fine. It's just trying to divide NoData
@@ -210,7 +219,10 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
            '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)

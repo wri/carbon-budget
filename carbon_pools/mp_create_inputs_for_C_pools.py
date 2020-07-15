@@ -3,9 +3,10 @@ This script creates the three inputs used for creating the carbon pools besides 
 It takes several hours to run.
 '''
 
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import argparse
+import datetime
 import create_inputs_for_C_pools
 import multiprocessing
 import sys
@@ -44,18 +45,24 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     for input in input_files:
         uu.s3_file_download('{}'.format(input), cn.docker_base_dir, sensit_type)
 
-    print("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
-    unzip_zones = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
-    subprocess.check_call(unzip_zones)
+    uu.print_log("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
+    cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
 
-    print("Copying elevation (srtm) files")
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
+
+    uu.print_log("Copying elevation (srtm) files")
     uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
 
-    print("Making elevation (srtm) vrt")
-    subprocess.check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)
+    uu.print_log("Making elevation (srtm) vrt")
+    check_call('gdalbuildvrt srtm.vrt srtm/*.tif', shell=True)  # I don't know how to convert this to output to the pipe, so just leaving as is
 
     # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
-    pool = multiprocessing.Pool(processes=cn.count / 2)
+    processes = int(cn.count/2)
+    uu.print_log('Inputs for C pools max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
 
     # # For single processor use
@@ -63,7 +70,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     #
     #     create_inputs_for_C_pools.create_input_files(tile_id)
 
-    print("Uploading output files")
+    uu.print_log("Uploading output files")
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
@@ -80,4 +87,7 @@ if __name__ == '__main__':
     tile_id_list = args.tile_id_list
     run_date = args.run_date
 
-    mp_create_inputs_for_C_pools(tile_id_list=tile_id_list, run_date=run_date)
+    # Create the output log
+    uu.initiate_log(tile_id_list, run_date=run_date)
+
+    mp_create_inputs_for_C_pools(tile_id_list, run_date=run_date)

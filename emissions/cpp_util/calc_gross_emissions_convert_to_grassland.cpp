@@ -51,7 +51,7 @@ string sensit_type = argv[2];   // For standard model or sensitivity analyses th
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
 string infolder = argv[3];     // The folder which has all the input files
 
-cout << infolder << endl;
+cout << "Gross emissions C++ infolder:" <<  infolder << endl;
 
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
@@ -183,7 +183,7 @@ pixelsize=GeoTransform[1];
 //ysize = 6000;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
-cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
+cout << "Gross emissions convert_to_grassland model C++ parameters:" <<  xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;

@@ -5,9 +5,10 @@
 import multiprocessing
 import sys
 import argparse
+import datetime
 from functools import partial
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -22,8 +23,8 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Downloads zipped raw mangrove files
@@ -32,7 +33,10 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
     # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
     cmd = ['unzip', '-o', '-j', cn.mangrove_biomass_raw_file]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Creates vrt for the Saatchi biomass rasters
     mangrove_vrt = 'mangrove_biomass.vrt'
@@ -42,7 +46,9 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     source_raster = mangrove_vrt
     out_pattern = cn.pattern_mangrove_biomass_2000
     dt = 'float32'
-    pool = multiprocessing.Pool(int(cn.count/4))
+    processes=int(cn.count/4)
+    uu.print_log('Mangrove preprocessing max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
 
     # # For single processor use, for testing purposes
@@ -53,7 +59,9 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.mangrove_biomass_2000_dir
     pattern = cn.pattern_mangrove_biomass_2000
-    pool = multiprocessing.Pool(cn.count - 5)
+    processes=int(cn.count-5)
+    uu.print_log('Mangrove check for data max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 
@@ -68,5 +76,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
 
     mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date)

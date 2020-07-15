@@ -4,6 +4,7 @@
 import multiprocessing
 import argparse
 import os
+import datetime
 from functools import partial
 import sys
 sys.path.append('/usr/local/app/gain/')
@@ -24,8 +25,8 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
                                                     set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
                                                     sensit_type=sensit_type
                                                     )
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
     # Files to download for this script
     download_dict = {
@@ -62,7 +63,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
 
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -74,10 +75,16 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
 
     # For multiprocessing
     # Count/4 seems to pretty consistently use about 390 GB memory on an r4.16xlarge (not so much of an initial peak).
-    # processes=18 maxes out at about 440 GB memory
-    pool = multiprocessing.Pool(processes=18)
+    if cn.count == 96:
+        processes = 18   # 18 processors = 690 GB peak; 18 = 690 GB max; 19 = >750 GB max (maxed out)
+    else:
+        processes = int(cn.count/5)
+    uu.print_log('Cumulative gain all forest types max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(merge_cumulative_annual_gain_all_forest_types.gain_merge, output_pattern_list=output_pattern_list,
                      sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -105,6 +112,9 @@ if __name__ == '__main__':
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

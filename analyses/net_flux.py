@@ -10,7 +10,7 @@ import universal_util as uu
 
 def net_calc(tile_id, pattern, sensit_type):
 
-    print("Calculating net flux for", tile_id)
+    uu.print_log("Calculating net flux for", tile_id)
 
     # Start time
     start = datetime.datetime.now()

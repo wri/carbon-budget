@@ -5,6 +5,7 @@ import multiprocessing
 from functools import partial
 import non_mangrove_non_planted_biomass_2000
 import argparse
+import datetime
 import os
 import pandas as pd
 import sys
@@ -23,8 +24,8 @@ def mp_non_mangrove_non_planted_biomass_2000(tile_id_list, run_date = None):
         # List of tiles to run in the model
         tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir, sensit_type)
 
-    print(tile_id_list)
-    print("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
     # Files to download for this script.
@@ -61,7 +62,7 @@ def mp_non_mangrove_non_planted_biomass_2000(tile_id_list, run_date = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
-        print("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
@@ -71,7 +72,9 @@ def mp_non_mangrove_non_planted_biomass_2000(tile_id_list, run_date = None):
 
     # For multiprocessing. count/2 uses more than 470GB of memory for JPL AGB.
     # processes=26 maxes out at about 420 GB of memory for JPL AGB.
-    pool = multiprocessing.Pool(processes=16)
+    processes=16
+    uu.print_log('Non-mangrove non-planted area AGB max processors=', processes)
+    pool = multiprocessing.Pool(processes)
     pool.map(partial(non_mangrove_non_planted_biomass_2000.mask_biomass, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
@@ -95,5 +98,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
 
     mp_non_mangrove_non_planted_biomass_2000(tile_id_list=tile_id_list, run_date=run_date)
