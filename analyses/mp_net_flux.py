@@ -99,6 +99,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     uu.print_log('Net flux max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
