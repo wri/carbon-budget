@@ -786,11 +786,21 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = coords(tile_id)
 
-    out_file = '{0}_{1}.tif'.format(tile_id, out_pattern)
+    out_tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
-            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_file]
-    check_call(cmd)
+            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_tile]
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
+
+    print_log("Checking if {} contains any data...".format(tile_id))
+    stats = check_for_data(out_tile)
+    if stats[0] > 0:
+        print_log("  Data found in {}. Keeping file...".format(tile_id))
+    else:
+        print_log("  No data found. Deleting {}...".format(tile_id))
+        os.remove(out_tile)
 
     end_of_fx_summary(start, tile_id, out_pattern)
 
@@ -799,7 +809,9 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
-    check_call(cmd)
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
 
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
@@ -811,8 +823,9 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
            anodata, in_shape, out_tif]
-
-    check_call(cmd)
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
 
     return out_tif
 

@@ -16,7 +16,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Prepares the non ifl/primary forest tiles
-def data_prep(tile_id):
+def rasterize_pre_2000_plantations(tile_id):
 
     # Start time
     start = datetime.datetime.now()
@@ -24,18 +24,45 @@ def data_prep(tile_id):
     uu.print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    uu.print_log("Warping IDN/MYS pre-2000 plantation tile", tile_id)
-    uu.warp_to_Hansen('{}.tif'.format(cn.pattern_plant_pre_2000_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000),
-                                      xmin, ymin, xmax, ymax, 'Byte')
+    out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
 
-    uu.print_log("Warping tree cover loss tile", tile_id)
-    uu.warp_to_Hansen('{}.tif'.format(cn.pattern_drivers_raw), '{0}_{1}.tif'.format(tile_id, cn.pattern_drivers), xmin, ymin, xmax, ymax, 'Byte')
+    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+          '-tap', '-ot', 'Byte', '-a_nodata', '0', '-te', str(xmin), str(ymin), str(xmas), str(ymax),
+          '{}.shp'.format(cn.pattern_plant_pre_2000_raw), out_tile]
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
+
+
+    # Checks if tile has any data in it. If not, tile is deleted.
+    print_log("Checking if {} contains any data...".format(tile_id))
+    stats = uu.check_for_data(out_tile)
+    if stats[0] > 0:
+        uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
+    else:
+        uu.print_log("  No data found. Deleting {}...".format(tile_id))
+        os.remove(out_tile)
+
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_plant_pre_2000)
+
+
+# Creates climate zone tiles
+def create_climate_zone_tiles(tile_id):
+    # Start time
+    start = datetime.datetime.now()
+
+    uu.print_log("Getting extent of", tile_id)
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # Makes a 10x10 degree chunk of the global climate zone raster conform to Hansen tile properties.
     # Rather than the usual 40000x1 windows, this creates 1024x1024 windows for filling in missing values (see below).
     # The output of gdalwarp ("climate_zone_intermediate") is not used anywhere else.
     uu.print_log("Warping climate zone tile", tile_id)
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+           '-tap', '-te',
            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', 'Byte', '-overwrite',
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
            cn.climate_zone_raw, '{0}_{1}.tif'.format(tile_id, "climate_zone_intermediate")]
@@ -108,34 +135,18 @@ def data_prep(tile_id):
         dst_climate_zone.write_band(1, climate_zone_window, window=window)
 
 
-    uu.print_log("Checking if {} contains any data...".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)))
-    tile_stats = uu.check_for_data('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    if tile_stats[1] > 0:
-        uu.print_log("  Data found in {}. Keeping tile".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)))
+    # Checks if tile has any data in it. If not, tile is deleted.
+    print_log("Checking if {} contains any data...".format(tile_id))
+    stats = uu.check_for_data(climate_zone_processed)
+    if stats[0] > 0:
+        uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
     else:
-        uu.print_log("  No data found in {}. Deleting.".format('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)))
-        os.remove('{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
+        uu.print_log("  No data found. Deleting {}...".format(tile_id))
+        os.remove(out_tile)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_drivers)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_climate_zone)
 
-# Creates primary forest tiles
-def create_primary_tile(tile_id, primary_vrt):
-
-    # Start time
-    start = datetime.datetime.now()
-
-    uu.print_log("Getting extent of", tile_id)
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    primary_tile = '{}_primary_2001.tif'.format(tile_id)
-
-    uu.print_log("Creating primary forest tile for {}".format(tile_id))
-
-    uu.warp_to_Hansen(primary_vrt, primary_tile, xmin, ymin, xmax, ymax, 'Byte')
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, "primary_2001.tif")
 
 # Creates a combined primary forest/ifl tile set. Tiles between 30N and 30S get primary forest; tiles outside that
 # get ifl2000

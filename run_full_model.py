@@ -28,6 +28,7 @@ from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
 from analyses.mp_aggregate_results_to_10_km import mp_aggregate_results_to_10_km
+from analyses.mp_output_per_pixel import mp_output_per_pixel
 
 def main ():
 
@@ -37,7 +38,7 @@ def main ():
     model_stages = ['all', 'forest_age_category_natrl_forest', 'gain_year_count_natrl_forest',
                     'annual_gain_rate_natrl_forest', 'cumulative_gain_natrl_forest', 'removals_merged',
                     'carbon_pools', 'gross_emissions',
-                    'net_flux', 'aggregate']
+                    'net_flux', 'aggregate', 'per_pixel_results']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -206,7 +207,9 @@ def main ():
                                cn.gross_emis_non_co2_all_drivers_soil_only_dir,
                                cn.gross_emis_nodes_soil_only_dir]
 
-    output_dir_list = output_dir_list + [cn.net_flux_dir]
+    output_dir_list = output_dir_list + [cn.net_flux_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir,
+                                         cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir,
+                                         cn.net_flux_per_pixel_dir]
 
     # Output patterns aren't actually used in the script-- here just for reference.
     output_pattern_list = [
@@ -248,7 +251,10 @@ def main ():
                                    cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
                                    cn.pattern_gross_emis_nodes_soil_only]
 
-        output_pattern_list = output_pattern_list + [cn.pattern_net_flux]
+        output_pattern_list = output_pattern_list + [cn.pattern_net_flux,
+                                                     cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel,
+                                                     cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel,
+                                                     cn.pattern_net_flux_per_pixel]
 
 
     # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
@@ -529,6 +535,20 @@ def main ():
         elapsed_time = end - start
         uu.check_storage()
         uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
+
+
+    # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
+    if 'per_pixel_results' in actual_stages:
+
+        uu.print_log(":::::Creating per pixel versions of main model outputs")
+        start = datetime.datetime.now()
+
+        mp_output_per_pixel(sensit_type, tile_id_list, run_date = run_date)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        uu.check_storage()
+        uu.print_log(":::::Processing time for per pixel raster creation:", elapsed_time, "\n", "\n")
 
 
     script_end = datetime.datetime.now()

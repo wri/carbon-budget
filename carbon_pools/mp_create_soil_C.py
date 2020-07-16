@@ -9,7 +9,7 @@ This is a convoluted way of doing this processing. Originally, I tried making ma
 mangrove AGB tiles, then making a vrt of all those mangrove soil C tiles and the mineral soil raster, and then
 using gdal_warp on that to get combined tiles.
 However, for reasons I couldn't figure out, the gdalbuildvrt step in which I combined the mangrove 10x10 tiles
-and the mineral soil raster never actually combined the mangrove tiles with the mineral soil raste; I just kept
+and the mineral soil raster never actually combined the mangrove tiles with the mineral soil raster; I just kept
 getting mineral soil C values out.
 So, I switched to this somewhat more convoluted method that uses both gdal and rasterio/numpy.
 '''
@@ -25,7 +25,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_create_soil_C(tile_id_list, run_date = None):
+def mp_create_soil_C(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
     sensit_type = 'std'
@@ -47,10 +47,7 @@ def mp_create_soil_C(tile_id_list, run_date = None):
 
 
     uu.print_log("Downloading mangrove soil C rasters")
-    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.pattern_mangrove_soil_C), cn.docker_base_dir, sensit_type)
-
-    uu.print_log("Downloading mineral soil C raster")
-    uu.s3_file_download(os.path.join(cn.mineral_soil_C_dir, cn.pattern_mineral_soil_C), cn.docker_base_dir, sensit_type)
+    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_base_dir, sensit_type)
 
     # For downloading all tiles in the input folders.
     input_files = [cn.mangrove_biomass_2000_dir]
@@ -58,25 +55,18 @@ def mp_create_soil_C(tile_id_list, run_date = None):
     for input in input_files:
         uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
 
-    # # For downloading files directly from the internet. NOTE: for some reason, unzip doesn't work on the mangrove
-    # # zip file if it is downloaded using wget but it does work if it comes from s3.
-    # print "Downloading soil grids 250 raster"
-    # cmd = ['wget', 'https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/OCYUIT/BY6SFR&version=4.0', '-O', cn.mineral_soil_C_name]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    # with process.stdout:
-    #     uu.log_subprocess_output(process.stdout)
-    #
-    # print "Downloading mangrove soil C raster"
-    # cmd = ['wget', 'https://files.isric.org/soilgrids/data/recent/OCSTHA_M_30cm_250m_ll.tif', '-O', cn.mineral_soil_C_name]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    # with process.stdout:
-    #     uu.log_subprocess_output(process.stdout)
+    # Download raw mineral soil tiles.
+    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+                   '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
 
     uu.print_log("Unzipping mangrove soil C images...")
-    cmd = ['unzip', '-j', cn.pattern_mangrove_soil_C, '-d', cn.docker_base_dir]
+    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
@@ -84,16 +74,20 @@ def mp_create_soil_C(tile_id_list, run_date = None):
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mangrove soil C vrt...")
-    subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *dSOCS_0_100cm*.tif', shell=True)
+    subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
     uu.print_log("Done making mangrove soil C vrt")
 
     uu.print_log("Making mangrove soil C tiles...")
 
-    # count/3 worked on a r4.16xlarge machine. Memory usage maxed out around 350 GB during the gdal_calc step.
-    processes = int(cn.count/3)
+    if cn.count == 96:
+        processes = 32   # 32 processors = XXX GB peak
+    else:
+        processes = int(cn.count/3)
     uu.print_log('Mangrove soil C max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -105,12 +99,15 @@ def mp_create_soil_C(tile_id_list, run_date = None):
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mineral soil C vrt...")
-    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C), shell=True)
+    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C_raw), shell=True)
     uu.print_log("Done making mineral soil C vrt")
 
     uu.print_log("Making mineral soil C tiles...")
 
-    processes = int(cn.count/2)
+    if cn.count == 96:
+        processes = 40   # 40 processors = XXX GB peak
+    else:
+        processes = int(cn.count/2)
     uu.print_log('Mineral soil C max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(create_soil_C.create_mineral_soil_C, tile_id_list)
@@ -122,10 +119,14 @@ def mp_create_soil_C(tile_id_list, run_date = None):
 
     uu.print_log("Done making mineral soil C tiles")
 
+
     uu.print_log("Making combined soil C tiles...")
 
     # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
-    processes = int(cn.count/2)
+    if cn.count == 96:
+        processes = 45   # 45 processors = XXX GB peak
+    else:
+        processes = int(cn.count/2)
     uu.print_log('Combined soil C max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
@@ -156,4 +157,4 @@ if __name__ == '__main__':
     # Create the output log
     uu.initiate_log(tile_id_list, run_date=run_date)
 
-    mp_create_soil_C(tile_id_list=tile_id_list, run_date=run_date)
+    mp_create_soil_C(tile_id_list=tile_id_list)
