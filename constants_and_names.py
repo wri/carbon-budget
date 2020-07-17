@@ -309,7 +309,7 @@ cumul_gain_BGCO2_natrl_forest_dir = os.path.join(s3_base_dir, 'cumulative_gain_B
 
 # Cumulative gain for all forest types
 pattern_cumul_gain_AGCO2_BGCO2_all_types = 'cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_{}'.format(loss_years)
-cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20200720/')
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/20191016/')
 
 
 ### Non-biomass inputs to carbon pools
@@ -492,15 +492,15 @@ net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/
 
 # Gross removals
 pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel = 'cumul_gain_AGCO2_BGCO2_Mg_pixel_all_forest_types_2001_{}'.format(loss_years)
-cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir = os.path.join(s3_base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/per_pixel/20209999/')
+cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir = os.path.join(s3_base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/per_pixel/20191017/')
 
 # Gross emissions
 pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel = 'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil'
-gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/per_pixel/20209999/')
+gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/per_pixel/20191107/')
 
 # Net flux
 pattern_net_flux_per_pixel = 'net_flux_Mg_CO2e_pixel_2001_{}_biomass_soil'.format(loss_years)
-net_flux_per_pixel_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/per_pixel/20209999/')
+net_flux_per_pixel_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/per_pixel/20191107/')
 
 
 ### 10x10 km aggregation tiles for mapping
