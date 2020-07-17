@@ -72,7 +72,7 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
         output_pattern = values[1]
 
         if cn.count == 96:
-            processes = 30  # 20 processors = 430 GB peak for cumul gain;
+            processes = 32  # 20 processors = 430 GB peak for cumul gain; 30 = 640 GB peak for cumul gain; 32 = XXX GB peak for cumul gain
         else:
             processes = int(cn.count/2)
         uu.print_log("Creating {0} with {1} processors...".format(output_pattern, processes))
