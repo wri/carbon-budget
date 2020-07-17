@@ -181,7 +181,7 @@ pixelsize=GeoTransform[1];
 //ysize = 7900;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
-cout "Gross emissions soil_only model C++ parameters:" << << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
+cout "Gross emissions soil_only model C++ parameters:" << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
