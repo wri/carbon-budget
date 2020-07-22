@@ -27,22 +27,22 @@ def rasterize_pre_2000_plantations(tile_id):
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
 
     cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
-          '-tap', '-ot', 'Byte', '-a_nodata', '0', '-te', str(xmin), str(ymin), str(xmas), str(ymax),
+          '-tap', '-ot', 'Byte', '-a_nodata', '0', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
           '{}.shp'.format(cn.pattern_plant_pre_2000_raw), out_tile]
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
         uu.log_subprocess_output(process.stdout)
 
-
-    # Checks if tile has any data in it. If not, tile is deleted.
-    print_log("Checking if {} contains any data...".format(tile_id))
-    stats = uu.check_for_data(out_tile)
-    if stats[0] > 0:
-        uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
-    else:
-        uu.print_log("  No data found. Deleting {}...".format(tile_id))
-        os.remove(out_tile)
+    #
+    # # Checks if tile has any data in it. If not, tile is deleted.
+    # uu.print_log("Checking if {} contains any data...".format(tile_id))
+    # stats = uu.check_for_data(out_tile)
+    # if stats[0] > 0:
+    #     uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
+    # else:
+    #     uu.print_log("  No data found. Deleting {}...".format(tile_id))
+    #     os.remove(out_tile)
 
 
     # Prints information about the tile that was just processed
@@ -135,14 +135,14 @@ def create_climate_zone_tiles(tile_id):
         dst_climate_zone.write_band(1, climate_zone_window, window=window)
 
 
-    # Checks if tile has any data in it. If not, tile is deleted.
-    print_log("Checking if {} contains any data...".format(tile_id))
-    stats = uu.check_for_data(climate_zone_processed)
-    if stats[0] > 0:
-        uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
-    else:
-        uu.print_log("  No data found. Deleting {}...".format(tile_id))
-        os.remove(out_tile)
+    # # Checks if tile has any data in it. If not, tile is deleted.
+    # print_log("Checking if {} contains any data...".format(tile_id))
+    # stats = uu.check_for_data(climate_zone_processed)
+    # if stats[0] > 0:
+    #     uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
+    # else:
+    #     uu.print_log("  No data found. Deleting {}...".format(tile_id))
+    #     os.remove(out_tile)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_climate_zone)

@@ -54,8 +54,8 @@ command line argument. Supply the rest of the global tiles (the unchanged tiles)
 # Start a r.16xlarge spot machine
 spotutil new r4.16xlarge dgibbs_wri
 
-# Copy zipped plantation gdb with growth rate field in tables
-aws s3 cp s3://gfw-files/plantations/final/global/plantations_v2_1.zip .
+# Copy zipped plantation gdb with growth rate field in tables. This has the updated rates from July 2020.
+wget http://gfw-files.s3.amazonaws.com/plantations/final/global/plantations_v2_1.zip
 
 # Unzip the zipped plantation gdb. This can take several minutes.
 unzip plantations_v2_1.zip

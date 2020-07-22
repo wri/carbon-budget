@@ -46,6 +46,8 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     # Downloads peat layers
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), cn.docker_base_dir, sensit_type)
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), cn.docker_base_dir, sensit_type)
+
+    ###### This soilgrids peat map is probably different using the latest soilgrids version. Need to check on that!!!! #####
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), cn.docker_base_dir, sensit_type) # Raster of the most likely soil group
 
     # Unzips the Jukka peat shapefile (IDN and MYS)

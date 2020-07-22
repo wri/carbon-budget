@@ -176,7 +176,7 @@ pattern_plant_pre_2000 = 'plantation_2000_or_earlier_processed'
 plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20209999/')
 
 drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
-pattern_drivers_raw = 'Goode_FinalClassification_19_Excludeduncertain_Expanded_05pcnt'
+pattern_drivers_raw = 'Goode_FinalClassification_19_Excludeduncertain_Expanded_05pcnt_reproj__20200722'
 pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2019/20209999/')
 
@@ -232,7 +232,7 @@ gain_year_count_natrl_forest_dir = os.path.join(s3_base_dir, 'gain_year_count_na
 pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
 age_cat_natrl_forest_dir = os.path.join(s3_base_dir, 'forest_age_category_natural_forest/standard/20191016/')
 
-### Annual carbon gain rates that are precursors for annual biomass gain rates
+### Annual carbon gain rates that are precursors for annual biomass/carbon gain rates
 ######
 
 # Annual aboveground and belowground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
@@ -241,11 +241,20 @@ annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(s3_base_dir, 'ann
 
 # Annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
 name_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__mean__aboveground__full_extent__Mg_C_ha_yr.tif'
-annual_gain_AGC_natrl_forest_young_raw_dir = 's3://gfw2-data/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/'
+annual_gain_AGC_natrl_forest_young_raw_URL = 'http://gfw2-data.s3.amazonaws.com/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/sequestration_rate__mean__aboveground__full_extent__Mg_C_ha_yr.tif'
 
-# Annual aboveground biomass gain rate for <20 year secondary, non-mangrove, non-planted natural forests
+# Annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests
 pattern_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_AGC_t_ha_natural_forest_young_secondary'
 annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_natural_forest_young_secondary/standard/20209999/')
+
+# Annual aboveground+belowground carbon gain rate for natural European forests (raw)
+name_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
+annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
+
+# Annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
+pattern_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe'
+annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20209999/')
+
 
 
 ### Annual biomass gain rates
@@ -513,6 +522,30 @@ pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv1_1_2_sign_change_std
 output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200311/'.format(s3_base_dir)
 
 
+
+### Removal factor standard deviation maps
+######
+
+# Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
+name_stdev_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
+stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 's3://gfw2-data/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
+# stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 'http://gfw2-data.s3.amazonaws.com/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
+
+# Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests
+pattern_stdev_annual_gain_AGC_natrl_forest_young = 'stdev_annual_gain_rate_AGC_t_ha_natural_forest_young_secondary'
+stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_natural_forest_young_secondary/standard/20209999/')
+
+
+# Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (raw)
+name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'stdev_annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
+stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
+
+# Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
+pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'stdev_annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe'
+stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20209999/')
+
+
+
 ### Sensitivity analysis
 ######
 
@@ -609,14 +642,4 @@ tile_stats_dir = os.path.join(s3_base_dir, 'tile_stats/')
 # The area of each pixel in m^2
 pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
-
-# Locations of tsvs from model output
-tsv_output_dir = os.path.join(s3_base_dir, 'model_output_tsv/20181119/')
-
-# Location of raw Hadoop output
-hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
-
-# Location of processed (cumsummed) Hadoop output
-hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
-hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 

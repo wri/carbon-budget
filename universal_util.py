@@ -717,14 +717,33 @@ def check_for_data_old(out_tile):
 
 # This version of checking for data in a tile is more robust
 def check_for_data(tile):
+    print("here")
     with rasterio.open(tile) as img:
         msk = img.read_masks(1).astype(bool)
+    print(tile)
     if msk[msk].size == 0:
         print_log("Tile {} is empty".format(tile))
         return True
     else:
         print_log("Tile {} is not empty".format(tile))
         return False
+
+
+def mp_check_delete_if_empty(tile_id, output_pattern):
+
+    tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
+
+    print_log("Checking if {} contains any data...".format(tile_name))
+    stats = check_for_data(tile_name)
+
+    if stats[0] > 0:
+
+        print_log("  Data found in {}. Keeping file...".format(tile_name))
+
+    else:
+
+        print_log("  No data found. Deleting {}...".format(tile_name))
+        os.remove(tile_name)
 
 
 # Checks if there's data in a tile and, if so, uploads it to s3
@@ -793,14 +812,6 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
         log_subprocess_output(process.stdout)
-
-    print_log("Checking if {} contains any data...".format(tile_id))
-    stats = check_for_data(out_tile)
-    if stats[0] > 0:
-        print_log("  Data found in {}. Keeping file...".format(tile_id))
-    else:
-        print_log("  No data found. Deleting {}...".format(tile_id))
-        os.remove(out_tile)
 
     end_of_fx_summary(start, tile_id, out_pattern)
 
