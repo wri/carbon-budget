@@ -77,7 +77,13 @@ def mp_prep_other_inputs(tile_id_list, run_date):
         uu.log_subprocess_output(process.stdout)
     uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
     uu.s3_folder_download(cn.primary_raw_dir, cn.docker_base_dir, sensit_type)
-    uu.s3_folder_download(cn.ifl_dir, cn.docker_base_dir, sensit_type)
+    cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--exclude', '*', '--include',
+           '{}*'.format('_2001_primary'), '--recursive']
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
+
+    uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_base_dir, sensit_type, tile_id_list)
 
     uu.print_log("Unzipping pre-2000 plantations...")
     cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
