@@ -76,7 +76,6 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     with process.stdout:
         uu.log_subprocess_output(process.stdout)
     uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
-    uu.s3_folder_download(cn.primary_raw_dir, cn.docker_base_dir, sensit_type)
     cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--exclude', '*', '--include',
            '{}*'.format('_2001_primary'), '--recursive']
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
