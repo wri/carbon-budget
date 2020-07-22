@@ -729,21 +729,18 @@ def check_for_data(tile):
         return False
 
 
-def mp_check_delete_if_empty(tile_id, output_pattern):
+def check_and_delete_if_empty(tile_id, output_pattern):
 
     tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
 
     print_log("Checking if {} contains any data...".format(tile_name))
-    stats = check_for_data(tile_name)
+    no_data = check_for_data(tile_name)
 
-    if stats[0] > 0:
-
-        print_log("  Data found in {}. Keeping file...".format(tile_name))
-
-    else:
-
-        print_log("  No data found. Deleting {}...".format(tile_name))
+    if no_data:
+        uu.print_log("  No data found in {}. Deleting tile...".format(tile_name))
         os.remove(tile_name)
+    else:
+        uu.print_log("  Data found in {}. Keeping tile to copy to s3...".format(tile_name))
 
 
 # Checks if there's data in a tile and, if so, uploads it to s3
