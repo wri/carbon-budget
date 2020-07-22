@@ -717,10 +717,8 @@ def check_for_data_old(out_tile):
 
 # This version of checking for data in a tile is more robust
 def check_for_data(tile):
-    print("here")
     with rasterio.open(tile) as img:
         msk = img.read_masks(1).astype(bool)
-    print(tile)
     if msk[msk].size == 0:
         print_log("Tile {} is empty".format(tile))
         return True
@@ -737,10 +735,10 @@ def check_and_delete_if_empty(tile_id, output_pattern):
     no_data = check_for_data(tile_name)
 
     if no_data:
-        uu.print_log("  No data found in {}. Deleting tile...".format(tile_name))
+        print_log("  No data found in {}. Deleting tile...".format(tile_name))
         os.remove(tile_name)
     else:
-        uu.print_log("  Data found in {}. Keeping tile to copy to s3...".format(tile_name))
+        print_log("  Data found in {}. Keeping tile to copy to s3...".format(tile_name))
 
 
 # Checks if there's data in a tile and, if so, uploads it to s3
