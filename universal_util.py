@@ -50,11 +50,11 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
     logging.info("AWS ec2 instance type and AMI id:")
     try:
-        cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
             log_subprocess_output(process.stdout)
-        cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:
             log_subprocess_output(process.stdout)
@@ -616,6 +616,7 @@ def s3_file_download(source, dest, sensit_type):
 
             # If not already on the spot machine, it downloads the file
             else:
+                print_log(file_name_sens, "not previously downloaded. Downloading to", dest, '\n')
                 source = os.path.join(dir_sens, file_name_sens)
                 cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
 
@@ -702,17 +703,24 @@ def upload_final(upload_dir, tile_id, pattern):
         print_log("Error uploading output tile")
 
 
-# This version of checking for data is bad because it can miss tiles that have very little data in them
-def check_for_data_old(out_tile):
+# This version of checking for data is bad because it can miss tiles that have very little data in them.
+# But it takes less memory than using rasterio, so it's good for local tests
+def check_and_delete_if_empty_light(tile_id, output_pattern):
+
+    tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
 
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find min, max
-    gtif = gdal.Open(out_tile)
+    gtif = gdal.Open(tile_name)
     srcband = gtif.GetRasterBand(1)
     stats = srcband.GetStatistics(True, True)
     print_log("  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3]))
 
-    return stats
+    if stats[0] > 0:
+        print_log("  Data found in {}. Keeping file...".format(tile_name))
+    else:
+        print_log("  No data found. Deleting {}...".format(tile_name))
+        os.remove(tile_name)
 
 
 # This version of checking for data in a tile is more robust
@@ -821,11 +829,11 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
-def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_field=None, anodata=None):
+def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksizex, blocksizey, tr=None, ot=None, name_field=None, anodata=None):
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
 
            # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksizex), '-co', 'BLOCKYSIZE={}'.format(blocksizey),
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
            anodata, in_shape, out_tif]
@@ -834,6 +842,28 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_
         log_subprocess_output(process.stdout)
 
     return out_tif
+
+
+def mp_rasterize(tile_id, in_shape, out_pattern, blocksizex, blocksizey, tr, ot, anodata, name_field):
+
+    # Start time
+    start = datetime.datetime.now()
+
+    print_log("Getting extent of", tile_id)
+    xmin, ymin, xmax, ymax = coords(tile_id)
+
+    out_tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
+
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksizex), '-co', 'BLOCKYSIZE={}'.format(blocksizey),
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
+           anodata, in_shape, out_tile]
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
+
+    end_of_fx_summary(start, tile_id, out_pattern)
 
 
 # Creates a tile of all 0s for any tile passed to it.

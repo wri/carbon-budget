@@ -34,16 +34,6 @@ def rasterize_pre_2000_plantations(tile_id):
     with process.stdout:
         uu.log_subprocess_output(process.stdout)
 
-    #
-    # # Checks if tile has any data in it. If not, tile is deleted.
-    # uu.print_log("Checking if {} contains any data...".format(tile_id))
-    # stats = uu.check_for_data(out_tile)
-    # if stats[0] > 0:
-    #     uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
-    # else:
-    #     uu.print_log("  No data found. Deleting {}...".format(tile_id))
-    #     os.remove(out_tile)
-
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_plant_pre_2000)
@@ -134,15 +124,6 @@ def create_climate_zone_tiles(tile_id):
         # so they should work fine with all the other tiles.
         dst_climate_zone.write_band(1, climate_zone_window, window=window)
 
-
-    # # Checks if tile has any data in it. If not, tile is deleted.
-    # print_log("Checking if {} contains any data...".format(tile_id))
-    # stats = uu.check_for_data(climate_zone_processed)
-    # if stats[0] > 0:
-    #     uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
-    # else:
-    #     uu.print_log("  No data found. Deleting {}...".format(tile_id))
-    #     os.remove(out_tile)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_climate_zone)

@@ -20,9 +20,11 @@ def prep_FIA_regions(tile_id):
 
 
     uu.print_log("Rasterizing FIA region shapefile", tile_id)
+    blocksizex = 1024
+    blocksizey = 1024
     uu.rasterize('{}.shp'.format(cn.name_FIA_regions_raw[:-4]),
                    "{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed),
-                        xmin, ymin, xmax, ymax, '.00025', 'Byte', 'regionCode', '0')
+                        xmin, ymin, xmax, ymax, blocksizex, blocksizey, '.00025', 'Byte', 'regionCode', '0')
 
     uu.print_log("Checking if {} contains any data...".format(tile_id))
     no_data = uu.check_for_data("{0}_{1}.tif".format(tile_id, cn.pattern_FIA_regions_processed))

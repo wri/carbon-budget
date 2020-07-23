@@ -42,8 +42,10 @@ def create_continent_ecozone_tiles(tile_id):
     # to improve assigning pixels without continent-ecozone codes to a continent-ecozone code.
     # This way, pixels without continent-ecozone are assigned a code based on what's in a window nearby, rather
     # than a window that spans the entire 10x10 degree tile.
+    blocksizex = 1024
+    blocksizey = 1024
     uu.rasterize('fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.shp',
-                                              cont_eco_raw, xmin, ymin, xmax, ymax, '.00025', 'Int16', 'gainEcoCon', '0')
+                                              cont_eco_raw, xmin, ymin, xmax, ymax, blocksizex, blocksizey, '.00025', 'Int16', 'gainEcoCon', '0')
 
     # Opens continent-ecozone tile.
     # Everything from here down is used to assign pixels without continent ecozone codes to a continent-ecozone in the 1024x1024 windows.
