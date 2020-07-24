@@ -106,13 +106,6 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     with process.stdout:
         uu.log_subprocess_output(process.stdout)
 
-    uu.print_log("Unzipping US FIA regions...")
-    cmd = ['unzip', '-j', '{}'.format(cn.name_FIA_regions_raw)]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
-
 
     # Creates tree cover loss driver tiles
     source_raster = '{}.tif'.format(cn.pattern_drivers_raw)
@@ -273,23 +266,16 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     pool.join()
 
     # Creates FIA regions for US forests
-    in_shape = cn.name_FIA_regions_raw_unzip
+    source_raster = cn.name_FIA_regions_raw
     out_pattern = cn.pattern_FIA_regions_processed
-    blocksizex = 40000
-    blocksizey = 1
-    tr = cn.Hansen_res
-    ot = 'Byte'
-    anodata = 0
-    name_field = 'new_val'
+    dt = 'Byte'
     if cn.count == 96:
         processes = 32  # 32 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log("Creating US forest group tiles with {} processors...".format(processes))
+    uu.print_log("Creating US forest region tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_rasterize, in_shape=in_shape, out_pattern=out_pattern,
-                     blocksizex=blocksizex, blocksizey=blocksizey, tr=tr, ot=ot,
-                     anodata=anodata, name_field=name_field), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
     pool.close()
     pool.join()
 
@@ -305,7 +291,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
             pool.join()
         elif cn.count <= 2: # For local tests
             processes = 1
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
             pool.close()

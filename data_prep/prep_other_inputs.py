@@ -124,7 +124,6 @@ def create_climate_zone_tiles(tile_id):
         # so they should work fine with all the other tiles.
         dst_climate_zone.write_band(1, climate_zone_window, window=window)
 
-
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_climate_zone)
 

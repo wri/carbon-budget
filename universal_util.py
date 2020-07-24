@@ -619,7 +619,6 @@ def s3_file_download(source, dest, sensit_type):
                 print_log(file_name_sens, "not previously downloaded. Downloading to", dest, '\n')
                 source = os.path.join(dir_sens, file_name_sens)
                 cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-
                 # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                 process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
                 with process.stdout:
@@ -638,8 +637,8 @@ def s3_file_download(source, dest, sensit_type):
             else:
                 source = os.path.join(dir, file_name)
                 try:
+                    print_log(file_name, "not previously downloaded. Downloading to", dest, '\n')
                     cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-
                     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
                     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
                     with process.stdout:
