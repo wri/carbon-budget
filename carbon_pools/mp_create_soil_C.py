@@ -66,90 +66,90 @@ def mp_create_soil_C(tile_id_list):
         uu.log_subprocess_output(process.stdout)
 
 
-    # uu.print_log("Unzipping mangrove soil C images...")
-    # cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
-    # # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    # with process.stdout:
-    #     uu.log_subprocess_output(process.stdout)
+    uu.print_log("Unzipping mangrove soil C images...")
+    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
+
+    # Mangrove soil receives precedence over mineral soil
+    uu.print_log("Making mangrove soil C vrt...")
+    subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    uu.print_log("Done making mangrove soil C vrt")
+
+    uu.print_log("Making mangrove soil C tiles...")
+
+    if cn.count == 96:
+        processes = 32   # 32 processors = XXX GB peak
+    else:
+        processes = int(cn.count/3)
+    uu.print_log('Mangrove soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
     #
-    # # Mangrove soil receives precedence over mineral soil
-    # uu.print_log("Making mangrove soil C vrt...")
-    # subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
-    # uu.print_log("Done making mangrove soil C vrt")
+    #     create_soil_C.create_mangrove_soil_C(tile_id)
+
+    uu.print_log("Done making mangrove soil C tiles")
+
+    # Mangrove soil receives precedence over mineral soil
+    uu.print_log("Making mineral soil C vrt...")
+    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    uu.print_log("Done making mineral soil C vrt")
+
+    # Creates European natural forest removal rate tiles
+    source_raster = 'mineral_soil_C.vrt'
+    out_pattern = 'mineral_soil'
+    dt = 'Int16'
+    if cn.count == 96:
+        processes = 32  # 32 processors = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
     #
-    # uu.print_log("Making mangrove soil C tiles...")
+    #     create_soil_C.create_mineral_soil_C(tile_id)
+
+    uu.print_log("Done making mineral soil C tiles")
+
+
+    uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
+
+    # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
+    if cn.count == 96:
+        processes = 45   # 45 processors = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Combined soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
+
+    # # For single processor use
+    # for tile in tile_list:
     #
-    # if cn.count == 96:
-    #     processes = 32   # 32 processors = XXX GB peak
-    # else:
-    #     processes = int(cn.count/3)
-    # uu.print_log('Mangrove soil C max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #
-    # #     create_soil_C.create_mangrove_soil_C(tile_id)
-    #
-    # uu.print_log("Done making mangrove soil C tiles")
-    #
-    # # Mangrove soil receives precedence over mineral soil
-    # uu.print_log("Making mineral soil C vrt...")
-    # subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
-    # uu.print_log("Done making mineral soil C vrt")
-    #
-    # # Creates European natural forest removal rate tiles
-    # source_raster = 'mineral_soil_C.vrt'
-    # out_pattern = 'mineral_soil'
-    # dt = 'Int16'
-    # if cn.count == 96:
-    #     processes = 32  # 32 processors = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #
-    # #     create_soil_C.create_mineral_soil_C(tile_id)
-    #
-    # uu.print_log("Done making mineral soil C tiles")
-    #
-    #
-    # uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
-    #
-    # # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
-    # if cn.count == 96:
-    #     processes = 45   # 45 processors = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log('Combined soil C max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
-    #
-    # # # For single processor use
-    # # for tile in tile_list:
-    # #
-    # #     create_soil_C.create_combined_soil_C(tile_id)
-    #
-    # uu.print_log("Done making combined soil C tiles")
-    #
-    # uu.print_log("Uploading soil C density tiles")
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    #
-    # # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
-    # uu.print_log("Deleting raw soil C density rasters")
-    # c_stocks = glob.glob('*{}*'.format(cn.pattern_soil_C_full_extent_2000))
-    # for c_stock in c_stocks:
-    #     os.remove(c_stock)
+    #     create_soil_C.create_combined_soil_C(tile_id)
+
+    uu.print_log("Done making combined soil C tiles")
+
+    uu.print_log("Uploading soil C density tiles")
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+    # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
+    uu.print_log("Deleting raw soil C density rasters")
+    c_stocks = glob.glob('*{}*'.format(cn.pattern_soil_C_full_extent_2000))
+    for c_stock in c_stocks:
+        os.remove(c_stock)
 
 
     # # Download raw mineral soil C density standard deviation tiles.
