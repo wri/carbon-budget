@@ -727,10 +727,10 @@ def check_for_data(tile):
     with rasterio.open(tile) as img:
         msk = img.read_masks(1).astype(bool)
     if msk[msk].size == 0:
-        print_log("Tile {} is empty".format(tile))
+        # print_log("Tile {} is empty".format(tile))
         return True
     else:
-        print_log("Tile {} is not empty".format(tile))
+        # print_log("Tile {} is not empty".format(tile))
         return False
 
 

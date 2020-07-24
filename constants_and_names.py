@@ -285,7 +285,7 @@ pattern_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_AGC_t_ha_natural_
 annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_natural_forest_young_secondary/standard/20209999/')
 
 # Annual aboveground+belowground carbon gain rate for natural European forests (raw)
-name_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
+name_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_raw_Europe.tif'
 annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
@@ -576,11 +576,11 @@ stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 's3://gfw2-data/climate/carbo
 
 # Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests
 pattern_stdev_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_stdev_AGC_t_ha_natural_forest_young_secondary'
-stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_stdev_AGC_natural_forest_young_secondary/processed/standard/20209999/')
+stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_natural_forest_young_secondary/processed/standard/20209999/')
 
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (raw)
-name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_stdev_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
+name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'stdev_annual_gain_rate_AGC_BGC_t_ha_natural_forest_raw_Europe_raw.tif'
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
