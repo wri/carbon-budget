@@ -112,7 +112,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     out_pattern = cn.pattern_drivers
     dt = 'Byte'
     if cn.count == 96:
-        processes = 45  # 45 processors = XXX GB peak
+        processes = 70  # 45 processors = 70 GB peak; 70 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
@@ -127,7 +127,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     out_pattern = cn.pattern_annual_gain_AGC_natrl_forest_young
     dt = 'float32'
     if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
+        processes = 60  # 32 processors = 210 GB peak; 60 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log("Creating young natural forest gain rate tiles with {} processors...".format(processes))
@@ -141,7 +141,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     out_pattern = cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
     dt = 'float32'
     if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
+        processes = 60  # 32 processors = 210 GB peak; 60 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log("Creating standard deviation for young natural forest removal rate tiles with {} processors...".format(processes))

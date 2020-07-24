@@ -131,7 +131,8 @@ gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200106.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'
-loss_dir = 's3://gfw2-data/forest_change/hansen_2015/Loss_tiles/'
+pattern_loss = 'GFW2019'
+loss_dir = 's3://gfw2-data/forest_change/hansen_2019/'
 
 # Hansen gain tiles (2001-2012)
 pattern_gain = 'Hansen_GFC2015_gain'
