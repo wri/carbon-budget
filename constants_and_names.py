@@ -580,7 +580,7 @@ stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_
 
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (raw)
-name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'stdev_annual_gain_rate_AGC_BGC_t_ha_natural_forest_raw_Europe_raw.tif'
+name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'stdev_annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
