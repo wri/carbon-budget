@@ -110,7 +110,7 @@ def mp_create_soil_C(tile_id_list):
         processes = 32  # 32 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log("Creating mineral soil C stock tiles with {} processors...".format(processes))
+    uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
     pool.close()
@@ -124,7 +124,7 @@ def mp_create_soil_C(tile_id_list):
     uu.print_log("Done making mineral soil C tiles")
 
 
-    uu.print_log("Making combined (mangrove + non-mangrove) soil C tiles...")
+    uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
 
     # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
     if cn.count == 96:
@@ -142,22 +142,47 @@ def mp_create_soil_C(tile_id_list):
 
     uu.print_log("Done making combined soil C tiles")
 
-    c_stock_inputs = glob.glob('*')
-    os.remove()
-
-
-    # Download raw mineral soil C density standard deviation tiles.
-    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.tif', '{}'.format(cn.stdev_mineral_soil_C_url)]
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
-
-
-    uu.print_log("Uploading output files")
+    uu.print_log("Uploading soil C density tiles")
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+    # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
+    uu.print_log("Deleting raw soil C density rasters")
+    c_stocks = glob.glob('*{}*'.format(cn.pattern_soil_C_full_extent_2000))
+    for c_stock in c_stocks:
+        os.remove(c_stock)
+
+
+    # # Download raw mineral soil C density standard deviation tiles.
+    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+    #                '--accept', '*.tif', '{}'.format(cn.stdev_mineral_soil_C_url)]
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
+    #
+    #
+    # # Makes a vrt of mineral soil C standard deviation
+    # uu.print_log("Making mineral soil C vrt...")
+    # subprocess.check_call('gdalbuildvrt mineral_soil_C_stdev.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    # uu.print_log("Done making mineral soil C stdev vrt")
+    #
+    # # Creates European natural forest removal rate tiles
+    # source_raster = 'mineral_soil_C_stdev.vrt'
+    # out_pattern = cn.pattern_stdev_soil_C_full_extent
+    # dt = 'Int16'
+    # if cn.count == 96:
+    #     processes = 32  # 32 processors = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # uu.print_log("Uploading soil C density standard deviation tiles")
+    # uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
 
 if __name__ == '__main__':

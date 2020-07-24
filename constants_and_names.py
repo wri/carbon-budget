@@ -451,7 +451,7 @@ mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30
 # Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
 # Non-mangrove C is 0-30 cm, mangrove C is 0-100 cm
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
-soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/standard/20200720/'.format(base_carbon_pool_dir)
+soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/standard/20200724/'.format(base_carbon_pool_dir)
 
 # Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "t_total_C_ha_2000"
@@ -596,7 +596,7 @@ stdev_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/oc
 
 # Standard deviation in soil C stocks (0-30 cm)
 pattern_stdev_soil_C_full_extent = 't_soil_C_ha_stdev_full_extent_2000'
-stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200724/')
+stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200727/')
 
 
 
