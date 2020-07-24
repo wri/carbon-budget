@@ -280,30 +280,30 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     # pool.join()
 
 
-    for output_pattern in output_pattern_list:
-
-        if cn.count == 96:
-            processes = 60  # 45 processors = XXX GB peak
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
-        elif cn.count <= 2: # For local tests
-            processes = 1
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
-        else:
-            processes = int(cn.count / 2)
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
-        uu.print_log('\n')
+    # for output_pattern in output_pattern_list:
+    #
+    #     if cn.count == 96:
+    #         processes = 60  # 45 processors = XXX GB peak
+    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    #         pool = multiprocessing.Pool(processes)
+    #         pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    #         pool.close()
+    #         pool.join()
+    #     elif cn.count <= 2: # For local tests
+    #         processes = 1
+    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+    #         pool = multiprocessing.Pool(processes)
+    #         pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+    #         pool.close()
+    #         pool.join()
+    #     else:
+    #         processes = int(cn.count / 2)
+    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    #         pool = multiprocessing.Pool(processes)
+    #         pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    #         pool.close()
+    #         pool.join()
+    #     uu.print_log('\n')
 
 
     # Uploads output tiles to s3
