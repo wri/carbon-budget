@@ -63,22 +63,6 @@ def create_mangrove_soil_C(tile_id):
     uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
 
 
-# Creates 10x10 mineral soil C tiles
-def create_mineral_soil_C(tile_id):
-
-    # Start time
-    start = datetime.datetime.now()
-
-    uu.print_log("Getting extent of", tile_id)
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    uu.print_log("Clipping mineral soil C for", tile_id)
-    uu.warp_to_Hansen('mineral_soil_C.vrt', '{0}_{1}.tif'.format(tile_id, 'mineral_soil'), xmin, ymin, xmax, ymax, 'Int16')
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
-
-
 # Overlays the mangrove soil C tiles with the mineral soil C tiles, giving precedence to the mangrove soil C
 def create_combined_soil_C(tile_id):
 

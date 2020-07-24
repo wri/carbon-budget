@@ -42,8 +42,8 @@ def mp_create_soil_C(tile_id_list):
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.soil_C_full_extent_2000_dir]
-    output_pattern_list = [cn.pattern_soil_C_full_extent_2000]
+    output_dir_list = [cn.soil_C_full_extent_2000_dir, cn.stdev_soil_C_full_extent_2000_dir]
+    output_pattern_list = [cn.pattern_soil_C_full_extent_2000, cn.pattern_stdev_soil_C_full_extent]
 
 
     uu.print_log("Downloading mangrove soil C rasters")
@@ -55,7 +55,7 @@ def mp_create_soil_C(tile_id_list):
     for input in input_files:
         uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
 
-    # Download raw mineral soil tiles.
+    # Download raw mineral soil C density tiles.
     # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
     # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
     cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
@@ -95,22 +95,25 @@ def mp_create_soil_C(tile_id_list):
     #     create_soil_C.create_mangrove_soil_C(tile_id)
 
     uu.print_log("Done making mangrove soil C tiles")
-    uu.print_log("Uploading mangrove output soil")
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mineral soil C vrt...")
-    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt {}'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
     uu.print_log("Done making mineral soil C vrt")
 
-    uu.print_log("Making mineral soil C tiles...")
-
+    # Creates European natural forest removal rate tiles
+    source_raster = 'mineral_soil_C.vrt'
+    out_pattern = 'mineral_soil'
+    dt = 'Int16'
     if cn.count == 96:
-        processes = 40   # 40 processors = XXX GB peak
+        processes = 32  # 32 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log('Mineral soil C max processors=', processes)
+    uu.print_log("Creating mineral soil C stock tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(create_soil_C.create_mineral_soil_C, tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -120,7 +123,7 @@ def mp_create_soil_C(tile_id_list):
     uu.print_log("Done making mineral soil C tiles")
 
 
-    uu.print_log("Making combined soil C tiles...")
+    uu.print_log("Making combined (mangrove + non-mangrove) soil C tiles...")
 
     # With count/2 on an r4.16xlarge machine, this was overpowered (used about 240 GB). Could increase the pool.
     if cn.count == 96:
@@ -137,6 +140,19 @@ def mp_create_soil_C(tile_id_list):
     #     create_soil_C.create_combined_soil_C(tile_id)
 
     uu.print_log("Done making combined soil C tiles")
+
+    os.remove()
+
+
+    # Download raw mineral soil C density standard deviation tiles.
+    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+                   '--accept', '*.tif', '{}'.format(cn.stdev_mineral_soil_C_url)]
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
+
 
     uu.print_log("Uploading output files")
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

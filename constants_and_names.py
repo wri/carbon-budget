@@ -449,6 +449,7 @@ pattern_mineral_soil_C_raw = 'tileSG'
 mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_mean/'
 
 # Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
+# Non-mangrove C is 0-30 cm, mangrove C is 0-100 cm
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
 soil_C_full_extent_2000_dir = '{}soil_carbon/intermediate_full_extent/standard/20200720/'.format(base_carbon_pool_dir)
 
@@ -567,7 +568,7 @@ output_aggreg_dir = '{}0_4deg_output_aggregation/biomass_soil/standard/20200311/
 
 
 
-### Removal factor standard deviation maps
+### Standard deviation maps
 ######
 
 # Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
@@ -587,6 +588,15 @@ stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
 pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_AGC_BGC_t_ha_natural_forest_Europe'
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
+
+
+# Raw mineral soil C file site
+pattern_stdev_mineral_soil_C_raw = 'tileSG'
+stdev_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_mean/'
+
+# Standard deviation in soil C stocks (0-30 cm)
+pattern_stdev_soil_C_full_extent = 't_soil_C_ha_stdev_full_extent_2000'
+stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200724/')
 
 
 

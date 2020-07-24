@@ -69,221 +69,221 @@ def mp_prep_other_inputs(tile_id_list, run_date):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
-    uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.age_cat_natrl_forest_US_raw_dir, cn.name_age_cat_natrl_forest_US_raw), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_base_dir, sensit_type)
-    # For some reason, using uu.s3_file_download or otherwise using AWSCLI as a subprocess doesn't work for this raster.
-    # Thus, using wget instead.
-    cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_base_dir)]
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
-    uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
-    cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--recursive']
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
-
-    uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_base_dir, sensit_type, tile_id_list)
-
-    uu.print_log("Unzipping pre-2000 plantations...")
-    cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
-
-    uu.print_log("Unzipping drivers...")
-    cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_drivers_raw)]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
-
-
-    # Creates tree cover loss driver tiles
-    source_raster = '{}.tif'.format(cn.pattern_drivers_raw)
-    out_pattern = cn.pattern_drivers
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 70  # 45 processors = 70 GB peak; 70 = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-
-    # Creates young natural forest removal rate tiles
-    source_raster = cn.name_annual_gain_AGC_natrl_forest_young_raw
-    out_pattern = cn.pattern_annual_gain_AGC_natrl_forest_young
-    dt = 'float32'
-    if cn.count == 96:
-        processes = 60  # 32 processors = 210 GB peak; 60 = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating young natural forest gain rate tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # Creates young natural forest removal rate standard deviation tiles
-    source_raster = cn.name_stdev_annual_gain_AGC_natrl_forest_young_raw
-    out_pattern = cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
-    dt = 'float32'
-    if cn.count == 96:
-        processes = 60  # 32 processors = 210 GB peak; 60 = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating standard deviation for young natural forest removal rate tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-
-    # Creates pre-2000 oil palm plantation tiles
-    if cn.count == 96:
-        processes = 45  # 45 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating pre-2000 oil palm plantation tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(prep_other_inputs.rasterize_pre_2000_plantations, tile_id_list)
-    pool.close()
-    pool.join()
-
-
-    # Creates climate zone tiles
-    if cn.count == 96:
-        processes = 45  # 45 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating climate zone tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(prep_other_inputs.create_climate_zone_tiles, tile_id_list)
-    pool.close()
-    pool.join()
-
-    # Creates European natural forest removal rate tiles
-    source_raster = cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw
-    out_pattern = cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe
-    dt = 'float32'
-    if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating European natural forest gain rate tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # Creates European natural forest standard deviation of removal rate tiles
-    source_raster = cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw
-    out_pattern = cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe
-    dt = 'float32'
-    if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating standard deviation for European natural forest gain rate tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-
-    # Creates a vrt of the primary forests with nodata=0 from the continental primary forest rasters
-    uu.print_log("Creating vrt of humid tropial primary forest...")
-    primary_vrt = 'primary_2001.vrt'
-    os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
-    uu.print_log("  Humid tropical primary forest vrt created")
-
-    # Creates primary forest tiles
-    source_raster = primary_vrt
-    out_pattern = 'primary_2001'
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 45  # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-
-    # Creates a combined IFL/primary forest raster
-    # Uses very little memory since it's just file renaming
-    if cn.count == 96:
-        processes = 60  # 45 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Assigning each tile to ifl2000 or primary forest with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(prep_other_inputs.create_combined_ifl_primary, tile_id_list)
-    pool.close()
-    pool.join()
-
-
-    # Creates forest age category tiles for US forests
-    source_raster = cn.name_age_cat_natrl_forest_US_raw
-    out_pattern = cn.pattern_age_cat_natrl_forest_US
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating US forest age category tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # Creates forest groups for US forests
-    source_raster = cn.name_FIA_forest_group_raw
-    out_pattern = cn.pattern_FIA_forest_group_processed
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating US forest group tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # Creates FIA regions for US forests
-    source_raster = cn.name_FIA_regions_raw
-    out_pattern = cn.pattern_FIA_regions_processed
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating US forest region tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
+    # # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
+    # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, '{}.zip'.format(cn.pattern_drivers_raw)), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.age_cat_natrl_forest_US_raw_dir, cn.name_age_cat_natrl_forest_US_raw), cn.docker_base_dir, sensit_type)
+    # uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_base_dir, sensit_type)
+    # # For some reason, using uu.s3_file_download or otherwise using AWSCLI as a subprocess doesn't work for this raster.
+    # # Thus, using wget instead.
+    # cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_base_dir)]
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
+    # uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
+    # cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--recursive']
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
+    #
+    # uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_base_dir, sensit_type, tile_id_list)
+    #
+    # uu.print_log("Unzipping pre-2000 plantations...")
+    # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
+    # # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
+    #
+    # uu.print_log("Unzipping drivers...")
+    # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_drivers_raw)]
+    # # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
+    #
+    #
+    # # Creates tree cover loss driver tiles
+    # source_raster = '{}.tif'.format(cn.pattern_drivers_raw)
+    # out_pattern = cn.pattern_drivers
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 80  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    #
+    # # Creates young natural forest removal rate tiles
+    # source_raster = cn.name_annual_gain_AGC_natrl_forest_young_raw
+    # out_pattern = cn.pattern_annual_gain_AGC_natrl_forest_young
+    # dt = 'float32'
+    # if cn.count == 96:
+    #     processes = 80  # 32 processors = 210 GB peak; 60 = 370 GB peak; 80 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating young natural forest gain rate tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # Creates young natural forest removal rate standard deviation tiles
+    # source_raster = cn.name_stdev_annual_gain_AGC_natrl_forest_young_raw
+    # out_pattern = cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
+    # dt = 'float32'
+    # if cn.count == 96:
+    #     processes = 80  # 32 processors = 210 GB peak; 60 = 370 GB peak; 80 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating standard deviation for young natural forest removal rate tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    #
+    # # Creates pre-2000 oil palm plantation tiles
+    # if cn.count == 96:
+    #     processes = 80  # 45 processors = 100 GB peak; 80 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating pre-2000 oil palm plantation tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(prep_other_inputs.rasterize_pre_2000_plantations, tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    #
+    # # Creates climate zone tiles
+    # if cn.count == 96:
+    #     processes = 80  # 45 processors = 230 GB peak (on second step); 80 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating climate zone tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(prep_other_inputs.create_climate_zone_tiles, tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # Creates European natural forest removal rate tiles
+    # source_raster = cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw
+    # out_pattern = cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe
+    # dt = 'float32'
+    # if cn.count == 96:
+    #     processes = 60  # 32 processors = 60 GB peak; 60 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating European natural forest gain rate tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # Creates European natural forest standard deviation of removal rate tiles
+    # source_raster = cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw
+    # out_pattern = cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe
+    # dt = 'float32'
+    # if cn.count == 96:
+    #     processes = 32  # 32 processors = 60 GB peak; 60 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating standard deviation for European natural forest gain rate tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    #
+    # # Creates a vrt of the primary forests with nodata=0 from the continental primary forest rasters
+    # uu.print_log("Creating vrt of humid tropial primary forest...")
+    # primary_vrt = 'primary_2001.vrt'
+    # os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
+    # uu.print_log("  Humid tropical primary forest vrt created")
+    #
+    # # Creates primary forest tiles
+    # source_raster = primary_vrt
+    # out_pattern = 'primary_2001'
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 45  # 45 processors = 650 GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    #
+    # # Creates a combined IFL/primary forest raster
+    # # Uses very little memory since it's just file renaming
+    # if cn.count == 96:
+    #     processes = 60  # 60 processors = 10 GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Assigning each tile to ifl2000 or primary forest with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(prep_other_inputs.create_combined_ifl_primary, tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    #
+    # # Creates forest age category tiles for US forests
+    # source_raster = cn.name_age_cat_natrl_forest_US_raw
+    # out_pattern = cn.pattern_age_cat_natrl_forest_US
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 70  # 32 processors = 35 GB peak; 70 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating US forest age category tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # Creates forest groups for US forests
+    # source_raster = cn.name_FIA_forest_group_raw
+    # out_pattern = cn.pattern_FIA_forest_group_processed
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 80  # 32 processors = 25 GB peak; 80 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating US forest group tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # Creates FIA regions for US forests
+    # source_raster = cn.name_FIA_regions_raw
+    # out_pattern = cn.pattern_FIA_regions_processed
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 70  # 32 processors = 35 GB peak; 70 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log("Creating US forest region tiles with {} processors...".format(processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
 
 
     for output_pattern in output_pattern_list:
 
         if cn.count == 96:
-            processes = 60  # 45 processors = XXX GB peak
+            processes = 55  # 60 processors = 720 GB peak (for European natural forest forest removal rates); 55 = XXX GB peak
             uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
