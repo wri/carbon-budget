@@ -150,7 +150,7 @@ primary_raw_dir = 's3://gfw2-data/forest_cover/primary_forest/jan_2019/'
 
 # Primary forest/IFL merged tiles
 pattern_ifl_primary = 'ifl_2000_primary_2001_merged'
-ifl_primary_processed_dir = os.path.join(s3_base_dir, 'ifl_primary_merged/processed/20209999/')
+ifl_primary_processed_dir = os.path.join(s3_base_dir, 'ifl_primary_merged/processed/20200724/')
 
 # Processed FAO ecozone shapefile
 cont_ecozone_shp = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_20180906.zip'
@@ -178,17 +178,17 @@ peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/proc
 climate_zone_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/raw/')
 climate_zone_raw = 'climate_zone.tif'
 pattern_climate_zone = 'climate_zone_processed'
-climate_zone_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/processed/20209999/')
+climate_zone_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/processed/20200724/')
 
 plant_pre_2000_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/raw/')
 pattern_plant_pre_2000_raw = 'plant_est_2000_or_earlier'
 pattern_plant_pre_2000 = 'plantation_2000_or_earlier_processed'
-plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20209999/')
+plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20200724/')
 
 drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
 pattern_drivers_raw = 'Goode_FinalClassification_19_Excludeduncertain_Expanded_05pcnt_reproj__20200722'
 pattern_drivers = 'tree_cover_loss_driver_processed'
-drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2019/20209999/')
+drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2019/20200724/')
 
 pattern_burn_year = "burnyear"
 burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/')
@@ -249,7 +249,7 @@ name_age_cat_natrl_forest_US_raw = 'forest_age_category_US__0_20__20_100__100plu
 age_cat_natrl_forest_US_raw_dir = os.path.join(s3_base_dir, 'forest_age_category_natural_forest_US/raw/20200723/')
 
 pattern_age_cat_natrl_forest_US = 'forest_age_category_natural_forest_US'
-age_cat_natrl_forest_US_dir = os.path.join(s3_base_dir, 'forest_age_category_natural_forest_US/processed/standard/20200723/')
+age_cat_natrl_forest_US_dir = os.path.join(s3_base_dir, 'forest_age_category_natural_forest_US/processed/standard/20200724/')
 
 
 ### US-specific removal precursors
@@ -258,13 +258,13 @@ name_FIA_regions_raw = 'Forest_Management_Regions_Final_Integrated_from_Thailynn
 FIA_regions_raw_dir = os.path.join(s3_base_dir, 'US_FIA_region/raw/20200723/')
 
 pattern_FIA_regions_processed = 'FIA_regions_processed'
-FIA_regions_processed_dir = os.path.join(s3_base_dir, 'US_FIA_region/processed/20191216/')
+FIA_regions_processed_dir = os.path.join(s3_base_dir, 'US_FIA_region/processed/20200724/')
 
 name_FIA_forest_group_raw = 'forest_group_composite_set_no_data_20191223.tif'
 FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'US_forest_group/intermediate/')
 
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
-FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'US_forest_group/processed/20200723/')
+FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'US_forest_group/processed/20200724/')
 
 table_US_removal_rate = 'US_removal_rates_flux_model_20200723.xlsx'
 US_removal_rate_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
@@ -282,7 +282,7 @@ annual_gain_AGC_natrl_forest_young_raw_URL = 'http://gfw2-data.s3.amazonaws.com/
 
 # Annual aboveground carbon gain rate for young (<20 year secondary), non-mangrove, non-planted natural forests
 pattern_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_AGC_t_ha_natural_forest_young_secondary'
-annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_natural_forest_young_secondary/standard/20209999/')
+annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_natural_forest_young_secondary/standard/20200724/')
 
 # Annual aboveground+belowground carbon gain rate for natural European forests (raw)
 name_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_raw_Europe.tif'
@@ -290,7 +290,7 @@ annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'ann
 
 # Annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
 pattern_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe'
-annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20209999/')
+annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
 pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_US'
@@ -576,7 +576,7 @@ stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 's3://gfw2-data/climate/carbo
 
 # Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests
 pattern_stdev_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_stdev_AGC_t_ha_natural_forest_young_secondary'
-stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_natural_forest_young_secondary/processed/standard/20209999/')
+stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_natural_forest_young_secondary/processed/standard/20200724/')
 
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (raw)
@@ -585,7 +585,7 @@ stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
 pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_AGC_BGC_t_ha_natural_forest_Europe'
-stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20209999/')
+stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 
 
