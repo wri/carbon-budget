@@ -18,6 +18,7 @@ from subprocess import Popen, PIPE, STDOUT, check_call
 import create_soil_C
 import multiprocessing
 import datetime
+import glob
 import argparse
 import os
 import sys
@@ -141,6 +142,7 @@ def mp_create_soil_C(tile_id_list):
 
     uu.print_log("Done making combined soil C tiles")
 
+    c_stock_inputs = glob.glob('*')
     os.remove()
 
 
