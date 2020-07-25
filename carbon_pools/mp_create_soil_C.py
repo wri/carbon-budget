@@ -123,7 +123,7 @@ def mp_create_soil_C(tile_id_list):
     #
     #     create_soil_C.create_mineral_soil_C(tile_id)
 
-    uu.print_log("Done making mineral soil C tiles", "\n"")
+    uu.print_log("Done making mineral soil C tiles", "\n")
 
 
     uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
