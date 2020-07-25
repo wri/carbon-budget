@@ -16,6 +16,7 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 
 from subprocess import Popen, PIPE, STDOUT, check_call
 import create_soil_C
+from functools import partial
 import multiprocessing
 import datetime
 import glob
@@ -55,11 +56,11 @@ def mp_create_soil_C(tile_id_list):
 
     # for input in input_files:
     #     uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
-    # 
+    #
     # # Download raw mineral soil C density tiles.
     # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
     # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # # There are 12951 tiles!
+    # # There are 12951 tiles and it takes about 3 hours to download them!
     # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
     #                '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
     # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -74,36 +75,36 @@ def mp_create_soil_C(tile_id_list):
     # with process.stdout:
     #     uu.log_subprocess_output(process.stdout)
 
-    # Mangrove soil receives precedence over mineral soil
-    uu.print_log("Making mangrove soil C vrt...")
-    check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
-    uu.print_log("Done making mangrove soil C vrt")
-
-    uu.print_log("Making mangrove soil C tiles...")
-
-    if cn.count == 96:
-        processes = 32   # 32 processors = XXX GB peak
-    else:
-        processes = int(cn.count/3)
-    uu.print_log('Mangrove soil C max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
+    # # Mangrove soil receives precedence over mineral soil
+    # uu.print_log("Making mangrove soil C vrt...")
+    # check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    # uu.print_log("Done making mangrove soil C vrt")
     #
-    #     create_soil_C.create_mangrove_soil_C(tile_id)
+    # uu.print_log("Making mangrove soil C tiles...")
+    #
+    # if cn.count == 96:
+    #     processes = 32   # 32 processors = 550 GB peak
+    # else:
+    #     processes = int(cn.count/3)
+    # uu.print_log('Mangrove soil C max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #
+    # #     create_soil_C.create_mangrove_soil_C(tile_id)
+    #
+    # uu.print_log('Done making mangrove soil C tiles', '\n')
 
-    uu.print_log("Done making mangrove soil C tiles")
+    # # Mangrove soil receives precedence over mineral soil
+    # uu.print_log("Making mineral soil C vrt...")
+    # check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    # uu.print_log("Done making mineral soil C vrt")
 
-    # Mangrove soil receives precedence over mineral soil
-    uu.print_log("Making mineral soil C vrt...")
-    check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
-    uu.print_log("Done making mineral soil C vrt")
-
-    # Creates European natural forest removal rate tiles
+    # Creates mineral soil C  density tiles
     source_raster = 'mineral_soil_C.vrt'
     out_pattern = 'mineral_soil'
     dt = 'Int16'
@@ -122,7 +123,7 @@ def mp_create_soil_C(tile_id_list):
     #
     #     create_soil_C.create_mineral_soil_C(tile_id)
 
-    uu.print_log("Done making mineral soil C tiles")
+    uu.print_log("Done making mineral soil C tiles", "\n"")
 
 
     uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
