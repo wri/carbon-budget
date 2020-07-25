@@ -53,9 +53,9 @@ def mp_create_soil_C(tile_id_list):
     # For downloading all tiles in the input folders.
     input_files = [cn.mangrove_biomass_2000_dir]
 
-    for input in input_files:
-        uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
-
+    # for input in input_files:
+    #     uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
+    # 
     # # Download raw mineral soil C density tiles.
     # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
     # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
@@ -65,14 +65,14 @@ def mp_create_soil_C(tile_id_list):
     # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     # with process.stdout:
     #     uu.log_subprocess_output(process.stdout)
-
-
-    uu.print_log("Unzipping mangrove soil C rasters...")
-    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    #
+    #
+    # uu.print_log("Unzipping mangrove soil C rasters...")
+    # cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
+    # # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mangrove soil C vrt...")
