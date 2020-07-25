@@ -47,8 +47,8 @@ def mp_create_soil_C(tile_id_list):
     output_pattern_list = [cn.pattern_soil_C_full_extent_2000, cn.pattern_stdev_soil_C_full_extent]
 
 
-    uu.print_log("Downloading mangrove soil C rasters")
-    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_base_dir, sensit_type)
+    # uu.print_log("Downloading mangrove soil C rasters")
+    # uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_base_dir, sensit_type)
 
     # For downloading all tiles in the input folders.
     input_files = [cn.mangrove_biomass_2000_dir]
@@ -56,17 +56,18 @@ def mp_create_soil_C(tile_id_list):
     for input in input_files:
         uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
 
-    # Download raw mineral soil C density tiles.
-    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    # # Download raw mineral soil C density tiles.
+    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # # There are 12951 tiles!
+    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+    #                '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
+    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    # with process.stdout:
+    #     uu.log_subprocess_output(process.stdout)
 
 
-    uu.print_log("Unzipping mangrove soil C images...")
+    uu.print_log("Unzipping mangrove soil C rasters...")
     cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -75,7 +76,7 @@ def mp_create_soil_C(tile_id_list):
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mangrove soil C vrt...")
-    subprocess.check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
     uu.print_log("Done making mangrove soil C vrt")
 
     uu.print_log("Making mangrove soil C tiles...")
@@ -99,7 +100,7 @@ def mp_create_soil_C(tile_id_list):
 
     # Mangrove soil receives precedence over mineral soil
     uu.print_log("Making mineral soil C vrt...")
-    subprocess.check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
     uu.print_log("Done making mineral soil C vrt")
 
     # Creates European natural forest removal rate tiles
@@ -164,7 +165,7 @@ def mp_create_soil_C(tile_id_list):
     #
     # # Makes a vrt of mineral soil C standard deviation
     # uu.print_log("Making mineral soil C vrt...")
-    # subprocess.check_call('gdalbuildvrt mineral_soil_C_stdev.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    # check_call('gdalbuildvrt mineral_soil_C_stdev.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
     # uu.print_log("Done making mineral soil C stdev vrt")
     #
     # # Creates European natural forest removal rate tiles
