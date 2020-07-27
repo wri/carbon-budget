@@ -160,6 +160,30 @@ def create_1x1_plantation_type_from_1x1_planted(tile_1x1):
     subprocess.check_call(cmd)
 
 
+
+# Makes 1x1 rasters of the removal rate standard deviation
+def create_1x1_plantation_stdev_from_1x1_planted(tile_1x1):
+
+    # Gets the bounding coordinates for the 1x1 degree tile
+    coords = tile_1x1.split("_")
+    xmin_1x1 = str(coords[3])[:-4]
+    xmax_1x1 = int(xmin_1x1) + 1
+    ymax_1x1 = int(coords[2])
+    ymin_1x1 = ymax_1x1 - 1
+
+    print "For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1
+
+    print "There are plantations in {}. Converting to stdev raster...".format(tile_1x1)
+
+    # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
+    cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=LZW', 'PG:dbname=ubuntu',
+           '-l', 'all_plant', 'plant_stdev_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1),
+           '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
+           '-a', 'SD_error', '-a_nodata', '0']
+    subprocess.check_call(cmd)
+
+
+
 # Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
 def create_10x10_plantation_gain(tile_id, plant_gain_1x1_vrt):
 
@@ -175,7 +199,8 @@ def create_10x10_plantation_gain(tile_id, plant_gain_1x1_vrt):
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = uu.check_for_data(tile_10x10)
+    stats = uu.check_for_data_old(tile_10x10)
+    print stats
 
     if stats[0] > 0:
 
@@ -203,12 +228,41 @@ def create_10x10_plantation_type(tile_id, plant_type_1x1_vrt):
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)
-    stats = uu.check_for_data(tile_10x10)
+    stats = uu.check_for_data_old(tile_10x10)
 
+    
     if stats[0] > 0:
 
         print "  Data found in {}. Copying tile to s3...".format(tile_id)
         uu.upload_final(cn.planted_forest_type_unmasked_dir, tile_id, cn.pattern_planted_forest_type_unmasked)
+        print "    Tile converted and copied to s3"
+
+    else:
+
+        print "  No data found. Not copying {}.".format(tile_id)
+
+
+# Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
+def create_10x10_plantation_stdev(tile_id, plant_stdev_1x1_vrt):
+
+    print "Getting bounding coordinates for tile", tile_id
+    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+    print "  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax
+
+    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_planted_forest_stdev_unmasked)
+    print "Rasterizing", tile_10x10
+    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
+           '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Byte', plant_stdev_1x1_vrt, tile_10x10]
+    subprocess.check_call(cmd)
+
+    print "Checking if {} contains any data...".format(tile_id)
+    stats = uu.check_for_data_old(tile_10x10)
+
+    if stats[0] > 0:
+
+        print "  Data found in {}. Copying tile to s3...".format(tile_id)
+        uu.upload_final(cn.planted_forest_stdev_unmasked_dir, tile_id, cn.pattern_planted_forest_stdev_unmasked)
         print "    Tile converted and copied to s3"
 
     else:

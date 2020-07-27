@@ -123,7 +123,7 @@ cont_eco_dir = os.path.join(base_dir, 'fao_ecozones/ecozone_continent/20190116/p
 
 # Plantation type: palm oil (code=1), wood fiber (code=2), and other (code=3)
 pattern_planted_forest_type_unmasked = 'plantation_type_oilpalm_woodfiber_other_unmasked'
-planted_forest_type_unmasked_dir = os.path.join(base_dir, 'other_emissions_inputs/plantation_type/standard/20191011/')
+planted_forest_type_unmasked_dir = os.path.join(base_dir, 'other_emissions_inputs/plantation_type/standard/20200729/')
 
 peat_unprocessed_dir = os.path.join(base_dir, 'other_emissions_inputs/peatlands/raw/')
 cifor_peat_file = 'cifor_peat_mask.tif'
@@ -214,7 +214,7 @@ annual_gain_BGB_mangrove_dir = os.path.join(base_dir, 'annual_gain_rate_BGB_mang
 
 # Annual aboveground and belowground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
 pattern_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_AGC_BGC_t_ha_planted_forest_unmasked'
-annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(base_dir, 'annual_gain_rate_AGC_BGC_planted_forest_unmasked/standard/20191011/')
+annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(base_dir, 'annual_gain_rate_AGC_BGC_planted_forest_unmasked/standard/20200729/')
 
 # Annual aboveground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_AGB_planted_forest_non_mangrove = 'annual_gain_rate_AGB_t_ha_planted_forest_non_mangrove'
@@ -559,4 +559,11 @@ hadoop_raw_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/raw/'
 # Location of processed (cumsummed) Hadoop output
 hadoop_processed_s3_dir = 'gfw2-data/climate/carbon_model/model_output_Hadoop/processed/'
 hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
+
+
+### Standard deviations for removal factors
+######
+
+pattern_planted_forest_stdev_unmasked = 'annual_gain_rate_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
+planted_forest_stdev_unmasked_dir = 'gfw2-data/climate/carbon_model/stdev_annual_gain_rate_AGC_BGC_planted_forest_unmasked/standard/20200730'
 

@@ -288,6 +288,7 @@ def main ():
     ### Entry point 3
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
     # This is the part that actually creates the sequestration rate and forest type tiles.
+    
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
         print "Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles..."
@@ -315,25 +316,34 @@ def main ():
         # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
         # to intersecting the planted forest table with the 1x1 tile.
 
-        # # For single processor use
-        # for tile in planted_list_1x1:
-        #     plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
+        # For single processor use
+        #for tile in planted_list_1x1:
+        #    plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
 
         # For multiprocessor use
         # processes=40 uses about 360 GB of memory. Works on r4.16xlarge with space to spare
-        num_of_processes = 40
+        num_of_processes = 52
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
 
         # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
-        num_of_processes = 50
+        num_of_processes = 52
         pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_type_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
 
+
+
+
+        # # This rasterizes the plantation removal factor standard deviations 
+        # num_of_processes = 50
+    	# pool = Pool(num_of_processes)
+	# pool.map(plantation_preparation.create_1x1_plantation_stdev_from_1x1_planted, planted_list_1x1)
+	# pool.close()
+	# pool.join()
 
 
     ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
@@ -355,11 +365,10 @@ def main ():
     pool.close()
     pool.join()
 
-    # # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
-    # at the start of the script that are in latitudes with planted forests.
-    # # For single processor use
-    # for tile in planted_lat_tile_list:
-    #
+    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    #at the start of the script that are in latitudes with planted forests.
+    # For single processor use
+    #for tile in planted_lat_tile_list:
     #     plantation_preparation.create_10x10_plantation_gain(tile, plant_gain_1x1_vrt)
 
 
@@ -387,6 +396,26 @@ def main ():
     #
     #     plantation_preparation.create_10x10_plantation_type(tile, plant_type_1x1_vrt)
 
+
+
+
+
+
+    # # Name of the vrt of 1x1 planted forest gain rate standard deviation tiles
+    # plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
+
+    # # Creates a mosaic of all the 1x1 plantation gain rate standard deviation tiles
+    # print "Creating vrt of 1x1 plantation gain rate standard deviation tiles"
+    # os.system('gdalbuildvrt {} plant_stdev_*.tif'.format(plant_stdev_1x1_vrt))
+
+    # # Creates 10x10 degree tiles of plantation gain rate standard deviation by iterating over the set of pixel area tiles supplied
+    # # at the start of the script that are in latitudes with planted forests.
+    # # For multiprocessor use
+    # num_of_processes = 20
+    # pool = Pool(num_of_processes)
+    # pool.map(partial(plantation_preparation.create_10x10_plantation_gain_stdev, plant_stdev_1x1_vrt=plant_stdev_1x1_vrt), planted_lat_tile_list)
+    # pool.close()
+    # pool.join()
 
 
 if __name__ == '__main__':
