@@ -280,7 +280,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     # pool.join()
 
 
-    for output_pattern in output_pattern_list:
+    for output_pattern in [cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
 
         if output_pattern in [cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
             processes = int(cn.count / 2)
