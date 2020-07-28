@@ -282,6 +282,14 @@ def mp_prep_other_inputs(tile_id_list, run_date):
 
     for output_pattern in output_pattern_list:
 
+        if output_pattern in [cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
         if cn.count == 96:
             processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
             uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))

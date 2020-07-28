@@ -83,7 +83,7 @@ def mp_create_soil_C(tile_id_list):
     # uu.print_log("Making mangrove soil C tiles...")
     #
     # if cn.count == 96:
-    #     processes = 32   # 32 processors = 550 GB peak
+    #     processes = 32   # 32 processors = 570 GB peak
     # else:
     #     processes = int(cn.count/3)
     # uu.print_log('Mangrove soil C max processors=', processes)
@@ -109,7 +109,7 @@ def mp_create_soil_C(tile_id_list):
     out_pattern = 'mineral_soil'
     dt = 'Int16'
     if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
+        processes = 50  # 32 processors = 100 GB peak; 50 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))

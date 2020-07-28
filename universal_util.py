@@ -129,6 +129,38 @@ def log_subprocess_output(pipe):
     upload_log()
 
 
+def log_subprocess_output_simple(cmd):
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
+
+
+def log_subprocess_output_full(cmd):
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+
+        # Reads all the output into a string
+        for full_out in iter(pipe.readline, b''):  # b'\n'-separated lines
+
+            # Separates the string into an array, where each entry is one line of output
+            line_array = full_out.splitlines()
+
+            # For reasons I don't know, the array is backwards, so this prints it out in reverse (i.e. correct) order
+            for line in reversed(line_array):
+                logging.info(line.decode(
+                    "utf-8"))  # https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+                print(line.decode(
+                    "utf-8"))  # https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+
+            # logging.info("\n")
+            # print("\n")
+
+        # After the subprocess finishes, the log is uploaded to s3
+        upload_log()
+
+
 # Checks the OS for how much storage is available in the system, what's being used, and what percent is being used
 # https://stackoverflow.com/questions/12027237/selecting-specific-columns-from-df-h-output-in-python
 def check_storage():
