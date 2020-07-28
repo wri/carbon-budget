@@ -58,11 +58,11 @@ spotutil new r4.16xlarge dgibbs_wri
 aws s3 cp s3://gfw-files/plantations/final/global/plantations_v3_1.gdb.zip .
 
 # Unzip the zipped plantation gdb. This can take several minutes.
-unzip plantations_v3_1.zip
+unzip plantations_v3_1.gdb.zip
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
-ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_1.gdb -progress -nln all_plant -sql "SELECT growth, species_simp, SD_error FROM cmr_plant"
+ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -progress -nln all_plant -sql "SELECT growth, species_simp, SD_error FROM cmr_plant"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
