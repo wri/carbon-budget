@@ -296,7 +296,7 @@ annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_
 
 # Annual aboveground+belowground carbon gain rate for natural US forests (processed tiles)
 pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_US'
-annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20209999/')
+annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20200729/')
 
 
 
