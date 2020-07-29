@@ -29,7 +29,8 @@ different are the ones that have a region-group-age combination that's in the FI
 import multiprocessing
 from functools import partial
 import datetime
-from sensitivity_analysis import US_removal_rates
+import argparse
+import US_removal_rates
 import pandas as pd
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
@@ -51,15 +52,15 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
 
     # Files to download for this script
     download_dict = {cn.gain_dir: [cn.pattern_gain],
-                     cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+                     cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked], # used as template/kwargs source for output tiles
                      cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed],
                      cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
                      cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US]
     }
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.US_annual_gain_AGB_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_US_annual_gain_AGB_natrl_forest]
+    output_dir_list = [cn.annual_gain_AGC_BGC_natrl_forest_US_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US]
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
@@ -88,7 +89,7 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
 
     # Imports the table with the region-group-age AGB removal rates
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
-                               sheet_name="US_rates_for_model")
+                               sheet_name="US_rates_AGC+BGC")
 
     # Converts gain table from wide to long, so each region-group-age category has its own row
     gain_table_group_region_by_age = pd.melt(gain_table, id_vars=['FIA_region_code', 'forest_group_code'],
@@ -126,18 +127,23 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
 
 
     # count/2 on a m4.16xlarge maxes out at about 230 GB of memory (processing 16 tiles at once), so it's okay on an m4.16xlarge
-    pool = multiprocessing.Pool(int(cn.count/2))
-    pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
-                     gain_table_group_region_dict=gain_table_group_region_dict,
-                     output_pattern_list=output_pattern_list, sensit_type=sensit_type), US_tile_id_list)
-    pool.close()
-    pool.join()
+    if cn.count == 96:
+        processes = 68   # 36 processors = 200 GB peak; 54 = 260 GB peak; 62 = 290 GB peak; 68 = XXX GB peak
+    else:
+        processes = 24
+    uu.print_log('US natural forest AGC+BGC removal rate max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
+    #                  gain_table_group_region_dict=gain_table_group_region_dict,
+    #                  output_pattern_list=output_pattern_list), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile_id in US_tile_id_list:
-    #
-    #     US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
-    #                                           output_pattern_list, sensit_type)
+    # For single processor use
+    for tile_id in tile_id_list:
+
+        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
+                                              output_pattern_list)
 
 
     # Uploads output tiles to s3

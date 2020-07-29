@@ -139,7 +139,8 @@ def log_subprocess_output_simple(cmd):
 def log_subprocess_output_full(cmd):
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
+    pipe = process.stdout
+    with pipe:
 
         # Reads all the output into a string
         for full_out in iter(pipe.readline, b''):  # b'\n'-separated lines

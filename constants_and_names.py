@@ -267,8 +267,9 @@ FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'US_forest_group/intermedia
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'US_forest_group/processed/20200724/')
 
-table_US_removal_rate = 'US_removal_rates_flux_model_20200723.xlsx'
+table_US_removal_rate = 'ICLEI R factors_livebiomass_all_nat_forest_types__20200729.xlsx'
 US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
+
 
 
 ### Annual carbon gain rates that are precursors for annual biomass gain rates
@@ -293,7 +294,7 @@ annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'ann
 pattern_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe'
 annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
-# Annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
+# Annual aboveground+belowground carbon gain rate for natural US forests (processed tiles)
 pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_US'
 annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20209999/')
 
@@ -316,10 +317,6 @@ annual_gain_AGB_planted_forest_non_mangrove_dir = os.path.join(s3_base_dir, 'ann
 # Annual belowground biomass gain rate for planted forests where there are no mangroves (non-mangrove planted forests)
 pattern_annual_gain_BGB_planted_forest_non_mangrove = 'annual_gain_rate_BGB_t_ha_planted_forest_non_mangrove'
 annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_planted_forest_non_mangrove/standard/20191012/')
-
-# Annual aboveground biomass gain rate for US forests
-pattern_US_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_US_removals'
-US_annual_gain_AGB_natrl_forest_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_natural_forest/US_removals/20200728/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
 pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_all_ages'
