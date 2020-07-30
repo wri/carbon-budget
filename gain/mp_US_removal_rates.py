@@ -52,7 +52,6 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
 
     # Files to download for this script
     download_dict = {cn.gain_dir: [cn.pattern_gain],
-                     cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked], # used as template/kwargs source for output tiles. This is not used for the extent
                      cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed],
                      cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
                      cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US]
@@ -128,22 +127,22 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
 
     # count/2 on a m4.16xlarge maxes out at about 230 GB of memory (processing 16 tiles at once), so it's okay on an m4.16xlarge
     if cn.count == 96:
-        processes = 68   # 36 processors = 200 GB peak; 54 = 260 GB peak; 62 = 290 GB peak; 68 = XXX GB peak
+        processes = 68   # 68 processors (only 16 tiles though) = 310 GB peak
     else:
         processes = 24
     uu.print_log('US natural forest AGC+BGC removal rate max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
-                     gain_table_group_region_dict=gain_table_group_region_dict,
-                     output_pattern_list=output_pattern_list), tile_id_list)
-    pool.close()
-    pool.join()
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
+    #                  gain_table_group_region_dict=gain_table_group_region_dict,
+    #                  output_pattern_list=output_pattern_list), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #
-    #     US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
-    #                                           output_pattern_list)
+    # For single processor use
+    for tile_id in tile_id_list:
+
+        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
+                                              output_pattern_list)
 
 
     # Uploads output tiles to s3

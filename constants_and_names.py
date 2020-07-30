@@ -267,7 +267,7 @@ FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'US_forest_group/intermedia
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'US_forest_group/processed/20200724/')
 
-table_US_removal_rate = 'ICLEI R factors_livebiomass_all_nat_forest_types__20200729.xlsx'
+table_US_removal_rate = 'ICLEI R factors_livebiomass_all_nat_forest_types__20200730.xlsx'
 US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 
@@ -296,7 +296,7 @@ annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_
 
 # Annual aboveground+belowground carbon gain rate for natural US forests (processed tiles)
 pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_US'
-annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20200729/')
+annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20200730/')
 
 
 

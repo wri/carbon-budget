@@ -18,23 +18,22 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
     # Names of the input tiles
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    WHRC_template = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     US_age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest_US)
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)
 
     # Opens standard model gain rate tile
-    with rasterio.open(WHRC_template) as WHRC_template_src:
+    with rasterio.open(US_age_cat) as US_age_cat_src:
 
         # Grabs metadata about the tif, like its location/projection/cell size
-        kwargs = WHRC_template_src.meta
+        kwargs = US_age_cat_src.meta
 
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-        windows = WHRC_template_src.block_windows(1)
+        windows = US_age_cat_src.block_windows(1)
 
         # Opens other necessary tiles
         gain_src = rasterio.open(gain)
-        US_age_cat_src = rasterio.open(US_age_cat)
+        # US_age_cat_src = rasterio.open(US_age_cat)
         US_forest_group_src = rasterio.open(US_forest_group)
         US_region_src = rasterio.open(US_region)
 
@@ -54,23 +53,23 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         for idx, window in windows:
 
             # Creates window for each input raster
-            WHRC_template_window = WHRC_template_src.read(1, window=window).astype('float32')
             gain_window = gain_src.read(1, window=window)
             US_age_cat_window = US_age_cat_src.read(1, window=window).astype('float32')
             US_forest_group_window = US_forest_group_src.read(1, window=window).astype('float32')
             US_region_window = US_region_src.read(1, window=window).astype('float32')
 
+
             # Creates empty windows (arrays) that will store gain rates. There are separate arrays for
             # no Hansen gain pixels and for Hansen gain pixels. These are later combined.
             # Pixels without and with Hansen gain are treated separately because gain pixels automatically get the youngest
             # removal rate, regardless of their age category.
-            agc_bgc_without_gain_pixel_window = WHRC_template_window
-            agc_bgc_without_gain_pixel_window.fill(0)
-            agc_bgc_with_gain_pixel_window = agc_bgc_without_gain_pixel_window
+            agc_bgc_without_gain_pixel_window = np.zeros((1,40000), dtype='float32')
+            agc_bgc_with_gain_pixel_window = np.zeros((1,40000), dtype='float32')
 
             # Performs the same operation on the three rasters as is done on the values in the table in order to
             # make the codes (dictionary key) match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
             group_region_age_combined_window = (US_age_cat_window * 10000 + US_forest_group_window * 100 + US_region_window)
+
 
             # Masks the combined age-group-region raster to the three input tiles (age category, forest group, FIA region).
             # Excludes all Hamsen gain pixels.
@@ -104,17 +103,11 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             for key, value in gain_table_group_region_dict.items():
                 agc_bgc_with_gain_pixel_window[group_region_combined_window == key] = value
 
+            agc_bgc_rate_window = agc_bgc_without_gain_pixel_window + agc_bgc_with_gain_pixel_window
 
-            # # For reasons I don't understand, this somehow doubles the value in all pixels, which is incorrect.
-            # # Thus, I am commenting it out and not adding these two arrays together.
-            # # This is a bad solution because I understand the bug, but this is expedient.
-            # agc_bgc_rate_window = agc_bgc_without_gain_pixel_window + agc_bgc_with_gain_pixel_window
+            # Writes the output to raster
+            agc_bgc_rate_dst.write_band(1, agc_bgc_rate_window, window=window)
 
-            # Instead, again for reasons I don't understand, writing agc_bgc_with_gain_pixel_window to the raster
-            # seems to result in correct values in all pixels (whether there was a Hansen gain pixel there or not).
-            # Again, I don't know why this works-- this should be just outputting values where there are Hansen gain
-            # pixels. But it seems to work and I don't want to keep trying to fix it.
-            agc_bgc_rate_dst.write_band(1, agc_bgc_with_gain_pixel_window, window=window)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])
