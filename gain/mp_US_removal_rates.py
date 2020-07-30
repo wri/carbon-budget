@@ -131,18 +131,18 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
     else:
         processes = 24
     uu.print_log('US natural forest AGC+BGC removal rate max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
-    #                  gain_table_group_region_dict=gain_table_group_region_dict,
-    #                  output_pattern_list=output_pattern_list), tile_id_list)
-    # pool.close()
-    # pool.join()
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
+                     gain_table_group_region_dict=gain_table_group_region_dict,
+                     output_pattern_list=output_pattern_list), tile_id_list)
+    pool.close()
+    pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
-
-        US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
-                                              output_pattern_list)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #
+    #     US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
+    #                                           output_pattern_list)
 
 
     # Uploads output tiles to s3
