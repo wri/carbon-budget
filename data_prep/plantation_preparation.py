@@ -243,7 +243,7 @@ def create_10x10_plantation_type(tile_id, plant_type_1x1_vrt):
 
 
 # Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
-def create_10x10_plantation_stdev(tile_id, plant_stdev_1x1_vrt):
+def create_10x10_plantation_gain_stdev(tile_id, plant_stdev_1x1_vrt):
 
     print "Getting bounding coordinates for tile", tile_id
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
@@ -253,7 +253,7 @@ def create_10x10_plantation_stdev(tile_id, plant_stdev_1x1_vrt):
     print "Rasterizing", tile_10x10
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=LZW', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Byte', plant_stdev_1x1_vrt, tile_10x10]
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_stdev_1x1_vrt, tile_10x10]
     subprocess.check_call(cmd)
 
     print "Checking if {} contains any data...".format(tile_id)

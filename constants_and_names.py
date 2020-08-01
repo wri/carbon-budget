@@ -565,5 +565,5 @@ hadoop_processed_local_dir = 'C:\GIS\Carbon_model\model_output_Hadoop'
 ######
 
 pattern_planted_forest_stdev_unmasked = 'annual_gain_rate_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
-planted_forest_stdev_unmasked_dir = 'gfw2-data/climate/carbon_model/stdev_annual_gain_rate_AGC_BGC_planted_forest_unmasked/standard/20200730'
+planted_forest_stdev_unmasked_dir = 's3://gfw2-data/climate/carbon_model/stdev_annual_gain_rate_AGC_BGC_planted_forest_unmasked/standard/20200801/'
 
