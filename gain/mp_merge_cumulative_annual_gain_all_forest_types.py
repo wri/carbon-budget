@@ -32,7 +32,7 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
     download_dict = {
         cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
         cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
-        cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
 
         cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
         cn.annual_gain_BGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_BGB_planted_forest_non_mangrove],
@@ -49,8 +49,8 @@ def mp_merge_cumulative_annual_gain_all_forest_types(sensit_type, tile_id_list, 
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
+    output_dir_list = [cn.annual_gain_AGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list

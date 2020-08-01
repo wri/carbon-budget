@@ -54,7 +54,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
     # Names of the input tiles
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    annual_gain_standard = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_natrl_forest)  # Used as the template extent/default for the US
+    annual_gain_standard = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)  # Used as the template extent/default for the US
     US_age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_US_forest_age_cat_processed)
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)

@@ -1,12 +1,3 @@
-### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
-### (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to non-mangrove natural forest pixels.
-### It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
-### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
-### to every pixel in every tile.
-### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
-### processed IPCC table.
-### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate, again according to IPCC tables.
-
 import datetime
 import numpy as np
 import rasterio
@@ -26,7 +17,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     # These are five digits so they can easily be added to the four digits of the continent-ecozone code to make unique codes
     # for each continent-ecozone-age combination.
     # The key in the dictionary is the forest age category decision tree endpoints.
-    age_dict = {0: 0, 1: 20000, 2: 20000, 3: 10000, 4: 30000, 5: 20000, 6: 10000, 7: 30000, 8: 30000, 9: 30000, 10: 30000}
+    age_dict = {0: 0, 1: 10000, 2: 20000, 3: 30000}
 
     uu.print_log("Processing:", tile_id)
 
@@ -37,16 +28,10 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     age_cat = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_natrl_forest)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
 
-    # Name of pre-2000 plantation tile
-    pre_2000_plant = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
-
-    uu.mask_pre_2000_plantation(pre_2000_plant, age_cat, age_cat, tile_id)
-
     # Names of the output natural forest gain rate tiles (above and belowground)
     AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
-    BGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
 
-    uu.print_log("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
+    uu.print_log("  Reading input files and creating aboveground biomass gain rates for {}".format(tile_id))
 
     # Opens the continent-ecozone and natural forest age category tiles
     cont_eco_src = rasterio.open(cont_eco)
@@ -70,7 +55,6 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
     # The output files, aboveground and belowground biomass gain rates
     dst_above = rasterio.open(AGB_natrl_forest_gain_rate, 'w', **kwargs)
-    dst_below = rasterio.open(BGB_natrl_forest_gain_rate, 'w', **kwargs)
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -96,11 +80,6 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
 
-        # Calculates the belowground biomass gain rate
-        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_non_mang
-
-        # Writes the belowground gain rate output window to the output file
-        dst_below.write_band(1, gain_rate_BGB, window=window)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])

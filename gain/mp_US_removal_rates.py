@@ -1,21 +1,32 @@
 '''
-This script creates Hansen tiles of US-specific AGB and BGB removal rates for non-mangrove, non-planted forests for the
-US removal rate sensitivity analysis. The extent of the output is the same as the non-mangrove, non-planted forests
-for the standard model. These rates are then combined with mangrove and non-mangrove planted forest
-rates from the standard model in mp_merge_cumulative_annual_gain_all_forest_types.py and the model then run like for
-any other sensitivity analysis.
+This script creates Hansen tiles of US-specific AGC+BGC removal rates for the standard model.
+Its extent is all pixels that have a US region, US age category, and FIA forest group assigned.
+Not all US pixels within the model extent have a US region, a US age category, and an FIA forest group pixel.
+Those pixels are not included in these tiles; rates from other sources are eventually applied to those pixels.
+Moreover, this does not use the model extent map at all, so it produces rates in pixels that may not actually be part
+of the final model extent.
+
+The combination of US region, US age category, and FIA forest group is used to assign annual removal rates from a
+spreadsheet.
+The rates in the spreadsheet were prepared by Rich Birdsey (retired US Forest Service, now at WHRC) using FIA
+database queries.
 US-specific removal rates are based on the FIA region, FIA forest group, and forest age category of each pixel. A rate
 table is then applied to each combination of region-group-age to apply the correct rates, just like for the standard
-model (mp_annual_gain_rate_natrl_forest.py).
-The FIA region shapefile is Hansenized in this script.
+model (mp_annual_gain_rate_IPCC_defaults.py).
+The FIA region tiles are a Hansenized version of a US region map that Thailynn Munroe made.
 The FIA forest group raster is created in ArcMap before this processing and Hansenized in this script. The input forest group
 raster is basically the composite of the original forest group raster and the ArcMap Focal Statistics tool applied to it
 at various rectangular windows, from 3x3 to 400x400. This Focal Statistics process covers the entire CONUS in
 forest group characterization so that any model pixel will be covered by forest group.
-The forest age raster (Pan et al.) is pre-created and then processed in this script the same as the forest group raster.
-The actual age category cutoffs are different for the SE/SC regions and the rest of the US but the age category raster
-as already incorporated that, so the youngest category (1000) means 0-20 years for non-south and 0-10 years for south, etc.
-After Hansenizing region, group, and age category, this script creates two dictionaries: one with removal rates by
+The forest age raster is based on Pan et al. and was created by Thailynn Munroe. She used the same Focal Statistics
+process for forest age category as I did for forest group. The age category cutoffs are 0-20, 20-100, and >100 years
+and are the same for the entire US.
+The pixels that don't have a rate assigned are ones where Rich Birdsey couldn't get a rate from the FIA database for
+that region-group-age combination (such as exotic hardwoods, I believe).
+So although almost the entire US is covered by the three input rasters, considerable areas with assigned rates can
+occur when the FIA didn't have sufficient data to come up with a rate.
+
+This script creates two dictionaries to apply to the three input tiles: one with removal rates by
 region-group-age combinations and another with the youngest rate for each region-group combination.
 The first dictionary is applied to all standard gain model pixels according to their region-group-age combination
 but then is overwritten for any Hansen gain pixel with the youngest rate for that region-group combination applied

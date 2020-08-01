@@ -1,11 +1,13 @@
-### This script assigns annual above and belowground non-mangrove, non-planted forestbiomass gain rates
-### (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to non-mangrove natural forest pixels.
-### It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
-### Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
-### to every pixel in every tile.
-### Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
-### processed IPCC table.
-### Belowground biomass gain rate is a constant proportion of aboveground biomass gain rate, again according to IPCC tables.
+'''
+This script assigns annual aboveground gain rates for the full model extent according to IPCC Table 4.9 defaults
+(in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to the entire model extent.
+It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
+Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
+to every pixel in every tile.
+Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
+processed IPCC table.
+It does not produce belowground removals tiles.
+'''
 
 import multiprocessing
 from functools import partial
@@ -16,7 +18,7 @@ from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')
-import annual_gain_rate_natrl_forest
+import annual_gain_rate_IPCC_defaults
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -32,7 +34,7 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -41,14 +43,13 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
     # Files to download for this script.
     download_dict = {
         cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
-        cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+        cn.cont_eco_dir: [cn.pattern_cont_eco_processed]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest]
+    output_dir_list = [cn.annual_gain_AGB_IPCC_defaults_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGB_IPCC_defaults]
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -72,11 +73,7 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
 
     # Table with IPCC Table 4.9 default gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
     if sensit_type == 'no_primary_gain':
@@ -106,7 +103,7 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
     gain_table_con_eco_only['cont_eco_age'] = gain_table_con_eco_only['gainEcoCon']
 
     # Creates a code for each age category so that each continent-ecozone-age combo can have its own unique value
-    age_dict = {'growth_primary': 10000, 'growth_secondary_greater_20': 20000, 'growth_secondary_less_20': 30000}
+    age_dict = {'growth_secondary_less_20': 10000, 'growth_secondary_greater_20': 20000, 'growth_primary': 30000}
 
     # Creates a unique value for each continent-ecozone-age category
     gain_table_cont_eco_age = gain_table_cont_eco_age.replace({"variable": age_dict})
@@ -130,27 +127,26 @@ def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None)
     gain_table_dict = {float(key): value for key, value in gain_table_dict.items()}
 
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    if cn.count == 96:
-        processes = 38   # 24 processors = 450 GB peak; 36 = 690 GB peak; 36 = 690 GB peak; 38 = 720 GB peak
-    else:
-        processes = 24
-    uu.print_log('Annual gain rate natural forest max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
-                     output_pattern_list=output_pattern_list), tile_id_list)
-    pool.close()
-    pool.join()
+    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # if cn.count == 96:
+    #     processes = 38   # 24 processors = 450 GB peak; 36 = 690 GB peak; 36 = 690 GB peak; 38 = 720 GB peak
+    # else:
+    #     processes = 24
+    # uu.print_log('Annual gain rate natural forest max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
+    #                  output_pattern_list=output_pattern_list), tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #
-    #     annual_gain_rate_natrl_forest.annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
+    # For single processor use
+    for tile_id in tile_id_list:
+
+        annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
 
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':

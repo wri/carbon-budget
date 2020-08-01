@@ -17,7 +17,7 @@ def cumulative_gain_AGCO2(tile_id, output_pattern_list, sensit_type):
     start = datetime.datetime.now()
 
     # Names of the input tiles, modified according to sensitivity analysis
-    gain_rate_AGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    gain_rate_AGB = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
     gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count_natrl_forest)
 
     # CO2 gain uses non-mangrove non-planted biomass:carbon ratio

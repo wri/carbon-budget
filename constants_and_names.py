@@ -127,7 +127,7 @@ pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables')
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200106.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200427.xlsx'
 
 # Annual Hansen loss tiles (2001-2015)
 pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'
@@ -194,6 +194,10 @@ drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_c
 pattern_burn_year = "burnyear"
 burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/')
 
+# Model extent
+pattern_model_extent = 'model_extent'
+model_extent_dir = os.path.join(s3_base_dir, 'model_extent/standard/20209999/')
+
 ######
 ### Plantation processing
 ######
@@ -223,6 +227,18 @@ plantation_countries = [
 ### Removals
 ######
 
+# Forest type used in removals model
+pattern_removal_forest_type = 'removal_forest_type'
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20199999/')
+
+# Removal model forest type codes
+mangrove_rank = 6
+europe_rank = 5
+planted_forest_rank = 4
+US_rank = 3
+young_natural_rank = 2
+old_natural_rank = 1
+
 
 ### Number of gain years (gain year count)
 
@@ -242,7 +258,7 @@ gain_year_count_natrl_forest_dir = os.path.join(s3_base_dir, 'gain_year_count_na
 ### Forest age category
 
 # Non-mangrove, non-planted natural forest age category tiles
-pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest'
+pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest__1_young_2_mid_3_old'
 age_cat_natrl_forest_dir = os.path.join(s3_base_dir, 'forest_age_category_natural_forest/standard/20191016/')
 
 # US forest age category tiles
@@ -319,16 +335,16 @@ pattern_annual_gain_BGB_planted_forest_non_mangrove = 'annual_gain_rate_BGB_t_ha
 annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_planted_forest_non_mangrove/standard/20191012/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
-pattern_annual_gain_AGB_natrl_forest = 'annual_gain_rate_AGB_t_ha_natural_forest_non_mangrove_non_planted_all_ages'
-annual_gain_AGB_natrl_forest_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_natural_forest_all_ages/standard/20200720/')
-
-# Annual belowground biomass gain rate for non-mangrove, non-planted natural forests
-pattern_annual_gain_BGB_natrl_forest = 'annual_gain_rate_BGB_t_ha_natural_forest_non_mangrove_non_planted_all_ages'
-annual_gain_BGB_natrl_forest_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_natural_forest_all_ages/standard/20200720/')
+pattern_annual_gain_AGB_IPCC_defaults = 'annual_gain_rate_AGB_t_ha_IPCC_defaults_all_ages'
+annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_IPCC_defaults_all_ages/standard/20209999/')
 
 # Annual aboveground gain rate for all forest types
-pattern_annual_gain_AGB_BGB_all_types = 'annual_gain_rate_AGB_BGB_t_ha_all_forest_types'
-annual_gain_AGB_BGB_all_types_dir = os.path.join(s3_base_dir, 'annual_gain_rate_all_forest_types/standard/20200720/')
+pattern_annual_gain_AGB_all_types = 'annual_gain_rate_AGB_Mg_ha_all_forest_types'
+annual_gain_AGB_all_types_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_all_forest_types/standard/20200720/')
+
+# Annual belowground gain rate for all forest types
+pattern_annual_gain_BGB_all_types = 'annual_gain_rate_BGB_Mg_ha_all_forest_types'
+annual_gain_BGB_all_types_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_all_forest_types/standard/20200720/')
 
 
 ### Cumulative carbon dioxide gain rates

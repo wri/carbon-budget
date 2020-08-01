@@ -207,7 +207,7 @@ def create_emitted_AGC(tile_id, pattern, sensit_type):
     natrl_forest_cumul_AGCO2_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
     mangrove_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_mangrove)
     planted_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_planted_forest_non_mangrove)
-    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    natrl_forest_annual_gain = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
 
     gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id)
     if sensit_type == 'biomass_swap':

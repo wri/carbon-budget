@@ -21,7 +21,7 @@ from gain.mp_gain_year_count_planted_forest import mp_gain_year_count_planted_fo
 from gain.mp_annual_gain_rate_planted_forest import mp_annual_gain_rate_planted_forest
 from gain.mp_cumulative_gain_planted_forest import mp_cumulative_gain_planted_forest
 from gain.mp_gain_year_count_natrl_forest import mp_gain_year_count_natrl_forest
-from gain.mp_annual_gain_rate_natrl_forest import mp_annual_gain_rate_natrl_forest
+from gain.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_natrl_forest
 from gain.mp_cumulative_gain_natrl_forest import mp_cumulative_gain_natrl_forest
 from gain.mp_merge_cumulative_annual_gain_all_forest_types import mp_merge_cumulative_annual_gain_all_forest_types
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
@@ -175,9 +175,9 @@ def main ():
         cn.annual_gain_AGB_planted_forest_non_mangrove_dir, cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
         cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir, cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir,
         cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
-        cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
+        cn.annual_gain_AGB_IPCC_defaults_dir, cn.annual_gain_BGB_natrl_forest_dir,
         cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
-        cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
+        cn.annual_gain_AGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
         cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
         cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir
     ]
@@ -220,9 +220,9 @@ def main ():
         cn.pattern_annual_gain_AGB_planted_forest_non_mangrove, cn.pattern_annual_gain_BGB_planted_forest_non_mangrove,
         cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove, cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove,
         cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
-        cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
+        cn.pattern_annual_gain_AGB_IPCC_defaults, cn.pattern_annual_gain_BGB_natrl_forest,
         cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
-        cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
+        cn.pattern_annual_gain_AGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
         cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
         cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year
     ]
@@ -427,7 +427,7 @@ def main ():
         tiles_to_delete.extend(glob.glob('*cumul_gain_BGCO2*tif')) # Any forest type
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.ifl_primary_processed_dir)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_natrl_forest)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
@@ -458,7 +458,7 @@ def main ():
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_BGB_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")

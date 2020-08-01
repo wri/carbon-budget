@@ -28,7 +28,7 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Files to download for this script.
     download_dict = {
-        cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
         cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
         cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest]
     }

@@ -120,7 +120,7 @@ def log_subprocess_output(pipe):
         # For reasons I don't know, the array is backwards, so this prints it out in reverse (i.e. correct) order
         for line in reversed(line_array):
             logging.info(line.decode("utf-8")) #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
-            print(line.decode("utf-8"))        #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+            print(line.decode("utf-8"))
 
         # logging.info("\n")
         # print("\n")
@@ -497,9 +497,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern == '':   # For Hansen loss tiles
-                source = '{0}{1}.tif'.format(source_dir, tile_id)
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:  # For every other type of tile
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)

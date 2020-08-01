@@ -8,7 +8,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-# Creates annual AGB and BGB removal rate rasters for US using US-specific removal rates
+# Creates annual AGC and BGC removal rate rasters for US using US-specific removal rates
 def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict, output_pattern_list):
 
     uu.print_log("Assigning US removal rates:", tile_id)
@@ -22,7 +22,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)
 
-    # Opens standard model gain rate tile
+    # Opens age category raster and uses it as a template for the metadata output raster
     with rasterio.open(US_age_cat) as US_age_cat_src:
 
         # Grabs metadata about the tif, like its location/projection/cell size
@@ -33,11 +33,10 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
         # Opens other necessary tiles
         gain_src = rasterio.open(gain)
-        # US_age_cat_src = rasterio.open(US_age_cat)
         US_forest_group_src = rasterio.open(US_forest_group)
         US_region_src = rasterio.open(US_region)
 
-        # Updates kwargs for the output dataset
+        # Updates kwargs for the output dataset. Changes the datatype from int to float32.
         kwargs.update(
             driver='GTiff',
             count=1,
@@ -46,7 +45,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             dtype='float32'
         )
 
-        # Opens the output tiles (aboveground and belowground), giving them the proporties of the standard model removal rate tiles
+        # Opens the output tile (aboveground + belowground), giving it the modified metadata of the age category tile
         agc_bgc_rate_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[0]), 'w', **kwargs)
 
         # Iterates across the windows (1 pixel strips) of the input tile
@@ -63,8 +62,9 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             # no Hansen gain pixels and for Hansen gain pixels. These are later combined.
             # Pixels without and with Hansen gain are treated separately because gain pixels automatically get the youngest
             # removal rate, regardless of their age category.
-            agc_bgc_without_gain_pixel_window = np.zeros((1,40000), dtype='float32')
-            agc_bgc_with_gain_pixel_window = np.zeros((1,40000), dtype='float32')
+            # 40000 is the number of pixels in a row (or window)
+            agc_bgc_without_gain_pixel_window = np.zeros((window.height, window.width), dtype='float32')
+            agc_bgc_with_gain_pixel_window = np.zeros((window.height, window.width), dtype='float32')
 
             # Performs the same operation on the three rasters as is done on the values in the table in order to
             # make the codes (dictionary key) match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
@@ -72,7 +72,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
 
             # Masks the combined age-group-region raster to the three input tiles (age category, forest group, FIA region).
-            # Excludes all Hamsen gain pixels.
+            # Excludes all Hansen gain pixels.
             group_region_age_combined_window = np.ma.masked_where(US_age_cat_window == 0, group_region_age_combined_window).filled(0).astype('uint16')
             group_region_age_combined_window = np.ma.masked_where(US_forest_group_window == 0, group_region_age_combined_window).filled(0)
             group_region_age_combined_window = np.ma.masked_where(US_region_window == 0, group_region_age_combined_window).filled(0)
@@ -103,6 +103,8 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             for key, value in gain_table_group_region_dict.items():
                 agc_bgc_with_gain_pixel_window[group_region_combined_window == key] = value
 
+            # Pixels with Hansen gain fill in the pixels that don't have Hansen gain. Each pixel has a value in
+            # one or neither of these arrays but not both of these arrays
             agc_bgc_rate_window = agc_bgc_without_gain_pixel_window + agc_bgc_with_gain_pixel_window
 
             # Writes the output to raster

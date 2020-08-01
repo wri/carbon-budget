@@ -33,7 +33,7 @@ def gain_merge(tile_id, output_pattern_list, sensit_type):
 
     # Names of the annual gain rate and cumulative gain tiles for non-mangrove non-planted forests
     # These names are created even if the tile doesn't have any non-mangrove non-planted forests.
-    annual_gain_AGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_natrl_forest)
+    annual_gain_AGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
     cumul_gain_AGCO2_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_natrl_forest)
     annual_gain_BGB_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGB_natrl_forest)
     cumul_gain_BGCO2_natrl_forest = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_BGCO2_natrl_forest)
