@@ -137,6 +137,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
 
             model_extent_window = model_extent_src.read(1, window=window)
 
+            # Output rasters' windows
             removal_forest_type_window = np.zeros((window.height, window.width), dtype='uint8')
             annual_gain_AGC_all_forest_types_window = np.zeros((window.height, window.width), dtype='float32')
             annual_gain_BGC_all_forest_types_window = np.zeros((window.height, window.width), dtype='float32')
@@ -146,6 +147,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
             except:
                 age_category_window = np.zeros((window.height, window.width), dtype='uint8')
 
+            # Lowest priority
             try:
                 ipcc_AGB_default_rate_window = ipcc_AGB_default_src.read(1, window=window)
                 removal_forest_type_window = np.where(ipcc_AGB_default_rate_window != 0,
@@ -213,6 +215,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
             except:
                 pass
 
+            # Highest priority
             try:
                 mangroves_AGB_rate_window = mangrove_AGB_src.read(1, window=window)
                 mangroves_BGB_rate_window = mangrove_BGB_src.read(1, window=window)
@@ -226,10 +229,10 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
             except:
                 pass
 
+            # Masks outputs to model output extent
             removal_forest_type_window = np.where(model_extent_window == 1, removal_forest_type_window, 0)
             annual_gain_AGC_all_forest_types_window = np.where(model_extent_window == 1, annual_gain_AGC_all_forest_types_window, 0)
             annual_gain_BGC_all_forest_types_window = np.where(model_extent_window == 1, annual_gain_BGC_all_forest_types_window, 0)
-
 
             # Writes the outputs window to the output files
             removal_forest_type_dst.write_band(1, removal_forest_type_window, window=window)

@@ -43,14 +43,11 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Download SoilGrids250 most probable soil class rasters.
-    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # There are 12951 tiles and it takes about 3 hours to download them!
-    cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
-           # '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
-    uu.log_subprocess_output_full(cmd)
+    # # Download SoilGrids250 most probable soil class rasters.
+    # # There are 459 tiles and it takes about 20 minutes to download them
+    # cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
+    #                '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
+    # uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Making SoilGrids250 most likely soil class vrt...")
     check_call('gdalbuildvrt mineral_soil_C.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
@@ -62,31 +59,41 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), cn.docker_base_dir, sensit_type)
 
 
-    # Unzips the Jukka peat shapefile (IDN and MYS)
-    cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
-    uu.log_subprocess_output_full(cmd)
-
-    jukka_tif = 'jukka_peat.tif'
-
-    # Converts the Jukka peat shapefile to a raster
-    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
-          '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
-    uu.log_subprocess_output_full(cmd)
-
-    # For multiprocessor use
-    # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
-    processes=cn.count-10
-    uu.print_log('Peatland preprocessing max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
-
-    # # For single processor use, for testing purposes
-    # for tile_id in tile_id_list:
+    # # Unzips the Jukka peat shapefile (IDN and MYS)
+    # cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
+    # uu.log_subprocess_output_full(cmd)
     #
-    #     peatland_processing.create_peat_mask_tiles(tile_id)
-
-    uu.print_log("Uploading output files")
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # jukka_tif = 'jukka_peat.tif'
+    #
+    # # Converts the Jukka peat shapefile to a raster
+    # cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+    #       '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
+    # uu.log_subprocess_output_full(cmd)
+    #
+    # # For multiprocessor use
+    # # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
+    # processes=cn.count-10
+    # uu.print_log('Peatland preprocessing max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use, for testing purposes
+    # # for tile_id in tile_id_list:
+    # #
+    # #     peatland_processing.create_peat_mask_tiles(tile_id)
+    #
+    # output_pattern = output_pattern_list[0]
+    # processes = 50  # 50 processors = XXX GB peak
+    # uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # uu.print_log("Uploading output files")
+    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':

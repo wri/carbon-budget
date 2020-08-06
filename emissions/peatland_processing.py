@@ -62,7 +62,6 @@ def create_peat_mask_tiles(tile_id):
         uu.print_log("{} created.".format(tile_id))
 
 
-
     # Opens the output tile, only so that metadata tags can be added
     dst = rasterio.open(out_tile, 'w')
 
@@ -75,19 +74,6 @@ def create_peat_mask_tiles(tile_id):
     dst.update_tags(
         extent='Full model extent. This defines the extent of the model.')
 
-
-
-    uu.print_log("Checking if {} contains any data...".format(tile_id))
-    stats = uu.check_for_data(out_tile)
-
-    if stats[0] > 0:
-
-        uu.print_log("  Data found in {}. Keeping file...".format(tile_id))
-
-    else:
-
-        uu.print_log("  No data found. Deleting {}...".format(tile_id))
-        os.remove(out_tile)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_peat_mask)

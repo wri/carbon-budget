@@ -87,7 +87,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
         processes = 26
     uu.print_log('Removal model forest extent processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_AGB_all_forest_types.annual_gain_rate_AGB_all_forest_types, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
