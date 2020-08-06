@@ -1,33 +1,11 @@
-'''
-This script calculates the gross emissions in tonnes CO2e/ha for every loss pixel.
-The properties of each pixel determine the appropriate emissions equation, the constants for the equation, and the
-carbon pool values that go into the equation.
-'''
-
 from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
+import rasterio
 import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-
-# Calls the function to mask pre-2000 plantations from the loss tiles before calculating emissions from them
-def mask_pre_2000_plant(tile_id, sensit_type, folder):
-
-    uu.print_log("Masking pre-2000 plantations for {}".format(tile_id))
-
-    pre_2000_plant = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000))
-    if sensit_type == 'legal_Amazon_loss':
-        loss_tile = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed))
-    elif sensit_type == 'Mekong_loss':
-        loss_tile = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed))
-    else:
-        loss_tile = os.path.join(folder, '{}.tif'.format(tile_id))
-    out_tile = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, cn.pattern_loss_pre_2000_plant_masked))
-
-    uu.mask_pre_2000_plantation(pre_2000_plant, loss_tile, out_tile, tile_id)
-
 
 # Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id, pools, sensit_type, folder):
@@ -52,10 +30,7 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
     else:
         uu.exception_log('Pool and/or sensitivity analysis option not valid')
 
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
 
     # Identifies which pattern to use for counting tile completion

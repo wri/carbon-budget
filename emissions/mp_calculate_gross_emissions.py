@@ -50,6 +50,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
 
     # Files to download for this script
     download_dict = {
+        cn.model_extent_dir: [cn.pattern_model_extent],
         cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
         cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
         cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],

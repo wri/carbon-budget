@@ -7,6 +7,7 @@ Any pixel that is marked as most likely being a histosol subgroup is classified 
 
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
+import rasterio
 import datetime
 import sys
 sys.path.append('../')
