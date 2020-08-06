@@ -50,7 +50,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     # uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Making SoilGrids250 most likely soil class vrt...")
-    check_call('gdalbuildvrt mineral_soil_C.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
+    check_call('gdalbuildvrt most_likely_soil_class.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
     uu.print_log("Done making SoilGrids250 most likely soil class vrt")
 
 
@@ -59,17 +59,17 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), cn.docker_base_dir, sensit_type)
 
 
-    # # Unzips the Jukka peat shapefile (IDN and MYS)
-    # cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # jukka_tif = 'jukka_peat.tif'
-    #
-    # # Converts the Jukka peat shapefile to a raster
-    # cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
-    #       '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
-    # uu.log_subprocess_output_full(cmd)
-    #
+    # Unzips the Jukka peat shapefile (IDN and MYS)
+    cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
+    uu.log_subprocess_output_full(cmd)
+
+    jukka_tif = 'jukka_peat.tif'
+
+    # Converts the Jukka peat shapefile to a raster
+    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+          '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
+    uu.log_subprocess_output_full(cmd)
+
     # # For multiprocessor use
     # # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
     # processes=cn.count-10
