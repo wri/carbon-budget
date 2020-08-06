@@ -66,34 +66,36 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     jukka_tif = 'jukka_peat.tif'
 
     # Converts the Jukka peat shapefile to a raster
+    uu.print_log('Rasterizing jukka peat...')
     cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
     uu.log_subprocess_output_full(cmd)
+    uu.print_log('   Jukka peat rasterized')
 
-    # # For multiprocessor use
-    # # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
-    # processes=cn.count-10
-    # uu.print_log('Peatland preprocessing max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
-    # pool.close()
-    # pool.join()
+    # For multiprocessor use
+    # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
+    processes=cn.count-10
+    uu.print_log('Peatland preprocessing max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use, for testing purposes
+    # for tile_id in tile_id_list:
     #
-    # # # For single processor use, for testing purposes
-    # # for tile_id in tile_id_list:
-    # #
-    # #     peatland_processing.create_peat_mask_tiles(tile_id)
-    #
-    # output_pattern = output_pattern_list[0]
-    # processes = 50  # 50 processors = XXX GB peak
-    # uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # uu.print_log("Uploading output files")
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #     peatland_processing.create_peat_mask_tiles(tile_id)
+
+    output_pattern = output_pattern_list[0]
+    processes = 50  # 50 processors = XXX GB peak
+    uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    pool.close()
+    pool.join()
+
+    uu.print_log("Uploading output files")
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
