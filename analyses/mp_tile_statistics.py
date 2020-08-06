@@ -63,7 +63,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
                     cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
                     cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
-                    cn.annual_gain_AGB_all_types_dir: [cn.pattern_annual_gain_AGB_all_types],
+                    cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
                     cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
                     #
                     # # cn.elevation_processed_dir,

@@ -54,10 +54,14 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
         # Opens gain tile
         gain_src = rasterio.open(gain)
-        ifl_primary_src = rasterio.open(ifl_primary)
         cont_eco_src = rasterio.open(cont_eco)
         biomass_src = rasterio.open(biomass)
         model_extent_src = rasterio.open(model_extent)
+
+        try:
+            ifl_primary_src = rasterio.open(ifl_primary)
+        except:
+            pass
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -70,6 +74,16 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         # Opens the output tile, giving it the arguments of the input tiles
         dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
 
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+        dst.update_tags(
+            key='1: young (<20 year) secondary forest; 2: old (>20 year) secondary forest; 3: primary forest or IFL')
+        dst.update_tags(
+            source='Decision tree that uses Hansen gain and loss, IFL/primary forest extent, and aboveground biomass to assign an age category')
+        dst.update_tags(
+            extent='Full model extent, even though these age categories will not be used over the full model extent. They apply to just the rates from IPCC defaults.')
+
+
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
 
@@ -77,9 +91,13 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
             loss_window = loss_src.read(1, window=window)
             gain_window = gain_src.read(1, window=window)
             model_extent_window = model_extent_src.read(1, window=window)
-            ifl_primary_window = ifl_primary_src.read(1, window=window)
             cont_eco_window = cont_eco_src.read(1, window=window)
             biomass_window = biomass_src.read(1, window=window)
+
+            try:
+                ifl_primary_window = ifl_primary_src.read(1, window=window).astype('uint8')
+            except:
+                ifl_primary_window = np.zeros((window.height, window.width), dtype=int)
 
             # Creates a numpy array that has the <=20 year secondary forest growth rate x 20
             # based on the continent-ecozone code of each pixel (the dictionary).

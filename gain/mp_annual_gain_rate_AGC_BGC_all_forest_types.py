@@ -1,27 +1,31 @@
-### This script calculates the cumulative above and belowground carbon dioxide gain in mangrove forest pixels from 2001-2015.
-### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and
-### by to the C to CO2 conversion.
+'''
+
+'''
+
 
 import multiprocessing
-import argparse
-import os
-import datetime
 from functools import partial
+import pandas as pd
+import datetime
+import argparse
+from subprocess import Popen, PIPE, STDOUT, check_call
+import os
 import sys
-sys.path.append('/usr/local/app/gain/')
-import cumulative_gain_mangrove
+sys.path.append('/usr/local/app/data_prep/')
+import annual_gain_rate_AGC_BGC_all_forest_types
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
+
+def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_mangrove_dir)
+        tile_id_list = uu.tile_list_s3(cn.pattern_mangrove_biomass_2000, sensit_type)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -29,16 +33,21 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Files to download for this script.
     download_dict = {
+        cn.model_extent_dir: [cn.pattern_model_extent],
         cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
         cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
-        cn.gain_year_count_mangrove_dir: [cn.pattern_gain_year_count_mangrove]
+        cn.annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe],
+        cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
+        cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
+        cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
+        cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.cumul_gain_AGCO2_mangrove_dir, cn.cumul_gain_BGCO2_mangrove_dir]
-    output_pattern_list = [cn.pattern_cumul_gain_AGCO2_mangrove, cn.pattern_cumul_gain_BGCO2_mangrove]
-
+    output_dir_list = [cn.removal_forest_type_dir, cn.annual_gain_AGC_all_types_dir, cn.annual_gain_BGC_all_types_dir]
+    output_pattern_list = [cn.pattern_removal_forest_type, cn.pattern_annual_gain_AGC_all_types, cn.pattern_annual_gain_BGC_all_types]
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
@@ -59,47 +68,30 @@ def mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[0]
+    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # # With processes=30, peak usage was about 350 GB using WHRC AGB.
+    # # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+    # if cn.count == 96:
+    #     processes = 30
+    #     # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
+    #     # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
+    #     # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
+    # else:
+    #     processes = 26
+    # uu.print_log('Removal model forest extent processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(annual_gain_rate_AGB_all_forest_types.annual_gain_rate_AGB_all_forest_types, sensit_type=sensit_type, tile_id_list)
+    # pool.close()
+    # pool.join()
 
-    # Calculates cumulative aboveground carbon gain in mangroves
-    # count/3 peaks at about 380 GB, so this is okay on r4.16xlarge
-    # count/2 peaks above 480 GB
-    # processes=26 peaks at about 400 GB
-    if cn.count == 96:
-        processes = 50   # 26 processors = 380 GB peak; 46 = 650 GB peak; 50 = 720 GB peak
-    else:
-        processes = 26
-    uu.print_log('Cumulative gain AGC rate mangrove max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(cumulative_gain_mangrove.cumulative_gain_AGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    # For single processor use
+    for tile_id in tile_id_list:
+        annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
 
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[1]
-
-    # Calculates cumulative belowground carbon gain in mangroves
-    # count/3 maxes out at about 320 GB
-    if cn.count == 96:
-        processes = 50   # 26 processors = 380 GB peak; 46 = 650 GB peak; 50 = XXX GB peak
-    else:
-        processes = 26
-    uu.print_log('Cumulative gain BGC rate mangrove max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(cumulative_gain_mangrove.cumulative_gain_BGCO2, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     cumulative_gain_mangrove.cumulative_gain_AGCO2(tile_id, output_pattern_list[0], sensit_type)
-    #
-    # for tile_id in tile_id_list:
-    #     cumulative_gain_mangrove.cumulative_gain_BGCO2(tile_id, output_pattern_list[1], sensit_type)
-
-
-    # Uploads output tiles to s3
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # # Uploads output tiles to s3
+    # for i in range(0, len(output_dir_list)):
+    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
@@ -126,4 +118,5 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_cumulative_gain_mangrove(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+

@@ -13,17 +13,12 @@ import datetime
 import logging
 import constants_and_names as cn
 import universal_util as uu
-from gain.mp_forest_age_category_natrl_forest import mp_forest_age_category_natrl_forest
-from gain.mp_gain_year_count_mangrove import mp_gain_year_count_mangrove
+from data_prep.mp_model_extent import mp_model_extent
 from gain.mp_annual_gain_rate_mangrove import mp_annual_gain_rate_mangrove
-from gain.mp_cumulative_gain_mangrove import mp_cumulative_gain_mangrove
-from gain.mp_gain_year_count_planted_forest import mp_gain_year_count_planted_forest
-from gain.mp_annual_gain_rate_planted_forest import mp_annual_gain_rate_planted_forest
-from gain.mp_cumulative_gain_planted_forest import mp_cumulative_gain_planted_forest
-from gain.mp_gain_year_count_natrl_forest import mp_gain_year_count_natrl_forest
-from gain.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_natrl_forest
-from gain.mp_cumulative_gain_natrl_forest import mp_cumulative_gain_natrl_forest
-from gain.mp_merge_cumulative_annual_gain_all_forest_types import mp_merge_cumulative_annual_gain_all_forest_types
+from gain.mp_forest_age_category_natrl_forest import mp_forest_age_category_natrl_forest
+from gain.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_IPCC_defaults
+from gain.mp_gain_year_count_all_forest_types import mp_gain_year_count_all_forest_types
+from gain.mp_gross_removals_all_forest_types import mp_gross_removals_all_forest_types
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
@@ -35,14 +30,14 @@ def main ():
     os.chdir(cn.docker_base_dir)
 
     # List of possible model stages to run (not including mangrove and planted forest stages)
-    model_stages = ['all', 'forest_age_category_natrl_forest', 'gain_year_count_natrl_forest',
-                    'annual_gain_rate_natrl_forest', 'cumulative_gain_natrl_forest', 'removals_merged',
+    model_stages = ['all', 'model_extent', 'forest_age_category_natrl_forest', 'annual_gain_rate_IPCC',
+                    'gain_year_count', 'gross_removals',
                     'carbon_pools', 'gross_emissions',
                     'net_flux', 'aggregate', 'per_pixel_results']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser = argparse.ArgumentParser(description='Run the full carbon flux model')
     parser.add_argument('--model-type', '-t', required=True, help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--stages', '-s', required=True,
                         help='Stages of creating Brazil legal Amazon-specific gross cumulative removals. Options are {}'.format(model_stages))
@@ -62,8 +57,6 @@ def main ():
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', required=False,
                         help='Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
-    parser.add_argument('--plantations', '-pl', required=False,
-                        help='Include planted forest annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
     parser.add_argument('--log-note', '-ln', required=False,
                         help='Note to include in log header about model run.')
     args = parser.parse_args()
@@ -80,7 +73,6 @@ def main ():
         thresh = int(thresh)
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
-    include_plantations = args.plantations
     log_note = args.log_note
 
     # Working directory
@@ -92,7 +84,7 @@ def main ():
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, stage_input=stage_input, run_through=run_through,
                     carbon_pool_extent=carbon_pool_extent, pools=pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, include_plantations=include_plantations, log_note=log_note)
+                    include_mangroves=include_mangroves, log_note=log_note)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
@@ -177,7 +169,7 @@ def main ():
         cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
         cn.annual_gain_AGB_IPCC_defaults_dir, cn.annual_gain_BGB_natrl_forest_dir,
         cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
-        cn.annual_gain_AGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
+        cn.annual_gain_AGC_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
         cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
         cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir
     ]
@@ -222,7 +214,7 @@ def main ():
         cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
         cn.pattern_annual_gain_AGB_IPCC_defaults, cn.pattern_annual_gain_BGB_natrl_forest,
         cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
-        cn.pattern_annual_gain_AGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
+        cn.pattern_annual_gain_AGC_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
         cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
         cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year
     ]
@@ -293,7 +285,7 @@ def main ():
         uu.print_log(":::::Creating cumulative removals for mangrove tiles")
         start = datetime.datetime.now()
 
-        mp_cumulative_gain_mangrove(sensit_type, tile_id_list, run_date = run_date)
+        mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -427,7 +419,7 @@ def main ():
         tiles_to_delete.extend(glob.glob('*cumul_gain_BGCO2*tif')) # Any forest type
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.ifl_primary_processed_dir)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_non_mang_non_planted)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_natrl_forest)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_US_forest_age_cat_processed)))
@@ -458,7 +450,7 @@ def main ():
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
         tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_all_types)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")

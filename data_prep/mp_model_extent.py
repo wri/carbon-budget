@@ -1,3 +1,9 @@
+'''
+This script creates a binary raster of the model extent at the pixel level.
+The model extent is ((TCD2000>1 AND WHRC AGB2000>0) OR Hansen gain=1 or mangrove AGB2000>0) NOT IN pre-2000 plantations
+The rest of the model uses this to mask its extent.
+'''
+
 
 import multiprocessing
 from functools import partial

@@ -6,7 +6,10 @@ Essentially, this does some processing of the IPCC gain rate table, then uses it
 to every pixel in every tile.
 Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 processed IPCC table.
-It does not produce belowground removals tiles.
+It does not produce belowground removal rate tiles.
+The extent of these removal rates is greater than what is ultimately used in the model because it assigns IPCC defaults
+everywhere there's a forest age category, continent, and ecozone.
+You can think of this as the IPCC default rate that would be applied if no other data were available for that pixel.
 '''
 
 import multiprocessing
@@ -25,7 +28,7 @@ import universal_util as uu
 
 os.chdir(cn.docker_base_dir)
 
-def mp_annual_gain_rate_natrl_forest(sensit_type, tile_id_list, run_date = None):
+def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
     pd.options.mode.chained_assignment = None
@@ -173,4 +176,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_annual_gain_rate_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_annual_gain_rate_IPCC_defaults(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)

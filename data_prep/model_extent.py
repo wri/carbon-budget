@@ -70,6 +70,16 @@ def model_extent(tile_id, pattern, sensit_type):
         # Opens the output tile, giving it the metadata of the input tiles
         dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
 
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+        dst.update_tags(
+            units='unitless. 1 = in model extent. 0 = not in model extent')
+        dst.update_tags(
+            source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+        dst.update_tags(
+            extent='Full model extent. This defines the extent of the model.')
+
+
         uu.print_log("  Creating model extent for {}".format(tile_id))
 
         # Iterates across the windows (1 pixel strips) of the input tile

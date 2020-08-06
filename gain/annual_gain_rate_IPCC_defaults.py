@@ -56,6 +56,16 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     # The output files, aboveground and belowground biomass gain rates
     dst_above = rasterio.open(AGB_natrl_forest_gain_rate, 'w', **kwargs)
 
+    # Adds metadata tags to the output raster
+    uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+    dst_above.update_tags(
+        units='megagrams aboveground biomass (AGB or dry matter)/ha/yr')
+    dst_above.update_tags(
+        source='IPCC Guidelines 2019 refinement, forest section, Table 4.9')
+    dst_above.update_tags(
+        extent='Full model extent, even though these rates will not be used over the full model extent')
+
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 

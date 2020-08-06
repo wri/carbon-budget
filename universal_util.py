@@ -704,16 +704,14 @@ def s3_file_download(source, dest, sensit_type):
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
+    print_log("Uploading tiles with pattern {0} to {1}".format(pattern, upload_dir))
+
     cmd = ['aws', 's3', 'cp', cn.docker_base_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
            '--recursive', '--no-progress']
-
     try:
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
+        log_subprocess_output_full(cmd)
     except:
-        print_log("Error uploading output tile")
+        print_log("Error uploading output tile(s)")
 
 
 # Uploads tile to specified location
@@ -1157,3 +1155,23 @@ def replace_output_dir_date(output_dir_list, run_date):
     print_log(output_dir_list)
     print_log("")
     return output_dir_list
+
+# Adds various metadata tags to the raster
+def add_rasterio_tags(output_dst, sensit_type):
+
+    # based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
+
+    if sensit_type == 'std':
+        sensit_type = 'standard model'
+
+    output_dst.update_tags(
+        model_version=cn.version)
+    output_dst.update_tags(
+        date_created=date_today)
+    output_dst.update_tags(
+        model_type=sensit_type)
+    output_dst.update_tags(
+        originator='Global Forest Watch at the World Resources Institute')
+
+    return output_dst
+

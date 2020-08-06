@@ -1,5 +1,11 @@
-### This script calculates the cumulative above and belowground CO2 gain in non-mangrove, non-planted natural forest pixels from 2001-2015.
-### It multiplies the annual biomass gain rate by the number of years of gain by the biomass-to-carbon conversion and C to CO2 conversion.
+'''
+This script calculates the cumulative above and belowground carbon dioxide gain (removals) for all forest types
+for the duration of the model.
+It multiplies the annual aboveground and belowground carbon removal factors by the number of years of gain and the C to CO2 conversion.
+It then sums the aboveground and belowground gross removals to get gross removals for all forest types in both pools.
+That is the final gross removals for the entire model.
+Note that gross removals from this script are reported as positive values.
+'''
 
 import multiprocessing
 import argparse
@@ -8,19 +14,19 @@ import datetime
 from functools import partial
 import sys
 sys.path.append('/usr/local/app/gain/')
-import cumulative_gain_natrl_forest
+import gross_removals_all_forest_types
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
+def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
+        tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_mangrove_dir)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -28,15 +34,15 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
 
     # Files to download for this script.
     download_dict = {
-        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
-        cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
-        cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest]
+        cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+        cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types],
+        cn.gain_year_count_dir: [cn.pattern_gain_year_count]
     }
 
-    
+
     # List of output directories and output file name patterns
-    output_dir_list = [cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest]
+    output_dir_list = [cn.cumul_gain_AGCO2_all_types_dir, cn.cumul_gain_BGCO2_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir]
+    output_pattern_list = [cn.pattern_cumul_gain_AGCO2_all_types, cn.pattern_cumul_gain_BGCO2_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -58,37 +64,22 @@ def mp_cumulative_gain_natrl_forest(sensit_type, tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
-    # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
-    if cn.count == 96:
-        processes = 44   # 26 processors = 370 GB peak; 32 = 470 GB peak; 38 = 540 GB peak; 44 = XXX GB peak
-    else:
-        processes = 24
-    uu.print_log('Cumulative gain AGC rate natural forest max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
-                     sensit_type=sensit_type), tile_id_list)
+    # # Calculates gross removals
+    # if cn.count == 96:
+    #     processes = 50   # 50 processors = XXX GB peak
+    # else:
+    #     processes = 26
+    # uu.print_log('Gross removals max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
+    #                  sensit_type=sensit_type), tile_id_list)
 
-    # Calculates cumulative belowground carbon gain in non-mangrove planted forests
-    # Processors=26 peaks at 400 - 450 GB of memory, which works on an r4.16xlarge (different runs had different maxes)
-    if cn.count == 96:
-        processes = 44   # 26 processors = 400 GB peak; 32 = 470 GB peak; 38 = 540 GB peak; 44 = XXX GB peak
-    else:
-        processes = 24
-    uu.print_log('Cumulative gain BGC rate natural forest max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
-                     sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
+    # For single processor use
+    for tile_id in tile_id_list:
+        gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type)
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     cumulative_gain_natrl_forest.cumulative_gain_AGCO2(tile_id, output_pattern_list, sensit_type)
-    #
-    # for tile_id in tile_id_list:
-    #     cumulative_gain_natrl_forest.cumulative_gain_BGCO2(tile_id, output_pattern_list, sensit_type)
 
+    # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
@@ -117,4 +108,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_cumulative_gain_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_gross_removals_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)

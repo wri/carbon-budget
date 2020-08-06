@@ -7,7 +7,8 @@ The forest age category tiles are inputs for assigning gain rates to
 non-mangrove, non-planted, non-European, non-US, older secondary and primary forests.pixels.
 The extent of this layer is greater than the extent of the rates which are based on this, though.
 This assigns forest age category to all pixels within the model but they are ultimately only used for
-non-mangrove, non-planted, non-European, non-US, older secondary and primary forests.pixels.
+non-mangrove, non-planted, non-European, non-US, older secondary and primary forest pixels.
+You can think of the output from this script as being the age category if IPCC Table 4.9 rates were to be applied there.
 '''
 
 
