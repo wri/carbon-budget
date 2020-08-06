@@ -42,7 +42,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.JPL_processed_dir: [cn.pattern_JPL_unmasked_processed],
                     # # cn.mangrove_biomass_2000_dir,
                     # # cn.cont_eco_dir,
-                    # # cn.WHRC_biomass_2000_non_mang_non_planted_dir,
+
                     # # cn.gain_year_count_mangrove_dir,
                     # # cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
                     # # cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],

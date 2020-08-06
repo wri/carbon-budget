@@ -152,12 +152,28 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         AGC_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
         dst_AGC_2000 = rasterio.open(AGC_2000, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_AGC_2000, sensit_type)
+        dst_AGC_2000.update_tags(
+            units='megagrams aboveground carbon (AGC)/ha')
+        dst_AGC_2000.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018)')
+        dst_AGC_2000.update_tags(
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
     if 'loss' in carbon_pool_extent:
         output_pattern_list = [cn.pattern_AGC_emis_year]
         if sensit_type != 'std':
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         AGC_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
         dst_AGC_emis_year = rasterio.open(AGC_emis_year, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_AGC_emis_year, sensit_type)
+        dst_AGC_emis_year.update_tags(
+            units='megagrams aboveground carbon (AGC)/ha')
+        dst_AGC_emis_year.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year.')
+        dst_AGC_emis_year.update_tags(
+            extent='tree cover loss pixels within model extent')
 
 
     uu.print_log("  Creating aboveground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
@@ -263,6 +279,14 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         BGC_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
         dst_BGC_2000 = rasterio.open(BGC_2000, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_BGC_2000, sensit_type)
+        dst_BGC_2000.update_tags(
+            units='megagrams belowground carbon (BGC)/ha')
+        dst_BGC_2000.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:BGC for mangrove and non-mangrove forests applied.')
+        dst_BGC_2000.update_tags(
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
 
     # For BGC in emissions year, opens AGC, names the output tile, creates the output tile
     if 'loss' in carbon_pool_extent:
@@ -276,6 +300,15 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         BGC_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
         dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_BGC_emis_year, sensit_type)
+        dst_BGC_emis_year.update_tags(
+            units='megagrams belowground carbon (BGC)/ha')
+        dst_BGC_emis_year.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:BGC for mangrove and non-mangrove forests applied.')
+        dst_BGC_emis_year.update_tags(
+            extent='tree cover loss pixels within model extent')
+
 
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
@@ -357,6 +390,22 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         litter_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
         dst_deadwood_2000 = rasterio.open(deadwood_2000, 'w', **kwargs)
         dst_litter_2000 = rasterio.open(litter_2000, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_deadwood_2000, sensit_type)
+        dst_deadwood_2000.update_tags(
+            units='megagrams deadwood carbon/ha')
+        dst_deadwood_2000.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:deadwood carbon for mangrove and non-mangrove forests applied.')
+        dst_deadwood_2000.update_tags(
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_litter_2000, sensit_type)
+        dst_litter_2000.update_tags(
+            units='megagrams litter carbon/ha')
+        dst_litter_2000.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:litter carbon for mangrove and non-mangrove forests applied.')
+        dst_litter_2000.update_tags(
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
 
     # For deadwood and litter in emissions year, opens AGC, names the output tiles, creates the output tiles
     if 'loss' in carbon_pool_extent:
@@ -372,6 +421,22 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         litter_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
         dst_deadwood_emis_year = rasterio.open(deadwood_emis_year, 'w', **kwargs)
         dst_litter_emis_year = rasterio.open(litter_emis_year, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_deadwood_emis_year, sensit_type)
+        dst_deadwood_emis_year.update_tags(
+            units='megagrams deadwood carbon/ha')
+        dst_deadwood_emis_year.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:litter carbon for mangrove and non-mangrove forests applied.')
+        dst_deadwood_emis_year.update_tags(
+            extent='tree cover loss pixels within model extent')
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_litter_emis_year, sensit_type)
+        dst_litter_emis_year.update_tags(
+            units='megagrams litter carbon/ha')
+        dst_litter_emis_year.update_tags(
+            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:litter carbon for mangrove and non-mangrove forests applied.')
+        dst_litter_emis_year.update_tags(
+            extent='tree cover loss pixels within model extent')
 
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
@@ -555,189 +620,6 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_2000)
 
 
-
-# Creates litter carbon tiles (both in 2000 and loss year)
-def create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, pattern, sensit_type):
-
-    start = datetime.datetime.now()
-
-    # Names of the input tiles. Creates the names even if the files don't exist.
-    # The AGC name depends on whether carbon in 2000 or in the emission year is being created.
-    # If litter in the loss year is being created, it uses the loss year AGC tile.
-    # If litter in 2000 is being created, is uses the 2000 AGC tile.
-    # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed)
-    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
-    precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip)
-    elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
-    if sensit_type == 'biomass_swap':
-        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
-    else:
-        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-    if carbon_pool_extent == "loss":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
-    if carbon_pool_extent == "2000":
-        AGC = uu.sensit_tile_rename(sensit_type, tile_id,  cn.pattern_AGC_2000)
-
-    # Name of output tile
-    # The output name depends on whether carbon in 2000 or in the emission year is being created.
-    litter = '{0}_{1}.tif'.format(tile_id, pattern)
-
-    uu.print_log("  Reading input files for {}...".format(tile_id))
-
-    # These tiles should exist and thus be able to be opened
-    AGC_src = rasterio.open(AGC)
-    bor_tem_trop_src = rasterio.open(bor_tem_trop)
-    cont_ecozone_src = rasterio.open(cont_eco)
-    precip_src = rasterio.open(precip)
-    elevation_src = rasterio.open(elevation)
-
-    # Opens the mangrove biomass tile if it exists
-    try:
-        mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        uu.print_log("Mangrove biomass found for", tile_id)
-    except:
-        uu.print_log("No mangrove biomass for", tile_id)
-
-    # Opens the WHRC biomass tile if it exists
-    try:
-        natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log("WHRC biomass found for", tile_id)
-    except:
-        uu.print_log("No WHRC biomass for", tile_id)
-
-    # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = AGC_src.meta
-    # Grabs the windows of the tile (stripes) to iterate over the entire tif without running out of memory
-    windows = AGC_src.block_windows(1)
-
-    # Updates kwargs for the output dataset.
-    # Need to update data type to float 32 so that it can handle fractional carbon pools
-    kwargs.update(
-        driver='GTiff',
-        count=1,
-        compress='lzw',
-        nodata=0,
-        dtype='float32'
-    )
-
-    # The output file: litter carbon density
-    dst_litter = rasterio.open(litter, 'w', **kwargs)
-
-    uu.print_log("  Creating litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
-
-    # Iterates across the windows (1 pixel strips) of the input tiles
-    for idx, window in windows:
-
-        # Populates the output raster's windows with 0s so that pixels without
-        # any of the forest types will have 0s
-        litter_output = np.zeros((window.height, window.width), dtype='float32')
-
-        # Reads in the window of the AGC emissions in loss year in order to determine if there was any loss in thw window
-        AGC_window = AGC_src.read(1, window=window)
-
-        # If there was no loss in the window, the window is skipped
-        if np.amax(AGC_window) == 0:
-            continue
-
-        # These tiles should exist regardless of whether there is mangrove and/or WHRC biomass
-        bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
-        cont_ecozone_window = cont_ecozone_src.read(1, window=window)
-        cont_ecozone_window = cont_ecozone_window.astype('float32')
-        precip_window = precip_src.read(1, window=window)
-        elevation_window = elevation_src.read(1, window=window)
-
-        # This allows the script to bypass the few tiles that have mangrove biomass but not WHRC biomass
-        if os.path.exists(natrl_forest_biomass_2000):
-
-            # Reads in the windows of each input file that definitely exist
-            natrl_forest_biomass_window = natrl_forest_biomass_2000_src.read(1, window=window)
-
-            # The litter conversions generally come from here: https://cdm.unfccc.int/methodologies/ARmethodologies/tools/ar-am-tool-12-v3.0.pdf, p. 17-18
-            # They depend on the elevation, precipitation, and broad biome category (boreal/temperate/tropical).
-            # For some reason, the masks need to be named different variables for each equation.
-            # If they all have the same name (e.g., elev_mask and condition_mask are reused), then at least the condition_mask_4
-            # equation won't work properly.)
-
-            # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
-            elev_mask_1 = elevation_window <= 2000
-            precip_mask_1 = precip_window <= 1000
-            ecozone_mask_1 = bor_tem_trop_window == 1
-            condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
-            agb_masked_1 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_1))
-            litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
-            litter_output = litter_output + litter_masked.filled(0)
-
-            # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
-            elev_mask_2 = elevation_window <= 2000
-            precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
-            ecozone_mask_2 = bor_tem_trop_window == 1
-            condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
-            agb_masked_2 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_2))
-            litter_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_non_mangrove_litter
-            litter_output = litter_output + litter_masked.filled(0)
-
-            # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
-            elev_mask_3 = elevation_window <= 2000
-            precip_mask_3 = precip_window > 1600
-            ecozone_mask_3 = bor_tem_trop_window == 1
-            condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
-            agb_masked_3 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_3))
-            litter_masked = agb_masked_3 * 0.01 * cn.biomass_to_c_non_mangrove_litter
-            litter_output = litter_output + litter_masked.filled(0)
-
-            # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
-            elev_mask_4 = elevation_window > 2000
-            ecozone_mask_4 = bor_tem_trop_window == 1
-            condition_mask_4 = elev_mask_4 & ecozone_mask_4
-            agb_masked_4 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_4))
-            litter_masked = agb_masked_4 * 0.01 * cn.biomass_to_c_non_mangrove_litter
-            litter_output = litter_output + litter_masked.filled(0)
-
-            # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
-            ecozone_mask_5 = bor_tem_trop_window != 1
-            condition_mask_5 = ecozone_mask_5
-            agb_masked_5 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_5))
-            litter_masked = agb_masked_5 * 0.04 * cn.biomass_to_c_non_mangrove_litter
-            litter_output = litter_output + litter_masked.filled(0)
-
-        # Replaces non-mangrove litter with special mangrove litter values if there is mangrove
-        if os.path.exists(mangrove_biomass_2000):
-
-            # Reads in the window for mangrove biomass if it exists
-            mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-
-            # Applies the mangrove litter:AGB ratios (2 different ratios) to the ecozone raster to create a raster of litter:AGB ratios
-            for key, value in mang_litter_AGB_ratio.items():
-                cont_ecozone_window[cont_ecozone_window == key] = value
-
-            # Multiplies the AGB in the loss year (2000 for litter) by the correct mangrove litter:AGB ratio to get an array of litter
-            mangrove_C_final = mangrove_biomass_2000_window * cont_ecozone_window * cn.biomass_to_c_mangrove
-
-            # Replaces non-mangrove litter with mangrove litter values
-            litter_output = np.ma.masked_where(mangrove_biomass_2000_window > 0, litter_output)
-            litter_output = litter_output.filled(0)
-
-            # Combines the mangrove and non-mangrove litter arrays into a single array
-            litter_output = mangrove_C_final + litter_output
-
-        # Removes litter values that did not have tree cover loss
-        litter_output = np.ma.masked_where(AGC_window == 0, litter_output)
-        litter_output = litter_output.filled(0)
-
-        # Necessary for matching the output to the raster datatype
-        litter_output = litter_output.astype('float32')
-
-        # Writes the output window to the output file
-        dst_litter.write_band(1, litter_output, window=window)
-
-        # sys.quit()
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
-
-
 # Creates soil carbon tiles in loss pixels only
 def create_soil_emis_extent(tile_id, pattern, sensit_type):
 
@@ -773,6 +655,15 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type):
 
     # The output file: belowground carbon denity in the year of tree cover loss for pixels with tree cover loss
     dst_soil_emis_year = rasterio.open(soil_emis_year, 'w', **kwargs)
+
+    # Adds metadata tags to the output raster
+    uu.add_rasterio_tags(dst_soil_emis_year, sensit_type)
+    dst_soil_emis_year.update_tags(
+        units='megagrams soil carbon/ha')
+    dst_soil_emis_year.update_tags(
+        source='ISRIC SoilGrids250 (May 2020 update) soil organic carbon stock data. 0-30 cm data.')
+    dst_soil_emis_year.update_tags(
+        extent='tree cover loss pixels')
 
     uu.print_log("  Creating soil carbon density for loss pixels in {}...".format(tile_id))
 
@@ -826,6 +717,14 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         total_C_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
         dst_total_C_2000 = rasterio.open(total_C_2000, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_total_C_2000, sensit_type)
+        dst_total_C_2000.update_tags(
+            units='megagrams total (all pools) carbon/ha')
+        dst_total_C_2000.update_tags(
+            source='AGC, BGC, deadwood carbon, litter carbon, and soil carbon')
+        dst_total_C_2000.update_tags(
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap), mangrove AGB, and soil carbon. Mangrove AGB has precedence.')
 
 
     if 'loss' in carbon_pool_extent:
@@ -847,6 +746,14 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
         total_C_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
         dst_total_C_emis_year = rasterio.open(total_C_emis_year, 'w', **kwargs)
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst_total_C_emis_year, sensit_type)
+        dst_total_C_emis_year.update_tags(
+            units='megagrams total (all pools) carbon/ha')
+        dst_total_C_emis_year.update_tags(
+            source='AGC, BGC, deadwood carbon, litter carbon, and soil carbon')
+        dst_total_C_emis_year.update_tags(
+            extent='tree cover loss pixels within model extent')
 
 
     uu.print_log("  Reading input files for {}...".format(tile_id))

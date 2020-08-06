@@ -22,10 +22,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_non_mang_non_planted_dir,
-                                             cn.annual_gain_AGB_mangrove_dir,
-                                             set3=cn.annual_gain_AGB_planted_forest_non_mangrove_dir
-                                             )
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
 
 
     # List of output directories and output file name patterns
