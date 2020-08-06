@@ -325,6 +325,7 @@ float dead_data[xsize];
 float litter_data[xsize];
 float ifl_primary_data[xsize];
 float plant_data[xsize];
+float model_extent_data[xsize];
 
 // Outputs
 float out_data1[xsize];
