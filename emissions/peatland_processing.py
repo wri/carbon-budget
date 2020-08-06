@@ -67,18 +67,18 @@ def create_peat_mask_tiles(tile_id):
     # Opens the output tile, only so that metadata tags can be added
 
     with rasterio.open(out_tile) as out_tile_src:
-        # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = out_tile_src.meta
-
-        dst = rasterio.open(out_tile, 'w', **kwargs)
+        # # Grabs metadata about the tif, like its location/projection/cellsize
+        # kwargs = out_tile_src.meta
+        #
+        # dst = rasterio.open(out_tile, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst, sensit_type)
-        dst.update_tags(
+        uu.add_rasterio_tags(out_tile_src, sensit_type)
+        out_tile_src.update_tags(
             units='unitless. 1 = in model extent. 0 = not in model extent')
-        dst.update_tags(
+        out_tile_src.update_tags(
             source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
-        dst.update_tags(
+        out_tile_src.update_tags(
             extent='Full model extent. This defines the extent of the model.')
 
 
