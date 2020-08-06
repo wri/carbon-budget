@@ -10,6 +10,7 @@ Between 40N and 60S, SoilGrids250m is not used.
 import multiprocessing
 import peatland_processing
 import argparse
+from functools import partial
 import datetime
 import sys
 import os
@@ -42,11 +43,11 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # # # Download SoilGrids250 most probable soil class rasters.
-    # # # There are 459 tiles and it takes about 20 minutes to download them
-    # # cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
-    # #                '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
-    # # uu.log_subprocess_output_full(cmd)
+    # # Download SoilGrids250 most probable soil class rasters.
+    # # There are 459 tiles and it takes about 20 minutes to download them
+    # cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
+    #                '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
+    # uu.log_subprocess_output_full(cmd)
     #
     # uu.print_log("Making SoilGrids250 most likely soil class vrt...")
     # check_call('gdalbuildvrt most_likely_soil_class.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
@@ -70,20 +71,20 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     #       '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
     # uu.log_subprocess_output_full(cmd)
     # uu.print_log('   Jukka peat rasterized')
-
-    # For multiprocessor use
-    # count-10 maxes out at about 100 GB on an r5d.16xlarge
-    processes=cn.count-10
-    uu.print_log('Peatland preprocessing max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use, for testing purposes
-    # for tile_id in tile_id_list:
     #
-    #     peatland_processing.create_peat_mask_tiles(tile_id)
+    # # For multiprocessor use
+    # # count-10 maxes out at about 100 GB on an r5d.16xlarge
+    # processes=cn.count-10
+    # uu.print_log('Peatland preprocessing max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use, for testing purposes
+    # # for tile_id in tile_id_list:
+    # #
+    # #     peatland_processing.create_peat_mask_tiles(tile_id)
 
     output_pattern = output_pattern_list[0]
     processes = 50  # 50 processors = XXX GB peak

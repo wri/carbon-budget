@@ -1166,6 +1166,9 @@ def add_rasterio_tags(output_dst, sensit_type):
         model_type=sensit_type)
     output_dst.update_tags(
         originator='Global Forest Watch at the World Resources Institute')
+    output_dst.update_tags(
+        model_year_range='2001 through 20{}'.format(cn.loss_years)
+    )
 
     return output_dst
 

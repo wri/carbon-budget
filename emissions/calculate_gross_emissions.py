@@ -50,3 +50,24 @@ def calc_emissions(tile_id, pools, sensit_type, folder):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)
+
+# Adds metadata tags to the output rasters
+def add_metadata_tags(tile_id, pattern, sensit_type):
+
+    tile = '{0}_{1}.tif'.format(tile_id, pattern)
+
+    uu.print_log("Adding metadata tags to", tile)
+    # Opens the output tile, only so that metadata tags can be added
+    with rasterio.open(tile) as out_tile_src:
+
+        # Grabs metadata about the tif, like its location/projection/cellsize
+        kwargs = out_tile_src.meta
+
+        out_tile_tagged = rasterio.open(tile, 'w', **kwargs)
+
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(out_tile_tagged, sensit_type)
+        out_tile_tagged.update_tags(
+            units='megagrams CO2e/ha over model duration')
+        out_tile_tagged.update_tags(
+            extent='Tree cover loss within model extent. May also be for a specific tree cover loss driver (refer to file name).')

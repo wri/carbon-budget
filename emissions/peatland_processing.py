@@ -65,7 +65,6 @@ def create_peat_mask_tiles(tile_id):
 
     uu.print_log("Adding metadata tags to", tile_id)
     # Opens the output tile, only so that metadata tags can be added
-
     with rasterio.open(out_tile) as out_tile_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize

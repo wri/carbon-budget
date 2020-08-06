@@ -219,6 +219,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     uu.print_log('Gross emissions max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type, folder=folder), tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile in tile_id_list:
@@ -227,6 +229,19 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
 
     # Print the list of blank created tiles, delete the tiles, and delete their text file
     uu.list_and_delete_blank_tiles()
+
+    for i in range(0, len(output_pattern_list)):
+        pattern = output_pattern_list[i]
+        if cn.count == 96:
+            processes = 19  # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
+        else:
+            processes = 9
+        uu.print_log('Adding metadata tags max processors=', processes)
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(calculate_gross_emissions.add_metadata_tags, pattern=pattern, sensit_type=sensit_type),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
 
     # Uploads emissions to appropriate directory for the carbon pools chosen
