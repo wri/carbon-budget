@@ -1,6 +1,8 @@
-### Creates tiles of annual aboveground biomass gain rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
-### Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC
-### gain rate table.
+'''
+Creates tiles of annual aboveground and belowground biomass gain rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
+Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC mangrove
+gain rate table.
+'''
 
 import multiprocessing
 from functools import partial
@@ -10,11 +12,11 @@ import pandas as pd
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('/usr/local/app/gain/')
-import annual_gain_rate_mangrove
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'gain'))
+import annual_gain_rate_mangrove
 
 def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 

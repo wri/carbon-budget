@@ -1,29 +1,3 @@
-'''
-This script creates carbon pools.
-For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
-carbon pools (soil is created in a separate script but is brought in to create total carbon). These are to the extent
-of WHRC and mangrove biomass 2000.
-
-It also creates carbon pools for the year of loss/emissions-- only for pixels that had loss. To do this, it adds
-CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
-until loss. (For Hansen loss+gain pixels, only the portion of C that is accumulated before loss is included in the
-lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon pools depend on
-carbon removals, any time the removals model changes, the emissions year carbon pools need to be regenerated.
-
-In both cases (carbon pools in 2000 and in the loss year), BGC, deadwood, and litter are calculated from AGC. Thus,
-there are two AGC functions (one for AGC2000 and one for AGC in loss year) but only one function for BGC, deadwood,
-litter, and total C (since those are purely functions of the AGC supplied to them).
-
-The carbon pools in 2000 are not used for the model at all; they are purely for illustrative purposes. Only the
-emissions year pools are used for the model.
-
-Which carbon pools are being generated (2000 or loss) is controlled through the command line argument --extent (-e).
-This extent argument determines which AGC function is used and how the outputs of the other pools' scripts are named.
-
-NOTE: Because there are so many input files, this script needs a machine with extra disk space.
-Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
-'''
-
 import datetime
 import sys
 import pandas as pd
@@ -755,13 +729,6 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
         dst_total_C_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
 
-
-    uu.print_log("  Reading input files for {}...".format(tile_id))
-
-    # if carbon_pool_extent == "2000":
-    #     kwargs.update(
-    #         bigtiff='YES'
-    #     )
 
     uu.print_log("  Creating total carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 

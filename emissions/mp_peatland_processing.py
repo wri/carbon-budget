@@ -47,7 +47,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
     # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
     # There are 12951 tiles and it takes about 3 hours to download them!
-    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6',
+    cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
            # '--no-parent', '--reject', 'index.html*',
                    '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
     uu.log_subprocess_output_full(cmd)

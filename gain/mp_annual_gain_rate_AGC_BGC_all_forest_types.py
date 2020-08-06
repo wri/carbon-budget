@@ -1,5 +1,12 @@
 '''
-
+Creates tiles of annual aboveground and belowground removal rates for the entire model extent (all forest types).
+Also, creates tiles that show what the source of the removal factor is each for each pixel. This can correspond to
+particular forest types (mangrove, planted, natural) or data sources (US, Europe, young natural forests from Cook-Patton et al.,
+older natural forests from IPCC defaults).
+The current hierarchy where pixels overlap is: mangrove > Europe > planted forests > US forests > Cook-Patton et al.
+rates for young secondary forests > IPCC defaults for old secondary and primary forests.
+This hierarchy is reflected in the removal rates and the forest type rasters.
+The different removal rate inputs are in different units but all are standardized to AGC/ha/yr and BGC/ha/yr.
 '''
 
 
@@ -11,12 +18,11 @@ import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('/usr/local/app/data_prep/')
-import annual_gain_rate_AGC_BGC_all_forest_types
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-
+sys.path.append(os.path.join(cn.docker_app,'gain'))
+import annual_gain_rate_AGC_BGC_all_forest_types
 
 def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_date = None):
 
@@ -68,26 +74,26 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # With processes=30, peak usage was about 350 GB using WHRC AGB.
-    # # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-    # if cn.count == 96:
-    #     processes = 30
-    #     # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
-    #     # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
-    #     # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
-    # else:
-    #     processes = 26
-    # uu.print_log('Removal model forest extent processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(annual_gain_rate_AGB_all_forest_types.annual_gain_rate_AGB_all_forest_types, sensit_type=sensit_type, tile_id_list)
-    # pool.close()
-    # pool.join()
+    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # With processes=30, peak usage was about 350 GB using WHRC AGB.
+    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+    if cn.count == 96:
+        processes = 30
+        # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
+        # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
+        # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
+    else:
+        processes = 26
+    uu.print_log('Removal model forest extent processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(annual_gain_rate_AGB_all_forest_types.annual_gain_rate_AGB_all_forest_types, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
 
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):

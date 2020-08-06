@@ -13,12 +13,11 @@ import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('/usr/local/app/data_prep/')
-import model_extent
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-
+sys.path.append(os.path.join(cn.docker_app,'data_prep'))
+import model_extent
 
 def mp_model_extent(sensit_type, tile_id_list, run_date = None):
 

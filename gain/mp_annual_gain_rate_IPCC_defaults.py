@@ -6,7 +6,6 @@ Essentially, this does some processing of the IPCC gain rate table, then uses it
 to every pixel in every tile.
 Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 processed IPCC table.
-It does not produce belowground removal rate tiles.
 The extent of these removal rates is greater than what is ultimately used in the model because it assigns IPCC defaults
 everywhere there's a forest age category, continent, and ecozone.
 You can think of this as the IPCC default rate that would be applied if no other data were available for that pixel.
@@ -21,11 +20,11 @@ import datetime
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('/usr/local/app/gain/')
-import annual_gain_rate_IPCC_defaults
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'gain'))
+import annual_gain_rate_IPCC_defaults
 
 os.chdir(cn.docker_base_dir)
 

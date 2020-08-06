@@ -7,11 +7,11 @@ import os
 import datetime
 from functools import partial
 import sys
-sys.path.append('/usr/local/app/analyses/')
-import output_per_pixel
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'analyses'))
+import output_per_pixel
 
 def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
 

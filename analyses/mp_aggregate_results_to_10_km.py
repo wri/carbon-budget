@@ -22,11 +22,11 @@ import argparse
 import os
 import glob
 import sys
-sys.path.append('/usr/local/app/analyses/')
-import aggregate_results_to_10_km
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'analyses'))
+import aggregate_results_to_10_km
 
 def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None):
 

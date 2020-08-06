@@ -7,11 +7,11 @@ import os
 import datetime
 from functools import partial
 import sys
-sys.path.append('/usr/local/app/analyses/')
-import net_flux
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'analyses'))
+import net_flux
 
 def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 

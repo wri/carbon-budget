@@ -28,11 +28,11 @@ import datetime
 import os
 from functools import partial
 import sys
-sys.path.append('/usr/local/app/emissions/')
-import calculate_gross_emissions
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'emissions'))
+import calculate_gross_emissions
 
 def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = None, working_dir = None):
 

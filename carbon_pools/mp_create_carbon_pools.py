@@ -1,40 +1,23 @@
 '''
 This script creates carbon pools.
 For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
-carbon pools (soil is created in a separate script but is brought in to create total carbon). These are to the extent
-of WHRC and mangrove biomass 2000.
+carbon pools (soil is created in a separate script but is brought in to create total carbon). All but total carbon are to the extent
+of WHRC and mangrove biomass 2000, while total carbon is to the extent of WHRC AGB, mangrove AGB, and soil C.
 
-It also creates carbon pools for the year of loss/emissions-- only for pixels that had loss. To do this, it adds
-CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
+It also creates carbon pools for the year of loss/emissions-- only for pixels that had loss that are within the model.
+To do this, it adds CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
 until loss. (For Hansen loss+gain pixels, only the portion of C that is accumulated before loss is included in the
 lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon pools depend on
 carbon removals, any time the removals model changes, the emissions year carbon pools need to be regenerated.
 
-In both cases (carbon pools in 2000 and in the loss year), BGC, deadwood, and litter are calculated from AGC. Thus,
-there are two AGC functions (one for AGC2000 and one for AGC in loss year) but only one function for BGC, deadwood,
-litter, and total C (since those are purely functions of the AGC supplied to them).
-
-The carbon pools in 2000 are not used for the model at all; they are purely for illustrative purposes. Only the
+The carbon pools in 2000 are not used for the flux model at all; they are purely for illustrative purposes. Only the
 emissions year pools are used for the model.
+Hence, if the flux model is updated to a new year the carbon pools is loss years need to be updated but the carbon
+pools in 2000 only need to be updated if mangrove AGB, WHRC AGB, or soil C are updated.
 
-Which carbon pools are being generated (2000 or loss pixels) is controlled through the command line argument --extent (-e).
+Which carbon pools are being generated (2000 and/or loss pixels) is controlled through the command line argument --carbon-pool-extent (-ce).
 This extent argument determines which AGC function is used and how the outputs of the other pools' scripts are named.
-
-NOTE: Because there are so many input files, this script needs a machine with extra disk space.
-Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
-
-
-###
-This function creates tiles of the aboveground carbon density in 2000 and/or in which the year in which tree cover loss occurred.
-For carbon
-
-using mangrove and non-mangrove (WHRC) aboveground biomass density in 2000 and carbon gain from 2000 until the loss year.
-Unlike the AGC in 2000, it outputs values only where there is loss, and the values are carbon in 2000 + gain until loss.
-Thus, loss pixels that don't also have gain pixels have all of their carbon accumulation from after 2000 emitted because
-all of the carbon accumuluation is assumed to come before the loss happens.
-However, pixels that have both loss and gain only emit the portion of the carbon accumulation that occurs before loss.
-Therefore, loss+gain pixels only have part of their gross carbon accumulation added to AGC 2000 for all forest types.
-This is used for the gross emissions model.
+Carbon pools in both 2000 and in the year of loss can be created in a single run by using '2000,loss' or 'loss,2000'.
 '''
 
 import multiprocessing
@@ -45,11 +28,11 @@ import os
 import argparse
 from functools import partial
 import sys
-sys.path.append('/usr/local/app/carbon_pools/')
-import create_carbon_pools
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
+import create_carbon_pools
 
 def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None):
 
