@@ -43,29 +43,34 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
+    # Download SoilGrids250 most probable soil class rasters.
+    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # There are 12951 tiles and it takes about 3 hours to download them!
+    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+                   '--accept', '*.tif', '{}'.format(cn.soilgrids250_peat_url)]
+    uu.log_subprocess_output_full(cmd)
+
+    uu.print_log("Making SoilGrids250 most likely soil class vrt...")
+    check_call('gdalbuildvrt mineral_soil_C.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
+    uu.print_log("Done making SoilGrids250 most likely soil class vrt")
+
+
     # Downloads peat layers
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), cn.docker_base_dir, sensit_type)
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), cn.docker_base_dir, sensit_type)
 
-    ###### This soilgrids peat map is probably different using the latest soilgrids version. Need to check on that!!!! #####
-    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.soilgrids250_peat_file), cn.docker_base_dir, sensit_type) # Raster of the most likely soil group
 
     # Unzips the Jukka peat shapefile (IDN and MYS)
     cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     jukka_tif = 'jukka_peat.tif'
 
     # Converts the Jukka peat shapefile to a raster
     cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     # For multiprocessor use
     # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.

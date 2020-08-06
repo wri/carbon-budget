@@ -64,7 +64,7 @@ float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
 int model_years;    // How many loss years are in the model
-model_years = 15;
+model_years = 19;
 
 int tropical;       // The ecozone code for the tropics
 tropical = 1;

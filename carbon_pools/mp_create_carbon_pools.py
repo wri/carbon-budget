@@ -302,7 +302,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             processes = 8
         uu.print_log('Soil carbon loss year max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(create_carbon_pools.create_soil, pattern=pattern,
+        pool.map(partial(create_carbon_pools.create_soil_emis_extent, pattern=pattern,
                          sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()
@@ -357,7 +357,7 @@ if __name__ == '__main__':
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--carbon_pool_extent', '-ce', required=True,
-                        help='Extent over which carbon pools should be calculated: loss or 2000')
+                        help='Extent over which carbon pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()

@@ -172,9 +172,10 @@ peat_unprocessed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlan
 cifor_peat_file = 'cifor_peat_mask.tif'
 jukka_peat_zip = 'Jukka_peatland.zip'
 jukka_peat_shp = 'peatland_drainage_proj.shp'
-soilgrids250_peat_file = 'TAXNWRB_250m_ll.tif'   #Keys 61 to 65 from https://files.isric.org/soilgrids/data/recent/TAXNWRB_250m_ll.tif, metadata: https://files.isric.org/soilgrids/data/recent/TAXNWRB_250m_ll.xml
+soilgrids250_peat_url = 'https://files.isric.org/soilgrids/latest/data/wrb/MostProbable/'   #Value 14 is histosol according to https://files.isric.org/soilgrids/latest/data/wrb/MostProbable.qml
+pattern_soilgrids_most_likely_class = 'geotiff'
 pattern_peat_mask = 'peat_mask_processed'
-peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20190429/')
+peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20200806/')
 
 climate_zone_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/raw/')
 climate_zone_raw = 'climate_zone.tif'
@@ -262,8 +263,8 @@ gain_year_count_dir = os.path.join(s3_base_dir, 'gain_year_count_all_forest_type
 ### Forest age category
 
 # Non-mangrove, non-planted natural forest age category tiles
-pattern_age_cat_natrl_forest = 'forest_age_category_natural_forest__1_young_2_mid_3_old'
-age_cat_natrl_forest_dir = os.path.join(s3_base_dir, 'forest_age_category_natural_forest/standard/20209999/')
+pattern_age_cat_IPCC = 'forest_age_category_IPCC__1_young_2_mid_3_old'
+age_cat_IPCC_dir = os.path.join(s3_base_dir, 'forest_age_category_IPCC/standard/20209999/')
 
 # US forest age category tiles
 name_age_cat_natrl_forest_US_raw = 'forest_age_category_US__0_20__20_100__100plus__20200723.tif'
@@ -339,8 +340,12 @@ pattern_annual_gain_BGB_planted_forest_non_mangrove = 'annual_gain_rate_BGB_t_ha
 annual_gain_BGB_planted_forest_non_mangrove_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_planted_forest_non_mangrove/standard/20191012/')
 
 # Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
-pattern_annual_gain_AGB_IPCC_defaults = 'annual_gain_rate_AGB_t_ha_IPCC_defaults_all_ages'
+pattern_annual_gain_AGB_IPCC_defaults = 'annual_gain_rate_AGB_Mg_ha_IPCC_defaults_all_ages'
 annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_IPCC_defaults_all_ages/standard/20209999/')
+
+# Annual aboveground biomass gain rate for non-mangrove, non-planted natural forests
+pattern_annual_gain_BGB_IPCC_defaults = 'annual_gain_rate_BGB_Mg_ha_IPCC_defaults_all_ages'
+annual_gain_BGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_IPCC_defaults_all_ages/standard/20209999/')
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGC_all_types = 'annual_gain_rate_AGC_Mg_ha_all_forest_types'

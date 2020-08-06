@@ -21,13 +21,13 @@ from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
 sys.path.append('/usr/local/app/gain/')
-import forest_age_category_natrl_forest
+import forest_age_category_IPCC
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 
-def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = None):
+def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -64,8 +64,8 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.age_cat_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_age_cat_natrl_forest]
+    output_dir_list = [cn.age_cat_IPCC_dir]
+    output_pattern_list = [cn.pattern_age_cat_IPCC]
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
@@ -108,28 +108,28 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # With processes=30, peak usage was about 350 GB using WHRC AGB.
-    # # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-    # if cn.count == 96:
-    #     processes = 30
-    #     # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
-    #     # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
-    #     # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
-    # else:
-    #     processes = 26
-    # uu.print_log('Natural forest age category max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
-    #                  pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
+    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # With processes=30, peak usage was about 350 GB using WHRC AGB.
+    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+    if cn.count == 96:
+        processes = 30
+        # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
+        # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
+        # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
+    else:
+        processes = 26
+    uu.print_log('Natural forest age category max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict,
+                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
     # For single processor use
     for tile_id in tile_id_list:
 
-        forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
+        forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
@@ -159,5 +159,5 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_forest_age_category_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_forest_age_category_IPCC(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
 

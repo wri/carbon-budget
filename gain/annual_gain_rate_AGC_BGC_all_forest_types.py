@@ -25,7 +25,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
     plantations_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
     us_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
     young_AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
-    age_category = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_natrl_forest)
+    age_category = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_IPCC)
     ipcc_AGB_default = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
 
     # Names of the output tiles

@@ -1095,7 +1095,7 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
 
 # Determines what stages should actually be run
-def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None, include_plantations = None):
+def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None):
 
     # If user wants all stages, all named stages (i.e. everything except 'all') are returned
     if stage_input == 'all':
@@ -1114,16 +1114,9 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
             stage_output = stage_input.split()
 
-    # Flags to include mangroves and/or planted forests in the stages to run
-    if include_plantations == 'true':
-        stage_output.insert(0, 'annual_gain_rate_planted_forest')
-        stage_output.insert(1, 'gain_year_count_planted_forest')
-        stage_output.insert(2, 'cumulative_gain_planted_forest')
-
+    # Flags to include mangrove forest removal rates in the stages to run
     if include_mangroves == 'true':
-        stage_output.insert(0, 'annual_gain_rate_mangrove')
-        stage_output.insert(1, 'gain_year_count_mangrove')
-        stage_output.insert(2, 'cumulative_gain_mangrove')
+        stage_output.insert(0, 'annual_removals_mangrove')
 
     return stage_output
 

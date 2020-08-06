@@ -40,7 +40,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
         cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
         cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
         cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
-        cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+        cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
         cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults]
     }
 
@@ -89,9 +89,9 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
     for tile_id in tile_id_list:
         annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
 
-    # # Uploads output tiles to s3
-    # for i in range(0, len(output_dir_list)):
-    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # Uploads output tiles to s3
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

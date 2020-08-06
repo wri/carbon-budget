@@ -57,7 +57,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
                     # # cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove],
 
-                    cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+                    cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
                     # cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest],
                     cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
                     cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],

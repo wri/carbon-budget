@@ -1,5 +1,5 @@
 '''
-This script assigns annual aboveground gain rates for the full model extent according to IPCC Table 4.9 defaults
+This script assigns annual aboveground and belowground removal rates for the full model extent according to IPCC Table 4.9 defaults
 (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to the entire model extent.
 It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
 Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
@@ -10,6 +10,7 @@ It does not produce belowground removal rate tiles.
 The extent of these removal rates is greater than what is ultimately used in the model because it assigns IPCC defaults
 everywhere there's a forest age category, continent, and ecozone.
 You can think of this as the IPCC default rate that would be applied if no other data were available for that pixel.
+The belowground removal rates are purely the aboveground removal rates with the above:below ratio applied to them.
 '''
 
 import multiprocessing
@@ -45,14 +46,14 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
 
     # Files to download for this script.
     download_dict = {
-        cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+        cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
         cn.cont_eco_dir: [cn.pattern_cont_eco_processed]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGB_IPCC_defaults_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGB_IPCC_defaults]
+    output_dir_list = [cn.annual_gain_AGB_IPCC_defaults_dir, cn.annual_gain_BGB_IPCC_defaults_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGB_IPCC_defaults, cn.pattern_annual_gain_BGB_IPCC_defaults]
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -130,26 +131,28 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     gain_table_dict = {float(key): value for key, value in gain_table_dict.items()}
 
 
-    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # if cn.count == 96:
-    #     processes = 38   # 24 processors = 450 GB peak; 36 = 690 GB peak; 36 = 690 GB peak; 38 = 720 GB peak
-    # else:
-    #     processes = 24
-    # uu.print_log('Annual gain rate natural forest max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(annual_gain_rate_natrl_forest.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
-    #                  output_pattern_list=output_pattern_list), tile_id_list)
-    # pool.close()
-    # pool.join()
+    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    if cn.count == 96:
+        processes = 38   # 24 processors = 450 GB peak; 36 = 690 GB peak; 36 = 690 GB peak; 38 = 720 GB peak
+    else:
+        processes = 24
+    uu.print_log('Annual gain rate natural forest max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate, sensit_type=sensit_type, gain_table_dict=gain_table_dict,
+                     output_pattern_list=output_pattern_list), tile_id_list)
+    pool.close()
+    pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #
+    #     annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
-        annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
-
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # Uploads output tiles to s3
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

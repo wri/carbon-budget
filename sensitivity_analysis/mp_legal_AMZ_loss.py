@@ -63,7 +63,7 @@ def main ():
 
     # List of output directories and output file name patterns
     master_output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir,
-                              cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
+                              cn.age_cat_IPCC_dir, cn.gain_year_count_natrl_forest_dir,
                               cn.annual_gain_AGB_IPCC_defaults_dir, cn.annual_gain_BGB_natrl_forest_dir,
                               cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
                               cn.annual_gain_AGC_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
@@ -72,7 +72,7 @@ def main ():
                               ]
 
     master_output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
-                                  cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
+                                  cn.pattern_age_cat_IPCC, cn.pattern_gain_year_count_natrl_forest,
                                   cn.pattern_annual_gain_AGB_IPCC_defaults, cn.pattern_annual_gain_BGB_natrl_forest,
                                   cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
                                   cn.pattern_annual_gain_AGC_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
@@ -320,7 +320,7 @@ def main ():
 
         # Files to download for this script.
         download_dict = {
-            cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+            cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
             cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
         }

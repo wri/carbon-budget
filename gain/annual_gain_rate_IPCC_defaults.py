@@ -25,11 +25,12 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     start = datetime.datetime.now()
 
     # Names of the forest age category and continent-ecozone tiles
-    age_cat = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_natrl_forest)
+    age_cat = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_IPCC)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
 
     # Names of the output natural forest gain rate tiles (above and belowground)
-    AGB_natrl_forest_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+    AGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+    BGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
 
     uu.print_log("  Reading input files and creating aboveground biomass gain rates for {}".format(tile_id))
 
@@ -54,8 +55,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     )
 
     # The output files, aboveground and belowground biomass gain rates
-    dst_above = rasterio.open(AGB_natrl_forest_gain_rate, 'w', **kwargs)
-
+    dst_above = rasterio.open(AGB_IPCC_default_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
     uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
     dst_above.update_tags(
@@ -65,6 +65,15 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     dst_above.update_tags(
         extent='Full model extent, even though these rates will not be used over the full model extent')
 
+    dst_below = rasterio.open(BGB_IPCC_default_gain_rate, 'w', **kwargs)
+    # Adds metadata tags to the output raster
+    uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+    dst_above.update_tags(
+        units='megagrams belowground biomass (ABB or dry matter)/ha/yr')
+    dst_above.update_tags(
+        source='IPCC Guidelines 2019 refinement, forest section, Table 4.9')
+    dst_above.update_tags(
+        extent='Full model extent, even though these rates will not be used over the full model extent')
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -89,6 +98,12 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
+
+        # Calculates belowground annual removal rates
+        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_non_mang
+
+        # Writes the output window to the output file
+        dst_below.write_band(1, gain_rate_BGB, window=window)
 
 
     # Prints information about the tile that was just processed
