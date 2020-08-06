@@ -41,10 +41,7 @@ def create_peat_mask_tiles(tile_id):
         AGC_accum_outfilearg = '--outfile={}'.format(out_tile)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, AGC_accum_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
         uu.print_log("{} created.".format(tile_id))
 
@@ -60,13 +57,23 @@ def create_peat_mask_tiles(tile_id):
         cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
                '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
                '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile]
-
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
         uu.print_log("{} created.".format(tile_id))
+
+
+
+    # Opens the output tile, only so that metadata tags can be added
+    dst = rasterio.open(out_tile, 'w')
+
+    # Adds metadata tags to the output raster
+    uu.add_rasterio_tags(dst, sensit_type)
+    dst.update_tags(
+        units='unitless. 1 = in model extent. 0 = not in model extent')
+    dst.update_tags(
+        source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+    dst.update_tags(
+        extent='Full model extent. This defines the extent of the model.')
 
 
 

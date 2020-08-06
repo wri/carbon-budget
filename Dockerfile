@@ -52,14 +52,17 @@ RUN cd /usr/include && ln -s ./ gdal
 #https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
+# Check out the branch that I'm currently using for model development
+RUN git checkoout model_v_1.2.0
+
+# Makes sure the latest version of the current branch is downloaded
+RUN git pull
+
 # Compile C++ scripts
 RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/tmp/calc_gross_emissions_generic.exe -lgdal && \
     g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/tmp/calc_gross_emissions_soil_only.exe -lgdal && \
     g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o /usr/local/tmp/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
     g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o /usr/local/tmp/calc_gross_emissions_convert_to_grassland.exe -lgdal
-
-# Check out the branch that I'm currently using for model development
-RUN git checkoout model_v_1.2.0
 
 # Opens the Docker shell
 ENTRYPOINT ["/bin/bash"]

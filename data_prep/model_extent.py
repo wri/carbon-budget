@@ -71,7 +71,7 @@ def model_extent(tile_id, pattern, sensit_type):
         dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+        uu.add_rasterio_tags(dst, sensit_type)
         dst.update_tags(
             units='unitless. 1 = in model extent. 0 = not in model extent')
         dst.update_tags(

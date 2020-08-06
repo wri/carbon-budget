@@ -43,14 +43,14 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Download SoilGrids250 most probable soil class rasters.
-    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # There are 12951 tiles and it takes about 3 hours to download them!
-    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6',
-           # '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
-    uu.log_subprocess_output_full(cmd)
+    # # Download SoilGrids250 most probable soil class rasters.
+    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # # There are 12951 tiles and it takes about 3 hours to download them!
+    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6',
+    #        # '--no-parent', '--reject', 'index.html*',
+    #                '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
+    # uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Making SoilGrids250 most likely soil class vrt...")
     check_call('gdalbuildvrt mineral_soil_C.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
