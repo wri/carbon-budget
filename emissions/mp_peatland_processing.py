@@ -71,30 +71,30 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     # uu.log_subprocess_output_full(cmd)
     # uu.print_log('   Jukka peat rasterized')
 
-    # # For multiprocessor use
-    # # count-10 maxes out at about 100 GB on an r5d.16xlarge
-    # processes=cn.count-10
-    # uu.print_log('Peatland preprocessing max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
-    # pool.close()
-    # pool.join()
+    # For multiprocessor use
+    # count-10 maxes out at about 100 GB on an r5d.16xlarge
+    processes=cn.count-10
+    uu.print_log('Peatland preprocessing max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
+    pool.close()
+    pool.join()
 
-    # For single processor use, for testing purposes
-    for tile_id in tile_id_list:
-
-        peatland_processing.create_peat_mask_tiles(tile_id)
-
-    # output_pattern = output_pattern_list[0]
-    # processes = 50  # 50 processors = XXX GB peak
-    # uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-    # pool.close()
-    # pool.join()
+    # # For single processor use, for testing purposes
+    # for tile_id in tile_id_list:
     #
-    # uu.print_log("Uploading output files")
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #     peatland_processing.create_peat_mask_tiles(tile_id)
+
+    output_pattern = output_pattern_list[0]
+    processes = 50  # 50 processors = XXX GB peak
+    uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    pool.close()
+    pool.join()
+
+    uu.print_log("Uploading output files")
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':

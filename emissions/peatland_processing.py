@@ -76,11 +76,11 @@ def create_peat_mask_tiles(tile_id):
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(out_tile_tagged, 'std')
         out_tile_tagged.update_tags(
-            units='unitless. 1 = in model extent. 0 = not in model extent')
+            units='unitless. 1 = peat. 0 = not peat')
         out_tile_tagged.update_tags(
-            source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+            source='Jukka for IDN and MYS; CIFOR for rest of tropics; SoilGrids250 (May 2020) most likely histosol for outside tropics')
         out_tile_tagged.update_tags(
-            extent='Full model extent. This defines the extent of the model.')
+            extent='Full extent of input datasets')
 
 
     # Prints information about the tile that was just processed
