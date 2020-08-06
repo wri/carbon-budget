@@ -73,7 +73,7 @@ def create_peat_mask_tiles(tile_id):
         # dst = rasterio.open(out_tile, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(out_tile_src, sensit_type)
+        uu.add_rasterio_tags(out_tile_src, 'std')
         out_tile_src.update_tags(
             units='unitless. 1 = in model extent. 0 = not in model extent')
         out_tile_src.update_tags(
