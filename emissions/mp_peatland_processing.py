@@ -73,7 +73,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     uu.print_log('   Jukka peat rasterized')
 
     # For multiprocessor use
-    # This script uses about 80 GB memory max, so an r4.16xlarge is big for it.
+    # count-10 maxes out at about 100 GB on an r5.12xlarge
     processes=cn.count-10
     uu.print_log('Peatland preprocessing max processors=', processes)
     pool = multiprocessing.Pool(processes)

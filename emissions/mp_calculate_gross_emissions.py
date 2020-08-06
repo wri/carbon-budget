@@ -61,8 +61,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         cn.drivers_processed_dir: [cn.pattern_drivers],
         cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
         cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-        cn.burn_year_dir: [cn.pattern_burn_year],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+        cn.burn_year_dir: [cn.pattern_burn_year]
     }
 
     # Special loss tiles for the Brazil and Mekong sensitivity analyses
@@ -71,7 +70,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     if sensit_type == 'Mekong_loss':
         download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
     else:
-        download_dict[cn.loss_dir] = ['']
+        download_dict[cn.loss_dir] = [cn.pattern_loss]
 
 
     # Checks the validity of the pools argument
@@ -180,18 +179,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     # This replaces the date in constants_and_names.
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
-
-
-    uu.print_log("Removing loss pixels from plantations that existed in Indonesia and Malaysia before 2000...")
-    # Pixels that were in plantations that existed before 2000 should not be included in gross emissions.
-    # Pre-2000 plantations have not previously been masked, so that is done here.
-    # There are only 8 tiles to process, so count/2 will cover all of them in one go.
-    pool = multiprocessing.Pool(int(cn.count/2))
-    pool.map(partial(calculate_gross_emissions.mask_pre_2000_plant, sensit_type=sensit_type, folder=folder), tile_id_list)
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #       calculate_gross_emissions.mask_pre_2000_plant(tile, sensit_type, working_dir)
 
 
     # The C++ code expects certain tiles for every input 10x10.

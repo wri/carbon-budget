@@ -960,6 +960,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
 
+
 # Creates a txt that will have blank dummy tiles listed in it for certain scripts that need those
 def create_blank_tile_txt():
 
