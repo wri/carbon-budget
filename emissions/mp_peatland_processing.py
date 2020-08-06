@@ -21,7 +21,6 @@ import universal_util as uu
 def mp_peatland_processing(tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
-    sensit_type = 'std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -109,6 +108,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    sensit_type='std'
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
