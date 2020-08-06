@@ -82,7 +82,7 @@ string litter_name = infolder + "/" + tile_id + "_t_litter_C_ha_emis_year_2000.t
 string soil_name = infolder + "/" + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
 
 // Other inputs
-string loss_name = infolder + "/" + "GFW2019" + tile_id + ".tif";
+string loss_name = infolder + "/" + "GFW2019_" + tile_id + ".tif";
 string burn_name = infolder + "/" + tile_id + "_burnyear.tif";
 string ecozone_name = infolder + "/" + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + "/" + tile_id + "_climate_zone_processed.tif";
@@ -90,6 +90,7 @@ string drivermodel_name = infolder + "/" + tile_id + "_tree_cover_loss_driver_pr
 string peat_name = infolder + "/" + tile_id + "_peat_mask_processed.tif";
 string ifl_primary_name = infolder + "/" + tile_id + "_ifl_2000_primary_2001_merged.tif";
 string plant_name = infolder + "/" + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+string model_extent = infolder + "/" + tile_id + "_model_extent.tif";
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
@@ -126,6 +127,7 @@ GDALDataset  *INGDAL10; GDALRasterBand  *INBAND10;
 GDALDataset  *INGDAL11; GDALRasterBand  *INBAND11;
 GDALDataset  *INGDAL12; GDALRasterBand  *INBAND12;
 GDALDataset  *INGDAL13; GDALRasterBand  *INBAND13;
+GDALDataset  *INGDAL14; GDALRasterBand  *INBAND14;
 
 //open file (string variables defined above) and assign it extent and projection
 INGDAL1 = (GDALDataset *) GDALOpen(agc_name.c_str(), GA_ReadOnly );
@@ -167,9 +169,12 @@ INBAND12 = INGDAL12->GetRasterBand(1);
 INGDAL13 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND13 = INGDAL13->GetRasterBand(1);
 
+INGDAL14 = (GDALDataset *) GDALOpen(model_extent.c_str(), GA_ReadOnly );
+INBAND14 = INGDAL14->GetRasterBand(1);
+
 // The rest of the code runs on the size of INBAND3. This can be changed.
-xsize=INBAND3->GetXSize();
-ysize=INBAND3->GetYSize();
+xsize=INBAND1->GetXSize();
+ysize=INBAND1->GetYSize();
 INGDAL1->GetGeoTransform(GeoTransform);
 
 ulx=GeoTransform[0];
