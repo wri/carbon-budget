@@ -102,9 +102,9 @@ def mp_peatland_processing(tile_id_list, run_date = None):
     # pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
     # pool.close()
     # pool.join()
-    #
-    # uu.print_log("Uploading output files")
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+    uu.print_log("Uploading output files")
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
