@@ -67,24 +67,24 @@ def create_peat_mask_tiles(tile_id):
         uu.print_log("{} created.".format(tile_id))
 
 
-    uu.print_log("Adding metadata tags to", tile_id)
-    # Opens the output tile, only so that metadata tags can be added
-    # Kind of based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
-    with rasterio.open(out_tile) as out_tile_src:
-
-        # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = out_tile_src.meta
-
-        out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
-
-        # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(out_tile_tagged, 'std')
-        out_tile_tagged.update_tags(
-            units='unitless. 1 = peat. 0 = not peat')
-        out_tile_tagged.update_tags(
-            source='Jukka for IDN and MYS; CIFOR for rest of tropics; SoilGrids250 (May 2020) most likely histosol for outside tropics')
-        out_tile_tagged.update_tags(
-            extent='Full extent of input datasets')
+    # uu.print_log("Adding metadata tags to", tile_id)
+    # # Opens the output tile, only so that metadata tags can be added
+    # # Kind of based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
+    # with rasterio.open(out_tile) as out_tile_src:
+    #
+    #     # Grabs metadata about the tif, like its location/projection/cellsize
+    #     kwargs = out_tile_src.meta
+    #
+    #     out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
+    #
+    #     # Adds metadata tags to the output raster
+    #     uu.add_rasterio_tags(out_tile_tagged, 'std')
+    #     out_tile_tagged.update_tags(
+    #         units='unitless. 1 = peat. 0 = not peat')
+    #     out_tile_tagged.update_tags(
+    #         source='Jukka for IDN and MYS; CIFOR for rest of tropics; SoilGrids250 (May 2020) most likely histosol for outside tropics')
+    #     out_tile_tagged.update_tags(
+    #         extent='Full extent of input datasets')
 
 
     # Prints information about the tile that was just processed
