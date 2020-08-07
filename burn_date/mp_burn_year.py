@@ -21,12 +21,10 @@ def mp_burn_year(tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
-    ftp_path = '{}*'.format(cn.burn_area_raw_ftp)
-
     # use wget to download the burned area tiles from ftp site
     file_name = "*.hdf"
-    cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '-A', file_name]
-    cmd += ['--no-directories', '--no-parent', ftp_path]
+    cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--accept', file_name]
+    cmd += ['--no-directories', '--no-parent', cn.burn_area_raw_ftp]
     uu.log_subprocess_output_full(cmd)
 
     cmd = ['aws', 's3', 'cp', '.', cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
