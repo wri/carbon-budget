@@ -51,7 +51,6 @@ if __name__ == '__main__':
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()
-    sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
 
