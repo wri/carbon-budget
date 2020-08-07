@@ -27,34 +27,6 @@ def create_peat_mask_tiles(tile_id):
     out_tile_no_tag = '{0}_{1}_no_tag.tif'.format(tile_id, cn.pattern_peat_mask)
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_peat_mask)
 
-    # uu.print_log("Adding metadata tags to", tile_id)
-    # gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    # # Opens the output tile, only so that metadata tags can be added
-    # # Based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
-    # with rasterio.open(gain) as gain_src:
-    #
-    #     # Grabs metadata about the tif, like its location/projection/cellsize
-    #     kwargs = gain_src.meta
-    #
-    #     # Updates kwargs for the output dataset
-    #     kwargs.update(
-    #         driver='GTiff',
-    #         count=1,
-    #         compress='lzw',
-    #         nodata=0
-    #     )
-    #
-    #     out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
-    #
-    #     # Adds metadata tags to the output raster
-    #     uu.add_rasterio_tags(out_tile_tagged, 'std')
-    #     out_tile_tagged.update_tags(
-    #         units='unitless. 1 = peat. 0 = not peat')
-    #     out_tile_tagged.update_tags(
-    #         source='Jukka for IDN and MYS; CIFOR for rest of tropics; SoilGrids250 (May 2020) most likely histosol for outside tropics')
-    #     out_tile_tagged.update_tags(
-    #         extent='Full extent of input datasets')
-
     # If the tile is outside the band covered by the CIFOR peat raster, SoilGrids250m is used
     if ymax > 40 or ymax < -60:
 
@@ -92,10 +64,15 @@ def create_peat_mask_tiles(tile_id):
 
         uu.print_log("{} created.".format(tile_id))
 
+    # All of the below is to add metadata tags to the output peat masks.
+    # For some reason, just doing what's at https://rasterio.readthedocs.io/en/latest/topics/tags.html
+    # results in the data getting removed.
+    # I found it necessary to copy the peat mask and read its windows into a new copy of the file, to which the
+    # metadata tags are added. I'm sure there's an easier way to do this but I couldn't figure out how.
+
     copyfile(out_tile_no_tag, out_tile)
 
     uu.print_log("Adding metadata tags to", tile_id)
-    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     # Opens the output tile, only so that metadata tags can be added
     # Based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
     with rasterio.open(out_tile_no_tag) as out_tile_no_tag_src:
@@ -133,25 +110,8 @@ def create_peat_mask_tiles(tile_id):
             # Writes the output window to the output
             out_tile_tagged.write_band(1, peat_mask_window, window=window)
 
-
-    # with rasterio.open(out_tile) as out_tile_src:
-    #
-    #     # Grabs metadata about the tif, like its location/projection/cellsize
-    #     kwargs = out_tile_src.meta
-    #
-    #     out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
-    #
-    #     # Adds metadata tags to the output raster
-    #     uu.add_rasterio_tags(out_tile_tagged, 'std')
-    #     out_tile_tagged.update_tags(
-    #         units='unitless. 1 = peat. 0 = not peat')
-    #     out_tile_tagged.update_tags(
-    #         source='Jukka for IDN and MYS; CIFOR for rest of tropics; SoilGrids250 (May 2020) most likely histosol for outside tropics')
-    #     out_tile_tagged.update_tags(
-    #         extent='Full extent of input datasets')
-
-
-
+    # Otherwise, the untagged version is counted and eventually copied to s3 if it has data in it
+    os.remove(out_tile_no_tag)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_peat_mask)
