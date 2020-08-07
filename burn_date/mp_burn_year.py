@@ -64,7 +64,7 @@ def mp_burn_year(tile_id_list, run_date = None):
                       "h32v11", "h32v12", "h33v07", "h33v08", "h33v09", "h33v10", "h33v11", "h34v07", "h34v08",
                       "h34v09", "h34v10", "h35v08", "h35v09", "h35v10"]
 
-    uu.print_log("Stacking hdf into hv tifs by year...")
+    uu.print_log("Stacking hdf into MODIS burned area tifs by year and MODIS hv tile...")
 
     # Makes burned area rasters for each year for each MODIS horizontal-vertical tile
     count = multiprocessing.cpu_count()
@@ -73,7 +73,6 @@ def mp_burn_year(tile_id_list, run_date = None):
 
     # for hv_tile in global_grid_hv:
     #     stack_ba_hv.stack_ba_hv(hv_tile)
-
 
 
 
