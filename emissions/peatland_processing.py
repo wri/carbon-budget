@@ -38,9 +38,9 @@ def create_peat_mask_tiles(tile_id):
         # Removes all non-histosol sub-groups from the SoilGrids raster.
         # Ideally, this would be done once on the entire SoilGrids raster in the main function but I didn't think of that.
         # Code 14 is the histosol subgroup in SoilGrids250 (https://files.isric.org/soilgrids/latest/data/wrb/MostProbable.qml).
-        calc = '--calc=(A==14)'
-        AGC_accum_outfilearg = '--outfile={}'.format(out_tile)
-        cmd = ['gdal_calc.py', '-A', out_intermediate, calc, AGC_accum_outfilearg,
+        calc = '--calc=1*(A==14)'
+        peat_mask_out_filearg = '--outfile={}'.format(out_tile)
+        cmd = ['gdal_calc.py', '-A', out_intermediate, calc, peat_mask_out_filearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
 
