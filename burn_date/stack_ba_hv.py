@@ -20,8 +20,6 @@ def stack_ba_hv(hv_tile):
         # convert hdf to array
         hdf_files = glob.glob(output_dir + "*hdf")
 
-        uu.print_log(hdf_files)
-
         if len(hdf_files) > 0:
             array_list = []
             for hdf in hdf_files:
@@ -41,7 +39,7 @@ def stack_ba_hv(hv_tile):
             stacked_year_raster = utilities.array_to_raster(hv_tile, year, max_stacked_year_array, template_hdf,
                                                             year_folder)
 
-            # upload to somewhere on s3
+            # upload to s3
             cmd = ['aws', 's3', 'cp', stacked_year_raster, cn.burn_year_stacked_hv_tif_dir]
             uu.log_subprocess_output_full(cmd)
 
