@@ -57,8 +57,7 @@ if __name__ == '__main__':
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
 
-    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_burn_year(tile_id_list=tile_id_list, run_date=run_date)
