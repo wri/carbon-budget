@@ -1,5 +1,5 @@
-# Use osgeo GDAL image. It builds of Ubuntu 18.04 and uses GDAL 3.0.4
-FROM osgeo/gdal:ubuntu-small-3.0.4
+# Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
+FROM osgeo/gdal:ubuntu-full-3.0.4
 
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
