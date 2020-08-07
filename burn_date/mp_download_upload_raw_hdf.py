@@ -8,3 +8,6 @@ if __name__ == '__main__':
     count = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=count/3)
     pool.map(download_upload_raw_hdf.download_ba, global_grid_hv)
+
+
+

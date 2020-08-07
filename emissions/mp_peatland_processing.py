@@ -43,21 +43,19 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # # Download SoilGrids250 most probable soil class rasters.
-    # # There are 459 tiles and it takes about 20 minutes to download them
-    # cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
-    #                '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # uu.print_log("Making SoilGrids250 most likely soil class vrt...")
-    # check_call('gdalbuildvrt most_likely_soil_class.vrt *'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
-    # uu.print_log("Done making SoilGrids250 most likely soil class vrt")
+    # Download SoilGrids250 most probable soil class rasters.
+    # There are 459 tiles and it takes about 20 minutes to download them
+    cmd = ['wget', '--recursive', '--no-parent', '-nH', '--cut-dirs=7',
+                   '--accept', '*.geotiff', '{}'.format(cn.soilgrids250_peat_url)]
+    uu.log_subprocess_output_full(cmd)
 
+    uu.print_log("Making SoilGrids250 most likely soil class vrt...")
+    check_call('gdalbuildvrt most_likely_soil_class.vrt *{}*'.format(cn.pattern_soilgrids_most_likely_class), shell=True)
+    uu.print_log("Done making SoilGrids250 most likely soil class vrt")
 
     # Downloads peat layers
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.cifor_peat_file), cn.docker_base_dir, sensit_type)
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.jukka_peat_zip), cn.docker_base_dir, sensit_type)
-
 
     # Unzips the Jukka peat shapefile (IDN and MYS)
     cmd = ['unzip', '-o', '-j', cn.jukka_peat_zip]

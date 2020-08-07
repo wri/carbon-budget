@@ -84,7 +84,7 @@ docker_app = '/usr/local/app'
 start = datetime.datetime.now()
 date = datetime.datetime.now()
 date_formatted = date.strftime("%Y_%m_%d__%H_%M_%S")
-model_log_dir = os.path.join(s3_base_dir, 'model_logs', version)
+model_log_dir = os.path.join(s3_base_dir, 'model_logs/{}/'.format(version))
 model_log = "flux_model_log_{}.txt".format(date_formatted)
 
 
@@ -137,7 +137,7 @@ pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200427.xlsx'
-gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables')
+gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2015)
 # pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'   ### This is deprecated but still referred to in emissions script
@@ -209,6 +209,8 @@ pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2019/20200724/')
 
 # Burn year
+burn_area_raw_ftp = 'ftp://ba1.geog.umd.edu/Collection6/HDF/2019/' # Copies a specific year of burn data
+burn_year_hdf_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/raw_hdf/')
 pattern_burn_year = "burnyear"
 burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/')
 
@@ -401,27 +403,27 @@ emis_pool_run_date = '20209999'
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "Mg_AGC_ha_emis_year"
-AGC_emis_year_dir = os.path.join(base_carbon_pool_dir, 'aboveground_carbon/loss_pixels/standard', emis_pool_run_date)
+AGC_emis_year_dir = os.path.join(base_carbon_pool_dir, 'aboveground_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 # Belowground carbon in loss pixels
 pattern_BGC_emis_year = 'Mg_BGC_ha_emis_year'
-BGC_emis_year_dir = os.path.join(base_carbon_pool_dir, 'belowground_carbon/loss_pixels/standard', emis_pool_run_date)
+BGC_emis_year_dir = os.path.join(base_carbon_pool_dir, 'belowground_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 # Deadwood in loss pixels
 pattern_deadwood_emis_year_2000 = 'Mg_deadwood_C_ha_emis_year_2000'
-deadwood_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'deadwood_carbon/loss_pixels/standard', emis_pool_run_date)
+deadwood_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'deadwood_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 # Litter in loss pixels
 pattern_litter_emis_year_2000 = 'Mg_litter_C_ha_emis_year_2000'
-litter_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'litter_carbon/loss_pixels/standard', emis_pool_run_date)
+litter_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'litter_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 # Soil C in loss pixels
 pattern_soil_C_emis_year_2000 = 'Mg_soil_C_ha_emis_year_2000'
-soil_C_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'soilaboveground_carbon/loss_pixels/standard', emis_pool_run_date)
+soil_C_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'soilaboveground_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 # All carbon pools combined in loss pixels, with emitted values
 pattern_total_C_emis_year = 'Mg_total_C_ha_emis_year'
-total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/loss_pixels/standard', emis_pool_run_date)
+total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 ## Carbon pools in 2000
 
@@ -429,19 +431,19 @@ pool_2000_run_date = '20209999'
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "Mg_AGC_ha_2000"
-AGC_2000_dir = os.path.join(base_carbon_pool_dir, 'aboveground_carbon/extent_2000/standard', emis_pool_run_date)
+AGC_2000_dir = os.path.join(base_carbon_pool_dir, 'aboveground_carbon/extent_2000/standard/{}/'.format(emis_pool_run_date))
 
 # Belowground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_BGC_2000 = "Mg_BGC_ha_2000"
-BGC_2000_dir = os.path.join(base_carbon_pool_dir, 'belowground_carbon/extent_2000/standard', emis_pool_run_date)
+BGC_2000_dir = os.path.join(base_carbon_pool_dir, 'belowground_carbon/extent_2000/standard/{}/'.format(emis_pool_run_date))
 
 # Deadwood carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_deadwood_2000 = "Mg_deadwood_C_ha_2000"
-deadwood_2000_dir = os.path.join(base_carbon_pool_dir, 'deadwood_carbon/extent_2000/standard', emis_pool_run_date)
+deadwood_2000_dir = os.path.join(base_carbon_pool_dir, 'deadwood_carbon/extent_2000/standard/{}/'.format(emis_pool_run_date))
 
 # Litter carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_litter_2000 = "Mg_litter_C_ha_2000"
-litter_2000_dir = os.path.join(base_carbon_pool_dir, 'litter_carbon/extent_2000/standard', emis_pool_run_date)
+litter_2000_dir = os.path.join(base_carbon_pool_dir, 'litter_carbon/extent_2000/standard/{}/'.format(emis_pool_run_date))
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = os.path.join(s3_base_dir, 'carbon_pools/soil_carbon/raw/')
@@ -458,7 +460,7 @@ soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/in
 
 # Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "Mg_total_C_ha_2000"
-total_C_2000_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/extent_2000/standard', emis_pool_run_date)
+total_C_2000_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/extent_2000/standard/{}/'.format(emis_pool_run_date))
 
 
 ######

@@ -69,6 +69,10 @@ def create_peat_mask_tiles(tile_id):
     # results in the data getting removed.
     # I found it necessary to copy the peat mask and read its windows into a new copy of the file, to which the
     # metadata tags are added. I'm sure there's an easier way to do this but I couldn't figure out how.
+    # I know it's very convoluted but I really couldn't figure out how to add the tags without erasing the data.
+    # To make it even stranger, adding the tags before the gdal processing seemed to work fine for the non-tropical
+    # (SoilGrids) tiles but not for the tropical (CIFOR/Jukka) tiles (i.e. data didn't disappear in the non-tropical
+    # tiles if I added the tags before the GDAL steps but the tropical data did disappear).
 
     copyfile(out_tile_no_tag, out_tile)
 
