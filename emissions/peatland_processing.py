@@ -8,6 +8,7 @@ Any pixel that is marked as most likely being a histosol subgroup is classified 
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import rasterio
+from shutil import copyfile
 import datetime
 import sys
 sys.path.append('../')
@@ -23,6 +24,7 @@ def create_peat_mask_tiles(tile_id):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     uu.print_log("  ymax:", ymax, "; ymin:", ymin, "; xmax", xmax, "; xmin:", xmin)
 
+    out_tile_no_tag = '{0}_{1}_no_tag.tif'.format(tile_id, cn.pattern_peat_mask)
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_peat_mask)
 
     # uu.print_log("Adding metadata tags to", tile_id)
@@ -67,7 +69,7 @@ def create_peat_mask_tiles(tile_id):
         # Ideally, this would be done once on the entire SoilGrids raster in the main function but I didn't think of that.
         # Code 14 is the histosol subgroup in SoilGrids250 (https://files.isric.org/soilgrids/latest/data/wrb/MostProbable.qml).
         calc = '--calc=(A==14)'
-        peat_mask_out_filearg = '--outfile={}'.format(out_tile)
+        peat_mask_out_filearg = '--outfile={}'.format(out_tile_no_tag)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, peat_mask_out_filearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
@@ -85,20 +87,24 @@ def create_peat_mask_tiles(tile_id):
         # Combines CIFOR and Jukka (if it occurs there)
         cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
                '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-               '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile]
+               '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile_no_tag]
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("{} created.".format(tile_id))
 
+    copyfile(out_tile_no_tag, out_tile)
 
     uu.print_log("Adding metadata tags to", tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     # Opens the output tile, only so that metadata tags can be added
     # Based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
-    with rasterio.open(gain) as gain_src:
+    with rasterio.open(out_tile_no_tag) as out_tile_no_tag_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = gain_src.meta
+        kwargs = out_tile_no_tag_src.meta
+
+        # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+        windows = out_tile_no_tag_src.block_windows(1)
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -113,11 +119,19 @@ def create_peat_mask_tiles(tile_id):
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(out_tile_tagged, 'std')
         out_tile_tagged.update_tags(
-            units='unitless. 1 = peat. 0 = not peat')
+            key='1 = peat. 0 = not peat.')
         out_tile_tagged.update_tags(
             source='Jukka for IDN and MYS; CIFOR for rest of tropics; SoilGrids250 (May 2020) most likely histosol for outside tropics')
         out_tile_tagged.update_tags(
             extent='Full extent of input datasets')
+
+        # Iterates across the windows (1 pixel strips) of the input tile
+        for idx, window in windows:
+
+            peat_mask_window = out_tile_no_tag_src.read(1, window=window)
+
+            # Writes the output window to the output
+            out_tile_tagged.write_band(1, peat_mask_window, window=window)
 
 
     # with rasterio.open(out_tile) as out_tile_src:
