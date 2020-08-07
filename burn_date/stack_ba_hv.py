@@ -20,6 +20,8 @@ def stack_ba_hv(hv_tile):
         # convert hdf to array
         hdf_files = glob.glob(output_dir + "*hdf")
 
+        uu.print_log(hdf_files)
+
         if len(hdf_files) > 0:
             array_list = []
             for hdf in hdf_files:
