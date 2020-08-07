@@ -42,6 +42,7 @@ def create_peat_mask_tiles(tile_id):
         peat_mask_out_filearg = '--outfile={}'.format(out_tile)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, peat_mask_out_filearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
+        uu.print_log(cmd)
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("{} created.".format(tile_id))
