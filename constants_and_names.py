@@ -58,6 +58,9 @@ deadwood_to_above_subtrop_mang = 0.258
 # The size of a Hansen loss pixel, in decimal degrees
 Hansen_res = 0.00025
 
+tile_width = 10 / Hansen_res
+tile_height = 10 / Hansen_res
+
 # m2 per hectare
 m2_per_ha = 100 * 100
 

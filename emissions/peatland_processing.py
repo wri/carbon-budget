@@ -32,8 +32,8 @@ def create_peat_mask_tiles(tile_id):
 
         out_intermediate = '{0}_intermediate.tif'.format(tile_id, cn.pattern_peat_mask)
 
-        # # Cuts the SoilGrids250m global raster to the focal tile
-        # uu.warp_to_Hansen('most_likely_soil_class.vrt', out_intermediate, xmin, ymin, xmax, ymax, 'Byte')
+        # Cuts the SoilGrids250m global raster to the focal tile
+        uu.warp_to_Hansen('most_likely_soil_class.vrt', out_intermediate, xmin, ymin, xmax, ymax, 'Byte')
 
         # Removes all non-histosol sub-groups from the SoilGrids raster.
         # Ideally, this would be done once on the entire SoilGrids raster in the main function but I didn't think of that.
@@ -67,7 +67,8 @@ def create_peat_mask_tiles(tile_id):
     # Opens the output tile, only so that metadata tags can be added
     # Kind of based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
 
-    with rasterio.open(out_tile, 'w', driver='GTiff', count=1, width=40000, height=1) as out_tile_tagged:
+    with rasterio.open(out_tile, 'w', driver='GTiff', count=1, dtype=uint8,
+                       width=cn.tile_width, height=cn.tile_height) as out_tile_tagged:
 
     # out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
 
