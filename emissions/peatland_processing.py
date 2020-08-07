@@ -42,7 +42,8 @@ def create_peat_mask_tiles(tile_id):
         calc = '--calc=A'
         peat_mask_out_filearg = '--outfile={}'.format(out_tile)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, peat_mask_out_filearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
+               # '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte']
         uu.print_log(cmd)
         uu.log_subprocess_output_full(cmd)
 
@@ -60,6 +61,7 @@ def create_peat_mask_tiles(tile_id):
         cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
                '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
                '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile]
+        uu.print_log(cmd)
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("{} created.".format(tile_id))
