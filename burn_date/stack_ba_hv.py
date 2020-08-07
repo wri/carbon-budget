@@ -42,7 +42,7 @@ def stack_ba_hv(hv_tile):
                                                             year_folder)
 
             # upload to somewhere on s3
-            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/20190322/']
+            cmd = ['aws', 's3', 'cp', stacked_year_raster, burn_year_stacked_tif_dir]
             uu.log_subprocess_output_full(cmd)
 
             # remove files
