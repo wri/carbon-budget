@@ -42,7 +42,7 @@ def stack_ba_hv(hv_tile):
                                                             year_folder)
 
             # upload to somewhere on s3
-            cmd = ['aws', 's3', 'cp', stacked_year_raster, burn_year_stacked_tif_dir]
+            cmd = ['aws', 's3', 'cp', stacked_year_raster, cn.burn_year_stacked_tif_dir]
             uu.log_subprocess_output_full(cmd)
 
             # remove files
