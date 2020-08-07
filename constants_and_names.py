@@ -185,7 +185,7 @@ pattern_soilgrids_most_likely_class = 'geotiff'
 
 # Peat mask
 pattern_peat_mask = 'peat_mask_processed'
-peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20200806/')
+peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20200807/')
 
 # Climate zone
 climate_zone_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/raw/')
