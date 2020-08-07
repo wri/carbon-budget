@@ -143,7 +143,7 @@ def makedir(dir):
 
 def download_df(year, hv_tile, output_dir):
         include = '*A{0}*{1}*'.format(year, hv_tile)
-        cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/raw_hdf/', output_dir, '--recursive', '--exclude',
+        cmd = ['aws', 's3', 'cp', cn.burn_year_hdf_raw_dir, output_dir, '--recursive', '--exclude',
                "*", '--include', include]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging

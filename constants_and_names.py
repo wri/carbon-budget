@@ -209,7 +209,7 @@ pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2019/20200724/')
 
 # Burn year
-burn_area_raw_ftp = 'ftp://ba1.geog.umd.edu/Collection6/HDF/2019/' # Copies a specific year of burn data
+burn_area_raw_ftp = 'ftp://ba1.geog.umd.edu/Collection6/HDF/' # Copies a specific year of burn data
 burn_year_hdf_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/raw_hdf/')
 pattern_burn_year = "burnyear"
 burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/')
