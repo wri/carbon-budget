@@ -53,7 +53,7 @@ RUN cd /usr/include && ln -s ./ gdal
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Check out the branch that I'm currently using for model development
-RUN git checkoout model_v_1.2.0
+RUN git checkout model_v_1.2.0
 
 # Makes sure the latest version of the current branch is downloaded
 RUN git pull
