@@ -1,4 +1,5 @@
 # Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
+# Full build is necessary for reading hdf files for burned area analysis.
 FROM osgeo/gdal:ubuntu-full-3.0.4
 
 ENV DIR=/usr/local/app

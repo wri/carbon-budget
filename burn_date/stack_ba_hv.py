@@ -13,9 +13,9 @@ def stack_ba_hv(hv_tile):
 
     for year in range(2019, 2020): # End year is not included in burn year product
 
-        # # Download hdf files from s3 into folders by h and v
-        # output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))
-        # utilities.download_df(year, hv_tile, output_dir)
+        # Download hdf files from s3 into folders by h and v
+        output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))
+        utilities.download_df(year, hv_tile, output_dir)
 
         # convert hdf to array
         hdf_files = glob.glob(output_dir + "*hdf")
