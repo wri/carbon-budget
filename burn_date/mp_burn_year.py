@@ -104,7 +104,7 @@ def mp_burn_year(tile_id_list, run_date = None):
 
         uu.print_log("Downloading MODIS burn date files from s3...")
 
-        cmd = ['aws', 's3', 'cp', uu.burn_year_stacked_hv_tif_dir, year_tifs_folder]
+        cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
         cmd += ['--recursive', '--exclude', "*", '--include', include]
         uu.log_subprocess_output_full(cmd)
 
