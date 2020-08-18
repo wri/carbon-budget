@@ -7,6 +7,7 @@ from functools import partial
 import pandas as pd
 import datetime
 import glob
+import shutil
 import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
