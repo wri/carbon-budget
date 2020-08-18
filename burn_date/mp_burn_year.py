@@ -93,13 +93,14 @@ def mp_burn_year(tile_id_list, run_date = None):
 
 
     # Step 3:
-    # creates a 10x10 degree wgs 84 tile of .00025 res burned year. Download all modis hv tile from s3,
-    # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
+    # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
+    # Downloads all MODIS hv tiles from s3,
+    # makes a mosaic for each year, and warps to Hansen extent. =
     for year in range(2000, 2020):
 
         uu.print_log("Processing", year)
 
-        # download all hv tifs for this year
+        # Downloads all hv tifs for this year
         include = '{0}_*.tif'.format(year)
         year_tifs_folder = "{}_year_tifs".format(year)
         utilities.makedir(year_tifs_folder)
@@ -112,41 +113,44 @@ def mp_burn_year(tile_id_list, run_date = None):
 
         uu.print_log("Creating vrt of MODIS files...")
 
-        # build list of vrt files (command wont take folder/*.tif)
         vrt_name = "global_vrt_{}.vrt".format(year)
 
+        # Builds list of vrt files
         with open('vrt_files.txt', 'w') as vrt_files:
             vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
             for tif in vrt_tifs:
                 vrt_files.write(tif + "\n")
 
-        # create vrt with wgs84 modis tiles
+        # Creates vrt with wgs84 MODIS tiles.
         cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("Reprojecting vrt...")
 
-        # # build new vrt and virtually project it
+        # Builds new vrt and virtually project it
+        # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
+        # so I'm leaving it like that.
         vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
         cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite',
                vrt_name, vrt_wgs84]
         uu.log_subprocess_output_full(cmd)
 
-        # create a list of lists, with year and tile id to send to multi processor
+        # Creates a list of lists, with year and tile id to send to multi processor
         tile_year_list = []
         for tile_id in tile_id_list:
             tile_year_list.append([tile_id, year])
 
-        # count = multiprocessing.cpu_count()
-        # pool = multiprocessing.Pool(processes=count/2)
-        # pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
-        # pool.close()
-        # pool.join()
+        count = multiprocessing.cpu_count()
+        pool = multiprocessing.Pool(processes=count-10)
+        pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+        pool.close()
+        pool.join()
 
+        # For single processoe
         for tile_year in tile_year_list:
             clip_year_tiles.clip_year_tiles(tile_year)
 
-        uu.print_log("Multiprocessing for year done. Moving to next year.")
+        uu.print_log("Processing for {} done. Moving to next year.".format(year))
 
         # year_tifs_folder = "{}_year_tifs".format(year)
         # shutil.rmtree(year_tifs_folder)
