@@ -143,9 +143,8 @@ def mp_burn_year(tile_id_list, run_date = None):
         # pool.close()
         # pool.join()
 
-        # for tile_year in tile_year_list:
-        #     clip_year_tiles.clip_year_tiles(tile_year)
-
+        for tile_year in tile_year_list:
+            clip_year_tiles.clip_year_tiles(tile_year)
 
         uu.print_log("Multiprocessing for year done. Moving to next year.")
 
