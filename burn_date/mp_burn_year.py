@@ -19,6 +19,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'burn_date'))
 import stack_ba_hv
 import clip_year_tiles
+import hansen_burnyear
 
 
 
@@ -87,16 +88,17 @@ def mp_burn_year(tile_id_list, run_date = None):
     # pool.close()
     # pool.join()
 
+    # # For single processor use
     # for hv_tile in global_grid_hv:
     #     stack_ba_hv.stack_ba_hv(hv_tile)
-
 
 
     # Step 3:
     # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
     # Downloads all MODIS hv tiles from s3,
-    # makes a mosaic for each year, and warps to Hansen extent. =
-    for year in range(2000, 2020):
+    # makes a mosaic for each year, and warps to Hansen extent.
+    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2020 goes from 2001 to 2019)
+    for year in range(2001, 2020):
 
         uu.print_log("Processing", year)
 
@@ -140,21 +142,38 @@ def mp_burn_year(tile_id_list, run_date = None):
         for tile_id in tile_id_list:
             tile_year_list.append([tile_id, year])
 
+        # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
+        # the global vrt has pixels representing burned or not. This process clips the global VRT
+        # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
+        # year burned and NoData.
         count = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=count-10)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
         pool.close()
         pool.join()
 
-        # For single processoe
-        for tile_year in tile_year_list:
-            clip_year_tiles.clip_year_tiles(tile_year)
+        # # For single processor use
+        # for tile_year in tile_year_list:
+        #     clip_year_tiles.clip_year_tiles(tile_year)
 
         uu.print_log("Processing for {} done. Moving to next year.".format(year))
 
-        # year_tifs_folder = "{}_year_tifs".format(year)
-        # shutil.rmtree(year_tifs_folder)
+    # Step 4:
+    # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
 
+    uu.s3_folder_download(cn.loss_dir, '.', 'std')
+
+    uu.print_log("Extracting burn year data that coincides with tree cover loss...")
+
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=count - 10)
+    pool.map(hansen_burnyear.hansen_burnyear, tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     hansen_burnyear.hansen_burnyear(tile_id)
 
 
 
