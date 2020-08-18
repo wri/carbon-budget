@@ -6,6 +6,7 @@ import multiprocessing
 from functools import partial
 import pandas as pd
 import datetime
+import glob
 import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
@@ -93,7 +94,7 @@ def mp_burn_year(tile_id_list, run_date = None):
     # Step 3:
     # creates a 10x10 degree wgs 84 tile of .00025 res burned year. Download all modis hv tile from s3,
     # make a mosaic for each year, and clip to hansen extent. Files are uploaded to s3.
-    for year in range(2019, 2020):
+    for year in range(2000, 2020):
 
         uu.print_log("Processing", year)
 
