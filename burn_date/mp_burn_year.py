@@ -10,6 +10,7 @@ import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
+import utilities
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -81,6 +82,8 @@ def mp_burn_year(tile_id_list, run_date = None):
     # count = multiprocessing.cpu_count()
     # pool = multiprocessing.Pool(processes=count - 10)
     # pool.map(stack_ba_hv.stack_ba_hv, global_grid_hv)
+    # pool.close()
+    # pool.join()
 
     # for hv_tile in global_grid_hv:
     #     stack_ba_hv.stack_ba_hv(hv_tile)
@@ -133,8 +136,14 @@ def mp_burn_year(tile_id_list, run_date = None):
         for tile_id in tile_id_list:
             tile_year_list.append([tile_id, year])
 
-        pool = multiprocessing.Pool(processes=40)
-        pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+        # count = multiprocessing.cpu_count()
+        # pool = multiprocessing.Pool(processes=count/2)
+        # pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+        # pool.close()
+        # pool.join()
+
+        for tile_year in tile_year_list:
+            clip_year_tiles.clip_year_tiles(tile_year)
 
         uu.print_log("Multiprocessing for year done. Moving to next year.")
 
