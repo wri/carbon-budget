@@ -147,7 +147,7 @@ def mp_burn_year(tile_id_list, run_date = None):
         # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
         # year burned and NoData.
         count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=count-10)
+        pool = multiprocessing.Pool(processes=count-5)
         pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
         pool.close()
         pool.join()
