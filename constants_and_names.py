@@ -212,6 +212,7 @@ drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_c
 burn_area_raw_ftp = 'ftp://ba1.geog.umd.edu/Collection6/HDF/' # Copies a specific year of burn data
 burn_year_hdf_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/raw_hdf/')
 burn_year_stacked_hv_tif_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/stacked_hv_tifs/')
+burn_year_warped_to_Hansen_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/burn_year_warped_to_Hansen/')
 pattern_burn_year = "burnyear"
 burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/')
 
