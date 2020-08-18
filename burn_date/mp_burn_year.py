@@ -158,18 +158,18 @@ def mp_burn_year(tile_id_list, run_date = None):
 
         uu.print_log("Processing for {} done. Moving to next year.".format(year))
 
-    # Step 4:
-    # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
-
-    uu.s3_folder_download(cn.loss_dir, '.', 'std')
-
-    uu.print_log("Extracting burn year data that coincides with tree cover loss...")
-
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=count - 10)
-    pool.map(hansen_burnyear.hansen_burnyear, tile_id_list)
-    pool.close()
-    pool.join()
+    # # Step 4:
+    # # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
+    #
+    # uu.s3_folder_download(cn.loss_dir, '.', 'std')
+    #
+    # uu.print_log("Extracting burn year data that coincides with tree cover loss...")
+    #
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=count - 10)
+    # pool.map(hansen_burnyear.hansen_burnyear, tile_id_list)
+    # pool.close()
+    # pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:

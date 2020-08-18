@@ -12,6 +12,9 @@ sys.path.insert(0, parentdir)
 
 def clip_year_tiles(tile_year_list):
 
+    # Start time
+    start = datetime.datetime.now()
+
     tile_id = tile_year_list[0].strip('.tif')
     year = tile_year_list[1]
 
