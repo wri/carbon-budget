@@ -45,9 +45,20 @@ def clip_year_tiles(tile_year_list):
     cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--quiet']
     uu.log_subprocess_output_full(cmd)
 
-    # upload file
-    cmd = ['aws', 's3', 'mv', recoded_output, cn.burn_year_warped_to_Hansen_dir]
-    uu.log_subprocess_output_full(cmd)
+    uu.print_log("Checking if {} contains any data...".format(tile_id))
+    empty = uu.check_for_data(recoded_output)
+
+    if empty:
+
+        uu.print_log("  No data found. Not copying {}.".format(tile_id))
+
+    else:
+
+        uu.print_log("  Data found in {}. Copying tile to s3...".format(tile_id))
+        cmd = ['aws', 's3', 'mv', recoded_output, cn.burn_year_warped_to_Hansen_dir]
+        uu.log_subprocess_output_full(cmd)
+        uu.print_log("    Tile converted and copied to s3")
+
 
     # # remove files
     # uu.print_log("Removing files")

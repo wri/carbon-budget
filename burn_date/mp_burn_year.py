@@ -114,7 +114,6 @@ def mp_burn_year(tile_id_list, run_date = None):
 
         # build list of vrt files (command wont take folder/*.tif)
         vrt_name = "global_vrt_{}.vrt".format(year)
-        vrt_source_folder = "{}/*.tif".format(year_tifs_folder)
 
         with open('vrt_files.txt', 'w') as vrt_files:
             vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
@@ -144,8 +143,9 @@ def mp_burn_year(tile_id_list, run_date = None):
         # pool.close()
         # pool.join()
 
-        for tile_year in tile_year_list:
-            clip_year_tiles.clip_year_tiles(tile_year)
+        # for tile_year in tile_year_list:
+        #     clip_year_tiles.clip_year_tiles(tile_year)
+
 
         uu.print_log("Multiprocessing for year done. Moving to next year.")
 
