@@ -5,6 +5,7 @@ import sys
 import utilities
 sys.path.append('../')
 import universal_util as uu
+import constants_and_names as cn
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
