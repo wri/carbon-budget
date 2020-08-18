@@ -49,10 +49,10 @@ def clip_year_tiles(tile_year_list):
     cmd = ['aws', 's3', 'mv', recoded_output, cn.burn_year_warped_to_Hansen_dir]
     uu.log_subprocess_output_full(cmd)
 
-    # remove files
-    uu.print_log("Removing files")
-    files_to_remove = [clipped_raster, recoded_output]
-    utilities.remove_list_files(files_to_remove)
-
-    uu.print_log("Done removing individual files")
+    # # remove files
+    # uu.print_log("Removing files")
+    # files_to_remove = [clipped_raster, recoded_output]
+    # utilities.remove_list_files(files_to_remove)
+    #
+    # uu.print_log("Done removing individual files")
 

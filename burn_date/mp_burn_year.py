@@ -149,8 +149,8 @@ def mp_burn_year(tile_id_list, run_date = None):
 
         uu.print_log("Multiprocessing for year done. Moving to next year.")
 
-        year_tifs_folder = "{}_year_tifs".format(year)
-        shutil.rmtree(year_tifs_folder)
+        # year_tifs_folder = "{}_year_tifs".format(year)
+        # shutil.rmtree(year_tifs_folder)
 
 
 
