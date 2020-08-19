@@ -175,7 +175,9 @@ def mp_burn_year(tile_id_list, run_date = None):
     uu.print_log("Extracting burn year data that coincides with tree cover loss...")
 
     count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=count - 10)
+    # This can use up to 130 GB per tile (loss year array step).
+    # Running it on an r5d.16xlarge (500 GB memory)
+    pool = multiprocessing.Pool(processes=3)
     pool.map(hansen_burnyear_final.hansen_burnyear, tile_id_list)
     pool.close()
     pool.join()
