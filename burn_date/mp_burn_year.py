@@ -187,6 +187,14 @@ def mp_burn_year(tile_id_list, run_date = None):
     #     hansen_burnyear_final.hansen_burnyear(tile_id)
 
 
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.burn_year_dir]
+    output_pattern_list = [cn.pattern_burn_year]
+
+    # Uploads output tiles to s3
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+
 
 
 if __name__ == '__main__':
