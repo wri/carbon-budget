@@ -29,7 +29,6 @@ import clip_year_tiles
 import hansen_burnyear_final
 
 
-
 def mp_burn_year(tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
@@ -174,10 +173,13 @@ def mp_burn_year(tile_id_list, run_date = None):
     # Step 4:
     # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
 
+    # Downloads the loss tiles
     uu.s3_folder_download(cn.loss_dir, '.', 'std', cn.pattern_loss)
 
     uu.print_log("Extracting burn year data that coincides with tree cover loss...")
 
+    # Downloads the 10x10 deg burn year tiles (1 for each year in which there was burned areaa), stack and evaluate
+    # to return burn year values on hansen loss pixels within 1 year of loss date
     if cn.count == 96:
         processes = 6
         # 6 processors = XXX GB peak (1 processor can use up to 130 GB of memory)
