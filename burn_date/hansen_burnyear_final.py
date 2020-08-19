@@ -87,11 +87,11 @@ def hansen_burnyear(tile_id):
     else:
         uu.print_log("  Data found in {}. Adding metadata tags...".format(tile_id))
 
-        with rasterio.open(out_tile, 'r') as src:
+        with rasterio.open(out_tile_no_tag, 'r') as src:
 
             profile = src.profile
 
-        with rasterio.open(out_tile, 'w', **profile) as dst:
+        with rasterio.open(out_tile_no_tag, 'w', **profile) as dst:
 
             dst.update_tags(units='year (2001, 2002, 2003...)',
                             source='MODIS collection 6 burned area',
