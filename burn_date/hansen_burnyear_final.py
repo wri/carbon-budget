@@ -73,7 +73,7 @@ def hansen_burnyear(tile_id):
         return
 
     else:
-        uu.print_log("  Data found in {}. Adding metadata tags and copying tile to s3...".format(tile_id))
+        uu.print_log("  Data found in {}. Adding metadata tags...".format(tile_id))
 
         # All of the below is to add metadata tags to the output burn year masks.
         # For some reason, just doing what's at https://rasterio.readthedocs.io/en/latest/topics/tags.html

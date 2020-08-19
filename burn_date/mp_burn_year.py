@@ -42,6 +42,10 @@ def mp_burn_year(tile_id_list, run_date = None):
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.burn_year_dir]
+    output_pattern_list = [cn.pattern_burn_year]
+
     # # Step 1:
     # # Downloads the latest year of raw burn area hdfs to the spot machine.
     # # This step requires using osgeo/gdal:ubuntu-full-X.X.X Docker image because the small image doesn't have an
@@ -186,10 +190,6 @@ def mp_burn_year(tile_id_list, run_date = None):
     # for tile_id in tile_id_list:
     #     hansen_burnyear_final.hansen_burnyear(tile_id)
 
-
-    # List of output directories and output file name patterns
-    output_dir_list = [cn.burn_year_dir]
-    output_pattern_list = [cn.pattern_burn_year]
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
