@@ -118,7 +118,7 @@ def hansen_burnyear(tile_id):
         # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
         os.remove(out_tile_no_tag)
 
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_base_dir, out_tile), cn.burn_year_dir]
+        cmd = ['aws', 's3', 'cp', '{0}{1}'.format(cn.docker_base_dir, out_tile), cn.burn_year_dir]
         uu.log_subprocess_output_full(cmd)
         uu.print_log("    Tile copied to s3")
 
