@@ -37,6 +37,12 @@ def hansen_burnyear(tile_id):
     # for each year tile, convert to array and stack them
     array_list = []
     ba_tifs = glob.glob(burn_tiles_dir + '/*{}*'.format(tile_id))
+
+    uu.print_log("There are {0} tiles to stack for {1}".format(len(ba_tifs), tile_id))
+    if len(ba_tifs) == 0:
+        uu.print_log("Skipping {} because there are no tiles to stack".format(tile_id))
+        return
+
     for ba_tif in ba_tifs:
         uu.print_log("Creating array with {}".format(ba_tif))
         array = utilities.raster_to_array(ba_tif)
