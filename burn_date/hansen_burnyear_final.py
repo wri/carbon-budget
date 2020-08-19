@@ -93,7 +93,7 @@ def hansen_burnyear(tile_id):
 
         with rasterio.open(out_tile, 'w', **profile) as dst:
 
-            src.update_tags(units='year (2001, 2002, 2003...)',
+            dst.update_tags(units='year (2001, 2002, 2003...)',
                             source='MODIS collection 6 burned area',
                             extent='global')
 
