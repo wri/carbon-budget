@@ -87,20 +87,11 @@ def hansen_burnyear(tile_id):
     else:
         uu.print_log("  Data found in {}. Adding metadata tags...".format(tile_id))
 
-        # All of the below is to add metadata tags to the output burn year masks.
-        # For some reason, just doing what's at https://rasterio.readthedocs.io/en/latest/topics/tags.html
-        # results in the data getting removed.
-        # I found it necessary to copy the desired output and read its windows into a new copy of the file, to which the
-        # metadata tags are added. I'm sure there's an easier way to do this but I couldn't figure out how.
-        # I know it's very convoluted but I really couldn't figure out how to add the tags without erasing the data.
+        with rasterio.open(out_tile, 'r') as src:
 
-        uu.print_log("  Adding metadata tags to", tile_id)
+            profile = src.profile
 
-        with rasterio.open(out_tile, 'w+') as src:
-
-            # profile = src.profile
-
-        # with rasterio.open(out_tile, 'w', **profile) as dst:
+        with rasterio.open(out_tile, 'w', **profile) as dst:
 
             src.update_tags(units='year (2001, 2002, 2003...)',
                             source='MODIS collection 6 burned area',
