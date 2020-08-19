@@ -33,8 +33,6 @@ def hansen_burnyear(tile_id):
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_burn_year)
     loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
 
-    uu.print_log("Adding metadata tags to", tile_id)
-
 
     # for each year tile, convert to array and stack them
     array_list = []
@@ -45,12 +43,12 @@ def hansen_burnyear(tile_id):
         array_list.append(array)
 
     # stack arrays
-    uu.print_log("Stacking arrays")
+    uu.print_log("Stacking arrays for", tile_id)
     stacked_year_array = utilities.stack_arrays(array_list)
 
 
     # convert hansen tile to array
-    uu.print_log("Creating loss year array")
+    uu.print_log("Creating loss year array for", tile_id)
     loss_array = utilities.raster_to_array(loss)
 
     lossarray_min1 = np.subtract(loss_array, 1)
@@ -120,7 +118,7 @@ def hansen_burnyear(tile_id):
         # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
         os.remove(out_tile_no_tag)
 
-        cmd = ['aws', 's3', 'cp', out_tile, cn.burn_year_dir]
+        cmd = ['aws', 's3', 'cp', os.path.join('burn_tiles', out_tile), cn.burn_year_dir]
         uu.log_subprocess_output_full(cmd)
         uu.print_log("    Tile copied to s3")
 
