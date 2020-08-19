@@ -5,12 +5,12 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
 From carbon-budget/emissions/, do:
-c++ ./cpp_util/calc_gross_emissions_generic.cpp -o ./cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 (for the standard model and some sensitivity analysis versions).
 calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
 and convert_to_grassland), do:
-c++ ./cpp_util/calc_gross_emissions_<sensit_type>.cpp -o ./cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
+c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
 Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE].
 The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
@@ -117,7 +117,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
             if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
-                uu.print_log("here")
                 uu.exception_log('Must compile generic emissions C++...')
 
     elif (pools == 'soil_only') & (sensit_type == 'std'):
@@ -161,11 +160,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
         folder = cn.docker_base_dir     # When emissions are calculated on their own
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.items():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, folder, sensit_type, tile_id_list)
+    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    # for key, values in download_dict.items():
+    #     dir = key
+    #     pattern = values[0]
+    #     uu.s3_flexible_download(dir, pattern, folder, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -189,49 +188,51 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, pools, run_date = No
     uu.print_log("Making blank tiles for inputs that don't currently exist")
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
-                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed]
+                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_burn_year]
 
 
-    # textfile that stores the names of the blank tiles that are created for processing.
-    # This will be iterated through to delete the tiles at the end of the script.
-    uu.create_blank_tile_txt()
-
-    for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=60)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
-                                             sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
+    # # textfile that stores the names of the blank tiles that are created for processing.
+    # # This will be iterated through to delete the tiles at the end of the script.
+    # uu.create_blank_tile_txt()
+    #
     # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
+    #     pool = multiprocessing.Pool(processes=60)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
+    #                                          sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    # # # For single processor use
+    # # for pattern in pattern_list:
+    # #     for tile in tile_id_list:
+    # #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
 
 
-    # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    if cn.count == 96:
-        processes = 19   # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
-    else:
-        processes = 9
-    uu.print_log('Gross emissions max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type, folder=folder), tile_id_list)
-    pool.close()
-    pool.join()
-
+    # # Calculates gross emissions for each tile
+    # # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+    # # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+    # if cn.count == 96:
+    #     processes = 19   # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
+    # else:
+    #     processes = 9
+    # uu.print_log('Gross emissions max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(calculate_gross_emissions.calc_emissions, pools=pools, sensit_type=sensit_type, folder=folder), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
     # # For single processor use
     # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type)
+    #       calculate_gross_emissions.calc_emissions(tile, pools, sensit_type, folder)
+    #
+    #
+    # # Print the list of blank created tiles, delete the tiles, and delete their text file
+    # uu.list_and_delete_blank_tiles()
 
-
-    # Print the list of blank created tiles, delete the tiles, and delete their text file
-    uu.list_and_delete_blank_tiles()
-
-    for i in range(0, len(output_pattern_list)):
-        pattern = output_pattern_list[i]
+    # for i in range(0, len(output_pattern_list)):
+    for i in range(0, 1):
+        pattern = output_pattern_list[0]
+        # pattern = output_pattern_list[i]
         if cn.count == 96:
             processes = 19  # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
         else:

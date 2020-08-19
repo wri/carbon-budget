@@ -49,17 +49,17 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
     logging.info("AWS ec2 instance type and AMI id:")
-    try:
-        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
-        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
-    except:
-        logging.info("Not running on AWS ec2 instance")
+    # try:
+    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    #     with process.stdout:
+    #         log_subprocess_output(process.stdout)
+    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    #     with process.stdout:
+    #         log_subprocess_output(process.stdout)
+    # except:
+    #     logging.info("Not running on AWS ec2 instance")
     logging.info("Available processors: {}".format(cn.count))
     logging.info("")
 
@@ -879,7 +879,7 @@ def mp_rasterize(tile_id, in_shape, out_pattern, blocksizex, blocksizey, tr, ot,
 
 
 # Creates a tile of all 0s for any tile passed to it.
-# Uses the pixel area tile for information about the tile.
+# Uses the Hansen loss tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
@@ -892,10 +892,12 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name)))
+        return
 
     # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
     elif os.path.exists(file_name_sens):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens)))
+        return
 
     # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
     else:

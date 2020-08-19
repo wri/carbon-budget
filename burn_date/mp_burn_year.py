@@ -1,11 +1,20 @@
 '''
+Creates tiles of when tree cover loss coincides with burning.
+There are kind of four steps to this: 1) acquire raw hdfs from MODIS burned area ftp; 2) make tifs of burned area for
+each year in each MODUS h-v tile; 3) make annual Hansen tiles of burned area; 4) make tiles of where TCL and burning
+coincided (same year or with 1 year lag).
+To update this, steps 1-3 can be run on only the latest year of MODIS burned area product. Only step 4 needs to be run
+on the entire time series. That is, steps 1-3 operate on burned area products separately for each year, so adding
+another year of data won't change steps 1-3 for preceding years.
 
-The step in which hdf files are downloaded from the MODIS burned area site using wget (step 1) requires
+This is still basically as Sam Gibbes wrote it in early 2018, with file name changes and other cosmetic changes
+by David Gibbs. The real processing code is still all by Sam.
+
+NOTE: The step in which hdf files are downloaded from the MODIS burned area site using wget (step 1) requires
 osgeo/gdal:ubuntu-full-X.X.X Docker image. The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
 the hdf files on the ftp site. The rest of the burned area analysis can be done with a 'small' version of the Docker image
 (though that would require terminating the Docker container and restarting it, which would only make sense if the
 analysis was being continued later).
-
 
 '''
 

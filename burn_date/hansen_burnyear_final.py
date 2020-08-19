@@ -19,6 +19,20 @@ def hansen_burnyear(tile_id):
 
     uu.print_log("Processing", tile_id)
 
+    # The tiles that are used. out_tile_no_tag is the output before metadata tags are added. out_tile is the output
+    # once metadata tags have been added.
+    out_tile_no_tag = '{0}_{1}_no_tag.tif'.format(tile_id, cn.pattern_burn_year)
+    out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_burn_year)
+    loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+
+    # Does not continue processing tile if no loss (because there will not be any output)
+    if not os.path.exists(loss):
+        uu.print_log("No loss tile for", tile_id)
+        return
+    else:
+        uu.print_log("Loss tile exists for", tile_id)
+
+
     # Downloads the burned area tiles for each year
     include = 'ba_*_{}.tif'.format(tile_id)
     burn_tiles_dir = 'burn_tiles'
@@ -26,13 +40,6 @@ def hansen_burnyear(tile_id):
         os.mkdir(burn_tiles_dir)
     cmd = ['aws', 's3', 'cp', cn.burn_year_warped_to_Hansen_dir, burn_tiles_dir, '--recursive', '--exclude', "*", '--include', include]
     uu.log_subprocess_output_full(cmd)
-
-    # The tiles that are used. out_tile_no_tag is the output before metadata tags are added. out_tile is the output
-    # once metadata tags have been added.
-    out_tile_no_tag = '{0}_{1}_no_tag.tif'.format(tile_id, cn.pattern_burn_year)
-    out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_burn_year)
-    loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
-
 
     # For each year tile, converts to array and stacks them
     array_list = []
@@ -87,11 +94,19 @@ def hansen_burnyear(tile_id):
     else:
         uu.print_log("  Data found in {}. Adding metadata tags...".format(tile_id))
 
+        ### Thomas suggested these on 8/19/2020 but they didn't work. The first one wrote the tags but erased all the
+        ### data in the tiles (everything became 0 according to gdalinfo). The second one had some other error.
         # with rasterio.open(out_tile_no_tag, 'r') as src:
         #
         #     profile = src.profile
         #
         # with rasterio.open(out_tile_no_tag, 'w', **profile) as dst:
+        #
+        #     dst.update_tags(units='year (2001, 2002, 2003...)',
+        #                     source='MODIS collection 6 burned area',
+        #                     extent='global')
+        #
+        # with rasterio.open(out_tile_no_tag, 'w+') as src:
         #
         #     dst.update_tags(units='year (2001, 2002, 2003...)',
         #                     source='MODIS collection 6 burned area',

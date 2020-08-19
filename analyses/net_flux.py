@@ -45,6 +45,15 @@ def net_calc(tile_id, pattern, sensit_type):
     # Opens the output tile, giving it the arguments of the input tiles
     net_flux_dst = rasterio.open(net_flux, 'w', **kwargs)
 
+    # Adds metadata tags to the output raster
+    uu.add_rasterio_tags(net_flux_dst, sensit_type)
+    net_flux_dst.update_tags(
+        units='Mg CO2e over model duration (2001-20{})'.format(cn.loss_years))
+    net_flux_dst.update_tags(
+        source='Gross emissions - gross removals')
+    net_flux_dst.update_tags(
+        extent='Model extent')
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 
