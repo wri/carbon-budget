@@ -28,7 +28,7 @@ def clip_year_tiles(tile_year_list):
     # Clips vrt to tile extent
     uu.print_log("Clipping burn year vrt to {0} for {1}".format(tile_id, year))
 
-    clipped_raster = "ba_{0}_{1}_clipped.tif".format(year, tile_id)
+    clipped_raster = "ba_clipped_{0}_{1}.tif".format(year, tile_id)
     cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0']
     cmd += [vrt_name, clipped_raster, '-tr', '.00025', '.00025']
     cmd += ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
@@ -54,7 +54,7 @@ def clip_year_tiles(tile_year_list):
         uu.print_log("  Data found in {}. Copying tile to s3...".format(tile_id))
         cmd = ['aws', 's3', 'cp', recoded_output, cn.burn_year_warped_to_Hansen_dir]
         uu.log_subprocess_output_full(cmd)
-        uu.print_log("    Tile copied to s3")
+        uu.print_log("    Tile copied to", cn.burn_year_warped_to_Hansen_dir)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, "ba_{}".format(year))

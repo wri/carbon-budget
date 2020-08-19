@@ -1,6 +1,6 @@
 # Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
-# Full build is necessary for reading hdf files for burned area analysis.
-FROM osgeo/gdal:ubuntu-full-3.0.4
+FROM osgeo/gdal:ubuntu-small-3.0.4
+#FROM osgeo/gdal:ubuntu-full-3.0.4   # Use this if downloading hdf files for burn year analysis
 
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
@@ -57,7 +57,7 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN git checkout model_v_1.2.0
 
 # Makes sure the latest version of the current branch is downloaded
-RUN git pull
+RUN git pull origin model_v_1.2.0
 
 # Compile C++ scripts
 RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/tmp/calc_gross_emissions_generic.exe -lgdal && \

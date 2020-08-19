@@ -1,5 +1,12 @@
 '''
 
+The step in which hdf files are downloaded from the MODIS burned area site using wget (step 1) requires
+osgeo/gdal:ubuntu-full-X.X.X Docker image. The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
+the hdf files on the ftp site. The rest of the burned area analysis can be done with a 'small' version of the Docker image
+(though that would require terminating the Docker container and restarting it, which would only make sense if the
+analysis was being continued later).
+
+
 '''
 
 import multiprocessing
@@ -19,7 +26,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'burn_date'))
 import stack_ba_hv
 import clip_year_tiles
-import hansen_burnyear
+import hansen_burnyear_final
 
 
 
@@ -36,7 +43,9 @@ def mp_burn_year(tile_id_list, run_date = None):
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
     # # Step 1:
-    # # Downloads the latest year of raw burn area hdfs to the spot machine
+    # # Downloads the latest year of raw burn area hdfs to the spot machine.
+    # # This step requires using osgeo/gdal:ubuntu-full-X.X.X Docker image because the small image doesn't have an
+    # # hdf driver in gdal.
     # file_name = "*.hdf"
     # raw_source = '{0}/20{1}'.format(cn.burn_area_raw_ftp, cn.loss_years)
     # cmd = ['wget', '-r', '--ftp-user=user', '--ftp-password=burnt_data', '--accept', file_name]
@@ -93,87 +102,87 @@ def mp_burn_year(tile_id_list, run_date = None):
     #     stack_ba_hv.stack_ba_hv(hv_tile)
 
 
-    # Step 3:
-    # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
-    # Downloads all MODIS hv tiles from s3,
-    # makes a mosaic for each year, and warps to Hansen extent.
-    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2020 goes from 2001 to 2019)
-    for year in range(2001, 2020):
-
-        uu.print_log("Processing", year)
-
-        # Downloads all hv tifs for this year
-        include = '{0}_*.tif'.format(year)
-        year_tifs_folder = "{}_year_tifs".format(year)
-        utilities.makedir(year_tifs_folder)
-
-        uu.print_log("Downloading MODIS burn date files from s3...")
-
-        cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
-        cmd += ['--recursive', '--exclude', "*", '--include', include]
-        uu.log_subprocess_output_full(cmd)
-
-        uu.print_log("Creating vrt of MODIS files...")
-
-        vrt_name = "global_vrt_{}.vrt".format(year)
-
-        # Builds list of vrt files
-        with open('vrt_files.txt', 'w') as vrt_files:
-            vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
-            for tif in vrt_tifs:
-                vrt_files.write(tif + "\n")
-
-        # Creates vrt with wgs84 MODIS tiles.
-        cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
-        uu.log_subprocess_output_full(cmd)
-
-        uu.print_log("Reprojecting vrt...")
-
-        # Builds new vrt and virtually project it
-        # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
-        # so I'm leaving it like that.
-        vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
-        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite',
-               vrt_name, vrt_wgs84]
-        uu.log_subprocess_output_full(cmd)
-
-        # Creates a list of lists, with year and tile id to send to multi processor
-        tile_year_list = []
-        for tile_id in tile_id_list:
-            tile_year_list.append([tile_id, year])
-
-        # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
-        # the global vrt has pixels representing burned or not. This process clips the global VRT
-        # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
-        # year burned and NoData.
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=count-5)
-        pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_year in tile_year_list:
-        #     clip_year_tiles.clip_year_tiles(tile_year)
-
-        uu.print_log("Processing for {} done. Moving to next year.".format(year))
-
-    # # Step 4:
-    # # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
+    # # Step 3:
+    # # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
+    # # Downloads all MODIS hv tiles from s3,
+    # # makes a mosaic for each year, and warps to Hansen extent.
+    # # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2020 goes from 2001 to 2019)
+    # for year in range(2001, 2020):
     #
-    # uu.s3_folder_download(cn.loss_dir, '.', 'std')
+    #     uu.print_log("Processing", year)
     #
-    # uu.print_log("Extracting burn year data that coincides with tree cover loss...")
+    #     # Downloads all hv tifs for this year
+    #     include = '{0}_*.tif'.format(year)
+    #     year_tifs_folder = "{}_year_tifs".format(year)
+    #     utilities.makedir(year_tifs_folder)
     #
-    # count = multiprocessing.cpu_count()
-    # pool = multiprocessing.Pool(processes=count - 10)
-    # pool.map(hansen_burnyear.hansen_burnyear, tile_id_list)
-    # pool.close()
-    # pool.join()
+    #     uu.print_log("Downloading MODIS burn date files from s3...")
+    #
+    #     cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
+    #     cmd += ['--recursive', '--exclude', "*", '--include', include]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     uu.print_log("Creating vrt of MODIS files...")
+    #
+    #     vrt_name = "global_vrt_{}.vrt".format(year)
+    #
+    #     # Builds list of vrt files
+    #     with open('vrt_files.txt', 'w') as vrt_files:
+    #         vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
+    #         for tif in vrt_tifs:
+    #             vrt_files.write(tif + "\n")
+    #
+    #     # Creates vrt with wgs84 MODIS tiles.
+    #     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     uu.print_log("Reprojecting vrt...")
+    #
+    #     # Builds new vrt and virtually project it
+    #     # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
+    #     # so I'm leaving it like that.
+    #     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
+    #     cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite',
+    #            vrt_name, vrt_wgs84]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     # Creates a list of lists, with year and tile id to send to multi processor
+    #     tile_year_list = []
+    #     for tile_id in tile_id_list:
+    #         tile_year_list.append([tile_id, year])
+    #
+    #     # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
+    #     # the global vrt has pixels representing burned or not. This process clips the global VRT
+    #     # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
+    #     # year burned and NoData.
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(processes=count-5)
+    #     pool.map(clip_year_tiles.clip_year_tiles, tile_year_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #     # # For single processor use
+    #     # for tile_year in tile_year_list:
+    #     #     clip_year_tiles.clip_year_tiles(tile_year)
+    #
+    #     uu.print_log("Processing for {} done. Moving to next year.".format(year))
+
+    # Step 4:
+    # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
+
+    uu.s3_folder_download(cn.loss_dir, '.', 'std')
+
+    uu.print_log("Extracting burn year data that coincides with tree cover loss...")
+
+    count = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=count - 10)
+    pool.map(hansen_burnyear_final.hansen_burnyear, tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     hansen_burnyear.hansen_burnyear(tile_id)
+    #     hansen_burnyear_final.hansen_burnyear(tile_id)
 
 
 

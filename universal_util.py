@@ -525,22 +525,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
 
 
-    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine
-    # needs to be handled separately.
-    if pattern == '':
-
-        local_tile_count = 0
-
-        all_local_tiles = glob.glob('*tif')
-
-        for tile in all_local_tiles:
-
-            # Loss tiles are 12 characters long (just [tile_id].tif). Only tiles with that length name are counted.
-            # Using regex to identify the loss tiles would be better but I couldn't get that to work.
-            if len(tile) == 12:
-                local_tile_count = local_tile_count + 1
-
-
     print_log("There are", local_tile_count, "tiles on the spot machine with the pattern", pattern)
 
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
