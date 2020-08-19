@@ -170,7 +170,7 @@ def mp_burn_year(tile_id_list, run_date = None):
     # Step 4:
     # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
 
-    uu.s3_folder_download(cn.loss_dir, '.', 'std')
+    uu.s3_folder_download(cn.loss_dir, '.', 'std', cn.pattern_loss)
 
     uu.print_log("Extracting burn year data that coincides with tree cover loss...")
 

@@ -519,7 +519,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     # Special cases are below.
     local_tile_count = len(glob.glob('*{}.tif'.format(pattern)))
 
-    # For tile types that have the tild_id after the pattern
+    # For tile types that have the tile_id after the pattern
     if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_loss, cn.pattern_pixel_area]:
 
         local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
