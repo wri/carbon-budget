@@ -87,15 +87,15 @@ def hansen_burnyear(tile_id):
     else:
         uu.print_log("  Data found in {}. Adding metadata tags...".format(tile_id))
 
-        with rasterio.open(out_tile_no_tag, 'r') as src:
-
-            profile = src.profile
-
-        with rasterio.open(out_tile_no_tag, 'w', **profile) as dst:
-
-            dst.update_tags(units='year (2001, 2002, 2003...)',
-                            source='MODIS collection 6 burned area',
-                            extent='global')
+        # with rasterio.open(out_tile_no_tag, 'r') as src:
+        #
+        #     profile = src.profile
+        #
+        # with rasterio.open(out_tile_no_tag, 'w', **profile) as dst:
+        #
+        #     dst.update_tags(units='year (2001, 2002, 2003...)',
+        #                     source='MODIS collection 6 burned area',
+        #                     extent='global')
 
 
         # All of the below is to add metadata tags to the output burn year masks.
@@ -105,46 +105,44 @@ def hansen_burnyear(tile_id):
         # metadata tags are added. I'm sure there's an easier way to do this but I couldn't figure out how.
         # I know it's very convoluted but I really couldn't figure out how to add the tags without erasing the data.
 
-        # uu.print_log("  Adding metadata tags to", tile_id)
+        copyfile(out_tile_no_tag, out_tile)
 
-        # copyfile(out_tile_no_tag, out_tile)
+        with rasterio.open(out_tile_no_tag) as out_tile_no_tag_src:
 
-        # with rasterio.open(out_tile_no_tag) as out_tile_no_tag_src:
+            # Grabs metadata about the tif, like its location/projection/cellsize
+            kwargs = out_tile_no_tag_src.meta  #### Use profile instead
 
-        #     # Grabs metadata about the tif, like its location/projection/cellsize
-        #     kwargs = out_tile_no_tag_src.meta  #### Use profile instead
-        #
-        #     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-        #     windows = out_tile_no_tag_src.block_windows(1)
-        #
-        #     # Updates kwargs for the output dataset
-        #     kwargs.update(
-        #         driver='GTiff',
-        #         count=1,
-        #         compress='lzw',
-        #         nodata=0
-        #     )
-        #
-        #     out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
-        #
-        #     # Adds metadata tags to the output raster
-        #     uu.add_rasterio_tags(out_tile_tagged, 'std')
-        #     out_tile_tagged.update_tags(
-        #         units='year (2001, 2002, 2003...)')
-        #     out_tile_tagged.update_tags(
-        #         source='MODIS collection 6 burned area')
-        #     out_tile_tagged.update_tags(
-        #         extent='global')
-        #
-        #     # Iterates across the windows (1 pixel strips) of the input tile
-        #     for idx, window in windows:
-        #         in_window = out_tile_no_tag_src.read(1, window=window)
-        #
-        #         # Writes the output window to the output
-        #         out_tile_tagged.write_band(1, in_window, window=window)
-        #
-        # # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
-        # os.remove(out_tile_no_tag)
+            # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+            windows = out_tile_no_tag_src.block_windows(1)
+
+            # Updates kwargs for the output dataset
+            kwargs.update(
+                driver='GTiff',
+                count=1,
+                compress='lzw',
+                nodata=0
+            )
+
+            out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
+
+            # Adds metadata tags to the output raster
+            uu.add_rasterio_tags(out_tile_tagged, 'std')
+            out_tile_tagged.update_tags(
+                units='year (2001, 2002, 2003...)')
+            out_tile_tagged.update_tags(
+                source='MODIS collection 6 burned area')
+            out_tile_tagged.update_tags(
+                extent='global')
+
+            # Iterates across the windows (1 pixel strips) of the input tile
+            for idx, window in windows:
+                in_window = out_tile_no_tag_src.read(1, window=window)
+
+                # Writes the output window to the output
+                out_tile_tagged.write_band(1, in_window, window=window)
+
+        # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
+        os.remove(out_tile_no_tag)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_burn_year)

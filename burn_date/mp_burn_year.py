@@ -181,8 +181,8 @@ def mp_burn_year(tile_id_list, run_date = None):
     # Downloads the 10x10 deg burn year tiles (1 for each year in which there was burned areaa), stack and evaluate
     # to return burn year values on hansen loss pixels within 1 year of loss date
     if cn.count == 96:
-        processes = 6
-        # 6 processors = XXX GB peak (1 processor can use up to 130 GB of memory)
+        processes = 5
+        # 6 processors = >750 GB peak (1 processor can use up to 130 GB of memory)
     else:
         processes = 1
     pool = multiprocessing.Pool(processes)
