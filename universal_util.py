@@ -441,7 +441,7 @@ def count_tiles_s3(source, pattern=None):
                         file_list.append(tile_id)
 
             # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
