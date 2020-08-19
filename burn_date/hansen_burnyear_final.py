@@ -66,6 +66,7 @@ def hansen_burnyear(tile_id):
 
     if empty:
         uu.print_log("  No data found. Not copying {}.".format(tile_id))
+        return
 
     else:
         uu.print_log("  Data found in {}. Adding metadata tags and copying tile to s3...".format(tile_id))
@@ -118,9 +119,9 @@ def hansen_burnyear(tile_id):
         # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
         os.remove(out_tile_no_tag)
 
-        cmd = ['aws', 's3', 'cp', '{0}{1}'.format(cn.docker_base_dir, out_tile), cn.burn_year_dir]
-        uu.log_subprocess_output_full(cmd)
-        uu.print_log("    Tile copied to s3")
+    cmd = ['aws', 's3', 'cp', '{0}{1}'.format(cn.docker_base_dir, out_tile), cn.burn_year_dir]
+    uu.log_subprocess_output_full(cmd)
+    uu.print_log("    Tile copied to s3")
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_burn_year)
