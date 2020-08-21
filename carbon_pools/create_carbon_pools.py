@@ -529,8 +529,8 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             litter_masked = agb_masked_5 * 0.04 * cn.biomass_to_c_non_mangrove_litter
             litter_2000_output = litter_2000_output + litter_masked.filled(0)
 
-            deadwood_2000_output.astype('float32')
-            litter_2000_output.astype('float32')
+            deadwood_2000_output = deadwood_2000_output.astype('float32')
+            litter_2000_output = litter_2000_output.astype('float32')
 
         # Replaces non-mangrove deadwood and litter with special mangrove deadwood and litter values if there is mangrove
         if os.path.exists(mangrove_biomass_2000):
