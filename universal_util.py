@@ -899,7 +899,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
             print_log("Hansen loss tile exists for {}. Using that as template for blank tile.".format(tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}/{1}.tif'.format(folder, tile_id)]
+                   '{0}/{1}_{2}.tif'.format(folder, cn.pattern_loss, tile_id)]
             check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine
