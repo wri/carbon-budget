@@ -259,26 +259,33 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     uu.upload_final_set(output_dir_list[8], output_pattern_list[8])  # deadwood
     #     uu.upload_final_set(output_dir_list[9], output_pattern_list[9])  # litter
     # uu.check_storage()
-
-    uu.print_log(":::::Freeing up memory for soil and total carbon creation deleting unneeded tiles")
-    tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
-    uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-
-    for tile_to_delete in tiles_to_delete:
-        os.remove(tile_to_delete)
-    uu.print_log(":::::Deleted unneeded tiles")
-    uu.check_storage()
+    #
+    # uu.print_log(":::::Freeing up memory for soil and total carbon creation deleting unneeded tiles")
+    # tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
+    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
+    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
+    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
+    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
+    # uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    #
+    # for tile_to_delete in tiles_to_delete:
+    #     os.remove(tile_to_delete)
+    # uu.print_log(":::::Deleted unneeded tiles")
+    # uu.check_storage()
 
 
     if 'loss' in carbon_pool_extent:
 
         uu.print_log("Creating tiles of soil carbon in loss extent")
-        pattern = output_pattern_list[4]
+
+        # If pools in 2000 weren't generated, soil carbon in emissions extent is 4.
+        # If pools in 2000 were generated, soil carbon in emissions extent is 10.
+        if '2000' not in carbon_pool_extent:
+            pattern = output_pattern_list[4]
+        else:
+            pattern = output_pattern_list[10]
+
         if cn.count == 96:
             processes = 32  # 16 processors = 250 GB peak; 32 = XXX GB peak
         else:
