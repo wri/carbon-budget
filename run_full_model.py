@@ -428,6 +428,7 @@ def main ():
 
         uu.print_log(":::::Freeing up memory for gross emissions creation by deleting unneeded tiles")
         tiles_to_delete = []
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_2000)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_deadwood_2000)))
