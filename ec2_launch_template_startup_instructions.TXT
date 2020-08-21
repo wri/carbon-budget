@@ -41,7 +41,8 @@ docker-compose --version
 cd /home/ec2-user
 git clone https://github.com/wri/carbon-budget
 cd carbon-budget
-git checkout docker
+
+cd /home/ec2-user/carbon-budget/
 
 #######################################
 # Starts the docker service
@@ -55,9 +56,6 @@ sudo service docker start
 cd /
 sudo chown -R ec2-user: .
 
-######################################
 # Replaces htop config file with my preferred configuration
-######################################
 mkdir -p /home/ec2-user/.config/htop/
 cp /home/ec2-user/carbon-budget/htoprc /home/ec2-user/.config/htop/htoprc
-cd /home/ec2-user/carbon-budget/
