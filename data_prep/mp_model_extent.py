@@ -44,15 +44,6 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
                     cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
 
-    # # Adds the correct loss tile to the download dictionary depending on the model run
-    # if sensit_type == 'legal_Amazon_loss':
-    #     download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
-    # elif sensit_type == 'Mekong_loss':
-    #     download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
-    # else:
-    #     download_dict[cn.loss_dir] = ['']
-
-
     # List of output directories and output file name patterns
     output_dir_list = [cn.model_extent_dir]
     output_pattern_list = [cn.pattern_model_extent]
@@ -92,7 +83,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
         processes = 26
     uu.print_log('Removal model forest extent processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(model_extent_forest_type.model_extent_forest_type, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(model_extent.model_extent, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 

@@ -1,23 +1,23 @@
 '''
-This script creates carbon pools.
+This script creates carbon emitted_pools.
 For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
-carbon pools (soil is created in a separate script but is brought in to create total carbon). All but total carbon are to the extent
+carbon emitted_pools (soil is created in a separate script but is brought in to create total carbon). All but total carbon are to the extent
 of WHRC and mangrove biomass 2000, while total carbon is to the extent of WHRC AGB, mangrove AGB, and soil C.
 
-It also creates carbon pools for the year of loss/emissions-- only for pixels that had loss that are within the model.
+It also creates carbon emitted_pools for the year of loss/emissions-- only for pixels that had loss that are within the model.
 To do this, it adds CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
 until loss. (For Hansen loss+gain pixels, only the portion of C that is accumulated before loss is included in the
-lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon pools depend on
-carbon removals, any time the removals model changes, the emissions year carbon pools need to be regenerated.
+lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon emitted_pools depend on
+carbon removals, any time the removals model changes, the emissions year carbon emitted_pools need to be regenerated.
 
-The carbon pools in 2000 are not used for the flux model at all; they are purely for illustrative purposes. Only the
-emissions year pools are used for the model.
-Hence, if the flux model is updated to a new year the carbon pools is loss years need to be updated but the carbon
-pools in 2000 only need to be updated if mangrove AGB, WHRC AGB, or soil C are updated.
+The carbon emitted_pools in 2000 are not used for the flux model at all; they are purely for illustrative purposes. Only the
+emissions year emitted_pools are used for the model.
+Hence, if the flux model is updated to a new year the carbon emitted_pools is loss years need to be updated but the carbon
+emitted_pools in 2000 only need to be updated if mangrove AGB, WHRC AGB, or soil C are updated.
 
-Which carbon pools are being generated (2000 and/or loss pixels) is controlled through the command line argument --carbon-pool-extent (-ce).
-This extent argument determines which AGC function is used and how the outputs of the other pools' scripts are named.
-Carbon pools in both 2000 and in the year of loss can be created in a single run by using '2000,loss' or 'loss,2000'.
+Which carbon emitted_pools are being generated (2000 and/or loss pixels) is controlled through the command line argument --carbon-pool-extent (-ce).
+This extent argument determines which AGC function is used and how the outputs of the other emitted_pools' scripts are named.
+Carbon emitted_pools in both 2000 and in the year of loss can be created in a single run by using '2000,loss' or 'loss,2000'.
 '''
 
 import multiprocessing
@@ -57,7 +57,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     output_dir_list = []
     output_pattern_list = []
 
-    # Output files and patterns and files to download if carbon pools for loss year are being generated
+    # Output files and patterns and files to download if carbon emitted_pools for loss year are being generated
     if 'loss' in carbon_pool_extent:
 
         # List of output directories and output file name patterns
@@ -95,7 +95,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             download_dict[cn.loss_dir] = [cn.pattern_loss]
 
 
-    # Output files and patterns and files to download if carbon pools for 2000 are being generated
+    # Output files and patterns and files to download if carbon emitted_pools for 2000 are being generated
     if '2000' in carbon_pool_extent:
 
         # List of output directories and output file name patterns
@@ -204,7 +204,6 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.check_storage()
 
 
-
     uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
     # Creates a single filename pattern to pass to the multiprocessor call
     if cn.count == 96:
@@ -260,19 +259,19 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.upload_final_set(output_dir_list[9], output_pattern_list[9])  # litter
     uu.check_storage()
 
-    # uu.print_log(":::::Freeing up memory for soil and total carbon creation deleting unneeded tiles")
-    # tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
-    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
-    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
-    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
-    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
-    # uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-    #
-    # for tile_to_delete in tiles_to_delete:
-    #     os.remove(tile_to_delete)
-    # uu.print_log(":::::Deleted unneeded tiles")
-    # uu.check_storage()
+    uu.print_log(":::::Freeing up memory for soil and total carbon creation deleting unneeded tiles")
+    tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
+    uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+    for tile_to_delete in tiles_to_delete:
+        os.remove(tile_to_delete)
+    uu.print_log(":::::Deleted unneeded tiles")
+    uu.check_storage()
 
 
     if 'loss' in carbon_pool_extent:
@@ -340,13 +339,13 @@ if __name__ == '__main__':
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--carbon_pool_extent', '-ce', required=True,
-                        help='Extent over which carbon pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
+                        help='Extent over which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
-    carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
+    carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
     run_date = args.run_date
 
     # Create the output log

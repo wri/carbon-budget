@@ -1,7 +1,8 @@
 '''
-Creates tiles of annual aboveground and belowground biomass gain rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
+Creates tiles of annual aboveground and belowground biomass removal rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
 Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC mangrove
 gain rate table.
+Also creates tiles of standard deviation in mangrove aboveground biomass removal rates based on the 95% CI in IPCC Wetlands Supplement Table 4.4.
 '''
 
 import multiprocessing
@@ -38,14 +39,13 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
     download_dict = {
         cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+        cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGB_mangrove, cn.pattern_annual_gain_BGB_mangrove]
+    output_dir_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir, cn.stdev_annual_gain_AGB_mangrove_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGB_mangrove, cn.pattern_annual_gain_BGB_mangrove, cn.pattern_stdev_annual_gain_AGB_mangrove]
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
@@ -62,11 +62,10 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+    uu.log_subprocess_output_full(cmd)
 
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+
+    ### To make the removal factor dictionaries
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
@@ -85,10 +84,10 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # Applies the belowground:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to get
     # a column of belowground annual gain rates by mangrove type
     gain_table_simplified['BGB_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
-    gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.AGB_gain_tons_yr * gain_table_simplified.BGB_AGB_ratio
+    gain_table_simplified['BGB_annual_rate'] = gain_table_simplified.AGB_gain_tons_ha_yr * gain_table_simplified.BGB_AGB_ratio
 
     # Converts the continent-ecozone codes and corresponding gain rates to dictionaries for aboveground and belowground gain rates
-    gain_above_dict = pd.Series(gain_table_simplified.AGB_gain_tons_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
+    gain_above_dict = pd.Series(gain_table_simplified.AGB_gain_tons_ha_yr.values,index=gain_table_simplified.gainEcoCon).to_dict()
     gain_below_dict = pd.Series(gain_table_simplified.BGB_annual_rate.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
     # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
@@ -98,6 +97,26 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # Converts all the keys (continent-ecozone codes) to float type
     gain_above_dict = {float(key): value for key, value in gain_above_dict.items()}
     gain_below_dict = {float(key): value for key, value in gain_below_dict.items()}
+
+
+    ### To make the removal factor standard deviation dictionary
+
+    # Imports the table with the ecozone-continent codes and the carbon gain rates
+    stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
+                               sheet_name = "mangrove stdev, for model")
+
+    # Removes rows with duplicate codes (N. and S. America for the same ecozone)
+    stdev_table_simplified = stdev_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+    # Converts the continent-ecozone codes and corresponding gain rate standard deviations to dictionaries for aboveground and belowground gain rate stdevs
+    stdev_dict = pd.Series(stdev_table_simplified.AGB_gain_stdev_tons_ha_yr.values,index=stdev_table_simplified.gainEcoCon).to_dict()
+
+    # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)
+    stdev_dict[0] = 0
+
+    # Converts all the keys (continent-ecozone codes) to float type
+    stdev_dict = {float(key): value for key, value in stdev_dict.items()}
+
 
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
@@ -109,7 +128,7 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     uu.print_log('Mangrove annual gain rate max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, sensit_type=sensit_type, output_pattern_list=output_pattern_list,
-                     gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict), tile_id_list)
+                     gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict, stdev_dict=stdev_dict), tile_id_list)
     pool.close()
     pool.join()
 
@@ -117,7 +136,7 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # for tile in tile_id_list:
     #
     #     annual_gain_rate_mangrove.annual_gain_rate(tile, sensit_type, output_pattern_list,
-    #           gain_above_dict, gain_below_dict)
+    #           gain_above_dict, gain_below_dict, stdev_dict)
 
 
     for i in range(0, len(output_dir_list)):

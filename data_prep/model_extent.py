@@ -1,5 +1,3 @@
-
-
 import datetime
 import numpy as np
 import os
@@ -12,7 +10,10 @@ import universal_util as uu
 
 def model_extent(tile_id, pattern, sensit_type):
 
-    uu.print_log("Delineating removal model extent:", tile_id)
+    # I don't know why, but this needs to be here and not just in mp_model_extent
+    os.chdir(cn.docker_base_dir)
+
+    uu.print_log("Delineating model extent:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -23,6 +24,8 @@ def model_extent(tile_id, pattern, sensit_type):
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     pre_2000_plantations = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+
+    out_tile = '{0}_{1}.tif'.format(tile_id, pattern)
 
     # Opens biomass tile
     with rasterio.open(tcd) as tcd_src:
@@ -68,7 +71,7 @@ def model_extent(tile_id, pattern, sensit_type):
 
 
         # Opens the output tile, giving it the metadata of the input tiles
-        dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
+        dst = rasterio.open(out_tile, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(dst, sensit_type)
@@ -77,7 +80,7 @@ def model_extent(tile_id, pattern, sensit_type):
         dst.update_tags(
             source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
         dst.update_tags(
-            extent='Full model extent. This defines the extent of the model.')
+            extent='Full model extent. This defines which pixels are included in the model.')
 
 
         uu.print_log("  Creating model extent for {}".format(tile_id))

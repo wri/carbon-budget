@@ -21,7 +21,7 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
     # Pixel area tiles-- necessary for calculating values per pixel
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, 'std', tile_id_list)
 
-    # Files to download for this script
+    # Files to download for this script. Unusually, this script needs the output pattern in the dictionary as well!
     download_dict = {
         cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel],
@@ -80,13 +80,13 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
         uu.print_log("Creating {0} with {1} processors...".format(output_pattern, processes))
         pool = multiprocessing.Pool(processes)
         pool.map(partial(output_per_pixel.output_per_pixel, input_pattern=input_pattern,
-                         output_pattern=output_pattern), tile_id_list)
+                         output_pattern=output_pattern, sensit_type=sensit_type), tile_id_list)
         pool.close()
         pool.join()
 
         # # For single processor use
         # for tile_id in tile_id_list:
-        #     output_per_pixel.output_per_pixel(tile_id, input_pattern, output_pattern)
+        #     output_per_pixel.output_per_pixel(tile_id, input_pattern, output_pattern, sensit_type)
 
 
     # Uploads output tiles to s3

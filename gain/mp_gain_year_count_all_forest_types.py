@@ -65,90 +65,89 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-
+    # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # # Creates gain year count tiles using only pixels that had only loss
-    # # count/3 maxes out at about 300 GB
-    # if cn.count == 96:
-    #     processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log('Planted forest gain year count loss only pixels max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_only, tile_id_list)
+    # Creates gain year count tiles using only pixels that had only loss
+    # count/3 maxes out at about 300 GB
+    if cn.count == 96:
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Planted forest gain year count loss only pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_only, tile_id_list)
+
+    if cn.count == 96:
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Planted forest gain year count gain only pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    if sensit_type == 'maxgain':
+        # Creates gain year count tiles using only pixels that had only gain
+        pool.map(gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain, tile_id_list)
+    else:
+        # Creates gain year count tiles using only pixels that had only gain
+        pool.map(gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard, tile_id_list)
+
+    # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
+    if cn.count == 96:
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Planted forest gain year count no change pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(gain_year_count_all_forest_types.create_gain_year_count_no_change, tile_id_list)
+
+    if cn.count == 96:
+        processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Planted forest gain year count loss & gain pixels max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    if sensit_type == 'maxgain':
+        # Creates gain year count tiles using only pixels that had only gain
+        pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain, tile_id_list)
+    else:
+        # Creates gain year count tiles using only pixels that had only gain
+        pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard, tile_id_list)
+
+    # Combines the four above gain year count tiles for each Hansen tile into a single output tile
+    if cn.count == 96:
+        processes = 28   # 28 processors = XXX GB peak
+    if cn.count < 4:
+        processes = 1
+    else:
+        processes = int(cn.count/4)
+    uu.print_log('Planted forest gain year count gain merge all combos max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_merge, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
+
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     gain_year_count_all_forest_types.create_gain_year_count_loss_only(tile_id)
     #
-    # if cn.count == 96:
-    #     processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log('Planted forest gain year count gain only pixels max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # if sensit_type == 'maxgain':
-    #     # Creates gain year count tiles using only pixels that had only gain
-    #     pool.map(gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain, tile_id_list)
-    # else:
-    #     # Creates gain year count tiles using only pixels that had only gain
-    #     pool.map(gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard, tile_id_list)
+    # for tile_id in tile_id_list:
+    #     if sensit_type == 'maxgain':
+    #         gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain(tile_id)
+    #     else:
+    #         gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard(tile_id)
     #
-    # # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
-    # if cn.count == 96:
-    #     processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log('Planted forest gain year count no change pixels max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(gain_year_count_all_forest_types.create_gain_year_count_no_change, tile_id_list)
+    # for tile_id in tile_id_list:
+    #     gain_year_count_all_forest_types.create_gain_year_count_no_change(tile_id)
     #
-    # if cn.count == 96:
-    #     processes = 66   # 48 processors = 580 GB peak; 62 = 660 GB peak; 66 = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log('Planted forest gain year count loss & gain pixels max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # if sensit_type == 'maxgain':
-    #     # Creates gain year count tiles using only pixels that had only gain
-    #     pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain, tile_id_list)
-    # else:
-    #     # Creates gain year count tiles using only pixels that had only gain
-    #     pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard, tile_id_list)
+    # for tile_id in tile_id_list:
+    #     if sensit_type == 'maxgain':
+    #         gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+    #     else:
+    #         gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard(tile_id)
     #
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[0]
-    #
-    # # Combines the four above gain year count tiles for each Hansen tile into a single output tile
-    # if cn.count == 96:
-    #     processes = 28   # 28 processors = XXX GB peak
-    # else:
-    #     processes = int(cn.count/4)
-    # uu.print_log('Planted forest gain year count gain merge all combos max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_merge, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
-
-
-    # For single processor use
-    for tile_id in tile_id_list:
-        gain_year_count_all_forest_types.create_gain_year_count_loss_only(tile_id)
-
-    for tile_id in tile_id_list:
-        if sensit_type == 'maxgain':
-            gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain(tile_id)
-        else:
-            gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard(tile_id)
-
-    for tile_id in tile_id_list:
-        gain_year_count_all_forest_types.create_gain_year_count_no_change(tile_id)
-
-    for tile_id in tile_id_list:
-        if sensit_type == 'maxgain':
-            gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain(tile_id)
-        else:
-            gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard(tile_id)
-
-    for tile_id in tile_id_list:
-        gain_year_count_all_forest_types.create_gain_year_count_merge(tile_id, pattern, sensit_type)
+    # for tile_id in tile_id_list:
+    #     gain_year_count_all_forest_types.create_gain_year_count_merge(tile_id, pattern, sensit_type)
 
 
     # Intermediate output tiles for checking outputs

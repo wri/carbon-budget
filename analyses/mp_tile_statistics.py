@@ -24,7 +24,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                'percentile75', 'percentile90', 'min', 'max', 'sum']
     header_no_brackets = ', '.join(headers)
 
-    tile_stats = '{0}_{1}_{2}'.format(uu.date_today, sensit_type, cn.tile_stats_pattern)
+    tile_stats = '{0}_{1}_{2}'.format(uu.date_time_today, sensit_type, cn.tile_stats_pattern)
 
     # Creates the output text file with the column names
     with open(tile_stats, 'w+') as f:

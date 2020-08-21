@@ -553,12 +553,12 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
 
 
-    # Creates carbon pools in loss year
+    # Creates carbon emitted_pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        uu.print_log('Creating emissions year carbon pools')
+        uu.print_log('Creating emissions year carbon emitted_pools')
 
-        # Specifies that carbon pools are created for loss year rather than in 2000
+        # Specifies that carbon emitted_pools are created for loss year rather than in 2000
         extent = 'loss'
 
 

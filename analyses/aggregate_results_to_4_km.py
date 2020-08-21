@@ -103,7 +103,7 @@ def rewindow(tile):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile, thresh):
+def aggregate(tile, thresh, sensit_type):
 
     # start time
     start = datetime.datetime.now()
@@ -154,7 +154,7 @@ def aggregate(tile, thresh):
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
-    # Converts the annual biomass gain values annual gain in megatonnes and makes negative (because removals are negative)
+    # Converts the annual carbon gain values annual gain in megatonnes and makes negative (because removals are negative)
     if cn.pattern_annual_gain_AGC_all_types in tile_type:
         sum_array = sum_array / cn.tonnes_to_megatonnes * -1
 
@@ -162,20 +162,20 @@ def aggregate(tile, thresh):
     if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
-    # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
-    if cn.pattern_net_flux in tile_type:
+    # Converts the cumulative gross emissions CO2 only values to annualized gross emissions CO2e in megatonnes
+    if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+        sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
+
+    # Converts the cumulative gross emissions non-CO2 values to annualized gross emissions CO2e in megatonnes
+    if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
-    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
-        sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
-
-    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+    # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
+    if cn.pattern_net_flux in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     uu.print_log("  Creating aggregated tile for {}...".format(tile))
@@ -183,15 +183,47 @@ def aggregate(tile, thresh):
     # Converts array to the same output type as the raster that is created below
     sum_array = np.float32(sum_array)
 
-    # Creates a tile at 0.1x0.1 degree resolution (approximately 10x10 km in the tropics) where the values are
+    # Creates a tile at 0.04x0.04 degree resolution (approximately 10x10 km in the tropics) where the values are
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
-    aggregated = rasterio.open("{0}_{1}_0_4deg.tif".format(tile_id, tile_type), 'w',
+    with rasterio.open("{0}_{1}_0_4deg.tif".format(tile_id, tile_type), 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
                                 height=250, width=250,
-                                crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04))
-    aggregated.write(sum_array,1)
-    aggregated.close()
+                                crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04)) as aggregated:
+        uu.add_rasterio_tags(aggregated, sensit_type)
+        if cn.pattern_annual_gain_AGC_all_types in tile_type:
+            aggregated.update_tags(units='Mg aboveground carbon/pixel, where pixels are 0.04x0.04 degrees)',
+                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                            extent='Global',
+                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
+            aggregated.update_tags(units='Mg CO2/yr/pixel, where pixels are 0.04x0.04 degrees)',
+                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                            extent='Global',
+                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                            extent='Global', gases_included='CO2 only',
+                            treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                            extent='Global', gases_included='CH4, N20',
+                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
+            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                            extent='Global',
+                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        if cn.pattern_net_flux in tile_type:
+            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+                            scale='Negative values are net sinks. Positive values are net sources.',
+                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                            extent='Global',
+                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        aggregated.write(sum_array, 1)
+
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, '{}_0_4deg'.format(tile_type))
@@ -219,10 +251,7 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
     cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
            '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)
@@ -250,6 +279,15 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
         # Creates the sign change raster
         dst = rasterio.open('{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_sign_change, sensit_type, date_formatted), 'w', **kwargs)
+
+        # Adds metadata tags to the output raster
+        uu.add_rasterio_tags(dst, sensit_type)
+        dst.update_tags(
+            key='1=stays net source. 2=stays net sink. 3=changes from net source to net sink. 4=changes from net sink to net source.')
+        dst.update_tags(
+            source='Comparison of net flux at 0.04x0.04 degrees from standard model to net flux from {} sensitivity analysis'.format(sensit_type))
+        dst.update_tags(
+            extent='Global')
 
         # Iterates through the windows in the standard net flux output
         for idx, window in windows:

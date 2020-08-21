@@ -125,10 +125,10 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None):
     pool.close()
     pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
-
-        forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #
+    #     forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

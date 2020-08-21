@@ -61,8 +61,13 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
     # so that it has all the necessary input tiles
-    # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon pools
+    # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
     folder = os.getcwd()
+
+    # textfile that stores the names of the blank tiles that are created for processing.
+    # This will be iterated through to delete the tiles at the end of the script.
+    uu.create_blank_tile_txt()
+
     for download_dir, download_pattern in download_dict.items():
 
         # Renames the tiles according to the sensitivity analysis before creating dummy tiles.

@@ -10,7 +10,7 @@ import universal_util as uu
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
 
-def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list):
+def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, output_pattern_list):
 
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
@@ -31,8 +31,9 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     # Names of the output natural forest gain rate tiles (above and belowground)
     AGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     BGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
+    AGB_IPCC_default_gain_stdev = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
 
-    uu.print_log("  Reading input files and creating aboveground biomass gain rates for {}".format(tile_id))
+    uu.print_log("  Creating IPCC default biomass gain rates and standard deviation for {}".format(tile_id))
 
     # Opens the continent-ecozone and natural forest age category tiles
     cont_eco_src = rasterio.open(cont_eco)
@@ -57,7 +58,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
     # The output files, aboveground and belowground biomass gain rates
     dst_above = rasterio.open(AGB_IPCC_default_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+    uu.add_rasterio_tags(dst_above, sensit_type)
     dst_above.update_tags(
         units='megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_above.update_tags(
@@ -67,13 +68,23 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
 
     dst_below = rasterio.open(BGB_IPCC_default_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
-    dst_above.update_tags(
-        units='megagrams belowground biomass (ABB or dry matter)/ha/yr')
-    dst_above.update_tags(
+    uu.add_rasterio_tags(dst_below, sensit_type)
+    dst_below.update_tags(
+        units='megagrams belowground biomass (AGB or dry matter)/ha/yr')
+    dst_below.update_tags(
         source='IPCC Guidelines 2019 refinement, forest section, Table 4.9')
-    dst_above.update_tags(
+    dst_below.update_tags(
         extent='Full model extent, even though these rates will not be used over the full model extent')
+
+    dst_stdev_above = rasterio.open(AGB_IPCC_default_gain_stdev, 'w', **kwargs)
+    # Adds metadata tags to the output raster
+    uu.add_rasterio_tags(dst_stdev_above, sensit_type)
+    dst_stdev_above.update_tags(
+        units='standard deviation, in terms of megagrams aboveground biomass (AGB or dry matter)/ha/yr')
+    dst_stdev_above.update_tags(
+        source='IPCC Guidelines 2019 refinement, forest section, Table 4.9')
+    dst_stdev_above.update_tags(
+        extent='Full model extent, even though these standard deviations will not be used over the full model extent')
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -88,6 +99,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
         # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
         cont_eco_age = cont_eco + age_recode
 
+        ## Aboveground removal factors
         # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
         gain_rate_AGB = cont_eco_age.astype('float32')
 
@@ -99,12 +111,24 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, output_pattern_list)
         # Writes the output window to the output file
         dst_above.write_band(1, gain_rate_AGB, window=window)
 
+        ## Belowground removal factors
         # Calculates belowground annual removal rates
         gain_rate_BGB = gain_rate_AGB * cn.below_to_above_non_mang
 
         # Writes the output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
 
+        ## Aboveground removal factor standard deviation
+        # Converts the continent-ecozone array to float so that the values can be replaced with fractional standard deviations
+        gain_stdev_AGB = cont_eco_age.astype('float32')
+
+        # Applies the dictionary of continent-ecozone-age gain rate standard deviations to the continent-ecozone-age array to
+        # get annual gain rate standard deviations (metric tons aboveground biomass/yr) for each pixel
+        for key, value in stdev_table_dict.items():
+            gain_stdev_AGB[gain_stdev_AGB == key] = value
+
+        # Writes the output window to the output file
+        dst_stdev_above.write_band(1, gain_stdev_AGB, window=window)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])

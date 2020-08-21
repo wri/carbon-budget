@@ -8,7 +8,8 @@ import datetime
 ########     ########
 
 # Model version
-version = 'v1.2.0'
+version = '1.2.0'
+version_filename = version.replace('.', '_')
 
 
 # Number of processors on the machine being used
@@ -83,7 +84,7 @@ docker_app = '/usr/local/app'
 start = datetime.datetime.now()
 date = datetime.datetime.now()
 date_formatted = date.strftime("%Y_%m_%d__%H_%M_%S")
-model_log_dir = os.path.join(s3_base_dir, 'model_logs/{}/'.format(version))
+model_log_dir = os.path.join(s3_base_dir, 'model_logs/v{}/'.format(version))
 model_log = "flux_model_log_{}.txt".format(date_formatted)
 
 
@@ -135,7 +136,7 @@ pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Spreadsheet with annual gain rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200427.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2015)
@@ -328,28 +329,32 @@ annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain
 ### Annual biomass gain rates
 
 # Annual aboveground biomass gain rate for mangroves
-pattern_annual_gain_AGB_mangrove = 'annual_gain_rate_AGB_t_ha_mangrove'
-annual_gain_AGB_mangrove_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_mangrove/standard/20190904/')
+pattern_annual_gain_AGB_mangrove = 'annual_removal_factor_AGB_Mg_ha_mangrove'
+annual_gain_AGB_mangrove_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGB_mangrove/standard/20190904/')
 
 # Annual belowground biomass gain rate for mangroves
-pattern_annual_gain_BGB_mangrove = 'annual_gain_rate_BGB_t_ha_mangrove'
-annual_gain_BGB_mangrove_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_mangrove/standard/20190904/')
+pattern_annual_gain_BGB_mangrove = 'annual_removal_factor_BGB_Mg_ha_mangrove'
+annual_gain_BGB_mangrove_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGB_mangrove/standard/20190904/')
 
 # Annual aboveground biomass gain rate using IPCC default removal rates
-pattern_annual_gain_AGB_IPCC_defaults = 'annual_gain_rate_AGB_Mg_ha_IPCC_defaults_all_ages'
-annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGB_IPCC_defaults_all_ages/standard/20209999/')
+pattern_annual_gain_AGB_IPCC_defaults = 'annual_removal_factor_AGB_Mg_ha_IPCC_defaults_all_ages'
+annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGB_IPCC_defaults_all_ages/standard/20209999/')
 
 # Annual aboveground biomass gain rate using IPCC default removal rates
-pattern_annual_gain_BGB_IPCC_defaults = 'annual_gain_rate_BGB_Mg_ha_IPCC_defaults_all_ages'
-annual_gain_BGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGB_IPCC_defaults_all_ages/standard/20209999/')
+pattern_annual_gain_BGB_IPCC_defaults = 'annual_removal_factor_BGB_Mg_ha_IPCC_defaults_all_ages'
+annual_gain_BGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGB_IPCC_defaults_all_ages/standard/20209999/')
 
 # Annual aboveground gain rate for all forest types
-pattern_annual_gain_AGC_all_types = 'annual_gain_rate_AGC_Mg_ha_all_forest_types'
-annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_all_forest_types/standard/20200720/')
+pattern_annual_gain_AGC_all_types = 'annual_removal_factor_AGC_Mg_ha_all_forest_types'
+annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_all_forest_types/standard/20200720/')
 
 # Annual belowground gain rate for all forest types
-pattern_annual_gain_BGC_all_types = 'annual_gain_rate_BGC_Mg_ha_all_forest_types'
-annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_gain_rate_BGC_all_forest_types/standard/20200720/')
+pattern_annual_gain_BGC_all_types = 'annual_removal_factor_BGC_Mg_ha_all_forest_types'
+annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGC_all_forest_types/standard/20200720/')
+
+# Annual belowground gain rate for all forest types
+pattern_annual_gain_AGC_BGC_all_types = 'annual_removal_factor_AGC_BGC_Mg_ha_all_forest_types'
+annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_BGC_all_forest_types/standard/20200720/')
 
 
 ### Cumulative carbon dioxide removals
@@ -368,11 +373,11 @@ cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals
 
 
 ######
-### Carbon pools
+### Carbon emitted_pools
 ######
 
 
-### Non-biomass inputs to carbon pools
+### Non-biomass inputs to carbon emitted_pools
 
 # FAO ecozones as boreal/temperate/tropical
 pattern_fao_ecozone_raw = 'fao_ecozones_bor_tem_tro_20180619.zip'
@@ -392,14 +397,14 @@ pattern_elevation = 'elevation'
 elevation_processed_dir = os.path.join(s3_base_dir, 'inputs_for_carbon_pools/processed/elevation/20190418/')
 
 
-### Carbon pools
+### Carbon emitted_pools
 
-# Base directory for all carbon pools
+# Base directory for all carbon emitted_pools
 base_carbon_pool_dir = os.path.join(s3_base_dir, 'carbon_pools/')
 
-## Carbon pools in loss year
+## Carbon emitted_pools in loss year
 
-# Date to include in the output directory for all emissions year carbon pools
+# Date to include in the output directory for all emissions year carbon emitted_pools
 emis_pool_run_date = '20209999'
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
@@ -422,11 +427,11 @@ litter_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'litter_carbon/lo
 pattern_soil_C_emis_year_2000 = 'Mg_soil_C_ha_emis_year_2000'
 soil_C_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'soilaboveground_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
-# All carbon pools combined in loss pixels, with emitted values
+# All carbon emitted_pools combined in loss pixels, with emitted values
 pattern_total_C_emis_year = 'Mg_total_C_ha_emis_year'
 total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
-## Carbon pools in 2000
+## Carbon emitted_pools in 2000
 
 pool_2000_run_date = '20209999'
 
@@ -459,7 +464,7 @@ mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
 soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/standard/20200724/')
 
-# Total carbon (all carbon pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
+# Total carbon (all carbon emitted_pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "Mg_total_C_ha_2000"
 total_C_2000_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/extent_2000/standard/{}/'.format(emis_pool_run_date))
 
@@ -468,39 +473,40 @@ total_C_2000_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/extent_2000/
 ### Gross emissions (directory and pattern names changed in script to soil_only-- no separate variables for those)
 ######
 
-### Emissions from biomass and soil (all carbon pools)
+### Emissions from biomass and soil (all carbon emitted_pools)
 
 # Date to include in the output directory
 emis_run_date_biomass_soil = '20200820'
 
-pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_Mg_CO2e_ha_biomass_soil'
+# pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
+pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_commod_biomass_soil_dir = '{0}gross_emissions/commodities/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_forestry_biomass_soil = 'gross_emis_forestry_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_forestry_biomass_soil = 'gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_forestry_biomass_soil_dir = '{0}gross_emissions/forestry/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_shifting_ag_biomass_soil = 'gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_shifting_ag_biomass_soil = 'gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_shifting_ag_biomass_soil_dir = '{0}gross_emissions/shifting_ag/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_urban_biomass_soil = 'gross_emis_urbanization_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_urban_biomass_soil = 'gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_urban_biomass_soil_dir = '{0}gross_emissions/urbanization/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_wildfire_biomass_soil = 'gross_emis_wildfire_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_wildfire_biomass_soil = 'gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_wildfire_biomass_soil_dir = '{0}gross_emissions/wildfire/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_no_driver_biomass_soil = 'gross_emis_no_driver_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_no_driver_biomass_soil = 'gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_no_driver_biomass_soil_dir = '{0}gross_emissions/no_driver/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_all_gases_all_drivers_biomass_soil = 'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_all_gases_all_drivers_biomass_soil = 'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_all_gases_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/all_gases/biomass_soil/standard/per_hectare/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_co2_only_all_drivers_biomass_soil = 'gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_co2_only_all_drivers_biomass_soil = 'gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_co2_only_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/CO2_only/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_non_co2_all_drivers_biomass_soil = 'gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil'
+pattern_gross_emis_non_co2_all_drivers_biomass_soil = 'gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_non_co2_all_drivers_biomass_soil_dir = '{0}gross_emissions/all_drivers/non_CO2/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
-pattern_gross_emis_nodes_biomass_soil = 'gross_emis_decision_tree_nodes_biomass_soil'
+pattern_gross_emis_nodes_biomass_soil = 'gross_emis_decision_tree_nodes_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
 ### Emissions from soil only
@@ -508,42 +514,42 @@ gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biom
 # Date to include in the output directory
 emis_run_date_soil_only = '20200820'
 
-pattern_gross_emis_commod_soil_only = 'gross_emis_commodity_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_commod_soil_only = 'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_commod_soil_only_dir = '{0}gross_emissions/commodities/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_forestry_soil_only = 'gross_emis_forestry_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_forestry_soil_only = 'gross_emis_forestry_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_forestry_soil_only_dir = '{0}gross_emissions/forestry/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_shifting_ag_soil_only = 'gross_emis_shifting_ag_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_shifting_ag_soil_only = 'gross_emis_shifting_ag_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_shifting_ag_soil_only_dir = '{0}gross_emissions/shifting_ag/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_urban_soil_only = 'gross_emis_urbanization_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_urban_soil_only = 'gross_emis_urbanization_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_urban_soil_only_dir = '{0}gross_emissions/urbanization/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_wildfire_soil_only = 'gross_emis_wildfire_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_wildfire_soil_only = 'gross_emis_wildfire_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_wildfire_soil_only_dir = '{0}gross_emissions/wildfire/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_no_driver_soil_only = 'gross_emis_no_driver_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_no_driver_soil_only = 'gross_emis_no_driver_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_no_driver_soil_only_dir = '{0}gross_emissions/no_driver/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_all_gases_all_drivers_soil_only = 'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_all_gases_all_drivers_soil_only = 'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_all_gases_all_drivers_soil_only_dir = '{0}gross_emissions/all_drivers/all_gases/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_co2_only_all_drivers_soil_only = 'gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_co2_only_all_drivers_soil_only = 'gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_co2_only_all_drivers_soil_only_dir = '{0}gross_emissions/all_drivers/CO2_only/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_non_co2_all_drivers_soil_only = 'gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_soil_only'
+pattern_gross_emis_non_co2_all_drivers_soil_only = 'gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_non_co2_all_drivers_soil_only_dir = '{0}gross_emissions/all_drivers/non_CO2/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
-pattern_gross_emis_nodes_soil_only = 'gross_emis_decision_tree_nodes_soil_only'
+pattern_gross_emis_nodes_soil_only = 'gross_emis_decision_tree_nodes_soil_only_2001_{}'.format(loss_years)
 gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
 
 
 ### Net flux
 ######
 
-# Net emissions for all forest types and all carbon pools
-pattern_net_flux = 'net_flux_Mg_CO2e_ha_2001_{}_biomass_soil'.format(loss_years)
+# Net emissions for all forest types and all carbon emitted_pools
+pattern_net_flux = 'net_flux_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/per_hectare/20191106/')
 
 
@@ -551,24 +557,24 @@ net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/
 ######
 
 # Gross removals per pixel
-pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel = 'cumul_gain_AGCO2_BGCO2_Mg_pixel_all_forest_types_2001_{}'.format(loss_years)
-cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir = os.path.join(s3_base_dir, 'cumulative_gain_AGCO2_BGCO2_all_forest_types/standard/per_pixel/20191017/')
+pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel = 'gross_removals_AGCO2_BGCO2_Mg_pixel_all_forest_types_2001_{}'.format(loss_years)
+cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/per_pixel/20191017/')
 
 # Gross emissions per pixel
-pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel = 'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil'
+pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel = 'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil_2001_{}'.format(loss_years)
 gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/per_pixel/20191107/')
 
 # Net flux per pixel
-pattern_net_flux_per_pixel = 'net_flux_Mg_CO2e_pixel_2001_{}_biomass_soil'.format(loss_years)
+pattern_net_flux_per_pixel = 'net_flux_Mg_CO2e_pixel_biomass_soil_2001_{}'.format(loss_years)
 net_flux_per_pixel_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/per_pixel/20191107/')
 
 
 ### 10x10 km aggregation tiles for mapping
 ######
 
-pattern_aggreg = '0_4deg_modelv1_1_2'
-pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv1_1_2_perc_diff_std_v'
-pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv1_1_2_sign_change_std_v'
+pattern_aggreg = '0_4deg_modelv{}'.format(version_filename)
+pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv{}_perc_diff_std'.format(version_filename)
+pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv{}_sign_change_std'.format(version_filename)
 
 output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20200311/')
 
@@ -577,23 +583,41 @@ output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass
 ### Standard deviation maps
 ######
 
-# Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
+# Standard deviation for annual aboveground biomass removal factors for mangroves
+pattern_stdev_annual_gain_AGB_mangrove = 'annual_removal_factor_stdev_AGB_Mg_ha_mangrove'
+stdev_annual_gain_AGB_mangrove_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGB_mangrove/standard/20209999/')
+
+# Standard deviation for annual aboveground+belowground carbon removal factors for natural European forests (raw)
+name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_removal_factor_stdev_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
+stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
+
+# Standard deviation for annual aboveground+belowground carbon removal factors for natural European forests (processed tiles)
+pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_removal_factor_stdev_AGC_BGC_t_ha_natural_forest_Europe'
+stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
+
+# Standard deviation for annual aboveground+belowground carbon removal factors for planted forests
+pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_planted_forest_unmasked'
+stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/carbon_model/stdev_annual_removal_factor_AGC_BGC_planted_forest_unmasked/standard/20200801/'
+
+# Standard deviation for annual aboveground+belowground carbon gain rate for natural US forests
+pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_stdev_AGC_BGC_t_ha_natural_forest_US'
+stdev_annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_US/processed/standard/20200730/')
+
+# Standard deviation for annual aboveground carbon removal factors for <20 year secondary, non-mangrove, non-planted natural forests (raw input)
 name_stdev_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
 stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 's3://gfw2-data/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
-# stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 'http://gfw2-data.s3.amazonaws.com/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
 
-# Standard deviation for annual aboveground carbon gain rate for <20 year secondary, non-mangrove, non-planted natural forests
-pattern_stdev_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_stdev_AGC_t_ha_natural_forest_young_secondary'
-stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_natural_forest_young_secondary/processed/standard/20200728/')
+# Standard deviation for annual aboveground carbon removal factors for <20 year secondary, non-mangrove, non-planted natural forests
+pattern_stdev_annual_gain_AGC_natrl_forest_young = 'annual_removal_factor_stdev_AGC_t_ha_natural_forest_young_secondary'
+stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_natural_forest_young_secondary/processed/standard/20200728/')
 
+# Standard deviation for annual aboveground biomass removal factors using IPCC default removal rates
+pattern_stdev_annual_gain_AGB_IPCC_defaults = 'annual_removal_factor_stdev_AGB_Mg_ha_IPCC_defaults_all_ages'
+stdev_annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGB_IPCC_defaults_all_ages/standard/20209999/')
 
-# Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (raw)
-name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_stdev_AGC_BGC_t_ha_natural_forest_Europe_raw.tif'
-stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
-
-# Standard deviation for annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
-pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_AGC_BGC_t_ha_natural_forest_Europe'
-stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
+# Standard deviation for aboveground and belowground removal factors for all forest types
+pattern_stdev_annual_gain_AGC_all_types = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_all_forest_types'
+stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_all_forest_types/standard/20209999/')
 
 
 # Raw mineral soil C file site

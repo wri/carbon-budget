@@ -9,7 +9,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-# Creates a dictionary of biomass in belowground, deadwood, and litter pools to aboveground biomass pool
+# Creates a dictionary of biomass in belowground, deadwood, and litter emitted_pools to aboveground biomass pool
 def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet,  subtropical):
 
     # Creates x_pool:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
@@ -38,7 +38,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
     return mang_x_pool_AGB_ratio
 
 
-# Creates aboveground carbon pools in 2000 and/or the year of loss (loss pixels only)
+# Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
 def create_AGC(tile_id, sensit_type, carbon_pool_extent):
 
     # Start time
@@ -184,7 +184,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
                                    natrl_forest_biomass_2000_window * cn.biomass_to_c_non_mangrove
                                    ).astype('float32')
 
-        # Only writes AGC2000 window to raster if user asked for carbon pools in 2000
+        # Only writes AGC2000 window to raster if user asked for carbon emitted_pools in 2000
         if '2000' in carbon_pool_extent:
             dst_AGC_2000.write_band(1, agc_2000_window, window=window)
 
@@ -574,7 +574,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_litter_2000.write_band(1, litter_2000_output, window=window)
 
 
-        # Only if calculating carbon pools in emissions year are deadwood and litter clipped to AGC emissions year pixels.
+        # Only if calculating carbon emitted_pools in emissions year are deadwood and litter clipped to AGC emissions year pixels.
         # Important to use AGC_emis_year_window extent and not loss years because AGC_emis_year_extent is already
         # clipped to the model extent, whereas some loss pixels are outside the extent of the model.
         if 'loss' in carbon_pool_extent:
@@ -618,7 +618,7 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type):
     windows = AGC_emis_year_src.block_windows(1)
 
     # Updates kwargs for the output dataset.
-    # Need to update data type to float 32 so that it can handle fractional carbon pools
+    # Need to update data type to float 32 so that it can handle fractional carbon emitted_pools
     kwargs.update(
         driver='GTiff',
         count=1,
@@ -694,7 +694,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(dst_total_C_2000, sensit_type)
         dst_total_C_2000.update_tags(
-            units='megagrams total (all pools) carbon/ha')
+            units='megagrams total (all emitted_pools) carbon/ha')
         dst_total_C_2000.update_tags(
             source='AGC, BGC, deadwood carbon, litter carbon, and soil carbon')
         dst_total_C_2000.update_tags(
@@ -723,7 +723,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(dst_total_C_emis_year, sensit_type)
         dst_total_C_emis_year.update_tags(
-            units='megagrams total (all pools) carbon/ha')
+            units='megagrams total (all emitted_pools) carbon/ha')
         dst_total_C_emis_year.update_tags(
             source='AGC, BGC, deadwood carbon, litter carbon, and soil carbon')
         dst_total_C_emis_year.update_tags(

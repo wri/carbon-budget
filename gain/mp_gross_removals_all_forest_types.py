@@ -2,7 +2,7 @@
 This script calculates the cumulative above and belowground carbon dioxide gain (removals) for all forest types
 for the duration of the model.
 It multiplies the annual aboveground and belowground carbon removal factors by the number of years of gain and the C to CO2 conversion.
-It then sums the aboveground and belowground gross removals to get gross removals for all forest types in both pools.
+It then sums the aboveground and belowground gross removals to get gross removals for all forest types in both emitted_pools.
 That is the final gross removals for the entire model.
 Note that gross removals from this script are reported as positive values.
 '''
@@ -64,19 +64,19 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # # Calculates gross removals
-    # if cn.count == 96:
-    #     processes = 50   # 50 processors = XXX GB peak
-    # else:
-    #     processes = 26
-    # uu.print_log('Gross removals max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
-    #                  sensit_type=sensit_type), tile_id_list)
+    # Calculates gross removals
+    if cn.count == 96:
+        processes = 50   # 50 processors = XXX GB peak
+    else:
+        processes = 26
+    uu.print_log('Gross removals max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
+                     sensit_type=sensit_type), tile_id_list)
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type)
 
 
     # Uploads output tiles to s3

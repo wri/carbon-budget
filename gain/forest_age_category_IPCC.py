@@ -75,7 +75,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+        uu.add_rasterio_tags(dst, sensit_type)
         dst.update_tags(
             key='1: young (<20 year) secondary forest; 2: old (>20 year) secondary forest; 3: primary forest or IFL')
         dst.update_tags(

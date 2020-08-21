@@ -1,5 +1,5 @@
 '''
-This script creates the three inputs used for creating the carbon pools besides aboveground carbon.
+This script creates the three inputs used for creating the carbon emitted_pools besides aboveground carbon.
 It takes several hours to run.
 '''
 
@@ -36,7 +36,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Downloads two of the raw input files for creating carbon pools
+    # Downloads two of the raw input files for creating carbon emitted_pools
     input_files = [cn.fao_ecozone_raw_dir, cn.precip_raw_dir]
 
     for input in input_files:
@@ -58,7 +58,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
 
     # Worked with count/3 on an r4.16xlarge (140 out of 480 GB used). I think it should be fine with count/2 but didn't try it.
     processes = int(cn.count/2)
-    uu.print_log('Inputs for C pools max processors=', processes)
+    uu.print_log('Inputs for C emitted_pools max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
 

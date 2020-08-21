@@ -65,6 +65,8 @@ C_to_CO2 = 44.0/12.0;
 
 int model_years;    // How many loss years are in the model
 model_years = 19;
+string model_years_str;
+model_years_str = to_string(model_years);
 
 int tropical;       // The ecozone code for the tropics
 tropical = 1;
@@ -95,16 +97,16 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_no_shifting_ag.tif";
+string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
+string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_no_shifting_ag_no_tag.tif";
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
@@ -183,7 +185,7 @@ pixelsize=GeoTransform[1];
 //ysize = 3500;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
-cout << "Gross emissions no_shifting_ag model C++ parameters:" << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
+cout << "Gross emissions no_shifting_ag model C++ parameters: " << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -352,7 +354,7 @@ for(x=0; x<xsize; x++)
 		float outdata12 = 0;  // all drivers, non-CO2
 		float outdata20 = 0;  // flowchart node
 
-        // Only evaluates pixels that have loss and carbon
+                // Only evaluates pixels that have loss and carbon. By definition, all pixels with carbon are in the model extent.
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
 

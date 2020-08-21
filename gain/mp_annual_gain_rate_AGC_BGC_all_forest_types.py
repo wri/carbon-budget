@@ -47,13 +47,24 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
         cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
         cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
         cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
-        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults]
+        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
+
+        cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove],
+        cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe],
+        cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked],
+        # cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],         ##### Need US removal factor uncertainties
+        cn.stdev_annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_stdev_annual_gain_AGC_natrl_forest_young],
+        cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.removal_forest_type_dir, cn.annual_gain_AGC_all_types_dir, cn.annual_gain_BGC_all_types_dir]
-    output_pattern_list = [cn.pattern_removal_forest_type, cn.pattern_annual_gain_AGC_all_types, cn.pattern_annual_gain_BGC_all_types]
+    output_dir_list = [cn.removal_forest_type_dir,
+                       cn.annual_gain_AGC_all_types_dir, cn.annual_gain_BGC_all_types_dir,
+                       cn.annual_gain_AGC_BGC_all_types_dir, cn.stdev_annual_gain_AGC_all_types_dir]
+    output_pattern_list = [cn.pattern_removal_forest_type,
+                           cn.pattern_annual_gain_AGC_all_types, cn.pattern_annual_gain_BGC_all_types,
+                           cn.pattern_annual_gain_AGC_BGC_all_types, cn.pattern_stdev_annual_gain_AGC_all_types]
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():

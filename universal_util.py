@@ -17,8 +17,9 @@ from osgeo import gdal
 
 # Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
-date_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
-# date_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
+date_today = d.strftime('%Y_%m_%d')
+date_time_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
+# date_time_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
 
 # Uploads the output log to the designated s3 folder
 def upload_log():
@@ -29,7 +30,7 @@ def upload_log():
 
 # Creates the log with a starting line
 def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
-                 pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None,
+                 emitted_pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None,
                  log_note=None):
 
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
@@ -42,8 +43,8 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Run through model: {}".format(run_through))
     logging.info("Run date: {}".format(run_date))
     logging.info("Tile ID list: {}".format(tile_id_list))
-    logging.info("Carbon pools to generate (optional): {}".format(carbon_pool_extent))
-    logging.info("Emissions pools (optional): {}".format(pools))
+    logging.info("Carbon emitted_pools to generate (optional): {}".format(carbon_pool_extent))
+    logging.info("Emissions emitted_pools (optional): {}".format(emitted_pools))
     logging.info("TCD threshold for aggregated map (optional): {}".format(thresh))
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
@@ -435,13 +436,8 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            if pattern == '':   # For Hansen loss tiles
-                if tile_name.endswith('.tif'):
-                        tile_id = get_tile_id(tile_name)
-                        file_list.append(tile_id)
-
             # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -634,10 +630,7 @@ def s3_file_download(source, dest, sensit_type):
                 print_log(file_name_sens, "not previously downloaded. Downloading to", dest, '\n')
                 source = os.path.join(dir_sens, file_name_sens)
                 cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-                # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-                process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                with process.stdout:
-                    log_subprocess_output(process.stdout)
+                log_subprocess_output_full(cmd)
 
                 print_log(file_name_sens, "not previously downloaded. Now downloaded to", dest, '\n')
 
@@ -654,10 +647,7 @@ def s3_file_download(source, dest, sensit_type):
                 try:
                     print_log(file_name, "not previously downloaded. Downloading to", dest, '\n')
                     cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-                    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-                    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                    with process.stdout:
-                        log_subprocess_output(process.stdout)
+                    log_subprocess_output_full(cmd)
 
                     print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
                 except:
@@ -674,11 +664,7 @@ def s3_file_download(source, dest, sensit_type):
             source = os.path.join(dir, file_name)
             try:
                 cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-
-                # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-                process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                with process.stdout:
-                    log_subprocess_output(process.stdout)
+                log_subprocess_output_full(cmd)
 
                 print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
             except:
@@ -694,6 +680,7 @@ def upload_final_set(upload_dir, pattern):
            '--recursive', '--no-progress']
     try:
         log_subprocess_output_full(cmd)
+        print_log("  Upload of tiles with {} pattern complete!".format(pattern))
     except:
         print_log("Error uploading output tile(s)")
 
@@ -707,10 +694,7 @@ def upload_final(upload_dir, tile_id, pattern):
     cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
 
     try:
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
+        log_subprocess_output_full(cmd)
     except:
         print_log("Error uploading output tile")
 
@@ -1138,6 +1122,8 @@ def replace_output_dir_date(output_dir_list, run_date):
 
 # Adds various metadata tags to the raster
 def add_rasterio_tags(output_dst, sensit_type):
+
+    print("in the tag function")
 
     # based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
 

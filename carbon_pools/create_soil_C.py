@@ -1,5 +1,5 @@
 '''
-This script creates tiles of soil carbon density, one of the carbon pools.
+This script creates tiles of soil carbon density, one of the carbon emitted_pools.
 At this time, mineral soil carbon is for the top 30 cm of soil.
 Mangrove soil carbon gets precedence over mineral soil carbon where there is mangrove biomass.
 Where there is no mangrove biomass, mineral soil C is used.
