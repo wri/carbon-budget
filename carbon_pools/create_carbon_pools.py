@@ -487,6 +487,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
             litter_2000_output = litter_2000_output + litter_masked.filled(0)
 
+
             # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
             elev_mask_2 = elevation_window <= 2000
             precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
@@ -527,6 +528,9 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
             litter_masked = agb_masked_5 * 0.04 * cn.biomass_to_c_non_mangrove_litter
             litter_2000_output = litter_2000_output + litter_masked.filled(0)
+
+            deadwood_2000_output.astype('float32')
+            litter_2000_output.astype('float32')
 
         # Replaces non-mangrove deadwood and litter with special mangrove deadwood and litter values if there is mangrove
         if os.path.exists(mangrove_biomass_2000):
