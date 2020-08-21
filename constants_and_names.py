@@ -247,7 +247,7 @@ plantation_countries = [
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
-removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20199999/')
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20209999/')
 
 # Removal model forest type codes
 mangrove_rank = 6

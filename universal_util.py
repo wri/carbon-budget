@@ -664,8 +664,6 @@ def s3_file_download(source, dest, sensit_type):
             source = os.path.join(dir, file_name)
             try:
                 cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-                print(source)
-                print(dest)
                 log_subprocess_output_full(cmd)
 
                 print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
