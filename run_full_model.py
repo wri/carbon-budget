@@ -119,18 +119,18 @@ def main ():
             # Some sensitivity analyses have specific gross emissions scripts.
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
             if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
-                if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.docker_tmp, sensit_type)):
+                if os.path.exists('{0}/emissions/cpp_util/calc_gross_emissions_{1}.exe'.format(cn.docker_app, sensit_type)):
                     uu.print_log("C++ for {} already compiled.".format(sensit_type))
                 else:
                     uu.exception_log('Must compile standard {} model C++...'.format(sensit_type))
             else:
-                if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp)):
+                if os.path.exists('{0}/emissions/cpp_util/calc_gross_emissions_generic.exe'.format(cn.docker_app)):
                     uu.print_log("C++ for generic emissions already compiled.")
                 else:
                     uu.exception_log('Must compile generic emissions C++...')
 
         elif (emitted_pools == 'soil_only') & (sensit_type == 'std'):
-            if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.docker_tmp)):
+            if os.path.exists('{0}/emissions/cpp_util/calc_gross_emissions_soil_only.exe'.format(cn.docker_app)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
                 uu.exception_log('Must compile soil_only C++...')
