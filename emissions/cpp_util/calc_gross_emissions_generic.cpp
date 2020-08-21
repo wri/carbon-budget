@@ -83,6 +83,7 @@ boreal = 2;
 
 // Carbon pools default to the standard model names
 string agc_name = infolder + tile_id + "_Mg_AGC_ha_emis_year.tif";
+cout << agc_name << endl;
 string bgc_name = infolder + tile_id + "_Mg_BGC_ha_emis_year.tif";
 string dead_name = infolder + tile_id + "_Mg_deadwood_C_ha_emis_year_2000.tif";
 string litter_name = infolder + tile_id + "_Mg_litter_C_ha_emis_year_2000.tif";
