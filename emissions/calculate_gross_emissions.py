@@ -19,14 +19,14 @@ def calc_emissions(tile_id, emitted_pools, sensit_type, folder):
     # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
     if (emitted_pools == 'soil_only') & (sensit_type == 'std'):
-        cmd = ['{0}/calc_gross_emissions_soil_only.exe'.format(cn.docker_tmp), tile_id, sensit_type, folder]
+        cmd = ['{0}/emissions/cpp_util/calc_gross_emissions_soil_only.exe'.format(cn.docker_app), tile_id, sensit_type, folder]
 
     elif (emitted_pools == 'biomass_soil') & (sensit_type in ['convert_to_grassland', 'no_shifting_ag']):
-        cmd = ['{0}/calc_gross_emissions_{1}.exe'.format(cn.docker_tmp, sensit_type), tile_id, sensit_type, folder]
+        cmd = ['{0}/emissions/cpp_util/calc_gross_emissions_{1}.exe'.format(cn.docker_app, sensit_type), tile_id, sensit_type, folder]
 
     # This C++ script has an extra argument that names the input carbon emitted_pools and output emissions correctly
     elif (emitted_pools == 'biomass_soil') & (sensit_type not in ['no_shifting_ag', 'convert_to_grassland']):
-        cmd = ['{0}/calc_gross_emissions_generic.exe'.format(cn.docker_tmp), tile_id, sensit_type, folder]
+        cmd = ['{0}/emissions/cpp_util/calc_gross_emissions_generic.exe'.format(cn.docker_app), tile_id, sensit_type, folder]
 
     else:
         uu.exception_log('Pool and/or sensitivity analysis option not valid')
