@@ -617,8 +617,8 @@ pattern_stdev_annual_gain_AGB_IPCC_defaults = 'annual_removal_factor_stdev_AGB_M
 stdev_annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGB_IPCC_defaults_all_ages/standard/20200822/')
 
 # Standard deviation for aboveground and belowground removal factors for all forest types
-pattern_stdev_annual_gain_AGC_all_types = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_all_forest_types'
-stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_all_forest_types/standard/20200822/')
+pattern_stdev_annual_gain_AGC_all_types = 'annual_removal_factor_stdev_AGC_Mg_ha_all_forest_types'
+stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_all_forest_types/standard/20200822/')
 
 
 # Raw mineral soil C file site

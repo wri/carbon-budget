@@ -81,7 +81,7 @@ def add_metadata_tags(tile_id, pattern, sensit_type):
         uu.add_rasterio_tags(out_tile_tagged, sensit_type)
         out_tile_tagged.update_tags(units='Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years),
                         source='Many data sources',
-                        extent='Tree cover loss pixels within model extent')
+                        extent='Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)')
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
