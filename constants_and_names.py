@@ -512,7 +512,7 @@ pattern_gross_emis_nodes_biomass_soil = 'gross_emis_decision_tree_nodes_biomass_
 gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biomass_soil/standard/{1}/'.format(s3_base_dir, emis_run_date_biomass_soil)
 
 ### Emissions from soil only
-
+ 
 # Date to include in the output directory
 emis_run_date_soil_only = '20209999'
 
