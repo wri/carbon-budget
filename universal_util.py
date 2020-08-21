@@ -1123,8 +1123,6 @@ def replace_output_dir_date(output_dir_list, run_date):
 # Adds various metadata tags to the raster
 def add_rasterio_tags(output_dst, sensit_type):
 
-    print("in the tag function")
-
     # based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
 
     if sensit_type == 'std':
