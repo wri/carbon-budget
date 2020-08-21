@@ -380,7 +380,6 @@ def main ():
         uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
         tiles_to_delete = []
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_model_extent)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_mangrove)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_mangrove)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)))
@@ -413,7 +412,7 @@ def main ():
         uu.print_log(":::::Deleted unneeded tiles")
         uu.check_storage()
 
-        uu.print_log(":::::Creating emissions year carbon emitted_pools tiles")
+        uu.print_log(":::::Creating carbon pool tiles")
         start = datetime.datetime.now()
 
         mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = run_date)

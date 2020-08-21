@@ -22,10 +22,10 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
     start = datetime.datetime.now()
 
     # This is only needed for testing, when a list of tiles might include ones without mangroves.
-    # When the full model is being run, only tiles with mangroves are included. 
+    # When the full model is being run, only tiles with mangroves are included.
     mangrove_biomass_tile_list = uu.tile_list_s3(cn.mangrove_biomass_2000_dir)
     if tile_id not in mangrove_biomass_tile_list:
-        uu.print_log("Tile id does not contain mangroves. Skipping tile.")
+        uu.print_log("{} does not contain mangroves. Skipping tile.".format(tile_id))
         return
 
     # Name of the input files

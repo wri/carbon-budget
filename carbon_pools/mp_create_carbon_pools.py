@@ -57,44 +57,6 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     output_dir_list = []
     output_pattern_list = []
 
-    # Output files and patterns and files to download if carbon emitted_pools for loss year are being generated
-    if 'loss' in carbon_pool_extent:
-
-        # List of output directories and output file name patterns
-        output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
-                           cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
-        output_pattern_list = output_pattern_list + [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
-                               cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
-
-        # Files to download for this script
-        download_dict = {
-            cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
-            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-            cn.precip_processed_dir: [cn.pattern_precip],
-            cn.elevation_processed_dir: [cn.pattern_elevation],
-            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain],
-            cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-            cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]
-       }
-
-        # Adds the correct AGB tiles to the download dictionary depending on the model run
-        if sensit_type == 'biomass_swap':
-            download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
-        else:
-            download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
-
-        # Adds the correct loss tile to the download dictionary depending on the model run
-        if sensit_type == 'legal_Amazon_loss':
-            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
-        elif sensit_type == 'Mekong_loss':
-            download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
-        else:
-            download_dict[cn.loss_dir] = [cn.pattern_loss]
-
-
     # Output files and patterns and files to download if carbon emitted_pools for 2000 are being generated
     if '2000' in carbon_pool_extent:
 
@@ -114,6 +76,44 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
             cn.gain_dir: [cn.pattern_gain],
         }
+
+        # Adds the correct AGB tiles to the download dictionary depending on the model run
+        if sensit_type == 'biomass_swap':
+            download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
+        else:
+            download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
+
+        # Adds the correct loss tile to the download dictionary depending on the model run
+        if sensit_type == 'legal_Amazon_loss':
+            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        elif sensit_type == 'Mekong_loss':
+            download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
+        else:
+            download_dict[cn.loss_dir] = [cn.pattern_loss]
+
+    # Output files and patterns and files to download if carbon emitted_pools for loss year are being generated
+    if 'loss' in carbon_pool_extent:
+
+        # List of output directories and output file name patterns
+        output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
+                           cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
+        output_pattern_list = output_pattern_list + [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
+                               cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
+
+        # Files to download for this script. This has the same items as the download_dict for 2000 pools plus
+        # other tiles.
+        download_dict = {
+            cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
+            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+            cn.precip_processed_dir: [cn.pattern_precip],
+            cn.elevation_processed_dir: [cn.pattern_elevation],
+            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
+            cn.gain_dir: [cn.pattern_gain],
+            cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+            cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]
+       }
 
         # Adds the correct AGB tiles to the download dictionary depending on the model run
         if sensit_type == 'biomass_swap':
