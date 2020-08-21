@@ -81,6 +81,7 @@ boreal = 2;
 // Input files
 // Carbon pools
 
+cout << boreal << endl;
 // Carbon pools default to the standard model names
 string agc_name = infolder + tile_id + "_Mg_AGC_ha_emis_year.tif";
 cout << agc_name << endl;

@@ -425,7 +425,7 @@ litter_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'litter_carbon/lo
 
 # Soil C in loss pixels
 pattern_soil_C_emis_year_2000 = 'Mg_soil_C_ha_emis_year_2000'
-soil_C_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'soilaboveground_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
+soil_C_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/loss_pixels/standard/{}/'.format(emis_pool_run_date))
 
 # All carbon emitted_pools combined in loss pixels, with emitted values
 pattern_total_C_emis_year = 'Mg_total_C_ha_emis_year'
