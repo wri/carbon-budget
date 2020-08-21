@@ -162,13 +162,13 @@ def aggregate(tile, thresh, sensit_type):
     if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
-    # Converts the cumulative gross emissions CO2 only values to annualized gross emissions CO2e in megatonnes
-    if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
-        sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
-
-    # Converts the cumulative gross emissions non-CO2 values to annualized gross emissions CO2e in megatonnes
-    if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
-        sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
+    # # Converts the cumulative gross emissions CO2 only values to annualized gross emissions CO2e in megatonnes
+    # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+    #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
+    #
+    # # Converts the cumulative gross emissions non-CO2 values to annualized gross emissions CO2e in megatonnes
+    # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+    #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
@@ -201,16 +201,16 @@ def aggregate(tile, thresh, sensit_type):
                             source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                             extent='Global',
                             treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
-            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-                            extent='Global', gases_included='CO2 only',
-                            treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
-            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-                            extent='Global', gases_included='CH4, N20',
-                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        #                     extent='Global', gases_included='CO2 only',
+        #                     treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        #                     extent='Global', gases_included='CH4, N20',
+        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
         if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
             aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
                             source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',

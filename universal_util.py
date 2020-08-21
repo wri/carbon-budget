@@ -956,13 +956,11 @@ def name_aggregated_output(pattern, thresh, sensit_type):
 
     out_pattern = re.sub('ha_', '', pattern)
     # print out_pattern
-    out_pattern = re.sub('2001_15', 'per_year', out_pattern)
+    out_pattern = re.sub('2001_{}'.format(cn.loss_years), 'per_year', out_pattern)
     # print out_pattern
     out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
     # print out_pattern
     out_pattern = re.sub('_t_', '_Mt_', out_pattern)
-    # print out_pattern
-    out_pattern = re.sub('_10km_', '_per_year_10km_', out_pattern)
     # print out_pattern
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print out_pattern

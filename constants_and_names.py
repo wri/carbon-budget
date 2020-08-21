@@ -141,8 +141,7 @@ pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
-# Annual Hansen loss tiles (2001-2015)
-# pattern_loss_pre_2000_plant_masked = 'loss_pre_2000_plant_masked'   ### This is deprecated but still referred to in emissions script
+# Annual Hansen loss tiles (2001-2019)
 pattern_loss = 'GFW2019'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2019/'
 
@@ -578,7 +577,7 @@ pattern_aggreg = '0_4deg_modelv{}'.format(version_filename)
 pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv{}_perc_diff_std'.format(version_filename)
 pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv{}_sign_change_std'.format(version_filename)
 
-output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20200311/')
+output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20209999/')
 
 
 
