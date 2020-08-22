@@ -72,12 +72,10 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
 
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # With processes=30, peak usage was about 350 GB using WHRC AGB.
-    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
-        processes = 30 # 30 processors = XXX GB peak
+        processes = 36 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases); 36 = XXX GB peak
     else:
-        processes = 26
+        processes = 3
     uu.print_log('Removal model forest extent processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(model_extent.model_extent, pattern=pattern, sensit_type=sensit_type), tile_id_list)
@@ -87,6 +85,14 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
     # # For single processor use
     # for tile_id in tile_id_list:
     #     model_extent.model_extent(tile_id, pattern, sensit_type)
+
+    output_pattern = output_pattern_list[0]
+    processes = 50  # 50 processors = XXX GB peak
+    uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    pool.close()
+    pool.join()
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
