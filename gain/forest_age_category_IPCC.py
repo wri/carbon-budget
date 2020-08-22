@@ -55,28 +55,33 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         # continent-ecozone is necessary for this script to work. If it does not exist, tile is skipped.
         try:
             cont_eco_src = rasterio.open(cont_eco)
+            uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
         except:
-            return uu.print_log("No continent-ecozone tile for {}. Skipping tile.".format(tile_id))
+            uu.print_log("    No continent-ecozone tile found for {}".format(tile_id))
 
         try:
             gain_src = rasterio.open(gain)
+            uu.print_log("  Gain tile found for {}".format(tile_id))
         except:
-            pass
+            uu.print_log("    No gain tile found for {}".format(tile_id))
 
         try:
             biomass_src = rasterio.open(biomass)
+            uu.print_log("   WHRC biomass tile found for {}".format(tile_id))
         except:
-            pass
+            uu.print_log("    No WHRC biomass tile found for {}".format(tile_id))
 
         try:
             loss_src = rasterio.open(loss)
+            uu.print_log("   Loss tile found for {}".format(tile_id))
         except:
-            pass
+            uu.print_log("    No loss tile found for {}".format(tile_id))
 
         try:
             ifl_primary_src = rasterio.open(ifl_primary)
+            uu.print_log("   IFL-primary forest tile found for {}".format(tile_id))
         except:
-            pass
+            uu.print_log("    No IFL-primary forest tile found for {}".format(tile_id))
 
         # Updates kwargs for the output dataset
         kwargs.update(
