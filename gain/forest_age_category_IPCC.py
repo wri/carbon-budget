@@ -44,19 +44,33 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
     uu.print_log("  Assigning age categories")
 
     # Opens biomass tile
-    with rasterio.open(loss) as loss_src:
+    with rasterio.open(model_extent) as model_extent_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = loss_src.meta
+        kwargs = model_extent_src.meta
 
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-        windows = loss_src.block_windows(1)
+        windows = model_extent_src.block_windows(1)
 
-        # Opens gain tile
-        gain_src = rasterio.open(gain)
-        cont_eco_src = rasterio.open(cont_eco)
-        biomass_src = rasterio.open(biomass)
-        model_extent_src = rasterio.open(model_extent)
+        try:
+            gain_src = rasterio.open(gain)
+        except:
+            pass
+
+        try:
+            cont_eco_src = rasterio.open(cont_eco)
+        except:
+            pass
+
+        try:
+            biomass_src = rasterio.open(biomass)
+        except:
+            pass
+
+        try:
+            loss_src = rasterio.open(loss)
+        except:
+            pass
 
         try:
             ifl_primary_src = rasterio.open(ifl_primary)
@@ -87,12 +101,29 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
 
-            # Creates windows for each input raster
-            loss_window = loss_src.read(1, window=window)
-            gain_window = gain_src.read(1, window=window)
+            # Creates windows for each input raster. Only model_extent_src is guaranteed to exist
             model_extent_window = model_extent_src.read(1, window=window)
-            cont_eco_window = cont_eco_src.read(1, window=window)
-            biomass_window = biomass_src.read(1, window=window)
+
+            try:
+                loss_window = loss_src.read(1, window=window).astype('uint8')
+            except:
+                loss_window = np.zeros((window.height, window.width), dtype=int)
+
+            try:
+                gain_window = gain_src.read(1, window=window).astype('uint8')
+            except:
+                gain_window = np.zeros((window.height, window.width), dtype=int)
+
+
+            try:
+                cont_eco_window = cont_eco_src.read(1, window=window).astype('uint8')
+            except:
+                cont_eco_window = np.zeros((window.height, window.width), dtype=int)
+
+            try:
+                biomass_window = biomass_src.read(1, window=window).astype('uint8')
+            except:
+                biomass_window = np.zeros((window.height, window.width), dtype=int)
 
             try:
                 ifl_primary_window = ifl_primary_src.read(1, window=window).astype('uint8')
