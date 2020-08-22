@@ -75,10 +75,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
     # With processes=30, peak usage was about 350 GB using WHRC AGB.
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
-        processes = 30
-        # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
-        # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
-        # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
+        processes = 30 # 30 processors = XXX GB peak
     else:
         processes = 26
     uu.print_log('Removal model forest extent processors=', processes)

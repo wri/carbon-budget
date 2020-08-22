@@ -183,7 +183,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log("Creating tiles of aboveground carbon in {}".format(carbon_pool_extent))
     # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
     if cn.count == 96:
-        processes = 14  # 12 processors = 580 GB peak (stays there for a while); 14 = 660 GB peak; 15 = >750 GB (maxed out)
+        processes = 12  # 12 processors = XXX GB peak
     else:
         processes = 2
     uu.print_log('AGC loss year max processors=', processes)
@@ -208,7 +208,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
     # Creates a single filename pattern to pass to the multiprocessor call
     if cn.count == 96:
-        processes = 28  # 16 processors = 400 GB peak; 24 = 590 GB peak; 27 = 650 GB peak; 28 = XXX GB peak
+        processes = 28  # 28 processors = XXX GB peak
     else:
         processes = 8
     uu.print_log('BGC max processors=', processes)
@@ -233,7 +233,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
     if cn.count == 96:
-        processes = 16  # 16 processors = 700 GB peak
+        processes = 16  # 16 processors = XXX GB peak
     else:
         processes = 8
     uu.print_log('Deadwood max processors=', processes)
@@ -287,7 +287,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             pattern = output_pattern_list[10]
 
         if cn.count == 96:
-            processes = 32  # 16 processors = 250 GB peak; 32 = XXX GB peak
+            processes = 32  # 32 processors = XXX GB peak
         else:
             processes = 8
         uu.print_log('Soil carbon loss year max processors=', processes)
@@ -321,7 +321,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[5]
     if cn.count == 96:
-        processes = 18  # 14 processors = 510 GB peak; 18 = XXX GB peak
+        processes = 18  # 18 processors = XXX GB peak
     else:
         processes = 8
     uu.print_log('Total carbon loss year max processors=', processes)
