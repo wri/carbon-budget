@@ -55,43 +55,54 @@ def calc_emissions(tile_id, emitted_pools, sensit_type, folder):
 # Adds metadata tags to the output rasters
 def add_metadata_tags(tile_id, pattern, sensit_type):
 
-    # The tiles that are used. out_tile_no_tag is the output before metadata tags are added. out_tile is the output
-    # once metadata tags have been added.
-    out_tile_no_tag = uu.sensit_tile_rename(sensit_type, tile_id, '{}_no_tag'.format(pattern))
-    out_tile = uu.sensit_tile_rename(sensit_type, tile_id, pattern)
+    # Adds metadata tags to output rasters
+    uu.add_universal_metadata_tags('{0}_{1}.tif'.format(tile_id, pattern), sensit_type)
 
-    uu.print_log("Adding metadata tags to {}".format(out_tile))
+    cmd = ['gdal_edit.py', '-mo',
+           'units=Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years),
+           '-mo', 'source=many data sources',
+           '-mo', 'extent=Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)',
+           '{0}_{1}.tif'.format(tile_id, pattern)]
+    uu.log_subprocess_output_full(cmd)
 
-    copyfile(out_tile_no_tag, out_tile)
 
-    with rasterio.open(out_tile_no_tag) as out_tile_no_tag_src:
-        # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = out_tile_no_tag_src.meta  #### Use profile instead
-
-        # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-        windows = out_tile_no_tag_src.block_windows(1)
-
-        kwargs.update(
-            compress='lzw'
-        )
-
-        out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
-
-        # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(out_tile_tagged, sensit_type)
-        out_tile_tagged.update_tags(units='Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years),
-                        source='Many data sources',
-                        extent='Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)')
-
-        # Iterates across the windows (1 pixel strips) of the input tile
-        for idx, window in windows:
-            in_window = out_tile_no_tag_src.read(1, window=window)
-
-            # Writes the output window to the output
-            out_tile_tagged.write_band(1, in_window, window=window)
-
-    # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
-    os.remove(out_tile_no_tag)
+    # # The tiles that are used. out_tile_no_tag is the output before metadata tags are added. out_tile is the output
+    # # once metadata tags have been added.
+    # out_tile_no_tag = uu.sensit_tile_rename(sensit_type, tile_id, '{}_no_tag'.format(pattern))
+    # out_tile = uu.sensit_tile_rename(sensit_type, tile_id, pattern)
+    #
+    # uu.print_log("Adding metadata tags to {}".format(out_tile))
+    #
+    # copyfile(out_tile_no_tag, out_tile)
+    #
+    # with rasterio.open(out_tile_no_tag) as out_tile_no_tag_src:
+    #     # Grabs metadata about the tif, like its location/projection/cellsize
+    #     kwargs = out_tile_no_tag_src.meta  #### Use profile instead
+    #
+    #     # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
+    #     windows = out_tile_no_tag_src.block_windows(1)
+    #
+    #     kwargs.update(
+    #         compress='lzw'
+    #     )
+    #
+    #     out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
+    #
+    #     # Adds metadata tags to the output raster
+    #     uu.add_rasterio_tags(out_tile_tagged, sensit_type)
+    #     out_tile_tagged.update_tags(units='Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years),
+    #                     source='Many data sources',
+    #                     extent='Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)')
+    #
+    #     # Iterates across the windows (1 pixel strips) of the input tile
+    #     for idx, window in windows:
+    #         in_window = out_tile_no_tag_src.read(1, window=window)
+    #
+    #         # Writes the output window to the output
+    #         out_tile_tagged.write_band(1, in_window, window=window)
+    #
+    # # Without this, the untagged version is counted and eventually copied to s3 if it has data in it
+    # os.remove(out_tile_no_tag)
 
 
     ### These were Thomas Maschler's suggestions for how to add metadata tags but they didn't work.

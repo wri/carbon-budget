@@ -131,6 +131,8 @@ def aggregate(tile, thresh, sensit_type):
     #2D array in which the 0.05x0.05 deg aggregated sums will be stored
     sum_array = np.zeros([250,250], 'float32')
 
+    out_raster = "{0}_{1}_0_4deg.tif".format(tile_id, tile_type)
+
     # Iterates across the windows (400x400 30m pixels) of the input tile
     for idx, window in windows:
 
@@ -186,44 +188,52 @@ def aggregate(tile, thresh, sensit_type):
     # Creates a tile at 0.04x0.04 degree resolution (approximately 10x10 km in the tropics) where the values are
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
-    with rasterio.open("{0}_{1}_0_4deg.tif".format(tile_id, tile_type), 'w',
+    with rasterio.open(out_raster, 'w',
                                 driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
                                 height=250, width=250,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04)) as aggregated:
-        uu.add_rasterio_tags(aggregated, sensit_type)
-        if cn.pattern_annual_gain_AGC_all_types in tile_type:
-            aggregated.update_tags(units='Mg aboveground carbon/pixel, where pixels are 0.04x0.04 degrees)',
-                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-                            extent='Global',
-                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
-            aggregated.update_tags(units='Mg CO2/yr/pixel, where pixels are 0.04x0.04 degrees)',
-                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-                            extent='Global',
-                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
-        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        #                     extent='Global', gases_included='CO2 only',
-        #                     treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
-        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        #                     extent='Global', gases_included='CH4, N20',
-        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
-            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-                            extent='Global',
-                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        if cn.pattern_net_flux in tile_type:
-            aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-                            scale='Negative values are net sinks. Positive values are net sources.',
-                            source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-                            extent='Global',
-                            treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
         aggregated.write(sum_array, 1)
-
+        ### I don't know why, but update_tags() is adding the tags to the raster but not saving them.
+        ### That is, the tags are printed but not showing up when I do gdalinfo on the raster.
+        ### Instead, I'm using gdal_edit
+        # print(aggregated)
+        # aggregated.update_tags(a="1")
+        # print(aggregated.tags())
+        # uu.add_rasterio_tags(aggregated, sensit_type)
+        # print(aggregated.tags())
+        # if cn.pattern_annual_gain_AGC_all_types in tile_type:
+        #     aggregated.update_tags(units='Mg aboveground carbon/pixel, where pixels are 0.04x0.04 degrees)',
+        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        #                     extent='Global',
+        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
+        #     aggregated.update_tags(units='Mg CO2/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        #                     extent='Global',
+        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+        # #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        # #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        # #                     extent='Global', gases_included='CO2 only',
+        # #                     treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+        # #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        # #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        # #                     extent='Global', gases_included='CH4, N20',
+        # #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
+        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        #                     extent='Global',
+        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # if cn.pattern_net_flux in tile_type:
+        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
+        #                     scale='Negative values are net sinks. Positive values are net sources.',
+        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+        #                     extent='Global',
+        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
+        # print(aggregated.tags())
+        # aggregated.close()
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, '{}_0_4deg'.format(tile_type))

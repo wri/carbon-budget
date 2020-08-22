@@ -110,7 +110,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
         if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
             # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-            if os.path.exists('{0}//calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, sensit_type)):
+            if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, sensit_type)):
                 uu.print_log("C++ for {} already compiled.".format(sensit_type))
             else:
                 uu.exception_log('Must compile {} model C++...'.format(sensit_type))
@@ -223,13 +223,14 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     # Print the list of blank created tiles, delete the tiles, and delete their text file
     uu.list_and_delete_blank_tiles()
 
+
     for i in range(0, len(output_pattern_list)):
         pattern = output_pattern_list[i]
 
         uu.print_log("Adding metadata tags for pattern {}".format(pattern))
 
         if cn.count == 96:
-            processes = 19  # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
+            processes = 60  # 60 processors = XXX GB peak
         else:
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)

@@ -80,7 +80,7 @@ docker_tmp = '/usr/local/tmp'
 
 docker_app = '/usr/local/app'
 
-c_emis_compile_dst = '{0}/emissions/cpp_util'.format(docker_tmp)
+c_emis_compile_dst = '{0}/emissions/cpp_util'.format(docker_app)
 
 # Model log
 start = datetime.datetime.now()
@@ -577,7 +577,7 @@ pattern_aggreg = '0_4deg_modelv{}'.format(version_filename)
 pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv{}_perc_diff_std'.format(version_filename)
 pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv{}_sign_change_std'.format(version_filename)
 
-output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20209999/')
+output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20200822/')
 
 
 

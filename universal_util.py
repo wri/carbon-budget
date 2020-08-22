@@ -1140,3 +1140,15 @@ def add_rasterio_tags(output_dst, sensit_type):
 
     return output_dst
 
+
+def add_universal_metadata_tags(output_raster, sensit_type):
+
+    print_log("Adding metadata tags to", output_raster)
+
+    cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
+           '-mo', 'date_created={}'.format(date_today),
+           '-mo', 'model_type={}'.format(sensit_type),
+           '-mo', 'originator=Global Forest Watch at the World Resources Institute',
+           '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years),
+           output_raster]
+    log_subprocess_output_full(cmd)

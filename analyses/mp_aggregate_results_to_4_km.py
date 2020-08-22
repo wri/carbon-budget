@@ -167,6 +167,30 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
                out_vrt, '{}.tif'.format(out_pattern)]
         uu.log_subprocess_output_full(cmd)
 
+
+        # Adds metadata tags to output rasters
+        uu.add_universal_metadata_tags('{0}.tif'.format(out_pattern), sensit_type)
+
+        # Units are different for annual removal factor, so metadata has to reflect that
+        if 'annual_removal_factor' in out_pattern:
+            cmd = ['gdal_edit.py',
+                   '-mo', 'units=Mg aboveground carbon/yr/pixel, where pixels are 0.04x0.04 degrees',
+                   '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                   '-mo', 'extent=Global',
+                   '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
+                   '{0}.tif'.format(out_pattern)]
+            uu.log_subprocess_output_full(cmd)
+
+        else:
+            cmd = ['gdal_edit.py',
+                   '-mo', 'units=Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees',
+                   '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                   '-mo', 'extent=Global',
+                   '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
+                   '{0}.tif'.format(out_pattern)]
+            uu.log_subprocess_output_full(cmd)
+
+
         uu.print_log("Tiles processed. Uploading to s3 now...")
 
         # Uploads all output tiles to s3
