@@ -56,7 +56,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         try:
             cont_eco_src = rasterio.open(cont_eco)
         except:
-            uu.print_log("No continent-ecozone tile for {}. Skipping tile.".format(tile_id)
+            uu.print_log("No continent-ecozone tile for {}. Skipping tile.".format(tile_id))
             return
 
         try:
