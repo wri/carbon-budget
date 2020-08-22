@@ -57,31 +57,31 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
             cont_eco_src = rasterio.open(cont_eco)
             uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No continent-ecozone tile found for {}".format(tile_id))
+            uu.print_log("   No continent-ecozone tile found for {}".format(tile_id))
 
         try:
             gain_src = rasterio.open(gain)
-            uu.print_log("  Gain tile found for {}".format(tile_id))
+            uu.print_log("   Gain tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No gain tile found for {}".format(tile_id))
+            uu.print_log("   No gain tile found for {}".format(tile_id))
 
         try:
             biomass_src = rasterio.open(biomass)
             uu.print_log("   WHRC biomass tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No WHRC biomass tile found for {}".format(tile_id))
+            uu.print_log("   No WHRC biomass tile found for {}".format(tile_id))
 
         try:
             loss_src = rasterio.open(loss)
             uu.print_log("   Loss tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No loss tile found for {}".format(tile_id))
+            uu.print_log("   No loss tile found for {}".format(tile_id))
 
         try:
             ifl_primary_src = rasterio.open(ifl_primary)
             uu.print_log("   IFL-primary forest tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No IFL-primary forest tile found for {}".format(tile_id))
+            uu.print_log("   No IFL-primary forest tile found for {}".format(tile_id))
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -111,29 +111,29 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
             model_extent_window = model_extent_src.read(1, window=window)
 
             try:
-                loss_window = loss_src.read(1, window=window).astype('uint8')
+                loss_window = loss_src.read(1, window=window)
             except:
-                loss_window = np.zeros((window.height, window.width), dtype=int)
+                loss_window = np.zeros((window.height, window.width), dtype='uint8')
 
             try:
-                gain_window = gain_src.read(1, window=window).astype('uint8')
+                gain_window = gain_src.read(1, window=window)
             except:
-                gain_window = np.zeros((window.height, window.width), dtype=int)
+                gain_window = np.zeros((window.height, window.width), dtype='uint8')
 
             try:
-                cont_eco_window = cont_eco_src.read(1, window=window).astype('uint8')
+                cont_eco_window = cont_eco_src.read(1, window=window)
             except:
-                cont_eco_window = np.zeros((window.height, window.width), dtype=int)
+                cont_eco_window = np.zeros((window.height, window.width), dtype='uint8')
 
             try:
-                biomass_window = biomass_src.read(1, window=window).astype('uint8')
+                biomass_window = biomass_src.read(1, window=window)
             except:
-                biomass_window = np.zeros((window.height, window.width), dtype=int)
+                biomass_window = np.zeros((window.height, window.width), dtype='float32')
 
             try:
-                ifl_primary_window = ifl_primary_src.read(1, window=window).astype('uint8')
+                ifl_primary_window = ifl_primary_src.read(1, window=window)
             except:
-                ifl_primary_window = np.zeros((window.height, window.width), dtype=int)
+                ifl_primary_window = np.zeros((window.height, window.width), dtype='uint8')
 
             # Creates a numpy array that has the <=20 year secondary forest growth rate x 20
             # based on the continent-ecozone code of each pixel (the dictionary).
