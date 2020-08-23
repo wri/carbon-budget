@@ -29,13 +29,16 @@ def create_gain_year_count_loss_only(tile_id):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, model_extent = tile_names(tile_id)
 
-    # Pixels with loss only
-    loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
-    loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
-    loss_outfilearg = '--outfile={}'.format(loss_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_calc, loss_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    uu.log_subprocess_output_full(cmd)
+    if os.path.exists(loss):
+        uu.print_log("Loss tile found for {}. Using it in loss only gain year count".format(tile_id))
+        loss_calc = '--calc=(A>0)*(B==0)*(C>0)*(A-1)'
+        loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
+        loss_outfilearg = '--outfile={}'.format(loss_outfilename)
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_calc, loss_outfilearg,
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
+    else:
+        uu.print_log("No loss tile found for {}. Skipping loss only gain year count.".format(tile_id))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
