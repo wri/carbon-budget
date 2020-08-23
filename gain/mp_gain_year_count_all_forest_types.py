@@ -68,15 +68,15 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # Creates gain year count tiles using only pixels that had only loss
-    # count/3 maxes out at about 300 GB
-    if cn.count == 96:
-        processes = 82   # 66 = 310 GB peak; 75 = 380 GB peak; 82 = XXX GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log('Planted forest gain year count loss only pixels max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_only, tile_id_list)
+    # # Creates gain year count tiles using only pixels that had only loss
+    # # count/3 maxes out at about 300 GB
+    # if cn.count == 96:
+    #     processes = 82   # 66 = 310 GB peak; 75 = 380 GB peak; 82 = XXX GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log('Planted forest gain year count loss only pixels max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(gain_year_count_all_forest_types.create_gain_year_count_loss_only, tile_id_list)
 
     if cn.count == 96:
         processes = 75   # 66 = 330 GB peak; 75 = XXX GB pesk
