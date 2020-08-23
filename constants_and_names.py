@@ -601,7 +601,7 @@ pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_removal_fact
 stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/carbon_model/stdev_annual_removal_factor_AGC_BGC_planted_forest_unmasked/standard/20200801/'
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural US forests
-pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_stdev_AGC_BGC_t_ha_natural_forest_US'
+pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_natural_forest_US'
 stdev_annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_US/processed/standard/20200730/')
 
 # Standard deviation for annual aboveground carbon removal factors for <20 year secondary, non-mangrove, non-planted natural forests (raw input)
