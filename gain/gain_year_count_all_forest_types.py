@@ -164,22 +164,22 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type):
     start = datetime.datetime.now()
 
     # The four rasters from above that are to be merged
+    no_change_gain_years = '{}_growth_years_no_change.tif'.format(tile_id)
     loss_only_gain_years = '{}_growth_years_loss_only.tif'.format(tile_id)
     gain_only_gain_years = '{}_growth_years_gain_only.tif'.format(tile_id)
-    no_change_gain_years = '{}_growth_years_no_change.tif'.format(tile_id)
     loss_and_gain_gain_years = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
 
     # Names of the output tiles
     gain_year_count_merged = '{0}_{1}.tif'.format(tile_id, pattern)
 
-    # Opens biomass tile
-    with rasterio.open(loss_only_gain_years) as loss_only_gain_years_src:
+    # Opens no change gain year count tile. This should exist for all tiles.
+    with rasterio.open(no_change_gain_years) as no_change_gain_years_src:
 
         # Grabs metadata about the tif, like its location/projection/cellsize
-        kwargs = loss_only_gain_years_src.meta
+        kwargs = no_change_gain_years_src.meta
 
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
-        windows = loss_only_gain_years_src.block_windows(1)
+        windows = no_change_gain_years_src.block_windows(1)
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -189,9 +189,25 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type):
             nodata=0
         )
 
-        gain_only_gain_years_src = rasterio.open(gain_only_gain_years)
-        no_change_gain_years_src = rasterio.open(no_change_gain_years)
-        loss_and_gain_gain_years_src = rasterio.open(loss_and_gain_gain_years)
+        # Opens the other gain year count tiles. They may not exist for all other tiles.
+        try:
+            loss_only_gain_years_src = rasterio.open(loss_only_gain_years)
+            uu.print_log("   Loss only tile found for {}".format(tile_id))
+        except:
+            uu.print_log("   No loss only tile found for {}".format(tile_id))
+
+        try:
+            gain_only_gain_years_src = rasterio.open(gain_only_gain_years)
+            uu.print_log("   Gain only tile found for {}".format(tile_id))
+        except:
+            uu.print_log("   No gain only tile found for {}".format(tile_id))
+
+        try:
+            loss_and_gain_gain_years_src = rasterio.open(loss_and_gain_gain_years)
+            uu.print_log("   Loss and gain tile found for {}".format(tile_id))
+        except:
+            uu.print_log("   No loss and gain tile found for {}".format(tile_id))
+
 
         # Opens the output tile, giving it the arguments of the input tiles
         gain_year_count_merged_dst = rasterio.open(gain_year_count_merged, 'w', **kwargs)
@@ -212,10 +228,23 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type):
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
 
-            loss_only_gain_years_window = loss_only_gain_years_src.read(1, window=window)
-            gain_only_gain_years_window = gain_only_gain_years_src.read(1, window=window)
             no_change_gain_years_window = no_change_gain_years_src.read(1, window=window)
-            loss_and_gain_gain_years_window = loss_and_gain_gain_years_src.read(1, window=window)
+
+            try:
+                loss_only_gain_years_window = loss_only_gain_years_src.read(1, window=window)
+            except:
+                loss_only_gain_years_window = np.zeros((window.height, window.width), dtype='uint8')
+
+            try:
+                gain_only_gain_years_window = gain_only_gain_years_src.read(1, window=window)
+            except:
+                gain_only_gain_years_window = np.zeros((window.height, window.width), dtype='uint8')
+
+            try:
+                loss_and_gain_gain_years_window = loss_and_gain_gain_years_src.read(1, window=window)
+            except:
+                loss_and_gain_gain_years_window = np.zeros((window.height, window.width), dtype='uint8')
+
 
             gain_year_count_merged_window = loss_only_gain_years_window + gain_only_gain_years_window + \
                                             no_change_gain_years_window + loss_and_gain_gain_years_window
