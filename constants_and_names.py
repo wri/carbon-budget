@@ -593,7 +593,7 @@ name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_removal_factor_
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for natural European forests (processed tiles)
-pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_removal_factor_stdev_AGC_BGC_t_ha_natural_forest_Europe'
+pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_natural_forest_Europe'
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for planted forests
