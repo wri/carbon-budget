@@ -593,11 +593,11 @@ name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_removal_factor_
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for natural European forests (processed tiles)
-pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_natural_forest_Europe'
+pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_AGC_BGC_Mg_ha_natural_forest_Europe'
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for planted forests
-pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_removal_factor_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
+pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
 stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/carbon_model/stdev_annual_removal_factor_AGC_BGC_planted_forest_unmasked/standard/20200801/'
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural US forests
@@ -609,7 +609,7 @@ name_stdev_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__stdev__
 stdev_annual_gain_AGC_natrl_forest_young_raw_URL = 's3://gfw2-data/climate/carbon_seqr_AI4E/Nature_publication_final_202007/full_extent/sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
 
 # Standard deviation for annual aboveground carbon removal factors for <20 year secondary, non-mangrove, non-planted natural forests
-pattern_stdev_annual_gain_AGC_natrl_forest_young = 'annual_removal_factor_stdev_AGC_t_ha_natural_forest_young_secondary'
+pattern_stdev_annual_gain_AGC_natrl_forest_young = 'annual_gain_rate_stdev_AGC_t_ha_natural_forest_young_secondary'
 stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_natural_forest_young_secondary/processed/standard/20200728/')
 
 # Standard deviation for annual aboveground biomass removal factors using IPCC default removal rates
