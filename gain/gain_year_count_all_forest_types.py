@@ -84,13 +84,22 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with gain only
-    gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({})'.format(cn.loss_years)
-    gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
-    gain_outfilearg = '--outfile={}'.format(gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, gain_calc, gain_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    uu.log_subprocess_output_full(cmd)
+    if os.path.exists(loss):
+        uu.print_log("Loss tile found for {}. Using it in gain only gain year count".format(tile_id))
+        gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({})'.format(cn.loss_years)
+        gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
+        gain_outfilearg = '--outfile={}'.format(gain_outfilename)
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, gain_calc, gain_outfilearg,
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
+    else:
+        uu.print_log("No loss tile found for {}. Not using it for gain only gain year count.".format(tile_id))
+        gain_calc = '--calc=(A==1)*(B>0)*({})'.format(cn.loss_years)
+        gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
+        gain_outfilearg = '--outfile={}'.format(gain_outfilename)
+        cmd = ['gdal_calc.py', '-A', gain, '-B', model_extent, gain_calc, gain_outfilearg,
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
@@ -107,13 +116,22 @@ def create_gain_year_count_no_change(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with neither loss nor gain
-    no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
-    no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
-    no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, no_change_calc,
-           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    uu.log_subprocess_output_full(cmd)
+    if os.path.exists(loss):
+        uu.print_log("Loss tile found for {}. Using it in no change gain year count".format(tile_id))
+        no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
+        no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
+        no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, no_change_calc,
+               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
+    else:
+        uu.print_log("No loss tile found for {}. Not using it for no change gain year count.".format(tile_id))
+        no_change_calc = '--calc=(A==0)*(B>0)*{}'.format(cn.loss_years)
+        no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
+        no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
+        cmd = ['gdal_calc.py', '-A', gain, '-B', model_extent, no_change_calc,
+               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
@@ -130,13 +148,17 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with both loss and gain
-    loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+floor(({}+1-A)/2)))'.format(cn.loss_years)
-    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
-    loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_and_gain_calc,
-           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    uu.log_subprocess_output_full(cmd)
+    if os.path.exists(loss):
+        uu.print_log("Loss tile found for {}. Using it in loss and gain gain year count".format(tile_id))
+        loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+floor(({}+1-A)/2)))'.format(cn.loss_years)
+        loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
+        loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_and_gain_calc,
+               loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
+    else:
+        uu.print_log("No loss tile found for {}. Skipping loss and gain gain year count.".format(tile_id))
+
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
@@ -153,13 +175,16 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with both loss and gain
-    loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*({}-1))'.format(cn.loss_years)
-    loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
-    loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
-    cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_and_gain_calc,
-           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-    uu.log_subprocess_output_full(cmd)
+    if os.path.exists(loss):
+        uu.print_log("Loss tile found for {}. Using it in loss and gain gain year count".format(tile_id))
+        loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*({}-1))'.format(cn.loss_years)
+        loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
+        loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
+        cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_and_gain_calc,
+               loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+        uu.log_subprocess_output_full(cmd)
+    else:
+        uu.print_log("No loss tile found for {}. Skipping loss and gain gain year count.".format(tile_id))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
