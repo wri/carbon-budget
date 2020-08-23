@@ -73,6 +73,8 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
                      sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:

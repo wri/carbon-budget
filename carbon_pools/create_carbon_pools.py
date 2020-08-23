@@ -73,10 +73,22 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
 
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
-    # Opens the input tiles if they exist
-    annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
-    cumul_gain_AGCO2_src = rasterio.open(cumul_gain_AGCO2)
+    # This input should exist for all tiles
     removal_forest_type_src = rasterio.open(removal_forest_type)
+
+    # Opens the input tiles if they exist
+    try:
+        annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
+        uu.print_log("    Aboveground removal factor tile found for", tile_id)
+    except:
+        uu.print_log("    No aboveground removal factor tile for", tile_id)
+
+    try:
+        cumul_gain_AGCO2_src = rasterio.open(cumul_gain_AGCO2)
+        uu.print_log("    Gross aboveground removal tile found for", tile_id)
+    except:
+        uu.print_log("    No gross aboveground removal tile for", tile_id)
+
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         uu.print_log("    Mangrove tile found for", tile_id)
@@ -157,8 +169,14 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
 
         # Reads the input tiles' windows. For windows from tiles that may not exist, an array of all 0s is created.
         removal_forest_type_window = removal_forest_type_src.read(1, window=window)
-        annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
-        cumul_gain_AGCO2_window = cumul_gain_AGCO2_src.read(1, window=window)
+        try:
+            annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
+        except:
+            annual_gain_AGC_window = np.zeros((window.height, window.width), dtype='float32')
+        try:
+            cumul_gain_AGCO2_window = cumul_gain_AGCO2_src.read(1, window=window)
+        except:
+            cumul_gain_AGCO2_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             loss_year_window = loss_year_src.read(1, window=window)
         except:
