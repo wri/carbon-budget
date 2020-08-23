@@ -35,9 +35,18 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
 
     uu.print_log("  Creating IPCC default biomass gain rates and standard deviation for {}".format(tile_id))
 
-    # Opens the continent-ecozone and natural forest age category tiles
-    cont_eco_src = rasterio.open(cont_eco)
-    age_cat_src = rasterio.open(age_cat)
+    # Opens the input tiles if they exist. kips tile if either input doesn't exist.
+    try:
+        age_cat_src = rasterio.open(age_cat)
+        uu.print_log("   Age category tile found for {}".format(tile_id))
+    except:
+        return uu.print_log("   No age category tile found for {}. Skipping tile.".format(tile_id))
+
+    try:
+        cont_eco_src = rasterio.open(cont_eco)
+        uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
+    except:
+        return uu.print_log("   No continent-ecozone tile found for {}. Skipping tile.".format(tile_id))
 
     # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
     kwargs = cont_eco_src.meta
@@ -90,14 +99,21 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     for idx, window in windows:
 
         # Creates a processing window for each input raster
-        cont_eco = cont_eco_src.read(1, window=window)
-        age_cat = age_cat_src.read(1, window=window)
+        try:
+            cont_eco_window = cont_eco_src.read(1, window=window)
+        except:
+            cont_eco_window = np.zeros((window.height, window.width), dtype='uint8')
+
+        try:
+            age_cat_window = age_cat_src.read(1, window=window)
+        except:
+            age_cat_window = np.zeros((window.height, window.width), dtype='uint8')
 
         # Recodes the input forest age category array with 10 different decision tree end values into the 3 actual age categories
-        age_recode = np.vectorize(age_dict.get)(age_cat)
+        age_recode = np.vectorize(age_dict.get)(age_cat_window)
 
         # Adds the age category codes to the continent-ecozone codes to create an array of unique continent-ecozone-age codes
-        cont_eco_age = cont_eco + age_recode
+        cont_eco_age = cont_eco_window + age_recode
 
         ## Aboveground removal factors
         # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates

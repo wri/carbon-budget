@@ -112,7 +112,7 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None):
     # With processes=30, peak usage was about 350 GB using WHRC AGB.
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
-        processes = 36  # 30 processors=460 GB peak; 36 = XXX GB peak
+        processes = 42  # 30 processors=460 GB peak; 36 = 550 GB peak; 42 = XXX GB peak
     else:
         processes = 26
     uu.print_log('Natural forest age category max processors=', processes)

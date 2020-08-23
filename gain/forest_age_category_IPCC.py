@@ -52,7 +52,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = model_extent_src.block_windows(1)
 
-        # continent-ecozone is necessary for this script to work. If it does not exist, tile is skipped.
+        # Opens the input tiles if they exist
         try:
             cont_eco_src = rasterio.open(cont_eco)
             uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
@@ -103,6 +103,8 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         dst.update_tags(
             extent='Full model extent, even though these age categories will not be used over the full model extent. They apply to just the rates from IPCC defaults.')
 
+
+        uu.print_log("    Assigning IPCC age categories for", tile_id)
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
