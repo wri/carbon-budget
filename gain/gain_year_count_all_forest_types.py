@@ -1,6 +1,7 @@
 from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import rasterio
+import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
