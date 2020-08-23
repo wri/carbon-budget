@@ -202,21 +202,22 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
             except:
                 pass
 
-            try: # young_AGC_rate_window uses > because of the weird NaN in the tiles. If != is used, the young rate NaN overwrite the IPCC arrays
+            try: # young_AGC_rate_window uses > because of the weird NaN in the tiles. If != is used, the young rate NaN overwrites the IPCC arrays
                 young_AGC_rate_window = young_AGC_src.read(1, window=window)
                 young_AGC_stdev_window = young_AGC_stdev_src.read(1, window=window)
-                removal_forest_type_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
-                                                      cn.young_natural_rank,
-                                                      removal_forest_type_window).astype('uint8')
-                annual_gain_AGC_all_forest_types_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
-                                                                   young_AGC_rate_window,
-                                                                   annual_gain_AGC_all_forest_types_window).astype('float32')
-                annual_gain_BGC_all_forest_types_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
-                                                                   young_AGC_rate_window * cn.below_to_above_non_mang,
-                                                                   annual_gain_BGC_all_forest_types_window).astype('float32')
-                stdev_annual_gain_AGC_all_forest_types_window = np.where((young_AGC_stdev_window > 0) & (age_category_window == 1),
-                                                                   young_AGC_stdev_window,
-                                                                   stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
+                with np.errstate(invalid='ignore'):
+                    removal_forest_type_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
+                                                          cn.young_natural_rank,
+                                                          removal_forest_type_window).astype('uint8')
+                    annual_gain_AGC_all_forest_types_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
+                                                                       young_AGC_rate_window,
+                                                                       annual_gain_AGC_all_forest_types_window).astype('float32')
+                    annual_gain_BGC_all_forest_types_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
+                                                                       young_AGC_rate_window * cn.below_to_above_non_mang,
+                                                                       annual_gain_BGC_all_forest_types_window).astype('float32')
+                    stdev_annual_gain_AGC_all_forest_types_window = np.where((young_AGC_stdev_window > 0) & (age_category_window == 1),
+                                                                       young_AGC_stdev_window,
+                                                                       stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
 
             except:
                 pass
