@@ -10,7 +10,7 @@ import universal_util as uu
 
 def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
 
-    uu.print_log("Mapping forest type for removal and AGB removal rate:", tile_id)
+    uu.print_log("Mapping forest type for removal and AGB and BGB removal rates:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
