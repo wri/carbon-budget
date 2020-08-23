@@ -39,7 +39,7 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     download_dict = {
         cn.loss_dir: [cn.pattern_loss],
         cn.gain_dir: [cn.pattern_gain],
-        cn.removal_forest_type_dir: [cn.pattern_model_extent]
+        cn.model_extent_dir: [cn.pattern_model_extent]
     }
     
     
@@ -71,7 +71,7 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     # Creates gain year count tiles using only pixels that had only loss
     # count/3 maxes out at about 300 GB
     if cn.count == 96:
-        processes = 66   # 66 = XXX GB peak
+        processes = 75   # 66 = 310 GB peak; 65 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log('Planted forest gain year count loss only pixels max processors=', processes)
