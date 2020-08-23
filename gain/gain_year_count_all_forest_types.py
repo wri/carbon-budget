@@ -51,16 +51,16 @@ def create_gain_year_count_gain_only_standard(tile_id):
     # Names of the loss, gain and tree cover density tiles
     loss, gain, model_extent = tile_names(tile_id)
 
-    try:
-        uu.print_log("No loss tile for {}. Switching to alternative version of equation.".format(tile_id))
+    if os.path.exists(loss):
+        uu.print_log("Loss tile found for {}. Using it in gain only gain year count".format(tile_id))
         gain_calc = '--calc=(A==0)*(B==1)*(C>0)*({}/2)'.format(cn.gain_years)
         gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
         gain_outfilearg = '--outfile={}'.format(gain_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, gain_calc, gain_outfilearg,
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
-    except:
-        uu.print_log("No loss tile for {}. Not using it for gain only gain year count.".format(tile_id))
+    else:
+        uu.print_log("No loss tile found for {}. Not using it for gain only gain year count.".format(tile_id))
         gain_calc = '--calc=(A==1)*(B>0)*({}/2)'.format(cn.gain_years)
         gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
         gain_outfilearg = '--outfile={}'.format(gain_outfilename)
