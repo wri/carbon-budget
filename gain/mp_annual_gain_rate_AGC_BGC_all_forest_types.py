@@ -85,23 +85,23 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # # With processes=30, peak usage was about 350 GB using WHRC AGB.
-    # # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-    # if cn.count == 96:
-    #     processes = 15 # 30 processors > 740 GB peak; 18 = >740 GB peak; 15 = XXX GB peak
-    # else:
-    #     processes = 2
-    # uu.print_log('Removal model forest extent processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types, sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
+    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+    # With processes=30, peak usage was about 350 GB using WHRC AGB.
+    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+    if cn.count == 96:
+        processes = 16 # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = XXX GB peak
+    else:
+        processes = 2
+    uu.print_log('Removal model forest extent processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
 
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):
