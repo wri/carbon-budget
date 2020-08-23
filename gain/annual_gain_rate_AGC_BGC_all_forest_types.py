@@ -205,7 +205,8 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
             try: # young_AGC_rate_window uses > because of the weird NaN in the tiles. If != is used, the young rate NaN overwrites the IPCC arrays
                 young_AGC_rate_window = young_AGC_src.read(1, window=window)
                 young_AGC_stdev_window = young_AGC_stdev_src.read(1, window=window)
-                # Using the > with the NaN results in non-fatal "RuntimeWarning: invalid value encountered in greater
+                # Using the > with the NaN results in non-fatal "RuntimeWarning: invalid value encountered in greater".
+                # This isn't actually a problem, so the "with" statement suppresses it, per https://stackoverflow.com/a/58026329/10839927
                 with np.errstate(invalid='ignore'):
                     removal_forest_type_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
                                                           cn.young_natural_rank,
