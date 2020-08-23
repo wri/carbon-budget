@@ -90,9 +90,9 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
     # With processes=30, peak usage was about 350 GB using WHRC AGB.
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
-        processes = 30 # 30 processors = XXX GB peak
+        processes = 18 # 30 processors > 740 GB peak; 18 = XXX GB peak
     else:
-        processes = 26
+        processes = 2
     uu.print_log('Removal model forest extent processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types, sensit_type=sensit_type), tile_id_list)
