@@ -305,8 +305,17 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # Opens inputs that are used regardless of whether calculating BGC2000 or BGC in emissions year
-    cont_ecozone_src = rasterio.open(cont_ecozone)
-    removal_forest_type_src = rasterio.open(removal_forest_type)
+    try:
+        cont_ecozone_src = rasterio.open(cont_ecozone)
+        uu.print_log("    Continent-ecozone tile found for", tile_id)
+    except:
+        uu.print_log("    No Continent-ecozone tile found for", tile_id)
+
+    try:
+        removal_forest_type_src = rasterio.open(removal_forest_type)
+        uu.print_log("    Removal forest type tile found for", tile_id)
+    except:
+        uu.print_log("    No Removal forest type tile found for", tile_id)
 
     uu.print_log("  Creating belowground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
@@ -314,8 +323,15 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
     for idx, window in windows:
 
         # Creates windows from inputs that are used regardless of whether calculating BGC2000 or BGC in emissions year
-        cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-        removal_forest_type_window = removal_forest_type_src.read(1, window=window)
+        try:
+            cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
+        except:
+            cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
+
+        try:
+            removal_forest_type_window = removal_forest_type_src.read(1, window=window)
+        except:
+            removal_forest_type_window = np.zeros((window.height, window.width))
 
         # Applies the mangrove BGB:AGB ratios (3 different ratios) to the ecozone raster to create a raster of BGB:AGB ratios
         for key, value in mang_BGB_AGB_ratio.items():
@@ -433,10 +449,15 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # These tiles should exist and thus be able to be opened
-    bor_tem_trop_src = rasterio.open(bor_tem_trop)
-    cont_ecozone_src = rasterio.open(cont_eco)
     precip_src = rasterio.open(precip)
     elevation_src = rasterio.open(elevation)
+
+    # Opens the mangrove biomass tile if it exists
+    try:
+        bor_tem_trop_src = rasterio.open(bor_tem_trop)
+        uu.print_log("Boreal/temperate/tropical tile found for", tile_id)
+    except:
+        uu.print_log("No Boreal/temperate/tropical tile biomass for", tile_id)
 
     # Opens the mangrove biomass tile if it exists
     try:
@@ -451,6 +472,13 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         uu.print_log("WHRC biomass found for", tile_id)
     except:
         uu.print_log("No WHRC biomass for", tile_id)
+
+    # Opens the continent-ecozone tile if it exists
+    try:
+        cont_ecozone_src = rasterio.open(cont_ecozone)
+        uu.print_log("    Continent-ecozone tile found for", tile_id)
+    except:
+        uu.print_log("    No Continent-ecozone tile found for", tile_id)
 
     uu.print_log("  Creating deadwood and litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
@@ -475,10 +503,16 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
         except:
             AGC_emis_year_window = np.zeros((window.height, window.width), dtype='float32')
+        try:
+            cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
+        except:
+            cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
+        try:
+            bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
+        except:
+            bor_tem_trop_window = np.zeros((window.height, window.width))
 
         # Creates windows from inputs that are used regardless of whether calculating deadwood/litter 2000 or deadwood/litter in emissions year
-        bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
-        cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
         precip_window = precip_src.read(1, window=window)
         elevation_window = elevation_src.read(1, window=window)
 
@@ -625,6 +659,11 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type):
     soil_full_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000)
     AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
 
+    if os.path.exists(soil_full_extent) & os.path.exists(AGC_emis_year):
+        uu.print_log("Soil C 2000 and loss found for {}. Proceeding with soil C in loss extent.".format(tile_id))
+    else:
+        return uu.print_log("Soil C 2000 and/or loss not found for {}. Skipping soil C in loss extent.".format(tile_id))
+
     # Name of output tile
     soil_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
 
@@ -704,7 +743,12 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
         BGC_2000_src = rasterio.open(BGC_2000)
         deadwood_2000_src = rasterio.open(deadwood_2000)
         litter_2000_src = rasterio.open(litter_2000)
-        soil_2000_src = rasterio.open(soil_2000)
+        try:
+            soil_2000_src = rasterio.open(soil_2000)
+            uu.print_log("   Soil C 2000 tile found for", tile_id)
+        except:
+            uu.print_log("    No soil C 2000 tile found for", tile_id)
+
         kwargs = AGC_2000_src.meta
         kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
         windows = AGC_2000_src.block_windows(1)
@@ -733,7 +777,12 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
         BGC_emis_year_src = rasterio.open(BGC_emis_year)
         deadwood_emis_year_src = rasterio.open(deadwood_emis_year)
         litter_emis_year_src = rasterio.open(litter_emis_year)
-        soil_emis_year_src = rasterio.open(soil_emis_year)
+        try:
+            soil_emis_year_src = rasterio.open(soil_emis_year)
+            uu.print_log("   Soil C emission year tile found for", tile_id)
+        except:
+            uu.print_log("    No soil C emission year tile found for", tile_id)
+
         kwargs = AGC_emis_year_src.meta
         kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
@@ -764,7 +813,10 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
             BGC_2000_window = BGC_2000_src.read(1, window=window)
             deadwood_2000_window = deadwood_2000_src.read(1, window=window)
             litter_2000_window = litter_2000_src.read(1, window=window)
-            soil_2000_window = soil_2000_src.read(1, window=window)
+            try:
+                soil_2000_window = soil_2000_src.read(1, window=window)
+            except:
+                soil_2000_window = np.zeros((window.height, window.width))
 
             total_C_2000_window = AGC_2000_window + BGC_2000_window + deadwood_2000_window + litter_2000_window + soil_2000_window
 
@@ -782,7 +834,10 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
             BGC_emis_year_window = BGC_emis_year_src.read(1, window=window)
             deadwood_emis_year_window = deadwood_emis_year_src.read(1, window=window)
             litter_emis_year_window = litter_emis_year_src.read(1, window=window)
-            soil_emis_year_window = soil_emis_year_src.read(1, window=window)
+            try:
+                soil_emis_year_window = soil_emis_year_src.read(1, window=window)
+            except:
+                soil_emis_year_window = np.zeros((window.height, window.width))
 
             total_C_emis_year_window = AGC_emis_year_window + BGC_emis_year_window + deadwood_emis_year_window + litter_emis_year_window + soil_emis_year_window
 
