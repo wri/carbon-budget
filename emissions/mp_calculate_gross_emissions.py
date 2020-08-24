@@ -206,7 +206,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     if cn.count == 96:
-        processes = 19   # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
+        processes = 17   # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
     else:
         processes = 9
     uu.print_log('Gross emissions max processors=', processes)
@@ -230,7 +230,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Adding metadata tags for pattern {}".format(pattern))
 
         if cn.count == 96:
-            processes = 60  # 60 processors = XXX GB peak
+            processes = 45  # 45 processors = XXX GB peak
         else:
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)

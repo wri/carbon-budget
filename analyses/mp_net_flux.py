@@ -98,7 +98,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # Count/3 uses about 380 GB on a r4.16xlarge spot machine
     # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
     if cn.count == 96:
-        processes = 40   # 24 processors = 440 GB peak; 36 = 660 GB peak; 40 = 720 GB peak
+        processes = 38   # 24 processors = 440 GB peak; 36 = 660 GB peak; 40 = 720 GB peak
     else:
         processes = 9
     uu.print_log('Net flux max processors=', processes)
