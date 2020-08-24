@@ -251,7 +251,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
     if cn.count == 96:
         if carbon_pool_extent == 'loss':
-            processes = 20  # 32 processors = >750 GB peak; 24 > 750 GB peak; 20 = XXX GB peak
+            processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = XXX GB peak
         else:
             processes = 8  # 8 processors = XXX GB peak
     else:
