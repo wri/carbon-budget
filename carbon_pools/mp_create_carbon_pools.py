@@ -183,7 +183,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log("Creating tiles of aboveground carbon in {}".format(carbon_pool_extent))
     if cn.count == 96:
         if carbon_pool_extent == 'loss':
-            processes = 16  # 16 processors = XXX GB peak
+            processes = 18  # 25 processors > 750 GB peak; 16 = 560 GB peak; 18 = XXX GB peak
         else:
             processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
     else:
@@ -223,7 +223,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # Creates a single filename pattern to pass to the multiprocessor call
     if cn.count == 96:
         if carbon_pool_extent == 'loss':
-            processes = 36  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = XXX GB peak
+            processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = XXX GB peak
         else:
             processes = 20  # 16 processors = 500 GB peak; 20 = XXX GB peak
     else:

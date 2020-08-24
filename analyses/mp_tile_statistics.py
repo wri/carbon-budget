@@ -38,71 +38,108 @@ def mp_tile_statistics(sensit_type, tile_id_list):
 
     # For downloading all tiles in selected folders
     download_dict = {
-                    # # cn.WHRC_biomass_2000_unmasked_dir,
+                    # cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked],
                     # cn.JPL_processed_dir: [cn.pattern_JPL_unmasked_processed],
-                    # # cn.mangrove_biomass_2000_dir,
-                    # # cn.cont_eco_dir,
+                    # cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+                    # cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
 
-                    # # cn.gain_year_count_mangrove_dir,
-                    # # cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
-                    # # cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
-                    # # cn.cumul_gain_AGCO2_mangrove_dir,
-                    # # cn.cumul_gain_BGCO2_mangrove_dir,
-                    # #
-                    # # cn.gain_year_count_planted_forest_non_mangrove_dir,
-                    # # cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
-                    # # cn.planted_forest_type_unmasked_dir,
-                    # # cn.annual_gain_AGB_planted_forest_non_mangrove_dir,
-                    # # cn.annual_gain_BGB_planted_forest_non_mangrove_dir,
-                    # # cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
-                    # # cn.cumul_gain_BGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_BGCO2_planted_forest_non_mangrove],
+                    cn.model_extent_dir: [cn.pattern_model_extent],
 
+                    # Mangrove removals
+                    cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
+                    cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
+                    cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove],
+
+                    # European forest removals
+                    cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe],
+                    cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe],
+
+                    # Planted forest removals
+                    cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
+                    cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+                    cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked],
+
+                    # US forest removals
+                    cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed],
+                    cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
+                    cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US],
+                    cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
+                    cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],
+
+                    # Young natural forest removals
+                    cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
+                    cn.stdev_annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_stdev_annual_gain_AGC_natrl_forest_young],
+
+                    # IPCC defaults forest removals
                     cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
-                    # cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest],
                     cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
-                    cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
-                    cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
-                    cn.cumul_gain_BGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_BGCO2_natrl_forest],
-                    cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
-                    #
-                    # # cn.elevation_processed_dir,
-                    # # cn.precip_processed_dir,
-                    # # cn.planted_forest_type_unmasked_dir,
-                    # # cn.bor_tem_trop_processed_dir,
-                    # # cn.soil_C_full_extent_2000_dir,
-                    # # cn.drivers_processed_dir,
-                    # # cn.climate_zone_processed_dir
-                    #
-                    cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
-                    cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
-                    cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
-                    cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
-                    cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
-                    cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year],
+                    cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults],
+                    cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults],
 
-                    # cn.net_flux_dir: [cn.pattern_net_flux],
-                    cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
-                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil],
-                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil]
-                    # cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil]
+                    # Annual removals from all forest types
+                    cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+                    cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types],
+                    cn.annual_gain_AGC_BGC_all_types_dir: [cn.pattern_annual_gain_AGC_BGC_all_types],
+                    cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
+                    cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types],
+
+                    # Gain year count
+                    cn.gain_year_count_dir: [cn.pattern_gain_year_count],
+
+                    # Gross removals from all forest types
+                    cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types],
+                    cn.cumul_gain_BGCO2_all_types_dir: [cn.pattern_cumul_gain_BGCO2_all_types],
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+
+                    # # # Carbon pool inputs
+                    # # cn.elevation_processed_dir: [cn.pattern_elevation],
+                    # # cn.precip_processed_dir: [cn.pattern_precip],
+                    # # cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+                    # # cn.drivers_processed_dir: [cn.pattern_drivers],
+                    # # cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
+                    # cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
+                    #
+                    # # Carbon pools in emissions year
+                    # cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
+                    # cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
+                    # cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
+                    # cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
+                    # cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
+                    # cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year],
+                    #
+                    # # Carbon pools in 2000
+                    # cn.AGC_2000_dir: [cn.pattern_AGC_2000],
+                    # cn.BGC_2000_dir: [cn.pattern_BGC_2000],
+                    # cn.deadwood_2000_dir: [cn.pattern_deadwood_2000],
+                    # cn.litter_2000_dir: [cn.pattern_litter_2000],
+                    # cn.total_C_2000_dir: [cn.pattern_total_C_2000],
+                    #
+                    # # Gross emissions from biomass and soil
+                    # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+                    # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil],
+                    # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil],
+                    # cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil],
                     # cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil],
                     # cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil],
                     # cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil],
                     # cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil],
                     # cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil],
-                    # cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil]
-
-                    # cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                    # cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                    # cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                    # cn.gross_emis_commod_soil_only_dir,
-                    # cn.gross_emis_shifting_ag_soil_only_dir,
-                    # cn.gross_emis_forestry_soil_only_dir,
-                    # cn.gross_emis_wildfire_soil_only_dir,
-                    # cn.gross_emis_urban_soil_only_dir,
-                    # cn.gross_emis_no_driver_soil_only_dir,
-                    # cn.gross_emis_nodes_soil_only_dir
+                    # cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil],
+                    #
+                    # # Net flux
+                    # cn.net_flux_dir: [cn.pattern_net_flux],
+                    #
+                    # # Gross emissions from soil only
+                    # cn.gross_emis_all_gases_all_drivers_soil_only_dir: [cn.pattern_gross_emis_all_gases_all_drivers_soil_only],
+                    # cn.gross_emis_co2_only_all_drivers_soil_only_dir: [cn.pattern_gross_emis_co2_only_all_drivers_soil_only],
+                    # cn.gross_emis_non_co2_all_drivers_soil_only_dir: [cn.pattern_gross_emis_non_co2_all_drivers_soil_only],
+                    # cn.gross_emis_commod_soil_only_dir: [cn.pattern_gross_emis_commod_soil_only],
+                    # cn.gross_emis_shifting_ag_soil_only_dir: [cn.pattern_gross_emis_shifting_ag_soil_only],
+                    # cn.gross_emis_forestry_soil_only_dir: [cn.pattern_gross_emis_forestry_soil_only],
+                    # cn.gross_emis_wildfire_soil_only_dir: [cn.pattern_gross_emis_wildfire_soil_only],
+                    # cn.gross_emis_urban_soil_only_dir: [cn.pattern_gross_emis_urban_soil_only],
+                    # cn.gross_emis_no_driver_soil_only_dir: [cn.pattern_gross_emis_no_driver_soil_only],
+                    # cn.gross_emis_nodes_soil_only_dir: [cn.pattern_gross_emis_nodes_soil_only]
     }
 
     # Iterates through each set of tiles and gets statistics of it
@@ -122,12 +159,9 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
-        processes=9
+        processes=15
         uu.print_log('Tile statistics max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        # processes=9 maxes out at about 340 for gross emissions
-        # processes=13 maxes out at above 480 for gross emissions
-        # processes=11 maxes out at about 440 for gross emissions
         pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
@@ -150,11 +184,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
 
         # Copies the text file to the tile statistics folder on s3
         cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
-
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
 
 
