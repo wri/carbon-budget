@@ -251,9 +251,9 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
     if cn.count == 96:
         if carbon_pool_extent == 'loss':
-            processes = 32  # 32 processors = XXX GB peak
+            processes = 24  # 32 processors = >750 GB peak; 24 = XXX GB peak
         else:
-            processes = 16  # 16 processors = XXX GB peak
+            processes = 12  # 12 processors = XXX GB peak
     else:
         processes = 2
     uu.print_log('Deadwood max processors=', processes)
@@ -304,9 +304,9 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
         if cn.count == 96:
             if carbon_pool_extent == 'loss':
-                processes = 32  # 32 processors = XXX GB peak
+                processes = 24  # 24 processors = XXX GB peak
             else:
-                processes = 16  # 16 processors = XXX GB peak
+                processes = 12  # 12 processors = XXX GB peak
         else:
             processes = 2
         uu.print_log('Soil carbon loss year max processors=', processes)
@@ -341,9 +341,9 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     pattern = output_pattern_list[5]
     if cn.count == 96:
         if carbon_pool_extent == 'loss':
-            processes = 36  # 36 processors = XXX GB peak
+            processes = 24  # 24 processors = XXX GB peak
         else:
-            processes = 18  # 18 processors = XXX GB peak
+            processes = 12  # 12 processors = XXX GB peak
     else:
         processes = 2
     uu.print_log('Total carbon loss year max processors=', processes)
