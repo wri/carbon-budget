@@ -47,12 +47,19 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
 
-    # If a full model run is specified, the correct set of tiles for the particular script is listed
-    if tile_id_list == 'all':
+    # If a full model run is specified, the correct set of tiles for the particular script is listed.
+    # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant.
+    if tile_id_list == 'all' & carbon_pool_extent == 'loss':
         # Lists the tiles that have both model extent and loss pixels
         model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
         loss_tile_id_list = uu.tile_list_s3(cn.loss_dir, sensit_type=sensit_type)
+        uu.print_log("Carbon pool at emissions year is combination of model_extent and loss tiles:")
         tile_id_list = list(set(model_extent_tile_id_list).intersection(loss_tile_id_list))
+
+    # For runs generating carbon pools in 2000, all model extent tiles are relevant.
+    if tile_id_list == 'all' & carbon_pool_extent != 'loss':
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
+
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
