@@ -217,35 +217,35 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     os.remove(tile_to_delete)
     # uu.print_log(":::::Deleted unneeded tiles")
     # uu.check_storage()
-
-
-    uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
-    # Creates a single filename pattern to pass to the multiprocessor call
-    if cn.count == 96:
-        if carbon_pool_extent == 'loss':
-            processes = 32  # 20 processors = 370 GB peak; 32 = XXX GB peak
-        else:
-            processes = 20  # 16 processors = 500 GB peak; 20 = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log('BGC max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
-                     carbon_pool_extent=carbon_pool_extent,
-                     sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type)
-
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-    else:
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-        uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
-    uu.check_storage()
+    #
+    #
+    # uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # if cn.count == 96:
+    #     if carbon_pool_extent == 'loss':
+    #         processes = 36  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = XXX GB peak
+    #     else:
+    #         processes = 20  # 16 processors = 500 GB peak; 20 = XXX GB peak
+    # else:
+    #     processes = 2
+    # uu.print_log('BGC max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
+    #                  carbon_pool_extent=carbon_pool_extent,
+    #                  sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type)
+    #
+    # if carbon_pool_extent in ['loss', '2000']:
+    #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    # else:
+    #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    #     uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+    # uu.check_storage()
 
 
     uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))

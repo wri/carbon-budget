@@ -448,16 +448,24 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
-    # These tiles should exist and thus be able to be opened
-    precip_src = rasterio.open(precip)
-    elevation_src = rasterio.open(elevation)
+    try:
+        precip_src = rasterio.open(precip)
+        uu.print_log("Precipitation tile found for", tile_id)
+    except:
+        uu.print_log("No precipitation tile biomass for", tile_id)
+
+    try:
+        elevation_src = rasterio.open(elevation)
+        uu.print_log("Elevation tile found for", tile_id)
+    except:
+        uu.print_log("No elevation tile biomass for", tile_id)
 
     # Opens the mangrove biomass tile if it exists
     try:
         bor_tem_trop_src = rasterio.open(bor_tem_trop)
         uu.print_log("Boreal/temperate/tropical tile found for", tile_id)
     except:
-        uu.print_log("No Boreal/temperate/tropical tile biomass for", tile_id)
+        uu.print_log("No boreal/temperate/tropical tile biomass for", tile_id)
 
     # Opens the mangrove biomass tile if it exists
     try:
@@ -475,10 +483,10 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
     # Opens the continent-ecozone tile if it exists
     try:
-        cont_ecozone_src = rasterio.open(cont_ecozone)
-        uu.print_log("    Continent-ecozone tile found for", tile_id)
+        cont_ecozone_src = rasterio.open(cont_eco)
+        uu.print_log("Continent-ecozone tile found for", tile_id)
     except:
-        uu.print_log("    No Continent-ecozone tile found for", tile_id)
+        uu.print_log("No Continent-ecozone tile found for", tile_id)
 
     uu.print_log("  Creating deadwood and litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
@@ -511,10 +519,14 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
         except:
             bor_tem_trop_window = np.zeros((window.height, window.width))
-
-        # Creates windows from inputs that are used regardless of whether calculating deadwood/litter 2000 or deadwood/litter in emissions year
-        precip_window = precip_src.read(1, window=window)
-        elevation_window = elevation_src.read(1, window=window)
+        try:
+            precip_window = precip_src.read(1, window=window)
+        except:
+            precip_window = np.zeros((window.height, window.width))
+        try:
+            elevation_window = elevation_src.read(1, window=window)
+        except:
+            elevation_window = np.zeros((window.height, window.width))
 
         # This allows the script to bypass the few tiles that have mangrove biomass but not WHRC biomass
         if os.path.exists(natrl_forest_biomass_2000):
