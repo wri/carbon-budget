@@ -190,7 +190,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     uu.create_blank_tile_txt()
 
     for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=60)
+        pool = multiprocessing.Pool(processes=60)  # 60 = XXX GB peak
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
                                              sensit_type=sensit_type), tile_id_list)
         pool.close()

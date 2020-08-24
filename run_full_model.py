@@ -479,6 +479,8 @@ def main ():
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
+        uu.print_log(tiles_to_delete)
+
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
         uu.print_log(":::::Deleted unneeded tiles")
