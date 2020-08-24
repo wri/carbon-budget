@@ -43,7 +43,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
                     # cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
 
-                    cn.model_extent_dir: [cn.pattern_model_extent],
+                    cn.model_extent_dir: [cn.pattern_model_extent], # 15 = 370 GB peak
 
                     # Mangrove removals
                     cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],

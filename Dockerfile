@@ -53,6 +53,8 @@ RUN cd /usr/include && ln -s ./ gdal
 #https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
+RUN cd carbon-budget
+
 # Check out the branch that I'm currently using for model development
 RUN git checkout model_v_1.2.0
 

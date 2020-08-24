@@ -622,7 +622,10 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
 
             # Same as above but for litter
-            cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
+            try:
+                cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
+            except:
+                cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
 
             # Applies the mangrove deadwood:AGB ratios (2 different ratios) to the ecozone raster to create a raster of deadwood:AGB ratios
             for key, value in mang_litter_AGB_ratio.items():
