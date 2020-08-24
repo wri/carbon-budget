@@ -115,7 +115,7 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
 
     # Combines the four above gain year count tiles for each Hansen tile into a single output tile
     if cn.count == 96:
-        processes = 80   # 28 processors = 220 GB peak; 62 = 470 GB peak; 78 = 600 GB peak; 80 = XXX GB peak
+        processes = 84   # 28 processors = 220 GB peak; 62 = 470 GB peak; 78 = 600 GB peak; 80 = 620 GB peak; 84 = XXX GB peak
     elif cn.count < 4:
         processes = 1
     else:
