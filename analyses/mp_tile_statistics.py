@@ -24,7 +24,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                'percentile75', 'percentile90', 'min', 'max', 'sum']
     header_no_brackets = ', '.join(headers)
 
-    tile_stats = '{0}_{1}_{2}'.format(uu.date_time_today, sensit_type, cn.tile_stats_pattern)
+    tile_stats = '{0}_{1}_{2}_{3}.csv'.format(cn.tile_stats_pattern, cn.version_filename, sensit_type, uu.date_time_today)
 
     # Creates the output text file with the column names
     with open(tile_stats, 'w+') as f:
@@ -46,50 +46,50 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     cn.model_extent_dir: [cn.pattern_model_extent], # 15 = 370 GB peak
 
                     # Mangrove removals
-                    cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
-                    cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
-                    cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove],
+                    cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove], # 15 = 640 GB peak
+                    cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove], # 15 = 640 GB peak
+                    cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove], # 15 = 640 GB peak
 
                     # European forest removals
-                    cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe],
-                    cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe],
+                    cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe], # 15 = 630 GB peak
+                    cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe], # 15 = 630 GB peak
 
                     # Planted forest removals
-                    cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
-                    cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
-                    cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked],
+                    cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked], # 15 = 600 GB peak
+                    cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked], # 15 = XXX GB peak
+                    cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked], # 15 = XXX GB peak
 
                     # US forest removals
-                    cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed],
-                    cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
-                    cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US],
-                    cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
+                    cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed], # 15 = XXX GB peak
+                    cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed], # 15 = XXX GB peak
+                    cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US], # 15 = XXX GB peak
+                    cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US], # 15 = XXX GB peak
                     # cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],
 
                     # Young natural forest removals
-                    cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
-                    cn.stdev_annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_stdev_annual_gain_AGC_natrl_forest_young],
+                    cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young], # 15 = XXX GB peak
+                    cn.stdev_annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_stdev_annual_gain_AGC_natrl_forest_young], # 15 = XXX GB peak
 
                     # IPCC defaults forest removals
-                    cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
-                    cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
-                    cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults],
-                    cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults],
+                    cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC], # 15 = XXX GB peak
+                    cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults], # 15 = XXX GB peak
+                    cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults], # 15 = XXX GB peak
+                    cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults], # 15 = XXX GB peak
 
                     # Annual removals from all forest types
-                    cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-                    cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types],
-                    cn.annual_gain_AGC_BGC_all_types_dir: [cn.pattern_annual_gain_AGC_BGC_all_types],
-                    cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
-                    cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types],
+                    cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types], # 15 = XXX GB peak
+                    cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types], # 15 = XXX GB peak
+                    cn.annual_gain_AGC_BGC_all_types_dir: [cn.pattern_annual_gain_AGC_BGC_all_types], # 15 = XXX GB peak
+                    cn.removal_forest_type_dir: [cn.pattern_removal_forest_type], # 15 = XXX GB peak
+                    cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types], # 15 = XXX GB peak
 
                     # Gain year count
-                    cn.gain_year_count_dir: [cn.pattern_gain_year_count],
+                    cn.gain_year_count_dir: [cn.pattern_gain_year_count], # 15 = XXX GB peak
 
                     # Gross removals from all forest types
-                    cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types],
-                    cn.cumul_gain_BGCO2_all_types_dir: [cn.pattern_cumul_gain_BGCO2_all_types],
-                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+                    cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types], # 15 = XXX GB peak
+                    cn.cumul_gain_BGCO2_all_types_dir: [cn.pattern_cumul_gain_BGCO2_all_types], # 15 = XXX GB peak
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types], # 15 = XXX GB peak
 
                     # # # Carbon pool inputs
                     # # cn.elevation_processed_dir: [cn.pattern_elevation],
@@ -180,7 +180,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
             tile_short = tile[:-4]
             outname = '{0}_value_per_pixel.tif'.format(tile_short)
             os.remove(outname)
-            uu.print_log("  Tiles deleted")
+            uu.print_log("  {} deleted".format(tile))
 
         # Copies the text file to the tile statistics folder on s3
         cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]

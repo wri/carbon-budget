@@ -97,7 +97,7 @@ blank_tile_txt = "blank_tiles.txt"
 
 
 # Tile summary spreadsheets
-tile_stats_pattern = 'tile_stats.csv'
+tile_stats_pattern = 'tile_stats_model'
 tile_stats_dir = os.path.join(s3_base_dir, 'tile_stats/')
 
 ######
