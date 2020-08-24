@@ -63,11 +63,11 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed], # 15 = 350 GB peak
                     cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed], # 15 = 340 GB peak
                     cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US], # 15 = 350 GB peak
-                    cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US], # 15 = XXX GB peak
+                    cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US], # 15 = 620 GB peak
                     # cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],
 
                     # Young natural forest removals
-                    cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young], # 15 = XXX GB peak
+                    cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young], # 15 = 710 GB peak
                     cn.stdev_annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_stdev_annual_gain_AGC_natrl_forest_young], # 15 = XXX GB peak
 
                     # IPCC defaults forest removals
@@ -173,7 +173,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         # for tile in tile_list:
         #     tile_statistics.create_tile_statistics(tile, sensit_type)
 
-        # Even an m4.16xlarge spot machine can't handle all these sets of tiles, so this deletes each set of tiles after it is analyzed
+        # Spot machine can't store all the tiles, so this cleans it up
         uu.print_log("Deleting tiles...")
         for tile in tile_list:
             os.remove(tile)
@@ -185,6 +185,8 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         # Copies the text file to the tile statistics folder on s3
         cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
         uu.log_subprocess_output_full(cmd)
+
+    uu.print_log("Script complete. All tiles analyzed!")
 
 
 

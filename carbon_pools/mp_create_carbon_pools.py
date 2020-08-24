@@ -49,8 +49,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
-        # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
+        # Lists the tiles that have both model extent and loss pixels
+        model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
+        loss_tile_id_list = uu.tile_list_s3(cn.loss_dir, sensit_type=sensit_type)
+        tile_id_list = list(set(model_extent_tile_id_list).intersection(loss_tile_id_list))
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")

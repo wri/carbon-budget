@@ -190,7 +190,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     uu.create_blank_tile_txt()
 
     for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=60)  # 60 = XXX GB peak
+        pool = multiprocessing.Pool(processes=60)  # 60 = 100 GB peak
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
                                              sensit_type=sensit_type), tile_id_list)
         pool.close()
@@ -206,7 +206,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     if cn.count == 96:
-        processes = 17   # 9 processors = 350 GB peak; 16 = 610 GB peak; 20 = >740 GB peak; 18 = 690 GB peak; 19 = 720 GB peak
+        processes = 18   # 17 = 650 GB peak; 18 = XXX GB peak
     else:
         processes = 9
     uu.print_log('Gross emissions max processors=', processes)

@@ -85,7 +85,6 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
 
     # # For single processor use
-    # folder = './'
     # for download_dir, download_pattern in download_dict.iteritems():
     #
     #     for tile_id in tile_id_list:
@@ -94,9 +93,6 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
 
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
-
-    # Count/3 uses about 380 GB on a r4.16xlarge spot machine
-    # processes/24 maxes out at about 435 GB on an r4.16xlarge spot machine
     if cn.count == 96:
         processes = 38   # 24 processors = 440 GB peak; 36 = 660 GB peak; 40 = 720 GB peak
     else:

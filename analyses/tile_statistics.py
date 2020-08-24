@@ -54,10 +54,7 @@ def create_tile_statistics(tile, sensit_type):
     uu.print_log("Converting {} from /ha to /pixel...".format(tile))
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
            '--overwrite', '--quiet']
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     uu.print_log("{} converted to /pixel".format(tile))
 
