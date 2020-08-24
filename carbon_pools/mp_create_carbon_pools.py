@@ -246,29 +246,29 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
     #     uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
     # uu.check_storage()
-
-
-    uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
-    if cn.count == 96:
-        if carbon_pool_extent == 'loss':
-            processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = XXX GB peak
-        else:
-            processes = 8  # 8 processors = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log('Deadwood max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(
-        partial(create_carbon_pools.create_deadwood_litter, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
-                mang_litter_AGB_ratio=mang_litter_AGB_ratio,
-                carbon_pool_extent=carbon_pool_extent,
-                sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type)
+    #
+    #
+    # uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
+    # if cn.count == 96:
+    #     if carbon_pool_extent == 'loss':
+    #         processes = 15  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 650 GB peak; 15 = XXX GB peak
+    #     else:
+    #         processes = 8  # 8 processors = XXX GB peak
+    # else:
+    #     processes = 2
+    # uu.print_log('Deadwood max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(
+    #     partial(create_carbon_pools.create_deadwood_litter, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
+    #             mang_litter_AGB_ratio=mang_litter_AGB_ratio,
+    #             carbon_pool_extent=carbon_pool_extent,
+    #             sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type)
 
     if carbon_pool_extent in ['loss', '2000']:
         uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
