@@ -637,9 +637,12 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
             litter_2000_output = np.where(AGC_2000_window > 0, litter_2000_output, 0).astype('float32')
 
-        # Writes deadwood and litter 2000 to rasters
-        dst_deadwood_2000.write_band(1, deadwood_2000_output, window=window)
-        dst_litter_2000.write_band(1, litter_2000_output, window=window)
+        # Only writes deadwood and litter 2000 to rasters if output in 2000 is desired
+        if '2000' in carbon_pool_extent:
+
+            # Writes deadwood and litter 2000 to rasters
+            dst_deadwood_2000.write_band(1, deadwood_2000_output, window=window)
+            dst_litter_2000.write_band(1, litter_2000_output, window=window)
 
 
         # Only if calculating carbon emitted_pools in emissions year are deadwood and litter clipped to AGC emissions year pixels.
