@@ -189,17 +189,17 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     # This will be iterated through to delete the tiles at the end of the script.
     uu.create_blank_tile_txt()
 
-    # for pattern in pattern_list:
-    #     pool = multiprocessing.Pool(processes=60)  # 60 = XXX GB peak
-    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
-    #                                          sensit_type=sensit_type), tile_id_list)
-    #     pool.close()
-    #     pool.join()
-
-    # For single processor use
     for pattern in pattern_list:
-        for tile in tile_id_list:
-            uu.make_blank_tile(tile, pattern, folder, sensit_type)
+        pool = multiprocessing.Pool(processes=60)  # 60 = XXX GB peak
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
+                                             sensit_type=sensit_type), tile_id_list)
+        pool.close()
+        pool.join()
+
+    # # For single processor use
+    # for pattern in pattern_list:
+    #     for tile in tile_id_list:
+    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
 
 
     # Calculates gross emissions for each tile
