@@ -905,18 +905,9 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         # If the Hansen loss tile isn't already on the spot machine
         else:
 
-            # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
-            try:
-                s3_file_download('{0}{1}_{2}.tif'.format(cn.loss_dir, cn.pattern_loss, tile_id),
-                                 os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
-                print_log("Downloaded Hansen loss tile for", tile_id, "to create a blank tile")
-
-            # If there is no Hansen tile, it downloads the pixel area tile instead
-            except:
-
-                s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-                                 os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
-                print_log("Downloaded pixel area tile for", tile_id, "to create a blank tile")
+            s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
+                             os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
+            print_log("Downloaded pixel area tile for", tile_id, "to create a blank tile")
 
             # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
             tile_list= tile_list_spot_machine(folder, pattern)
