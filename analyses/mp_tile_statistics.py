@@ -64,7 +64,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
                     cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US],
                     cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
-                    cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],
+                    # cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],
 
                     # Young natural forest removals
                     cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
