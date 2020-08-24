@@ -66,9 +66,9 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
 
     # Calculates gross removals
     if cn.count == 96:
-        processes = 18   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 18 = XXX GB peak
+        processes = 20   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 20 = XXX GB peak
     else:
-        processes = 26
+        processes = 2
     uu.print_log('Gross removals max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
