@@ -111,7 +111,7 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 // Output files default to the standard model names
 string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
 string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
-string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "tif";
+string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
 string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
 string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
 string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";

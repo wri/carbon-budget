@@ -24,10 +24,10 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                'percentile75', 'percentile90', 'min', 'max', 'sum']
     header_no_brackets = ', '.join(headers)
 
-    tile_stats = '{0}_v{1}_{2}_{3}.csv'.format(cn.tile_stats_pattern, cn.version, sensit_type, uu.date_time_today)
+    tile_stats_txt = '{0}_v{1}_{2}_{3}.csv'.format(cn.tile_stats_pattern, cn.version, sensit_type, uu.date_time_today)
 
     # Creates the output text file with the column names
-    with open(tile_stats, 'w+') as f:
+    with open(tile_stats_txt, 'w+') as f:
         f.write(header_no_brackets  +'\r\n')
     f.close()
 
@@ -162,7 +162,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         processes=15
         uu.print_log('Tile statistics max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type), tile_list)
+        pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type, tile_stats_txt=tile_stats_txt), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
         # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
@@ -183,7 +183,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
             uu.print_log("  {} deleted".format(tile))
 
         # Copies the text file to the tile statistics folder on s3
-        cmd = ['aws', 's3', 'cp', tile_stats, cn.tile_stats_dir]
+        cmd = ['aws', 's3', 'cp', tile_stats_txt, cn.tile_stats_dir]
         uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Script complete. All tiles analyzed!")

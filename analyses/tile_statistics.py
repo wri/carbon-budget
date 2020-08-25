@@ -8,9 +8,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def create_tile_statistics(tile, sensit_type):
-    
-    tile_stats = '{0}_v{1}_{2}_{3}.csv'.format(cn.tile_stats_pattern, cn.version, sensit_type, uu.date_time_today)
+def create_tile_statistics(tile, sensit_type, tile_stats_txt):
 
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)
@@ -111,7 +109,7 @@ def create_tile_statistics(tile, sensit_type):
     uu.print_log(stats_no_brackets)
 
     # Adds the tile's statistics to the txt file
-    with open(tile_stats, 'a+') as f:
+    with open(tile_stats_txt, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()
 
