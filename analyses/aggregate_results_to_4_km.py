@@ -54,10 +54,7 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tile, input_rewindow]
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
     if not os.path.exists(tcd_rewindow):
 
@@ -67,10 +64,7 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                tcd_tile, tcd_rewindow]
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
     else:
 

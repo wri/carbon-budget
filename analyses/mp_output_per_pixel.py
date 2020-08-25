@@ -74,9 +74,9 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
         # 20 processors = 430 GB peak for cumul gain; 30 = 640 GB peak for cumul gain;
         # 32 = 680 GB peak for cumul gain; 33 = 710 GB peak for cumul gain, gross emis, net flux
         if cn.count == 96:
-            processes = 30
+            processes = 20
         else:
-            processes = int(cn.count/2)
+            processes = 2
         uu.print_log("Creating {0} with {1} processors...".format(output_pattern, processes))
         pool = multiprocessing.Pool(processes)
         pool.map(partial(output_per_pixel.output_per_pixel, input_pattern=input_pattern,

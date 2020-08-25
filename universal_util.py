@@ -589,13 +589,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("Tiles with pattern", pattern, "are not on spot machine. Downloading...")
 
-        cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+        # cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+        #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
 
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
+        cmd = ['aws', 's3', 'cp', source, dest, '--recursive',
+               '--exclude', '*', '--include', '{}'.format(pattern), '--no-progress']
+        log_subprocess_output_full(cmd)
 
         print_log('\n')
 
@@ -1134,7 +1133,7 @@ def add_rasterio_tags(output_dst, sensit_type):
 
 def add_universal_metadata_tags(output_raster, sensit_type):
 
-    print_log("Adding metadata tags to", output_raster)
+    print_log("Adding universal metadata tags to", output_raster)
 
     cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
            '-mo', 'date_created={}'.format(date_today),
