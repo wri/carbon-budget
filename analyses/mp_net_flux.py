@@ -94,7 +94,7 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
     if cn.count == 96:
-        processes = 38   # 24 processors = 440 GB peak; 36 = 660 GB peak; 40 = 720 GB peak
+        processes = 38   # 38 = 700 GB peak
     else:
         processes = 9
     uu.print_log('Net flux max processors=', processes)

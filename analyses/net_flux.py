@@ -2,6 +2,7 @@
 
 import os
 import datetime
+import numpy as np
 import rasterio
 import sys
 sys.path.append('../')
