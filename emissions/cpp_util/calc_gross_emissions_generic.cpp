@@ -109,28 +109,28 @@ string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_oth
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
 // Output files default to the standard model names
-string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
-string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_no_tag.tif";
+string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "tif";
+string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + ".tif";
 
 if (sensit_type != "std") {
-    out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
-    out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_" + sensit_type + "_no_tag.tif";
+    out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
 }
 
 
