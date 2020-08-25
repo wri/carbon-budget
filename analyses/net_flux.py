@@ -70,13 +70,13 @@ def net_calc(tile_id, pattern, sensit_type):
 
         # Creates windows for each input tile
         try:
-            removals_window = removals_src.read(1, window=window)
+            removals_window = removals_src.read(1, window=window).astype('float32')
         except:
-            removals_window = np.zeros((window.height, window.width))
+            removals_window = np.zeros((window.height, window.width)).astype('float32')
         try:
-            emissions_window = emissions_src.read(1, window=window)
+            emissions_window = emissions_src.read(1, window=window).astype('float32')
         except:
-            emissions_window = np.zeros((window.height, window.width))
+            emissions_window = np.zeros((window.height, window.width)).astype('float32')
 
         # Subtracts gain that from loss
         dst_data = emissions_window - removals_window

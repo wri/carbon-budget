@@ -97,7 +97,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
                     # cn.drivers_processed_dir: [cn.pattern_drivers],
                     # cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
-                    cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000], # 15 = XXX GB peak
+                    cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000], # 15 = 430 GB peak
 
                     # Carbon pools in emissions year
                     cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 15 = XXX GB peak
