@@ -502,13 +502,15 @@ def main ():
 
         uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
         tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.gross_emis_non_co2_all_drivers_biomass_soil_dir)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil_dir)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_commod_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_shifting_ag_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_forestry_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_wildfire_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_urban_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_no_driver_biomass_soil)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_nodes_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_emis_year)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_emis_year)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_deadwood_emis_year_2000)))
