@@ -59,36 +59,36 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
-    # so that it has all the necessary input tiles
-    # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
-    folder = os.getcwd()
-
-    # textfile that stores the names of the blank tiles that are created for processing.
-    # This will be iterated through to delete the tiles at the end of the script.
-    uu.create_blank_tile_txt()
-
-    for download_dir, download_pattern in download_dict.items():
-
-        # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
-        # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
-        # lines later.
-        pattern = download_pattern[0]
-
-        processes=54
-        uu.print_log('Blank tile creation max processors=', processes)
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
-                                             sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-
-    # # For single processor use
-    # for download_dir, download_pattern in download_dict.iteritems():
+    # # Since the input tile lists have different numbers of tiles, at least one input will need to have some blank tiles made
+    # # so that it has all the necessary input tiles
+    # # The inputs that might need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
+    # folder = os.getcwd()
     #
-    #     for tile_id in tile_id_list:
-    #         uu.make_blank_tile(tile_id, download_pattern[0], folder, sensit_type)
+    # # textfile that stores the names of the blank tiles that are created for processing.
+    # # This will be iterated through to delete the tiles at the end of the script.
+    # uu.create_blank_tile_txt()
+    #
+    # for download_dir, download_pattern in download_dict.items():
+    #
+    #     # Renames the tiles according to the sensitivity analysis before creating dummy tiles.
+    #     # The renaming function requires a whole tile name, so this passes a dummy time name that is then stripped a few
+    #     # lines later.
+    #     pattern = download_pattern[0]
+    #
+    #     processes=54
+    #     uu.print_log('Blank tile creation max processors=', processes)
+    #     pool = multiprocessing.Pool(processes)
+    #     pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
+    #                                          sensit_type=sensit_type), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #
+    # # # For single processor use
+    # # for download_dir, download_pattern in download_dict.iteritems():
+    # #
+    # #     for tile_id in tile_id_list:
+    # #         uu.make_blank_tile(tile_id, download_pattern[0], folder, sensit_type)
 
 
     # Creates a single filename pattern to pass to the multiprocessor call
@@ -108,8 +108,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
 
 
-    # Print the list of blank created tiles, delete the tiles, and delete their text file
-    uu.list_and_delete_blank_tiles()
+    # # Print the list of blank created tiles, delete the tiles, and delete their text file
+    # uu.list_and_delete_blank_tiles()
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
