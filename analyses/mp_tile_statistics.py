@@ -83,8 +83,8 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.removal_forest_type_dir: [cn.pattern_removal_forest_type], # 15 = XXX GB peak
                     # cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types], # 15 = XXX GB peak
 
-                    # Gain year count
-                    cn.gain_year_count_dir: [cn.pattern_gain_year_count], # 15 = XXX GB peak
+                    # # Gain year count
+                    # cn.gain_year_count_dir: [cn.pattern_gain_year_count], # 15 = XXX GB peak
 
                     # Gross removals from all forest types
                     cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types], # 15 = XXX GB peak
