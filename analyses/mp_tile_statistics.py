@@ -86,10 +86,10 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # # Gain year count
                     # cn.gain_year_count_dir: [cn.pattern_gain_year_count], # 15 = XXX GB peak
 
-                    # Gross removals from all forest types
-                    cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types], # 15 = 630 GB peak
-                    cn.cumul_gain_BGCO2_all_types_dir: [cn.pattern_cumul_gain_BGCO2_all_types], # 15 = XXX GB peak
-                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types], # 15 = XXX GB peak
+                    # # Gross removals from all forest types
+                    # cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types], # 15 = 630 GB peak
+                    # cn.cumul_gain_BGCO2_all_types_dir: [cn.pattern_cumul_gain_BGCO2_all_types], # 15 = XXX GB peak
+                    # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types], # 15 = XXX GB peak
 
                     # # Carbon pool inputs
                     # cn.elevation_processed_dir: [cn.pattern_elevation],
@@ -97,15 +97,15 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
                     # cn.drivers_processed_dir: [cn.pattern_drivers],
                     # cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
-                    cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000], # 15 = 430 GB peak
+                    # cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000], # 15 = 430 GB peak
 
                     # Carbon pools in emissions year
-                    cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 15 = XXX GB peak
-                    cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year], # 15 = XXX GB peak
-                    cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000], # 15 = XXX GB peak
-                    cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000], # 15 = XXX GB peak
-                    cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000], # 15 = XXX GB peak
-                    cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year], # 15 = XXX GB peak
+                    # cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 15 = XXX GB peak
+                    # cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year], # 15 = > 520 GB peak
+                    cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000], # 14 = XXX GB peak (error memory when using 15, so switched to 14)
+                    cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000], # 14 = XXX GB peak
+                    cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000], # 14 = XXX GB peak
+                    cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year], # 14 = XXX GB peak
 
                     # # Carbon pools in 2000
                     # cn.AGC_2000_dir: [cn.pattern_AGC_2000],
@@ -115,19 +115,19 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.total_C_2000_dir: [cn.pattern_total_C_2000],
 
                     # Gross emissions from biomass and soil
-                    cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil], # 15 = XXX GB peak
-                    cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil], # 15 = XXX GB peak
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil], # 14 = XXX GB peak
 
                     # Net flux
-                    cn.net_flux_dir: [cn.pattern_net_flux] # 15 = XXX GB peak
+                    cn.net_flux_dir: [cn.pattern_net_flux] # 14 = XXX GB peak
                     #
                     # # Gross emissions from soil only
                     # cn.gross_emis_all_gases_all_drivers_soil_only_dir: [cn.pattern_gross_emis_all_gases_all_drivers_soil_only],
@@ -159,7 +159,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
-        processes=15
+        processes=14
         uu.print_log('Tile statistics max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type, tile_stats_txt=tile_stats_txt), tile_list)
