@@ -589,11 +589,11 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("Tiles with pattern", pattern, "are not on spot machine. Downloading...")
 
-        # cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
-        #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+        cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
 
-        cmd = ['aws', 's3', 'cp', source, dest, '--recursive',
-               '--exclude', '*', '--include', '{}'.format(pattern), '--no-progress']
+        # cmd = ['aws', 's3', 'cp', source, dest, '--recursive',
+        #        '--exclude', '*', '--include', '{}'.format(pattern), '--no-progress']
         log_subprocess_output_full(cmd)
 
         print_log('\n')
