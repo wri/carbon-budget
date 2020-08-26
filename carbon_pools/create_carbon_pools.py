@@ -423,10 +423,6 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
 
-        # Also need AGC in 2000 for deadwood/litter 2000 in emissions year
-        AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
-        AGC_2000_src = rasterio.open(AGC_2000)
-
         output_pattern_list = [cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000]
         if sensit_type != 'std':
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
@@ -506,12 +502,12 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         litter_2000_output = np.zeros((window.height, window.width), dtype='float32')
 
         # Clips deadwood and litter outputs to AGC2000 and AGC in emissions year extents.
-        # Note that deadwood and litter 2000 should already be at the extent of AGC2000 and not actually need
-        # clipping to AGC2000; I'm doing that just as a formality. It feels more complete.
-        try:
-            AGC_2000_window = AGC_2000_src.read(1, window=window)
-        except:
-            AGC_2000_window = np.zeros((window.height, window.width), dtype='float32')
+        # # Note that deadwood and litter 2000 should already be at the extent of AGC2000 and not actually need
+        # # clipping to AGC2000; I'm doing that just as a formality. It feels more complete.
+        # try:
+        #     AGC_2000_window = AGC_2000_src.read(1, window=window)
+        # except:
+        #     AGC_2000_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
         except:
@@ -620,10 +616,11 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
             # Combines the mangrove and non-mangrove deadwood arrays into a single array
             deadwood_2000_output = mangrove_C_final + deadwood_2000_output
+            deadwood_2000_output.astype('float32')
 
-            # Masks the deadwood 2000 to the AGC2000 extent. This shouldn't actually change the extent of the deadwood at all.
-            # Just doing it because it feels more complete.
-            deadwood_2000_output = np.where(AGC_2000_window > 0, deadwood_2000_output, 0).astype('float32')
+            # # Masks the deadwood 2000 to the AGC2000 extent. This shouldn't actually change the extent of the deadwood at all.
+            # # Just doing it because it feels more complete.
+            # deadwood_2000_output = np.where(AGC_2000_window > 0, deadwood_2000_output, 0).astype('float32')
 
 
             # Same as above but for litter
@@ -642,8 +639,9 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             litter_2000_output = litter_2000_output.filled(0)
 
             litter_2000_output = mangrove_C_final + litter_2000_output
+            litter_2000_output.astype('float32')
 
-            litter_2000_output = np.where(AGC_2000_window > 0, litter_2000_output, 0).astype('float32')
+            # litter_2000_output = np.where(AGC_2000_window > 0, litter_2000_output, 0).astype('float32')
 
         # Only writes deadwood and litter 2000 to rasters if output in 2000 is desired
         if '2000' in carbon_pool_extent:
