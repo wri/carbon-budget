@@ -188,75 +188,73 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
                                                                                             cn.litter_to_above_trop_wet_mang,
                                                                                             cn.litter_to_above_subtrop_mang)
 
-    uu.print_log("Creating tiles of aboveground carbon in {}".format(carbon_pool_extent))
-    if cn.count == 96:
-        # More processors can be used for loss carbon pools than for 2000 carbon pools
-        if carbon_pool_extent == 'loss':
-            processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
-            # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
-        else:
-            processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log('AGC loss year max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_carbon_pools.create_AGC,
-                     sensit_type=sensit_type, carbon_pool_extent=carbon_pool_extent), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_AGC(tile_id, sensit_type, carbon_pool_extent)
-
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    else:
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-        uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
-    uu.check_storage()
-
-    uu.print_log(":::::Freeing up memory for belowground carbon creation; deleting unneeded tiles")
-    tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
-    uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-
-    for tile_to_delete in tiles_to_delete:
-        os.remove(tile_to_delete)
-    uu.print_log(":::::Deleted unneeded tiles")
-    uu.check_storage()
-
-
-    uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
-    # Creates a single filename pattern to pass to the multiprocessor call
-    if cn.count == 96:
-        # More processors can be used for loss carbon pools than for 2000 carbon pools
-        if carbon_pool_extent == 'loss':
-            processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
-        else:
-            processes = 20  # 16 processors = 500 GB peak; 20 = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log('BGC max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
-                     carbon_pool_extent=carbon_pool_extent,
-                     sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type)
-
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-    else:
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-        uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
-    uu.check_storage()
+    # uu.print_log("Creating tiles of aboveground carbon in {}".format(carbon_pool_extent))
+    # if cn.count == 96:
+    #     # More processors can be used for loss carbon pools than for 2000 carbon pools
+    #     if carbon_pool_extent == 'loss':
+    #         processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
+    #         # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
+    #     else:
+    #         processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
+    # else:
+    #     processes = 2
+    # uu.print_log('AGC loss year max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(create_carbon_pools.create_AGC,
+    #                  sensit_type=sensit_type, carbon_pool_extent=carbon_pool_extent), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     create_carbon_pools.create_AGC(tile_id, sensit_type, carbon_pool_extent)
+    #
+    # if carbon_pool_extent in ['loss', '2000']:
+    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # else:
+    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #     uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
+    # uu.check_storage()
+    #
+    # uu.print_log(":::::Freeing up memory for belowground carbon creation; deleting unneeded tiles")
+    # tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types))
+    # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
+    # uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    #
+    # for tile_to_delete in tiles_to_delete:
+    #     os.remove(tile_to_delete)
+    # uu.print_log(":::::Deleted unneeded tiles")
+    # uu.check_storage()
+    #
+    #
+    # uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
+    # # Creates a single filename pattern to pass to the multiprocessor call
+    # if cn.count == 96:
+    #     # More processors can be used for loss carbon pools than for 2000 carbon pools
+    #     if carbon_pool_extent == 'loss':
+    #         processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
+    #     else:
+    #         processes = 20  # 16 processors = 500 GB peak; 20 = XXX GB peak
+    # else:
+    #     processes = 2
+    # uu.print_log('BGC max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
+    #                  carbon_pool_extent=carbon_pool_extent,
+    #                  sensit_type=sensit_type), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type)
+    #
+    # if carbon_pool_extent in ['loss', '2000']:
+    #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    # else:
+    #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    #     uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+    # uu.check_storage()
 
 
     uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
@@ -295,6 +293,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log(":::::Freeing up memory for soil and total carbon creation; deleting unneeded tiles")
     tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
     uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
     for tile_to_delete in tiles_to_delete:
