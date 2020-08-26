@@ -100,8 +100,8 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000], # 15 = 430 GB peak
 
                     # Carbon pools in emissions year
-                    cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 15 = XXX GB peak
-                    cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year], # 15 = > 520 GB peak
+                    cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 17 = XXX GB peak
+                    cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year], # 17 = > 520 GB peak
                     cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000], # 14 > 560 GB peak (error memory when using 15, so switched to 14)
                     cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000], # 14 = XXX GB peak
                     cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000], # 14 = XXX GB peak
@@ -159,7 +159,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
 
         # For multiprocessor use.
-        processes=17
+        processes=14
         uu.print_log('Tile statistics max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(tile_statistics.create_tile_statistics, sensit_type=sensit_type, tile_stats_txt=tile_stats_txt), tile_list)
