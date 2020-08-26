@@ -192,8 +192,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if cn.count == 96:
         # More processors can be used for loss carbon pools than for 2000 carbon pools
         if carbon_pool_extent == 'loss':
-            processes = 21  # 25 processors > 750 GB peak; 16 = 560 GB peak;
-            # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 = XXX GB peak
+            processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
+            # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
         else:
             processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
     else:
