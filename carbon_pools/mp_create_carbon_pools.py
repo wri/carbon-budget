@@ -123,7 +123,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
             cn.gain_dir: [cn.pattern_gain],
             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-            cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]
+            cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types],
+            cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
+            cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
+            cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
+            cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000]
        }
 
         # # Adds the correct AGB tiles to the download dictionary depending on the model run
