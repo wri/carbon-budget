@@ -89,6 +89,25 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
         #     output_per_pixel.output_per_pixel(tile_id, input_pattern, output_pattern, sensit_type)
 
 
+        uu.print_log("Adding metadata tags for pattern {}".format(input_pattern))
+        metadata_list = ['units=Mg CO2e/pixel over model duration (2001-20{})'.format(cn.loss_years),
+                                    'extent=Model extent',
+                                    'pixel_areas=Pixel areas depend on the latitude at which the pixel is found',
+                                    'scale=If this is for net flux, negative values are net sinks and positive values are net sources']
+        if cn.count == 96:
+            processes = 45  # 45 processors = XXX GB peak
+        else:
+            processes = 9
+        uu.print_log('Adding metadata tags max processors=', processes)
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(uu.add_metadata_tags, input_pattern=input_pattern, sensit_type=sensit_type, metadata_list=metadata_list),
+                 tile_id_list)
+        pool.close()
+        pool.join()
+
+        # for tile_id in tile_id_list:
+        #     calculate_gross_emissions.add_metadata_tags(tile_id, pattern, sensit_type, metadata_list)
+
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])

@@ -1142,3 +1142,23 @@ def add_universal_metadata_tags(output_raster, sensit_type):
            '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years),
            output_raster]
     log_subprocess_output_full(cmd)
+
+# Adds metadata tags to raster.
+# Certain tags are included for all rasters, while other tags can be customized for each input set.
+def add_metadata_tags(output_raster, sensit_type, metadata_list):
+
+    print_log("Adding metadata tags to", output_raster)
+
+    cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
+           '-mo', 'date_created={}'.format(date_today),
+           '-mo', 'model_type={}'.format(sensit_type),
+           '-mo', 'originator=Global Forest Watch at the World Resources Institute',
+           '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years)]
+
+    for metadata in metadata_list:
+
+        cmd += ['-mp', metadata]
+
+    cmd += [output_raster]
+
+    log_subprocess_output_full(cmd)

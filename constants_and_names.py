@@ -434,7 +434,7 @@ total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/loss_pi
 
 ## Carbon emitted_pools in 2000
 
-pool_2000_run_date = '20200824'
+pool_2000_run_date = '20200826'
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "Mg_AGC_ha_2000"
@@ -513,7 +513,7 @@ gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biom
 ### Emissions from soil only
 
 # Date to include in the output directory
-emis_run_date_soil_only = '20200824'
+emis_run_date_soil_only = '20200826'
 
 pattern_gross_emis_commod_soil_only = 'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_commod_soil_only_dir = '{0}gross_emissions/commodities/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)

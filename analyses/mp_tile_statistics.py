@@ -102,7 +102,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # Carbon pools in emissions year
                     # cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 15 = XXX GB peak
                     # cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year], # 15 = > 520 GB peak
-                    cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000], # 14 = XXX GB peak (error memory when using 15, so switched to 14)
+                    cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000], # 14 > 560 GB peak (error memory when using 15, so switched to 14)
                     cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000], # 14 = XXX GB peak
                     cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000], # 14 = XXX GB peak
                     cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year], # 14 = XXX GB peak
@@ -173,6 +173,10 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         # for tile in tile_list:
         #     tile_statistics.create_tile_statistics(tile, sensit_type)
 
+        # Copies the text file to the tile statistics folder on s3
+        cmd = ['aws', 's3', 'cp', tile_stats_txt, cn.tile_stats_dir]
+        uu.log_subprocess_output_full(cmd)
+
         # Spot machine can't store all the tiles, so this cleans it up
         uu.print_log("Deleting tiles...")
         for tile in tile_list:
@@ -181,10 +185,6 @@ def mp_tile_statistics(sensit_type, tile_id_list):
             outname = '{0}_value_per_pixel.tif'.format(tile_short)
             os.remove(outname)
             uu.print_log("  {} deleted".format(tile))
-
-        # Copies the text file to the tile statistics folder on s3
-        cmd = ['aws', 's3', 'cp', tile_stats_txt, cn.tile_stats_dir]
-        uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Script complete. All tiles analyzed!")
 
