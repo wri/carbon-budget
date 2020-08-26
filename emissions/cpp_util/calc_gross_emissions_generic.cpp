@@ -53,7 +53,6 @@ string infolder = argv[3];     // The folder which has all the input files
 
 cout << "Gross emissions C++ infolder:" << infolder << endl;
 
-
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
 CH4_equiv = 28;

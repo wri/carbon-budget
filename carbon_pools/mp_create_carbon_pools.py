@@ -49,7 +49,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed.
     # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant.
-    if tile_id_list == 'all' & carbon_pool_extent == 'loss':
+    if (tile_id_list == 'all') & (carbon_pool_extent == 'loss'):
         # Lists the tiles that have both model extent and loss pixels
         model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
         loss_tile_id_list = uu.tile_list_s3(cn.loss_dir, sensit_type=sensit_type)
@@ -57,7 +57,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         tile_id_list = list(set(model_extent_tile_id_list).intersection(loss_tile_id_list))
 
     # For runs generating carbon pools in 2000, all model extent tiles are relevant.
-    if tile_id_list == 'all' & carbon_pool_extent != 'loss':
+    if (tile_id_list == 'all') & (carbon_pool_extent != 'loss'):
         tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
 
 

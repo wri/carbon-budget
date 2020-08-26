@@ -13,6 +13,8 @@
 // These codes are summarized in carbon-budget/emissions/node_codes.txt
 // Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N20), each model endpoint has a CO2-only and
 // a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
+// Compile with:
+// c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal
 
 
 #include <iostream>
