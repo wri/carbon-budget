@@ -57,21 +57,20 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
     else:
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
 
+    uu.print_log("  Reading input files for {}...".format(tile_id))
+
     # Loss tile name depends on the sensitivity analysis
     if os.path.exists('{0}_{1}.tif'.format(cn.pattern_loss, tile_id)):
-        uu.print_log("Loss tile found for {}. Processing...".format(tile_id))
+        uu.print_log("    Hansen loss tile found for {}".format(tile_id))
         loss_year = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
     elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)):
-        uu.print_log("Brazil-specific loss tile found for {}. Processing...".format(tile_id))
+        uu.print_log("    Brazil-specific loss tile found for {}".format(tile_id))
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)):
-        uu.print_log("Mekong-specific loss tile found for {}. Processing...".format(tile_id))
+        uu.print_log("    Mekong-specific loss tile found for {}".format(tile_id))
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
         uu.print_log("No loss tile for {}.".format(tile_id))
-
-
-    uu.print_log("  Reading input files for {}...".format(tile_id))
 
     # This input should exist for all tiles
     removal_forest_type_src = rasterio.open(removal_forest_type)
