@@ -23,17 +23,22 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
 
     # Files to download for this script. Unusually, this script needs the output pattern in the dictionary as well!
     download_dict = {
-        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel],
-        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel],
-        cn.net_flux_dir: [cn.pattern_net_flux, cn.pattern_net_flux_per_pixel]
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir:
+            [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir:
+            [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel],
+        cn.net_flux_dir:
+            [cn.pattern_net_flux, cn.pattern_net_flux_per_pixel]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir,
+    output_dir_list = [
+                       cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir,
                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir,
                        cn.net_flux_per_pixel_dir]
-    output_pattern_list = [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel,
+    output_pattern_list = [
+                           cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel,
                            cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel,
                            cn.pattern_net_flux_per_pixel]
 
@@ -89,24 +94,23 @@ def mp_output_per_pixel(sensit_type, tile_id_list, run_date = None):
         #     output_per_pixel.output_per_pixel(tile_id, input_pattern, output_pattern, sensit_type)
 
 
-        uu.print_log("Adding metadata tags for pattern {}".format(input_pattern))
         metadata_list = ['units=Mg CO2e/pixel over model duration (2001-20{})'.format(cn.loss_years),
                                     'extent=Model extent',
                                     'pixel_areas=Pixel areas depend on the latitude at which the pixel is found',
                                     'scale=If this is for net flux, negative values are net sinks and positive values are net sources']
-        # if cn.count == 96:
-        #     processes = 45  # 45 processors = XXX GB peak
-        # else:
-        #     processes = 9
-        # uu.print_log('Adding metadata tags max processors=', processes)
-        # pool = multiprocessing.Pool(processes)
-        # pool.map(partial(uu.add_metadata_tags, input_pattern=input_pattern, sensit_type=sensit_type, metadata_list=metadata_list),
-        #          tile_id_list)
-        # pool.close()
-        # pool.join()
+        if cn.count == 96:
+            processes = 45  # 45 processors = XXX GB peak
+        else:
+            processes = 9
+        uu.print_log('Adding metadata tags max processors=', processes)
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(uu.add_metadata_tags, output_pattern=output_pattern, sensit_type=sensit_type, metadata_list=metadata_list),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
-        for tile_id in tile_id_list:
-            calculate_gross_emissions.add_metadata_tags(tile_id, pattern, sensit_type, metadata_list)
+        # for tile_id in tile_id_list:
+        #     uu.add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list)
 
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):

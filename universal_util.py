@@ -1145,19 +1145,22 @@ def add_universal_metadata_tags(output_raster, sensit_type):
 
 # Adds metadata tags to raster.
 # Certain tags are included for all rasters, while other tags can be customized for each input set.
-def add_metadata_tags(output_raster, sensit_type, metadata_list):
+def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
+
+    output_raster = '{0}_{1}.tif'.format(tile_id, output_pattern)
 
     print_log("Adding metadata tags to", output_raster)
 
+    # Universal metadata tags
     cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
            '-mo', 'date_created={}'.format(date_today),
            '-mo', 'model_type={}'.format(sensit_type),
            '-mo', 'originator=Global Forest Watch at the World Resources Institute',
            '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years)]
 
+    # Metadata tags specifically for this dataset
     for metadata in metadata_list:
-
-        cmd += ['-mp', metadata]
+        cmd += ['-mo', metadata]
 
     cmd += [output_raster]
 

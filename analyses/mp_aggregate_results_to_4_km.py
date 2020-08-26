@@ -177,6 +177,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
                    '-mo', 'units=Mg aboveground carbon/yr/pixel, where pixels are 0.04x0.04 degrees',
                    '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                    '-mo', 'extent=Global',
+                   '-mo', 'scale=negative values are removals',
                    '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
                    '{0}.tif'.format(out_pattern)]
             uu.log_subprocess_output_full(cmd)
