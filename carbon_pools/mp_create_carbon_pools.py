@@ -78,6 +78,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
         # Files to download for this script
         download_dict = {
+            cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
             cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
