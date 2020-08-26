@@ -422,6 +422,11 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         kwargs = AGC_emis_year_src.meta
         kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
+
+        # Also need AGC in 2000 for deadwood/litter 2000 in emissions year
+        AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
+        AGC_2000_src = rasterio.open(AGC_2000)
+
         output_pattern_list = [cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000]
         if sensit_type != 'std':
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
@@ -450,43 +455,43 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
     try:
         precip_src = rasterio.open(precip)
-        uu.print_log("Precipitation tile found for", tile_id)
+        uu.print_log("    Precipitation tile found for", tile_id)
     except:
-        uu.print_log("No precipitation tile biomass for", tile_id)
+        uu.print_log("    No precipitation tile biomass for", tile_id)
 
     try:
         elevation_src = rasterio.open(elevation)
-        uu.print_log("Elevation tile found for", tile_id)
+        uu.print_log("    Elevation tile found for", tile_id)
     except:
-        uu.print_log("No elevation tile biomass for", tile_id)
+        uu.print_log("    No elevation tile biomass for", tile_id)
 
     # Opens the mangrove biomass tile if it exists
     try:
         bor_tem_trop_src = rasterio.open(bor_tem_trop)
-        uu.print_log("Boreal/temperate/tropical tile found for", tile_id)
+        uu.print_log("    Boreal/temperate/tropical tile found for", tile_id)
     except:
-        uu.print_log("No boreal/temperate/tropical tile biomass for", tile_id)
+        uu.print_log("    No boreal/temperate/tropical tile biomass for", tile_id)
 
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        uu.print_log("Mangrove biomass found for", tile_id)
+        uu.print_log("    Mangrove biomass found for", tile_id)
     except:
-        uu.print_log("No mangrove biomass for", tile_id)
+        uu.print_log("    No mangrove biomass for", tile_id)
 
     # Opens the WHRC/JPL biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log("WHRC biomass found for", tile_id)
+        uu.print_log("    WHRC biomass found for", tile_id)
     except:
-        uu.print_log("No WHRC biomass for", tile_id)
+        uu.print_log("    No WHRC biomass for", tile_id)
 
     # Opens the continent-ecozone tile if it exists
     try:
         cont_ecozone_src = rasterio.open(cont_eco)
-        uu.print_log("Continent-ecozone tile found for", tile_id)
+        uu.print_log("    Continent-ecozone tile found for", tile_id)
     except:
-        uu.print_log("No Continent-ecozone tile found for", tile_id)
+        uu.print_log("    No Continent-ecozone tile found for", tile_id)
 
     uu.print_log("  Creating deadwood and litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
