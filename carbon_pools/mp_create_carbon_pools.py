@@ -256,27 +256,26 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
     #     uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
     # uu.check_storage()
-
-
-    # 825 GB isn't enough space to create deadwood and litter 2000 while having AGC and BGC 2000 on.
-    # Thus must delete AGC, BGC, and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
-    # for total C 2000 calculation.
-    if '2000' in carbon_pool_extent:
-        uu.print_log(":::::Freeing up memory for deadwood and litter carbon 2000 creation; deleting unneeded tiles")
-        tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_2000)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gain)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_full_extent_2000)))
-
-        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-
-        for tile_to_delete in tiles_to_delete:
-            os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted unneeded tiles")
-        uu.check_storage()
+    #
+    #
+    # # 825 GB isn't enough space to create deadwood and litter 2000 while having AGC and BGC 2000 on.
+    # # Thus must delete AGC, BGC, and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
+    # # for total C 2000 calculation.
+    # if '2000' in carbon_pool_extent:
+    #     uu.print_log(":::::Freeing up memory for deadwood and litter carbon 2000 creation; deleting unneeded tiles")
+    #     tiles_to_delete = []
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gain)))
+    #     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_full_extent_2000)))
+    #
+    #     uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    #
+    #     for tile_to_delete in tiles_to_delete:
+    #         os.remove(tile_to_delete)
+    #     uu.print_log(":::::Deleted unneeded tiles")
+    #     uu.check_storage()
 
 
     uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
@@ -371,13 +370,12 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
 
     # 825 GB isn't enough space to create deadwood and litter 2000 while having AGC and BGC 2000 on.
-    # Thus must delete AGC, BGC, and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
+    # Thus must delete BGC and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
     # for total C 2000 calculation.
     if '2000' in carbon_pool_extent:
 
         # Files to download for total C 2000. Previously deleted to save space
         download_dict = {
-            cn.AGC_2000_dir: [cn.pattern_AGC_2000],
             cn.BGC_2000_dir: [cn.pattern_BGC_2000],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000]
         }
