@@ -114,20 +114,21 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.litter_2000_dir: [cn.pattern_litter_2000],
                     # cn.total_C_2000_dir: [cn.pattern_total_C_2000],
 
+                    # Net flux
+                    cn.net_flux_dir: [cn.pattern_net_flux],  # 14 = XXX GB peak
+
                     # Gross emissions from biomass and soil
                     cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil], # 14 = XXX GB peak
                     cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil], # 14 = XXX GB peak
-                    # cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil] # 14 = XXX GB peak
+                    cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil], # 14 = XXX GB peak
+                    cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil], # 14 = XXX GB peak
 
-                    # Net flux
-                    cn.net_flux_dir: [cn.pattern_net_flux] # 14 = XXX GB peak
                     #
                     # # Gross emissions from soil only
                     # cn.gross_emis_all_gases_all_drivers_soil_only_dir: [cn.pattern_gross_emis_all_gases_all_drivers_soil_only],
