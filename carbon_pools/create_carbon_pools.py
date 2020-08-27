@@ -70,7 +70,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         uu.print_log("    Mekong-specific loss tile found for {}".format(tile_id))
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
-        uu.print_log("No loss tile for {}.".format(tile_id))
+        uu.print_log("  No loss tile found for {}".format(tile_id))
 
     # This input should exist for all tiles
     removal_forest_type_src = rasterio.open(removal_forest_type)

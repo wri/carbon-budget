@@ -235,7 +235,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         if carbon_pool_extent == 'loss':
             processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
         else:
-            processes = 25  # 20 processors = 370 GB peak; 25 = XXX GB peak
+            processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
     else:
         processes = 2
     uu.print_log('BGC max processors=', processes)

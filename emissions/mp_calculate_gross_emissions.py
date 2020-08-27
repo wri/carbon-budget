@@ -179,10 +179,12 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     # However, not all Hansen tiles have all of these inputs.
     # This function creates "dummy" tiles for all Hansen tiles that currently have non-existent tiles.
     # That way, the C++ script gets all the necessary input files.
+    # If it doesn't get the necessary inputs, it skips that tile.
     uu.print_log("Making blank tiles for inputs that don't currently exist")
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
-                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_burn_year, cn.pattern_climate_zone]
+                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_burn_year, cn.pattern_climate_zone,
+                    cn.pattern_soil_C_emis_year_2000]
 
 
     # textfile that stores the names of the blank tiles that are created for processing.
