@@ -123,3 +123,15 @@ def create_combined_soil_C(tile_id):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
+
+
+def create_soil_C_stdev(tile_id, vrt_CI05, vrt_CI95, out_pattern):
+
+    # Start time
+    start = datetime.datetime.now()
+
+
+
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, out_pattern)

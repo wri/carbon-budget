@@ -628,8 +628,8 @@ CI95_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs
 
 
 # Standard deviation in soil C stocks (0-30 cm)
-pattern_stdev_soil_C_full_extent = 't_soil_C_ha_stdev_full_extent_2000'
-stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200727/')
+pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
+stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200828/')
 
 
 
