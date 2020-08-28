@@ -157,6 +157,7 @@ def mp_create_soil_C(tile_id_list):
     dir_CI95 = '{0}{1}'.format(cn.docker_base_dir, 'CI95/')
     vrt_CI05 = 'mineral_soil_C_CI05.vrt'
     vrt_CI95 = 'mineral_soil_C_CI95.vrt'
+    soil_C_stdev_global = 'soil_C_stdev.tif'
 
     # # Download raw mineral soil C density 5% CI tiles
     # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
@@ -191,7 +192,6 @@ def mp_create_soil_C(tile_id_list):
     #
     # uu.print_log("Creating raster of standard deviations in soil C at native SoilGrids250 resolution. This may take a while...")
     # # global tif with approximation of the soil C stanard deviation (based on the 5% and 95% CIs)
-    # soil_C_stdev_global = 'soil_C_stdev.tif'
     #
     # # This takes about 20 minutes. It doesn't show any progress until the last moment, when it quickly counts
     # # up to 100.
