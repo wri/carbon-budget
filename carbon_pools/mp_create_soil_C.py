@@ -209,7 +209,7 @@ def mp_create_soil_C(tile_id_list):
     dt = 'Float32'
     source_raster = soil_C_stdev_global
     if cn.count == 96:
-        processes = 32  # 56 processors = 230 GB peak
+        processes = 56  # 32 processors = 290 GB peak; 56 = XXX GB peal
     else:
         processes = 2
     uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
@@ -220,7 +220,7 @@ def mp_create_soil_C(tile_id_list):
 
 
     output_pattern = cn.pattern_stdev_soil_C_full_extent
-    processes = 50
+    processes = 50 # 50 processors = 550 GB peak
     uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
     pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)

@@ -48,7 +48,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # # Mangrove removals
                     # cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove], # 15 = 640 GB peak
                     # cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove], # 15 = 640 GB peak
-                    # cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove], # 15 = 640 GB peak
+                    cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove], # 15 = 640 GB peak
                     #
                     # # European forest removals
                     # cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe], # 15 = 630 GB peak
@@ -74,14 +74,14 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC], # 15 = 330 GB peak
                     # cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults], # 15 = 620 GB peak
                     # cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults], # 15 = 620 GB peak
-                    # cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults], # 15 = 620 GB peak
+                    cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults], # 15 = 620 GB peak
                     #
                     # # Annual removals from all forest types
                     # cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types], # 15 = XXX GB peak
                     # cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types], # 15 > 550 GB peak
                     # cn.annual_gain_AGC_BGC_all_types_dir: [cn.pattern_annual_gain_AGC_BGC_all_types], # 15 = XXX GB peak
                     # cn.removal_forest_type_dir: [cn.pattern_removal_forest_type], # 15 = XXX GB peak
-                    # cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types], # 15 = XXX GB peak
+                    cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types], # 15 = XXX GB peak
 
                     # # Gain year count
                     # cn.gain_year_count_dir: [cn.pattern_gain_year_count], # 15 = XXX GB peak
@@ -98,6 +98,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.drivers_processed_dir: [cn.pattern_drivers],
                     # cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
                     # cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000], # 15 = 430 GB peak
+                    cn.stdev_soil_C_full_extent_2000_dir: [cn.pattern_stdev_soil_C_full_extent],
 
                     # Carbon pools in emissions year
                     # cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year], # 14 = 590 GB peak
@@ -114,28 +115,28 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.litter_2000_dir: [cn.pattern_litter_2000],
                     # cn.total_C_2000_dir: [cn.pattern_total_C_2000],
 
-                    # Net flux
-                    cn.net_flux_dir: [cn.pattern_net_flux],  # 14 = XXX GB peak
-
-                    # Gross emissions from biomass and soil
-                    cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil], # 14 = XXX GB peak
-                    cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil], # 14 = XXX GB peak
-
+                    # # Net flux
+                    # cn.net_flux_dir: [cn.pattern_net_flux],  # 14 = XXX GB peak
                     #
-                    # # Gross emissions from soil only
-                    # cn.gross_emis_all_gases_all_drivers_soil_only_dir: [cn.pattern_gross_emis_all_gases_all_drivers_soil_only],
-                    # cn.gross_emis_co2_only_all_drivers_soil_only_dir: [cn.pattern_gross_emis_co2_only_all_drivers_soil_only],
-                    # cn.gross_emis_non_co2_all_drivers_soil_only_dir: [cn.pattern_gross_emis_non_co2_all_drivers_soil_only],
-                    # cn.gross_emis_commod_soil_only_dir: [cn.pattern_gross_emis_commod_soil_only],
-                    # cn.gross_emis_shifting_ag_soil_only_dir: [cn.pattern_gross_emis_shifting_ag_soil_only],
+                    # # Gross emissions from biomass and soil
+                    # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_no_driver_biomass_soil], # 14 = XXX GB peak
+                    # cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil], # 14 = XXX GB peak
+
+
+                    # Gross emissions from soil only
+                    cn.gross_emis_all_gases_all_drivers_soil_only_dir: [cn.pattern_gross_emis_all_gases_all_drivers_soil_only],
+                    cn.gross_emis_co2_only_all_drivers_soil_only_dir: [cn.pattern_gross_emis_co2_only_all_drivers_soil_only],
+                    cn.gross_emis_non_co2_all_drivers_soil_only_dir: [cn.pattern_gross_emis_non_co2_all_drivers_soil_only],
+                    cn.gross_emis_commod_soil_only_dir: [cn.pattern_gross_emis_commod_soil_only],
+                    cn.gross_emis_shifting_ag_soil_only_dir: [cn.pattern_gross_emis_shifting_ag_soil_only]
                     # cn.gross_emis_forestry_soil_only_dir: [cn.pattern_gross_emis_forestry_soil_only],
                     # cn.gross_emis_wildfire_soil_only_dir: [cn.pattern_gross_emis_wildfire_soil_only],
                     # cn.gross_emis_urban_soil_only_dir: [cn.pattern_gross_emis_urban_soil_only],
