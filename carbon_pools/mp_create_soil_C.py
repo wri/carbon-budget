@@ -189,7 +189,8 @@ def mp_create_soil_C(tile_id_list):
     # uu.print_log("Done making mineral soil C CI95 vrt")
 
 
-    # vrt with approximation of the soil C stanard deviation (based on the 5% and 95% CIs)
+    uu.print_log("Creating raster of standard deviations in soil C at native SoilGrids250 resolution. This may take a while...")
+    # global tif with approximation of the soil C stanard deviation (based on the 5% and 95% CIs)
     soil_C_stdev_global = 'soil_C_stdev.tif'
 
     calc = '--calc=(A-B)/3'
@@ -198,7 +199,7 @@ def mp_create_soil_C(tile_id_list):
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Float32']
     uu.log_subprocess_output_full(cmd)
 
-    uu.print_log("{} created.".format(tile_id))
+    uu.print_log("{} created.".format(soil_C_stdev_global))
 
 
     # Creates soil carbon 2000 density standard deviation tiles
