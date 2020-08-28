@@ -284,7 +284,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         if carbon_pool_extent == 'loss':
             processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 650 GB peak; 15 = 700 GB peak
         else:
-            processes = 14  # 7 processors = 320 GB peak; 14 = XXX GB peak
+            ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
+            ### There wouldn't have been enough room for all deadwood and litter otherwise.
+            ### For example, when deadwood and litter generation started getting up to around 50N, I deleted
+            ### 00N precip, elevation, and WHRC AGB. I deleted all of those from 30N to 20S.
+            processes = 16  # 7 processors = 320 GB peak; 14 = 620 GB peak; 16 = XXX GB peak
     else:
         processes = 2
     uu.print_log('Deadwood and litter max processors=', processes)
@@ -317,6 +321,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
     tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
     uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
     for tile_to_delete in tiles_to_delete:
