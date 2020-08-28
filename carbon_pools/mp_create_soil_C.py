@@ -188,20 +188,20 @@ def mp_create_soil_C(tile_id_list):
 
     # check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI95, dir_CI95, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
     # uu.print_log("Done making mineral soil C CI95 vrt")
-    #
-    #
-    # uu.print_log("Creating raster of standard deviations in soil C at native SoilGrids250 resolution. This may take a while...")
-    # # global tif with approximation of the soil C stanard deviation (based on the 5% and 95% CIs)
-    #
-    # # This takes about 20 minutes. It doesn't show any progress until the last moment, when it quickly counts
-    # # up to 100.
-    # calc = '--calc=(A-B)/3'
-    # out_filearg = '--outfile={}'.format(soil_C_stdev_global)
-    # cmd = ['gdal_calc.py', '-A', vrt_CI95, '-B', vrt_CI05, calc, out_filearg,
-    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Float32']
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # uu.print_log("{} created.".format(soil_C_stdev_global))
+
+
+    uu.print_log("Creating raster of standard deviations in soil C at native SoilGrids250 resolution. This may take a while...")
+    # global tif with approximation of the soil C stanard deviation (based on the 5% and 95% CIs)
+
+    # This takes about 20 minutes. It doesn't show any progress until the last moment, when it quickly counts
+    # up to 100.
+    calc = '--calc=(A-B)/3'
+    out_filearg = '--outfile={}'.format(soil_C_stdev_global)
+    cmd = ['gdal_calc.py', '-A', vrt_CI95, '-B', vrt_CI05, calc, out_filearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Float32']
+    uu.log_subprocess_output_full(cmd)
+
+    uu.print_log("{} created.".format(soil_C_stdev_global))
 
 
     # Creates soil carbon 2000 density standard deviation tiles
@@ -209,12 +209,21 @@ def mp_create_soil_C(tile_id_list):
     dt = 'Float32'
     source_raster = soil_C_stdev_global
     if cn.count == 96:
-        processes = 32  # 32 processors = XXX GB peak
+        processes = 32  # 56 processors = 230 GB peak
     else:
-        processes = int(cn.count/2)
+        processes = 2
     uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.close()
+    pool.join()
+
+
+    output_pattern = cn.pattern_stdev_soil_C_full_extent
+    processes = 50
+    uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
     pool.close()
     pool.join()
 
