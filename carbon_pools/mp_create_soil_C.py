@@ -152,10 +152,12 @@ def mp_create_soil_C(tile_id_list):
 
     ### Soil carbon density uncertainty
 
-    # # Separate directories for the 5% CI and 95% CI
-    # dir_CI05 = '{0}{1}'.format(cn.docker_base_dir, 'CI05/')
-    # dir_CI95 = '{0}{1}'.format(cn.docker_base_dir, 'CI95/')
-    #
+    # Separate directories for the 5% CI and 95% CI
+    dir_CI05 = '{0}{1}'.format(cn.docker_base_dir, 'CI05/')
+    dir_CI95 = '{0}{1}'.format(cn.docker_base_dir, 'CI95/')
+    vrt_CI05 = 'mineral_soil_C_CI05.vrt'
+    vrt_CI95 = 'mineral_soil_C_CI95.vrt'
+
     # # Download raw mineral soil C density 5% CI tiles
     # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
     # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
@@ -168,7 +170,7 @@ def mp_create_soil_C(tile_id_list):
     # uu.log_subprocess_output_full(cmd)
     #
     # uu.print_log("Making mineral soil C 5% CI vrt...")
-    # vrt_CI05 = 'mineral_soil_C_CI05.vrt'
+
     # check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI05, dir_CI05, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
     # uu.print_log("Done making mineral soil C CI05 vrt")
     #
@@ -182,7 +184,7 @@ def mp_create_soil_C(tile_id_list):
     # uu.log_subprocess_output_full(cmd)
     #
     # uu.print_log("Making mineral soil C 95% CI vrt...")
-    # vrt_CI95 = 'mineral_soil_C_CI95.vrt'
+
     # check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI95, dir_CI95, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
     # uu.print_log("Done making mineral soil C CI95 vrt")
 
