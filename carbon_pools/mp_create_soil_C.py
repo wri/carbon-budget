@@ -190,10 +190,10 @@ def mp_create_soil_C(tile_id_list):
 
 
     # vrt with approximation of the soil C stanard deviation (based on the 5% and 95% CIs)
-    vrt_soil_C_stdev = 'soil_C_stdev.vrt'
+    soil_C_stdev_global = 'soil_C_stdev.tif'
 
     calc = '--calc=(A-B)/3'
-    out_filearg = '--outfile={}'.format(vrt_soil_C_stdev)
+    out_filearg = '--outfile={}'.format(soil_C_stdev_global)
     cmd = ['gdal_calc.py', '-A', vrt_CI95, '-B', vrt_CI05, calc, out_filearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Float32']
     uu.log_subprocess_output_full(cmd)
@@ -210,7 +210,7 @@ def mp_create_soil_C(tile_id_list):
         processes = int(cn.count/2)
     uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, vrt_soil_C_stdev, out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, soil_C_stdev_global, out_pattern, dt=dt), tile_id_list)
     pool.close()
     pool.join()
 
