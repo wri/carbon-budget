@@ -622,8 +622,10 @@ stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_re
 
 
 # Raw mineral soil C file site
-pattern_stdev_mineral_soil_C_raw = 'tileSG'
-stdev_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_mean/'
+pattern_uncert_mineral_soil_C_raw = 'tileSG'
+CI5_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_Q0.05/'
+CI95_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_Q0.95/'
+
 
 # Standard deviation in soil C stocks (0-30 cm)
 pattern_stdev_soil_C_full_extent = 't_soil_C_ha_stdev_full_extent_2000'
