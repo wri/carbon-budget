@@ -1,40 +1,40 @@
 '''
-This script creates Hansen tiles of US-specific AGC+BGC removal rates for the standard model.
+This script creates Hansen tiles of US-specific AGC+BGC removal rates and removal rate standard deviations for the standard model.
 Its extent is all pixels that have a US region, US age category, and FIA forest group assigned.
 Not all US pixels within the model extent have a US region, a US age category, and an FIA forest group pixel.
 Those pixels are not included in these tiles; rates from other sources are eventually applied to those pixels.
 Moreover, this does not use the model extent map at all, so it produces rates in pixels that may not actually be part
 of the final model extent.
 
-The combination of US region, US age category, and FIA forest group is used to assign annual removal rates from a
-spreadsheet.
+The combination of US region, US age category, and FIA forest group is used to assign annual removal rates and
+standard deviations from a spreadsheet.
 The rates in the spreadsheet were prepared by Rich Birdsey (retired US Forest Service, now at WHRC) using FIA
-database queries.
+database queries. The standard deviations were initially prepared by Rich Birdsey, then modified and consolidated
+by Nancy Harris (different issues for easter and western US forests and different age categories).
 US-specific removal rates are based on the FIA region, FIA forest group, and forest age category of each pixel. A rate
 table is then applied to each combination of region-group-age to apply the correct rates, just like for the standard
 model (mp_annual_gain_rate_IPCC_defaults.py).
 The FIA region tiles are a Hansenized version of a US region map that Thailynn Munroe made.
-The FIA forest group raster is created in ArcMap before this processing and Hansenized in this script. The input forest group
-raster is basically the composite of the original forest group raster and the ArcMap Focal Statistics tool applied to it
-at various rectangular windows, from 3x3 to 400x400. This Focal Statistics process covers the entire CONUS in
-forest group characterization so that any model pixel will be covered by forest group.
+The FIA forest group raster is created in ArcMap before this processing and Hansenized in the data prep script.
+The input forest group raster is basically the composite of the original forest group raster and the
+ArcMap Focal Statistics tool applied to it at various rectangular windows, from 3x3 to 400x400.
+This Focal Statistics process covers the entire CONUS in forest group characterization so that any model pixel will
+be covered by forest group.
 The forest age raster is based on Pan et al. and was created by Thailynn Munroe. She used the same Focal Statistics
 process for forest age category as I did for forest group. The age category cutoffs are 0-20, 20-100, and >100 years
-and are the same for the entire US.
+and are the same for the entire US. All Hansen gain pixels are automatically assigned the young forest rate and
+standard deviation, regardless of the Pan et al. forest age category.
 The pixels that don't have a rate assigned are ones where Rich Birdsey couldn't get a rate from the FIA database for
 that region-group-age combination (such as exotic hardwoods, I believe).
 So although almost the entire US is covered by the three input rasters, considerable areas with assigned rates can
 occur when the FIA didn't have sufficient data to come up with a rate.
 
-This script creates two dictionaries to apply to the three input tiles: one with removal rates by
+This script creates two dictionaries for rate and two for stdev to apply to the three input tiles: one by
 region-group-age combinations and another with the youngest rate for each region-group combination.
 The first dictionary is applied to all standard gain model pixels according to their region-group-age combination
 but then is overwritten for any Hansen gain pixel with the youngest rate for that region-group combination applied
 (using the second dictionary). That is because we can assume that any Hansen gain pixel is in the youngest age category,
 i.e. it is more specific information than the Pan et al. forest age category raster, so we give that info priority.
-Wherever there is no rate in the table for a region-group-age combination, the standard model rate is used.
-This has the exact same extent as the standard AGB and BGB annual removal rate layers; the pixels where it should be
-different are the ones that have a region-group-age combination that's in the FIA table.
 '''
 
 import multiprocessing
@@ -69,8 +69,8 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
     }
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGC_BGC_natrl_forest_US_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US]
+    output_dir_list = [cn.annual_gain_AGC_BGC_natrl_forest_US_dir, cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir]
+    output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US]
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
@@ -90,14 +90,14 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-
-
     # Table with US-specific removal rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
     uu.log_subprocess_output_full(cmd)
 
 
-    # Imports the table with the region-group-age AGB removal rates
+    ### To make the removal factor dictionaries
+
+    # Imports the table with the region-group-age AGC+BGC removal rates
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
                                sheet_name="US_rates_AGC+BGC")
 
@@ -136,15 +136,56 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
     uu.print_log(gain_table_group_region_dict)
 
 
-    # count/2 on a m4.16xlarge maxes out at about 230 GB of memory (processing 16 tiles at once), so it's okay on an m4.16xlarge
+    ### To make the removal factor standard deviation dictionaries
+
+    # Converts gain table from wide to long, so each region-group-age category has its own row
+    stdev_table_group_region_by_age = pd.melt(gain_table, id_vars=['FIA_region_code', 'forest_group_code'],
+                                             value_vars=['SD_young', 'SD_middle',
+                                                         'SD_old'])
+    stdev_table_group_region_by_age = stdev_table_group_region_by_age.dropna()
+
+    # In the forest age category raster, each category has this value
+    stdev_dict = {'SD_young': 1000, 'SD_middle': 2000, 'SD_old': 3000}
+
+    # Creates a unique value for each forest group-region-age category in the table.
+    # Although these rates are applied to all standard gain model pixels at first, they are not ultimately used for
+    # pixels that have Hansen gain (see below).
+    stdev_table_group_region_age = stdev_table_group_region_by_age.replace({"variable": stdev_dict})
+    stdev_table_group_region_age['age_cat'] = stdev_table_group_region_age['variable'] * 10
+    stdev_table_group_region_age['group_region_age_combined'] = stdev_table_group_region_age['age_cat'] + \
+                                                               stdev_table_group_region_age['forest_group_code'] * 100 + \
+                                                               stdev_table_group_region_age['FIA_region_code']
+    # Converts the forest group-region-age codes and corresponding gain rates to a dictionary,
+    # where the key is the unique group-region-age code and the value is the AGB removal rate.
+    stdev_table_group_region_age_dict = pd.Series(stdev_table_group_region_age.value.values,
+                                                 index=stdev_table_group_region_age.group_region_age_combined).to_dict()
+    uu.print_log(stdev_table_group_region_age_dict)
+
+    # Creates a unique value for each forest group-region category using just young forest rates.
+    # These are assigned to Hansen gain pixels, which automatically get the young forest rate, regardless of the
+    # forest age category raster.
+    stdev_table_group_region = stdev_table_group_region_age.drop(
+        stdev_table_group_region_age[stdev_table_group_region_age.age_cat != 10000].index)
+    stdev_table_group_region['group_region_combined'] = stdev_table_group_region['forest_group_code'] * 100 + \
+                                                       stdev_table_group_region['FIA_region_code']
+    # Converts the forest group-region codes and corresponding gain rates to a dictionary,
+    # where the key is the unique group-region code (youngest age category) and the value is the AGB removal rate.
+    stdev_table_group_region_dict = pd.Series(stdev_table_group_region.value.values,
+                                             index=stdev_table_group_region.group_region_combined).to_dict()
+    uu.print_log(stdev_table_group_region_dict)
+
+
     if cn.count == 96:
         processes = 68   # 68 processors (only 16 tiles though) = 310 GB peak
     else:
         processes = 24
     uu.print_log('US natural forest AGC+BGC removal rate max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(US_removal_rates.US_removal_rate_calc, gain_table_group_region_age_dict=gain_table_group_region_age_dict,
-                     gain_table_group_region_dict=gain_table_group_region_dict,
+    pool.map(partial(US_removal_rates.US_removal_rate_calc,
+                     gain_table_group_region_age_dict=stdev_table_group_region_age_dict,
+                     gain_table_group_region_dict=stdev_table_group_region_dict,
+                     stdev_table_group_region_age_dict=stdev_table_group_region_age_dict,
+                     stdev_table_group_region_dict=stdev_table_group_region_dict,
                      output_pattern_list=output_pattern_list), tile_id_list)
     pool.close()
     pool.join()
@@ -152,8 +193,12 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
     # # For single processor use
     # for tile_id in tile_id_list:
     #
-    #     US_removal_rates.US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_group_region_dict,
-    #                                           output_pattern_list)
+    #     US_removal_rates.US_removal_rate_calc(tile_id,
+    #       gain_table_group_region_age_dict,
+    #       gain_table_group_region_dict,
+    #       stdev_table_group_region_age_dict,
+    #       stdev_table_group_region_dict,
+    #       output_pattern_list)
 
 
     # Uploads output tiles to s3

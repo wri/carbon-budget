@@ -74,7 +74,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC], # 15 = 330 GB peak
                     # cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults], # 15 = 620 GB peak
                     # cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults], # 15 = 620 GB peak
-                    cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults], # 15 = 620 GB peak
+                    # cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults], # 15 = 620 GB peak
                     #
                     # # Annual removals from all forest types
                     # cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types], # 15 = XXX GB peak

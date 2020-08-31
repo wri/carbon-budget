@@ -294,7 +294,7 @@ FIA_forest_group_raw_dir = os.path.join(s3_base_dir, 'US_forest_group/intermedia
 pattern_FIA_forest_group_processed = 'FIA_forest_group_processed'
 FIA_forest_group_processed_dir = os.path.join(s3_base_dir, 'US_forest_group/processed/20200724/')
 
-table_US_removal_rate = 'ICLEI R factors_livebiomass_all_nat_forest_types__20200730.xlsx'
+table_US_removal_rate = 'ICLEI R factors_livebiomass_all_nat_forest_types_withSD__20200831.xlsx'
 US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 
@@ -602,7 +602,7 @@ stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/
 
 # Standard deviation for annual aboveground+belowground carbon gain rate for natural US forests
 pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_natural_forest_US'
-stdev_annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_US/processed/standard/20200730/')
+stdev_annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_US/processed/standard/20200831/')
 
 # Standard deviation for annual aboveground carbon removal factors for <20 year secondary, non-mangrove, non-planted natural forests (raw input)
 name_stdev_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__stdev__aboveground__full_extent__Mg_C_ha_yr.tif'
@@ -618,7 +618,7 @@ stdev_annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'stdev_annua
 
 # Standard deviation for aboveground and belowground removal factors for all forest types
 pattern_stdev_annual_gain_AGC_all_types = 'annual_removal_factor_stdev_AGC_Mg_ha_all_forest_types'
-stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_all_forest_types/standard/20200824/')
+stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_all_forest_types/standard/20200831/')
 
 
 # Raw mineral soil C file site

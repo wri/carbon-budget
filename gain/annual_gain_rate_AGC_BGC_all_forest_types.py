@@ -269,8 +269,11 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
                                                                    (europe_AGC_BGC_rate_window) -
                                                                    (europe_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
+                # NOTE: Nancy Harris thought that the European removal standard deviations were 2x too large,
+                # per email on 8/30/2020. Thus, simplest fix is to leave original tiles 2x too large and
+                # correct them only where composited with other stdev sources.
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(europe_AGC_BGC_stdev_window != 0,
-                                                                   europe_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
+                                                                   (europe_AGC_BGC_stdev_window/2) / (1 + cn.below_to_above_non_mang),
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
             except:
                 pass
