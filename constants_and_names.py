@@ -248,7 +248,7 @@ plantation_countries = [
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
-removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20200824/')
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20200831/')
 
 # Removal model forest type codes
 mangrove_rank = 6
@@ -322,7 +322,7 @@ pattern_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_AGC_BGC_t_ha
 annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Annual aboveground+belowground carbon gain rate for natural US forests (processed tiles)
-pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_US'
+pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_AGC_BGC_Mg_ha_natural_forest_US'
 annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20200730/')
 
 
@@ -347,15 +347,15 @@ annual_gain_BGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_removal_fa
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGC_all_types = 'annual_removal_factor_AGC_Mg_ha_all_forest_types'
-annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_all_forest_types/standard/20200824/')
+annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_all_forest_types/standard/20200831/')
 
 # Annual belowground gain rate for all forest types
 pattern_annual_gain_BGC_all_types = 'annual_removal_factor_BGC_Mg_ha_all_forest_types'
-annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGC_all_forest_types/standard/20200824/')
+annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGC_all_forest_types/standard/20200831/')
 
 # Annual belowground gain rate for all forest types
 pattern_annual_gain_AGC_BGC_all_types = 'annual_removal_factor_AGC_BGC_Mg_ha_all_forest_types'
-annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_BGC_all_forest_types/standard/20200824/')
+annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_BGC_all_forest_types/standard/20200831/')
 
 
 ### Cumulative carbon dioxide removals
