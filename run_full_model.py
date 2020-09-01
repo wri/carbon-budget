@@ -613,7 +613,8 @@ def main ():
 
     # Changes the date in the output directories. This date was used during the model run.
     # This replaces the date in constants_and_names.
-    output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if run_date:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
     for output in output_dir_list:
 
