@@ -248,7 +248,7 @@ plantation_countries = [
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
-removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20200831/')
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20200824/')
 
 # Removal model forest type codes
 mangrove_rank = 6
@@ -299,7 +299,7 @@ US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 
 
-### Annual carbon gain rates that are precursors for annual biomass gain rates
+### Annual carbon gain rates that are precursors for composite annual removal factor
 
 # Annual aboveground and belowground carbon gain rate for planted forests, with gain rates everywhere inside the plantation boundaries (includes mangrove pixels)
 pattern_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_AGC_BGC_t_ha_planted_forest_unmasked'
@@ -318,12 +318,13 @@ name_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_gain_rate_AGC_BGC_t_h
 annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Annual aboveground+belowground carbon gain rate for natural European forests (processed tiles)
+# https://www.efi.int/knowledge/maps/treespecies
 pattern_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_AGC_BGC_t_ha_natural_forest_Europe'
 annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Annual aboveground+belowground carbon gain rate for natural US forests (processed tiles)
 pattern_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_AGC_BGC_Mg_ha_natural_forest_US'
-annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20200730/')
+annual_gain_AGC_BGC_natrl_forest_US_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_natural_forest_US/processed/standard/20200831/')
 
 
 
@@ -347,15 +348,15 @@ annual_gain_BGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_removal_fa
 
 # Annual aboveground gain rate for all forest types
 pattern_annual_gain_AGC_all_types = 'annual_removal_factor_AGC_Mg_ha_all_forest_types'
-annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_all_forest_types/standard/20200831/')
+annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_all_forest_types/standard/20200824/')
 
 # Annual belowground gain rate for all forest types
 pattern_annual_gain_BGC_all_types = 'annual_removal_factor_BGC_Mg_ha_all_forest_types'
-annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGC_all_forest_types/standard/20200831/')
+annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGC_all_forest_types/standard/20200824/')
 
 # Annual belowground gain rate for all forest types
 pattern_annual_gain_AGC_BGC_all_types = 'annual_removal_factor_AGC_BGC_Mg_ha_all_forest_types'
-annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_BGC_all_forest_types/standard/20200831/')
+annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_BGC_all_forest_types/standard/20200824/')
 
 
 ### Cumulative carbon dioxide removals
@@ -593,6 +594,7 @@ name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw = 'annual_removal_factor_
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/raw/standard/20200722/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for natural European forests (processed tiles)
+# https://www.efi.int/knowledge/maps/treespecies
 pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_AGC_BGC_Mg_ha_natural_forest_Europe'
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
