@@ -80,7 +80,7 @@ def main ():
         thresh = int(thresh)
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
-    include_us = args.us
+    include_us = args.us_rates
     log_note = args.log_note
 
     # Start time for script
