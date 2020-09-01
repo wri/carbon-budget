@@ -62,7 +62,7 @@ def main ():
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', required=False,
                         help='Include mangrove removal rate and standard deviation tile creation step (before model extent). true or false.')
-    parser.add_argument('--US_rates', '-us', required=False,
+    parser.add_argument('--us_rates', '-us', required=False,
                         help='Include US removal rate and standard deviation tile creation step (before model extent). true or false.')
     parser.add_argument('--log-note', '-ln', required=False,
                         help='Note to include in log header about model run.')
