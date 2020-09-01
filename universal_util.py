@@ -30,7 +30,7 @@ def upload_log():
 
 # Creates the log with a starting line
 def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
-                 emitted_pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None,
+                 emitted_pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_us=None,
                  log_note=None):
 
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
@@ -48,7 +48,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("TCD threshold for aggregated map (optional): {}".format(thresh))
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
-    logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
+    logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
     logging.info("AWS ec2 instance type and AMI id:")
     # try:
     #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
@@ -1054,7 +1054,7 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
 
 # Determines what stages should actually be run
-def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None):
+def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None, include_us = None):
 
     # If user wants all stages, all named stages (i.e. everything except 'all') are returned
     if stage_input == 'all':
@@ -1073,7 +1073,10 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
             stage_output = stage_input.split()
 
-    # Flags to include mangrove forest removal rates in the stages to run
+    # Flags to include mangrove forest removal rates and US-specific removal rates in the stages to run
+    if include_us == 'true':
+        stage_output.insert(0, 'annual_removals_us')
+
     if include_mangroves == 'true':
         stage_output.insert(0, 'annual_removals_mangrove')
 

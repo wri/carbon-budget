@@ -18,6 +18,7 @@ import constants_and_names as cn
 import universal_util as uu
 from data_prep.mp_model_extent import mp_model_extent
 from gain.mp_annual_gain_rate_mangrove import mp_annual_gain_rate_mangrove
+from gain.mp_US_removal_rates import mp_US_removal_rates
 from gain.mp_forest_age_category_IPCC import mp_forest_age_category_IPCC
 from gain.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_IPCC_defaults
 from gain.mp_annual_gain_rate_AGC_BGC_all_forest_types import mp_annual_gain_rate_AGC_BGC_all_forest_types
@@ -60,7 +61,9 @@ def main ():
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', required=False,
-                        help='Include mangrove annual gain rate, gain year count, and cumulative gain in stages to run. true or false.')
+                        help='Include mangrove removal rate and standard deviation tile creation step (before model extent). true or false.')
+    parser.add_argument('--US_rates', '-us', required=False,
+                        help='Include US removal rate and standard deviation tile creation step (before model extent). true or false.')
     parser.add_argument('--log-note', '-ln', required=False,
                         help='Note to include in log header about model run.')
     args = parser.parse_args()
@@ -77,6 +80,7 @@ def main ():
         thresh = int(thresh)
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
+    include_us = args.us
     log_note = args.log_note
 
     # Start time for script
@@ -85,7 +89,7 @@ def main ():
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, stage_input=stage_input, run_through=run_through,
                     carbon_pool_extent=carbon_pool_extent, emitted_pools=emitted_pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, log_note=log_note)
+                    include_mangroves=include_mangroves, include_us=include_us, log_note=log_note)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
@@ -100,7 +104,7 @@ def main ():
 
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through,
-                                       include_mangroves = include_mangroves)
+                                       include_mangroves = include_mangroves, include_us=include_us)
     uu.print_log("Analysis stages to run:", actual_stages)
 
     # Reports how much storage is being used with files
@@ -172,13 +176,18 @@ def main ():
         cn.cumul_gain_AGCO2_BGCO2_all_types_dir
     ]
 
-    # Prepends the mangrove output directories if mangroves are included
+    # Prepends the mangrove and US output directories if mangroves are included
     if 'annual_removals_mangrove' in actual_stages:
 
         output_dir_list = [cn.annual_gain_AGB_mangrove_dir, cn.annual_gain_BGB_mangrove_dir,
                            cn.stdev_annual_gain_AGB_mangrove_dir] + output_dir_list
 
-    # Adds the soil carbon directories depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
+    if 'annual_removals_us' in actual_stages:
+
+        output_dir_list = [cn.annual_gain_AGC_BGC_natrl_forest_US_dir,
+                           cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir] + output_dir_list
+
+    # Adds the carbon directories depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
     if 'loss' in carbon_pool_extent:
         output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir,
                                              cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir,
@@ -232,11 +241,16 @@ def main ():
         cn.pattern_cumul_gain_AGCO2_BGCO2_all_types
     ]
 
-    # Prepends the mangrove output pattern if mangroves are included
+    # Prepends the mangrove and US output pattern if mangroves are included
     if 'annual_removals_mangrove' in actual_stages:
 
         output_pattern_list = [cn.pattern_annual_gain_AGB_mangrove, cn.pattern_annual_gain_BGB_mangrove,
                                cn.pattern_stdev_annual_gain_AGB_mangrove] + output_pattern_list
+
+    if 'annual_removals_us' in actual_stages:
+
+        output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US,
+                               cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US] + output_pattern_list
 
     # Adds the soil carbon patterns depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
     if 'loss' in carbon_pool_extent:
@@ -279,7 +293,7 @@ def main ():
                                                 cn.pattern_net_flux_per_pixel]
 
 
-    # Creates tiles of annual AGB and BGB gain rate for mangroves using the standard model
+    # Creates tiles of annual AGB and BGB gain rate and AGB stdev for mangroves using the standard model
     # removal function
     if 'annual_removals_mangrove' in actual_stages:
 
@@ -292,6 +306,21 @@ def main ():
         elapsed_time = end - start
         uu.check_storage()
         uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
+
+
+    # Creates tiles of annual AGC+BGC gain rate and AGC stdev for US-specific removals using the standard model
+    # removal function
+    if 'annual_removals_us' in actual_stages:
+
+        uu.print_log(":::::Creating tiles of annual removals for US")
+        start = datetime.datetime.now()
+
+        mp_US_removal_rates(sensit_type, tile_id_list, run_date = run_date)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        uu.check_storage()
+        uu.print_log(":::::Processing time for annual_gain_rate_us:", elapsed_time, "\n")
 
 
     # Creates model extent tiles
