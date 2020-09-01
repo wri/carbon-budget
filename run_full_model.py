@@ -48,7 +48,7 @@ def main ():
                         help='Stages for running the flux model. Options are {}'.format(model_stages))
     parser.add_argument('--run-through', '-r', required=True,
                         help='Options: true or false. true: run named stage and following stages. false: run only named stage.')
-    parser.add_argument('--run-date', '-d', required=True,
+    parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--tile-id-list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
