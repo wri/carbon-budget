@@ -182,8 +182,8 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
     uu.print_log('US natural forest AGC+BGC removal rate max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(US_removal_rates.US_removal_rate_calc,
-                     gain_table_group_region_age_dict=stdev_table_group_region_age_dict,
-                     gain_table_group_region_dict=stdev_table_group_region_dict,
+                     gain_table_group_region_age_dict=gain_table_group_region_age_dict,
+                     gain_table_group_region_dict=gain_table_group_region_dict,
                      stdev_table_group_region_age_dict=stdev_table_group_region_age_dict,
                      stdev_table_group_region_dict=stdev_table_group_region_dict,
                      output_pattern_list=output_pattern_list), tile_id_list)
