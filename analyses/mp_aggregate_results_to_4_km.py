@@ -102,6 +102,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         if (sensit_type != 'std') & (sensit_type not in pattern):
             uu.print_log("{} not a sensitivity analysis output. Skipping aggregation...".format(pattern))
             uu.print_log("")
+
             continue
 
         # Lists the tiles of the particular type that is being iterates through.
