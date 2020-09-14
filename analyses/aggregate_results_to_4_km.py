@@ -42,11 +42,16 @@ def rewindow(tile):
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
     tcd_tile = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
+    gain_tile = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    gain_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_gain, tile_id)
+    mangrove_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    mangrove_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
     # Only rewindows the necessary files if they haven't already been processed (just in case
     # this was run on the spot machine before)
 
     if not os.path.exists(input_rewindow):
+        uu.print_log("Model output for {} not rewindowed. Rewindowing...".format(tile_id))
 
         # Converts the tile of interest to the 400x400 pixel windows
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
@@ -57,6 +62,7 @@ def rewindow(tile):
         uu.log_subprocess_output_full(cmd)
 
     if not os.path.exists(tcd_rewindow):
+        uu.print_log("Canopy cover for {} not rewindowed. Rewindowing...".format(tile_id))
 
         # Converts the tcd tile to the 400x400 pixel windows
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
@@ -71,6 +77,7 @@ def rewindow(tile):
         uu.print_log("Canopy cover for {} already rewindowed.".format(tile_id))
 
     if not os.path.exists(pixel_area_rewindow):
+        uu.print_log("Pixel area for {} not rewindowed. Rewindowing...".format(tile_id))
 
         # Converts the pixel area tile to the 400x400 pixel windows
         cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
@@ -78,14 +85,46 @@ def rewindow(tile):
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                area_tile, pixel_area_rewindow]
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
     else:
 
         uu.print_log("Pixel area for {} already rewindowed.".format(tile_id))
+
+    if not os.path.exists(gain_rewindow):
+        uu.print_log("Hansen gain for {} not rewindowed. Rewindowing...".format(tile_id))
+
+        # Converts the pixel area tile to the 400x400 pixel windows
+        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
+               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
+               gain_tile, gain_rewindow]
+        uu.log_subprocess_output_full(cmd)
+
+    else:
+
+        uu.print_log("Hansen gain for {} already rewindowed.".format(tile_id))
+
+    if os.path.exists(mangrove_tile):
+        uu.print_log("Mangrove for {} not rewindowed. Rewindowing...".format(tile_id))
+
+        if not os.path.exists(mangrove_tile_rewindow):
+
+            # Converts the pixel area tile to the 400x400 pixel windows
+            cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
+                   '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+                   '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+                   '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
+                   mangrove_tile, mangrove_tile_rewindow]
+            uu.log_subprocess_output_full(cmd)
+
+        else:
+
+            uu.print_log("Mangrove tile for {} already rewindowed.".format(tile_id))
+    else:
+
+        uu.print_log("No mangrove tile found for {}".format(tile_id))
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type))
@@ -107,17 +146,26 @@ def aggregate(tile, thresh, sensit_type):
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
-    uu.print_log("  Converting {} to per-pixel values...".format(tile))
-
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
     pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
     tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
+    gain_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_gain, tile_id)
+    mangrove_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)
     pixel_area_src = rasterio.open(pixel_area_rewindow)
     tcd_src = rasterio.open(tcd_rewindow)
+    gain_src = rasterio.open(gain_rewindow)
+
+    try:
+        mangrove_src = rasterio.open(mangrove_rewindow)
+        uu.print_log("    Mangrove tile found for {}".format(tile_id))
+    except:
+        uu.print_log("    No mangrove tile found for {}".format(tile_id))
+
+    uu.print_log("  Converting {} to per-pixel values...".format(tile))
 
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
@@ -134,12 +182,22 @@ def aggregate(tile, thresh, sensit_type):
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
         tcd_window = tcd_src.read(1, window=window)
+        gain_window = gain_src.read(1, window=window)
+
+        try:
+            mangrove_window = mangrove_src.read(1, window=window)
+        except:
+            mangrove_window = np.zeros((window.height, window.width), dtype='uint8')
 
         # Applies the tree cover density threshold to the 30x30m pixels
         if thresh > 0:
 
-            in_window = np.ma.masked_where(tcd_window < thresh, in_window)
-            in_window = in_window.filled(0)
+            # in_window = np.ma.masked_where(tcd_window < thresh, in_window)
+            # in_window = in_window.filled(0)
+
+            # in_window = np.where((tcd_window > thresh), in_window, 0)
+            # in_window = np.where((tcd_window > thresh) | (gain_window == 1), in_window, 0)
+            in_window = np.where((tcd_window > thresh) | (gain_window == 1) | (mangrove_window != 0), in_window, 0)
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha

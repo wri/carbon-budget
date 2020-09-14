@@ -1,5 +1,7 @@
 from subprocess import Popen, PIPE, STDOUT, check_call
 import glob
+import boto3
+import botocore
 import constants_and_names as cn
 import datetime
 import rasterio
@@ -30,7 +32,8 @@ def upload_log():
 
 # Creates the log with a starting line
 def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
-                 emitted_pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_us=None,
+                 emitted_pools=None, thresh=None, std_net_flux=None,
+                 include_mangroves=None, include_us=None, include_per_pixel=None,
                  log_note=None):
 
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
@@ -49,6 +52,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
+    logging.info("Include per pixel tile creation for gross emissions, gross removals, net flux in model run (optional): {}".format(include_per_pixel))
     logging.info("AWS ec2 instance type and AMI id:")
     # try:
     #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
@@ -605,70 +609,103 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_file_download(source, dest, sensit_type):
 
+    s3 = boto3.resource('s3')
+
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
     file_name = get_tile_name(source)
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
-    # has a sensitivity analysis path on s3
+    # has a sensitivity analysis path on s3.
+    # Files that have standard and sensitivity analysis variants are handled differently from ones without variants
+    # Hierarchy for getting tiles (start with #1, end with #4):
+    # 1. Use sensitivity tile if already downloaded
+    # 2. Download sensitivity if it exists
+    # 3. Use standard tile if already downloaded
+    # 4. Download standard tile if it exists
     if sensit_type != 'std' and 'standard' in dir:
 
         # Creates directory and file names according to sensitivity analysis type
         dir_sens = dir.replace('standard', sensit_type)
         file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
 
-        # First attempt is to try to download the sensitivity analysis version
+        # Doesn't download the tile if sensitivity version is already on the spot machine
+        print_log("Option 1: Checking if {} is already on spot machine...".format(file_name_sens))
+        if os.path.exists(file_name_sens):
+            print_log("  Option 1 success:", file_name_sens, "already downloaded" + "\n")
+            return
+        else:
+            print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name_sens))
+            print_log("Option 2: Checking for sensitivity analysis tile {0}/{1} on s3...".format(dir_sens[15:], file_name_sens))
+
+        # If not already downloaded, first tries to download the sensitivity analysis version
         try:
-            # Doesn't download the tile if it's already on the spot machine
-            if os.path.exists(file_name_sens):
-                print_log(file_name_sens, "already downloaded" + "\n")
-                return
-
-            # If not already on the spot machine, it downloads the file
+            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
+            s3.Object('gfw2-data', '{0}/{1}'.format(dir_sens[15:], file_name_sens)).load()
+            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
+            log_subprocess_output_full(cmd)
+            print_log("  Option 2 success: Sensitivity analysis tile {} found on s3 and downloaded".format(source))
+            print_log("")
+            return
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print_log("  Option 2 failure: Tile {0}/{1} not found on s3. Looking for standard model source...".format(dir_sens, file_name_sens))
             else:
-                print_log(file_name_sens, "not previously downloaded. Downloading to", dest, '\n')
-                source = os.path.join(dir_sens, file_name_sens)
-                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-                log_subprocess_output_full(cmd)
+                print_log("  Option 2 failure: Some other error occurred while looking for {0}/{1}".format(dir_sens, file_name_sens))
 
-                print_log(file_name_sens, "not previously downloaded. Now downloaded to", dest, '\n')
-
-        # Second attempt is to download the standard version of the file.
+        # Next option is to use standard version of tile if on spot machine.
         # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
         # for this date.
-        except:
-            if os.path.exists(file_name):
-                print_log(file_name, "already downloaded" + "\n")
-                return
-
-            else:
-                source = os.path.join(dir, file_name)
-                try:
-                    print_log(file_name, "not previously downloaded. Downloading to", dest, '\n')
-                    cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-                    log_subprocess_output_full(cmd)
-
-                    print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
-                except:
-                    print_log(source, 'does not exist in standard model or sensitivity model' + '\n')
-
-    # If not a sensitivity run, the standard file is downloaded
-    else:
-        if os.path.exists(os.path.join(dest, file_name)):
-
-            print_log(file_name, "already downloaded" + "\n")
+        print_log("Option 3: Checking if standard version {} is already on spot machine...".format(file_name))
+        if os.path.exists(file_name):
+            print_log("  Option 3 success:", file_name, "already downloaded" + "\n")
             return
-
         else:
-            source = os.path.join(dir, file_name)
-            try:
-                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-                log_subprocess_output_full(cmd)
+            print_log("  Option 3 failure: {} is not already on spot machine. ".format(file_name))
+            print_log("Option 4: Looking for standard version of {} to download...".format(file_name))
 
-                print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
-            except:
-                print_log(source, 'does not exist-- check if this is expected to exist' + '\n')
+        # If not already downloaded, final optionis to try to download the standard version of the tile.
+        # If this doesn't work, the script throws a fatal error because no variant of this tile was found.
+        try:
+            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
+            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            log_subprocess_output_full(cmd)
+            print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source))
+            print_log("")
+            return
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print_log("  Option 4 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+            else:
+                print_log("  Option 4 failure: Some other error occurred while looking for {0}".format(source))
+            print_log("")
 
+    # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
+    else:
+        print_log("Option 1: Checking if {} is already on spot machine...".format(file_name))
+        if os.path.exists(os.path.join(dest, file_name)):
+            print_log("  Option 1 success:", os.path.join(dest, file_name), "already downloaded" + "\n")
+            return
+        else:
+            print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name))
+            print_log("Option 2: Checking for tile {} on s3...".format(source))
+
+        source = os.path.join(dir, file_name)
+
+        try:
+            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
+            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            log_subprocess_output_full(cmd)
+            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source))
+            print_log("")
+            return
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+            else:
+                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source))
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -950,7 +987,7 @@ def name_aggregated_output(pattern, thresh, sensit_type):
     # print out_pattern
     out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
     # print out_pattern
-    out_pattern = re.sub('_t_', '_Mt_', out_pattern)
+    out_pattern = re.sub('_Mg_', '_Mt_', out_pattern)
     # print out_pattern
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print out_pattern
@@ -1054,7 +1091,8 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
 
 # Determines what stages should actually be run
-def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None, include_us = None):
+def analysis_stages(stage_list, stage_input, run_through,
+                    include_mangroves = None, include_us = None, include_per_pixel = None):
 
     # If user wants all stages, all named stages (i.e. everything except 'all') are returned
     if stage_input == 'all':
@@ -1079,6 +1117,9 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
     if include_mangroves == 'true':
         stage_output.insert(0, 'annual_removals_mangrove')
+
+    if include_per_pixel == 'true':
+        stage_output.extend('per_pixel_results')
 
     return stage_output
 

@@ -38,7 +38,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count_all_forest_types', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions',
-                    'net_flux', 'aggregate', 'per_pixel_results']
+                    'net_flux', 'aggregate']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -62,8 +62,10 @@ def main ():
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', required=False,
                         help='Include mangrove removal rate and standard deviation tile creation step (before model extent). true or false.')
-    parser.add_argument('--us_rates', '-us', required=False,
+    parser.add_argument('--us-rates', '-us', required=False,
                         help='Include US removal rate and standard deviation tile creation step (before model extent). true or false.')
+    parser.add_argument('--per-pixel-results', '-ppr', required=False,
+                        help='Include per pixel result calculations for gross emissions (all gases, all pools), gross removals, and net flux. true or false.')
     parser.add_argument('--log-note', '-ln', required=False,
                         help='Note to include in log header about model run.')
     args = parser.parse_args()
@@ -81,6 +83,7 @@ def main ():
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
     include_us = args.us_rates
+    include_per_pixel = args.per_pixel_results
     log_note = args.log_note
 
     # Start time for script
@@ -89,7 +92,8 @@ def main ():
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, stage_input=stage_input, run_through=run_through,
                     carbon_pool_extent=carbon_pool_extent, emitted_pools=emitted_pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, include_us=include_us, log_note=log_note)
+                    include_mangroves=include_mangroves, include_us=include_us, include_per_pixel=include_per_pixel,
+                    log_note=log_note)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
@@ -104,7 +108,8 @@ def main ():
 
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, stage_input, run_through,
-                                       include_mangroves = include_mangroves, include_us=include_us)
+                                       include_mangroves = include_mangroves, include_us=include_us,
+                                       include_per_pixel=include_per_pixel)
     uu.print_log("Analysis stages to run:", actual_stages)
 
     # Reports how much storage is being used with files
@@ -115,7 +120,7 @@ def main ():
 
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
-    if (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
+    if ('carbon_pools' in actual_stages) & (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
         uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
@@ -188,40 +193,42 @@ def main ():
                            cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir] + output_dir_list
 
     # Adds the carbon directories depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
-    if 'loss' in carbon_pool_extent:
-        output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir,
-                                             cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir,
-                                             cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
+    if 'carbon_pools' in actual_stages:
+        if 'loss' in carbon_pool_extent:
+            output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir,
+                                                 cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir,
+                                                 cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
 
-    if '2000' in carbon_pool_extent:
-        output_dir_list = output_dir_list + [cn.AGC_2000_dir, cn.BGC_2000_dir,
-                                             cn.deadwood_2000_dir, cn.litter_2000_dir,
-                                             cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
+        if '2000' in carbon_pool_extent:
+            output_dir_list = output_dir_list + [cn.AGC_2000_dir, cn.BGC_2000_dir,
+                                                 cn.deadwood_2000_dir, cn.litter_2000_dir,
+                                                 cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
     # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
-    if emitted_pools == 'biomass_soil':
-        output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
-                           cn.gross_emis_shifting_ag_biomass_soil_dir,
-                           cn.gross_emis_forestry_biomass_soil_dir,
-                           cn.gross_emis_wildfire_biomass_soil_dir,
-                           cn.gross_emis_urban_biomass_soil_dir,
-                           cn.gross_emis_no_driver_biomass_soil_dir,
-                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                           cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                           cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                           cn.gross_emis_nodes_biomass_soil_dir]
+    if 'gross_emissions' in actual_stages:
+        if emitted_pools == 'biomass_soil':
+            output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
+                               cn.gross_emis_shifting_ag_biomass_soil_dir,
+                               cn.gross_emis_forestry_biomass_soil_dir,
+                               cn.gross_emis_wildfire_biomass_soil_dir,
+                               cn.gross_emis_urban_biomass_soil_dir,
+                               cn.gross_emis_no_driver_biomass_soil_dir,
+                               cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                               cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                               cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                               cn.gross_emis_nodes_biomass_soil_dir]
 
-    else:
-        output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
-                               cn.gross_emis_shifting_ag_soil_only_dir,
-                               cn.gross_emis_forestry_soil_only_dir,
-                               cn.gross_emis_wildfire_soil_only_dir,
-                               cn.gross_emis_urban_soil_only_dir,
-                               cn.gross_emis_no_driver_soil_only_dir,
-                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                               cn.gross_emis_nodes_soil_only_dir]
+        else:
+            output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
+                                   cn.gross_emis_shifting_ag_soil_only_dir,
+                                   cn.gross_emis_forestry_soil_only_dir,
+                                   cn.gross_emis_wildfire_soil_only_dir,
+                                   cn.gross_emis_urban_soil_only_dir,
+                                   cn.gross_emis_no_driver_soil_only_dir,
+                                   cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                                   cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                                   cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                                   cn.gross_emis_nodes_soil_only_dir]
 
     output_dir_list = output_dir_list + [cn.net_flux_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir,
                                          cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir,
@@ -253,39 +260,41 @@ def main ():
                                cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US] + output_pattern_list
 
     # Adds the soil carbon patterns depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
-    if 'loss' in carbon_pool_extent:
-        output_pattern_list = output_pattern_list + [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year,
-                                             cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000,
-                                             cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
+    if 'carbon_pools' in actual_stages:
+        if 'loss' in carbon_pool_extent:
+            output_pattern_list = output_pattern_list + [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year,
+                                                 cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000,
+                                                 cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
 
-    if '2000' in carbon_pool_extent:
-        output_pattern_list = output_pattern_list + [cn.pattern_AGC_2000, cn.pattern_BGC_2000,
-                                             cn.pattern_deadwood_2000, cn.pattern_litter_2000,
-                                             cn.pattern_soil_C_full_extent_2000, cn.pattern_total_C_2000]
+        if '2000' in carbon_pool_extent:
+            output_pattern_list = output_pattern_list + [cn.pattern_AGC_2000, cn.pattern_BGC_2000,
+                                                 cn.pattern_deadwood_2000, cn.pattern_litter_2000,
+                                                 cn.pattern_soil_C_full_extent_2000, cn.pattern_total_C_2000]
 
     # Adds the biomass_soil output patterns or the soil_only output directories depending on the model run
-    if emitted_pools == 'biomass_soil':
-        output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_biomass_soil,
-                                                  cn.pattern_gross_emis_shifting_ag_biomass_soil,
-                                                  cn.pattern_gross_emis_forestry_biomass_soil,
-                                                  cn.pattern_gross_emis_wildfire_biomass_soil,
-                                                  cn.pattern_gross_emis_urban_biomass_soil,
-                                                  cn.pattern_gross_emis_no_driver_biomass_soil,
-                                                  cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
-                                                  cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
-                                                  cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
+    if 'gross_emissions' in actual_stages:
+        if emitted_pools == 'biomass_soil':
+            output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_biomass_soil,
+                                                      cn.pattern_gross_emis_shifting_ag_biomass_soil,
+                                                      cn.pattern_gross_emis_forestry_biomass_soil,
+                                                      cn.pattern_gross_emis_wildfire_biomass_soil,
+                                                      cn.pattern_gross_emis_urban_biomass_soil,
+                                                      cn.pattern_gross_emis_no_driver_biomass_soil,
+                                                      cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+                                                      cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+                                                      cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
 
-    else:
-        output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_soil_only,
-                                   cn.pattern_gross_emis_shifting_ag_soil_only,
-                                   cn.pattern_gross_emis_forestry_soil_only,
-                                   cn.pattern_gross_emis_wildfire_soil_only,
-                                   cn.pattern_gross_emis_urban_soil_only,
-                                   cn.pattern_gross_emis_no_driver_soil_only,
-                                   cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
-                                   cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
-                                   cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
-                                   cn.pattern_gross_emis_nodes_soil_only]
+        else:
+            output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_soil_only,
+                                       cn.pattern_gross_emis_shifting_ag_soil_only,
+                                       cn.pattern_gross_emis_forestry_soil_only,
+                                       cn.pattern_gross_emis_wildfire_soil_only,
+                                       cn.pattern_gross_emis_urban_soil_only,
+                                       cn.pattern_gross_emis_no_driver_soil_only,
+                                       cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+                                       cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
+                                       cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
+                                       cn.pattern_gross_emis_nodes_soil_only]
 
     output_pattern_list = output_pattern_list + [cn.pattern_net_flux,
                                                 cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel,
@@ -501,7 +510,6 @@ def main ():
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
@@ -577,7 +585,7 @@ def main ():
     # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
     if 'aggregate' in actual_stages:
 
-        uu.print_log(":::::Creating 5km aggregate maps")
+        uu.print_log(":::::Creating 4x4 km aggregate maps")
         start = datetime.datetime.now()
 
         mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)

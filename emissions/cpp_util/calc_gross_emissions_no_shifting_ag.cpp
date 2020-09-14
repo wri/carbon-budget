@@ -393,7 +393,8 @@ for(x=0; x<xsize; x++)
 		    // Each driver is an output raster and has its own emissions model. outdata20 is the code for each
             // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
 
-			// Emissions model for commodity-driven deforestation and shifting ag (shifting ag uses commodity decision tree)
+			// Emissions model for commodity-driven deforestation and shifting ag
+			// (shifting ag uses commodity decision tree for this sensitivity analysis)
 			if ((drivermodel_data[x] == 1) || (drivermodel_data[x] == 2))
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.

@@ -246,9 +246,9 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         #     calculate_gross_emissions.add_metadata_tags(tile_id, pattern, sensit_type)
 
 
-    # Uploads emissions to appropriate directory for the carbon emitted_pools chosen
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # # Uploads emissions to appropriate directory for the carbon emitted_pools chosen
+    # for i in range(0, len(output_dir_list)):
+    #     uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':

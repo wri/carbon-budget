@@ -9,8 +9,9 @@ Then it calculates the per pixel value for each model output pixel and sums thos
 aggregated pixel.
 It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
 converts cumulative gross CO2 emissions to gross CO2 emissions per year.
+For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
 The user has to supply a tcd threshold for which forest pixels to include in the results.
-sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/10km_output_aggregation/biomass_soil/standard/20191107/net_flux_t_CO2e_per_year_biomass_soil_10km_tcd30_modelv1_2_0_std_2019_11_07.tif
+sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
 '''
 
 
@@ -56,8 +57,10 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list)
-    # Tree cover density tiles-- necessary for filtering sums by tcd
+    # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list)
 
     uu.print_log("Model outputs to process are:", download_dict)
 
@@ -94,6 +97,12 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         tile_id = sample_tile_id    # a dummy tile id (but it has to be a real tile id). It is removed later.
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
+
+        # For sensitivity analysis runs, only aggregates the tiles if they were created as part of the sensitivity analysis
+        if (sensit_type != 'std') & (sensit_type not in pattern):
+            uu.print_log("{} not a sensitivity analysis output. Skipping aggregation...".format(pattern))
+            uu.print_log("")
+            continue
 
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files

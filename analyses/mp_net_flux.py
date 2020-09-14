@@ -111,8 +111,8 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     # # Print the list of blank created tiles, delete the tiles, and delete their text file
     # uu.list_and_delete_blank_tiles()
 
-    # Uploads output tiles to s3
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # # Uploads output tiles to s3
+    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
