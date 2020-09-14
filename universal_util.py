@@ -252,8 +252,8 @@ def tile_list_s3(source, sensit_type='std'):
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
-    if len(file_list > 0):
-        
+    if len(file_list) > 0:
+
         return file_list
 
     # In case the change of directories to look for sensitivity versions yields an empty folder.
