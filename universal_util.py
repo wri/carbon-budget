@@ -259,17 +259,6 @@ def tile_list_s3(source, sensit_type='std'):
     # In case the change of directories to look for sensitivity versions yields an empty folder.
     # This could be done better by using boto3 to check the potential s3 folders for files upfront but I couldn't figure
     # out how to do that.
-    # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
-    # (JPL AGB extent and US extent, respectively)
-    if sensit_type == 'std':
-        source = source
-    elif sensit_type == 'biomass_swap':
-        source = cn.JPL_processed_dir
-    elif sensit_type == 'US_removals':
-        source = cn.US_annual_gain_AGB_natrl_forest_dir
-    else:
-        source = source.replace('standard', sensit_type)
-
     print_log("Creating list of tiles in", source)
 
     ## For an s3 folder in a bucket using AWSCLI
