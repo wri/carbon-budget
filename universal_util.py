@@ -252,46 +252,48 @@ def tile_list_s3(source, sensit_type='std'):
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
+    if len(file_list > 0):
+        
+        return file_list
+
     # In case the change of directories to look for sensitivity versions yields an empty folder.
     # This could be done better by using boto3 to check the potential s3 folders for files upfront but I couldn't figure
     # out how to do that.
-    if len(file_list) == 0:
+    # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
+    # (JPL AGB extent and US extent, respectively)
+    if sensit_type == 'std':
+        source = source
+    elif sensit_type == 'biomass_swap':
+        source = cn.JPL_processed_dir
+    elif sensit_type == 'US_removals':
+        source = cn.US_annual_gain_AGB_natrl_forest_dir
+    else:
+        source = source.replace('standard', sensit_type)
 
-        # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
-        # (JPL AGB extent and US extent, respectively)
-        if sensit_type == 'std':
-            source = source
-        elif sensit_type == 'biomass_swap':
-            source = cn.JPL_processed_dir
-        elif sensit_type == 'US_removals':
-            source = cn.US_annual_gain_AGB_natrl_forest_dir
-        else:
-            source = source.replace('standard', sensit_type)
+    print_log("Creating list of tiles in", source)
 
-        print_log("Creating list of tiles in", source)
+    ## For an s3 folder in a bucket using AWSCLI
+    # Captures the list of the files in the folder
+    out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
+    stdout, stderr = out.communicate()
 
-        ## For an s3 folder in a bucket using AWSCLI
-        # Captures the list of the files in the folder
-        out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
-        stdout, stderr = out.communicate()
+    # Writes the output string to a text file for easier interpretation
+    biomass_tiles = open(os.path.join(cn.docker_tmp, 'tiles.txt'), "wb")
+    biomass_tiles.write(stdout)
+    biomass_tiles.close()
 
-        # Writes the output string to a text file for easier interpretation
-        biomass_tiles = open(os.path.join(cn.docker_tmp, 'tiles.txt'), "wb")
-        biomass_tiles.write(stdout)
-        biomass_tiles.close()
+    file_list = []
 
-        file_list = []
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
 
-        # Iterates through the text file to get the names of the tiles and appends them to list
-        with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
-            for line in tile:
-                num = len(line.strip('\n').split(" "))
-                tile_name = line.strip('\n').split(" ")[num - 1]
-
-                # Only tifs will be in the tile list
-                if '.tif' in tile_name:
-                    tile_id = get_tile_id(tile_name)
-                    file_list.append(tile_id)
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
+                tile_id = get_tile_id(tile_name)
+                file_list.append(tile_id)
 
     return file_list
 
