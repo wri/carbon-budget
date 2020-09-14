@@ -7,6 +7,8 @@ python run_full_model.py -t std -s all -r true -d 20200327 -l all -ce loss -p bi
 
 python run_full_model.py -t std -s all -r true -d 20200822 -l all -ce loss,2000 -p biomass_soil -tcd 30 -ma true -ln "First attempt at running full standard model on all tiles for model v1.2.0. Hopefully this will be the sole, definitive run of standard model v1.2.0."
 
+python run_full_model.py -t no_shifting_ag -s gross_emissions -r true -d 20200920 -l all -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif -ln "Running sensitivity analysis for model v1.2.0"
+
 '''
 
 import argparse
