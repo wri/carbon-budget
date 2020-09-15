@@ -407,7 +407,7 @@ base_carbon_pool_dir = os.path.join(s3_base_dir, 'carbon_pools/')
 ## Carbon emitted_pools in loss year
 
 # Date to include in the output directory for all emissions year carbon emitted_pools
-emis_pool_run_date = '20200824'
+emis_pool_run_date = '20200915'
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "Mg_AGC_ha_emis_year"
@@ -478,7 +478,7 @@ total_C_2000_dir = os.path.join(base_carbon_pool_dir, 'total_carbon/extent_2000/
 ### Emissions from biomass and soil (all carbon emitted_pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20200914'
+emis_run_date_biomass_soil = '20200915'
 
 # pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
 pattern_gross_emis_commod_biomass_soil = 'gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
@@ -552,7 +552,7 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon emitted_pools
 pattern_net_flux = 'net_flux_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
-net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/per_hectare/20200914/')
+net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/per_hectare/20200915/')
 
 
 ### Per pixel model outputs
@@ -578,7 +578,7 @@ pattern_aggreg = '0_4deg_modelv{}'.format(version_filename)
 pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv{}_perc_diff_std'.format(version_filename)
 pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv{}_sign_change_std'.format(version_filename)
 
-output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20200914/')
+output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20200915/')
 
 
 

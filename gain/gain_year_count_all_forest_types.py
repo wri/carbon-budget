@@ -250,6 +250,7 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type):
 
         # Opens the output tile, giving it the arguments of the input tiles
         gain_year_count_merged_dst = rasterio.open(gain_year_count_merged, 'w', **kwargs)
+        uu.print_log("No change tile exists for {} by default".format(tile_id))
 
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(gain_year_count_merged_dst, sensit_type)

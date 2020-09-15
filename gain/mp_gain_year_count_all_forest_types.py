@@ -150,14 +150,14 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     #     gain_year_count_all_forest_types.create_gain_year_count_merge(tile_id, pattern, sensit_type)
 
 
-    # Intermediate output tiles for checking outputs
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
-
-    # This is the final output used later in the model
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # # Intermediate output tiles for checking outputs
+    # uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
+    # uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
+    # uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
+    # uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
+    #
+    # # This is the final output used later in the model
+    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
