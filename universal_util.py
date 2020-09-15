@@ -42,7 +42,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Model version: {}".format(cn.version))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
-    logging.info("Model stages to run: {}".format(stage_input))
+    logging.info("Model stage argument: {}".format(stage_input))
     logging.info("Run through model: {}".format(run_through))
     logging.info("Run date: {}".format(run_date))
     logging.info("Tile ID list: {}".format(tile_id_list))
