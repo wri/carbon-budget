@@ -28,56 +28,56 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
-    # # Files to download for this script
-    # download_dict = {
-    #     cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
-    #     cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
-    # }
-    #
-    #
-    # # List of output directories and output file name patterns
-    # output_dir_list = [cn.net_flux_dir]
-    # output_pattern_list = [cn.pattern_net_flux]
-    #
-    #
-    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    # for key, values in download_dict.items():
-    #     dir = key
-    #     pattern = values[0]
-    #     uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
-    #
-    #
-    # # If the model run isn't the standard one, the output directory and file names are changed
-    # if sensit_type != 'std':
-    #     uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-    #     output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-    #     output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-    #
-    # # A date can optionally be provided by the full model script or a run of this script.
-    # # This replaces the date in constants_and_names.
-    # if run_date is not None:
-    #     output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
-    #
-    #
-    # # Creates a single filename pattern to pass to the multiprocessor call
-    # pattern = output_pattern_list[0]
-    # if cn.count == 96:
-    #     processes = 40   # 38 = 690 GB peak; 40 = 715 GB peak
-    # else:
-    #     processes = 9
-    # uu.print_log('Net flux max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
-    #
-    #
-    # # Uploads output tiles to s3
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # Files to download for this script
+    download_dict = {
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
+    }
+
+
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.net_flux_dir]
+    output_pattern_list = [cn.pattern_net_flux]
+
+
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+
+
+    # If the model run isn't the standard one, the output directory and file names are changed
+    if sensit_type != 'std':
+        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+    # A date can optionally be provided by the full model script or a run of this script.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+
+
+    # Creates a single filename pattern to pass to the multiprocessor call
+    pattern = output_pattern_list[0]
+    if cn.count == 96:
+        processes = 40   # 38 = 690 GB peak; 40 = 715 GB peak
+    else:
+        processes = 9
+    uu.print_log('Net flux max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+
+
+    # Uploads output tiles to s3
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
