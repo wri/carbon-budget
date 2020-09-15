@@ -54,8 +54,10 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
     # Biomass tile name depends on the sensitivity analysis
     if sensit_type == 'biomass_swap':
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
     else:
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
 
     uu.print_log("  Reading input files for {}...".format(tile_id))
 
@@ -96,9 +98,9 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
 
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log("    WHRC biomass found for", tile_id)
+        uu.print_log("    Biomass found for", tile_id)
     except:
-        uu.print_log("    No WHRC biomass found for", tile_id)
+        uu.print_log("    No biomass found for", tile_id)
 
     try:
         gain_src = rasterio.open(gain)
@@ -144,7 +146,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         dst_AGC_2000.update_tags(
             source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018)')
         dst_AGC_2000.update_tags(
-            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
     if 'loss' in carbon_pool_extent:
         output_pattern_list = [cn.pattern_AGC_emis_year]
         if sensit_type != 'std':
@@ -156,7 +158,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         dst_AGC_emis_year.update_tags(
             units='megagrams aboveground carbon (AGC)/ha')
         dst_AGC_emis_year.update_tags(
-            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year.')
+            source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year.')
         dst_AGC_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
 
@@ -275,9 +277,9 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
         dst_BGC_2000.update_tags(
             units='megagrams belowground carbon (BGC)/ha')
         dst_BGC_2000.update_tags(
-            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:BGC for mangrove and non-mangrove forests applied.')
+            source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:BGC for mangrove and non-mangrove forests applied.')
         dst_BGC_2000.update_tags(
-            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
 
     # For BGC in emissions year, opens AGC, names the output tile, creates the output tile
     if 'loss' in carbon_pool_extent:
@@ -296,7 +298,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
         dst_BGC_emis_year.update_tags(
             units='megagrams belowground carbon (BGC)/ha')
         dst_BGC_emis_year.update_tags(
-            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:BGC for mangrove and non-mangrove forests applied.')
+            source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:BGC for mangrove and non-mangrove forests applied.')
         dst_BGC_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
 
@@ -380,8 +382,10 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
     elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
     if sensit_type == 'biomass_swap':
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
     else:
         natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
 
     # For deadwood and litter 2000, opens AGC, names the output tiles, creates the output tiles
     if '2000' in carbon_pool_extent:
@@ -404,7 +408,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_2000.update_tags(
             source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:deadwood carbon for mangrove and non-mangrove forests applied.')
         dst_deadwood_2000.update_tags(
-            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
         # Adds metadata tags to the output raster
         uu.add_rasterio_tags(dst_litter_2000, sensit_type)
         dst_litter_2000.update_tags(
@@ -412,7 +416,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_litter_2000.update_tags(
             source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). AGC:litter carbon for mangrove and non-mangrove forests applied.')
         dst_litter_2000.update_tags(
-            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap) and mangrove AGB. Mangrove AGB has precedence.')
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
 
     # For deadwood and litter in emissions year, opens AGC, names the output tiles, creates the output tiles
     if 'loss' in carbon_pool_extent:
@@ -434,7 +438,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_emis_year.update_tags(
             units='megagrams deadwood carbon/ha')
         dst_deadwood_emis_year.update_tags(
-            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:litter carbon for mangrove and non-mangrove forests applied.')
+            source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:litter carbon for mangrove and non-mangrove forests applied.')
         dst_deadwood_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
         # Adds metadata tags to the output raster
@@ -442,7 +446,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_litter_emis_year.update_tags(
             units='megagrams litter carbon/ha')
         dst_litter_emis_year.update_tags(
-            source='WHRC (if standard model) or JPL (if biomass swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:litter carbon for mangrove and non-mangrove forests applied.')
+            source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:litter carbon for mangrove and non-mangrove forests applied.')
         dst_litter_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
 
@@ -477,9 +481,9 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
     # Opens the WHRC/JPL biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log("    WHRC biomass found for", tile_id)
+        uu.print_log("    Biomass found for", tile_id)
     except:
-        uu.print_log("    No WHRC biomass for", tile_id)
+        uu.print_log("    No biomass for", tile_id)
 
     # Opens the continent-ecozone tile if it exists
     try:
@@ -784,7 +788,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
         dst_total_C_2000.update_tags(
             source='AGC, BGC, deadwood carbon, litter carbon, and soil carbon')
         dst_total_C_2000.update_tags(
-            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass swap), mangrove AGB, and soil carbon. Mangrove AGB has precedence.')
+            extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis), mangrove AGB, and soil carbon. Mangrove AGB has precedence.')
 
 
     if 'loss' in carbon_pool_extent:

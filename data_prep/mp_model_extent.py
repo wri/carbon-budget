@@ -25,8 +25,14 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
-        # List of tiles to run in the model
-        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
+        # List of tiles to run in the model. Which biomass tiles to use depends on sensitivity analysis
+        if sensit_type == 'biomass_swap':
+            tile_id_list = uu.create_combined_tile_list(cn.JPL_processed_dir,
+                                             cn.mangrove_biomass_2000_dir,
+                                             cn.gain_dir, cn.tcd_dir
+                                             )
+        else:
+            tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.mangrove_biomass_2000_dir,
                                              cn.gain_dir, cn.tcd_dir
                                              )
@@ -40,9 +46,13 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
                     cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
                     cn.gain_dir: [cn.pattern_gain],
                     cn.tcd_dir: [cn.pattern_tcd],
-                    cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked],
                     cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
+
+    if sensit_type == 'biomass_swap':
+        download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
+    else:
+        download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
 
     # List of output directories and output file name patterns
     output_dir_list = [cn.model_extent_dir]
@@ -88,12 +98,22 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
     #     model_extent.model_extent(tile_id, pattern, sensit_type)
 
     output_pattern = output_pattern_list[0]
-    processes = 50  # 50 processors = XXX GB peak
-    uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-    pool.close()
-    pool.join()
+    if cn.count <= 2:  # For local tests
+        processes = 1
+        uu.print_log(
+            "Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+        pool.close()
+        pool.join()
+    else:
+        processes = 50  # 50 processors = XXX GB peak
+        uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+        pool.close()
+        pool.join()
+
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

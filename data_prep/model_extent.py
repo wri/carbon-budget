@@ -22,8 +22,15 @@ def model_extent(tile_id, pattern, sensit_type):
     mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     pre_2000_plantations = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+
+    # Biomass tile name depends on the sensitivity analysis
+    if sensit_type == 'biomass_swap':
+        biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
+    else:
+        biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
 
     out_tile = '{0}_{1}.tif'.format(tile_id, pattern)
 
@@ -49,25 +56,25 @@ def model_extent(tile_id, pattern, sensit_type):
             mangroves_src = rasterio.open(mangrove)
             uu.print_log("  Mangrove tile found for {}".format(tile_id))
         except:
-            uu.print_log("  No mangrove tile for {}".format(tile_id))
+            uu.print_log("  No mangrove tile found for {}".format(tile_id))
 
         try:
             gain_src = rasterio.open(gain)
             uu.print_log("  Gain tile found for {}".format(tile_id))
         except:
-            uu.print_log("  No gain tile for {}".format(tile_id))
+            uu.print_log("  No gain tile found for {}".format(tile_id))
 
         try:
             biomass_src = rasterio.open(biomass)
-            uu.print_log("  WHRC biomass tile found for {}".format(tile_id))
+            uu.print_log("  Biomass tile found for {}".format(tile_id))
         except:
-            uu.print_log("  No WHRC biomass tile for {}".format(tile_id))
+            uu.print_log("  No biomass tile found for {}".format(tile_id))
 
         try:
             pre_2000_plantations_src = rasterio.open(pre_2000_plantations)
             uu.print_log("  Pre-2000 plantation tile found for {}".format(tile_id))
         except:
-            uu.print_log("  No pre-2000 plantation tile for {}".format(tile_id))
+            uu.print_log("  No pre-2000 plantation tile found for {}".format(tile_id))
 
 
         # Opens the output tile, giving it the metadata of the input tiles
@@ -77,8 +84,12 @@ def model_extent(tile_id, pattern, sensit_type):
         uu.add_rasterio_tags(dst, sensit_type)
         dst.update_tags(
             units='unitless. 1 = in model extent. 0 = not in model extent')
-        dst.update_tags(
-            source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+        if sensit_type == 'biomass_swap':
+            dst.update_tags(
+                source='Pixels with ((Hansen 2000 tree cover AND NASA JPL AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+        else:
+            dst.update_tags(
+                source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
         dst.update_tags(
             extent='Full model extent. This defines which pixels are included in the model.')
 
@@ -112,12 +123,12 @@ def model_extent(tile_id, pattern, sensit_type):
             except:
                 pre_2000_plantations_window = np.zeros((window.height, window.width), dtype=int)
 
-            # Array of pixels that have both WHRC biomass and tree cover density
+            # Array of pixels that have both biomass and tree cover density
             tcd_with_biomass_window = np.where((biomass_window > 0) & (tcd_window > 0), 1, 0)
-            # Array of pixels with (WHRC biomass AND tcd) OR mangrove biomass OR Hansen gain
+            # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain
             forest_extent = np.where((tcd_with_biomass_window == 1) | (mangrove_window > 1) | (gain_window == 1), 1, 0)
 
-            # Array of pixels with (WHRC biomass AND tcd) OR mangrove biomass OR Hansen gain WITHOUT pre-2000 plantations
+            # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain WITHOUT pre-2000 plantations
             forest_extent = np.where((forest_extent == 1) & (pre_2000_plantations_window == 0), 1, 0).astype('uint8')
 
             # Writes the output window to the output

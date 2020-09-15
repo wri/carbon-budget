@@ -388,8 +388,62 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
                 tile_id = get_tile_id(tile_name)
                 file_list_set2.append(tile_id)
 
-    print_log("There are {} tiles in {}".format(len(file_list_set1), set1))
-    print_log("There are {} tiles in {}".format(len(file_list_set1), set2))
+    if len(file_list_set1) > 1:
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set1), set1))
+    else:
+        print_log("There are 0 tiles in {}. Looking for alternative tile set...".format(set1))
+        set1 = set1.replace(sensit_type, 'standard')
+        print_log("  Looking for alternative tile set in {}".format(set1))
+
+        out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
+        stdout, stderr = out.communicate()
+        # Writes the output string to a text file for easier interpretation
+        set1_tiles = open("set1.txt", "wb")
+        set1_tiles.write(stdout)
+        set1_tiles.close()
+
+        # Empty lists for filling with biomass tile ids
+        file_list_set1 = []
+
+        # Iterates through the first text file to get the names of the tiles and appends them to list
+        with open("set1.txt", 'r') as tile:
+
+            for line in tile:
+                num = len(line.strip('\n').split(" "))
+                tile_name = line.strip('\n').split(" ")[num - 1]
+
+                # Only tifs will be in the tile list
+                if '.tif' in tile_name:
+                    tile_id = get_tile_id(tile_name)
+                    file_list_set1.append(tile_id)
+
+    if len(file_list_set2) > 1:
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set2), set2))
+    else:
+        print_log("There are 0 tiles in {}. Looking for alternative tile set.".format(set2))
+        set2 = set2.replace(sensit_type, 'standard')
+        print_log("  Looking for alternative tile set in {}".format(set2))
+
+        out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
+        stdout2, stderr2 = out.communicate()
+        # Writes the output string to a text file for easier interpretation
+        set2_tiles = open("set2.txt", "wb")
+        set2_tiles.write(stdout2)
+        set2_tiles.close()
+
+        file_list_set2 = []
+
+        # Iterates through the second text file to get the names of the tiles and appends them to list
+        with open("set2.txt", 'r') as tile:
+
+            for line in tile:
+                num = len(line.strip('\n').split(" "))
+                tile_name = line.strip('\n').split(" ")[num - 1]
+
+                # Only tifs will be in the tile list
+                if '.tif' in tile_name:
+                    tile_id = get_tile_id(tile_name)
+                    file_list_set2.append(tile_id)
 
     # If there's a third folder supplied, iterates through that
     if set3 != None:

@@ -455,7 +455,7 @@ for(x=0; x<xsize; x++)
 						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, IFL, not plantation
 						        {
-						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;
+						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
 						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						            outdata20 = 131;
 						        }
@@ -470,7 +470,7 @@ for(x=0; x<xsize; x++)
  						        }
 						        if (plant_data[x] == 0)     // Commodity, not peat, burned, tropical, not IFL, not plantation
 						        {
-						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;
+						            outdata1a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
 						            outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						            outdata20 = 141;
 						        }
@@ -478,7 +478,7 @@ for(x=0; x<xsize; x++)
 						}
 						if (ecozone_data[x] == boreal)   // Commodity, not peat, burned, boreal
 						{
-                            outdata1a = Biomass_tCO2e_yesfire_CO2_only;
+                            outdata1a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
                             outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						    outdata20 = 15;
 						}
@@ -492,7 +492,7 @@ for(x=0; x<xsize; x++)
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
 						    {
-						        outdata1a = Biomass_tCO2e_yesfire_CO2_only;
+						        outdata1a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
 						        outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						        outdata20 = 161;
 						    }
@@ -510,14 +510,14 @@ for(x=0; x<xsize; x++)
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, tropical, no plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata1a = Biomass_tCO2e_nofire_CO2_only;   // Standard model adds minsoil emissions here
 						        outdata1b = 0;
 						        outdata20 = 171;
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Commodity, not peat, not burned, boreal
 						{
-                            outdata1a = Biomass_tCO2e_nofire_CO2_only;
+                            outdata1a = Biomass_tCO2e_nofire_CO2_only;   // Standard model adds minsoil emissions here
                             outdata1b = 0;
                             outdata20 = 18;
 						}
@@ -531,7 +531,7 @@ for(x=0; x<xsize; x++)
 						    }
 						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
 						    {
-						        outdata1a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata1a = Biomass_tCO2e_nofire_CO2_only;   // Standard model adds minsoil emissions here
 						        outdata1b = 0;
 						        outdata20 = 191;
 
@@ -629,7 +629,7 @@ for(x=0; x<xsize; x++)
 						        }
 						        if (plant_data[x] == 0)     // Shifting ag, not peat, burned, tropical, IFL, not plantation
 						        {
-						            outdata2a = Biomass_tCO2e_yesfire_CO2_only;
+						            outdata2a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
 						            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
 						            outdata20 = 241;
 						        }
@@ -644,7 +644,7 @@ for(x=0; x<xsize; x++)
 						        }
 						        if (plant_data[x] == 0)     // Shifting ag, not peat, burned, tropical, not IFL, not plantation
 						        {
-						            outdata2a = Biomass_tCO2e_yesfire_CO2_only;
+						            outdata2a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
 						            outdata2b = Biomass_tCO2e_yesfire_non_CO2;
 						            outdata20 = 251;
 						        }
@@ -652,7 +652,7 @@ for(x=0; x<xsize; x++)
 						}
 						if (ecozone_data[x] == boreal)   // Shifting ag, not peat, burned, boreal
 						{
-                            outdata2a = Biomass_tCO2e_yesfire_CO2_only;
+                            outdata2a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
                             outdata2b = Biomass_tCO2e_yesfire_non_CO2;
 						    outdata20 = 26;
 						}
@@ -666,7 +666,7 @@ for(x=0; x<xsize; x++)
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, not peat, burned, temperate, no plantation
 						    {
-						        outdata2a = Biomass_tCO2e_yesfire_CO2_only;
+						        outdata2a = Biomass_tCO2e_yesfire_CO2_only;   // Standard model adds minsoil emissions here
 						        outdata2b = Biomass_tCO2e_yesfire_non_CO2;
 						        outdata20 = 271;
 						    }
@@ -684,14 +684,14 @@ for(x=0; x<xsize; x++)
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, tropical, no plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata2a = Biomass_tCO2e_nofire_CO2_only;    // Standard model adds minsoil emissions here
 						        outdata2b = 0;
 						        outdata20 = 281;
 						    }
 						}
 						if (ecozone_data[x] == boreal)   // Shifting ag, not peat, not burned, boreal
 						{
-                            outdata2a = Biomass_tCO2e_nofire_CO2_only;
+                            outdata2a = Biomass_tCO2e_nofire_CO2_only;   // Standard model adds minsoil emissions here
                             outdata2b = 0;
                             outdata20 = 29;
 						}
@@ -705,7 +705,7 @@ for(x=0; x<xsize; x++)
 						    }
 						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, temperate, no plantation
 						    {
-						        outdata2a = Biomass_tCO2e_nofire_CO2_only;
+						        outdata2a = Biomass_tCO2e_nofire_CO2_only;   // Standard model adds minsoil emissions here
 						        outdata2b = 0;
 						        outdata20 = 292;
 						    }

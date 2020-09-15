@@ -33,8 +33,15 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     model_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_model_extent)
     ifl_primary = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_ifl_primary)
-    biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+
+    # Biomass tile name depends on the sensitivity analysis
+    if sensit_type == 'biomass_swap':
+        biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
+        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
+    else:
+        biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
+        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
 
     if sensit_type == 'Mekong_loss':
         loss = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
@@ -67,9 +74,9 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
         try:
             biomass_src = rasterio.open(biomass)
-            uu.print_log("   WHRC biomass tile found for {}".format(tile_id))
+            uu.print_log("   Biomass tile found for {}".format(tile_id))
         except:
-            uu.print_log("   No WHRC biomass tile found for {}".format(tile_id))
+            uu.print_log("   No biomass tile found for {}".format(tile_id))
 
         try:
             loss_src = rasterio.open(loss)
