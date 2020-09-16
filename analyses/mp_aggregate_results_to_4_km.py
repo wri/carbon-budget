@@ -226,7 +226,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
     # the outline of the US and clip the standard model net flux to the extent of JPL AGB2000.
     # Then, manually upload the clipped US_removals and biomass_swap net flux rasters to the spot machine and the
     # code below should work.
-    if sensit_type != 'std':
+    if sensit_type not in ['std', 'biomass_swap', 'US_removals', 'legal_Amazon_loss']:
 
         if std_net_flux:
 
