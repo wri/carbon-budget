@@ -17,7 +17,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
 
     # Names of the input tiles
     # Removal factors
-    model_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_model_extent)
+    model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
     mangrove_AGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
     mangrove_BGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
     europe_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)

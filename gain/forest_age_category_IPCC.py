@@ -31,7 +31,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
     # Names of the input tiles
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    model_extent = '{0}_{1}.tif'.format(tile_id, cn.pattern_model_extent)
+    model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
     ifl_primary = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_ifl_primary)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
 
