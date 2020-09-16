@@ -417,6 +417,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
                     tile_id = get_tile_id(tile_name)
                     file_list_set1.append(tile_id)
 
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set1), set1))
+
     if len(file_list_set2) > 1:
         print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set2), set2))
     else:
@@ -444,6 +446,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
                 if '.tif' in tile_name:
                     tile_id = get_tile_id(tile_name)
                     file_list_set2.append(tile_id)
+
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set2), set2))
 
     # If there's a third folder supplied, iterates through that
     if set3 != None:

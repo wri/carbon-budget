@@ -97,7 +97,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
     else:
-        uu.print_log("No loss tile found for {}. Not using it for gain only pixel gain year count.".format(tile_id))
+        uu.print_log("No loss tile found for {}. Not using loss for gain only pixel gain year count.".format(tile_id))
         gain_calc = '--calc=(A==1)*(B>0)*({})'.format(cn.loss_years)
         gain_outfilename = '{}_growth_years_gain_only.tif'.format(tile_id)
         gain_outfilearg = '--outfile={}'.format(gain_outfilename)
