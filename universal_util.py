@@ -219,8 +219,6 @@ def tile_list_s3(source, sensit_type='std'):
     # (JPL AGB extent and US extent, respectively)
     if sensit_type == 'std':
         new_source = source
-    elif sensit_type == 'biomass_swap':
-        new_source = cn.JPL_processed_dir
     elif sensit_type == 'US_removals':
         new_source = cn.US_annual_gain_AGB_natrl_forest_dir
     else:

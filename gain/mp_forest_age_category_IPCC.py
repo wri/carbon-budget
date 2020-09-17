@@ -113,7 +113,7 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None):
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
         if sensit_type == 'biomass_swap':
-            processes = 32
+            processes = 32 # 32 processors = 610 GB peak
         else:
             processes = 42 # 30 processors=460 GB peak; 36 = 550 GB peak; 40 = XXX GB peak
     else:
