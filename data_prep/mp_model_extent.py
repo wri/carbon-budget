@@ -80,8 +80,11 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
-        processes = 38 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
-        # 36 = 550 GB peak; 40 = 590 GB peak; 42 = XXX GB peak
+        if sensit_type == 'biomass_swap':
+            processes = 38
+        else:
+            processes = 42 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
+            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = XXX GB peak
     else:
         processes = 3
     uu.print_log('Removal model forest extent processors=', processes)

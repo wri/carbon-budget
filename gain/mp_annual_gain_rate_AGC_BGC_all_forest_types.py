@@ -88,7 +88,10 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
-        processes = 17 # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = XXX GB peak
+        if sensit_type == 'biomass_swap':
+            processes = 13
+        else:
+            processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = XXX GB peak
     else:
         processes = 2
     uu.print_log('Removal model forest extent processors=', processes)

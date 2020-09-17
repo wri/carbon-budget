@@ -196,9 +196,12 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
-        processes = 30   # 30 processors = 725 GB peak
+        if sensit_type == 'biomass_swap':
+            processes = 24
+        else:
+            processes = 30  # 30 processors = 725 GB peak
     else:
-        processes = 24
+        processes = 2
     uu.print_log('Annual gain rate natural forest max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate, sensit_type=sensit_type,
