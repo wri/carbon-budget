@@ -193,9 +193,12 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if cn.count == 96:
         # More processors can be used for loss carbon pools than for 2000 carbon pools
         if carbon_pool_extent == 'loss':
-            processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
-            # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
-        else:
+            if sensit_type == 'biomass_swap':
+                processes = 16  # 16 processors = XXX GB peak
+            else:
+                processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
+                # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
+        else: # For 2000, or loss & 2000
             processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
     else:
         processes = 2
@@ -233,8 +236,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if cn.count == 96:
         # More processors can be used for loss carbon pools than for 2000 carbon pools
         if carbon_pool_extent == 'loss':
-            processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
-        else:
+            if sensit_type == 'biomass_swap':
+                processes = 30  # 30 processors = XXX GB peak
+            else:
+                processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
+        else: # For 2000, or loss & 2000
             processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
     else:
         processes = 2
@@ -282,8 +288,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if cn.count == 96:
         # More processors can be used for loss carbon pools than for 2000 carbon pools
         if carbon_pool_extent == 'loss':
-            processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 650 GB peak; 15 = 700 GB peak
-        else:
+            if sensit_type == 'biomass_swap':
+                processes = 10  # 10 processors = XXX GB peak
+            else:
+                processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 650 GB peak; 15 = 700 GB peak
+        else: # For 2000, or loss & 2000
             ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
             ### There wouldn't have been enough room for all deadwood and litter otherwise.
             ### For example, when deadwood and litter generation started getting up to around 50N, I deleted
@@ -344,8 +353,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         if cn.count == 96:
             # More processors can be used for loss carbon pools than for 2000 carbon pools
             if carbon_pool_extent == 'loss':
-                processes = 42  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = XXX GB peak
-            else:
+                if sensit_type == 'biomass_swap':
+                    processes = 36  # 36 processors = XXX GB peak
+                else:
+                    processes = 42  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = XXX GB peak
+            else: # For 2000, or loss & 2000
                 processes = 12  # 12 processors = XXX GB peak
         else:
             processes = 2
@@ -395,8 +407,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if cn.count == 96:
         # More processors can be used for loss carbon pools than for 2000 carbon pools
         if carbon_pool_extent == 'loss':
-            processes = 18  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = XXX GB peak
-        else:
+            if sensit_type == 'biomass_swap':
+                processes = 14  # 14 processors = XXX GB peak
+            else:
+                processes = 18  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = XXX GB peak
+        else: # For 2000, or loss & 2000
             processes = 12  # 12 processors = XXX GB peak
     else:
         processes = 2
