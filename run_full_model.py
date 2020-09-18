@@ -437,7 +437,7 @@ def main ():
     # Creates tiles of gross removals for all forest types (aboveground, belowground, and above+belowground)
     if 'gross_removals_all_forest_types' in actual_stages:
 
-        uu.print_log(":::::Creating annual and cumulative removals for all forest types combined (above + belowground) tiles'")
+        uu.print_log(":::::Creating gross removals for all forest types combined (above + belowground) tiles'")
         start = datetime.datetime.now()
 
         mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = run_date)

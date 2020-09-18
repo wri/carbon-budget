@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
+def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sensit_type):
 
     uu.print_log("Mapping forest type for removal and AGB and BGB removal rates:", tile_id)
 
@@ -36,11 +36,11 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type):
     ipcc_AGB_default_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
 
     # Names of the output tiles
-    removal_forest_type = '{0}_{1}.tif'.format(tile_id, cn.pattern_removal_forest_type)
-    annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_all_types)
-    annual_gain_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGC_all_types)
-    annual_gain_AGC_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_all_types) # Not used further in the model. Created just for reference.
-    stdev_annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, cn.pattern_stdev_annual_gain_AGC_all_types)
+    removal_forest_type = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+    annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
+    annual_gain_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
+    annual_gain_AGC_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[3]) # Not used further in the model. Created just for reference.
+    stdev_annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[4])
 
     # Opens biomass tile
     with rasterio.open(model_extent) as model_extent_src:

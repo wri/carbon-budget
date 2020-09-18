@@ -94,9 +94,10 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
             processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = XXX GB peak
     else:
         processes = 2
-    uu.print_log('Removal model forest extent processors=', processes)
+    uu.print_log('Removal factor processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
+                     output_pattern_list=output_pattern_list, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 

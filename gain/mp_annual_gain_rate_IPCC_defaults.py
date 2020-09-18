@@ -197,7 +197,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
         if sensit_type == 'biomass_swap':
-            processes = 24
+            processes = 24 # 24 processors = 590 GB peak
         else:
             processes = 30  # 30 processors = 725 GB peak
     else:
