@@ -630,7 +630,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # Counts how many tiles are in the standard model source s3 folder
         s3_count_std = count_tiles_s3(source)
-        print_log("There are", s3_count_std, "tiles in standard model folder", source_sens, "with the pattern", pattern)
+        print_log("There are", s3_count_std, "tiles in standard model folder", source, "with the pattern", pattern)
 
         # Decides which source folder to use the count from: standard model or sensitivity analysis.
         # If there are sensitivity analysis tiles, that source folder should be used.
