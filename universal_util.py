@@ -633,12 +633,14 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         print_log("There are", s3_count_std, "tiles in standard model folder", source_sens, "with the pattern", pattern)
 
         # Decides which source folder to use the count from: standard model or sensitivity analysis.
-        # If there are sensitivity analysis tiles, that count should be used.
-        # Otherwise, the count of tiles in the standard folder should be used.
+        # If there are sensitivity analysis tiles, that source folder should be used.
+        # Otherwise, the standard folder should be used.
         if s3_count_sens != 0:
             s3_count = s3_count_sens
+            source_final = source_sens
         else:
             s3_count = s3_count_std
+            source_final = source
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
@@ -649,15 +651,11 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # the sensitivity folder is downloaded
         if s3_count > 7:
 
-            print_log("Source directory used:", source_sens)
+            print_log("Source directory used:", source_final)
 
-            cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'cp', source_final, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                log_subprocess_output(process.stdout)
+            log_subprocess_output_full(cmd)
 
             print_log('\n')
 
@@ -671,11 +669,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                log_subprocess_output(process.stdout)
+            log_subprocess_output_full(cmd)
 
             print_log('\n')
 
