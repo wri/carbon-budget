@@ -547,7 +547,7 @@ def count_tiles_s3(source, pattern=None):
                     file_list.append(tile_id)
 
     # Count of tiles (ends in *tif)
-    return len(file_list)+1
+    return len(file_list)
 
 
 
