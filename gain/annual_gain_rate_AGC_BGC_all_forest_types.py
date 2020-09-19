@@ -187,9 +187,20 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             try:
                 ipcc_AGB_default_rate_window = ipcc_AGB_default_src.read(1, window=window)
                 ipcc_AGB_default_stdev_window = ipcc_AGB_default_stdev_src.read(1, window=window)
-                removal_forest_type_window = np.where(ipcc_AGB_default_rate_window != 0,
-                                                      cn.old_natural_rank,
-                                                      removal_forest_type_window).astype('uint8')
+                # In no_primary_gain, the AGB_default_rate_window = 0, so primary forest pixels would not be
+                # assigned a removal forest type and therefore get exclude from the model later.
+                # That is incorrect, so using model_extent as the criterion instead allows the primary forest pixels
+                # that don't have rates under this sensitivity analysis to still be included in the model.
+                # Unfortunately, model_extent is slightly different from the IPCC rate extent (no IPCC rates where
+                # there is no ecozone information), but this is a very small difference and not worth worrying about.
+                if sensit_type == 'no_primary_gain':
+                    removal_forest_type_window = np.where(model_extent_window != 0,
+                                                          cn.old_natural_rank,
+                                                          removal_forest_type_window).astype('uint8')
+                else:
+                    removal_forest_type_window = np.where(ipcc_AGB_default_rate_window != 0,
+                                                          cn.old_natural_rank,
+                                                          removal_forest_type_window).astype('uint8')
                 annual_gain_AGC_all_forest_types_window = np.where(ipcc_AGB_default_rate_window != 0,
                                                                    ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove,
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')

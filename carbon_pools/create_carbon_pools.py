@@ -74,7 +74,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
     else:
         uu.print_log("  No loss tile found for {}".format(tile_id))
 
-    # This input should exist for all tiles
+    # This input should exist
     removal_forest_type_src = rasterio.open(removal_forest_type)
 
     # Opens the input tiles if they exist
@@ -213,6 +213,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
 
             # Limits the AGC to the model extent
             agc_2000_model_extent_window = np.where(removal_forest_type_window > 0, agc_2000_window, 0)
+            # print(agc_2000_model_extent_window[0][0:5])
 
             # Creates a mask based on whether the pixels had loss and gain in them. Loss&gain pixels are 1, all else are 0.
             # This is used to determine how much post-2000 carbon gain to add to AGC2000 pixels.
@@ -222,26 +223,34 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
             # Calculates AGC in emission year for pixels that don't have gain and loss (excludes loss_gain_mask = 1).
             # To do this, it adds all the accumulated carbon after 2000 to the carbon in 2000 (all accumulated C is emitted).
             AGC_emis_year_non_loss_and_gain = agc_2000_model_extent_window + (cumul_gain_AGCO2_window / cn.c_to_co2)
+            # print(AGC_emis_year_non_loss_and_gain[0][0:5])
             AGC_emis_year_non_loss_and_gain_masked = np.ma.masked_where(loss_gain_mask == 1, AGC_emis_year_non_loss_and_gain).filled(0)
+            # print(AGC_emis_year_non_loss_and_gain_masked[0][0:5])
+
 
             # Calculates AGC in emission year for pixels that had loss & gain (excludes loss_gain_mask = 0).
             # To do this, it adds only the portion of the gain that occurred before the loss year to the carbon in 2000.
             gain_before_loss = annual_gain_AGC_window * (loss_year_window - 1)
             AGC_emis_year_loss_and_gain = agc_2000_model_extent_window + gain_before_loss
             AGC_emis_year_loss_and_gain_masked = np.ma.masked_where(loss_gain_mask == 0, AGC_emis_year_loss_and_gain).filled(0)
+            # print(AGC_emis_year_loss_and_gain_masked[0][0:5])
 
             # Adds the loss year pixels that had loss&gain to those that didn't have loss&gain.
             # Each pixel falls into only one of those categories.
             AGC_emis_year_all = AGC_emis_year_non_loss_and_gain_masked + AGC_emis_year_loss_and_gain_masked
+            # print(AGC_emis_year_all[0][0:5])
 
             # Limits output to only pixels that had tree cover loss.
             AGC_emis_year_all = np.where(loss_year_window > 0, AGC_emis_year_all, 0)
+            # print(AGC_emis_year_all[0][0:5])
 
             # Converts the output to float32 since float64 is an unnecessary level of precision
             AGC_emis_year_all = AGC_emis_year_all.astype('float32')
+            # print(AGC_emis_year_all[0][0:5])
 
             # Writes AGC in emissions year to raster
             dst_AGC_emis_year.write_band(1, AGC_emis_year_all, window=window)
+
 
 
     # Prints information about the tile that was just processed
