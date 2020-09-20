@@ -124,7 +124,7 @@ def main ():
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
-        cmd = ['aws', 's3', 'cp', cnBrazil_annual_loss_raw_dir, '.', '--recursive']
+        cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
         uu.log_subprocess_output_full(cmd)
 
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
