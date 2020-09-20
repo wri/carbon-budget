@@ -153,11 +153,13 @@ def main ():
         uu.upload_final_set(cn.Brazil_annual_loss_merged_dir, cn.pattern_Brazil_annual_loss_merged)
 
         # Creates annual loss 2001-2015 tiles
+        uu.print_log("Warping composite PRODES loss to Hansen tiles...")
         source_raster = '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged)
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        uu.print_log("  PRODES composite loss raster warped to Hansen tiles")
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         # In practice, every Amazon tile has loss in it but I figured I'd do this just to be thorough.
