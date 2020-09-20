@@ -331,7 +331,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
     elif sensit_type == 'US_removals':
-        source = cn.US_annual_gain_AGB_natrl_forest_dir
+        source = cn.annual_gain_AGC_BGC_natrl_forest_US_dir
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
     elif sensit_type == 'std':
