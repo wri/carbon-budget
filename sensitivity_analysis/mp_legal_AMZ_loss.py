@@ -17,12 +17,7 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append('../gain')
-import annual_gain_rate_natrl_forest
-import cumulative_gain_natrl_forest
-import merge_cumulative_annual_gain_all_forest_types
-sys.path.append('../carbon_pools')
-import create_carbon_pools
+
 
 def main ():
 
