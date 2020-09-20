@@ -104,7 +104,7 @@ tile_stats_dir = os.path.join(s3_base_dir, 'tile_stats/')
 ### Model extent
 ######
 pattern_model_extent = 'model_extent'
-model_extent_dir = os.path.join(s3_base_dir, 'model_extent/standard/20200824/')
+model_extent_dir = os.path.join(s3_base_dir, 'model_extent/standard/20200919/')
 
 ######
 ### Biomass tiles
@@ -263,7 +263,7 @@ old_natural_rank = 1
 
 # Non-mangrove, non-planted natural forest age category tiles
 pattern_age_cat_IPCC = 'forest_age_category_IPCC__1_young_2_mid_3_old'
-age_cat_IPCC_dir = os.path.join(s3_base_dir, 'forest_age_category_IPCC/standard/20200824/')
+age_cat_IPCC_dir = os.path.join(s3_base_dir, 'forest_age_category_IPCC/standard/20200919/')
 
 # US forest age category tiles
 name_age_cat_natrl_forest_US_raw = 'forest_age_category_US__0_20__20_100__100plus__20200723.tif'
