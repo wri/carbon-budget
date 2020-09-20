@@ -220,7 +220,7 @@ def tile_list_s3(source, sensit_type='std'):
     if sensit_type == 'std':
         new_source = source
     elif sensit_type == 'US_removals':
-        new_source = cn.US_annual_gain_AGB_natrl_forest_dir
+        new_source = cn.annual_gain_AGC_BGC_natrl_forest_US_dir
     else:
         new_source = source.replace('standard', sensit_type)
 
