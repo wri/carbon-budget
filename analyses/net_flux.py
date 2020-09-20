@@ -53,7 +53,7 @@ def net_calc(tile_id, pattern, sensit_type):
             dtype='float32'
         )
     except:
-        uu.exception_log("No gross emissions or gross removals for {}. Skipping tile.".format(tile_id))
+        uu.print_log("No gross emissions or gross removals for {}. Skipping tile.".format(tile_id))
         pass
 
     # Opens the output tile, giving it the arguments of the input tiles
