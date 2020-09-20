@@ -127,6 +127,8 @@ def main ():
         cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
         uu.log_subprocess_output_full(cmd)
 
+        uu.print_log("Input loss rasters downloaded. Getting resolution of recent raster...")
+
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
         raw_forest_extent_input_2019 = glob.glob('Prodes2019_*tif')
         prodes_2019 = gdal.Open(raw_forest_extent_input_2019[0])
@@ -134,13 +136,18 @@ def main ():
         pixelSizeX = transform_2019[1]
         pixelSizeY = -transform_2019[5]
 
+        uu.print_log("  Recent raster resolution: {0} by {1}".format(pixelSizeX, pixelSizeY))
+
+
         # This merges both loss rasters together, so it takes a lot of memory and time. It seems to max out
         # at about 150 GB. Loss from PRODES2014 needs to go second so that its loss years get priority over PRODES2017,
         # which seems to have a preponderance of 2007 loss that appears to often be earlier loss years.
+        uu.print_log("Merging input loss rasters into a composite for all years...")
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                'Prodes2019_annual_loss_2008_2019.tif', 'Prodes2014_annual_loss_2001_2007.tif']
         uu.log_subprocess_output_full(cmd)
+        uu.print_log("  Loss rasters combined into composite")
 
         # Uploads the merged loss raster to s3 for future reference
         uu.upload_final_set(cn.Brazil_annual_loss_merged_dir, cn.pattern_Brazil_annual_loss_merged)
