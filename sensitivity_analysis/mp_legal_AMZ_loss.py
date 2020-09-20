@@ -124,7 +124,7 @@ def main ():
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
-        uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, cn.docker_base_dir, sensit_type)
+        uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, cn.docker_base_dir, sensit_type, 'annual_loss_20')
 
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
         raw_forest_extent_input_2019 = glob.glob('Prodes2019_*tif')
