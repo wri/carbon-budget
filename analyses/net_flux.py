@@ -54,7 +54,7 @@ def net_calc(tile_id, pattern, sensit_type):
         )
     except:
         uu.print_log("No gross emissions or gross removals for {}. Skipping tile.".format(tile_id))
-        pass
+        return
 
     # Opens the output tile, giving it the arguments of the input tiles
     net_flux_dst = rasterio.open(net_flux, 'w', **kwargs)
