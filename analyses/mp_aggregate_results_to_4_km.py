@@ -116,7 +116,6 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        uu.print_log(tile_list)
         uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_list)), download_pattern) + "\n")
         uu.print_log("Processing:", dir, "; ", pattern)
 

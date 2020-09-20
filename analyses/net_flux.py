@@ -43,7 +43,10 @@ def net_calc(tile_id, pattern, sensit_type):
     except:
         uu.print_log("   No gross emissions tile {} found".format(emissions_in))
 
-
+    # Skips the tile if there is neither a gross emissions nor a gross removals tile.
+    # This should only occur for biomass_swap sensitivity analysis, which gets its net flux tile list from
+    # the JPL tile list (some tiles of which have neither emissions nor removals), rather than the union of
+    # emissions and removals tiles.
     try:
         kwargs.update(
             driver='GTiff',

@@ -700,13 +700,13 @@ Brazil_forest_extent_2000_merged_dir = os.path.join(s3_base_dir, 'sensit_analysi
 pattern_Brazil_forest_extent_2000_processed = 'legal_Amazon_forest_extent_2000'
 Brazil_forest_extent_2000_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/forest_extent_2000/processed/tiles/20200116/')
 
-Brazil_annual_loss_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/raw/20200117/')
+Brazil_annual_loss_raw_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/raw/20200920/')
 
 pattern_Brazil_annual_loss_merged = 'legal_Amazon_annual_loss_2001_20{}_merged'.format(loss_years)
-Brazil_annual_loss_merged_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/combined/20200117/')
+Brazil_annual_loss_merged_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/combined/20200920/')
 
 pattern_Brazil_annual_loss_processed = 'legal_Amazon_annual_loss_2001_20{}'.format(loss_years)
-Brazil_annual_loss_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/tiles/20200117/')
+Brazil_annual_loss_processed_dir = os.path.join(s3_base_dir, 'sensit_analysis_legal_Amazon_loss/annual_loss/processed/tiles/20200920/')
 
 ## Mekong loss (Hansen v2.0)
 

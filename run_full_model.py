@@ -628,7 +628,7 @@ def main ():
 
     for output in output_dir_list:
 
-        tile_count = uu.count_tiles_s3(output)-1
+        tile_count = uu.count_tiles_s3(output)
         uu.print_log("Total tiles in", output, ": ", tile_count)
 
 

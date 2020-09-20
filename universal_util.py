@@ -738,7 +738,7 @@ def s3_file_download(source, dest, sensit_type):
             s3.Object('gfw2-data', '{0}/{1}'.format(dir_sens[15:], file_name_sens)).load()
             cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
-            print_log("  Option 2 success: Sensitivity analysis tile {} found on s3 and downloaded".format(source))
+            print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
             print_log("")
             return
         except botocore.exceptions.ClientError as e:
