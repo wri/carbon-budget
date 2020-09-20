@@ -235,22 +235,23 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             except:
                 pass
 
-            try:
-                us_AGC_BGC_rate_window = us_AGC_BGC_src.read(1, window=window)
-                us_AGC_BGC_stdev_window = us_AGC_BGC_stdev_src.read(1, window=window)
-                removal_forest_type_window = np.where(us_AGC_BGC_rate_window != 0, cn.US_rank, removal_forest_type_window).astype('uint8')
-                annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
-                                                                   us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
-                                                                   annual_gain_AGC_all_forest_types_window).astype('float32')
-                annual_gain_BGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
-                                                                   (us_AGC_BGC_rate_window) -
-                                                                   (us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
-                                                                   annual_gain_BGC_all_forest_types_window).astype('float32')
-                stdev_annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_stdev_window != 0,
-                                                                   us_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
-                                                                   stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
-            except:
-                pass
+            if sensit_type != 'US_removals':
+                try:
+                    us_AGC_BGC_rate_window = us_AGC_BGC_src.read(1, window=window)
+                    us_AGC_BGC_stdev_window = us_AGC_BGC_stdev_src.read(1, window=window)
+                    removal_forest_type_window = np.where(us_AGC_BGC_rate_window != 0, cn.US_rank, removal_forest_type_window).astype('uint8')
+                    annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
+                                                                       us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                       annual_gain_AGC_all_forest_types_window).astype('float32')
+                    annual_gain_BGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
+                                                                       (us_AGC_BGC_rate_window) -
+                                                                       (us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                       annual_gain_BGC_all_forest_types_window).astype('float32')
+                    stdev_annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_stdev_window != 0,
+                                                                       us_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
+                                                                       stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
+                except:
+                    pass
 
             try:
                 plantations_AGC_BGC_rate_window = plantations_AGC_BGC_src.read(1, window=window)
