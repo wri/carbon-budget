@@ -154,11 +154,11 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.exception_log('Pool and/or sensitivity analysis option not valid')
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-    for key, values in download_dict.items():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, folder, sensit_type, tile_id_list)
+    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    # for key, values in download_dict.items():
+    #     dir = key
+    #     pattern = values[0]
+    #     uu.s3_flexible_download(dir, pattern, folder, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
