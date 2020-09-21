@@ -37,10 +37,17 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        cn.loss_dir: [cn.pattern_loss],
         cn.gain_dir: [cn.pattern_gain],
         cn.model_extent_dir: [cn.pattern_model_extent]
     }
+    
+    # Adds the correct loss tile to the download dictionary depending on the model run
+    if sensit_type == 'legal_Amazon_loss':
+        download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+    elif sensit_type == 'Mekong_loss':
+        download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
+    else:
+        download_dict[cn.loss_dir] = [cn.pattern_loss]
     
     
     output_dir_list = [cn.gain_year_count_dir]
