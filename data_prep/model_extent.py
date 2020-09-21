@@ -21,16 +21,24 @@ def model_extent(tile_id, pattern, sensit_type):
     # Names of the input tiles
     mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
     pre_2000_plantations = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
+
+    # Tree cover tile name depends on the sensitivity analysis.
+    # PRODES extent 2000 stands in for Hansen TCD
+    if sensit_type == 'legal_Amazon_loss':
+        tcd = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_forest_extent_2000_processed)
+        uu.print_log("Using PRODES extent 2000 tile {0} for {1} sensitivity analysis".format(tile_id, sensit_type))
+    else:
+        tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
+        uu.print_log("Using Hansen tcd tile {0} for {1} model run".format(tile_id, sensit_type))
 
     # Biomass tile name depends on the sensitivity analysis
     if sensit_type == 'biomass_swap':
         biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
-        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
+        uu.print_log("Using JPL biomass tile {0} for {1} sensitivity analysis".format(tile_id, sensit_type))
     else:
         biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
+        uu.print_log("Using WHRC biomass tile {0} for {1} model run".format(tile_id, sensit_type))
 
     out_tile = '{0}_{1}.tif'.format(tile_id, pattern)
 
@@ -125,14 +133,27 @@ def model_extent(tile_id, pattern, sensit_type):
 
             # Array of pixels that have both biomass and tree cover density
             tcd_with_biomass_window = np.where((biomass_window > 0) & (tcd_window > 0), 1, 0)
-            # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain
-            forest_extent = np.where((tcd_with_biomass_window == 1) | (mangrove_window > 1) | (gain_window == 1), 1, 0)
 
-            # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain WITHOUT pre-2000 plantations
-            forest_extent = np.where((forest_extent == 1) & (pre_2000_plantations_window == 0), 1, 0).astype('uint8')
+            # For all moel types except legal_Amazon_loss sensitivity analysis
+            if sensit_type != 'legal_Amazon_loss':
+
+                # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain
+                forest_extent = np.where((tcd_with_biomass_window == 1) | (mangrove_window > 1) | (gain_window == 1), 1, 0)
+
+                # extent now WITHOUT pre-2000 plantations
+                forest_extent = np.where((forest_extent == 1) & (pre_2000_plantations_window == 0), 1, 0).astype('uint8')
+
+            # For legal_Amazon_loss sensitivity analysis
+            else:
+                # Array of pixels with (biomass AND tcd) OR mangrove biomass.
+                # Does not include mangrove or Hansen gain pixels that are outside PRODES 2000 forest extent
+                forest_extent = tcd_with_biomass_window.astype('uint8')
+
 
             # Writes the output window to the output
             dst.write_band(1, forest_extent, window=window)
+
+
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)

@@ -11,8 +11,11 @@ import universal_util as uu
 # Gets the names of the input tiles
 def tile_names(tile_id, sensit_type):
 
-    # Names of the loss, gain, tree cover density, intact forest landscape, mangrove biomass and planted forest tiles
-    loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+    # Names of the loss, gain, and model extent tiles
+    if sensit_type == 'legal_Amazon_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+    else:
+        loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
 
@@ -109,8 +112,9 @@ def create_gain_year_count_gain_only_maxgain(tile_id, sensit_type):
     uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
 
 
-# Creates gain year count tiles for pixels that had neither loss not gain
-def create_gain_year_count_no_change(tile_id, sensit_type):
+# Creates gain year count tiles for pixels that had neither loss not gain.
+# For all models except legal_Amazon_loss.
+def create_gain_year_count_no_change_standard(tile_id, sensit_type):
 
     uu.print_log("Gain year count for pixels with neither loss nor gain:", tile_id)
 
@@ -136,6 +140,37 @@ def create_gain_year_count_no_change(tile_id, sensit_type):
         cmd = ['gdal_calc.py', '-A', gain, '-B', model_extent, no_change_calc,
                no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
+
+
+# Creates gain year count tiles for pixels that did not have loss (doesn't matter if they had gain or not).
+# For legal_Amazon_loss sensitivity analysis.
+def create_gain_year_count_no_change_legal_Amazon_loss(tile_id, sensit_type):
+
+    uu.print_log("Gain year count for pixels without loss for legal_Amazon_loss:", tile_id)
+
+    # Names of the loss, gain and tree cover density tiles
+    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+
+    # start time
+    start = datetime.datetime.now()
+
+    # For unclear reasons, gdal_calc doesn't register the 0 (NoData) pixels in the loss tile, so I have to convert it
+    # to a vrt so that the 0 pixels are recognized.
+    # This was the case with PRODES loss in model v.1.1.2.
+    loss_vrt = '{}_loss.vrt'.format(tile_id)
+    os.system('gdalbuildvrt -vrtnodata None {0} {1}'.format(loss_vrt, loss))
+
+    no_change_calc = '--calc=(A==0)*(B>0)*{}'.format(cn.loss_years)
+    no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
+    no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
+    cmd = ['gdal_calc.py', '-A', loss_vrt, '-B', model_extent, no_change_calc,
+           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+    uu.log_subprocess_output_full(cmd)
+    
+    os.remove(loss_vrt)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')

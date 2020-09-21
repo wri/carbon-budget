@@ -2,6 +2,9 @@
 This script creates a binary raster of the model extent at the pixel level.
 The model extent is ((TCD2000>1 AND WHRC AGB2000>0) OR Hansen gain=1 or mangrove AGB2000>0) NOT IN pre-2000 plantations
 The rest of the model uses this to mask its extent.
+For biomass_swap sensitivity analysis, NASA JPL AGB 2000 replaces WHRC 2000.
+For legal_Amazon_loss sensitivity analysis, PRODES 2000 forest extent replaces Hansen tree cover 2000 and Hansen gain
+pixels and mangrove pixels outside of (PRODES extent AND WHRC AGB) are not included.
 '''
 
 
@@ -28,6 +31,8 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
         # List of tiles to run in the model. Which biomass tiles to use depends on sensitivity analysis
         if sensit_type == 'biomass_swap':
             tile_id_list = uu.tile_list_s3(cn.JPL_processed_dir, sensit_type)
+        elif sensit_type == 'legal_Amazon_loss':
+            tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir, sensit_type)
         else:
             tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.mangrove_biomass_2000_dir,
@@ -42,9 +47,13 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
     download_dict = {
                     cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
                     cn.gain_dir: [cn.pattern_gain],
-                    cn.tcd_dir: [cn.pattern_tcd],
                     cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
+
+    if sensit_type == 'legal_Amazon_loss':
+        download_dict[cn.Brazil_forest_extent_2000_processed_dir] = [cn.pattern_Brazil_forest_extent_2000_processed]
+    else:
+        download_dict[cn.tcd_dir] = [cn.pattern_tcd]
 
     if sensit_type == 'biomass_swap':
         download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]

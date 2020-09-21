@@ -43,10 +43,14 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
         biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
         uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
 
-    if sensit_type == 'Mekong_loss':
-        loss = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+    if sensit_type == 'legal_Amazon_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
+        uu.print_log("Using PRODES loss tile {0} for {1} sensitivity analysis".format(tile_id, sensit_type))
+    elif sensit_type == 'Mekong_loss':
+        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
-        loss = '{}_{}.tif'.format(cn.pattern_loss, tile_id)
+        loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+        uu.print_log("Using Hansen loss tile {0} for {1} model run".format(tile_id, sensit_type))
 
     uu.print_log("  Assigning age categories")
 
@@ -157,32 +161,49 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
             # model_extent_window ensures that there is both biomass and tree cover in 2000 OR mangroves OR tree cover gain
             # WITHOUT pre-2000 plantations
 
-            # No change pixels- no loss or gain
-            if tropics == 0:
+            # For every model version except legal_Amazon_loss sensitivity analysis, which has its own rules about age assignment
 
-                dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window == 0))] = 2
+            if sensit_type != 'legal_Amazon_loss':
+                # No change pixels- no loss or gain
+                if tropics == 0:
 
-            if tropics == 1:
+                    dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window == 0))] = 2
 
-                dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window != 1))] = 2
-                dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window == 1))] = 3
+                if tropics == 1:
 
-            # Loss-only pixels
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window <= gain_20_years))] = 1
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window > gain_20_years))] = 2
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window ==1))] = 3
+                    dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window != 1))] = 2
+                    dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window == 0) & (ifl_primary_window == 1))] = 3
 
-            # Gain-only pixels
-            # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-            # The role of model_extent_window here is to exclude the pre-2000 plantations.
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window == 0))] = 1
+                # Loss-only pixels
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window <= gain_20_years))] = 1
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window != 1) & (biomass_window > gain_20_years))] = 2
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window ==1))] = 3
 
-            # Pixels with loss and gain
-            # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
-            # The role of model_extent_window here is to exclude the pre-2000 plantations.
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > (cn.gain_years)))] = 1
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= (cn.gain_years/2)))] = 1
-            dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > (cn.gain_years/2)) & (loss_window <= cn.gain_years))] = 1
+                # Gain-only pixels
+                # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
+                # The role of model_extent_window here is to exclude the pre-2000 plantations.
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window == 0))] = 1
+
+                # Pixels with loss and gain
+                # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
+                # The role of model_extent_window here is to exclude the pre-2000 plantations.
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > (cn.gain_years)))] = 1
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= (cn.gain_years/2)))] = 1
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > (cn.gain_years/2)) & (loss_window <= cn.gain_years))] = 1
+
+            # For legal_Amazon_loss sensitivity analysis
+            else:
+
+                # Non-loss pixels (could have gain or not. Assuming that if within PRODES extent in 2000, there can't be
+                # gain, so it's a faulty detection. Thus, gain-only pixels are ignored and become part of no change.)
+                dst_data[np.where((model_extent_window == 1) & (loss_window == 0))] = 3  # primary forest
+
+                # Loss-only pixels
+                dst_data[np.where((model_extent_window == 1) & (loss_window > 0) & (gain_window == 0))] = 3  # primary forest
+
+                # Loss-and-gain pixels
+                dst_data[np.where((model_extent_window == 1) & (loss_window > 0) & (gain_window == 1))] = 2  # young secondary forest
+
 
             # Writes the output window to the output
             dst.write_band(1, dst_data, window=window)
