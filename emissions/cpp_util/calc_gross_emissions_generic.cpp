@@ -96,10 +96,9 @@ if (sensit_type != "std") {
 }
 
 // Other inputs
+string loss_name = infolder + "GFW2019_" + tile_id + ".tif";
 if (sensit_type == "legal_Amazon_loss"):
-    string loss_name = infolder + tile_id + "_legal_Amazon_loss_2001_2019.tif"
-else:
-    string loss_name = infolder + "GFW2019_" + tile_id + ".tif";
+    loss_name = infolder + tile_id + "_legal_Amazon_loss_2001_2019.tif";
 string burn_name = infolder + tile_id + "_burnyear.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
