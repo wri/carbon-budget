@@ -8,9 +8,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def create_tile_statistics(tile, sensit_type):
-
-    tile_stats = '{0}_{1}_{2}'.format(uu.date_today, sensit_type, cn.tile_stats_pattern)
+def create_tile_statistics(tile, sensit_type, tile_stats_txt):
 
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)
@@ -54,10 +52,7 @@ def create_tile_statistics(tile, sensit_type):
     uu.print_log("Converting {} from /ha to /pixel...".format(tile))
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
            '--overwrite', '--quiet']
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     uu.print_log("{} converted to /pixel".format(tile))
 
@@ -114,7 +109,7 @@ def create_tile_statistics(tile, sensit_type):
     uu.print_log(stats_no_brackets)
 
     # Adds the tile's statistics to the txt file
-    with open(tile_stats, 'a+') as f:
+    with open(tile_stats_txt, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()
 

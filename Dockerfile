@@ -1,5 +1,6 @@
-# Use osgeo GDAL image. It builds of Ubuntu 18.04 and uses GDAL 3.0.4
+# Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
 FROM osgeo/gdal:ubuntu-small-3.0.4
+#FROM osgeo/gdal:ubuntu-full-3.0.4   # Use this if downloading hdf files for burn year analysis
 
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
@@ -52,11 +53,17 @@ RUN cd /usr/include && ln -s ./ gdal
 #https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Compile C++ scripts
-RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/tmp/calc_gross_emissions_generic.exe -lgdal && \
-    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/tmp/calc_gross_emissions_soil_only.exe -lgdal && \
-    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o /usr/local/tmp/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
-    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o /usr/local/tmp/calc_gross_emissions_convert_to_grassland.exe -lgdal
+## Check out the branch that I'm currently using for model development
+#RUN git checkout model_v_1.2.0
+#
+## Makes sure the latest version of the current branch is downloaded
+#RUN git pull origin model_v_1.2.0
+
+## Compile C++ scripts
+#RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
+#    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
+#    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
+#    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
 
 # Opens the Docker shell
 ENTRYPOINT ["/bin/bash"]

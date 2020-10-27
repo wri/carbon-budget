@@ -1,43 +1,39 @@
 '''
-This script creates carbon pools.
+This script creates carbon emitted_pools.
 For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
-carbon pools (soil is created in a separate script but is brought in to create total carbon). These are to the extent
-of WHRC and mangrove biomass 2000.
+carbon emitted_pools (soil is created in a separate script but is brought in to create total carbon). All but total carbon are to the extent
+of WHRC and mangrove biomass 2000, while total carbon is to the extent of WHRC AGB, mangrove AGB, and soil C.
 
-It also creates carbon pools for the year of loss/emissions-- only for pixels that had loss. To do this, it adds
-CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
+It also creates carbon emitted_pools for the year of loss/emissions-- only for pixels that had loss that are within the model.
+To do this, it adds CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
 until loss. (For Hansen loss+gain pixels, only the portion of C that is accumulated before loss is included in the
-lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon pools depend on
-carbon removals, any time the removals model changes, the emissions year carbon pools need to be regenerated.
+lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon emitted_pools depend on
+carbon removals, any time the removals model changes, the emissions year carbon emitted_pools need to be regenerated.
 
-In both cases (carbon pools in 2000 and in the loss year), BGC, deadwood, and litter are calculated from AGC. Thus,
-there are two AGC functions (one for AGC2000 and one for AGC in loss year) but only one function for BGC, deadwood,
-litter, and total C (since those are purely functions of the AGC supplied to them).
+The carbon emitted_pools in 2000 are not used for the flux model at all; they are purely for illustrative purposes. Only the
+emissions year emitted_pools are used for the model.
+Hence, if the flux model is updated to a new year the carbon emitted_pools is loss years need to be updated but the carbon
+emitted_pools in 2000 only need to be updated if mangrove AGB, WHRC AGB, or soil C are updated.
 
-The carbon pools in 2000 are not used for the model at all; they are purely for illustrative purposes. Only the
-emissions year pools are used for the model.
-
-Which carbon pools are being generated (2000 or loss pixels) is controlled through the command line argument --extent (-e).
-This extent argument determines which AGC function is used and how the outputs of the other pools' scripts are named.
-
-NOTE: Because there are so many input files, this script needs a machine with extra disk space.
-Thus, create a spot machine with extra disk space: spotutil new r4.16xlarge dgibbs_wri --disk_size 1024    (this is the maximum value).
+Which carbon emitted_pools are being generated (2000 and/or loss pixels) is controlled through the command line argument --carbon-pool-extent (-ce).
+This extent argument determines which AGC function is used and how the outputs of the other emitted_pools' scripts are named.
+Carbon emitted_pools in both 2000 and in the year of loss can be created in a single run by using '2000,loss' or 'loss,2000'.
 '''
-
 
 import multiprocessing
 import pandas as pd
 from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
+import glob
 import os
 import argparse
 from functools import partial
 import sys
-sys.path.append('/usr/local/app/carbon_pools/')
-import create_carbon_pools
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
+import create_carbon_pools
 
 def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None):
 
@@ -47,73 +43,42 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.exception_log("Sensitivity analysis run must use 'loss' extent")
 
     # Checks the validity of the carbon_pool_extent argument
-    if (carbon_pool_extent not in ['loss', '2000']):
-        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss or 2000.")
+    if (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
+        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
 
-    # If a full model run is specified, the correct set of tiles for the particular script is listed
-    if tile_id_list == 'all':
-        # List of tiles to run in the model
-        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                                    cn.annual_gain_AGB_mangrove_dir,
-                                                    sensit_type=sensit_type
-                                                    )
+    # If a full model run is specified, the correct set of tiles for the particular script is listed.
+    # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant.
+    if (tile_id_list == 'all') & (carbon_pool_extent == 'loss'):
+        # Lists the tiles that have both model extent and loss pixels
+        model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
+        loss_tile_id_list = uu.tile_list_s3(cn.loss_dir, sensit_type=sensit_type)
+        uu.print_log("Carbon pool at emissions year is combination of model_extent and loss tiles:")
+        tile_id_list = list(set(model_extent_tile_id_list).intersection(loss_tile_id_list))
+
+    # For runs generating carbon pools in 2000, all model extent tiles are relevant.
+    if (tile_id_list == 'all') & (carbon_pool_extent != 'loss'):
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
+
+
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
+    output_dir_list = []
+    output_pattern_list = []
 
-    # Output files and patterns and files to download if carbon pools for loss year are being generated
-    if carbon_pool_extent == 'loss':
-
-        # List of output directories and output file name patterns
-        output_dir_list = [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
-                           cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
-        output_pattern_list = [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
-                               cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
-
-        # Files to download for this script
-        download_dict = {
-            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-            cn.precip_processed_dir: [cn.pattern_precip],
-            cn.elevation_processed_dir: [cn.pattern_elevation],
-            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain],
-            cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
-            cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
-            cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
-            cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
-            cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
-        }
-
-        # Adds the correct AGB tiles to the download dictionary depending on the model run
-        if sensit_type == 'biomass_swap':
-            download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
-        else:
-            download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
-
-        # Adds the correct loss tile to the download dictionary depending on the model run
-        if sensit_type == 'legal_Amazon_loss':
-            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
-        elif sensit_type == 'Mekong_loss':
-            download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
-        else:
-            download_dict[cn.loss_dir] = ['']
-
-
-    # Output files and patterns and files to download if carbon pools for 2000 are being generated
-    elif carbon_pool_extent == '2000':
+    # Output files and patterns and files to download if carbon emitted_pools for 2000 are being generated
+    if '2000' in carbon_pool_extent:
 
         # List of output directories and output file name patterns
-        output_dir_list = [cn.AGC_2000_dir, cn.BGC_2000_dir, cn.deadwood_2000_dir,
+        output_dir_list = output_dir_list + [cn.AGC_2000_dir, cn.BGC_2000_dir, cn.deadwood_2000_dir,
                            cn.litter_2000_dir, cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
-        output_pattern_list = [cn.pattern_AGC_2000, cn.pattern_BGC_2000, cn.pattern_deadwood_2000,
+        output_pattern_list = output_pattern_list + [cn.pattern_AGC_2000, cn.pattern_BGC_2000, cn.pattern_deadwood_2000,
                                cn.pattern_litter_2000, cn.pattern_soil_C_full_extent_2000, cn.pattern_total_C_2000]
 
         # Files to download for this script
         download_dict = {
+            cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
             cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
@@ -135,10 +100,45 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         elif sensit_type == 'Mekong_loss':
             download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
         else:
-            download_dict[cn.loss_dir] = ['']
+            download_dict[cn.loss_dir] = [cn.pattern_loss]
 
-    else:
-        uu.exception_log('Extent not valid.')
+    # Output files and patterns and files to download if carbon emitted_pools for loss year are being generated
+    if 'loss' in carbon_pool_extent:
+
+        # List of output directories and output file name patterns
+        output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
+                           cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
+        output_pattern_list = output_pattern_list + [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
+                               cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
+
+        # Files to download for this script. This has the same items as the download_dict for 2000 pools plus
+        # other tiles.
+        download_dict = {
+            cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
+            cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
+            cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+            cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
+            cn.precip_processed_dir: [cn.pattern_precip],
+            cn.elevation_processed_dir: [cn.pattern_elevation],
+            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
+            cn.gain_dir: [cn.pattern_gain],
+            cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+            cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]
+       }
+
+        # Adds the correct AGB tiles to the download dictionary depending on the model run
+        if sensit_type == 'biomass_swap':
+            download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
+        else:
+            download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
+
+        # Adds the correct loss tile to the download dictionary depending on the model run
+        if sensit_type == 'legal_Amazon_loss':
+            download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
+        elif sensit_type == 'Mekong_loss':
+            download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
+        else:
+            download_dict[cn.loss_dir] = [cn.pattern_loss]
 
 
     for key, values in download_dict.items():
@@ -152,6 +152,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+    else:
+        uu.print_log("Output directory list for standard model:", output_dir_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
@@ -161,11 +163,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None
 
@@ -191,133 +189,40 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
                                                                                             cn.litter_to_above_trop_wet_mang,
                                                                                             cn.litter_to_above_subtrop_mang)
 
+    uu.print_log("Creating tiles of aboveground carbon in {}".format(carbon_pool_extent))
+    if cn.count == 96:
+        # More processors can be used for loss carbon pools than for 2000 carbon pools
+        if carbon_pool_extent == 'loss':
+            if sensit_type == 'biomass_swap':
+                processes = 16  # 16 processors = XXX GB peak
+            else:
+                processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
+                # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
+        else: # For 2000, or loss & 2000
+            processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
+    else:
+        processes = 2
+    uu.print_log('AGC loss year max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(create_carbon_pools.create_AGC,
+                     sensit_type=sensit_type, carbon_pool_extent=carbon_pool_extent), tile_id_list)
+    pool.close()
+    pool.join()
 
-    if carbon_pool_extent == 'loss':
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     create_carbon_pools.create_AGC(tile_id, sensit_type, carbon_pool_extent)
 
-        uu.print_log("Creating tiles of emitted aboveground carbon (carbon 2000 + carbon accumulation until loss year)")
-        # 16 processors seems to use more than 460 GB-- I don't know exactly how much it uses because I stopped it at 460
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[0]
-        if cn.count == 96:
-            processes = 14  # 12 processors = 580 GB peak (stays there for a while); 14 = 660 GB peak; 15 = >750 GB (maxed out)
-        else:
-            processes = 2
-        uu.print_log('AGC loss year max processors=', processes)
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(create_carbon_pools.create_emitted_AGC,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_emitted_AGC(tile_id, output_pattern_list[0], sensit_type)
-
+    if carbon_pool_extent in ['loss', '2000']:
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-        uu.check_storage()
-
-    elif carbon_pool_extent == '2000':
-
-        uu.print_log("Creating tiles of aboveground carbon in 2000")
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[0]
-        if cn.count == 96:
-            processes = 12  # 14 processors = XXX GB peak
-        else:
-            processes = 8
-        uu.print_log('AGC 2000 max processors=', processes)
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(create_carbon_pools.create_2000_AGC,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_2000_AGC(tile_id, output_pattern_list[0], sensit_type)
-
+    else:
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-        uu.check_storage()
-
-    else:
-        uu.exception_log("Extent argument not valid")
-
-
-    uu.print_log("Creating tiles of belowground carbon")
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[1]
-    if cn.count == 96:
-        processes = 28  # 16 processors = 400 GB peak; 24 = 590 GB peak; 27 = 650 GB peak; 28 = XXX GB peak
-    else:
-        processes = 8
-    uu.print_log('BGC loss year max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
-                     carbon_pool_extent=carbon_pool_extent,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, output_pattern_list[1], sensit_type)
-
-    uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+        uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
     uu.check_storage()
 
-
-    uu.print_log("Creating tiles of deadwood carbon")
-    # processes=16 maxes out at about 430 GB
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[2]
-    if cn.count == 96:
-        processes = 16  # 16 processors = 700 GB peak
-    else:
-        processes = 8
-    uu.print_log('Deadwood loss year max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(
-        partial(create_carbon_pools.create_deadwood, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
-                carbon_pool_extent=carbon_pool_extent,
-                pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_deadwood(tile_id, mang_deadwood_AGB_ratio, carbon_pool_extent, output_pattern_list[2], sensit_type)
-
-    uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
-    uu.check_storage()
-
-
-    uu.print_log("Creating tiles of litter carbon")
-    # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[3]
-    if cn.count == 96:
-        processes = 16  # 16 processors = 700 GB peak
-    else:
-        processes = 8
-    uu.print_log('Litter loss year max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_carbon_pools.create_litter, mang_litter_AGB_ratio=mang_litter_AGB_ratio,
-                     carbon_pool_extent=carbon_pool_extent,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_litter(tile_id, mang_litter_AGB_ratio, carbon_pool_extent, output_pattern_list[3], sensit_type)
-
-    uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
-    uu.check_storage()
-
-    uu.print_log(":::::Freeing up memory for soil and total carbon creation deleting unneeded tiles")
-    tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_elevation))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))  # Any forest type
-    tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGB*tif'))  # Any forest type
-    tiles_to_delete.extend(glob.glob('*annual_gain_rate_AGCO2*tif'))  # Any forest type
+    uu.print_log(":::::Freeing up memory for belowground carbon creation; deleting unneeded tiles")
+    tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
     uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
     for tile_to_delete in tiles_to_delete:
@@ -326,57 +231,207 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.check_storage()
 
 
-    if carbon_pool_extent == 'loss':
-
-        uu.print_log("Creating tiles of soil carbon")
-        # Creates a single filename pattern to pass to the multiprocessor call
-        pattern = output_pattern_list[4]
-        if cn.count == 96:
-            processes = 32  # 16 processors = 250 GB peak; 32 = XXX GB peak
-        else:
-            processes = 8
-        uu.print_log('Soil carbon loss year max processors=', processes)
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(create_carbon_pools.create_soil,
-                         pattern=pattern, sensit_type=sensit_type), tile_id_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_soil(tile_id, output_pattern_list[4], sensit_type)
-
-        uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
-        uu.check_storage()
-
-    elif carbon_pool_extent == '2000':
-        uu.print_log("Skipping soil for 2000 carbon pool calculation")
-
-    else:
-        uu.exception_log("Extent argument not valid")
-
-
-    uu.print_log("Creating tiles of total carbon")
-    # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory
-    # at peak. Probably could've handled 16 processors on an r4.16xlarge machine but I didn't feel like taking the time to check.
+    uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
     # Creates a single filename pattern to pass to the multiprocessor call
-    pattern = output_pattern_list[5]
     if cn.count == 96:
-        processes = 18  # 14 processors = 510 GB peak; 18 = XXX GB peak
+        # More processors can be used for loss carbon pools than for 2000 carbon pools
+        if carbon_pool_extent == 'loss':
+            if sensit_type == 'biomass_swap':
+                processes = 30  # 30 processors = XXX GB peak
+            else:
+                processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
+        else: # For 2000, or loss & 2000
+            processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
     else:
-        processes = 8
-    uu.print_log('Total carbon loss year max processors=', processes)
+        processes = 2
+    uu.print_log('BGC max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent,
-                     pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
+                     carbon_pool_extent=carbon_pool_extent,
+                     sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent, output_pattern_list[5], sensit_type)
+    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type)
 
-    uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+    if carbon_pool_extent in ['loss', '2000']:
+        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    else:
+        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+        uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+    uu.check_storage()
+
+
+    # 825 GB isn't enough space to create deadwood and litter 2000 while having AGC and BGC 2000 on.
+    # Thus must delete AGC, BGC, and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
+    # for total C 2000 calculation.
+    if '2000' in carbon_pool_extent:
+        uu.print_log(":::::Freeing up memory for deadwood and litter carbon 2000 creation; deleting unneeded tiles")
+        tiles_to_delete = []
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gain)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_full_extent_2000)))
+
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
+
+
+    uu.print_log("Creating tiles of deadwood and litter carbon in {}".format(carbon_pool_extent))
+    if cn.count == 96:
+        # More processors can be used for loss carbon pools than for 2000 carbon pools
+        if carbon_pool_extent == 'loss':
+            if sensit_type == 'biomass_swap':
+                processes = 10  # 10 processors = XXX GB peak
+            else:
+                processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 650 GB peak; 15 = 700 GB peak
+        else: # For 2000, or loss & 2000
+            ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
+            ### There wouldn't have been enough room for all deadwood and litter otherwise.
+            ### For example, when deadwood and litter generation started getting up to around 50N, I deleted
+            ### 00N precip, elevation, and WHRC AGB. I deleted all of those from 30N to 20S.
+            processes = 16  # 7 processors = 320 GB peak; 14 = 620 GB peak; 16 = XXX GB peak
+    else:
+        processes = 2
+    uu.print_log('Deadwood and litter max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(
+        partial(create_carbon_pools.create_deadwood_litter, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
+                mang_litter_AGB_ratio=mang_litter_AGB_ratio,
+                carbon_pool_extent=carbon_pool_extent,
+                sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type)
+
+    if carbon_pool_extent in ['loss', '2000']:
+        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
+        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])  # litter
+    else:
+        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
+        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])  # litter
+        uu.upload_final_set(output_dir_list[8], output_pattern_list[8])  # deadwood
+        uu.upload_final_set(output_dir_list[9], output_pattern_list[9])  # litter
+    uu.check_storage()
+
+    uu.print_log(":::::Freeing up memory for soil and total carbon creation; deleting unneeded tiles")
+    tiles_to_delete = []
+    tiles_to_delete .extend(glob.glob('*{}*tif'.format(cn.pattern_elevation)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
+    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+    uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+    for tile_to_delete in tiles_to_delete:
+        os.remove(tile_to_delete)
+    uu.print_log(":::::Deleted unneeded tiles")
+    uu.check_storage()
+
+
+    if 'loss' in carbon_pool_extent:
+
+        uu.print_log("Creating tiles of soil carbon in loss extent")
+
+        # If pools in 2000 weren't generated, soil carbon in emissions extent is 4.
+        # If pools in 2000 were generated, soil carbon in emissions extent is 10.
+        if '2000' not in carbon_pool_extent:
+            pattern = output_pattern_list[4]
+        else:
+            pattern = output_pattern_list[10]
+
+        if cn.count == 96:
+            # More processors can be used for loss carbon pools than for 2000 carbon pools
+            if carbon_pool_extent == 'loss':
+                if sensit_type == 'biomass_swap':
+                    processes = 36  # 36 processors = XXX GB peak
+                else:
+                    processes = 42  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = XXX GB peak
+            else: # For 2000, or loss & 2000
+                processes = 12  # 12 processors = XXX GB peak
+        else:
+            processes = 2
+        uu.print_log('Soil carbon loss year max processors=', processes)
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(create_carbon_pools.create_soil_emis_extent, pattern=pattern,
+                         sensit_type=sensit_type), tile_id_list)
+        pool.close()
+        pool.join()
+
+        # # For single processor use
+        # for tile_id in tile_id_list:
+        #     create_carbon_pools.create_soil_emis_extent(tile_id, pattern, sensit_type)
+
+        # If pools in 2000 weren't generated, soil carbon in emissions extent is 4.
+        # If pools in 2000 were generated, soil carbon in emissions extent is 10.
+        if '2000' not in carbon_pool_extent:
+            uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
+        else:
+            uu.upload_final_set(output_dir_list[10], output_pattern_list[10])
+
+        uu.check_storage()
+
+    if '2000' in carbon_pool_extent:
+        uu.print_log("Skipping soil for 2000 carbon pool calculation. Soil carbon in 2000 already created.")
+        uu.check_storage()
+
+
+    # 825 GB isn't enough space to create deadwood and litter 2000 while having AGC and BGC 2000 on.
+    # Thus must delete BGC and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
+    # for total C 2000 calculation.
+    if '2000' in carbon_pool_extent:
+
+        # Files to download for total C 2000. Previously deleted to save space
+        download_dict = {
+            cn.BGC_2000_dir: [cn.pattern_BGC_2000],
+            cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000]
+        }
+
+        for key, values in download_dict.items():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+
+
+    uu.print_log("Creating tiles of total carbon")
+    if cn.count == 96:
+        # More processors can be used for loss carbon pools than for 2000 carbon pools
+        if carbon_pool_extent == 'loss':
+            if sensit_type == 'biomass_swap':
+                processes = 14  # 14 processors = XXX GB peak
+            else:
+                processes = 18  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = XXX GB peak
+        else: # For 2000, or loss & 2000
+            processes = 12  # 12 processors = XXX GB peak
+    else:
+        processes = 2
+    uu.print_log('Total carbon loss year max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent,
+                     sensit_type=sensit_type), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent, sensit_type)
+
+    if carbon_pool_extent in ['loss', '2000']:
+        uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+    else:
+        uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+        uu.upload_final_set(output_dir_list[11], output_pattern_list[11])
+    uu.check_storage()
 
 
 if __name__ == '__main__':
@@ -388,14 +443,14 @@ if __name__ == '__main__':
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
-    parser.add_argument('--carbon_pool_extent', '-e', required=True,
-                        help='Extent over which carbon pools should be calculated: loss or 2000')
+    parser.add_argument('--carbon_pool_extent', '-ce', required=True,
+                        help='Extent over which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
-    carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon pools as they were at the year of loss in loss pixels only
+    carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
     run_date = args.run_date
 
     # Create the output log

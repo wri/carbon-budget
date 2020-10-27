@@ -54,8 +54,8 @@ command line argument. Supply the rest of the global tiles (the unchanged tiles)
 # Start a r.16xlarge spot machine
 spotutil new r4.16xlarge dgibbs_wri
 
-# Copy zipped plantation gdb with growth rate field in tables
-aws s3 cp s3://gfw-files/plantations/final/global/plantations_v2_1.zip .
+# Copy zipped plantation gdb with growth rate field in tables. This has the updated rates from July 2020.
+wget http://gfw-files.s3.amazonaws.com/plantations/final/global/plantations_v2_1.zip
 
 # Unzip the zipped plantation gdb. This can take several minutes.
 unzip plantations_v2_1.zip
@@ -196,7 +196,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
             #     plantation_preparation.rasterize_gadm_1x1(tile)
 
             # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
-            os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_today))
+            os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_time_today))
             cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
 
             # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
@@ -281,7 +281,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
         # Creates a shapefile in which each feature is the extent of a plantation extent tile.
         # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
-        os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_today))
+        os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_time_today))
         cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging

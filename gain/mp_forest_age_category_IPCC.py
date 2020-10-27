@@ -1,15 +1,16 @@
-### This script creates tiles of non-planted, non-mangrove forest age category according to a decision tree.
-### The age categories are: <= 20 year old secondary forest, >20 year old secondary forest, and primary forest.
-### The decision tree uses several input tiles, including IFL status, gain, and loss.
-### Downloading all of these tiles can take awhile.
-### The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
-### The output tiles have 10 possible values, each value representing an end of the decision tree.
-### These 10 values map to the three natural forest age categories.
-### The forest age category tiles are inputs for assigning gain rates to pixels.
-### The extent of this layer is what determines the extent of the non-mangrove non-planted forest gain rate layer
-### (in conjunction with ecozone and continent layers).
-### That is, the forest age category layer should cover the entire non-mangrove non-planted annual gain rate layer.
-### Uses an r4.16xlarge spot machine.
+'''
+This script creates tiles of forest age category across the entire model extent (all pixels) according to a decision tree.
+The age categories are: <= 20 year old secondary forest (1), >20 year old secondary forest (2), and primary forest (3).
+The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
+The output tiles have 3 possible values, each value representing an end of the decision tree.
+The forest age category tiles are inputs for assigning gain rates to
+non-mangrove, non-planted, non-European, non-US, older secondary and primary forests.pixels.
+The extent of this layer is greater than the extent of the rates which are based on this, though.
+This assigns forest age category to all pixels within the model but they are ultimately only used for
+non-mangrove, non-planted, non-European, non-US, older secondary and primary forest pixels.
+You can think of the output from this script as being the age category if IPCC Table 4.9 rates were to be applied there.
+'''
+
 
 import multiprocessing
 from functools import partial
@@ -19,21 +20,20 @@ import argparse
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('/usr/local/app/gain/')
-import forest_age_category_natrl_forest
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'gain'))
+import forest_age_category_IPCC
 
-
-def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = None):
+def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_non_mang_non_planted_dir, sensit_type)
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -41,13 +41,10 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
     # Files to download for this script.
     download_dict = {
+                     cn.model_extent_dir: [cn.pattern_model_extent],
                      cn.gain_dir: [cn.pattern_gain],
-                     cn.tcd_dir: [cn.pattern_tcd],
                      cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
-                     cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
-                     cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
-                     cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
-                     cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
+                     cn.cont_eco_dir: [cn.pattern_cont_eco_processed]
     }
 
     # Adds the correct loss tile to the download dictionary depending on the model run
@@ -56,12 +53,18 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     elif sensit_type == 'Mekong_loss':
         download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
     else:
-        download_dict[cn.loss_dir] = ['']
+        download_dict[cn.loss_dir] = [cn.pattern_loss]
+
+    # Adds the correct biomass tile to the download dictionary depending on the model run
+    if sensit_type == 'biomass_swap':
+        download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
+    else:
+        download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.age_cat_natrl_forest_dir]
-    output_pattern_list = [cn.pattern_age_cat_natrl_forest]
+    output_dir_list = [cn.age_cat_IPCC_dir]
+    output_pattern_list = [cn.pattern_age_cat_IPCC]
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
@@ -84,11 +87,7 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
 
      # Table with IPCC Table 4.9 default gain rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
@@ -113,15 +112,15 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     # With processes=30, peak usage was about 350 GB using WHRC AGB.
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
-        processes = 30
-        # 20 processors=500 GB peak; 28=660 GB peak (stops @ 600 for a while, then increases slowly);
-        # 32=shut off at 730 peak (stops @ 686 for a while, then increases slowly);
-        # 30=710 GB peak (stops @ 653 for a while, then increases slowly)
+        if sensit_type == 'biomass_swap':
+            processes = 32 # 32 processors = 610 GB peak
+        else:
+            processes = 42 # 30 processors=460 GB peak; 36 = 550 GB peak; 40 = XXX GB peak
     else:
-        processes = 26
+        processes = 2
     uu.print_log('Natural forest age category max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(forest_age_category_natrl_forest.forest_age_category, gain_table_dict=gain_table_dict,
+    pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict,
                      pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
     pool.join()
@@ -129,7 +128,7 @@ def mp_forest_age_category_natrl_forest(sensit_type, tile_id_list, run_date = No
     # # For single processor use
     # for tile_id in tile_id_list:
     #
-    #     forest_age_category_natrl_forest.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
+    #     forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type)
 
     # Uploads output tiles to s3
     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
@@ -159,5 +158,5 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_forest_age_category_natrl_forest(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_forest_age_category_IPCC(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
 

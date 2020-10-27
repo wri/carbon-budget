@@ -6,7 +6,7 @@ rates from the standard model in mp_merge_cumulative_annual_gain_all_forest_type
 any other sensitivity analysis.
 US-specific removal rates are based on the FIA region, FIA forest group, and forest age category of each pixel. A rate
 table is then applied to each combination of region-group-age to apply the correct rates, just like for the standard
-model (mp_annual_gain_rate_natrl_forest.py).
+model (mp_annual_gain_rate_IPCC_defaults.py).
 The FIA region shapefile is Hansenized in this script.
 The FIA forest group raster is created in ArcMap before this processing and Hansenized in this script. The input forest group
 raster is basically the composite of the original forest group raster and the ArcMap Focal Statistics tool applied to it
@@ -47,11 +47,11 @@ def main ():
 
     # Files to download for this script.
     download_dict = {cn.gain_dir: [cn.pattern_gain],
-                     cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
+                     cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults]
     }
 
     # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
-    tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_natrl_forest_dir)
+    tile_id_list = uu.tile_list_s3(cn.annual_gain_AGB_IPCC_defaults_dir)
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
     # tile_id_list = ['50N_130W'] # test tiles
 

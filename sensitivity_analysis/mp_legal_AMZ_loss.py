@@ -1,3 +1,6 @@
+'''
+Downloaded PRODES loss from http://www.dpi.inpe.br/prodesdigital/dadosn/mosaicos/
+'''
 
 
 import multiprocessing
@@ -14,12 +17,7 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append('../gain')
-import annual_gain_rate_natrl_forest
-import cumulative_gain_natrl_forest
-import merge_cumulative_annual_gain_all_forest_types
-sys.path.append('../carbon_pools')
-import create_carbon_pools
+
 
 def main ():
 
@@ -28,13 +26,11 @@ def main ():
 
     os.chdir(cn.docker_base_dir)
 
-    Brazil_stages = ['all', 'create_forest_extent', 'create_loss',
-                     'forest_age_category', 'gain_year_count', 'annual_removals', 'cumulative_removals', 'removals_merged',
-                     'carbon_pools']
+    Brazil_stages = ['all', 'create_forest_extent', 'create_loss']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
-    parser = argparse.ArgumentParser(description='Create tiles of the number of years of carbon gain for mangrove forests')
+    parser = argparse.ArgumentParser(description='Create tiles of forest extent in legal Amazon in 2000 and annual loss according to PRODES')
     parser.add_argument('--stages', '-s', required=True,
                         help='Stages of creating Brazil legal Amazon-specific gross cumulative removals. Options are {}'.format(Brazil_stages))
     parser.add_argument('--run_through', '-r', required=True,
@@ -62,26 +58,13 @@ def main ():
     sensit_type = 'legal_Amazon_loss'
 
     # List of output directories and output file name patterns
-    master_output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir,
-                       cn.age_cat_natrl_forest_dir, cn.gain_year_count_natrl_forest_dir,
-                       cn.annual_gain_AGB_natrl_forest_dir, cn.annual_gain_BGB_natrl_forest_dir,
-                       cn.cumul_gain_AGCO2_natrl_forest_dir, cn.cumul_gain_BGCO2_natrl_forest_dir,
-                       cn.annual_gain_AGB_BGB_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
-                       cn.AGC_emis_year_dir, cn.BGC_emis_year_dir, cn.deadwood_emis_year_2000_dir,
-                       cn.litter_emis_year_2000_dir, cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir
-                       ]
+    master_output_dir_list = [cn.Brazil_forest_extent_2000_processed_dir, cn.Brazil_annual_loss_processed_dir]
 
-    master_output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed,
-                           cn.pattern_age_cat_natrl_forest, cn.pattern_gain_year_count_natrl_forest,
-                           cn.pattern_annual_gain_AGB_natrl_forest, cn.pattern_annual_gain_BGB_natrl_forest,
-                           cn.pattern_cumul_gain_AGCO2_natrl_forest, cn.pattern_cumul_gain_BGCO2_natrl_forest,
-                           cn.pattern_annual_gain_AGB_BGB_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types,
-                           cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year, cn.pattern_deadwood_emis_year_2000,
-                           cn.pattern_litter_emis_year_2000, cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year
-                           ]
+    master_output_pattern_list = [cn.pattern_Brazil_forest_extent_2000_processed, cn.pattern_Brazil_annual_loss_processed]
 
 
     # Creates forest extent 2000 raster from multiple PRODES forest extent rasters
+    ###NOTE: Didn't redo this for model v1.2.0, so I don't know if it still works.
     if 'create_forest_extent' in actual_stages:
 
         uu.print_log('Creating forest extent tiles')
@@ -112,10 +95,7 @@ def main ():
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
                raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
         # Uploads the merged forest extent raster to s3 for future reference
         uu.upload_final_set(cn.Brazil_forest_extent_2000_merged_dir, cn.pattern_Brazil_forest_extent_2000_merged)
@@ -134,45 +114,52 @@ def main ():
         pool.map(partial(uu.check_and_upload, upload_dir=upload_dir, pattern=pattern), tile_id_list)
 
 
-    # Creates annual loss raster for 2001-2015 from multiples PRODES rasters
+    # Creates annual loss raster for 2001-2019 from multiples PRODES rasters
     if 'create_loss' in actual_stages:
 
-        uu.print_log('Creating annual loss tiles')
+        uu.print_log('Creating annual PRODES loss tiles')
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         uu.print_log(tile_id_list)
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
         # Downloads input rasters and lists them
-        uu.s3_folder_download(cn.Brazil_annual_loss_raw_dir, cn.docker_base_dir, sensit_type)
+        cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
+        uu.log_subprocess_output_full(cmd)
+
+        uu.print_log("Input loss rasters downloaded. Getting resolution of recent raster...")
 
         # Gets the resolution of the more recent PRODES raster, which has a higher resolution. The merged output matches that.
-        raw_forest_extent_input_2017 = glob.glob('Prodes2017_*tif')
-        prodes_2017 = gdal.Open(raw_forest_extent_input_2017[0])
-        transform_2017 = prodes_2017.GetGeoTransform()
-        pixelSizeX = transform_2017[1]
-        pixelSizeY = -transform_2017[5]
+        raw_forest_extent_input_2019 = glob.glob('Prodes2019_*tif')
+        prodes_2019 = gdal.Open(raw_forest_extent_input_2019[0])
+        transform_2019 = prodes_2019.GetGeoTransform()
+        pixelSizeX = transform_2019[1]
+        pixelSizeY = -transform_2019[5]
+
+        uu.print_log("  Recent raster resolution: {0} by {1}".format(pixelSizeX, pixelSizeY))
+
 
         # This merges both loss rasters together, so it takes a lot of memory and time. It seems to max out
-        # at about 150 GB. Loss from PRODES2014 needs to go second so that its loss years get priority over PRODES2017,
-        # which seems to have a preponderance of 2007 loss that appears to often be earlier loss years.
+        # at about 180 GB, then go back to 0.
+        # This took about 8 minutes.
+        uu.print_log("Merging input loss rasters into a composite for all years...")
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged),
                '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
-               'Prodes2017_annual_loss_2008_2015.tif', 'Prodes2014_annual_loss_2001_2007.tif']
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+               'Prodes2019_annual_loss_2008_2019.tif', 'Prodes2014_annual_loss_2001_2007.tif']
+        uu.log_subprocess_output_full(cmd)
+        uu.print_log("  Loss rasters combined into composite")
 
         # Uploads the merged loss raster to s3 for future reference
         uu.upload_final_set(cn.Brazil_annual_loss_merged_dir, cn.pattern_Brazil_annual_loss_merged)
 
         # Creates annual loss 2001-2015 tiles
+        uu.print_log("Warping composite PRODES loss to Hansen tiles...")
         source_raster = '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged)
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
         pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        uu.print_log("  PRODES composite loss raster warped to Hansen tiles")
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         # In practice, every Amazon tile has loss in it but I figured I'd do this just to be thorough.
@@ -320,7 +307,7 @@ def main ():
 
         # Files to download for this script.
         download_dict = {
-            cn.age_cat_natrl_forest_dir: [cn.pattern_age_cat_natrl_forest],
+            cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
             cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
         }
@@ -436,7 +423,7 @@ def main ():
 
         # Files to download for this script.
         download_dict = {
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+            cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
             cn.annual_gain_BGB_natrl_forest_dir: [cn.pattern_annual_gain_BGB_natrl_forest],
             cn.gain_year_count_natrl_forest_dir: [cn.pattern_gain_year_count_natrl_forest]
         }
@@ -498,7 +485,7 @@ def main ():
         download_dict = {
             cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
             cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest],
+            cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
 
             cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
             cn.annual_gain_BGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_BGB_planted_forest_non_mangrove],
@@ -553,12 +540,12 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
 
 
-    # Creates carbon pools in loss year
+    # Creates carbon emitted_pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        uu.print_log('Creating emissions year carbon pools')
+        uu.print_log('Creating emissions year carbon emitted_pools')
 
-        # Specifies that carbon pools are created for loss year rather than in 2000
+        # Specifies that carbon emitted_pools are created for loss year rather than in 2000
         extent = 'loss'
 
 
@@ -576,7 +563,7 @@ def main ():
             cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
             cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
             cn.annual_gain_AGB_planted_forest_non_mangrove_dir: [cn.pattern_annual_gain_AGB_planted_forest_non_mangrove],
-            cn.annual_gain_AGB_natrl_forest_dir: [cn.pattern_annual_gain_AGB_natrl_forest]
+            cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults]
         }
 
         # Adds the correct AGB tiles to the download dictionary depending on the model run

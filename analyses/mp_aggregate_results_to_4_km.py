@@ -9,8 +9,9 @@ Then it calculates the per pixel value for each model output pixel and sums thos
 aggregated pixel.
 It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
 converts cumulative gross CO2 emissions to gross CO2 emissions per year.
+For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
 The user has to supply a tcd threshold for which forest pixels to include in the results.
-sample command: python mp_aggregate_results_to_10_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/10km_output_aggregation/biomass_soil/standard/20191107/net_flux_t_CO2e_per_year_biomass_soil_10km_tcd30_modelv1_1_2_std_2019_11_07.tif
+sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
 '''
 
 
@@ -22,13 +23,13 @@ import argparse
 import os
 import glob
 import sys
-sys.path.append('/usr/local/app/analyses/')
-import aggregate_results_to_10_km
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'analyses'))
+import aggregate_results_to_4_km
 
-def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None):
+def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -41,12 +42,11 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
 
-    # Files to download for this script. 'true'/'false' says whether the input directory and pattern should be
-    # changed for a sensitivity analysis. This does not need to change based on what run is being done;
-    # this assignment should be true for all sensitivity analyses and the standard model.
+    # Files to download for this script
     download_dict = {
-             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
              cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
              cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
@@ -54,14 +54,13 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
     if thresh < 0 or thresh > 99:
         uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
 
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list)
-    # tree cover density tiles-- necessary for filtering sums by tcd
+    # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list)
 
     uu.print_log("Model outputs to process are:", download_dict)
 
@@ -99,6 +98,13 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         output_pattern = uu.sensit_tile_rename(sensit_type, tile_id, download_pattern_name)
         pattern = output_pattern[9:-4]
 
+        # For sensitivity analysis runs, only aggregates the tiles if they were created as part of the sensitivity analysis
+        if (sensit_type != 'std') & (sensit_type not in pattern):
+            uu.print_log("{} not a sensitivity analysis output. Skipping aggregation...".format(pattern))
+            uu.print_log("")
+
+            continue
+
         # Lists the tiles of the particular type that is being iterates through.
         # Excludes all intermediate files
         tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
@@ -106,23 +112,26 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
         tile_list = [i for i in tile_list if not ('0_4deg' in i)]
+        tile_list = [i for i in tile_list if not ('.ovr' in i)]
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        uu.print_log(tile_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_list))) + "\n")
+        uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_list)), download_pattern) + "\n")
         uu.print_log("Processing:", dir, "; ", pattern)
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         if cn.count == 96:
-            processes = 14  # 14 processors = XXX GB peak; 20 = >750 GB (maxed out)
+            if sensit_type == 'biomass_swap':
+                processes = 12  # 12 processors = XXX GB peak
+            else:
+                processes = 16  # 12 processors = 140 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
         else:
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(aggregate_results_to_10_km.rewindow, tile_list)
+        pool.map(aggregate_results_to_4_km.rewindow, tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
         # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
@@ -132,7 +141,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # # For single processor use
         # for tile in tile_list:
         #
-        #     aggregate_results_to_10_km.rewindow(tile)
+        #     aggregate_results_to_4_km.rewindow(tile)
 
         # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
         # and sums those values in each 400x400 pixel window.
@@ -142,22 +151,22 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         # The 0.1x0.1 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         if cn.count == 96:
-            processes = 14  # 14 processors = XXX GB peak; 20 = >750 GB (maxed out)
+            if sensit_type == 'biomass_swap':
+                processes = 10  # 10 processors = XXX GB peak
+            else:
+                processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
         else:
             processes = 8
         uu.print_log('Conversion to per pixel and aggregate max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(aggregate_results_to_10_km.aggregate, thresh=thresh), tile_list)
-        # Added these in response to error12: Cannot allocate memory error.
-        # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
-        # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
+        pool.map(partial(aggregate_results_to_4_km.aggregate, thresh=thresh, sensit_type=sensit_type), tile_list)
         pool.close()
         pool.join()
 
         # # For single processor use
         # for tile in tile_list:
         #
-        #     aggregate_results_to_10_km.aggregate(tile, thresh)
+        #     aggregate_results_to_4_km.aggregate(tile, thresh, sensit_type)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_0_4deg.vrt".format(pattern)
@@ -167,25 +176,47 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
         uu.print_log(out_pattern)
 
-        # Produces a single raster of all the 10x10 tiles (10 km resolution)
+        # Produces a single raster of all the 10x10 tiles (0.4 degree resolution)
         cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
                '-tr', '0.04', '0.04',
                out_vrt, '{}.tif'.format(out_pattern)]
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
+
+
+        # Adds metadata tags to output rasters
+        uu.add_universal_metadata_tags('{0}.tif'.format(out_pattern), sensit_type)
+
+        # Units are different for annual removal factor, so metadata has to reflect that
+        if 'annual_removal_factor' in out_pattern:
+            cmd = ['gdal_edit.py',
+                   '-mo', 'units=Mg aboveground carbon/yr/pixel, where pixels are 0.04x0.04 degrees',
+                   '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                   '-mo', 'extent=Global',
+                   '-mo', 'scale=negative values are removals',
+                   '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
+                   '{0}.tif'.format(out_pattern)]
+            uu.log_subprocess_output_full(cmd)
+
+        else:
+            cmd = ['gdal_edit.py',
+                   '-mo', 'units=Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees',
+                   '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
+                   '-mo', 'extent=Global',
+                   '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
+                   '{0}.tif'.format(out_pattern)]
+            uu.log_subprocess_output_full(cmd)
+
 
         uu.print_log("Tiles processed. Uploading to s3 now...")
 
         # Uploads all output tiles to s3
         uu.upload_final_set(output_dir_list[0], out_pattern)
 
-        # # Cleans up the folder before starting on the next raster type
-        # vrtList = glob.glob('*vrt')
-        # for vrt in vrtList:
-        #     os.remove(vrt)
-        #
+        # Cleans up the folder before starting on the next raster type
+        vrtList = glob.glob('*vrt')
+        for vrt in vrtList:
+            os.remove(vrt)
+
         for tile_name in tile_list:
             tile_id = uu.get_tile_id(tile_name)
             os.remove('{0}_{1}.tif'.format(tile_id, pattern))
@@ -200,7 +231,7 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
     # the outline of the US and clip the standard model net flux to the extent of JPL AGB2000.
     # Then, manually upload the clipped US_removals and biomass_swap net flux rasters to the spot machine and the
     # code below should work.
-    if sensit_type != 'std':
+    if sensit_type not in ['std', 'biomass_swap', 'US_removals', 'legal_Amazon_loss']:
 
         if std_net_flux:
 
@@ -223,11 +254,11 @@ def mp_aggregate_results_to_10_km(sensit_type, thresh, tile_id_list, std_net_flu
                 uu.print_log('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
 
             uu.print_log("Creating map of percent difference between standard and {} net flux".format(sensit_type))
-            aggregate_results_to_10_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+            aggregate_results_to_4_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
 
             uu.print_log("Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type))
-            aggregate_results_to_10_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
+            aggregate_results_to_4_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
 
         else:
@@ -262,4 +293,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_aggregate_results_to_10_km(sensit_type=sensit_type, tile_id_list=tile_id_list, thresh=thresh, std_net_flux=std_net_flux)
+    mp_aggregate_results_to_4_km(sensit_type=sensit_type, tile_id_list=tile_id_list, thresh=thresh, std_net_flux=std_net_flux)

@@ -1,5 +1,7 @@
 from subprocess import Popen, PIPE, STDOUT, check_call
 import glob
+import boto3
+import botocore
 import constants_and_names as cn
 import datetime
 import rasterio
@@ -17,8 +19,9 @@ from osgeo import gdal
 
 # Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
-date_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
-# date_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
+date_today = d.strftime('%Y_%m_%d')
+date_time_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
+# date_time_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
 
 # Uploads the output log to the designated s3 folder
 def upload_log():
@@ -29,7 +32,8 @@ def upload_log():
 
 # Creates the log with a starting line
 def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
-                 pools=None, thresh=None, std_net_flux=None, include_mangroves=None, include_plantations=None,
+                 emitted_pools=None, thresh=None, std_net_flux=None,
+                 include_mangroves=None, include_us=None, include_per_pixel=None,
                  log_note=None):
 
     logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
@@ -38,28 +42,29 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Model version: {}".format(cn.version))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
-    logging.info("Model stages to run: {}".format(stage_input))
+    logging.info("Model stage argument: {}".format(stage_input))
     logging.info("Run through model: {}".format(run_through))
     logging.info("Run date: {}".format(run_date))
     logging.info("Tile ID list: {}".format(tile_id_list))
-    logging.info("Carbon pools to generate (optional): {}".format(carbon_pool_extent))
-    logging.info("Emissions pools (optional): {}".format(pools))
+    logging.info("Carbon emitted_pools to generate (optional): {}".format(carbon_pool_extent))
+    logging.info("Emissions emitted_pools (optional): {}".format(emitted_pools))
     logging.info("TCD threshold for aggregated map (optional): {}".format(thresh))
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
-    logging.info("Include planted forest removal scripts in model run (optional): {}".format(include_plantations))
+    logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
+    logging.info("Include per pixel tile creation for gross emissions, gross removals, net flux in model run (optional): {}".format(include_per_pixel))
     logging.info("AWS ec2 instance type and AMI id:")
-    try:
-        cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
-        cmd = ['wget -q -O - http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
-    except:
-        logging.info("Not running on AWS ec2 instance")
+    # try:
+    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    #     with process.stdout:
+    #         log_subprocess_output(process.stdout)
+    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    #     with process.stdout:
+    #         log_subprocess_output(process.stdout)
+    # except:
+    #     logging.info("Not running on AWS ec2 instance")
     logging.info("Available processors: {}".format(cn.count))
     logging.info("")
 
@@ -120,13 +125,46 @@ def log_subprocess_output(pipe):
         # For reasons I don't know, the array is backwards, so this prints it out in reverse (i.e. correct) order
         for line in reversed(line_array):
             logging.info(line.decode("utf-8")) #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
-            print(line.decode("utf-8"))        #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+            print(line.decode("utf-8"))
 
         # logging.info("\n")
         # print("\n")
 
     # After the subprocess finishes, the log is uploaded to s3
     upload_log()
+
+
+def log_subprocess_output_simple(cmd):
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
+
+
+def log_subprocess_output_full(cmd):
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    pipe = process.stdout
+    with pipe:
+
+        # Reads all the output into a string
+        for full_out in iter(pipe.readline, b''):  # b'\n'-separated lines
+
+            # Separates the string into an array, where each entry is one line of output
+            line_array = full_out.splitlines()
+
+            # For reasons I don't know, the array is backwards, so this prints it out in reverse (i.e. correct) order
+            for line in reversed(line_array):
+                logging.info(line.decode(
+                    "utf-8"))  # https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+                print(line.decode(
+                    "utf-8"))  # https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
+
+            # logging.info("\n")
+            # print("\n")
+
+        # After the subprocess finishes, the log is uploaded to s3
+        upload_log()
 
 
 # Checks the OS for how much storage is available in the system, what's being used, and what percent is being used
@@ -180,14 +218,45 @@ def tile_list_s3(source, sensit_type='std'):
     # Changes the directory to list tiles in if the model run is the biomass_swap or US_removals sensitivity analyses
     # (JPL AGB extent and US extent, respectively)
     if sensit_type == 'std':
-        source = source
-    elif sensit_type == 'biomass_swap':
-        source = cn.JPL_processed_dir
+        new_source = source
     elif sensit_type == 'US_removals':
-        source = cn.US_annual_gain_AGB_natrl_forest_dir
+        new_source = cn.annual_gain_AGC_BGC_natrl_forest_US_dir
     else:
-        source = source.replace('standard', sensit_type)
+        new_source = source.replace('standard', sensit_type)
 
+    print_log("Creating list of tiles in", new_source)
+
+    ## For an s3 folder in a bucket using AWSCLI
+    # Captures the list of the files in the folder
+    out = Popen(['aws', 's3', 'ls', new_source], stdout=PIPE, stderr=STDOUT)
+    stdout, stderr = out.communicate()
+
+    # Writes the output string to a text file for easier interpretation
+    biomass_tiles = open(os.path.join(cn.docker_tmp, 'tiles.txt'), "wb")
+    biomass_tiles.write(stdout)
+    biomass_tiles.close()
+
+    file_list = []
+
+    # Iterates through the text file to get the names of the tiles and appends them to list
+    with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
+        for line in tile:
+            num = len(line.strip('\n').split(" "))
+            tile_name = line.strip('\n').split(" ")[num - 1]
+
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
+
+                tile_id = get_tile_id(tile_name)
+                file_list.append(tile_id)
+
+    if len(file_list) > 0:
+
+        return file_list
+
+    # In case the change of directories to look for sensitivity versions yields an empty folder.
+    # This could be done better by using boto3 to check the potential s3 folders for files upfront but I couldn't figure
+    # out how to do that.
     print_log("Creating list of tiles in", source)
 
     ## For an s3 folder in a bucket using AWSCLI
@@ -210,7 +279,6 @@ def tile_list_s3(source, sensit_type='std'):
 
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
-
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
@@ -263,7 +331,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
     elif sensit_type == 'US_removals':
-        source = cn.US_annual_gain_AGB_natrl_forest_dir
+        source = cn.annual_gain_AGC_BGC_natrl_forest_US_dir
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
     elif sensit_type == 'std':
@@ -318,8 +386,66 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
                 tile_id = get_tile_id(tile_name)
                 file_list_set2.append(tile_id)
 
-    print_log("There are {} tiles in {}".format(len(file_list_set1), set1))
-    print_log("There are {} tiles in {}".format(len(file_list_set1), set2))
+    if len(file_list_set1) > 1:
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set1), set1))
+    else:
+        print_log("There are 0 tiles in {}. Looking for alternative tile set...".format(set1))
+        set1 = set1.replace(sensit_type, 'standard')
+        print_log("  Looking for alternative tile set in {}".format(set1))
+
+        out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
+        stdout, stderr = out.communicate()
+        # Writes the output string to a text file for easier interpretation
+        set1_tiles = open("set1.txt", "wb")
+        set1_tiles.write(stdout)
+        set1_tiles.close()
+
+        # Empty lists for filling with biomass tile ids
+        file_list_set1 = []
+
+        # Iterates through the first text file to get the names of the tiles and appends them to list
+        with open("set1.txt", 'r') as tile:
+
+            for line in tile:
+                num = len(line.strip('\n').split(" "))
+                tile_name = line.strip('\n').split(" ")[num - 1]
+
+                # Only tifs will be in the tile list
+                if '.tif' in tile_name:
+                    tile_id = get_tile_id(tile_name)
+                    file_list_set1.append(tile_id)
+
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set1), set1))
+
+    if len(file_list_set2) > 1:
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set2), set2))
+    else:
+        print_log("There are 0 tiles in {}. Looking for alternative tile set.".format(set2))
+        set2 = set2.replace(sensit_type, 'standard')
+        print_log("  Looking for alternative tile set in {}".format(set2))
+
+        out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
+        stdout2, stderr2 = out.communicate()
+        # Writes the output string to a text file for easier interpretation
+        set2_tiles = open("set2.txt", "wb")
+        set2_tiles.write(stdout2)
+        set2_tiles.close()
+
+        file_list_set2 = []
+
+        # Iterates through the second text file to get the names of the tiles and appends them to list
+        with open("set2.txt", 'r') as tile:
+
+            for line in tile:
+                num = len(line.strip('\n').split(" "))
+                tile_name = line.strip('\n').split(" ")[num - 1]
+
+                # Only tifs will be in the tile list
+                if '.tif' in tile_name:
+                    tile_id = get_tile_id(tile_name)
+                    file_list_set2.append(tile_id)
+
+        print_log("There are {} tiles in {}. Using this tile set.".format(len(file_list_set2), set2))
 
     # If there's a third folder supplied, iterates through that
     if set3 != None:
@@ -402,13 +528,8 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            if pattern == '':   # For Hansen loss tiles
-                if tile_name.endswith('.tif'):
-                        tile_id = get_tile_id(tile_name)
-                        file_list.append(tile_id)
-
             # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -426,7 +547,7 @@ def count_tiles_s3(source, pattern=None):
                     file_list.append(tile_id)
 
     # Count of tiles (ends in *tif)
-    return len(file_list)+1
+    return len(file_list)
 
 
 
@@ -464,9 +585,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern == '':   # For Hansen loss tiles
-                source = '{0}{1}.tif'.format(source_dir, tile_id)
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:  # For every other type of tile
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
@@ -486,28 +605,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
     # The number of tiles with the given pattern on the spot machine.
     # Special cases are below.
-    local_tile_count = len(glob.glob('*{}.tif'.format(pattern)))
+    local_tile_count = len(glob.glob('*{}*.tif'.format(pattern)))
 
-    # For tile types that have the tild_id after the pattern
-    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+    # For tile types that have the tile_id after the pattern
+    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_loss, cn.pattern_pixel_area]:
 
         local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
-
-
-    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine
-    # needs to be handled separately.
-    if pattern == '':
-
-        local_tile_count = 0
-
-        all_local_tiles = glob.glob('*tif')
-
-        for tile in all_local_tiles:
-
-            # Loss tiles are 12 characters long (just [tile_id].tif). Only tiles with that length name are counted.
-            # Using regex to identify the loss tiles would be better but I couldn't get that to work.
-            if len(tile) == 12:
-                local_tile_count = local_tile_count + 1
 
 
     print_log("There are", local_tile_count, "tiles on the spot machine with the pattern", pattern)
@@ -521,9 +624,23 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("Attempting to change source directory {0} to {1} to reflect sensitivity analysis".format(source, source_sens))
 
-        # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source_sens)
-        print_log("There are", s3_count, "tiles at", source_sens, "with the pattern", pattern)
+        # Counts how many tiles are in the sensitivity analysis source s3 folder
+        s3_count_sens = count_tiles_s3(source_sens)
+        print_log("There are", s3_count_sens, "tiles in sensitivity analysis folder", source_sens, "with the pattern", pattern)
+
+        # Counts how many tiles are in the standard model source s3 folder
+        s3_count_std = count_tiles_s3(source)
+        print_log("There are", s3_count_std, "tiles in standard model folder", source, "with the pattern", pattern)
+
+        # Decides which source folder to use the count from: standard model or sensitivity analysis.
+        # If there are sensitivity analysis tiles, that source folder should be used.
+        # Otherwise, the standard folder should be used.
+        if s3_count_sens != 0:
+            s3_count = s3_count_sens
+            source_final = source_sens
+        else:
+            s3_count = s3_count_std
+            source_final = source
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
@@ -534,15 +651,11 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # the sensitivity folder is downloaded
         if s3_count > 7:
 
-            print_log("Source directory used:", source_sens)
+            print_log("Source directory used:", source_final)
 
-            cmd = ['aws', 's3', 'cp', source_sens, dest, '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'cp', source_final, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                log_subprocess_output(process.stdout)
+            log_subprocess_output_full(cmd)
 
             print_log('\n')
 
@@ -556,11 +669,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                log_subprocess_output(process.stdout)
+            log_subprocess_output_full(cmd)
 
             print_log('\n')
 
@@ -581,10 +690,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
                '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
 
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
+        # cmd = ['aws', 's3', 'cp', source, dest, '--recursive',
+        #        '--exclude', '*', '--include', '{}'.format(pattern), '--no-progress']
+        log_subprocess_output_full(cmd)
 
         print_log('\n')
 
@@ -595,94 +703,116 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_file_download(source, dest, sensit_type):
 
+    s3 = boto3.resource('s3')
+
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
     file_name = get_tile_name(source)
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
-    # has a sensitivity analysis path on s3
+    # has a sensitivity analysis path on s3.
+    # Files that have standard and sensitivity analysis variants are handled differently from ones without variants
+    # Hierarchy for getting tiles (start with #1, end with #4):
+    # 1. Use sensitivity tile if already downloaded
+    # 2. Download sensitivity if it exists
+    # 3. Use standard tile if already downloaded
+    # 4. Download standard tile if it exists
     if sensit_type != 'std' and 'standard' in dir:
 
         # Creates directory and file names according to sensitivity analysis type
         dir_sens = dir.replace('standard', sensit_type)
         file_name_sens = file_name[:-4] + '_' + sensit_type + '.tif'
 
-        # First attempt is to try to download the sensitivity analysis version
+        # Doesn't download the tile if sensitivity version is already on the spot machine
+        print_log("Option 1: Checking if {} is already on spot machine...".format(file_name_sens))
+        if os.path.exists(file_name_sens):
+            print_log("  Option 1 success:", file_name_sens, "already downloaded" + "\n")
+            return
+        else:
+            print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name_sens))
+            print_log("Option 2: Checking for sensitivity analysis tile {0}/{1} on s3...".format(dir_sens[15:], file_name_sens))
+
+        # If not already downloaded, first tries to download the sensitivity analysis version
         try:
-            # Doesn't download the tile if it's already on the spot machine
-            if os.path.exists(file_name_sens):
-                print_log(file_name_sens, "already downloaded" + "\n")
-                return
-
-            # If not already on the spot machine, it downloads the file
+            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
+            s3.Object('gfw2-data', '{0}/{1}'.format(dir_sens[15:], file_name_sens)).load()
+            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
+            log_subprocess_output_full(cmd)
+            print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
+            print_log("")
+            return
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print_log("  Option 2 failure: Tile {0}/{1} not found on s3. Looking for standard model source...".format(dir_sens, file_name_sens))
             else:
-                source = os.path.join(dir_sens, file_name_sens)
-                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+                print_log("  Option 2 failure: Some other error occurred while looking for {0}/{1}".format(dir_sens, file_name_sens))
 
-                # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-                process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                with process.stdout:
-                    log_subprocess_output(process.stdout)
-
-                print_log(file_name_sens, "not previously downloaded. Now downloaded to", dest, '\n')
-
-        # Second attempt is to download the standard version of the file.
+        # Next option is to use standard version of tile if on spot machine.
         # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
         # for this date.
-        except:
-            if os.path.exists(file_name):
-                print_log(file_name, "already downloaded" + "\n")
-                return
-
-            else:
-                source = os.path.join(dir, file_name)
-                try:
-                    cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-
-                    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-                    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                    with process.stdout:
-                        log_subprocess_output(process.stdout)
-
-                    print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
-                except:
-                    print_log(source, 'does not exist in standard model or sensitivity model' + '\n')
-
-    # If not a sensitivity run, the standard file is downloaded
-    else:
-        if os.path.exists(os.path.join(dest, file_name)):
-
-            print_log(file_name, "already downloaded" + "\n")
+        print_log("Option 3: Checking if standard version {} is already on spot machine...".format(file_name))
+        if os.path.exists(file_name):
+            print_log("  Option 3 success:", file_name, "already downloaded" + "\n")
             return
-
         else:
-            source = os.path.join(dir, file_name)
-            try:
-                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            print_log("  Option 3 failure: {} is not already on spot machine. ".format(file_name))
+            print_log("Option 4: Looking for standard version of {} to download...".format(file_name))
 
-                # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-                process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-                with process.stdout:
-                    log_subprocess_output(process.stdout)
+        # If not already downloaded, final optionis to try to download the standard version of the tile.
+        # If this doesn't work, the script throws a fatal error because no variant of this tile was found.
+        try:
+            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
+            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            log_subprocess_output_full(cmd)
+            print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source))
+            print_log("")
+            return
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print_log("  Option 4 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+            else:
+                print_log("  Option 4 failure: Some other error occurred while looking for {0}".format(source))
+            print_log("")
 
-                print_log(file_name, "not previously downloaded. Now downloaded to", dest, '\n')
-            except:
-                print_log(source, 'does not exist-- check if this is expected to exist' + '\n')
+    # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
+    else:
+        print_log("Option 1: Checking if {} is already on spot machine...".format(file_name))
+        if os.path.exists(os.path.join(dest, file_name)):
+            print_log("  Option 1 success:", os.path.join(dest, file_name), "already downloaded" + "\n")
+            return
+        else:
+            print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name))
+            print_log("Option 2: Checking for tile {} on s3...".format(source))
 
+        source = os.path.join(dir, file_name)
+
+        try:
+            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
+            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            log_subprocess_output_full(cmd)
+            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source))
+            print_log("")
+            return
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == "404":
+                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+            else:
+                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source))
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
+    print_log("Uploading tiles with pattern {0} to {1}".format(pattern, upload_dir))
+
     cmd = ['aws', 's3', 'cp', cn.docker_base_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
            '--recursive', '--no-progress']
-
     try:
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
+        log_subprocess_output_full(cmd)
+        print_log("  Upload of tiles with {} pattern complete!".format(pattern))
     except:
-        print_log("Error uploading output tile")
+        print_log("Error uploading output tile(s)")
 
 
 # Uploads tile to specified location
@@ -694,25 +824,29 @@ def upload_final(upload_dir, tile_id, pattern):
     cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
 
     try:
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            log_subprocess_output(process.stdout)
+        log_subprocess_output_full(cmd)
     except:
         print_log("Error uploading output tile")
 
 
-# This version of checking for data is bad because it can miss tiles that have very little data in them
-def check_for_data_old(out_tile):
+# This version of checking for data is bad because it can miss tiles that have very little data in them.
+# But it takes less memory than using rasterio, so it's good for local tests
+def check_and_delete_if_empty_light(tile_id, output_pattern):
+
+    tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
 
     # Source: http://gis.stackexchange.com/questions/90726
     # Opens raster and chooses band to find min, max
-    gtif = gdal.Open(out_tile)
+    gtif = gdal.Open(tile_name)
     srcband = gtif.GetRasterBand(1)
     stats = srcband.GetStatistics(True, True)
     print_log("  Tile stats =  Minimum=%.3f, Maximum=%.3f, Mean=%.3f, StdDev=%.3f" % (stats[0], stats[1], stats[2], stats[3]))
 
-    return stats
+    if stats[0] > 0:
+        print_log("  Data found in {}. Keeping file...".format(tile_name))
+    else:
+        print_log("  No data found. Deleting {}...".format(tile_name))
+        os.remove(tile_name)
 
 
 # This version of checking for data in a tile is more robust
@@ -720,11 +854,25 @@ def check_for_data(tile):
     with rasterio.open(tile) as img:
         msk = img.read_masks(1).astype(bool)
     if msk[msk].size == 0:
-        print_log("Tile {} is empty".format(tile))
+        # print_log("Tile {} is empty".format(tile))
         return True
     else:
-        print_log("Tile {} is not empty".format(tile))
+        # print_log("Tile {} is not empty".format(tile))
         return False
+
+
+def check_and_delete_if_empty(tile_id, output_pattern):
+
+    tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
+
+    print_log("Checking if {} contains any data...".format(tile_name))
+    no_data = check_for_data(tile_name)
+
+    if no_data:
+        print_log("  No data found in {}. Deleting tile...".format(tile_name))
+        os.remove(tile_name)
+    else:
+        print_log("  Data found in {}. Keeping tile to copy to s3...".format(tile_name))
 
 
 # Checks if there's data in a tile and, if so, uploads it to s3
@@ -786,11 +934,13 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = coords(tile_id)
 
-    out_file = '{0}_{1}.tif'.format(tile_id, out_pattern)
+    out_tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
-            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_file]
-    check_call(cmd)
+            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_tile]
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
 
     end_of_fx_summary(start, tile_id, out_pattern)
 
@@ -799,42 +949,69 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
-    check_call(cmd)
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
 
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
-def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, tr=None, ot=None, name_field=None, anodata=None):
+def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksizex, blocksizey, tr=None, ot=None, name_field=None, anodata=None):
     cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
 
            # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksizex), '-co', 'BLOCKYSIZE={}'.format(blocksizey),
            '-te', str(xmin), str(ymin), str(xmax), str(ymax),
            '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
            anodata, in_shape, out_tif]
-
-    check_call(cmd)
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
 
     return out_tif
 
 
+def mp_rasterize(tile_id, in_shape, out_pattern, blocksizex, blocksizey, tr, ot, anodata, name_field):
+
+    # Start time
+    start = datetime.datetime.now()
+
+    print_log("Getting extent of", tile_id)
+    xmin, ymin, xmax, ymax = coords(tile_id)
+
+    out_tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
+
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksizex), '-co', 'BLOCKYSIZE={}'.format(blocksizey),
+           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
+           anodata, in_shape, out_tile]
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        log_subprocess_output(process.stdout)
+
+    end_of_fx_summary(start, tile_id, out_pattern)
+
+
 # Creates a tile of all 0s for any tile passed to it.
-# Uses the pixel area tile for information about the tile.
+# Uses the Hansen loss tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
 def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
     # Creates tile names for standard and sensitivity analyses.
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
     # Thus, it has to be prepared for either one.
-    file_name = os.path.join(folder, '{0}_{1}.tif'.format(tile_id, pattern))
-    file_name_sens = os.path.join(folder, '{0}_{1}_{2}.tif'.format(tile_id, pattern, sensit_type))
+    file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
+    file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name)))
+        return
 
     # Checks if the sensitivity analysis file exists. If it does, a blank tile isn't created.
     elif os.path.exists(file_name_sens):
         print_log('{} exists. Not creating a blank tile.'.format(os.path.join(folder, file_name_sens)))
+        return
 
     # If neither a standard tile nor a sensitivity analysis tile exists, a blank tile is created.
     else:
@@ -848,28 +1025,19 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
-        if os.path.exists(os.path.join(folder, '{0}.tif'.format(tile_id))):
+        if os.path.exists(os.path.join(folder, '{0}_{1}.tif'.format(cn.pattern_loss, tile_id))):
             print_log("Hansen loss tile exists for {}. Using that as template for blank tile.".format(tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}/{1}.tif'.format(folder, tile_id)]
+                   '{0}/{1}_{2}.tif'.format(folder, cn.pattern_loss, tile_id)]
             check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine
         else:
 
-            # If the Hansen tile isn't already downloaded, it downloads the Hansen tile
-            try:
-                s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile_id),
-                                 os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
-                print_log("Downloaded Hansen loss tile for", tile_id, "to create a blank tile")
-
-            # If there is no Hansen tile, it downloads the pixel area tile instead
-            except:
-
-                s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
-                                 os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
-                print_log("Downloaded pixel area tile for", tile_id, "to create a blank tile")
+            s3_file_download('{0}{1}_{2}.tif'.format(cn.pixel_area_dir, cn.pattern_pixel_area, tile_id),
+                             os.path.join(folder, '{0}_{1}.tif'.format(tile_id, 'empty_tile_template')), 'std')
+            print_log("Downloaded pixel area tile for", tile_id, "to create a blank tile")
 
             # Determines what pattern to use (standard or sensitivity) based on the first tile in the list
             tile_list= tile_list_spot_machine(folder, pattern)
@@ -882,6 +1050,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
                    '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             check_call(cmd)
             print_log("Created raster of all 0s for", file_name)
+
 
 # Creates a txt that will have blank dummy tiles listed in it for certain scripts that need those
 def create_blank_tile_txt():
@@ -908,13 +1077,11 @@ def name_aggregated_output(pattern, thresh, sensit_type):
 
     out_pattern = re.sub('ha_', '', pattern)
     # print out_pattern
-    out_pattern = re.sub('2001_15', 'per_year', out_pattern)
+    out_pattern = re.sub('2001_{}'.format(cn.loss_years), 'per_year', out_pattern)
     # print out_pattern
     out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
     # print out_pattern
-    out_pattern = re.sub('_t_', '_Mt_', out_pattern)
-    # print out_pattern
-    out_pattern = re.sub('_10km_', '_per_year_10km_', out_pattern)
+    out_pattern = re.sub('_Mg_', '_Mt_', out_pattern)
     # print out_pattern
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print out_pattern
@@ -1018,7 +1185,8 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
 
 # Determines what stages should actually be run
-def analysis_stages(stage_list, stage_input, run_through, include_mangroves = None, include_plantations = None):
+def analysis_stages(stage_list, stage_input, run_through,
+                    include_mangroves = None, include_us = None, include_per_pixel = None):
 
     # If user wants all stages, all named stages (i.e. everything except 'all') are returned
     if stage_input == 'all':
@@ -1037,16 +1205,15 @@ def analysis_stages(stage_list, stage_input, run_through, include_mangroves = No
 
             stage_output = stage_input.split()
 
-    # Flags to include mangroves and/or planted forests in the stages to run
-    if include_plantations == 'true':
-        stage_output.insert(0, 'annual_gain_rate_planted_forest')
-        stage_output.insert(1, 'gain_year_count_planted_forest')
-        stage_output.insert(2, 'cumulative_gain_planted_forest')
+    # Flags to include mangrove forest removal rates and US-specific removal rates in the stages to run
+    if include_us == 'true':
+        stage_output.insert(0, 'annual_removals_us')
 
     if include_mangroves == 'true':
-        stage_output.insert(0, 'annual_gain_rate_mangrove')
-        stage_output.insert(1, 'gain_year_count_mangrove')
-        stage_output.insert(2, 'cumulative_gain_mangrove')
+        stage_output.insert(0, 'annual_removals_mangrove')
+
+    if include_per_pixel == 'true':
+        stage_output.extend('per_pixel_results')
 
     return stage_output
 
@@ -1078,3 +1245,61 @@ def replace_output_dir_date(output_dir_list, run_date):
     print_log(output_dir_list)
     print_log("")
     return output_dir_list
+
+# Adds various metadata tags to the raster
+def add_rasterio_tags(output_dst, sensit_type):
+
+    # based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
+
+    if sensit_type == 'std':
+        sensit_type = 'standard model'
+
+    output_dst.update_tags(
+        model_version=cn.version)
+    output_dst.update_tags(
+        date_created=date_today)
+    output_dst.update_tags(
+        model_type=sensit_type)
+    output_dst.update_tags(
+        originator='Global Forest Watch at the World Resources Institute')
+    output_dst.update_tags(
+        model_year_range='2001 through 20{}'.format(cn.loss_years)
+    )
+
+    return output_dst
+
+
+def add_universal_metadata_tags(output_raster, sensit_type):
+
+    print_log("Adding universal metadata tags to", output_raster)
+
+    cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
+           '-mo', 'date_created={}'.format(date_today),
+           '-mo', 'model_type={}'.format(sensit_type),
+           '-mo', 'originator=Global Forest Watch at the World Resources Institute',
+           '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years),
+           output_raster]
+    log_subprocess_output_full(cmd)
+
+# Adds metadata tags to raster.
+# Certain tags are included for all rasters, while other tags can be customized for each input set.
+def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
+
+    output_raster = '{0}_{1}.tif'.format(tile_id, output_pattern)
+
+    print_log("Adding metadata tags to", output_raster)
+
+    # Universal metadata tags
+    cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
+           '-mo', 'date_created={}'.format(date_today),
+           '-mo', 'model_type={}'.format(sensit_type),
+           '-mo', 'originator=Global Forest Watch at the World Resources Institute',
+           '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years)]
+
+    # Metadata tags specifically for this dataset
+    for metadata in metadata_list:
+        cmd += ['-mo', metadata]
+
+    cmd += [output_raster]
+
+    log_subprocess_output_full(cmd)

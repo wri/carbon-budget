@@ -64,7 +64,9 @@ float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
 int model_years;    // How many loss years are in the model
-model_years = 15;
+model_years = 19;
+string model_years_str;
+model_years_str = to_string(model_years);
 
 int tropical;       // The ecozone code for the tropics
 tropical = 1;
@@ -77,34 +79,34 @@ boreal = 2;
 
 // Input files
 // Carbon pools
-string agc_name = infolder + "/" + tile_id + "_t_AGC_ha_emis_year.tif";
-string bgc_name = infolder + "/" + tile_id + "_t_BGC_ha_emis_year.tif";
-string dead_name = infolder + "/" + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
-string litter_name = infolder + "/" + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
-string soil_name = infolder + "/" + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
+string agc_name = infolder + tile_id + "_Mg_AGC_ha_emis_year.tif";
+string bgc_name = infolder + tile_id + "_Mg_BGC_ha_emis_year.tif";
+string dead_name = infolder + tile_id + "_Mg_deadwood_C_ha_emis_year_2000.tif";
+string litter_name = infolder + tile_id + "_Mg_litter_C_ha_emis_year_2000.tif";
+string soil_name = infolder + tile_id + "_Mg_soil_C_ha_emis_year_2000.tif";
 
 // Other inputs
-string loss_name = infolder + "/" + tile_id + "_loss_pre_2000_plant_masked.tif";
-string burn_name = infolder + "/" + tile_id + "_burnyear.tif";
-string ecozone_name = infolder + "/" + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
-string climate_name = infolder + "/" + tile_id + "_climate_zone_processed.tif";
-string drivermodel_name = infolder + "/" + tile_id + "_tree_cover_loss_driver_processed.tif";
-string peat_name = infolder + "/" + tile_id + "_peat_mask_processed.tif";
-string ifl_primary_name = infolder + "/" + tile_id + "_ifl_2000_primary_2001_merged.tif";
-string plant_name = infolder + "/" + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+string loss_name = infolder + "GFW2019_" + tile_id + ".tif";
+string burn_name = infolder + tile_id + "_burnyear.tif";
+string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
+string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
+string drivermodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
+string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
+string ifl_primary_name = infolder + tile_id + "_ifl_2000_primary_2001_merged.tif";
+string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name4  = tile_id + "_gross_emis_wildfire_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name5  = tile_id + "_gross_emis_urbanization_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name6  = tile_id + "_gross_emis_no_driver_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil_no_shifting_ag.tif";
-string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_no_shifting_ag.tif";
+string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
+string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_no_shifting_ag.tif";
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
@@ -170,8 +172,8 @@ INGDAL13 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND13 = INGDAL13->GetRasterBand(1);
 
 // The rest of the code runs on the size of INBAND3. This can be changed.
-xsize=INBAND3->GetXSize();
-ysize=INBAND3->GetYSize();
+xsize=INBAND1->GetXSize();
+ysize=INBAND1->GetYSize();
 INGDAL1->GetGeoTransform(GeoTransform);
 
 ulx=GeoTransform[0];
@@ -183,7 +185,7 @@ pixelsize=GeoTransform[1];
 //ysize = 3500;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
-cout << "Gross emissions no_shifting_ag model C++ parameters:" << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
+cout << "Gross emissions no_shifting_ag model C++ parameters: " << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -352,7 +354,7 @@ for(x=0; x<xsize; x++)
 		float outdata12 = 0;  // all drivers, non-CO2
 		float outdata20 = 0;  // flowchart node
 
-        // Only evaluates pixels that have loss and carbon
+                // Only evaluates pixels that have loss and carbon. By definition, all pixels with carbon are in the model extent.
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
 
@@ -391,7 +393,8 @@ for(x=0; x<xsize; x++)
 		    // Each driver is an output raster and has its own emissions model. outdata20 is the code for each
             // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
 
-			// Emissions model for commodity-driven deforestation and shifting ag (shifting ag uses commodity decision tree)
+			// Emissions model for commodity-driven deforestation and shifting ag
+			// (shifting ag uses commodity decision tree for this sensitivity analysis)
 			if ((drivermodel_data[x] == 1) || (drivermodel_data[x] == 2))
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
