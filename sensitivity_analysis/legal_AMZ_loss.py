@@ -2,7 +2,7 @@ import numpy as np
 import datetime
 import rasterio
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import sys
 sys.path.append('../')
 import constants_and_names as cn
@@ -37,15 +37,15 @@ def legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern):
         # Checks whether there are mangrove or planted forest tiles. If so, they are opened.
         try:
             plantations_src = rasterio.open(plantations)
-            print "    Planted forest tile found for {}".format(tile_id)
+            uu.print_log("    Planted forest tile found for {}".format(tile_id))
         except:
-            print "    No planted forest tile for {}".format(tile_id)
+            uu.print_log("    No planted forest tile for {}".format(tile_id))
 
         try:
             mangroves_src = rasterio.open(mangroves)
-            print "    Mangrove tile found for {}".format(tile_id)
+            uu.print_log("    Mangrove tile found for {}".format(tile_id))
         except:
-            print "    No mangrove tile for {}".format(tile_id)
+            uu.print_log("    No mangrove tile for {}".format(tile_id))
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -108,7 +108,7 @@ def tile_names(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that only had loss
 def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 
-    print "Gain year count for loss only pixels:", tile_id
+    uu.print_log("Gain year count for loss only pixels:", tile_id)
 
     # Names of the input tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
@@ -121,8 +121,11 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
     loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', extent, loss_calc, loss_outfilearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
-    subprocess.check_call(cmd)
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
@@ -135,7 +138,7 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 # loss-and-gain covers the loss pixel side of things.
 def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 
-    print "Gain year count for non-loss pixels:", tile_id
+    uu.print_log("Gain year count for non-loss pixels:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -153,8 +156,11 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     no_change_outfilename = '{}_growth_years_no_change.tif'.format(tile_id)
     no_change_outfilearg = '--outfile={}'.format(no_change_outfilename)
     cmd = ['gdal_calc.py', '-A', loss_vrt, '-B', extent, '-C', biomass, no_change_calc,
-           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
-    subprocess.check_call(cmd)
+           no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
@@ -163,7 +169,7 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that had both loss and gain
 def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type):
 
-    print "Gain year count for loss and gain pixels:", tile_id
+    uu.print_log("Gain year count for loss and gain pixels:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -176,8 +182,11 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
     loss_and_gain_outfilename = '{}_growth_years_loss_and_gain.tif'.format(tile_id)
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
     cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', extent, loss_and_gain_calc,
-           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte']
-    subprocess.check_call(cmd)
+           loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
@@ -186,7 +195,7 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
 # Merges the four gain year count tiles above to create a single gain year count tile
 def legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern):
 
-    print "Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id)
+    uu.print_log("Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id))
 
     # start time
     start = datetime.datetime.now()
@@ -200,7 +209,10 @@ def legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern):
     age_outfile = '{}_{}.tif'.format(tile_id, output_pattern)
     cmd = ['gdal_merge.py', '-o', age_outfile, loss_outfilename, no_change_outfilename, loss_and_gain_outfilename,
            '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte']
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, output_pattern)

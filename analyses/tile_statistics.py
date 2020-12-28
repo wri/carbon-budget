@@ -1,6 +1,6 @@
 from osgeo import gdal
 import numpy as np
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import sys
 sys.path.append('../')
@@ -8,14 +8,12 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates a range of tile statistics
-def create_tile_statistics(tile, sensit_type):
-
-    tile_stats = '{0}_{1}_{2}'.format(uu.date_today, sensit_type, cn.tile_stats_pattern)
+def create_tile_statistics(tile, sensit_type, tile_stats_txt):
 
     # Extracts the tile id from the full tile name
     tile_id = uu.get_tile_id(tile)
 
-    print "Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id)
+    uu.print_log("Calculating tile statistics for {0}, tile id {1}...".format(tile, tile_id))
 
     # start time
     start = datetime.datetime.now()
@@ -25,7 +23,7 @@ def create_tile_statistics(tile, sensit_type):
     focus_tile = gdal.Open(tile)
 
     nodata = uu.get_raster_nodata_value(tile)
-    print "NoData value =", nodata
+    uu.print_log("NoData value =", nodata)
 
     # Turns the raster into a numpy array
     tile_array = np.array(focus_tile.GetRasterBand(1).ReadAsArray())
@@ -51,13 +49,14 @@ def create_tile_statistics(tile, sensit_type):
     # Argument for outputting file
     out = '--outfile={}'.format(outname)
 
-    print "Converting {} from /ha to /pixel...".format(tile)
+    uu.print_log("Converting {} from /ha to /pixel...".format(tile))
     cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
-           '--overwrite']
-    subprocess.check_call(cmd)
-    print "{} converted to /pixel".format(tile)
+           '--overwrite', '--quiet']
+    uu.log_subprocess_output_full(cmd)
 
-    print "Converting value/pixel tile {} to numpy array...".format(tile)
+    uu.print_log("{} converted to /pixel".format(tile))
+
+    uu.print_log("Converting value/pixel tile {} to numpy array...".format(tile))
     # Opens raster with value per pixel
     value_per_pixel = gdal.Open(outname)
 
@@ -67,7 +66,7 @@ def create_tile_statistics(tile, sensit_type):
     # Flattens the pixel area numpy array to a single dimension
     value_per_pixel_array_flat = value_per_pixel_array.flatten()
 
-    print "Converted {} to numpy array".format(tile)
+    uu.print_log("Converted {} to numpy array".format(tile))
 
     # Empty statistics list
     stats = [None] * 13
@@ -107,10 +106,10 @@ def create_tile_statistics(tile, sensit_type):
 
     stats_no_brackets = ', '.join(map(str, stats))
 
-    print stats_no_brackets
+    uu.print_log(stats_no_brackets)
 
     # Adds the tile's statistics to the txt file
-    with open(tile_stats, 'a+') as f:
+    with open(tile_stats_txt, 'a+') as f:
         f.write(stats_no_brackets + '\r\n')
     f.close()
 

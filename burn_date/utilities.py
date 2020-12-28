@@ -1,9 +1,13 @@
 
 import os
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 import numpy as np
 from osgeo import gdal
 from gdalconst import GA_ReadOnly
+import sys
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
 
 
 def hdf_to_array(hdf):
@@ -19,21 +23,10 @@ def makedir(folder):
         os.mkdir(folder)
 
 
-def wgetloss(tile_id):
-    print "download hansen loss tile"
-
-    hansen_tile = '{}_loss.tif'.format(tile_id)
-    # cmd = ['wget', r'http://glad.geog.umd.edu/Potapov/GFW_2017/tiles_2017/{}'.format(tile_id),
-    #       '-O', hansen_tile]
-    cmd = ['wget', r'https://glad.umd.edu/Potapov/GFW_2018/forest_loss_2018/{}.tif'.format(tile_id)]
-
-    subprocess.check_call(cmd)    
-    return hansen_tile
-
-
 def raster_to_array(raster):
     ds = gdal.Open(raster)
     array = np.array(ds.GetRasterBand(1).ReadAsArray())
+    # array = np.array(ds.GetRasterBand(1).ReadAsArray(win_xsize = 5000, win_ysize = 5000)) # For local testing. Reading in the full array is too large.
     
     return array
 
@@ -138,56 +131,12 @@ def makedir(dir):
 
 def download_df(year, hv_tile, output_dir):
         include = '*A{0}*{1}*'.format(year, hv_tile)
-        cmd = ['aws', 's3', 'cp', 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/20190322/raw_hdf/', output_dir, '--recursive', '--exclude',
+        cmd = ['aws', 's3', 'cp', cn.burn_year_hdf_raw_dir, output_dir, '--recursive', '--exclude',
                "*", '--include', include]
-        subprocess.check_call(cmd)
+
+        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            uu.log_subprocess_output(process.stdout)
 
 
-def remove_list_files(file_list):
-    for file in file_list:
-        try:
-            print "Removing ", file
-            os.remove(file)
-        except:
-            pass
-
-def get_extent(tif):
-
-    print "Getting extent of", tif
-
-    data = gdal.Open(tif, GA_ReadOnly)
-    geoTransform = data.GetGeoTransform()
-    minx = geoTransform[0]
-    maxy = geoTransform[3]
-    maxx = minx + geoTransform[1] * data.RasterXSize
-    miny = maxy + geoTransform[5] * data.RasterYSize
-    print [minx, miny, maxx, maxy]
-    data = None
-
-    return minx, miny, maxx, maxy
-
-# Lists the tiles in a folder in s3
-def list_tiles(source):
-
-    ## For an s3 folder in a bucket using AWSCLI
-    # Captures the list of the files in the folder
-    out = subprocess.Popen(['aws', 's3', 'ls', source], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
-
-    # Writes the output string to a text file for easier interpretation
-    Hansen_tiles = open("Hansen_tiles.txt", "w")
-    Hansen_tiles.write(stdout)
-    Hansen_tiles.close()
-
-    file_list = []
-
-    # Iterates through the text file to get the names of the tiles and appends them to list
-    with open("Hansen_tiles.txt", 'r') as tile:
-        for line in tile:
-
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
-            # tile_name_short = tile_name[0:8]
-            file_list.append(tile_name)
-
-    return file_list

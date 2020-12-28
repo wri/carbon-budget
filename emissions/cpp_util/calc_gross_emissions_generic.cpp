@@ -51,7 +51,7 @@ string sensit_type = argv[2];   // For standard model or sensitivity analyses th
                              // Used to name the input carbon pool tiles and output gross emissions tiles.
 string infolder = argv[3];     // The folder which has all the input files
 
-cout << infolder << endl;
+cout << "Gross emissions C++ infolder:" << infolder << endl;
 
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
@@ -64,7 +64,9 @@ float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
 int model_years;    // How many loss years are in the model
-model_years = 15;
+model_years = 19;
+string model_years_str;
+model_years_str = to_string(model_years);
 
 int tropical;       // The ecozone code for the tropics
 tropical = 1;
@@ -79,55 +81,57 @@ boreal = 2;
 // Carbon pools
 
 // Carbon pools default to the standard model names
-string agc_name = infolder + "/" + tile_id + "_t_AGC_ha_emis_year.tif";
-string bgc_name = infolder + "/" + tile_id + "_t_BGC_ha_emis_year.tif";
-string dead_name = infolder + "/" + tile_id + "_t_deadwood_C_ha_emis_year_2000.tif";
-string litter_name = infolder + "/" + tile_id + "_t_litter_C_ha_emis_year_2000.tif";
-string soil_name = infolder + "/" + tile_id + "_t_soil_C_ha_emis_year_2000.tif";
+string agc_name = infolder + tile_id + "_Mg_AGC_ha_emis_year.tif";
+string bgc_name = infolder + tile_id + "_Mg_BGC_ha_emis_year.tif";
+string dead_name = infolder + tile_id + "_Mg_deadwood_C_ha_emis_year_2000.tif";
+string litter_name = infolder + tile_id + "_Mg_litter_C_ha_emis_year_2000.tif";
+string soil_name = infolder + tile_id + "_Mg_soil_C_ha_emis_year_2000.tif";
 
 if (sensit_type != "std") {
-    agc_name = infolder + "/" + tile_id + "_t_AGC_ha_emis_year_" + sensit_type +".tif";
-    bgc_name = infolder + "/" + tile_id + "_t_BGC_ha_emis_year_" + sensit_type +".tif";
-    dead_name = infolder + "/" + tile_id + "_t_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
-    litter_name = infolder + "/" + tile_id + "_t_litter_C_ha_emis_year_2000_" + sensit_type +".tif";
-    soil_name = infolder + "/" + tile_id + "_t_soil_C_ha_emis_year_2000_" + sensit_type +".tif";
+    agc_name = infolder + tile_id + "_Mg_AGC_ha_emis_year_" + sensit_type +".tif";
+    bgc_name = infolder + tile_id + "_Mg_BGC_ha_emis_year_" + sensit_type +".tif";
+    dead_name = infolder + tile_id + "_Mg_deadwood_C_ha_emis_year_2000_" + sensit_type +".tif";
+    litter_name = infolder + tile_id + "_Mg_litter_C_ha_emis_year_2000_" + sensit_type +".tif";
+    soil_name = infolder + tile_id + "_Mg_soil_C_ha_emis_year_2000_" + sensit_type +".tif";
 }
 
 // Other inputs
-string loss_name = infolder + "/" + tile_id + "_loss_pre_2000_plant_masked.tif";
-string burn_name = infolder + "/" + tile_id + "_burnyear.tif";
-string ecozone_name = infolder + "/" + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
-string climate_name = infolder + "/" + tile_id + "_climate_zone_processed.tif";
-string drivermodel_name = infolder + "/" + tile_id + "_tree_cover_loss_driver_processed.tif";
-string peat_name = infolder + "/" + tile_id + "_peat_mask_processed.tif";
-string ifl_primary_name = infolder + "/" + tile_id + "_ifl_2000_primary_2001_merged.tif";
-string plant_name = infolder + "/" + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+string loss_name = infolder + "GFW2019_" + tile_id + ".tif";
+if (sensit_type == "legal_Amazon_loss");
+    loss_name = infolder + tile_id + "_legal_Amazon_annual_loss_2001_2019.tif";
+string burn_name = infolder + tile_id + "_burnyear.tif";
+string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
+string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
+string drivermodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
+string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
+string ifl_primary_name = infolder + tile_id + "_ifl_2000_primary_2001_merged.tif";
+string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
 // Output files default to the standard model names
-string out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_soil.tif";
-string out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_soil.tif";
-string out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_soil.tif";
-string out_name4  = tile_id + "_gross_emis_wildfire_t_CO2e_ha_biomass_soil.tif";
-string out_name5  = tile_id + "_gross_emis_urbanization_t_CO2e_ha_biomass_soil.tif";
-string out_name6  = tile_id + "_gross_emis_no_driver_t_CO2e_ha_biomass_soil.tif";
-string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_t_CO2e_ha_biomass_soil.tif";
-string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomass_soil.tif";
-string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil.tif";
-string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil.tif";
+string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + ".tif";
+string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + ".tif";
 
 if (sensit_type != "std") {
-    out_name1  = tile_id + "_gross_emis_commodity_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name2  = tile_id + "_gross_emis_shifting_ag_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name3  = tile_id + "_gross_emis_forestry_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name4  = tile_id + "_gross_emis_wildfire_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name5  = tile_id + "_gross_emis_urbanization_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name6  = tile_id + "_gross_emis_no_driver_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_t_CO2e_ha_biomass_soil_" + sensit_type +".tif";
-    out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_" + sensit_type +".tif";
+    out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
+    out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_" + sensit_type + ".tif";
 }
 
 
@@ -195,8 +199,8 @@ INGDAL13 = (GDALDataset *) GDALOpen(plant_name.c_str(), GA_ReadOnly );
 INBAND13 = INGDAL13->GetRasterBand(1);
 
 // The rest of the code runs on the size of INBAND3. This can be changed.
-xsize=INBAND3->GetXSize();
-ysize=INBAND3->GetYSize();
+xsize=INBAND1->GetXSize();
+ysize=INBAND1->GetYSize();
 INGDAL1->GetGeoTransform(GeoTransform);
 
 ulx=GeoTransform[0];
@@ -208,7 +212,7 @@ pixelsize=GeoTransform[1];
 //ysize = 3500;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
-cout << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
+cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
@@ -380,7 +384,7 @@ for(x=0; x<xsize; x++)
 		float outdata12 = 0;  // all drivers, non-CO2
 		float outdata20 = 0;  // flowchart node
 
-        // Only evaluates pixels that have loss and carbon
+        // Only evaluates pixels that have loss and carbon. By definition, all pixels with carbon are in the model extent.
 		if (loss_data[x] > 0 && agc_data[x] > 0)
         {
 
@@ -513,7 +517,7 @@ for(x=0; x<xsize; x++)
 						        outdata1b = Biomass_tCO2e_yesfire_non_CO2;
 						        outdata20 = 16;
 						    }
-						    if (plant_data[x] == 0)     // Commodity, not peat, burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Commodity, not peat, burned, temperate, not plantation
 						    {
 						        outdata1a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
 						        outdata1b = Biomass_tCO2e_yesfire_non_CO2;
@@ -531,7 +535,7 @@ for(x=0; x<xsize; x++)
 						        outdata1b = 0;
 						        outdata20 = 17;
 						    }
-						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, tropical, no plantation
+						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, tropical, not plantation
 						    {
 						        outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata1b = 0;
@@ -552,7 +556,7 @@ for(x=0; x<xsize; x++)
 						        outdata1b = 0;
 						        outdata20 = 19;
 						    }
-						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Commodity, not peat, not burned, temperate, not plantation
 						    {
 						        outdata1a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata1b = 0;
@@ -687,7 +691,7 @@ for(x=0; x<xsize; x++)
 						        outdata2b = Biomass_tCO2e_yesfire_non_CO2;
 						        outdata20 = 27;
 						    }
-						    if (plant_data[x] == 0)     // Shifting ag, not peat, burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Shifting ag, not peat, burned, temperate, not plantation
 						    {
 						        outdata2a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
 						        outdata2b = Biomass_tCO2e_yesfire_non_CO2;
@@ -705,7 +709,7 @@ for(x=0; x<xsize; x++)
 						        outdata2b = 0;
 						        outdata20 = 28;
 						    }
-						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, tropical, no plantation
+						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, tropical, not plantation
 						    {
 						        outdata2a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata2b = 0;
@@ -756,7 +760,7 @@ for(x=0; x<xsize; x++)
 						        outdata2b = 0;
 						        outdata20 = 291;
 						    }
-						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Shifting ag, not peat, not burned, temperate, not plantation
 						    {
 						        outdata2a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata2b = 0;
@@ -978,7 +982,7 @@ for(x=0; x<xsize; x++)
 						        outdata5b = Biomass_tCO2e_yesfire_non_CO2;
 						        outdata20 = 56;
 						    }
-						    if (plant_data[x] == 0)     // Urbanization, not peat, burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Urbanization, not peat, burned, temperate, not plantation
 						    {
 						        outdata5a = Biomass_tCO2e_yesfire_CO2_only + minsoil;
 						        outdata5b = Biomass_tCO2e_yesfire_non_CO2;
@@ -996,7 +1000,7 @@ for(x=0; x<xsize; x++)
 						        outdata5b = 0;
 						        outdata20 = 57;
 						    }
-						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, tropical, no plantation
+						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, tropical, not plantation
 						    {
 						        outdata5a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata5b = 0;
@@ -1017,7 +1021,7 @@ for(x=0; x<xsize; x++)
 						        outdata5b = 0;
 						        outdata20 = 59;
 						    }
-						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, temperate, no plantation
+						    if (plant_data[x] == 0)     // Urbanization, not peat, not burned, temperate, not plantation
 						    {
 						        outdata5a = Biomass_tCO2e_nofire_CO2_only + minsoil;
 						        outdata5b = 0;

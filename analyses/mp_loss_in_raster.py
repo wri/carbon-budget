@@ -14,11 +14,13 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+os.chdir(cn.docker_base_dir)
+
 tile_list = uu.tile_list_s3(cn.loss_dir, sensit_type)
 # tile_list = ['00N_110E'] # test tiles
 # tile_list = ['00N_110E', '70N_100W'] # test tiles: no mangrove or planted forest, mangrove only, planted forest only, mangrove and planted forest
-print tile_list
-print "There are {} tiles to process".format(str(len(tile_list)))
+uu.print_log(tile_list)
+uu.print_log("There are {} tiles to process".format(str(len(tile_list))))
 
 parser = argparse.ArgumentParser(description='Create rasters of loss masked by some other raster')
 parser.add_argument('--raster-of-interest', '-r', required=True,
@@ -48,20 +50,20 @@ valid_masks = ['True', 'False']
 
 # If the mask argument isn't valid, the script terminates
 if mask not in valid_masks:
-    print "Mask argument is not valid. Use either True or False."
+    uu.print_log("Mask argument is not valid. Use either True or False.")
     sys.exit()
 
 # For downloading all tiles in the input folders
 download_list = [cn.loss_dir, '{}/'.format(raster_path)]
 
 for input in download_list:
-    uu.s3_folder_download('{}'.format(input), '.')
+    uu.s3_folder_download('{}'.format(input), cn.docker_base_dir)
 
 # # For copying individual tiles to spot machine for testing
 # for tile in tile_list:
 #
-#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), '.')  # loss tiles
-#     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), '.')  # raster of interest
+#     uu.s3_file_download('{0}{1}.tif'.format(cn.loss_dir, tile), cn.docker_base_dir)  # loss tiles
+#     uu.s3_file_download('{0}/{1}_{2}.tif'.format(raster_path, tile, raster_type), cn.docker_base_dir)  # raster of interest
 
 # 14 processors maxed out at about 70 GB on an m4.16xlarge for  peat mask processing.
 num_of_processes = 45
@@ -75,7 +77,7 @@ pool.join()
 #
 #     loss_in_raster.loss_in_raster(tile, raster_type, output_name, lat, mask)
 
-print "Tiles processed. Uploading to s3 now..."
+uu.print_log("Tiles processed. Uploading to s3 now...")
 
 # Uploads all output tiles to s3
 uu.upload_final_set('s3://gfw2-data/climate/carbon_model/loss_in_peat/20190917/', output_name)

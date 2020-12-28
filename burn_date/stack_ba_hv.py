@@ -1,15 +1,19 @@
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
 from osgeo import gdal
 import utilities
 import glob
 import shutil
+import sys
+sys.path.append('../')
+import constants_and_names as cn
+import universal_util as uu
 
 
 def stack_ba_hv(hv_tile):
 
-    for year in range(2000, 2019):
+    for year in range(2019, 2020): # End year is not included in burn year product
 
-        # download hdf files
+        # Download hdf files from s3 into folders by h and v
         output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))
         utilities.download_df(year, hv_tile, output_dir)
 
@@ -19,7 +23,7 @@ def stack_ba_hv(hv_tile):
         if len(hdf_files) > 0:
             array_list = []
             for hdf in hdf_files:
-                print "converting hdf to array"
+                uu.print_log("converting hdf to array")
                 array = utilities.hdf_to_array(hdf)
                 array_list.append(array)
 
@@ -35,9 +39,9 @@ def stack_ba_hv(hv_tile):
             stacked_year_raster = utilities.array_to_raster(hv_tile, year, max_stacked_year_array, template_hdf,
                                                             year_folder)
 
-            # upload to somewhere on s3
-            cmd = ['aws', 's3', 'cp', stacked_year_raster, 's3://gfw2-data/climate/carbon_model/other_emissions_inputs/burn_year/burn_year/20190322/']
-            subprocess.check_call(cmd)
+            # upload to s3
+            cmd = ['aws', 's3', 'cp', stacked_year_raster, cn.burn_year_stacked_hv_tif_dir]
+            uu.log_subprocess_output_full(cmd)
 
             # remove files
             shutil.rmtree(output_dir)

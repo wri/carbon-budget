@@ -18,39 +18,75 @@
 
 import multiprocessing
 import continent_ecozone_tiles
-import subprocess
+from subprocess import Popen, PIPE, STDOUT, check_call
+import datetime
+import argparse
 import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
-if not os.path.exists(cn.cont_eco_zip):
+def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
-    # Downloads ecozone shapefile
-    uu.s3_file_download('{}'.format(cn.cont_eco_s3_zip), '.', )
+    os.chdir(cn.docker_base_dir)
+
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of tiles to run in the model
+        tile_id_list = uu.create_combined_tile_list(cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir)
+
+    uu.print_log(tile_id_list)
+    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+
+
+    # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
+    uu.s3_file_download(cn.cont_eco_s3_zip, cn.docker_base_dir, 'std')
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]
-    subprocess.check_call(cmd)
+    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    with process.stdout:
+        uu.log_subprocess_output(process.stdout)
 
-biomass_tile_list = uu.create_combined_tile_list(cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir)
-# biomass_tile_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
-# biomass_tile_list = ['20S_110E'] # test tile
-print biomass_tile_list
-print "There are {} tiles to process".format(str(len(biomass_tile_list)))
 
-# For multiprocessor use
-count = multiprocessing.cpu_count()
-pool = multiprocessing.Pool(processes=count/4)
-pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, biomass_tile_list)
+    # List of output directories and output file name patterns
+    output_dir_list = [cn.cont_eco_raw_dir, cn.cont_eco_dir]
+    output_pattern_list = [cn.pattern_cont_eco_raw, cn.pattern_cont_eco_processed]
 
-print "Done processing tiles. Now uploading them to s3..."
 
-# Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
-# These are not used for the model. They are for reference and completeness.
-uu.upload_final_set(cn.cont_eco_raw_dir, cn.pattern_cont_eco_raw)
+    # A date can optionally be provided by the full model script or a run of this script.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-# Uploads all processed tiles at the end
-uu.upload_final_set(cn.cont_eco_dir, cn.pattern_cont_eco_processed)
+
+    # For multiprocessor use
+    processes = int(cn.count/4)
+    uu.print_log('Continent-ecozone tile creation max processors=', processes)
+    pool.map(continent_ecozone_tiles.create_continent_ecozone_tiles, tile_id_list)
+
+
+    # Uploads the continent-ecozone tile to s3 before the codes are expanded to pixels in 1024x1024 windows that don't have codes.
+    # These are not used for the model. They are for reference and completeness.
+    for i in range(0, len(output_dir_list)):
+        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    parser.add_argument('--run-date', '-d', required=False,
+                        help='Date of run. Must be format YYYYMMDD.')
+    args = parser.parse_args()
+    tile_id_list = args.tile_id_list
+    run_date = args.run_date
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
+
+    mp_continent_ecozone_tiles(tile_id_list=tile_id_list, run_date=run_date)
