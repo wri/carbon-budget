@@ -179,6 +179,7 @@ cont_eco_dir = os.path.join(s3_base_dir, 'fao_ecozones/ecozone_continent/2019011
 pattern_planted_forest_type_unmasked = 'plantation_type_oilpalm_woodfiber_other_unmasked'
 planted_forest_type_unmasked_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/plantation_type/standard/20200730/')
 
+
 # Peat mask inputs
 peat_unprocessed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/raw/')
 cifor_peat_file = 'cifor_peat_mask.tif'
