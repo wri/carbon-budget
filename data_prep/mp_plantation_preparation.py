@@ -54,15 +54,15 @@ command line argument. Supply the rest of the global tiles (the unchanged tiles)
 # Start a r.16xlarge spot machine
 spotutil new r4.16xlarge dgibbs_wri
 
-# Copy zipped plantation gdb with growth rate field in tables. This has the updated rates from July 2020.
-wget http://gfw-files.s3.amazonaws.com/plantations/final/global/plantations_v2_1.zip
+# Copy zipped plantation gdb with growth rate field in tables
+aws s3 cp s3://gfw-files/plantations/final/global/plantations_v3_1.gdb.zip .
 
 # Unzip the zipped plantation gdb. This can take several minutes.
-unzip plantations_v2_1.zip
+unzip plantations_v3_1.gdb.zip
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
-ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_1.gdb -progress -nln all_plant -sql "SELECT growth, species_simp FROM cmr_plant"
+ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -progress -nln all_plant -sql "SELECT growth, species_simp, SD_error FROM cmr_plant"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
@@ -75,14 +75,14 @@ DELETE FROM all_plant;
 \q
 
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
-ogrinfo plantations_v2_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
+ogrinfo plantations_v3_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
 # Make sure all the country tables are listed in the txt, then exit it
 more out.txt
 q
 
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
-while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v2_1.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp FROM $p"; done < out.txt
+while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp, SD_error FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
@@ -292,6 +292,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     ### Entry point 3
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
     # This is the part that actually creates the sequestration rate and forest type tiles.
+    
     if cn.pattern_plant_1x1_index in args.planted_tile_index:
 
         uu.print_log("Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles...")
@@ -324,20 +325,22 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         # of this script), it does not need to check whether there are planted forests in this tile. It goes directly
         # to intersecting the planted forest table with the 1x1 tile.
 
-        # # For single processor use
-        # for tile in planted_list_1x1:
-        #     plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
+        # For single processor use
+        #for tile in planted_list_1x1:
+        #    plantation_preparation.create_1x1_plantation_growth_from_1x1_planted(tile)
 
         # For multiprocessor use
         # processes=40 uses about 360 GB of memory. Works on r4.16xlarge with space to spare
-        processes = 40
-        uu.print_log('Create 1x1 plantation gain rate max processors=', processes)
-        pool = Pool(processes)
+      	# processes=52 uses about 465 GB of memory (quite stably), so this is basically the max.
+        num_of_processes = 52
+        pool = Pool(num_of_processes)
         pool.map(plantation_preparation.create_1x1_plantation_growth_from_1x1_planted, planted_list_1x1)
         pool.close()
         pool.join()
 
         # This works with 50 processors on an r4.16xlarge marchine. Uses about 430 GB out of 480 GB.
+        num_of_processes = 52
+        pool = Pool(num_of_processes)
         processes = 50
         uu.print_log('Create 1x1 plantation type max processors=', processes)
         pool = Pool(processes)
@@ -345,6 +348,13 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         pool.close()
         pool.join()
 
+        # This rasterizes the plantation removal factor standard deviations 
+	      # processes=50 peaks at about 450 GB
+        num_of_processes = 50
+    	  pool = Pool(num_of_processes)
+	      pool.map(plantation_preparation.create_1x1_plantation_stdev_from_1x1_planted, planted_list_1x1)
+	      pool.close()
+	      pool.join()
 
 
     ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
@@ -367,11 +377,10 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     pool.close()
     pool.join()
 
-    # # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
-    # at the start of the script that are in latitudes with planted forests.
-    # # For single processor use
-    # for tile in planted_lat_tile_list:
-    #
+    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    #at the start of the script that are in latitudes with planted forests.
+    # For single processor use
+    #for tile in planted_lat_tile_list:
     #     plantation_preparation.create_10x10_plantation_gain(tile, plant_gain_1x1_vrt)
 
 
@@ -385,11 +394,10 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     # Creates 10x10 degree tiles of plantation type by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
-    processes = 20
+    num_of_processes = 26
+    pool = Pool(num_of_processes)
     uu.print_log('Create 10x10 plantation type max processors=', processes)
-    pool = Pool(processes)
-    pool.map(partial(plantation_preparation.create_10x10_plantation_type, plant_type_1x1_vrt=plant_type_1x1_vrt),
-             planted_lat_tile_list)
+    pool.map(partial(plantation_preparation.create_10x10_plantation_type, plant_type_1x1_vrt=plant_type_1x1_vrt), planted_lat_tile_list)
     pool.close()
     pool.join()
 
@@ -400,6 +408,23 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     #
     #     plantation_preparation.create_10x10_plantation_type(tile, plant_type_1x1_vrt)
 
+
+
+    # Name of the vrt of 1x1 planted forest gain rate standard deviation tiles
+    plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
+
+    # Creates a mosaic of all the 1x1 plantation gain rate standard deviation tiles
+    print "Creating vrt of 1x1 plantation gain rate standard deviation tiles"
+    os.system('gdalbuildvrt {} plant_stdev_*.tif'.format(plant_stdev_1x1_vrt))
+
+    # Creates 10x10 degree tiles of plantation gain rate standard deviation by iterating over the set of pixel area tiles supplied
+    # at the start of the script that are in latitudes with planted forests.
+    # For multiprocessor use
+    num_of_processes = 26
+    pool = Pool(num_of_processes)
+    pool.map(partial(plantation_preparation.create_10x10_plantation_gain_stdev, plant_stdev_1x1_vrt=plant_stdev_1x1_vrt), planted_lat_tile_list)
+    pool.close()
+    pool.join()
 
 
 if __name__ == '__main__':
