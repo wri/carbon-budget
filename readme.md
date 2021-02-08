@@ -92,16 +92,38 @@ and often the number of processors being used is 1/2 or a 1/3 of the actual numb
 If the tiles were smaller (e.g., 1x1 degree), more processors could be used but then there'd also be more tiles to process, so I'm not sure that would be any faster.
 Users can track memory usage in realtime using the `htop` command line utility. 
 
+The model runs inside a Docker container. Once you have Docker configured on your system and have cloned this repository, you can do the following.
+This will enter the command line in the Docker container. 
+
+For runs on my local computer, I use Docker-compose so that the Docker is mapped to my computer's drives. 
+I do this for development and testing.
+`docker-compose build`
+`docker-compose run --rm -e AWS_SECRET_ACCESS_KEY=... -e AWS_ACCESS_KEY_ID=... carbon-budget`
+
+For runs on an AWS r5d spot machine (for full model runs), I use docker build.
+`docker build . -t gfw/carbon-budget`
+`docker run --rm -it -e AWS_SECRET_ACCESS_KEY=... -e AWS_ACCESS_KEY_ID=... gfw/carbon-budget`
+
+Before doing a model run, confirm that the dates of the relevant input and output s3 folders are correct in `constants_and_names.py`. 
+Depending on what exactly the user is running, the user may have to change lots of dates in the s3 folders or change none.
+Unfortunately, I can't really give better guidance than that; it really depends on what part of the model is being run and how.
+(I want to make the situations under which users change folder dates more consistent eventually.)
+
 ##### Individual scripts
 The flux model is comprised of many separate scripts, each of which can be run separately and
 has its own inputs and output(s). Combined, these comprise the flux model. There are several data preparation
 scripts, several for the removals (sequestration/gain) model, a few to generate carbon pools, one for calculating
 gross emissions, one for calculating net flux, and one for aggregating key results into coarser 
 resolution rasters for mapping. The order in which these must be run is very specific; many scripts depend on 
+
 the outputs of other scripts. Looking at the files that must be downloaded for the 
 script to run will show what files must already be created and therefore what scripts must have already been
 run. The date component of the output directory on s3 generally must be changed in `constants_and_names.py`
 for each output file unless a date argument is provided on the command line. 
+
+Each script can be run either using multiple processors or one processor. The former is for full model runs,
+while the latter is for model development. The user can switch between these two versions by commenting out
+the appropriate code chunks. 
 
 ##### Master script 
 A master script will run through all of the non-preparatory scripts in the model: some removal factor creation, gross removals, carbon
@@ -110,6 +132,7 @@ every script. The user can control what model components are run to some extent 
 the output directories. The emissions C++ code has to be be compiled before running the master script (see below).
 
 `python run_full_model.py -t std -s all -r true -d 20200822 -l all -ce loss -p biomass_soil -tcd 30 -ma true -us true -ln "This will run the entire standard model, including creating mangrove and US removal factor tiles, on all tiles and output everything in s3 folders with the date 20200822."`
+
 
 ##### Running the emissions model
 The gross emissions script is the only part that uses C++. Thus, it must be manually compiled before running.

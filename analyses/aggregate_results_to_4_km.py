@@ -300,13 +300,16 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y_%m_%d")
 
-    uu.print_log(std_aggreg_flux)
     uu.print_log(sensit_aggreg_flux)
+    uu.print_log(std_aggreg_flux)
 
-    # CO2 gain uses non-mangrove non-planted biomass:carbon ratio
     # This produces errors about dividing by 0. As far as I can tell, those are fine. It's just trying to divide NoData
     # pixels by NoData pixels, and it doesn't affect the output.
-    perc_diff_calc = '--calc=(A-B)/absolute(B)*100'.format(sensit_aggreg_flux, std_aggreg_flux)
+    # For model v1.2.0, this kept producing incorrect values for the biomass_swap analysis. I don't know why. I ended
+    # up just using raster calculator in ArcMap to create the percent diff raster for biomass_swap. It worked
+    # fine for all the other analyses, though (including legal_Amazon_loss).
+    # Maybe that divide by 0 is throwing off other values now.
+    perc_diff_calc = '--calc=(A-B)/absolute(B)*100'
     perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
     perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
     # cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
