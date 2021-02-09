@@ -1,6 +1,6 @@
 '''
 This script creates a binary raster of the model extent at the pixel level.
-The model extent is ((TCD2000>1 AND WHRC AGB2000>0) OR Hansen gain=1 or mangrove AGB2000>0) NOT IN pre-2000 plantations
+The model extent is ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations
 The rest of the model uses this to mask its extent.
 For biomass_swap sensitivity analysis, NASA JPL AGB 2000 replaces WHRC 2000.
 For legal_Amazon_loss sensitivity analysis, PRODES 2000 forest extent replaces Hansen tree cover 2000 and Hansen gain

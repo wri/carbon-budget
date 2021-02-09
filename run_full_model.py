@@ -30,7 +30,7 @@ from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
 from analyses.mp_aggregate_results_to_4_km import mp_aggregate_results_to_4_km
-from analyses.mp_output_per_pixel import mp_output_per_pixel
+from analyses.mp_create_supplementary_outputs import mp_create_supplementary_outputs
 
 def main ():
 
@@ -40,7 +40,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions',
-                    'net_flux', 'aggregate']
+                    'net_flux', 'aggregate', 'create_supplementary_outputs']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -66,8 +66,6 @@ def main ():
                         help='Include mangrove removal rate and standard deviation tile creation step (before model extent). true or false.')
     parser.add_argument('--us-rates', '-us', required=False,
                         help='Include US removal rate and standard deviation tile creation step (before model extent). true or false.')
-    parser.add_argument('--per-pixel-results', '-ppr', required=False,
-                        help='Include per pixel result calculations for gross emissions (all gases, all pools), gross removals, and net flux. true or false.')
     parser.add_argument('--log-note', '-ln', required=False,
                         help='Note to include in log header about model run.')
     args = parser.parse_args()
@@ -85,7 +83,6 @@ def main ():
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
     include_us = args.us_rates
-    include_per_pixel = args.per_pixel_results
     log_note = args.log_note
 
     # Start time for script
@@ -94,8 +91,7 @@ def main ():
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, stage_input=stage_input, run_through=run_through,
                     carbon_pool_extent=carbon_pool_extent, emitted_pools=emitted_pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, include_us=include_us, include_per_pixel=include_per_pixel,
-                    log_note=log_note)
+                    include_mangroves=include_mangroves, include_us=include_us, log_note=log_note)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
@@ -109,9 +105,8 @@ def main ():
         pass
 
     # Generates the list of stages to run
-    actual_stages = uu.analysis_stages(model_stages, stage_input, run_through,
-                                       include_mangroves = include_mangroves, include_us=include_us,
-                                       include_per_pixel=include_per_pixel)
+    actual_stages = uu.analysis_stages(model_stages, stage_input, run_through, sensit_type,
+                                       include_mangroves = include_mangroves, include_us=include_us)
     uu.print_log("Analysis stages to run:", actual_stages)
 
     # Reports how much storage is being used with files
@@ -232,76 +227,19 @@ def main ():
                                    cn.gross_emis_non_co2_all_drivers_soil_only_dir,
                                    cn.gross_emis_nodes_soil_only_dir]
 
-    output_dir_list = output_dir_list + [cn.net_flux_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_dir,
-                                         cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_dir,
-                                         cn.net_flux_per_pixel_dir]
+    output_dir_list = output_dir_list + [cn.net_flux_dir]
 
-
-    # Output patterns aren't actually used in the script-- here just for reference.
-    output_pattern_list = [
-        cn.pattern_model_extent,
-        cn.pattern_age_cat_IPCC,
-        cn.pattern_annual_gain_AGB_IPCC_defaults, cn.pattern_annual_gain_BGB_IPCC_defaults, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults,
-        cn.pattern_removal_forest_type,
-        cn.pattern_annual_gain_AGC_all_types, cn.pattern_annual_gain_BGC_all_types,
-        cn.pattern_annual_gain_AGC_BGC_all_types, cn.pattern_stdev_annual_gain_AGC_all_types,
-        cn.pattern_gain_year_count,
-        cn.pattern_cumul_gain_AGCO2_all_types, cn.pattern_cumul_gain_BGCO2_all_types,
-        cn.pattern_cumul_gain_AGCO2_BGCO2_all_types
-    ]
-
-    # Prepends the mangrove and US output pattern if mangroves are included
-    if 'annual_removals_mangrove' in actual_stages:
-
-        output_pattern_list = [cn.pattern_annual_gain_AGB_mangrove, cn.pattern_annual_gain_BGB_mangrove,
-                               cn.pattern_stdev_annual_gain_AGB_mangrove] + output_pattern_list
-
-    if 'annual_removals_us' in actual_stages:
-
-        output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US,
-                               cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US] + output_pattern_list
-
-    # Adds the soil carbon patterns depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
-    if 'carbon_pools' in actual_stages:
-        if 'loss' in carbon_pool_extent:
-            output_pattern_list = output_pattern_list + [cn.pattern_AGC_emis_year, cn.pattern_BGC_emis_year,
-                                                 cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000,
-                                                 cn.pattern_soil_C_emis_year_2000, cn.pattern_total_C_emis_year]
-
-        if '2000' in carbon_pool_extent:
-            output_pattern_list = output_pattern_list + [cn.pattern_AGC_2000, cn.pattern_BGC_2000,
-                                                 cn.pattern_deadwood_2000, cn.pattern_litter_2000,
-                                                 cn.pattern_soil_C_full_extent_2000, cn.pattern_total_C_2000]
-
-    # Adds the biomass_soil output patterns or the soil_only output directories depending on the model run
-    if 'gross_emissions' in actual_stages:
-        if emitted_pools == 'biomass_soil':
-            output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_biomass_soil,
-                                                      cn.pattern_gross_emis_shifting_ag_biomass_soil,
-                                                      cn.pattern_gross_emis_forestry_biomass_soil,
-                                                      cn.pattern_gross_emis_wildfire_biomass_soil,
-                                                      cn.pattern_gross_emis_urban_biomass_soil,
-                                                      cn.pattern_gross_emis_no_driver_biomass_soil,
-                                                      cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
-                                                      cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
-                                                      cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
-
-        else:
-            output_pattern_list = output_pattern_list + [cn.pattern_gross_emis_commod_soil_only,
-                                       cn.pattern_gross_emis_shifting_ag_soil_only,
-                                       cn.pattern_gross_emis_forestry_soil_only,
-                                       cn.pattern_gross_emis_wildfire_soil_only,
-                                       cn.pattern_gross_emis_urban_soil_only,
-                                       cn.pattern_gross_emis_no_driver_soil_only,
-                                       cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
-                                       cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
-                                       cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
-                                       cn.pattern_gross_emis_nodes_soil_only]
-
-    output_pattern_list = output_pattern_list + [cn.pattern_net_flux,
-                                                cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel,
-                                                cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel,
-                                                cn.pattern_net_flux_per_pixel]
+    if create_supplementary_outputs in actual_stages:
+        output_dir_list = output_dir_list + \
+                        [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
+                        cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
+                        cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir,
+                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir,
+                        cn.gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir,
+                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir,
+                        cn.net_flux_per_pixel_full_extent_dir,
+                        cn.net_flux_forest_extent_dir,
+                        cn.net_flux_per_pixel_forest_extent_dir]
 
 
     # Creates tiles of annual AGB and BGB gain rate and AGB stdev for mangroves using the standard model
@@ -599,17 +537,17 @@ def main ():
 
 
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
-    if 'per_pixel_results' in actual_stages:
+    if 'create_supplementary_outputs' in actual_stages:
 
-        uu.print_log(":::::Creating per pixel versions of main model outputs")
+        uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
         start = datetime.datetime.now()
 
-        mp_output_per_pixel(sensit_type, tile_id_list, run_date = run_date)
+        mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = run_date)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for per pixel raster creation:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for supplementary output raster creation:", elapsed_time, "\n", "\n")
 
 
     uu.print_log(":::::Counting tiles output to each folder")
