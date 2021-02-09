@@ -130,10 +130,9 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
         uu.print_log("Input pattern:", input_pattern)
         uu.print_log("Output patterns:", output_patterns)
 
-        # 20 processors = 430 GB peak for cumul gain; 30 = 640 GB peak for cumul gain;
-        # 32 = 680 GB peak for cumul gain; 33 = 710 GB peak for cumul gain, gross emis, net flux
+        # 20 processors = >740 GB for gross removals; 15 = XXX GB
         if cn.count == 96:
-            processes = 20
+            processes = 15
         else:
             processes = 2
         uu.print_log("Creating derivative outputs for {0} with {1} processors...".format(input_pattern, processes))
@@ -159,7 +158,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
                 pool.close()
                 pool.join()
             else:
-                processes = 40  # 40 processors = XXX GB peak
+                processes = 50  # 40 processors = XXX GB peak
                 uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
                 pool = multiprocessing.Pool(processes)
                 pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
