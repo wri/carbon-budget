@@ -130,9 +130,9 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
         uu.print_log("Input pattern:", input_pattern)
         uu.print_log("Output patterns:", output_patterns)
 
-        # 20 processors = >740 GB for gross removals; 15 = XXX GB
+        # 20 processors = >740 GB for gross removals; 15 = 570 GB; 17 = XXX GB peak
         if cn.count == 96:
-            processes = 15
+            processes = 17
         else:
             processes = 2
         uu.print_log("Creating derivative outputs for {0} with {1} processors...".format(input_pattern, processes))

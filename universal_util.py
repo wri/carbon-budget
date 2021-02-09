@@ -675,7 +675,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     else:
 
         # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source, pattern=pattern)-1
+        s3_count = count_tiles_s3(source, pattern=pattern)
         print_log("There are", s3_count, "tiles at", source, "with the pattern", pattern)
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
