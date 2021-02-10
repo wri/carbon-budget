@@ -104,13 +104,13 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
         # If a full model run is specified, the correct set of tiles for the particular script is listed
         if tile_id_list == 'all':
             # List of tiles to run in the model
-            tile_id_list = uu.tile_list_s3(input_dir, sensit_type)
+            tile_id_list_input = uu.tile_list_s3(input_dir, sensit_type)
 
-        uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(tile_id_list_input)
+        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_input))) + "\n")
 
         uu.print_log("Downloading tiles from", input_dir)
-        uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, sensit_type, tile_id_list_input)
 
         # Blank list of output patterns, populated below
         output_patterns = []
@@ -139,12 +139,12 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
         uu.print_log("Creating derivative outputs for {0} with {1} processors...".format(input_pattern, processes))
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_supplementary_outputs.create_supplementary_outputs, input_pattern=input_pattern,
-                         output_patterns=output_patterns, sensit_type=sensit_type), tile_id_list)
+                         output_patterns=output_patterns, sensit_type=sensit_type), tile_id_list_input)
         pool.close()
         pool.join()
 
         # # For single processor use
-        # for tile_id in tile_id_list:
+        # for tile_id in tile_id_list_input:
         #     create_supplementary_outputs.create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit_type)
 
         # Checks the two forest extent output tiles created from each input tile for whether there is data in them.
@@ -155,14 +155,14 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
                 processes = 1
                 uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
                 pool = multiprocessing.Pool(processes)
-                pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+                pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list_input)
                 pool.close()
                 pool.join()
             else:
                 processes = 50  # 50 processors = 560 GB peak for gross removals
                 uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
                 pool = multiprocessing.Pool(processes)
-                pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+                pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list_input)
                 pool.close()
                 pool.join()
 
