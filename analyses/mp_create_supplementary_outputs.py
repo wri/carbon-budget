@@ -101,10 +101,13 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
         input_dir = key
         input_pattern = values[0]
 
-        # If a full model run is specified, the correct set of tiles for the particular script is listed
+        # If a full model run is specified, the correct set of tiles for the particular script is listed.
+        # A new list is named so that tile_id_list stays as the command line argument.
         if tile_id_list == 'all':
             # List of tiles to run in the model
             tile_id_list_input = uu.tile_list_s3(input_dir, sensit_type)
+        else:
+            tile_id_list_input = tile_id_list
 
         uu.print_log(tile_id_list_input)
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_input))) + "\n")
@@ -159,7 +162,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
                 pool.close()
                 pool.join()
             else:
-                processes = 50  # 50 processors = 560 GB peak for gross removals
+                processes = 55  # 50 processors = 560 GB peak for gross removals; 55 = XXX GB peak
                 uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
                 pool = multiprocessing.Pool(processes)
                 pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list_input)
