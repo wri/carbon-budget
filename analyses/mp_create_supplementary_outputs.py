@@ -130,8 +130,8 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
         uu.print_log("Input pattern:", input_pattern)
         uu.print_log("Output patterns:", output_patterns)
 
-        # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = XXX GB peak
-        # Gross emissions: 17 processors = 660 GB peak; 18 = XXX Gb peak
+        # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
+        # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
         if cn.count == 96:
             processes = 18
         else:
