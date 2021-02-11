@@ -192,11 +192,7 @@ def aggregate(tile, thresh, sensit_type):
         # Applies the tree cover density threshold to the 30x30m pixels
         if thresh > 0:
 
-            # in_window = np.ma.masked_where(tcd_window < thresh, in_window)
-            # in_window = in_window.filled(0)
-
-            # in_window = np.where((tcd_window > thresh), in_window, 0)
-            # in_window = np.where((tcd_window > thresh) | (gain_window == 1), in_window, 0)
+            # QCed this line before publication and then again afterwards in response to question from Lena Schulte-Uebbing at Wageningen Uni.
             in_window = np.where((tcd_window > thresh) | (gain_window == 1) | (mangrove_window != 0), in_window, 0)
 
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
