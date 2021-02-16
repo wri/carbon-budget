@@ -479,7 +479,6 @@ def main ():
 
         uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
         tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_commod_biomass_soil)))

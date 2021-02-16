@@ -15,7 +15,7 @@ def tile_names(tile_id, sensit_type):
     if sensit_type == 'legal_Amazon_loss':
         loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     else:
-        loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+        loss = '{0}.tif'.format(tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
     model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
 

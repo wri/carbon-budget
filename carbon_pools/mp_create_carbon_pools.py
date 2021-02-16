@@ -272,7 +272,6 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         tiles_to_delete = []
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gain)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_full_extent_2000)))
 

@@ -11,7 +11,7 @@ ENV SECRETS_PATH /usr/secrets
 # set timezone fo tzdata
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
-# Install missing dependencies
+# Install dependencies
 RUN apt-get update -y && apt-get install -y \
     make \
     automake \

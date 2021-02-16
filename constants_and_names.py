@@ -146,8 +146,8 @@ gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2019)
-pattern_loss = 'GFW2019'
-loss_dir = 's3://gfw2-data/forest_change/hansen_2019/'
+pattern_loss = ''
+loss_dir = 's3://gfw-data-lake/umd_tree_cover_loss/v1.8/raw/geotiff/'
 
 # Hansen gain tiles (2001-2012)
 pattern_gain = 'Hansen_GFC2015_gain'
@@ -214,12 +214,12 @@ pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2019/20200724/')
 
 # Burn year
-burn_area_raw_ftp = 'ftp://ba1.geog.umd.edu/Collection6/HDF/' # Copies a specific year of burn data
-burn_year_hdf_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/raw_hdf/')
-burn_year_stacked_hv_tif_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/stacked_hv_tifs/')
-burn_year_warped_to_Hansen_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/burn_year_warped_to_Hansen/')
-pattern_burn_year = "burnyear"
-burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20200807/burn_year_with_Hansen_loss/')
+burn_area_raw_ftp = 'sftp://fuoco.geog.umd.edu/data/MODIS/C6/MCD64A1/HDF/' # per https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf
+burn_year_hdf_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/raw_hdf/')
+burn_year_stacked_hv_tif_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/stacked_hv_tifs/')
+burn_year_warped_to_Hansen_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_10x10_clip/')
+pattern_burn_year = "burnyear_with_Hansen_loss"
+burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/20210216/burn_year_with_Hansen_loss/')
 
 ######
 ### Plantation processing

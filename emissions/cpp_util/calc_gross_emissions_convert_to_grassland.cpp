@@ -86,8 +86,8 @@ string litter_name = infolder + tile_id + "_Mg_litter_C_ha_emis_year_2000.tif";
 string soil_name = infolder + tile_id + "_Mg_soil_C_ha_emis_year_2000.tif";
 
 // Other inputs
-string loss_name = infolder + "GFW2019_" + tile_id + ".tif";
-string burn_name = infolder + tile_id + "_burnyear.tif";
+string loss_name = infolder + tile_id + ".tif";
+string burn_name = infolder + tile_id + "_burnyear_with_Hansen_loss.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
 string drivermodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
