@@ -7,6 +7,12 @@ To update this, steps 1-3 can be run on only the latest year of MODIS burned are
 on the entire time series. That is, steps 1-3 operate on burned area products separately for each year, so adding
 another year of data won't change steps 1-3 for preceding years.
 
+NOTE: The step in which hdf files are opened and converted to tifs (step 2) requires
+osgeo/gdal:ubuntu-full-X.X.X Docker image. The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
+the hdf files on the ftp site. The rest of the burned area analysis can be done with a 'small' version of the Docker image
+(though that would require terminating the Docker container and restarting it, which would only make sense if the
+analysis was being continued later).
+
 Step 4 takes many hours to run, mostly because it only uses five processors since each one requires so much memory.
 The other three steps can also take a few hours, I believe. Point is-- updating burned area takes a while.
 
@@ -98,10 +104,10 @@ def mp_burn_year(tile_id_list, run_date = None):
     bye    //exits the stfp shell
     '''
 
-    # Uploads the latest year of raw burn area hdfs to s3.
-    # All hdfs go in this folder
-    cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
-    uu.log_subprocess_output_full(cmd)
+    # # Uploads the latest year of raw burn area hdfs to s3.
+    # # All hdfs go in this folder
+    # cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
+    # uu.log_subprocess_output_full(cmd)
 
 
     # Step 2:
