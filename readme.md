@@ -196,21 +196,40 @@ Some use all tiles and some use a smaller extent.
 | `legal_Amazon_loss` | Uses Brazil's PRODES annual deforestation system instead of Hansen loss | Legal Amazon| `mp_model_extent.py` |
 | `Mekong_loss` | Uses Hansen loss v2.0 (multiple loss in same pixel). NOTE: Not used for flux model v1.2.0, so this is not currently supported. | Mekong region | N/A |
 
+
+### Updating the model with new tree cover loss
+For the current general configuration of the model, these are the changes that need to be made to update the
+model with a new year of tree cover loss data.
+
+1) Add a new year of burned area data using `mp_burn_year.py` (multiple changes needed).
+
+2) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`.
+
+3) In `calc_gross_emissions_[type].cpp`, change the number of model years.
+
+4) In `equations.cpp`, change the number of model years. 
+
+5) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
+
+6) Change the rules for numbers of gain years in `mp_gain_year_count_all_forest_types.py`.
+
+7) Change the number of loss years in `constants_and_names.py`.
+
 ### Modifying the model
 It is recommended that any changes to the model be tested in a local Docker instance before running on an EC2 instance.
 A standard development route is: 
 
-1) make changes to a single model script and run using the single processor option on a single tile (easiest for debugging) in local Docker,
+1) Make changes to a single model script and run using the single processor option on a single tile (easiest for debugging) in local Docker,
 
-2) run single script on a few representative tiles using a single processor in local Docker,
+2) Run single script on a few representative tiles using a single processor in local Docker,
 
-3) run single script on a few representative tiles using multiple processor option,
+3) Run single script on a few representative tiles using multiple processor option,
 
-4) run the single script from the master script on a few representative tiles using multiple processor option to confirm that changes work when using master script,
+4) Run the single script from the master script on a few representative tiles using multiple processor option to confirm that changes work when using master script,
 
-5) run single script on a few representative tiles using multiple processors on EC2 instance (need to commit and push changes to GitHub first),
+5) Run single script on a few representative tiles using multiple processors on EC2 instance (need to commit and push changes to GitHub first),
 
-6) run master script on all tiles using multiple processors on EC2 instance. If the changes likely affected memory usage, make sure to watch memory with `htop` to make sure that too much memory isn't required. If too much memory is needed, reduce the number of processors being called in the script. 
+6) Run master script on all tiles using multiple processors on EC2 instance. If the changes likely affected memory usage, make sure to watch memory with `htop` to make sure that too much memory isn't required. If too much memory is needed, reduce the number of processors being called in the script. 
 
 Obviously, depending on the changes being made, some of these steps can be ommitted. 
 

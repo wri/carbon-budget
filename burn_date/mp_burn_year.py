@@ -91,15 +91,16 @@ def mp_burn_year(tile_id_list, run_date = None):
     https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf, page 24, section 4.1.3
 
     sftp fire@fuoco.geog.umd.edu
+    [For password] burnt
     cd data/MODIS/C6/MCD64A1/HDF
+    ls [to check that it's the folder with all the tile folders]
     get h??v??/MCD64A1.A2020*
     bye    //exits the stfp shell
-    
     '''
 
     # Uploads the latest year of raw burn area hdfs to s3.
     # All hdfs go in this folder
-    cmd = ['aws', 's3', 'cp', '.', cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
+    cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
     uu.log_subprocess_output_full(cmd)
 
 

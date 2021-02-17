@@ -349,12 +349,12 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         pool.join()
 
         # This rasterizes the plantation removal factor standard deviations 
-	      # processes=50 peaks at about 450 GB
+	    # processes=50 peaks at about 450 GB
         num_of_processes = 50
-    	  pool = Pool(num_of_processes)
-	      pool.map(plantation_preparation.create_1x1_plantation_stdev_from_1x1_planted, planted_list_1x1)
-	      pool.close()
-	      pool.join()
+        pool = Pool(num_of_processes)
+        pool.map(plantation_preparation.create_1x1_plantation_stdev_from_1x1_planted, planted_list_1x1)
+        pool.close()
+        pool.join()
 
 
     ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
@@ -414,7 +414,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
 
     # Creates a mosaic of all the 1x1 plantation gain rate standard deviation tiles
-    print "Creating vrt of 1x1 plantation gain rate standard deviation tiles"
+    uu.print_log("Creating vrt of 1x1 plantation gain rate standard deviation tiles")
     os.system('gdalbuildvrt {} plant_stdev_*.tif'.format(plant_stdev_1x1_vrt))
 
     # Creates 10x10 degree tiles of plantation gain rate standard deviation by iterating over the set of pixel area tiles supplied

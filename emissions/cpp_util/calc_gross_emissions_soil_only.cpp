@@ -64,7 +64,7 @@ float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
 int model_years;    // How many loss years are in the model
-model_years = 19;
+model_years = 20;
 string model_years_str;
 model_years_str = to_string(model_years);
 

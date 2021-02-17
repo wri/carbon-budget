@@ -13,7 +13,7 @@ version_filename = version.replace('.', '_')
 
 
 # Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.
-loss_years = 19
+loss_years = 20
 
 # Number of years in tree cover gain. If input gain raster is changed, this must be changed, too.
 gain_years = 12
