@@ -63,6 +63,9 @@ N2O_equiv = 265;
 float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
+float biomass_to_c;    // Fraction of carbon in biomass
+biomass_to_c = 0.47/
+
 int model_years;    // How many loss years are in the model
 model_years = 20;
 string model_years_str;
@@ -429,7 +432,7 @@ for(x=0; x<xsize; x++)
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = non_soil_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (model_years-loss_data[x]);
 
@@ -593,7 +596,7 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
-                Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float shiftag_flu;
 				shiftag_flu = 0.72;
 				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20) * (model_years-loss_data[x]);
@@ -776,8 +779,8 @@ for(x=0; x<xsize; x++)
 			else if (drivermodel_data[x] == 3)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
-                Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
+                Biomass_tCO2e_yesfire_non_CO2 = ((agc_data[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((agc_data[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // Forestry, peat
 				{
@@ -834,8 +837,8 @@ for(x=0; x<xsize; x++)
 		    else if (drivermodel_data[x] == 4)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
+				Biomass_tCO2e_yesfire_non_CO2 = ((agc_data[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((agc_data[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // Wildfire, peat
 				{
@@ -893,7 +896,7 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * non_soil_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((2 * non_soil_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
+				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float urb_flu;
 				urb_flu = 0.8;
 				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/20) * (model_years-loss_data[x]);
@@ -1038,8 +1041,8 @@ for(x=0; x<xsize; x++)
 		    else
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
-				Biomass_tCO2e_yesfire_CO2_only = ((2 * agc_data[x]) * Cf * Gef_CO2 * pow(10, -3));
-				Biomass_tCO2e_yesfire_non_CO2 = ((2 * agc_data[x]) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((2 * agc_data[x]) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
+				Biomass_tCO2e_yesfire_non_CO2 = ((agc_data[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((agc_data[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
 				if (peat_data[x] > 0) // No driver, peat
 				{

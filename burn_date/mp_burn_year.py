@@ -1,6 +1,6 @@
 '''
-Creates tiles of when tree cover loss coincides with burning.
-There are kind of four steps to this: 1) acquire raw hdfs from MODIS burned area sftp; 2) make tifs of burned area for
+Creates tiles of when tree cover loss coincides with burning or preceded burning by one year.
+There are four steps to this: 1) acquire raw hdfs from MODIS burned area sftp; 2) make tifs of burned area for
 each year in each MODUS h-v tile; 3) make annual Hansen-style (extent, res, etc.) tiles of burned area;
 4) make tiles of where TCL and burning coincided (same year or with 1 year lag).
 To update this, steps 1-3 can be run on only the latest year of MODIS burned area product. Only step 4 needs to be run
@@ -14,7 +14,7 @@ the hdf files on the ftp site. The rest of the burned area analysis can be done 
 analysis was being continued later).
 
 Step 4 takes many hours to run, mostly because it only uses five processors since each one requires so much memory.
-The other three steps can also take a few hours, I believe. Point is-- updating burned area takes a while.
+The other steps might take an hour or two to run.
 
 This is still basically as Sam Gibbes wrote it in early 2018, with file name changes and other input/output changes
 by David Gibbs. The real processing code is still all by Sam's parts.
@@ -56,6 +56,11 @@ def mp_burn_year(tile_id_list, run_date = None):
     output_dir_list = [cn.burn_year_dir]
     output_pattern_list = [cn.pattern_burn_year]
 
+    # A date can optionally be provided.
+    # This replaces the date in constants_and_names.
+    if run_date is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+
     global_grid_hv = ["h00v08", "h00v09", "h00v10", "h01v07", "h01v08", "h01v09", "h01v10", "h01v11", "h02v06",
                       "h02v08", "h02v09", "h02v10", "h02v11", "h03v06", "h03v07", "h03v09", "h03v10", "h03v11",
                       "h04v09", "h04v10", "h04v11", "h05v10", "h05v11", "h05v13", "h06v03", "h06v11", "h07v03",
@@ -87,7 +92,9 @@ def mp_burn_year(tile_id_list, run_date = None):
                       "h32v11", "h32v12", "h33v07", "h33v08", "h33v09", "h33v10", "h33v11", "h34v07", "h34v08",
                       "h34v09", "h34v10", "h35v08", "h35v09", "h35v10"]
 
-    # Step 1: download hdf files for relevant year(s) from sftp site
+
+    # Step 1: download hdf files for relevant year(s) from sftp site.
+    # This only needs to be done for the most recent year of data.
 
     '''
     Downloading the hdf files from the sftp burned area site is done outside the script in the sftp shell on the command line.
@@ -104,14 +111,15 @@ def mp_burn_year(tile_id_list, run_date = None):
     bye    //exits the stfp shell
     '''
 
-    # # Uploads the latest year of raw burn area hdfs to s3.
-    # # All hdfs go in this folder
-    # cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
-    # uu.log_subprocess_output_full(cmd)
+    # Uploads the latest year of raw burn area hdfs to s3.
+    # All hdfs go in this folder
+    cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
+    uu.log_subprocess_output_full(cmd)
 
 
     # Step 2:
-    # Makes burned area rasters for each year for each MODIS horizontal-vertical tile
+    # Makes burned area rasters for each year for each MODIS horizontal-vertical tile.
+    # This only needs to be done for the most recent year of data (set in stach_ba_hv).
     uu.print_log("Stacking hdf into MODIS burned area tifs by year and MODIS hv tile...")
 
     count = multiprocessing.cpu_count()
@@ -129,7 +137,10 @@ def mp_burn_year(tile_id_list, run_date = None):
     # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
     # Downloads all MODIS hv tiles from s3,
     # makes a mosaic for each year, and warps to Hansen extent.
-    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2020 goes from 2001 to 2019)
+    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2021 goes from 2001 to 2020).
+    # This only needs to be done for the most recent year of data.
+    # NOTE: The first time I ran this for the 2020 TCL update, I got an error about uploading the log to s3
+    # after most of the tiles were processed. I didn't know why it happened, so I reran the step and it went fine.
     for year in range(2020, 2021):
 
         uu.print_log("Processing", year)
@@ -192,13 +203,15 @@ def mp_burn_year(tile_id_list, run_date = None):
 
     # Step 4:
     # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
+    # or preceded TCL by one year.
+    # This needs to be done on all years each time burned area is updated.
 
     # Downloads the loss tiles
     uu.s3_folder_download(cn.loss_dir, '.', 'std', cn.pattern_loss)
 
     uu.print_log("Extracting burn year data that coincides with tree cover loss...")
 
-    # Downloads the 10x10 deg burn year tiles (1 for each year in which there was burned areaa), stack and evaluate
+    # Downloads the 10x10 deg burn year tiles (1 for each year in which there was burned area), stack and evaluate
     # to return burn year values on hansen loss pixels within 1 year of loss date
     if cn.count == 96:
         processes = 5

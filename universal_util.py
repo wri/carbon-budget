@@ -588,7 +588,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern == '':   # For Hansen loss tiles
+            if pattern == cn.pattern_loss:   # For Hansen loss tiles
                 source = '{0}{1}.tif'.format(source_dir, tile_id)
             elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
@@ -755,8 +755,14 @@ def s3_file_download(source, dest, sensit_type):
 
         # If not already downloaded, first tries to download the sensitivity analysis version
         try:
-            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object('gfw2-data', '{0}/{1}'.format(dir_sens[15:], file_name_sens)).load()
+            # Determines which bucket to check
+            if 'gfw-data-lake' in source:
+                bucket = 'gfw-data-lake'
+                folder = source[19:]
+            else:
+                bucket = 'gfw2-data'
+                folder = source[15:]
+            s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
             cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
@@ -782,8 +788,15 @@ def s3_file_download(source, dest, sensit_type):
         # If not already downloaded, final optionis to try to download the standard version of the tile.
         # If this doesn't work, the script throws a fatal error because no variant of this tile was found.
         try:
+            # Determines which bucket to check
+            if 'gfw-data-lake' in source:
+                bucket = 'gfw-data-lake'
+                folder = source[19:]
+            else:
+                bucket = 'gfw2-data'
+                folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            s3.Object(bucket, folder).load()
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source))
@@ -809,8 +822,15 @@ def s3_file_download(source, dest, sensit_type):
         source = os.path.join(dir, file_name)
 
         try:
+            # Determines which bucket to check
+            if 'gfw-data-lake' in source:
+                bucket = 'gfw-data-lake'
+                folder = source[19:]
+            else:
+                bucket = 'gfw2-data'
+                folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            s3.Object(bucket, folder).load()
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source))
