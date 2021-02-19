@@ -33,9 +33,10 @@
 #include <gdal/cpl_conv.h>
 #include <gdal/ogr_spatialref.h>
 
-// These provide constants for the emissions equations
+// These provide constants for the emissions equations and universal constants
 #include "flu_val.cpp"
 #include "equations.cpp"
+//#include "header.h"
 
 using namespace std;
 
@@ -53,6 +54,10 @@ string infolder = argv[3];     // The folder which has all the input files
 
 cout << "Gross emissions C++ infolder:" << infolder << endl;
 
+//cout << "CH4_equiv:" << constants::CH4_equiv << endl;
+//cout << "N2O_equiv:" << constants::N2O_equiv << endl;
+
+
 // Model constants
 int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
 CH4_equiv = 28;
@@ -64,7 +69,7 @@ float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
 float biomass_to_c;    // Fraction of carbon in biomass
-biomass_to_c = 0.47/
+biomass_to_c = 0.47;
 
 int model_years;    // How many loss years are in the model
 model_years = 20;
@@ -100,8 +105,11 @@ if (sensit_type != "std") {
 
 // Other inputs
 string loss_name = infolder + tile_id + ".tif";
-if (sensit_type == "legal_Amazon_loss");
+
+if (sensit_type == "legal_Amazon_loss") {
     loss_name = infolder + tile_id + "_legal_Amazon_annual_loss_2001_2019.tif";
+}
+
 string burn_name = infolder + tile_id + "_burnyear_with_Hansen_loss.tif";
 string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
 string climate_name = infolder + tile_id + "_climate_zone_processed.tif";

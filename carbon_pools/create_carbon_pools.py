@@ -129,7 +129,6 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         dtype='float32'
     )
 
-
     # The output files: aboveground carbon density in 2000 and in the year of loss. Creates names and rasters to write to.
     if '2000' in carbon_pool_extent:
         output_pattern_list = [cn.pattern_AGC_2000]

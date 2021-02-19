@@ -64,7 +64,7 @@ float C_to_CO2;       // The conversion of carbon to CO2
 C_to_CO2 = 44.0/12.0;
 
 float biomass_to_c;    // Fraction of carbon in biomass
-biomass_to_c = 0.47/
+biomass_to_c = 0.47;
 
 int model_years;    // How many loss years are in the model
 model_years = 19;
