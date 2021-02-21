@@ -199,21 +199,22 @@ Some use all tiles and some use a smaller extent.
 
 ### Updating the model with new tree cover loss
 For the current general configuration of the model, these are the changes that need to be made to update the
-model with a new year of tree cover loss data.
+model with a new year of tree cover loss data. In the order in which the changes would be needed for rerunning the model:
 
-1) Add a new year of burned area data using `mp_burn_year.py` (multiple changes needed).
+1) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`.
 
-2) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`.
+2) Change the number of loss years in `constants_and_names.py`.
 
-3) In `calc_gross_emissions_[type].cpp`, change the number of model years.
+3) Make sure that the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still makes sense.
 
-4) In `equations.cpp`, change the number of model years. 
+4) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
 
-5) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
+5) Add a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed).
 
-6) Change the rules for numbers of gain years in `mp_gain_year_count_all_forest_types.py`.
+6) In `constants.h`, change the number of model years.
 
-7) Change the number of loss years in `constants_and_names.py`.
+7) In `equations.cpp`, change the number of model years. 
+
 
 ### Modifying the model
 It is recommended that any changes to the model be tested in a local Docker instance before running on an EC2 instance.

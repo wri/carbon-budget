@@ -36,6 +36,7 @@
 // These provide constants for the emissions equations
 #include "flu_val.cpp"
 #include "equations.cpp"
+#include "constants.h"
 
 using namespace std;
 
@@ -54,62 +55,67 @@ string infolder = argv[3];     // The folder which has all the input files
 cout << "Gross emissions C++ infolder:" <<  infolder << endl;
 
 // Model constants
-int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
-CH4_equiv = 28;
-
-int N2O_equiv;      // The CO2 equivalency (global warming potential) of N2O
-N2O_equiv = 265;
-
-float C_to_CO2;       // The conversion of carbon to CO2
-C_to_CO2 = 44.0/12.0;
-
-float biomass_to_c;    // Fraction of carbon in biomass
-biomass_to_c = 0.47/
-
 int model_years;    // How many loss years are in the model
-model_years = 19;
+model_years = constants::model_years;
 string model_years_str;
 model_years_str = to_string(model_years);
 
+int CH4_equiv;      // The CO2 equivalency (global warming potential) of CH4
+CH4_equiv = constants::CH4_equiv;
+
+int N2O_equiv;      // The CO2 equivalency (global warming potential) of N2O
+N2O_equiv = constants::N2O_equiv;
+
+float C_to_CO2;       // The conversion of carbon to CO2
+C_to_CO2 = constants::C_to_CO2;
+
+float biomass_to_c;    // Fraction of carbon in biomass
+biomass_to_c = constants::biomass_to_c;
+
 int tropical;       // The ecozone code for the tropics
-tropical = 1;
+tropical = constants::tropical;
 
 int temperate;      // The ecozone code for the temperate zone
-temperate = 3;
+temperate = constants::temperate;
 
 int boreal;         // The ecozone code for the boreal zone
-boreal = 2;
+boreal = constants::boreal;
+
+int soil_emis_period;      // The number of years over which soil emissions are calculated (separate from model years)
+soil_emis_period = constants::soil_emis_period;
+
 
 // Input files
-// Carbon pools
-string agc_name = infolder + tile_id + "_Mg_AGC_ha_emis_year.tif";
-string bgc_name = infolder + tile_id + "_Mg_BGC_ha_emis_year.tif";
-string dead_name = infolder + tile_id + "_Mg_deadwood_C_ha_emis_year_2000.tif";
-string litter_name = infolder + tile_id + "_Mg_litter_C_ha_emis_year_2000.tif";
-string soil_name = infolder + tile_id + "_Mg_soil_C_ha_emis_year_2000.tif";
+// Carbon pools use the standard names for this sensitivity analysis
+string agc_name = infolder + tile_id + constants::AGC_emis_year + ".tif";
+string bgc_name = infolder + tile_id + constants::BGC_emis_year + ".tif";
+string dead_name = infolder + tile_id + constants::deadwood_C_emis_year + ".tif";
+string litter_name = infolder + tile_id + constants::litter_C_emis_year + ".tif";
+string soil_name = infolder + tile_id + constants::soil_C_emis_year + ".tif";
 
 // Other inputs
 string loss_name = infolder + tile_id + ".tif";
-string burn_name = infolder + tile_id + "_burnyear_with_Hansen_loss.tif";
-string ecozone_name = infolder + tile_id + "_fao_ecozones_bor_tem_tro_processed.tif";
-string climate_name = infolder + tile_id + "_climate_zone_processed.tif";
-string drivermodel_name = infolder + tile_id + "_tree_cover_loss_driver_processed.tif";
-string peat_name = infolder + tile_id + "_peat_mask_processed.tif";
-string ifl_primary_name = infolder + tile_id + "_ifl_2000_primary_2001_merged.tif";
-string plant_name = infolder + tile_id + "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+string burn_name = infolder + tile_id + constants::burnyear;
+string ecozone_name = infolder + tile_id + constants::fao_ecozones;
+string climate_name = infolder + tile_id + constants::climate_zones;
+string drivermodel_name = infolder + tile_id + constants::tcl_drivers;
+string peat_name = infolder + tile_id + constants::peat_mask;
+string ifl_primary_name = infolder + tile_id + constants::ifl_primary;
+string plant_name = infolder + tile_id + constants::plantation_type;
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1  = tile_id + "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name2  = tile_id + "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name3  = tile_id + "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name4  = tile_id + "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name5  = tile_id + "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name6  = tile_id + "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name10 = tile_id + "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name11 = tile_id + "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name12 = tile_id + "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
-string out_name20 = tile_id + "_gross_emis_decision_tree_nodes_biomass_soil_2001_" + model_years_str + "_convert_to_grassland.tif";
+string out_name1  = tile_id + constants::commod_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name2  = tile_id + constants::shifting_ag_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name3  = tile_id + constants::forestry_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name4  = tile_id + constants::wildfire_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name5  = tile_id + constants::urbanization_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name6  = tile_id + constants::no_driver_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name10 = tile_id + constants::all_gases_all_drivers_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name11 = tile_id + constants::CO2_only_all_drivers_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name12 = tile_id + constants::non_CO2_all_drivers_emis + model_years_str + "_convert_to_grassland.tif";
+string out_name20 = tile_id + constants::decision_tree_all_drivers_emis + model_years_str + "_convert_to_grassland.tif";
+
 
 // Setting up the variables to hold the pixel location in x/y values
 int x, y;
@@ -407,7 +413,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/20) * (model_years-loss_data[x]);  // Not used in this sensitivity analysis for this driver
+				minsoil = ((soil_data[x]-(soil_data[x] * flu))/soil_emis_period) * (model_years-loss_data[x]);  // Not used in this sensitivity analysis for this driver
 
 				if (peat_data[x] > 0) // Commodity, peat
 				{
@@ -572,7 +578,7 @@ for(x=0; x<xsize; x++)
                 Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float shiftag_flu;
 				shiftag_flu = 0.72;
-				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/20) * (model_years-loss_data[x]);  // Not used in this sensitivity analysis for this driver
+				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/soil_emis_period) * (model_years-loss_data[x]);  // Not used in this sensitivity analysis for this driver
 
 				if (peat_data[x] > 0) // Shifting ag, peat
 				{
@@ -842,7 +848,7 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				float urb_flu;
 				urb_flu = 0.8;
-				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/20) * (model_years-loss_data[x]);
+				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/soil_emis_period) * (model_years-loss_data[x]);
 
                 if (peat_data[x] > 0) // Urbanization, peat
 				{

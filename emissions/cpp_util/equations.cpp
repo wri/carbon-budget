@@ -4,6 +4,13 @@
 #include <map>
 #include <iostream>
 #include <stdlib.h>
+
+//// http://www.math.uaa.alaska.edu/~afkjm/csce211/handouts/SeparateCompilation.pdf
+//#ifndef CONSTANTS_H
+//#define CONSTANTS_H
+////#include "constants.h"
+//#endif
+
 using namespace std;
 
 void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
@@ -18,6 +25,16 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
     temperate = 3;
     int boreal;         // The ecozone code for the boreal zone
     boreal = 2;
+
+//    int model_years;    // How many loss years are in the model
+//    model_years = constants::model_years;
+//
+//	int tropical;       // The ecozone code for the tropics
+//    tropical = constants::tropical;
+//    int temperate;      // The ecozone code for the temperate zone
+//    temperate = constants::temperate;
+//    int boreal;         // The ecozone code for the boreal zone
+//    boreal = constants::boreal;
 
 	// instantiates Cf, CO2, CH4, N2O, peatburn, peat_drain_total.
 	// peatburn and peat_drain_annual both have CO2 and non-CO2 components. They are calculated separately and
