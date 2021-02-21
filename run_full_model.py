@@ -229,7 +229,7 @@ def main ():
 
     output_dir_list = output_dir_list + [cn.net_flux_dir]
 
-    if create_supplementary_outputs in actual_stages:
+    if 'create_supplementary_outputs' in actual_stages:
         output_dir_list = output_dir_list + \
                         [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
                         cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
