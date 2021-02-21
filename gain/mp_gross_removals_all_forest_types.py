@@ -26,7 +26,11 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        # tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        gain_year_count_tile_id_list = uu.tile_list_s3(cn.gain_year_count_dir, sensit_type=sensit_type)
+        annual_removals_tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, sensit_type=sensit_type)
+        tile_id_list = list(set(gain_year_count_tile_id_list).intersection(annual_removals_tile_id_list))
+        uu.print_log("Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:")
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
