@@ -105,6 +105,26 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
     # for tile_id in tile_id_list:
     #     annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type)
 
+    # Checks the gross removals outputs for tiles with no data
+    for output_pattern in output_pattern_list:
+        if cn.count <= 2:  # For local tests
+            processes = 1
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
+                output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+        else:
+            processes = 55  # 50 processors = XXX GB peak
+            uu.print_log(
+                "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
+
     # Uploads output tiles to s3
     for i in range(0, len(output_dir_list)):
         uu.upload_final_set(output_dir_list[i], output_pattern_list[i])

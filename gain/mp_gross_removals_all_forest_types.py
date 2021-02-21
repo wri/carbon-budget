@@ -90,7 +90,7 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
             uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
                 output_pattern, processes))
             pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list_input)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
         else:
@@ -98,7 +98,7 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
             uu.print_log(
                 "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
             pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list_input)
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
 

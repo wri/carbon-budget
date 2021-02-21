@@ -108,7 +108,7 @@ tile_stats_dir = os.path.join(s3_base_dir, 'tile_stats/')
 ### Model extent
 ######
 pattern_model_extent = 'model_extent'
-model_extent_dir = os.path.join(s3_base_dir, 'model_extent/standard/20200920/')
+model_extent_dir = os.path.join(s3_base_dir, 'model_extent/standard/20200824/')
 
 ######
 ### Biomass tiles
