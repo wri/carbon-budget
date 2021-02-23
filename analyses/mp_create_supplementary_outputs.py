@@ -103,11 +103,11 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list_outer, run_date = 
 
         # If a full model run is specified, the correct set of tiles for the particular script is listed.
         # A new list is named so that tile_id_list stays as the command line argument.
-        if tile_id_list == 'all':
+        if tile_id_list_outer == 'all':
             # List of tiles to run in the model
             tile_id_list_input = uu.tile_list_s3(input_dir, sensit_type)
         else:
-            tile_id_list_input = tile_id_list
+            tile_id_list_input = tile_id_list_outer
 
         uu.print_log(tile_id_list_input)
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_input))) + "\n")
@@ -197,4 +197,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_create_supplementary_outputs(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_create_supplementary_outputs(sensit_type=sensit_type, tile_id_list_outer=tile_id_list, run_date=run_date)
