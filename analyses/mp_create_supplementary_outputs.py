@@ -33,7 +33,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list_outer, run_date = 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
-    if tile_id_list == 'all':
+    if tile_id_list_outer == 'all':
         # List of tiles to run in the model
         tile_id_list_outer = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
 
