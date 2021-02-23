@@ -1,5 +1,5 @@
 '''
-This script creates carbon emitted_pools.
+This script creates carbon pools in the year of loss (emitted-year carbon) and in 2000.
 For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
 carbon emitted_pools (soil is created in a separate script but is brought in to create total carbon). All but total carbon are to the extent
 of WHRC and mangrove biomass 2000, while total carbon is to the extent of WHRC AGB, mangrove AGB, and soil C.
@@ -48,7 +48,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed.
-    # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant.
+    # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant
+    # because there must be loss pixels for emissions-year carbon pools to exist.
     if (tile_id_list == 'all') & (carbon_pool_extent == 'loss'):
         # Lists the tiles that have both model extent and loss pixels
         model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
