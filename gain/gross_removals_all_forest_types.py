@@ -39,7 +39,7 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type):
         return
     try:
         gain_year_count_src = rasterio.open(gain_year_count)
-        uu.print_log("    Gain year younc tile for", tile_id)
+        uu.print_log("    Gain year count tile for", tile_id)
     except:
         uu.print_log("    No gain year count tile for {}. Not creating gross removals.".format(tile_id))
         return

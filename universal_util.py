@@ -833,14 +833,14 @@ def s3_file_download(source, dest, sensit_type):
             s3.Object(bucket, folder).load()
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
-            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source))
+            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
             print_log("")
             return
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] == "404":
-                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
             else:
-                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source))
+                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source) + "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -905,6 +905,11 @@ def check_for_data(tile):
 def check_and_delete_if_empty(tile_id, output_pattern):
 
     tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
+
+    # Only checks for data if the tile exists
+    if not os.path.exists(tile_name):
+        print_log(tile_name, "does not exist. Skipping check of whether there is data.")
+        return
 
     print_log("Checking if {} contains any data...".format(tile_name))
     no_data = check_for_data(tile_name)
