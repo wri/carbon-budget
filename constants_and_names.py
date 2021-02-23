@@ -564,7 +564,7 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon emitted_pools in all pixels
 pattern_net_flux = 'net_flux_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
-net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20209999/')
+net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20219999/')
 
 # Net emissions for all forest types and all carbon emitted_pools in forest extent
 pattern_net_flux_forest_extent = 'net_flux_Mg_CO2e_ha_biomass_soil_forest_extent_2001_{}'.format(loss_years)
