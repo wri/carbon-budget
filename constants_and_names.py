@@ -145,7 +145,7 @@ pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
-# Annual Hansen loss tiles (2001-2019)
+# Annual Hansen loss tiles (2001-2020)
 pattern_loss = ''
 loss_dir = 's3://gfw-data-lake/umd_tree_cover_loss/v1.8/raw/geotiff/'
 
@@ -346,7 +346,7 @@ annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_fa
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
-removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/202019999/')
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20209999/')
 
 # Removal model forest type codes
 mangrove_rank = 6
@@ -564,7 +564,7 @@ gross_emis_nodes_soil_only_dir = '{0}gross_emissions/decision_tree_nodes/soil_on
 
 # Net emissions for all forest types and all carbon emitted_pools in all pixels
 pattern_net_flux = 'net_flux_Mg_CO2e_ha_biomass_soil_2001_{}'.format(loss_years)
-net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/202019999/')
+net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20209999/')
 
 # Net emissions for all forest types and all carbon emitted_pools in forest extent
 pattern_net_flux_forest_extent = 'net_flux_Mg_CO2e_ha_biomass_soil_forest_extent_2001_{}'.format(loss_years)

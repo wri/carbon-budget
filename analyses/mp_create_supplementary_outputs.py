@@ -28,7 +28,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import create_supplementary_outputs
 
-def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
+def mp_create_supplementary_outputs(sensit_type, tile_id_list_outer, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 

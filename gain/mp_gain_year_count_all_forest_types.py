@@ -1,5 +1,5 @@
 '''
-Creates tiles of the number of years in which carbon removals occur during the model duration (2001 to 2019 currently).
+Creates tiles of the number of years in which carbon removals occur during the model duration (2001 to 2020 currently).
 It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data.
 First it separately calculates rasters of gain years for model pixels that had loss only,
 gain only, neither loss nor gain, and both loss and gain.
