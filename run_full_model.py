@@ -572,7 +572,7 @@ def main ():
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
     uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
-
+    uu.upload_log()
 
 if __name__ == '__main__':
     main()

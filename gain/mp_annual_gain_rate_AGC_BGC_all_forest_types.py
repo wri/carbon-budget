@@ -91,7 +91,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
         if sensit_type == 'biomass_swap':
             processes = 13
         else:
-            processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = XXX GB peak
+            processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = >680 GB peak
     else:
         processes = 2
     uu.print_log('Removal factor processors=', processes)

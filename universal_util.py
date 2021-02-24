@@ -86,8 +86,12 @@ def print_log(*args):
     # Prints to console
     print("LOG: " + full_statement)
 
-    # Every time a line is added to the log, it is copied to s3
-    upload_log()
+    # # Every time a line is added to the log, it is copied to s3.
+    # # NOTE: During model 1.2.1 runs, I started getting repeated errors about uploading the log to s3.
+    # # I don't know why it happened, but my guess is that it's because I had too many things trying to copy
+    # # to that s3 location at once. So I'm reducing the occasions for uploading the log by removing uploads
+    # # whenever anything is printed. Instead, I'll upload at the end of each tile and each model stage.
+    # upload_log()
 
 
 # Logs fatal errors to the log txt, uploads to s3, and then terminates the program with an exception in the console
@@ -855,6 +859,9 @@ def upload_final_set(upload_dir, pattern):
     except:
         print_log("Error uploading output tile(s)")
 
+    # Uploads the log as each model stage is finished
+    upload_log()
+
 
 # Uploads tile to specified location
 def upload_final(upload_dir, tile_id, pattern):
@@ -969,6 +976,9 @@ def end_of_fx_summary(start, tile_id, pattern):
     elapsed_time = end-start
     print_log("Processing time for tile", tile_id, ":", elapsed_time)
     count_completed_tiles(pattern)
+
+    # Uploads the log as each tile is finished
+    upload_log()
 
 
 # Warps raster to Hansen tiles using multiple processors

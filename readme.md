@@ -204,21 +204,29 @@ Some use all tiles and some use a smaller extent.
 For the current general configuration of the model, these are the changes that need to be made to update the
 model with a new year of tree cover loss data. In the order in which the changes would be needed for rerunning the model:
 
-1) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`. If the tree cover 
+1) Update the model version in `constants_and_names.py`.
+
+2) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`. If the tree cover 
 loss tile pattern is different from the previous year, that will need to be changed in several places in various scripts, unfortunately.
 
-2) Change the number of loss years in `constants_and_names.py`.
+3) Change the number of loss years in `constants_and_names.py`.
 
-3) Make sure that the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still makes sense.
+4) Make sure that the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still makes sense.
 
-4) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
+5) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
 
-5) Add a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed, and potentially 
+6) Add a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed, and potentially 
    some reworking if the burned area ftp site has changed its structure or download protocol).
 
-6) In `constants.h`, change the number of model years.
+7) In `constants.h`, change the number of model years.
 
-7) In `equations.cpp`, change the number of model years. 
+8) In `equations.cpp`, change the number of model years. 
+
+Strictly speaking, if only the drivers, burn year, and tree cover loss are being updated, the model only needs to be 
+run from gain_year_count onwards (all previous model stages aren't affected by those inputs).
+However, for completeness, I suggest running all stages of the model from model_extent onwards for an update so that
+model outputs from all stages have the same version in their metadata and the same dates of output as the model stages
+that are actually being changed.
 
 
 ### Modifying the model
