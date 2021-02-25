@@ -16,6 +16,9 @@ from shutil import copy
 import re
 import pandas as pd
 from osgeo import gdal
+import time
+from random import seed
+from random import random
 
 # Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
@@ -25,6 +28,11 @@ date_time_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 
 # Uploads the output log to the designated s3 folder
 def upload_log():
+
+    # Builds a slightly variable delay into the log uploading so that a ton of log uploads at once don't overwhelm s3
+    seed()
+    lag = random()*2
+    time.sleep(lag)
 
     cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
     check_call(cmd)
@@ -51,20 +59,34 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
-    logging.info("AWS ec2 instance type and AMI id:")
-    # try:
-    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    #     with process.stdout:
-    #         log_subprocess_output(process.stdout)
-    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    #     with process.stdout:
-    #         log_subprocess_output(process.stdout)
-    # except:
-    #     logging.info("Not running on AWS ec2 instance")
-    logging.info("Available processors: {}".format(cn.count))
-    logging.info("")
+    logging.info("AWS ec2 instance type and AMI ID:")
+
+    # https://stackoverflow.com/questions/13735051/how-to-capture-curl-output-to-a-file
+    # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+    try:
+        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type', '-o', 'instance_type.txt', '--silent']
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            log_subprocess_output(process.stdout)
+        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id', '-o', 'ami_id.txt', '--silent']
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            log_subprocess_output(process.stdout)
+
+        type_file = open("instance_type.txt", "r")
+        type_lines = type_file.readlines()
+        for line in type_lines:
+            logging.info("  Instance type: {}".format(line.strip()))
+
+        ami_file = open("ami_id.txt", "r")
+        ami_lines = ami_file.readlines()
+        for line in ami_lines:
+            logging.info("  AMI ID: {}".format(line.strip()))
+
+    except:
+        logging.info("  Not running on AWS ec2 instance")
+
+    logging.info("Available processors: {}".format(cn.count) + "\n")
 
     # Suppresses logging from rasterio and botocore below ERROR level for the entire model
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python

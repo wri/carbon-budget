@@ -192,7 +192,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     uu.create_blank_tile_txt()
 
     for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=60)  # 60 = 100 GB peak
+        pool = multiprocessing.Pool(processes=80)  # 60 = 100 GB peak; 80 =  XXX GB peak
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
                                              sensit_type=sensit_type), tile_id_list)
         pool.close()
@@ -211,7 +211,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         if sensit_type == 'biomass_swap':
             processes = 15 # 15 processors = XXX GB peak
         else:
-            processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 714 GB peak
+            processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
     else:
         processes = 9
     uu.print_log('Gross emissions max processors=', processes)
@@ -235,7 +235,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Adding metadata tags for pattern {}".format(pattern))
 
         if cn.count == 96:
-            processes = 45  # 45 processors = XXX GB peak
+            processes = 25  # 45 processors = ~30 GB peak but led to log copy error because of too many log uploads at once,
+                            # so decreasing to 25 processors. That seems not to overload the upload_log() function.
         else:
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)

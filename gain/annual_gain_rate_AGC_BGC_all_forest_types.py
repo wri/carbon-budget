@@ -10,7 +10,7 @@ import universal_util as uu
 
 def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sensit_type):
 
-    uu.print_log("Mapping forest type for removal and AGB and BGB removal rates:", tile_id)
+    uu.print_log("Mapping removal rate source and AGB and BGB removal rates:", tile_id)
 
     # Start time
     start = datetime.datetime.now()
@@ -64,50 +64,50 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             mangrove_AGB_src = rasterio.open(mangrove_AGB)
             mangrove_BGB_src = rasterio.open(mangrove_BGB)
             mangrove_AGB_stdev_src = rasterio.open(mangrove_AGB_stdev)
-            uu.print_log("    Mangrove tiles (AGB and BGB) found for {}".format(tile_id))
+            uu.print_log("    Mangrove tiles (AGB and BGB) for {}".format(tile_id))
         except:
             uu.print_log("    No mangrove tile for {}".format(tile_id))
 
         try:
             europe_AGC_BGC_src = rasterio.open(europe_AGC_BGC)
             europe_AGC_BGC_stdev_src = rasterio.open(europe_AGC_BGC_stdev)
-            uu.print_log("    Europe removal factor tile found for {}".format(tile_id))
+            uu.print_log("    Europe removal factor tile for {}".format(tile_id))
         except:
             uu.print_log("    No Europe removal factor tile for {}".format(tile_id))
 
         try:
             plantations_AGC_BGC_src = rasterio.open(plantations_AGC_BGC)
             plantations_AGC_BGC_stdev_src = rasterio.open(plantations_AGC_BGC_stdev)
-            uu.print_log("    Planted forest tile found for {}".format(tile_id))
+            uu.print_log("    Planted forest tile for {}".format(tile_id))
         except:
             uu.print_log("    No planted forest tile for {}".format(tile_id))
 
         try:
             us_AGC_BGC_src = rasterio.open(us_AGC_BGC)
             us_AGC_BGC_stdev_src = rasterio.open(us_AGC_BGC_stdev)
-            uu.print_log("    US removal factor tile found for {}".format(tile_id))
+            uu.print_log("    US removal factor tile for {}".format(tile_id))
         except:
             uu.print_log("    No US removal factor tile for {}".format(tile_id))
 
         try:
             young_AGC_src = rasterio.open(young_AGC)
             young_AGC_stdev_src = rasterio.open(young_AGC_stdev)
-            uu.print_log("    Young forest removal factor tile found for {}".format(tile_id))
+            uu.print_log("    Young forest removal factor tile for {}".format(tile_id))
         except:
             uu.print_log("    No young forest removal factor tile for {}".format(tile_id))
 
         try:
             age_category_src = rasterio.open(age_category)
-            uu.print_log("    Age category tile found for {}".format(tile_id))
+            uu.print_log("    Age category tile for {}".format(tile_id))
         except:
             uu.print_log("    No age category tile for {}".format(tile_id))
 
         try:
             ipcc_AGB_default_src = rasterio.open(ipcc_AGB_default)
             ipcc_AGB_default_stdev_src = rasterio.open(ipcc_AGB_default_stdev)
-            uu.print_log("    IPCC default removal rate tile found for {}".format(tile_id))
-        except:
             uu.print_log("    IPCC default removal rate tile for {}".format(tile_id))
+        except:
+            uu.print_log("    No IPCC default removal rate tile for {}".format(tile_id))
 
         # Opens the output tile, giving it the arguments of the input tiles
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)

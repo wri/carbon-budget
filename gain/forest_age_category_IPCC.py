@@ -17,7 +17,6 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
     # Gets the bounding coordinates of each tile. Needed to determine if the tile is in the tropics (within 30 deg of the equator)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    uu.print_log("  ymax:", ymax)
 
     # Default value is that the tile is not in the tropics
     tropics = 0
@@ -27,7 +26,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
 
         tropics = 1
 
-    uu.print_log("  Tile in tropics:", tropics)
+    uu.print_log("  Tile {} in tropics:".format(tile_id), tropics)
 
     # Names of the input tiles
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)

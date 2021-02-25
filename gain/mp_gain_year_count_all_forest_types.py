@@ -27,7 +27,7 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
-        # List of tiles to run in the model
+        # No point in making gain year count tiles for tiles that don't have annual removals
         tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, sensit_type)
 
     uu.print_log(tile_id_list)

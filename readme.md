@@ -211,11 +211,12 @@ loss tile pattern is different from the previous year, that will need to be chan
 
 3) Change the number of loss years in `constants_and_names.py`.
 
-4) Make sure that the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still makes sense.
+4) Make sure that and changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
+   and the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still make sense.
 
 5) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
 
-6) Add a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed, and potentially 
+6) Create a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed, and potentially 
    some reworking if the burned area ftp site has changed its structure or download protocol).
 
 7) In `constants.h`, change the number of model years.
@@ -223,7 +224,8 @@ loss tile pattern is different from the previous year, that will need to be chan
 8) In `equations.cpp`, change the number of model years. 
 
 Strictly speaking, if only the drivers, burn year, and tree cover loss are being updated, the model only needs to be 
-run from gain_year_count onwards (all previous model stages aren't affected by those inputs).
+run from forest_age_category_IPCC onwards (loss affects IPCC age category but model extent isn't affected by
+any of these inputs).
 However, for completeness, I suggest running all stages of the model from model_extent onwards for an update so that
 model outputs from all stages have the same version in their metadata and the same dates of output as the model stages
 that are actually being changed.

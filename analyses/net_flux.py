@@ -29,9 +29,9 @@ def net_calc(tile_id, pattern, sensit_type):
         kwargs = removals_src.meta
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = removals_src.block_windows(1)
-        uu.print_log("   Gross removals tile {} found".format(removals_in))
+        uu.print_log("   Gross removals tile found for {}".format(removals_in))
     except:
-        uu.print_log("   No gross removals tile {} found".format(removals_in))
+        uu.print_log("   No gross removals tile found for {}".format(removals_in))
 
     try:
         emissions_src = rasterio.open(emissions_in)
@@ -39,9 +39,9 @@ def net_calc(tile_id, pattern, sensit_type):
         kwargs = emissions_src.meta
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = emissions_src.block_windows(1)
-        uu.print_log("   Gross emissions tile {} found".format(emissions_in))
+        uu.print_log("   Gross emissions tile foudn for {}".format(emissions_in))
     except:
-        uu.print_log("   No gross emissions tile {} found".format(emissions_in))
+        uu.print_log("   No gross emissions tile found for {}".format(emissions_in))
 
     # Skips the tile if there is neither a gross emissions nor a gross removals tile.
     # This should only occur for biomass_swap sensitivity analysis, which gets its net flux tile list from

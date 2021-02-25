@@ -73,7 +73,7 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
         if sensit_type == 'biomass_swap':
             processes = 18
         else:
-            processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = XXX GB peak
+            processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
     else:
         processes = 2
     uu.print_log('Gross removals max processors=', processes)
@@ -98,7 +98,7 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
             pool.close()
             pool.join()
         else:
-            processes = 55  # 50 processors = XXX GB peak
+            processes = 55  # 55 processors = 670 GB peak
             uu.print_log(
                 "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
             pool = multiprocessing.Pool(processes)
