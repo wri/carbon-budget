@@ -538,6 +538,16 @@ def main ():
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
     if 'create_supplementary_outputs' in actual_stages:
 
+        uu.print_log(":::::Deleting rewindowed tiles")
+        tiles_to_delete = []
+        tiles_to_delete.extend(glob.glob('*rewindow*tif'))
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
+
         uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
         start = datetime.datetime.now()
 
