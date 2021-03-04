@@ -104,7 +104,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
 
 
     # Creates tree cover loss driver tiles
-    source_raster = '{}.tif'.format(cn.pattern_drivers_raw)
+    source_raster = cn.pattern_drivers_raw
     out_pattern = cn.pattern_drivers
     dt = 'Byte'
     if cn.count == 96:
