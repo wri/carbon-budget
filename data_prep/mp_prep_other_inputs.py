@@ -274,44 +274,44 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
     # pool.close()
     # pool.join()
-    #
-    #
-    # for output_pattern in [cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
-    #
-    #     # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
-    #     # should be. These NaN values show up as values when the check_and_delete_if_empty function runs, making the tiles not
-    #     # deleted even if they have no data. However, the light version (which uses gdalinfo rather than rasterio masks) doesn't
-    #     # have this problem. So I'm forcing the young forest rates to and stdev to have their emptiness checked by the gdalinfo version.
-    #     if output_pattern in [cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
-    #         processes = int(cn.count / 2)
-    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
-    #         pool = multiprocessing.Pool(processes)
-    #         pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
-    #         pool.close()
-    #         pool.join()
-    #
-    #     if cn.count == 96:
-    #         processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
-    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-    #         pool = multiprocessing.Pool(processes)
-    #         pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-    #         pool.close()
-    #         pool.join()
-    #     elif cn.count <= 2: # For local tests
-    #         processes = 1
-    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
-    #         pool = multiprocessing.Pool(processes)
-    #         pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
-    #         pool.close()
-    #         pool.join()
-    #     else:
-    #         processes = int(cn.count / 2)
-    #         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
-    #         pool = multiprocessing.Pool(processes)
-    #         pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-    #         pool.close()
-    #         pool.join()
-    #     uu.print_log('\n')
+
+
+    for output_pattern in output_pattern_list:
+
+        # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
+        # should be. These NaN values show up as values when the check_and_delete_if_empty function runs, making the tiles not
+        # deleted even if they have no data. However, the light version (which uses gdalinfo rather than rasterio masks) doesn't
+        # have this problem. So I'm forcing the young forest rates to and stdev to have their emptiness checked by the gdalinfo version.
+        if output_pattern in [cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
+        if cn.count == 96:
+            processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+        elif cn.count <= 2: # For local tests
+            processes = 1
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+        else:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+        uu.print_log('\n')
 
 
     # Uploads output tiles to s3
