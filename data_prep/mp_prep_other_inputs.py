@@ -109,7 +109,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     out_pattern = cn.pattern_drivers
     dt = 'Byte'
     if cn.count == 96:
-        processes = 80  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak
+        processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
