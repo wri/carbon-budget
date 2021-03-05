@@ -103,7 +103,9 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     # uu.log_subprocess_output_full(cmd)
 
 
-    # Creates tree cover loss driver tiles
+    # Creates tree cover loss driver tiles.
+    # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
+    # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap.
     source_raster = cn.pattern_drivers_raw
     out_pattern = cn.pattern_drivers
     dt = 'Byte'
