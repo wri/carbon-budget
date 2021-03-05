@@ -211,7 +211,7 @@ plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs
 drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
 pattern_drivers_raw = 'FinalClassification_2020.tif'
 pattern_drivers = 'tree_cover_loss_driver_processed'
-drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2020/20210304/')
+drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2020/20210305/')
 
 # Burn year
 burn_area_raw_ftp = 'sftp://fuoco.geog.umd.edu/data/MODIS/C6/MCD64A1/HDF/' # per https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf
