@@ -235,8 +235,9 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Adding metadata tags for pattern {}".format(pattern))
 
         if cn.count == 96:
-            processes = 25  # 45 processors = ~30 GB peak but led to log copy error because of too many log uploads at once,
-                            # so decreasing to 25 processors. That seems not to overload the upload_log() function.
+            processes = 30  # 45 processors = ~30 GB peak but led to log copy error because of too many log uploads at once,
+                            # so decreasing to 20 processors. 25 processors also overwhelmed the upload.
+                            # 20 seems not to overload the upload_log() function.
         else:
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)

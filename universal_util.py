@@ -154,8 +154,10 @@ def log_subprocess_output(pipe):
         # logging.info("\n")
         # print("\n")
 
-    # After the subprocess finishes, the log is uploaded to s3
-    upload_log()
+    # # After the subprocess finishes, the log is uploaded to s3.
+    # # Having too many tiles finish running subprocesses at once can cause the upload to get overwhelmed and cause
+    # # an error. So, I've commented out the log upload because it's not really necessary here.
+    # upload_log()
 
 
 def log_subprocess_output_simple(cmd):

@@ -104,12 +104,13 @@ def mp_prep_other_inputs(tile_id_list, run_date):
 
     # Creates tree cover loss driver tiles.
     # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
-    # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap.
+    # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap. I also unprojected the global drivers
+    # map to WGS84 because running the homolosine projection that Jimmy provided was giving incorrect processed results.
     source_raster = cn.pattern_drivers_raw
     out_pattern = cn.pattern_drivers
     dt = 'Byte'
     if cn.count == 96:
-        processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = XXX GB peak
+        processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = 125 GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
