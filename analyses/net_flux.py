@@ -39,7 +39,7 @@ def net_calc(tile_id, pattern, sensit_type):
         kwargs = emissions_src.meta
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = emissions_src.block_windows(1)
-        uu.print_log("   Gross emissions tile foudn for {}".format(emissions_in))
+        uu.print_log("   Gross emissions tile found for {}".format(emissions_in))
     except:
         uu.print_log("   No gross emissions tile found for {}".format(emissions_in))
 

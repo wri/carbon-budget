@@ -27,9 +27,10 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
+        ### BUG: THIS SHOULD ALSO INCLUDE cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir IN ITS LIST
         tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
                                              cn.mangrove_biomass_2000_dir,
-                                             set3=cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir
+                                             set3=cn.gain_dir
                                              )
 
     uu.print_log(tile_id_list)

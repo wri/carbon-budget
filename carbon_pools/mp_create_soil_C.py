@@ -36,7 +36,8 @@ def mp_create_soil_C(tile_id_list):
     if tile_id_list == 'all':
         # List of tiles to run in the model
         tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                             cn.mangrove_biomass_2000_dir
+                                             cn.mangrove_biomass_2000_dir,
+                                             set3=cn.gain_dir
                                              )
 
     uu.print_log(tile_id_list)
@@ -50,104 +51,104 @@ def mp_create_soil_C(tile_id_list):
 
     ### Soil carbon density
 
-    # uu.print_log("Downloading mangrove soil C rasters")
-    # uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_base_dir, sensit_type)
+    uu.print_log("Downloading mangrove soil C rasters")
+    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_base_dir, sensit_type)
+
+    # For downloading all tiles in the input folders.
+    input_files = [cn.mangrove_biomass_2000_dir]
+
+    for input in input_files:
+        uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
+
+    # Download raw mineral soil C density tiles.
+    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # There are 12951 tiles and it takes about 3 hours to download them!
+    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+                   '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
+    uu.log_subprocess_output_full(cmd)
+
+    uu.print_log("Unzipping mangrove soil C rasters...")
+    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
+    uu.log_subprocess_output_full(cmd)
+
+    # Mangrove soil receives precedence over mineral soil
+    uu.print_log("Making mangrove soil C vrt...")
+    check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    uu.print_log("Done making mangrove soil C vrt")
+
+    uu.print_log("Making mangrove soil C tiles...")
+
+    if cn.count == 96:
+        processes = 32   # 32 processors = 570 GB peak
+    else:
+        processes = int(cn.count/3)
+    uu.print_log('Mangrove soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
     #
-    # # For downloading all tiles in the input folders.
-    # input_files = [cn.mangrove_biomass_2000_dir]
+    #     create_soil_C.create_mangrove_soil_C(tile_id)
+
+    uu.print_log('Done making mangrove soil C tiles', '\n')
+
+    uu.print_log("Making mineral soil C vrt...")
+    check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    uu.print_log("Done making mineral soil C vrt")
+
+    # Creates mineral soil C density tiles
+    source_raster = 'mineral_soil_C.vrt'
+    out_pattern = 'mineral_soil'
+    dt = 'Int16'
+    if cn.count == 96:
+        processes = 50  # 32 processors = 100 GB peak; 50 = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile_id in tile_id_list:
     #
-    # for input in input_files:
-    #     uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
+    #     create_soil_C.create_mineral_soil_C(tile_id)
+
+    uu.print_log("Done making mineral soil C tiles", "\n")
+
+
+    uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
+
+    if cn.count == 96:
+        processes = 45   # 45 processors = XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log('Combined soil C max processors=', processes)
+    pool = multiprocessing.Pool(processes)
+    pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
+    pool.close()
+    pool.join()
+
+    # # For single processor use
+    # for tile in tile_list:
     #
-    # # Download raw mineral soil C density tiles.
-    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # # There are 12951 tiles and it takes about 3 hours to download them!
-    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-    #                '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # uu.print_log("Unzipping mangrove soil C rasters...")
-    # cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # # Mangrove soil receives precedence over mineral soil
-    # uu.print_log("Making mangrove soil C vrt...")
-    # check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
-    # uu.print_log("Done making mangrove soil C vrt")
-    #
-    # uu.print_log("Making mangrove soil C tiles...")
-    #
-    # if cn.count == 96:
-    #     processes = 32   # 32 processors = 570 GB peak
-    # else:
-    #     processes = int(cn.count/3)
-    # uu.print_log('Mangrove soil C max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #
-    # #     create_soil_C.create_mangrove_soil_C(tile_id)
-    #
-    # uu.print_log('Done making mangrove soil C tiles', '\n')
-    #
-    # uu.print_log("Making mineral soil C vrt...")
-    # check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
-    # uu.print_log("Done making mineral soil C vrt")
-    #
-    # # Creates mineral soil C density tiles
-    # source_raster = 'mineral_soil_C.vrt'
-    # out_pattern = 'mineral_soil'
-    # dt = 'Int16'
-    # if cn.count == 96:
-    #     processes = 50  # 32 processors = 100 GB peak; 50 = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # # For single processor use
-    # # for tile_id in tile_id_list:
-    # #
-    # #     create_soil_C.create_mineral_soil_C(tile_id)
-    #
-    # uu.print_log("Done making mineral soil C tiles", "\n")
-    #
-    #
-    # uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
-    #
-    # if cn.count == 96:
-    #     processes = 45   # 45 processors = XXX GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log('Combined soil C max processors=', processes)
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
-    # pool.close()
-    # pool.join()
-    #
-    # # # For single processor use
-    # # for tile in tile_list:
-    # #
-    # #     create_soil_C.create_combined_soil_C(tile_id)
-    #
-    # uu.print_log("Done making combined soil C tiles")
-    #
-    # uu.print_log("Uploading soil C density tiles")
-    # uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    #
-    # # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
-    # uu.print_log("Deleting raw soil C density rasters")
-    # c_stocks = glob.glob('*{}*'.format(cn.pattern_soil_C_full_extent_2000))
-    # for c_stock in c_stocks:
-    #     os.remove(c_stock)
+    #     create_soil_C.create_combined_soil_C(tile_id)
+
+    uu.print_log("Done making combined soil C tiles")
+
+    uu.print_log("Uploading soil C density tiles")
+    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
+    # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
+    uu.print_log("Deleting raw soil C density rasters")
+    c_stocks = glob.glob('*{}*'.format(cn.pattern_soil_C_full_extent_2000))
+    for c_stock in c_stocks:
+        os.remove(c_stock)
 
 
     ### Soil carbon density uncertainty
@@ -159,35 +160,35 @@ def mp_create_soil_C(tile_id_list):
     vrt_CI95 = 'mineral_soil_C_CI95.vrt'
     soil_C_stdev_global = 'soil_C_stdev.tif'
 
-    # # Download raw mineral soil C density 5% CI tiles
-    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # # Like soil C density rasters, there are 12951 tifs and they take about 3 hours to download.
-    # os.mkdir(dir_CI05)
-    #
-    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-    #                '--directory-prefix={}'.format(dir_CI05),
-    #                '--accept', '*.tif', '{}'.format(cn.CI5_mineral_soil_C_url)]
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # uu.print_log("Making mineral soil C 5% CI vrt...")
+    # Download raw mineral soil C density 5% CI tiles
+    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # Like soil C density rasters, there are 12951 tifs and they take about 3 hours to download.
+    os.mkdir(dir_CI05)
 
-    # check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI05, dir_CI05, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
-    # uu.print_log("Done making mineral soil C CI05 vrt")
-    #
-    # # Download raw mineral soil C density 5% CI tiles
-    # # Like soil C density rasters, there are 12951 tifs and they take about 3 hours to download.
-    # os.mkdir(dir_CI95)
-    #
-    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-    #                '--directory-prefix={}'.format(dir_CI95),
-    #                '--accept', '*.tif', '{}'.format(cn.CI95_mineral_soil_C_url)]
-    # uu.log_subprocess_output_full(cmd)
-    #
-    # uu.print_log("Making mineral soil C 95% CI vrt...")
+    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+                   '--directory-prefix={}'.format(dir_CI05),
+                   '--accept', '*.tif', '{}'.format(cn.CI5_mineral_soil_C_url)]
+    uu.log_subprocess_output_full(cmd)
 
-    # check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI95, dir_CI95, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
-    # uu.print_log("Done making mineral soil C CI95 vrt")
+    uu.print_log("Making mineral soil C 5% CI vrt...")
+
+    check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI05, dir_CI05, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
+    uu.print_log("Done making mineral soil C CI05 vrt")
+
+    # Download raw mineral soil C density 5% CI tiles
+    # Like soil C density rasters, there are 12951 tifs and they take about 3 hours to download.
+    os.mkdir(dir_CI95)
+
+    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+                   '--directory-prefix={}'.format(dir_CI95),
+                   '--accept', '*.tif', '{}'.format(cn.CI95_mineral_soil_C_url)]
+    uu.log_subprocess_output_full(cmd)
+
+    uu.print_log("Making mineral soil C 95% CI vrt...")
+
+    check_call('gdalbuildvrt {0} {1}*{2}*'.format(vrt_CI95, dir_CI95, cn.pattern_uncert_mineral_soil_C_raw), shell=True)
+    uu.print_log("Done making mineral soil C CI95 vrt")
 
 
     uu.print_log("Creating raster of standard deviations in soil C at native SoilGrids250 resolution. This may take a while...")
@@ -227,6 +228,26 @@ def mp_create_soil_C(tile_id_list):
     pool.close()
     pool.join()
 
+
+    # Checks the gross removals outputs for tiles with no data
+    for output_pattern in output_pattern_list:
+        if cn.count <= 2:  # For local tests
+            processes = 1
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
+                output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+        else:
+            processes = 55  # 50 processors = XXX GB peak
+            uu.print_log(
+                "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
     uu.print_log("Uploading soil C density standard deviation tiles")
     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
@@ -245,5 +266,6 @@ if __name__ == '__main__':
 
     # Create the output log
     uu.initiate_log(tile_id_list, run_date=run_date)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_create_soil_C(tile_id_list=tile_id_list)
