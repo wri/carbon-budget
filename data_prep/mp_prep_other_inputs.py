@@ -279,8 +279,9 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     # pool.join()
     #
     #
-    for output_pattern in [cn.pattern_drivers,
-                           cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young]:
+    for output_pattern in [cn.pattern_drivers
+        # ,cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
+    ]:
 
         # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
         # should be. These NaN values show up as values when the check_and_delete_if_empty function runs, making the tiles not
