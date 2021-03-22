@@ -189,8 +189,8 @@ def log_subprocess_output_full(cmd):
             # logging.info("\n")
             # print("\n")
 
-        # After the subprocess finishes, the log is uploaded to s3
-        upload_log()
+        # # After the subprocess finishes, the log is uploaded to s3
+        # upload_log()
 
 
 # Checks the OS for how much storage is available in the system, what's being used, and what percent is being used
