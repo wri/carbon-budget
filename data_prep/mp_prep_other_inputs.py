@@ -36,6 +36,19 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
 
+    '''
+    Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
+    gdal_warp is producing a weird output, so I did it in ArcMap for the 2020 update, 
+    with the output cell size being 0.01 x 0.01 degree and the method being nearest.
+    
+    arcpy.ProjectRaster_management(in_raster="C:/GIS/Drivers of loss/2020_drivers__tif__from_Forrest_Follett_20210323/FinalClassification_2020_v2__from_Jimmy_MacCarthy_20210323.tif", 
+    out_raster="C:/GIS/Drivers of loss/2020_drivers__tif__from_Forrest_Follett_20210323/Final_Classification_2020__reproj_nearest_0-005_0-005_deg__20210323.tif", 
+    out_coor_system="GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", 
+    resampling_type="NEAREST", cell_size="0.005 0.005", geographic_transform="", 
+    Registration_Point="", 
+    in_coor_system="PROJCS['WGS_1984_Goode_Homolosine',GEOGCS['GCS_unknown',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Goode_Homolosine'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Option',1.0],UNIT['Meter',1.0]]", 
+    vertical="NO_VERTICAL")
+    '''
 
     # List of output directories and output file name patterns
     output_dir_list = [
