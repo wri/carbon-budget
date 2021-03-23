@@ -235,7 +235,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Adding metadata tags for pattern {}".format(pattern))
 
         if cn.count == 96:
-            processes = 55  # 45 processors = ~30 GB peak; 55 = XXX GB peak
+            processes = 75  # 45 processors = ~30 GB peak; 55 = XXX GB peak; 75 = XXX GB peak
         else:
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)

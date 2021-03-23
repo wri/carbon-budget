@@ -40,7 +40,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions',
-                    'net_flux', 'aggregate', 'create_supplementary_outputs']
+                    'net_flux', 'create_supplementary_outputs', 'aggregate']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -520,33 +520,8 @@ def main ():
         uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n", "\n")
 
 
-    # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
-    # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
-    if 'aggregate' in actual_stages:
-
-        uu.print_log(":::::Creating 4x4 km aggregate maps")
-        start = datetime.datetime.now()
-
-        mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.check_storage()
-        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
-
-
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
     if 'create_supplementary_outputs' in actual_stages:
-
-        uu.print_log(":::::Deleting rewindowed tiles")
-        tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob('*rewindow*tif'))
-        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
-
-        for tile_to_delete in tiles_to_delete:
-            os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted unneeded tiles")
-        uu.check_storage()
 
         uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
         start = datetime.datetime.now()
@@ -557,6 +532,32 @@ def main ():
         elapsed_time = end - start
         uu.check_storage()
         uu.print_log(":::::Processing time for supplementary output raster creation:", elapsed_time, "\n", "\n")
+
+
+    # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
+    # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
+    if 'aggregate' in actual_stages:
+
+        uu.print_log(":::::Freeing up memory for aggregate map creation")
+        tiles_to_delete = []
+        tiles_to_delete.extend(glob.glob('*pixel*tif'))
+        tiles_to_delete.extend(glob.glob('*forest_extent*tif'))
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
+
+        uu.print_log(":::::Creating 4x4 km aggregate maps")
+        start = datetime.datetime.now()
+
+        mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = std_net_flux, run_date = run_date)
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        uu.check_storage()
+        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
 
 
     uu.print_log(":::::Counting tiles output to each folder")

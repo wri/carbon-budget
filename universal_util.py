@@ -250,7 +250,7 @@ def tile_list_s3(source, sensit_type='std'):
     else:
         new_source = source.replace('standard', sensit_type)
 
-    print_log("Creating list of tiles in", new_source)
+    print_log('\n' + "Creating list of tiles in", new_source)
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -283,7 +283,7 @@ def tile_list_s3(source, sensit_type='std'):
     # In case the change of directories to look for sensitivity versions yields an empty folder.
     # This could be done better by using boto3 to check the potential s3 folders for files upfront but I couldn't figure
     # out how to do that.
-    print_log("Creating list of tiles in", source)
+    print_log('\n' + "Creating list of tiles in", source)
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
