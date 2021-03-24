@@ -105,7 +105,8 @@ string ifl_primary_name = infolder + tile_id + constants::ifl_primary;
 string plant_name = infolder + tile_id + constants::plantation_type;
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
-// that determines emissions
+// that determines emissions.
+// regex_replace from https://stackoverflow.com/a/41294178
 string out_name1_pre = constants::commod_emis;
 out_name1_pre = std::regex_replace(out_name1_pre, std::regex("biomass_soil"), "soil_only");
 string out_name1  = tile_id + out_name1_pre + model_years_str + ".tif";
@@ -119,7 +120,7 @@ out_name3_pre = std::regex_replace(out_name3_pre, std::regex("biomass_soil"), "s
 string out_name3  = tile_id + out_name3_pre + model_years_str + ".tif";
 
 string out_name4_pre = constants::wildfire_emis;
-out_name1_pre = std::regex_replace(out_name4_pre, std::regex("biomass_soil"), "soil_only");
+out_name4_pre = std::regex_replace(out_name4_pre, std::regex("biomass_soil"), "soil_only");
 string out_name4  = tile_id + out_name4_pre + model_years_str + ".tif";
 
 string out_name5_pre = constants::urbanization_emis;
