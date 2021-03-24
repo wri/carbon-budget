@@ -540,7 +540,6 @@ def main ():
 
         uu.print_log(":::::Freeing up memory for aggregate map creation")
         tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob('*pixel*tif'))
         tiles_to_delete.extend(glob.glob('*forest_extent*tif'))
         uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 

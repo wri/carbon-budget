@@ -92,6 +92,8 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
     logging.getLogger("botocore").setLevel(logging.ERROR)  # "Found credentials in environment variables." is logged by botocore: https://github.com/boto/botocore/issues/1841
 
+    upload_log()
+
 
 # Prints the output statement in the console and adds it to the log. It can handle an indefinite number of string to print
 def print_log(*args):
