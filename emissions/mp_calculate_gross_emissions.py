@@ -166,13 +166,14 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        uu.print_log(output_dir_list)
-        uu.print_log(output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+
+    uu.print_log(output_dir_list)
+    uu.print_log(output_pattern_list)
 
 
     # The C++ code expects certain tiles for every input 10x10.
