@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <sstream>
 #include <iomanip>
+#include <regex>
 
 #include <gdal/gdal_priv.h>
 #include <gdal/cpl_conv.h>
@@ -105,16 +106,45 @@ string plant_name = infolder + tile_id + constants::plantation_type;
 
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
-string out_name1  = tile_id + constants::commod_emis + model_years_str + "_soil_only.tif";
-string out_name2  = tile_id + constants::shifting_ag_emis + model_years_str + "_soil_only.tif";
-string out_name3  = tile_id + constants::forestry_emis + model_years_str + "_soil_only.tif";
-string out_name4  = tile_id + constants::wildfire_emis + model_years_str + "_soil_only.tif";
-string out_name5  = tile_id + constants::urbanization_emis + model_years_str + "_soil_only.tif";
-string out_name6  = tile_id + constants::no_driver_emis + model_years_str + "_soil_only.tif";
-string out_name10 = tile_id + constants::all_gases_all_drivers_emis + model_years_str + "_soil_only.tif";
-string out_name11 = tile_id + constants::CO2_only_all_drivers_emis + model_years_str + "_soil_only.tif";
-string out_name12 = tile_id + constants::non_CO2_all_drivers_emis + model_years_str + "_soil_only.tif";
-string out_name20 = tile_id + constants::decision_tree_all_drivers_emis + model_years_str + "_soil_only.tif";
+string out_name1_pre = constants::commod_emis;
+out_name1_pre = std::regex_replace(out_name1_pre, std::regex("biomass_soil"), "soil_only");
+string out_name1  = tile_id + out_name1_pre + model_years_str + ".tif";
+
+string out_name2_pre = constants::shifting_ag_emis;
+out_name2_pre = std::regex_replace(out_name2_pre, std::regex("biomass_soil"), "soil_only");
+string out_name2  = tile_id + out_name2_pre + model_years_str + ".tif";
+
+string out_name3_pre = constants::forestry_emis;
+out_name3_pre = std::regex_replace(out_name3_pre, std::regex("biomass_soil"), "soil_only");
+string out_name3  = tile_id + out_name3_pre + model_years_str + ".tif";
+
+string out_name4_pre = constants::wildfire_emis;
+out_name1_pre = std::regex_replace(out_name4_pre, std::regex("biomass_soil"), "soil_only");
+string out_name4  = tile_id + out_name4_pre + model_years_str + ".tif";
+
+string out_name5_pre = constants::urbanization_emis;
+out_name5_pre = std::regex_replace(out_name5_pre, std::regex("biomass_soil"), "soil_only");
+string out_name5  = tile_id + out_name5_pre + model_years_str + ".tif";
+
+string out_name6_pre = constants::no_driver_emis;
+out_name6_pre = std::regex_replace(out_name6_pre, std::regex("biomass_soil"), "soil_only");
+string out_name6  = tile_id + out_name6_pre + model_years_str + ".tif";
+
+string out_name10_pre = constants::all_gases_all_drivers_emis;
+out_name10_pre = std::regex_replace(out_name10_pre, std::regex("biomass_soil"), "soil_only");
+string out_name10 = tile_id + out_name10_pre + model_years_str + ".tif";
+
+string out_name11_pre = constants::CO2_only_all_drivers_emis;
+out_name11_pre = std::regex_replace(out_name11_pre, std::regex("biomass_soil"), "soil_only");
+string out_name11 = tile_id + out_name11_pre + model_years_str + ".tif";
+
+string out_name12_pre = constants::non_CO2_all_drivers_emis;
+out_name12_pre = std::regex_replace(out_name12_pre, std::regex("biomass_soil"), "soil_only");
+string out_name12 = tile_id + out_name12_pre + model_years_str + ".tif";
+
+string out_name20_pre = constants::decision_tree_all_drivers_emis;
+out_name20_pre = std::regex_replace(out_name20_pre, std::regex("biomass_soil"), "soil_only");
+string out_name20 = tile_id + out_name20_pre + model_years_str + ".tif";
 
 
 // Setting up the variables to hold the pixel location in x/y values
