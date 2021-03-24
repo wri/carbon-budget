@@ -276,15 +276,11 @@ if __name__ == '__main__':
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, emitted_pools=emitted_pools)
 
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
 
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
-
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
 

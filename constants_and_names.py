@@ -526,7 +526,7 @@ gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biom
 ### Emissions from soil only
 
 # Date to include in the output directory
-emis_run_date_soil_only = '20219999'
+emis_run_date_soil_only = '20210324'
 
 pattern_gross_emis_commod_soil_only = 'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_commod_soil_only_dir = '{0}gross_emissions/commodities/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
