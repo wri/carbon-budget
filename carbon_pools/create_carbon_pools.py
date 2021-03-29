@@ -70,10 +70,10 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
         uu.print_log("    Hansen loss tile found for {}".format(tile_id))
-        loss_year = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+        loss_year = '{0}.tif'.format(tile_id)
 
-    # This input should exist
-    removal_forest_type_src = rasterio.open(removal_forest_type)
+    # This input is required to exist
+    loss_year_src = rasterio.open(loss_year)
 
     # Opens the input tiles if they exist
     try:
@@ -107,17 +107,17 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         uu.print_log("    No gain tile found for", tile_id)
 
     try:
-        loss_year_src = rasterio.open(loss_year)
-        uu.print_log("    Loss tile found for", tile_id)
+        removal_forest_type_src = rasterio.open(removal_forest_type)
+        uu.print_log("    Removal type tile found for", tile_id)
     except:
-        uu.print_log("    No loss tile found for", tile_id)
+        uu.print_log("    No removal type tile found for", tile_id)
 
 
     # Grabs the windows of a tile to iterate over the entire tif without running out of memory
-    windows = removal_forest_type_src.block_windows(1)
+    windows = loss_year_src.block_windows(1)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = removal_forest_type_src.meta
+    kwargs = loss_year_src.meta
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional carbon
@@ -128,7 +128,6 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         nodata=0,
         dtype='float32'
     )
-
 
     # The output files: aboveground carbon density in 2000 and in the year of loss. Creates names and rasters to write to.
     if '2000' in carbon_pool_extent:
@@ -167,7 +166,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
     for idx, window in windows:
 
         # Reads the input tiles' windows. For windows from tiles that may not exist, an array of all 0s is created.
-        removal_forest_type_window = removal_forest_type_src.read(1, window=window)
+        loss_year_window = loss_year_src.read(1, window=window)
         try:
             annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
         except:
@@ -177,9 +176,9 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
         except:
             cumul_gain_AGCO2_window = np.zeros((window.height, window.width), dtype='float32')
         try:
-            loss_year_window = loss_year_src.read(1, window=window)
+            removal_forest_type_window = removal_forest_type_src.read(1, window=window)
         except:
-            loss_year_window = np.zeros((window.height, window.width), dtype='uint8')
+            removal_forest_type_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             gain_window = gain_src.read(1, window=window)
         except:

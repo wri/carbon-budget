@@ -11,7 +11,7 @@ import universal_util as uu
 
 def stack_ba_hv(hv_tile):
 
-    for year in range(2019, 2020): # End year is not included in burn year product
+    for year in range(2020, 2021): # End year is not included in burn year product
 
         # Download hdf files from s3 into folders by h and v
         output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))
@@ -23,7 +23,6 @@ def stack_ba_hv(hv_tile):
         if len(hdf_files) > 0:
             array_list = []
             for hdf in hdf_files:
-                uu.print_log("converting hdf to array")
                 array = utilities.hdf_to_array(hdf)
                 array_list.append(array)
 

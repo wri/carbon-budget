@@ -96,7 +96,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
             # 36 = 550 GB peak; 40 = 590 GB peak; 42 = XXX GB peak
     else:
         processes = 3
-    uu.print_log('Removal model forest extent processors=', processes)
+    uu.print_log('Model extent processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(model_extent.model_extent, pattern=pattern, sensit_type=sensit_type), tile_id_list)
     pool.close()
@@ -116,7 +116,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None):
         pool.close()
         pool.join()
     else:
-        processes = 50  # 50 processors = XXX GB peak
+        processes = 58  # 50 processors = 620 GB peak; 55 = 640 GB; 58 = 650 GB (continues to increase very slowly several hundred tiles in)
         uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
         pool = multiprocessing.Pool(processes)
         pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)

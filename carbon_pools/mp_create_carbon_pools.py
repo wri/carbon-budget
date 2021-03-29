@@ -1,5 +1,5 @@
 '''
-This script creates carbon emitted_pools.
+This script creates carbon pools in the year of loss (emitted-year carbon) and in 2000.
 For the year 2000, it creates aboveground, belowground, deadwood, litter, and total
 carbon emitted_pools (soil is created in a separate script but is brought in to create total carbon). All but total carbon are to the extent
 of WHRC and mangrove biomass 2000, while total carbon is to the extent of WHRC AGB, mangrove AGB, and soil C.
@@ -48,9 +48,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed.
-    # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant.
+    # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant
+    # because there must be loss pixels for emissions-year carbon pools to exist.
     if (tile_id_list == 'all') & (carbon_pool_extent == 'loss'):
-        # Lists the tiles that have both model extent and loss pixels
+        # Lists the tiles that have both model extent and loss pixels, both being necessary precursors for emissions
         model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=sensit_type)
         loss_tile_id_list = uu.tile_list_s3(cn.loss_dir, sensit_type=sensit_type)
         uu.print_log("Carbon pool at emissions year is combination of model_extent and loss tiles:")
@@ -197,7 +198,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
                 processes = 16  # 16 processors = XXX GB peak
             else:
                 processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
-                # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 670 GB peak; 21 > 750 GB peak
+                # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 690 GB peak (stops at 600, then increases slowly); 21 > 750 GB peak
         else: # For 2000, or loss & 2000
             processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
     else:
@@ -239,7 +240,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             if sensit_type == 'biomass_swap':
                 processes = 30  # 30 processors = XXX GB peak
             else:
-                processes = 38  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 700 GB peak
+                processes = 39  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 690 GB peak; 39 = XXX GB peak
         else: # For 2000, or loss & 2000
             processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
     else:
@@ -272,7 +273,6 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         tiles_to_delete = []
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gain)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_full_extent_2000)))
 
@@ -291,7 +291,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             if sensit_type == 'biomass_swap':
                 processes = 10  # 10 processors = XXX GB peak
             else:
-                processes = 14  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 650 GB peak; 15 = 700 GB peak
+                processes = 15  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly); 15 = 700 GB peak
         else: # For 2000, or loss & 2000
             ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
             ### There wouldn't have been enough room for all deadwood and litter otherwise.
@@ -356,7 +356,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
                 if sensit_type == 'biomass_swap':
                     processes = 36  # 36 processors = XXX GB peak
                 else:
-                    processes = 42  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = XXX GB peak
+                    processes = 44  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 44 = XXX GB peak
             else: # For 2000, or loss & 2000
                 processes = 12  # 12 processors = XXX GB peak
         else:
@@ -410,7 +410,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             if sensit_type == 'biomass_swap':
                 processes = 14  # 14 processors = XXX GB peak
             else:
-                processes = 18  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = XXX GB peak
+                processes = 19  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = 660 GB peak; 19 = XXX GB peak
         else: # For 2000, or loss & 2000
             processes = 12  # 12 processors = XXX GB peak
     else:

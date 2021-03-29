@@ -11,7 +11,7 @@ calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
 and convert_to_grassland), do:
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
-Run mp_calculate_gross_emissions.py by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE].
+Run by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE] -l [TILE_LIST] -d [RUN_DATE]
 The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
 The --emitted_pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
@@ -166,13 +166,14 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        uu.print_log(output_dir_list)
-        uu.print_log(output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     if run_date is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+
+    uu.print_log(output_dir_list)
+    uu.print_log(output_pattern_list)
 
 
     # The C++ code expects certain tiles for every input 10x10.
@@ -192,7 +193,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     uu.create_blank_tile_txt()
 
     for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=60)  # 60 = 100 GB peak
+        pool = multiprocessing.Pool(processes=80)  # 60 = 100 GB peak; 80 =  XXX GB peak
         pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
                                              sensit_type=sensit_type), tile_id_list)
         pool.close()
@@ -211,7 +212,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         if sensit_type == 'biomass_swap':
             processes = 15 # 15 processors = XXX GB peak
         else:
-            processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 714 GB peak
+            processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
     else:
         processes = 9
     uu.print_log('Gross emissions max processors=', processes)
@@ -235,7 +236,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         uu.print_log("Adding metadata tags for pattern {}".format(pattern))
 
         if cn.count == 96:
-            processes = 45  # 45 processors = XXX GB peak
+            processes = 75  # 45 processors = ~30 GB peak; 55 = XXX GB peak; 75 = XXX GB peak
         else:
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)
@@ -276,15 +277,11 @@ if __name__ == '__main__':
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, emitted_pools=emitted_pools)
 
-    # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
-
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
 
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
-
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
 

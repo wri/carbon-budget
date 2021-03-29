@@ -26,7 +26,11 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        # tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        gain_year_count_tile_id_list = uu.tile_list_s3(cn.gain_year_count_dir, sensit_type=sensit_type)
+        annual_removals_tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, sensit_type=sensit_type)
+        tile_id_list = list(set(gain_year_count_tile_id_list).intersection(annual_removals_tile_id_list))
+        uu.print_log("Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:")
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -69,7 +73,7 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
         if sensit_type == 'biomass_swap':
             processes = 18
         else:
-            processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = XXX GB peak
+            processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
     else:
         processes = 2
     uu.print_log('Gross removals max processors=', processes)
@@ -82,6 +86,25 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
     # # For single processor use
     # for tile_id in tile_id_list:
     #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type)
+
+    # Checks the gross removals outputs for tiles with no data
+    for output_pattern in output_pattern_list:
+        if cn.count <= 2:  # For local tests
+            processes = 1
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
+                output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+        else:
+            processes = 55  # 55 processors = 670 GB peak
+            uu.print_log(
+                "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
 
 
     # Uploads output tiles to s3

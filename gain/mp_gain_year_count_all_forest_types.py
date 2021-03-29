@@ -1,5 +1,5 @@
 '''
-Creates tiles of the number of years in which carbon removals occur during the model duration (2001 to 2019 currently).
+Creates tiles of the number of years in which carbon removals occur during the model duration (2001 to 2020 currently).
 It is based on the annual Hansen loss data and the 2000-2012 Hansen gain data.
 First it separately calculates rasters of gain years for model pixels that had loss only,
 gain only, neither loss nor gain, and both loss and gain.
@@ -27,8 +27,8 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
-        # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        # No point in making gain year count tiles for tiles that don't have annual removals
+        tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, sensit_type)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")

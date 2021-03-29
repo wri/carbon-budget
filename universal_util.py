@@ -16,6 +16,9 @@ from shutil import copy
 import re
 import pandas as pd
 from osgeo import gdal
+import time
+from random import seed
+from random import random
 
 # Prints the date as YYYYmmdd_hhmmss
 d = datetime.datetime.today()
@@ -25,6 +28,11 @@ date_time_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 
 # Uploads the output log to the designated s3 folder
 def upload_log():
+
+    # Builds a slightly variable delay into the log uploading so that a ton of log uploads at once don't overwhelm s3
+    seed()
+    lag = random()*2
+    time.sleep(lag)
 
     cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
     check_call(cmd)
@@ -51,24 +59,40 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
-    logging.info("AWS ec2 instance type and AMI id:")
-    # try:
-    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    #     with process.stdout:
-    #         log_subprocess_output(process.stdout)
-    #     cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id']  # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
-    #     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    #     with process.stdout:
-    #         log_subprocess_output(process.stdout)
-    # except:
-    #     logging.info("Not running on AWS ec2 instance")
-    logging.info("Available processors: {}".format(cn.count))
-    logging.info("")
+    logging.info("AWS ec2 instance type and AMI ID:")
+
+    # https://stackoverflow.com/questions/13735051/how-to-capture-curl-output-to-a-file
+    # https://stackoverflow.com/questions/625644/how-to-get-the-instance-id-from-within-an-ec2-instance
+    try:
+        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/instance-type', '-o', 'instance_type.txt', '--silent']
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            log_subprocess_output(process.stdout)
+        cmd = ['curl', 'http://169.254.169.254/latest/meta-data/ami-id', '-o', 'ami_id.txt', '--silent']
+        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        with process.stdout:
+            log_subprocess_output(process.stdout)
+
+        type_file = open("instance_type.txt", "r")
+        type_lines = type_file.readlines()
+        for line in type_lines:
+            logging.info("  Instance type: {}".format(line.strip()))
+
+        ami_file = open("ami_id.txt", "r")
+        ami_lines = ami_file.readlines()
+        for line in ami_lines:
+            logging.info("  AMI ID: {}".format(line.strip()))
+
+    except:
+        logging.info("  Not running on AWS ec2 instance")
+
+    logging.info("Available processors: {}".format(cn.count) + "\n")
 
     # Suppresses logging from rasterio and botocore below ERROR level for the entire model
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
     logging.getLogger("botocore").setLevel(logging.ERROR)  # "Found credentials in environment variables." is logged by botocore: https://github.com/boto/botocore/issues/1841
+
+    upload_log()
 
 
 # Prints the output statement in the console and adds it to the log. It can handle an indefinite number of string to print
@@ -86,8 +110,12 @@ def print_log(*args):
     # Prints to console
     print("LOG: " + full_statement)
 
-    # Every time a line is added to the log, it is copied to s3
-    upload_log()
+    # # Every time a line is added to the log, it is copied to s3.
+    # # NOTE: During model 1.2.1 runs, I started getting repeated errors about uploading the log to s3.
+    # # I don't know why it happened, but my guess is that it's because I had too many things trying to copy
+    # # to that s3 location at once. So I'm reducing the occasions for uploading the log by removing uploads
+    # # whenever anything is printed. Instead, I'll upload at the end of each tile and each model stage.
+    # upload_log()
 
 
 # Logs fatal errors to the log txt, uploads to s3, and then terminates the program with an exception in the console
@@ -128,8 +156,10 @@ def log_subprocess_output(pipe):
         # logging.info("\n")
         # print("\n")
 
-    # After the subprocess finishes, the log is uploaded to s3
-    upload_log()
+    # # After the subprocess finishes, the log is uploaded to s3.
+    # # Having too many tiles finish running subprocesses at once can cause the upload to get overwhelmed and cause
+    # # an error. So, I've commented out the log upload because it's not really necessary here.
+    # upload_log()
 
 
 def log_subprocess_output_simple(cmd):
@@ -161,8 +191,8 @@ def log_subprocess_output_full(cmd):
             # logging.info("\n")
             # print("\n")
 
-        # After the subprocess finishes, the log is uploaded to s3
-        upload_log()
+        # # After the subprocess finishes, the log is uploaded to s3
+        # upload_log()
 
 
 # Checks the OS for how much storage is available in the system, what's being used, and what percent is being used
@@ -222,7 +252,7 @@ def tile_list_s3(source, sensit_type='std'):
     else:
         new_source = source.replace('standard', sensit_type)
 
-    print_log("Creating list of tiles in", new_source)
+    print_log('\n' + "Creating list of tiles in", new_source)
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -255,7 +285,7 @@ def tile_list_s3(source, sensit_type='std'):
     # In case the change of directories to look for sensitivity versions yields an empty folder.
     # This could be done better by using boto3 to check the potential s3 folders for files upfront but I couldn't figure
     # out how to do that.
-    print_log("Creating list of tiles in", source)
+    print_log('\n' + "Creating list of tiles in", source)
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -526,8 +556,13 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
+            if pattern == '':  # For Hansen loss tiles, which have no pattern
+                if tile_name.endswith('.tif'):
+                    tile_id = get_tile_id(tile_name)
+                    file_list.append(tile_id)
+
             # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -583,7 +618,9 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
+            if pattern == cn.pattern_loss:   # For Hansen loss tiles
+                source = '{0}{1}.tif'.format(source_dir, tile_id)
+            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:  # For every other type of tile
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
@@ -606,9 +643,25 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     local_tile_count = len(glob.glob('*{}*.tif'.format(pattern)))
 
     # For tile types that have the tile_id after the pattern
-    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_loss, cn.pattern_pixel_area]:
+    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
 
         local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
+
+
+    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine
+    # needs to be handled separately.
+    if pattern == '':
+
+        local_tile_count = 0
+
+        all_local_tiles = glob.glob('*tif')
+
+        for tile in all_local_tiles:
+
+            # Loss tiles are 12 characters long (just [tile_id].tif). Only tiles with that length name are counted.
+            # Using regex to identify the loss tiles would be better but I couldn't get that to work.
+            if len(tile) == 12:
+                local_tile_count = local_tile_count + 1
 
 
     print_log("There are", local_tile_count, "tiles on the spot machine with the pattern", pattern)
@@ -732,8 +785,14 @@ def s3_file_download(source, dest, sensit_type):
 
         # If not already downloaded, first tries to download the sensitivity analysis version
         try:
-            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object('gfw2-data', '{0}/{1}'.format(dir_sens[15:], file_name_sens)).load()
+            # Determines which bucket to check
+            if 'gfw-data-lake' in source:
+                bucket = 'gfw-data-lake'
+                folder = source[19:]
+            else:
+                bucket = 'gfw2-data'
+                folder = source[15:]
+            s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
             cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
@@ -759,8 +818,15 @@ def s3_file_download(source, dest, sensit_type):
         # If not already downloaded, final optionis to try to download the standard version of the tile.
         # If this doesn't work, the script throws a fatal error because no variant of this tile was found.
         try:
+            # Determines which bucket to check
+            if 'gfw-data-lake' in source:
+                bucket = 'gfw-data-lake'
+                folder = source[19:]
+            else:
+                bucket = 'gfw2-data'
+                folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            s3.Object(bucket, folder).load()
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source))
@@ -786,18 +852,25 @@ def s3_file_download(source, dest, sensit_type):
         source = os.path.join(dir, file_name)
 
         try:
+            # Determines which bucket to check
+            if 'gfw-data-lake' in source:
+                bucket = 'gfw-data-lake'
+                folder = source[19:]
+            else:
+                bucket = 'gfw2-data'
+                folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object('gfw2-data', '{0}'.format(source[15:])).load()
+            s3.Object(bucket, folder).load()
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
-            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source))
+            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
             print_log("")
             return
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] == "404":
-                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
             else:
-                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source))
+                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source) + "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -811,6 +884,9 @@ def upload_final_set(upload_dir, pattern):
         print_log("  Upload of tiles with {} pattern complete!".format(pattern))
     except:
         print_log("Error uploading output tile(s)")
+
+    # Uploads the log as each model stage is finished
+    upload_log()
 
 
 # Uploads tile to specified location
@@ -862,6 +938,11 @@ def check_for_data(tile):
 def check_and_delete_if_empty(tile_id, output_pattern):
 
     tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
+
+    # Only checks for data if the tile exists
+    if not os.path.exists(tile_name):
+        print_log(tile_name, "does not exist. Skipping check of whether there is data.")
+        return
 
     print_log("Checking if {} contains any data...".format(tile_name))
     no_data = check_for_data(tile_name)
@@ -921,6 +1002,9 @@ def end_of_fx_summary(start, tile_id, pattern):
     elapsed_time = end-start
     print_log("Processing time for tile", tile_id, ":", elapsed_time)
     count_completed_tiles(pattern)
+
+    # Uploads the log as each tile is finished
+    upload_log()
 
 
 # Warps raster to Hansen tiles using multiple processors
@@ -1023,11 +1107,11 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
-        if os.path.exists(os.path.join(folder, '{0}_{1}.tif'.format(cn.pattern_loss, tile_id))):
+        if os.path.exists(os.path.join(folder, '{0}.tif'.format(tile_id))):
             print_log("Hansen loss tile exists for {}. Using that as template for blank tile.".format(tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}/{1}_{2}.tif'.format(folder, cn.pattern_loss, tile_id)]
+                   '{0}/{1}.tif'.format(folder, tile_id)]
             check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine

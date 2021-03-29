@@ -229,7 +229,7 @@ def main ():
 
     output_dir_list = output_dir_list + [cn.net_flux_dir]
 
-    if create_supplementary_outputs in actual_stages:
+    if 'create_supplementary_outputs' in actual_stages:
         output_dir_list = output_dir_list + \
                         [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
                         cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
@@ -479,7 +479,6 @@ def main ():
 
         uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
         tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_loss)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)))
         tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_commod_biomass_soil)))
@@ -539,6 +538,16 @@ def main ():
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
     if 'create_supplementary_outputs' in actual_stages:
 
+        uu.print_log(":::::Deleting rewindowed tiles")
+        tiles_to_delete = []
+        tiles_to_delete.extend(glob.glob('*rewindow*tif'))
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
+
         uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
         start = datetime.datetime.now()
 
@@ -573,7 +582,7 @@ def main ():
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
     uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
-
+    uu.upload_log()
 
 if __name__ == '__main__':
     main()

@@ -130,7 +130,7 @@ def makedir(dir):
 
 
 def download_df(year, hv_tile, output_dir):
-        include = '*A{0}*{1}*'.format(year, hv_tile)
+        include = 'MCD64A1.A{0}*{1}*'.format(year, hv_tile)
         cmd = ['aws', 's3', 'cp', cn.burn_year_hdf_raw_dir, output_dir, '--recursive', '--exclude',
                "*", '--include', include]
 

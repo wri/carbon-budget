@@ -11,7 +11,7 @@ ENV SECRETS_PATH /usr/secrets
 # set timezone fo tzdata
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
-# Install missing dependencies
+# Install dependencies
 RUN apt-get update -y && apt-get install -y \
     make \
     automake \
@@ -52,6 +52,9 @@ RUN cd /usr/include && ln -s ./ gdal
 # Somehow, this makes gdal_calc.py accessible from anywhere in the Docker
 #https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
 RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# Enable ec2 to interact with GitHub
+RUN git config --global user.email dagibbs22@gmail.com
 
 ## Check out the branch that I'm currently using for model development
 #RUN git checkout model_v_1.2.0

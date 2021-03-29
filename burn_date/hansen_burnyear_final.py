@@ -23,7 +23,7 @@ def hansen_burnyear(tile_id):
     # once metadata tags have been added.
     out_tile_no_tag = '{0}_{1}_no_tag.tif'.format(tile_id, cn.pattern_burn_year)
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_burn_year)
-    loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+    loss = '{0}.tif'.format(tile_id)
 
     # Does not continue processing tile if no loss (because there will not be any output)
     if not os.path.exists(loss):
@@ -145,7 +145,7 @@ def hansen_burnyear(tile_id):
             out_tile_tagged.update_tags(
                 units='year (2001, 2002, 2003...)')
             out_tile_tagged.update_tags(
-                source='MODIS collection 6 burned area')
+                source='MODIS collection 6 burned area, https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf')
             out_tile_tagged.update_tags(
                 extent='global')
 

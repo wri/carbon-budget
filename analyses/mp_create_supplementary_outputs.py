@@ -32,8 +32,10 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
 
     os.chdir(cn.docker_base_dir)
 
+    tile_id_list_outer = tile_id_list
+
     # If a full model run is specified, the correct set of tiles for the particular script is listed
-    if tile_id_list == 'all':
+    if tile_id_list_outer == 'all':
         # List of tiles to run in the model
         tile_id_list_outer = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
 
@@ -43,7 +45,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
 
     # Files to download for this script
     download_dict = {
-        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
         cn.net_flux_dir: [cn.pattern_net_flux]
     }
@@ -107,7 +109,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None):
             # List of tiles to run in the model
             tile_id_list_input = uu.tile_list_s3(input_dir, sensit_type)
         else:
-            tile_id_list_input = tile_id_list
+            tile_id_list_input = tile_id_list_outer
 
         uu.print_log(tile_id_list_input)
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_input))) + "\n")

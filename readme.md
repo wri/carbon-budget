@@ -3,7 +3,7 @@
 ### Purpose and scope
 This model maps gross annual greenhouse gas emissions from forests, 
 gross carbon removals (sequestration) by forests, and the difference between them 
-(net flux), all between 2001 and 2019. 
+(net flux), all between 2001 and 2020. 
 Gross emissions includes CO2, NH4, and N20 and all carbon pools, and gross removals includes removals into aboveground and belowground biomass carbon. 
 Although the model is run for all tree canopy densities (per Hansen et al. 2013), it is most relevant to
 pixels with canopy density >30% in 2000 or pixels which subsequently had tree cover gain (per Hansen et al. 2013).
@@ -26,10 +26,14 @@ The input processing scripts are scattered among almost all the folders, unfortu
 which I haven't fixed yet. The data prep scripts are generally in the folder for which their outputs are most relevant.
 
 ### Outputs
-There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all for 2001-2019. 
+There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all for 2001-2020. 
 These are produced at two resolutions: 0.00025 x 0.00025 degrees 
 (approximately 30 x 30 m at the equator) in 10 x 10 degree rasters (to make outputs a 
 manageable size), and 0.04 x 0.04 degrees (approximately 4 x 4 km at the equator) as global rasters.
+
+Model runs also automatically generate a txt log that is saved to s3. This log includes nearly everything that is output in the console.
+This log is useful for documenting model runs and checking for mistakes/errors in retrospect, although it does not capture errors that terminate the model.
+For example, users can examine it to see if the correct input tiles were downloaded or if the intended tiles were used during the model run.  
 
 #### 30-m outputs
 
@@ -37,24 +41,36 @@ The 30-m outputs are used for zonal statistics analyses (i.e. emissions, removal
 and mapping on the Global Forest Watch web platform or at small scales (where 30-m pixels can be distinguished). 
 Individual emissions can be assigned years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire model run and cannot be assigned specific years. 
-This 30-m output is in megagrams CO2e/ha 2001-2019 (i.e. densities) and includes all tree cover densities ("full extent")
+This 30-m output is in megagrams CO2e/ha 2001-2020 (i.e. densities) and includes all tree cover densities ("full extent"):
 `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`.
 However, the model is designed to be used specifically for forests, so the model creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well 
 (only for the standard model, not for sensitivity analyses):
 
-1) Per pixel values for the full model extent (all tree cover densities) 
+1) Per pixel values for the full model extent (all tree cover densities): 
    `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
-2) Per hectare values for forest pixels only 
+2) Per hectare values for forest pixels only: 
    `(((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
-3) Per pixel values for forest pixels only  
+3) Per pixel values for forest pixels only:  
    `(((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
 
-The per hectare outputs are used for making maps, while the per pixel outputs are used for analyses because the values
+The per hectare outputs are used for making pixel-level maps (essentially showing emission and removal factors), 
+while the per pixel outputs are used for analyses because the values
 of those pixels can be summed within areas of interest. 
-(The pixels of the per hectare outputs should not be summed but they can be averaged.)
+(The pixels of the per hectare outputs should not be summed but they can be averaged in areas of interest.)
 Statistics from this model are always based on the "forest extent" rasters, not the "full extent" rasters.
 The full model extent outputs should generally not be used but are created by the model in case they are needed.
+
+In addition to these three key outputs, there are many intermediate output rasters from the model,
+some of which may be useful for QC, analyses by area of interest, or something else. 
+All of these are at 0.00025 x 0.00025 degree resolution and reported as per hectare values (as opposed to per pixel values), if applicable. 
+Intermediate outputs include the annual aboveground and belowground biomass removal rates
+for all kinds of forests, the type of removal factor applied to each pixel, the carbon pool densities in 2000, 
+carbon pool densities in the year of tree cover loss, and the number of years in which removals occurred. 
+
+Almost all model output have metadata associated with them, viewable using the `gdalinfo` command line utility (https://gdal.org/programs/gdalinfo.html). 
+Metadata includes units, date created, model version, geographic extent, and more. Unfortunately, the metadata are not viewable in ArcMap
+or in the versions of these files downloadable from the Global Forest Watch Open Data Portal.
 
 #### 4-km outputs
 
@@ -66,19 +82,6 @@ Although gross emissions are traditionally given positive (+) values and
 gross removals are traditionally given negative (-) values, the 30-m gross removals rasters are positive, while the 4-km gross removals rasters are negative. 
 Net flux at both scales can be positive or negative depending on the balance of emissions and removals in the area of interest.
 
-In addition to these three key outputs, there are many intermediate output rasters from the model,
-some of which may be useful for QC, analyses by area of interest, or something else. 
-All of these are at 0.00025 x 0.00025 degree resolution and reported as per hectare values (as opposed to per pixel values), if applicable. 
-Intermediate outputs include the annual aboveground and belowground biomass removal rates
-for all kinds of forests, the type of removal factor applied to each pixel, the carbon pool densities in 2000, 
-carbon pool densities in the year of tree cover loss, and the number of years in which removals occurred. 
-
-Almost all model output have metadata associated with them, viewable using the `gdalinfo` command line utility (https://gdal.org/programs/gdalinfo.html). 
-Metadata includes units, date created, model version, geographic extent, and more. Unfortunately, the metadata are not viewable in ArcMap.
-
-Model runs also automatically generate a txt log that is saved to s3. This log includes nearly everything that is output in the console.
-This log is useful for documenting model runs and checking for mistakes/errors in retrospect, although it does not capture errors that terminate the model.
-For example, users can examine it to see if the correct input tiles were downloaded or if the intended tiles were used during the model run.  
 
 ### Running the model
 There are two ways to run the model: as a series of individual scripts, or from a master script, which runs the individual scripts sequentially.
@@ -196,23 +199,59 @@ Some use all tiles and some use a smaller extent.
 | `legal_Amazon_loss` | Uses Brazil's PRODES annual deforestation system instead of Hansen loss | Legal Amazon| `mp_model_extent.py` |
 | `Mekong_loss` | Uses Hansen loss v2.0 (multiple loss in same pixel). NOTE: Not used for flux model v1.2.0, so this is not currently supported. | Mekong region | N/A |
 
+
+### Updating the model with new tree cover loss
+For the current general configuration of the model, these are the changes that need to be made to update the
+model with a new year of tree cover loss data. In the order in which the changes would be needed for rerunning the model:
+
+1) Update the model version in `constants_and_names.py`.
+
+2) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`. If the tree cover 
+loss tile pattern is different from the previous year, that will need to be changed in several places in various scripts, unfortunately.
+
+3) Change the number of loss years in `constants_and_names.py`.
+
+4) Make sure that and changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
+   and the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still make sense.
+
+5) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
+
+6) Create a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed, and potentially 
+   some reworking if the burned area ftp site has changed its structure or download protocol).
+
+7) In `constants.h`, change the number of model years.
+
+8) In `equations.cpp`, change the number of model years. 
+
+Strictly speaking, if only the drivers, burn year, and tree cover loss are being updated, the model only needs to be 
+run from forest_age_category_IPCC onwards (loss affects IPCC age category but model extent isn't affected by
+any of these inputs).
+However, for completeness, I suggest running all stages of the model from model_extent onwards for an update so that
+model outputs from all stages have the same version in their metadata and the same dates of output as the model stages
+that are actually being changed.
+
+
 ### Modifying the model
 It is recommended that any changes to the model be tested in a local Docker instance before running on an EC2 instance.
+I like to output files to test folders with dates 20219999 because that is clearly not a real run date. 
 A standard development route is: 
 
-1) make changes to a single model script and run using the single processor option on a single tile (easiest for debugging) in local Docker,
+1) Make changes to a single model script and run using the single processor option on a single tile (easiest for debugging) in local Docker.
 
-2) run single script on a few representative tiles using a single processor in local Docker,
+2) Run single script on a few representative tiles using a single processor in local Docker.
 
-3) run single script on a few representative tiles using multiple processor option,
+3) Run single script on a few representative tiles using multiple processor option.
 
-4) run the single script from the master script on a few representative tiles using multiple processor option to confirm that changes work when using master script,
+4) Run the single script from the master script on a few representative tiles using multiple processor option to 
+   confirm that changes work when using master script.
 
-5) run single script on a few representative tiles using multiple processors on EC2 instance (need to commit and push changes to GitHub first),
+5) Run single script on a few representative tiles using multiple processors on EC2 instance (need to commit and push changes to GitHub first).
 
-6) run master script on all tiles using multiple processors on EC2 instance. If the changes likely affected memory usage, make sure to watch memory with `htop` to make sure that too much memory isn't required. If too much memory is needed, reduce the number of processors being called in the script. 
+6) Run master script on all tiles using multiple processors on EC2 instance. 
+   If the changes likely affected memory usage, make sure to watch memory with `htop` to make sure that too much memory isn't required. 
+   If too much memory is needed, reduce the number of processors being called in the script. 
 
-Obviously, depending on the changes being made, some of these steps can be ommitted. 
+Depending on the complexity of the changes being made, some of these steps can be ommitted. 
 
 ### Dependencies
 Theoretically, this model should run anywhere that the correct Docker container can be started and there is access to the AWS s3 bucket. 
