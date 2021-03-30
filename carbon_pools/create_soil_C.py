@@ -24,7 +24,7 @@ import universal_util as uu
 import constants_and_names as cn
 
 # Creates 10x10 mangrove soil C tiles
-def create_mangrove_soil_C(tile_id):
+def create_mangrove_soil_C(tile_id, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -50,21 +50,18 @@ def create_mangrove_soil_C(tile_id):
         uu.print_log("Masking mangrove soil to mangrove biomass for", tile_id)
         cmd = ['gdal_calc.py', '-A', mangrove_soil, '-B', mangrove_biomass,
                calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
     else:
 
         uu.print_log("No mangrove aboveground biomass tile for", tile_id)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
+    uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove', no_upload)
 
 
 # Overlays the mangrove soil C tiles with the mineral soil C tiles, giving precedence to the mangrove soil C
-def create_combined_soil_C(tile_id):
+def create_combined_soil_C(tile_id, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -122,16 +119,4 @@ def create_combined_soil_C(tile_id):
         os.rename('{0}_{1}.tif'.format(tile_id, 'mineral_soil'), combined_soil)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
-
-
-def create_soil_C_stdev(tile_id, vrt_CI05, vrt_CI95, out_pattern):
-
-    # Start time
-    start = datetime.datetime.now()
-
-
-
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, out_pattern)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000, no_upload)

@@ -29,7 +29,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import aggregate_results_to_4_km
 
-def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None):
+def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -44,15 +44,15 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
     # Files to download for this script
     download_dict = {
-             # cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
              cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
              cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
     # Checks whether the canopy cover argument is valid
     if thresh < 0 or thresh > 99:
-        uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
+        uu.exception_log(no_upload, 'Invalid tcd. Please provide an integer between 0 and 99.')
 
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -131,7 +131,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(aggregate_results_to_4_km.rewindow, tile_list)
+        pool.map(partial(aggregate_results_to_4_km.rewindow, no_upload=no_upload), tile_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
         # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
@@ -141,7 +141,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         # # For single processor use
         # for tile in tile_list:
         #
-        #     aggregate_results_to_4_km.rewindow(tile)
+        #     aggregate_results_to_4_km.rewindow(til, no_upload)
 
         # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
         # and sums those values in each 400x400 pixel window.
@@ -159,14 +159,15 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             processes = 8
         uu.print_log('Conversion to per pixel and aggregate max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(aggregate_results_to_4_km.aggregate, thresh=thresh, sensit_type=sensit_type), tile_list)
+        pool.map(partial(aggregate_results_to_4_km.aggregate, thresh=thresh, sensit_type=sensit_type,
+                         no_upload=no_upload), tile_list)
         pool.close()
         pool.join()
 
         # # For single processor use
         # for tile in tile_list:
         #
-        #     aggregate_results_to_4_km.aggregate(tile, thresh, sensit_type)
+        #     aggregate_results_to_4_km.aggregate(tile, thresh, sensit_type, no_upload)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
         out_vrt = "{}_0_4deg.vrt".format(pattern)
@@ -207,10 +208,11 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             uu.log_subprocess_output_full(cmd)
 
 
-        uu.print_log("Tiles processed. Uploading to s3 now...")
+        # If no_upload flag is not activated, output is uploaded
+        if not no_upload:
 
-        # Uploads all output tiles to s3
-        uu.upload_final_set(output_dir_list[0], out_pattern)
+            uu.print_log("Tiles processed. Uploading to s3 now...")
+            uu.upload_final_set(output_dir_list[0], out_pattern)
 
         # Cleans up the folder before starting on the next raster type
         vrtList = glob.glob('*vrt')
@@ -254,12 +256,16 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
                 uu.print_log('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
 
             uu.print_log("Creating map of percent difference between standard and {} net flux".format(sensit_type))
-            aggregate_results_to_4_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-            uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+            aggregate_results_to_4_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload)
 
             uu.print_log("Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type))
-            aggregate_results_to_4_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type)
-            uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+            aggregate_results_to_4_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload)
+
+            # If no_upload flag is not activated, output is uploaded
+            if not no_upload:
+
+                uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+                uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
 
         else:
 
@@ -279,18 +285,23 @@ if __name__ == '__main__':
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     std_net_flux = args.std_net_flux_aggreg
     thresh = args.tcd_threshold
     thresh = int(thresh)
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux,
+                    no_upload=no_upload)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_aggregate_results_to_4_km(sensit_type=sensit_type, tile_id_list=tile_id_list, thresh=thresh, std_net_flux=std_net_flux)
+    mp_aggregate_results_to_4_km(sensit_type=sensit_type, tile_id_list=tile_id_list, thresh=thresh,
+                                 std_net_flux=std_net_flux, no_upload=no_upload)

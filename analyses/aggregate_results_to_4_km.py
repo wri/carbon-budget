@@ -24,7 +24,7 @@ import universal_util as uu
 
 # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
 # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-def rewindow(tile):
+def rewindow(tile, no_upload):
 
     # start time
     start = datetime.datetime.now()
@@ -127,7 +127,7 @@ def rewindow(tile):
         uu.print_log("No mangrove tile found for {}".format(tile_id))
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type))
+    uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type), no_upload)
 
 
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
@@ -136,7 +136,7 @@ def rewindow(tile):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile, thresh, sensit_type):
+def aggregate(tile, thresh, sensit_type, no_upload):
 
     # start time
     start = datetime.datetime.now()
@@ -284,12 +284,12 @@ def aggregate(tile, thresh, sensit_type):
         # aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_0_4deg'.format(tile_type))
+    uu.end_of_fx_summary(start, tile_id, '{}_0_4deg'.format(tile_type), no_upload)
 
 
 # Calculates the percent difference between the standard model's net flux output
 # and the sensitivity model's net flux output
-def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
+def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
 
     # start time
     start = datetime.datetime.now()
@@ -315,11 +315,11 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
     uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)
+    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux, no_upload)
 
 
 # Maps where the sources stay sources, sinks stay sinks, sources become sinks, and sinks become sources
-def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
+def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
 
     # start time
     start = datetime.datetime.now()
@@ -372,4 +372,4 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type):
 
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)
+    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux, no_upload)

@@ -10,7 +10,7 @@ import universal_util as uu
 # Necessary to suppress a pandas error later on
 np.set_printoptions(threshold=np.nan)
 
-def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, output_pattern_list):
+def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, output_pattern_list, no_upload):
 
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
@@ -147,4 +147,4 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
         dst_stdev_above.write_band(1, gain_stdev_AGB, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0], no_upload)

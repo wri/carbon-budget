@@ -35,16 +35,16 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
 import create_carbon_pools
 
-def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None):
+def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
 
     if (sensit_type != 'std') & (carbon_pool_extent != 'loss'):
-        uu.exception_log("Sensitivity analysis run must use 'loss' extent")
+        uu.exception_log(no_upload, "Sensitivity analysis run must use 'loss' extent")
 
     # Checks the validity of the carbon_pool_extent argument
     if (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
-        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+        uu.exception_log(no_upload, "Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed.
@@ -206,19 +206,23 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log('AGC loss year max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(create_carbon_pools.create_AGC,
-                     sensit_type=sensit_type, carbon_pool_extent=carbon_pool_extent), tile_id_list)
+                     sensit_type=sensit_type, carbon_pool_extent=carbon_pool_extent, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_AGC(tile_id, sensit_type, carbon_pool_extent)
+    #     create_carbon_pools.create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload)
 
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-    else:
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-        uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        if carbon_pool_extent in ['loss', '2000']:
+            uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+        else:
+            uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+            uu.upload_final_set(output_dir_list[6], output_pattern_list[6])
+
     uu.check_storage()
 
     uu.print_log(":::::Freeing up memory for belowground carbon creation; deleting unneeded tiles")
@@ -249,19 +253,23 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     pool = multiprocessing.Pool(processes)
     pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
                      carbon_pool_extent=carbon_pool_extent,
-                     sensit_type=sensit_type), tile_id_list)
+                     sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type)
+    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_upload)
 
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-    else:
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
-        uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        if carbon_pool_extent in ['loss', '2000']:
+            uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+        else:
+            uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+            uu.upload_final_set(output_dir_list[7], output_pattern_list[7])
+
     uu.check_storage()
 
 
@@ -306,22 +314,26 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         partial(create_carbon_pools.create_deadwood_litter, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
                 mang_litter_AGB_ratio=mang_litter_AGB_ratio,
                 carbon_pool_extent=carbon_pool_extent,
-                sensit_type=sensit_type), tile_id_list)
+                sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type)
+    #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type, no_upload)
 
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
-        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])  # litter
-    else:
-        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
-        uu.upload_final_set(output_dir_list[3], output_pattern_list[3])  # litter
-        uu.upload_final_set(output_dir_list[8], output_pattern_list[8])  # deadwood
-        uu.upload_final_set(output_dir_list[9], output_pattern_list[9])  # litter
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        if carbon_pool_extent in ['loss', '2000']:
+            uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
+            uu.upload_final_set(output_dir_list[3], output_pattern_list[3])  # litter
+        else:
+            uu.upload_final_set(output_dir_list[2], output_pattern_list[2])  # deadwood
+            uu.upload_final_set(output_dir_list[3], output_pattern_list[3])  # litter
+            uu.upload_final_set(output_dir_list[8], output_pattern_list[8])  # deadwood
+            uu.upload_final_set(output_dir_list[9], output_pattern_list[9])  # litter
+
     uu.check_storage()
 
     uu.print_log(":::::Freeing up memory for soil and total carbon creation; deleting unneeded tiles")
@@ -364,20 +376,23 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         uu.print_log('Soil carbon loss year max processors=', processes)
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_carbon_pools.create_soil_emis_extent, pattern=pattern,
-                         sensit_type=sensit_type), tile_id_list)
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
         pool.close()
         pool.join()
 
         # # For single processor use
         # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_soil_emis_extent(tile_id, pattern, sensit_type)
+        #     create_carbon_pools.create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload)
 
-        # If pools in 2000 weren't generated, soil carbon in emissions extent is 4.
-        # If pools in 2000 were generated, soil carbon in emissions extent is 10.
-        if '2000' not in carbon_pool_extent:
-            uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
-        else:
-            uu.upload_final_set(output_dir_list[10], output_pattern_list[10])
+        # If no_upload flag is not activated, output is uploaded
+        if not no_upload:
+
+            # If pools in 2000 weren't generated, soil carbon in emissions extent is 4.
+            # If pools in 2000 were generated, soil carbon in emissions extent is 10.
+            if '2000' not in carbon_pool_extent:
+                uu.upload_final_set(output_dir_list[4], output_pattern_list[4])
+            else:
+                uu.upload_final_set(output_dir_list[10], output_pattern_list[10])
 
         uu.check_storage()
 
@@ -418,19 +433,23 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     uu.print_log('Total carbon loss year max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent,
-                     sensit_type=sensit_type), tile_id_list)
+                     sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent, sensit_type)
+    #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload)
 
-    if carbon_pool_extent in ['loss', '2000']:
-        uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
-    else:
-        uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
-        uu.upload_final_set(output_dir_list[11], output_pattern_list[11])
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        if carbon_pool_extent in ['loss', '2000']:
+            uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+        else:
+            uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
+            uu.upload_final_set(output_dir_list[11], output_pattern_list[11])
+
     uu.check_storage()
 
 
@@ -447,18 +466,22 @@ if __name__ == '__main__':
                         help='Extent over which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, carbon_pool_extent=carbon_pool_extent)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date,
+                    carbon_pool_extent=carbon_pool_extent, no_upload=no_upload)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_create_carbon_pools(sensit_type=sensit_type, tile_id_list=tile_id_list,
-                           carbon_pool_extent=carbon_pool_extent, run_date=run_date)
+                           carbon_pool_extent=carbon_pool_extent, run_date=run_date, no_upload=no_upload)

@@ -9,7 +9,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def net_calc(tile_id, pattern, sensit_type):
+def net_calc(tile_id, pattern, sensit_type, no_upload):
 
     uu.print_log("Calculating net flux for", tile_id)
 
@@ -92,4 +92,4 @@ def net_calc(tile_id, pattern, sensit_type):
         net_flux_dst.write_band(1, dst_data, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
+    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)

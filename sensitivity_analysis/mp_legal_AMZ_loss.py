@@ -21,6 +21,10 @@ import universal_util as uu
 
 def main ():
 
+    no_upload = False
+
+    sensit_type = "legal_Amazon_loss"
+
     # Create the output log
     uu.initiate_log()
 
@@ -42,15 +46,15 @@ def main ():
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (stage_input not in Brazil_stages):
-        uu.exception_log('Invalid stage selection. Please provide a stage from', Brazil_stages)
+        uu.exception_log(no_upload, 'Invalid stage selection. Please provide a stage from', Brazil_stages)
     else:
         pass
     if (run_through not in ['true', 'false']):
-        uu.exception_log('Invalid run through option. Please enter true or false.')
+        uu.exception_log(no_upload, 'Invalid run through option. Please enter true or false.')
     else:
         pass
 
-    actual_stages = uu.analysis_stages(Brazil_stages, stage_input, run_through)
+    actual_stages = uu.analysis_stages(Brazil_stages, stage_input, run_through, sensit_type)
     uu.print_log(actual_stages)
 
 
@@ -105,7 +109,8 @@ def main ():
         out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                         no_upload=no_upload), tile_id_list)
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         upload_dir = master_output_dir_list[0]
@@ -158,7 +163,8 @@ def main ():
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                         no_upload=no_upload), tile_id_list)
         uu.print_log("  PRODES composite loss raster warped to Hansen tiles")
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
@@ -669,7 +675,7 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[0], stage_output_pattern_list[0])
 
         else:
-            uu.exception_log("Extent argument not valid")
+            uu.exception_log(no_upload, "Extent argument not valid")
 
         uu.print_log("Creating tiles of belowground carbon")
         # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
@@ -743,7 +749,7 @@ def main ():
             uu.print_log("Skipping soil for 2000 carbon pool calculation")
 
         else:
-            uu.exception_log("Extent argument not valid")
+            uu.exception_log(no_upload, "Extent argument not valid")
 
         uu.print_log("Creating tiles of total carbon")
         # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory

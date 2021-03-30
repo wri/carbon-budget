@@ -13,7 +13,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import net_flux
 
-def mp_net_flux(sensit_type, tile_id_list, run_date = None):
+def mp_net_flux(sensit_type, tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -70,17 +70,18 @@ def mp_net_flux(sensit_type, tile_id_list, run_date = None):
         processes = 9
     uu.print_log('Net flux max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(net_flux.net_calc, pattern=pattern, sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type)
+    #     net_flux.net_calc(tile_id, output_pattern_list[0], sensit_type, no_upload)
 
 
-    # Uploads output tiles to s3
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
@@ -94,16 +95,19 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_net_flux(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_net_flux(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

@@ -27,7 +27,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_create_soil_C(tile_id_list):
+def mp_create_soil_C(tile_id_list, no_upload=None):
 
     os.chdir(cn.docker_base_dir)
     sensit_type = 'std'
@@ -85,14 +85,14 @@ def mp_create_soil_C(tile_id_list):
         processes = int(cn.count/3)
     uu.print_log('Mangrove soil C max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(create_soil_C.create_mangrove_soil_C, tile_id_list)
+    pool.map(partial(create_soil_C.create_mangrove_soil_C, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
     #
-    #     create_soil_C.create_mangrove_soil_C(tile_id)
+    #     create_soil_C.create_mangrove_soil_C(tile_id, no_Upload)
 
     uu.print_log('Done making mangrove soil C tiles', '\n')
 
@@ -110,7 +110,8 @@ def mp_create_soil_C(tile_id_list):
         processes = int(cn.count/2)
     uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                     no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
@@ -130,19 +131,23 @@ def mp_create_soil_C(tile_id_list):
         processes = int(cn.count/2)
     uu.print_log('Combined soil C max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(create_soil_C.create_combined_soil_C, tile_id_list)
+    pool.map(partial(create_soil_C.create_combined_soil_C, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile in tile_list:
     #
-    #     create_soil_C.create_combined_soil_C(tile_id)
+    #     create_soil_C.create_combined_soil_C(tile_id, no_upload)
 
     uu.print_log("Done making combined soil C tiles")
 
-    uu.print_log("Uploading soil C density tiles")
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        uu.print_log("Uploading soil C density tiles")
+        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+
 
     # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
     uu.print_log("Deleting raw soil C density rasters")
@@ -215,7 +220,8 @@ def mp_create_soil_C(tile_id_list):
         processes = 2
     uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                     no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
@@ -248,8 +254,12 @@ def mp_create_soil_C(tile_id_list):
             pool.close()
             pool.join()
 
-    uu.print_log("Uploading soil C density standard deviation tiles")
-    uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        uu.print_log("Uploading soil C density standard deviation tiles")
+        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
 
 if __name__ == '__main__':
@@ -260,12 +270,15 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
     uu.initiate_log(tile_id_list, run_date=run_date)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_create_soil_C(tile_id_list=tile_id_list)
+    mp_create_soil_C(tile_id_list=tile_id_list, no_upload=no_upload)

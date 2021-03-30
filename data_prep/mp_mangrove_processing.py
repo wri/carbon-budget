@@ -13,10 +13,9 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_mangrove_processing(tile_id_list, run_date = None):
+def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
-    sensit_type = 'std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -33,10 +32,8 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
     # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.
     cmd = ['unzip', '-o', '-j', cn.mangrove_biomass_raw_file]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
+
 
     # Creates vrt for the Saatchi biomass rasters
     mangrove_vrt = 'mangrove_biomass.vrt'
@@ -49,12 +46,13 @@ def mp_mangrove_processing(tile_id_list, run_date = None):
     processes=int(cn.count/4)
     uu.print_log('Mangrove preprocessing max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                     no_upload=no_upload), tile_id_list)
 
     # # For single processor use, for testing purposes
     # for tile_id in tile_id_list:
     #
-    #     mangrove_processing.create_mangrove_tiles(tile_id, source_raster, out_pattern)
+    #     mangrove_processing.create_mangrove_tiles(tile_id, source_raster, out_pattern, no_upload)
 
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.mangrove_biomass_2000_dir
@@ -73,11 +71,14 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
 
-    mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date)
+    mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

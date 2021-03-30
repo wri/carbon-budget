@@ -21,7 +21,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = None):
+def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = True):
 
     os.chdir(cn.docker_base_dir)
 
@@ -83,7 +83,8 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
         processes = int(cn.count/2)
     uu.print_log('Gain year count loss only pixels max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_only, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_only,
+                     sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
 
     if cn.count == 96:
         processes = 90   # 66 = 330 GB peak; 75 = 380 GB peak; 90 = 530 GB peak
@@ -93,12 +94,14 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
-        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain, sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain,
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     if sensit_type == 'legal_Amazon_loss':
         uu.print_log("Gain-only pixels do not apply to legal_Amazon_loss sensitivity analysis. Skipping this step.")
     else:
         # Creates gain year count tiles using only pixels that had only gain
-        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard, sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard,
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
 
     # Creates gain year count tiles using only pixels that had neither loss nor gain pixels
     if cn.count == 96:
@@ -108,9 +111,11 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     uu.print_log('Gain year count no change pixels max processors=', processes)
     pool = multiprocessing.Pool(processes)
     if sensit_type == 'legal_Amazon_loss':
-        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_no_change_legal_Amazon_loss, sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_no_change_legal_Amazon_loss,
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     else:
-        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_no_change_standard, sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_no_change_standard,
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
 
     if cn.count == 96:
         processes = 90   # 66 = 370 GB peak; 88 = 430 GB peak; 90 = 550 GB peak
@@ -120,10 +125,12 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     pool = multiprocessing.Pool(processes)
     if sensit_type == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
-        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain, sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain,
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     else:
         # Creates gain year count tiles using only pixels that had only gain
-        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard, sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard,
+                         sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
 
     # Combines the four above gain year count tiles for each Hansen tile into a single output tile
     if cn.count == 96:
@@ -134,42 +141,46 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
         processes = int(cn.count/4)
     uu.print_log('Gain year count gain merge all combos max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_merge, pattern=pattern, sensit_type=sensit_type), tile_id_list)
+    pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_merge,
+                     pattern=pattern, sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     gain_year_count_all_forest_types.create_gain_year_count_loss_only(tile_id)
+    #     gain_year_count_all_forest_types.create_gain_year_count_loss_only(tile_id, no_upload)
     #
     # for tile_id in tile_id_list:
     #     if sensit_type == 'maxgain':
-    #         gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain(tile_id)
+    #         gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain(tile_id, no_upload)
     #     else:
-    #         gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard(tile_id)
+    #         gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard(tile_id, no_upload)
     #
     # for tile_id in tile_id_list:
-    #     gain_year_count_all_forest_types.create_gain_year_count_no_change_standard(tile_id)
+    #     gain_year_count_all_forest_types.create_gain_year_count_no_change_standard(tile_id, no_upload)
     #
     # for tile_id in tile_id_list:
     #     if sensit_type == 'maxgain':
-    #         gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain(tile_id)
+    #         gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_maxgain(tile_id, no_upload)
     #     else:
-    #         gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard(tile_id)
+    #         gain_year_count_all_forest_types.create_gain_year_count_loss_and_gain_standard(tile_id, no_upload)
     #
     # for tile_id in tile_id_list:
-    #     gain_year_count_all_forest_types.create_gain_year_count_merge(tile_id, pattern, sensit_type)
+    #     gain_year_count_all_forest_types.create_gain_year_count_merge(tile_id, pattern, sensit_type, no_upload)
 
 
-    # Intermediate output tiles for checking outputs
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
-    uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
-    uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
 
-    # This is the final output used later in the model
-    uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+        # Intermediate output tiles for checking outputs
+        uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")
+        uu.upload_final_set(output_dir_list[0], "growth_years_gain_only")
+        uu.upload_final_set(output_dir_list[0], "growth_years_no_change")
+        uu.upload_final_set(output_dir_list[0], "growth_years_loss_and_gain")
+
+        # This is the final output used later in the model
+        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
 if __name__ == '__main__':
@@ -184,16 +195,19 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_gain_year_count_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_gain_year_count_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
