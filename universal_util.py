@@ -51,7 +51,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=N
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
     logging.info("Model stage argument: {}".format(stage_input))
-    logging.info("Run through model: {}".format(run_through))
+    logging.info("Run model stages after the initial selected stage: {}".format(run_through))
     logging.info("Run date: {}".format(run_date))
     logging.info("Tile ID list: {}".format(tile_id_list))
     logging.info("Carbon emitted_pools to generate (optional): {}".format(carbon_pool_extent))
@@ -1290,10 +1290,11 @@ def analysis_stages(stage_list, stage_input, run_through, sensit_type,
 
         stage_output = stage_list[1:]
 
+    # If the user selected a specific stage, the run_through argument is evaluated
     else:
 
         # If the user wants to run through all stages after the selected one, a new list is created
-        if run_through == 'true':
+        if run_through:
 
             stage_output = stage_list[stage_list.index(stage_input):]
 
@@ -1303,10 +1304,10 @@ def analysis_stages(stage_list, stage_input, run_through, sensit_type,
             stage_output = stage_input.split()
 
     # Flags to include mangrove forest removal rates and US-specific removal rates in the stages to run
-    if include_us == 'true':
+    if include_us:
         stage_output.insert(0, 'annual_removals_us')
 
-    if include_mangroves == 'true':
+    if include_mangroves:
         stage_output.insert(0, 'annual_removals_mangrove')
 
     # Step create_supplementary_outputs only run for standard model

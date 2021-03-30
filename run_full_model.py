@@ -48,8 +48,8 @@ def main ():
     parser.add_argument('--model-type', '-t', required=True, help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--stages', '-s', required=True,
                         help='Stages for running the flux model. Options are {}'.format(model_stages))
-    parser.add_argument('--run-through', '-r', required=True,
-                        help='Options: true or false. true: run named stage and following stages. false: run only named stage.')
+    parser.add_argument('--run-through', '-r', action='store_true',
+                        help='If activated, run named stage and all following stages. If not activated, run the selected stage only.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--tile-id-list', '-l', required=True,
@@ -62,10 +62,10 @@ def main ():
                         help='Tree cover density threshold above which pixels will be included in the aggregation.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
-    parser.add_argument('--mangroves', '-ma', required=False,
-                        help='Include mangrove removal rate and standard deviation tile creation step (before model extent). true or false.')
-    parser.add_argument('--us-rates', '-us', required=False,
-                        help='Include US removal rate and standard deviation tile creation step (before model extent). true or false.')
+    parser.add_argument('--mangroves', '-ma', action='store_true',
+                        help='Include mangrove removal rate and standard deviation tile creation step (before model extent).')
+    parser.add_argument('--us-rates', '-us', action='store_true',
+                        help='Include US removal rate and standard deviation tile creation step (before model extent).')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     parser.add_argument('--save-intermediates', '-si', action='store_true',
@@ -105,10 +105,6 @@ def main ():
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (stage_input not in model_stages):
         uu.exception_log(no_upload, 'Invalid stage selection. Please provide a stage from', model_stages)
-    else:
-        pass
-    if (run_through not in ['true', 'false']):
-        uu.exception_log(no_upload, 'Invalid run through option. Please enter true or false.')
     else:
         pass
 
