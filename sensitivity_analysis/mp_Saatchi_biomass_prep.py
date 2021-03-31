@@ -15,6 +15,8 @@ import universal_util as uu
 
 def main ():
 
+    no_upload = False
+
     # Create the output log
     uu.initiate_log()
 
@@ -38,7 +40,7 @@ def main ():
     out_pattern = cn.pattern_JPL_unmasked_processed
     dt = 'Float32'
     pool = multiprocessing.Pool(cn.count-5)  # count-5 peaks at 320GB of memory
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
 
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.JPL_processed_dir

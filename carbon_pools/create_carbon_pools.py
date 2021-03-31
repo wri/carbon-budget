@@ -39,7 +39,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
 
 # Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
-def create_AGC(tile_id, sensit_type, carbon_pool_extent):
+def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -252,13 +252,13 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent):
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year, no_upload)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_2000)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_2000, no_upload)
 
 
 # Creates belowground carbon tiles (both in 2000 and loss year)
-def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
+def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_upload):
 
     start = datetime.datetime.now()
 
@@ -370,13 +370,13 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type):
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year, no_upload)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_2000)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_2000, no_upload)
 
 
 # Creates deadwood and litter carbon tiles (in 2000 and/or in loss year)
-def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type):
+def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type, no_upload):
 
     start = datetime.datetime.now()
 
@@ -675,13 +675,13 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_emis_year_2000)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_emis_year_2000, no_upload)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_2000)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_2000, no_upload)
 
 
 # Creates soil carbon tiles in loss pixels only
-def create_soil_emis_extent(tile_id, pattern, sensit_type):
+def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
 
     start = datetime.datetime.now()
 
@@ -750,11 +750,11 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type):
         dst_soil_emis_year.write_band(1, soil_output, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
+    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)
 
 
 # Creates total carbon tiles (both in 2000 and loss year)
-def create_total_C(tile_id, carbon_pool_extent, sensit_type):
+def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
 
     start = datetime.datetime.now()
 
@@ -880,6 +880,6 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type):
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_emis_year)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_emis_year, no_upload)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_2000)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_2000, no_upload)

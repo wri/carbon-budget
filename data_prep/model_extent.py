@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def model_extent(tile_id, pattern, sensit_type):
+def model_extent(tile_id, pattern, sensit_type, no_upload):
 
     # I don't know why, but this needs to be here and not just in mp_model_extent
     os.chdir(cn.docker_base_dir)
@@ -156,4 +156,4 @@ def model_extent(tile_id, pattern, sensit_type):
 
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
+    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)

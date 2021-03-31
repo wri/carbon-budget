@@ -39,7 +39,8 @@ def upload_log():
 
 
 # Creates the log with a starting line
-def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input=None, run_through=None, carbon_pool_extent=None,
+def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=None, save_intermediates=None,
+                 stage_input=None, run_through=None, carbon_pool_extent=None,
                  emitted_pools=None, thresh=None, std_net_flux=None,
                  include_mangroves=None, include_us=None, log_note=None):
 
@@ -50,7 +51,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
     logging.info("Sensitivity analysis type: {}".format(sensit_type))
     logging.info("Model stage argument: {}".format(stage_input))
-    logging.info("Run through model: {}".format(run_through))
+    logging.info("Run model stages after the initial selected stage: {}".format(run_through))
     logging.info("Run date: {}".format(run_date))
     logging.info("Tile ID list: {}".format(tile_id_list))
     logging.info("Carbon emitted_pools to generate (optional): {}".format(carbon_pool_extent))
@@ -59,6 +60,8 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
+    logging.info("Do not upload anything to s3: {}".format(no_upload))
+    logging.info("Save intermediate outputs: {}".format(save_intermediates))
     logging.info("AWS ec2 instance type and AMI ID:")
 
     # https://stackoverflow.com/questions/13735051/how-to-capture-curl-output-to-a-file
@@ -92,7 +95,9 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, stage_input
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
     logging.getLogger("botocore").setLevel(logging.ERROR)  # "Found credentials in environment variables." is logged by botocore: https://github.com/boto/botocore/issues/1841
 
-    upload_log()
+    # If no_upload flag is not activated, log is uploaded
+    if not no_upload:
+        upload_log()
 
 
 # Prints the output statement in the console and adds it to the log. It can handle an indefinite number of string to print
@@ -119,7 +124,7 @@ def print_log(*args):
 
 
 # Logs fatal errors to the log txt, uploads to s3, and then terminates the program with an exception in the console
-def exception_log(*args):
+def exception_log(no_upload, *args):
 
     # Empty string
     full_statement = str(object='')
@@ -129,10 +134,13 @@ def exception_log(*args):
         full_statement = full_statement + str(arg) + " "
 
     # Adds the exception to the log txt
-    logging.debug(full_statement, stack_info=True)
+    logging.info(full_statement, stack_info=True)
 
-    # Need to upload log before the exception stops the script
-    upload_log()
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        # Need to upload log before the exception stops the script
+        upload_log()
 
     # Prints to console, ending the program
     raise Exception(full_statement)
@@ -885,7 +893,7 @@ def upload_final_set(upload_dir, pattern):
     except:
         print_log("Error uploading output tile(s)")
 
-    # Uploads the log as each model stage is finished
+    # Uploads the log as each model output tile set is finished
     upload_log()
 
 
@@ -904,7 +912,8 @@ def upload_final(upload_dir, tile_id, pattern):
 
 
 # This version of checking for data is bad because it can miss tiles that have very little data in them.
-# But it takes less memory than using rasterio, so it's good for local tests
+# But it takes less memory than using rasterio, so it's good for local tests.
+# This method creates a tif.aux.xml file that I tried to add a line to delete but couldn't get to work.
 def check_and_delete_if_empty_light(tile_id, output_pattern):
 
     tile_name = '{0}_{1}.tif'.format(tile_id, output_pattern)
@@ -921,6 +930,10 @@ def check_and_delete_if_empty_light(tile_id, output_pattern):
     else:
         print_log("  No data found. Deleting {}...".format(tile_name))
         os.remove(tile_name)
+
+    # Using this gdal data check method creates a tif.aux.xml file that is unnecessary.
+    # This does not work, however; it returns an error that there is no such file or directory.
+    # os.remove("{0}{1}.aux.xml".format(cn.docker_base_dir, tile_name))
 
 
 # This version of checking for data in a tile is more robust
@@ -996,19 +1009,21 @@ def get_raster_nodata_value(tile):
 
 
 # Prints information about the tile that was just processed: how long it took and how many tiles have been completed
-def end_of_fx_summary(start, tile_id, pattern):
+def end_of_fx_summary(start, tile_id, pattern, no_upload):
 
     end = datetime.datetime.now()
     elapsed_time = end-start
     print_log("Processing time for tile", tile_id, ":", elapsed_time)
     count_completed_tiles(pattern)
 
-    # Uploads the log as each tile is finished
-    upload_log()
+    # If no_upload flag is not activated, log is uploaded
+    if not no_upload:
+        # Uploads the log as each tile is finished
+        upload_log()
 
 
 # Warps raster to Hansen tiles using multiple processors
-def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
+def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -1024,7 +1039,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     with process.stdout:
         log_subprocess_output(process.stdout)
 
-    end_of_fx_summary(start, tile_id, out_pattern)
+    end_of_fx_summary(start, tile_id, out_pattern, no_upload)
 
 
 def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
@@ -1275,10 +1290,11 @@ def analysis_stages(stage_list, stage_input, run_through, sensit_type,
 
         stage_output = stage_list[1:]
 
+    # If the user selected a specific stage, the run_through argument is evaluated
     else:
 
         # If the user wants to run through all stages after the selected one, a new list is created
-        if run_through == 'true':
+        if run_through:
 
             stage_output = stage_list[stage_list.index(stage_input):]
 
@@ -1288,10 +1304,10 @@ def analysis_stages(stage_list, stage_input, run_through, sensit_type,
             stage_output = stage_input.split()
 
     # Flags to include mangrove forest removal rates and US-specific removal rates in the stages to run
-    if include_us == 'true':
+    if include_us:
         stage_output.insert(0, 'annual_removals_us')
 
-    if include_mangroves == 'true':
+    if include_mangroves:
         stage_output.insert(0, 'annual_removals_mangrove')
 
     # Step create_supplementary_outputs only run for standard model

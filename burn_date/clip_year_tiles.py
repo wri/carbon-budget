@@ -11,7 +11,7 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-def clip_year_tiles(tile_year_list):
+def clip_year_tiles(tile_year_list, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -57,6 +57,6 @@ def clip_year_tiles(tile_year_list):
         uu.print_log("    Tile copied to", cn.burn_year_warped_to_Hansen_dir)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, "ba_{}".format(year))
+    uu.end_of_fx_summary(start, tile_id, "ba_{}".format(year), no_upload)
 
 

@@ -19,7 +19,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_prep_other_inputs(tile_id_list, run_date):
+def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
     sensit_type='std'
@@ -129,7 +129,8 @@ def mp_prep_other_inputs(tile_id_list, run_date):
         processes = int(cn.count/2)
     uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                     no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
@@ -144,7 +145,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating young natural forest gain rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -158,7 +159,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating standard deviation for young natural forest removal rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -196,7 +197,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating European natural forest gain rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -210,7 +211,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating standard deviation for European natural forest gain rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -231,7 +232,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -259,7 +260,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating US forest age category tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -273,7 +274,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating US forest group tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -287,7 +288,7 @@ def mp_prep_other_inputs(tile_id_list, run_date):
     #     processes = int(cn.count/2)
     # uu.print_log("Creating US forest region tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
     # pool.join()
     #
@@ -345,14 +346,17 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
+    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
 
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date)
+    mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

@@ -19,7 +19,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'gain'))
 import gross_removals_all_forest_types
 
-def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = None):
+def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = True):
 
     os.chdir(cn.docker_base_dir)
 
@@ -79,13 +79,13 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
     uu.print_log('Gross removals max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
-                     sensit_type=sensit_type), tile_id_list)
+                     sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type)
+    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload)
 
     # Checks the gross removals outputs for tiles with no data
     for output_pattern in output_pattern_list:
@@ -106,10 +106,11 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
             pool.close()
             pool.join()
 
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
 
-    # Uploads output tiles to s3
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+        for i in range(0, len(output_dir_list)):
+            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
@@ -124,16 +125,19 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_gross_removals_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_gross_removals_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

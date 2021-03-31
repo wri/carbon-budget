@@ -16,7 +16,7 @@ use transitions). The model is described and published in Harris et al. (2021) N
 ### Inputs
 Well over twenty inputs are needed to run this model. Most are spatial, but some are tabular.
 All spatial data are converted to 10 x 10 degree raster tiles at 0.00025 x 0.00025 degree resolution 
-(approximately 30 x 30 m at the equator). The tabular data are generally annual biomass removal (i.e. 
+(approximately 30 x 30 m at the equator) before inclusion in the model. The tabular data are generally annual biomass removal (i.e. 
 sequestration) factors (e.g., mangroves, planted forests, natural forests), which are then applied to spatial data. 
 Spatial data include annual tree cover loss, biomass densities in 2000, drivers of tree cover loss, 
 ecozones, tree cover extent in 2000, elevation, etc. Different inputs are needed for different
@@ -31,9 +31,14 @@ These are produced at two resolutions: 0.00025 x 0.00025 degrees
 (approximately 30 x 30 m at the equator) in 10 x 10 degree rasters (to make outputs a 
 manageable size), and 0.04 x 0.04 degrees (approximately 4 x 4 km at the equator) as global rasters.
 
-Model runs also automatically generate a txt log that is saved to s3. This log includes nearly everything that is output in the console.
+Model runs also automatically generate a txt log. This log includes nearly everything that is output in the console.
 This log is useful for documenting model runs and checking for mistakes/errors in retrospect, although it does not capture errors that terminate the model.
 For example, users can examine it to see if the correct input tiles were downloaded or if the intended tiles were used during the model run.  
+
+Output rasters and model logs are uploaded to s3 unless the `--no-upload` flag (`-nu`) is activated as a command line argument.
+When this is activated for any model stage, neither raster outputs nor logs are uploaded to s3. This is good for local test runs or versions
+of the model that are independent of s3 (that is, inputs are stored locally and no on s3, and the user does not have 
+a connection to s3 storage or s3 credentials).
 
 #### 30-m outputs
 
@@ -41,7 +46,7 @@ The 30-m outputs are used for zonal statistics analyses (i.e. emissions, removal
 and mapping on the Global Forest Watch web platform or at small scales (where 30-m pixels can be distinguished). 
 Individual emissions can be assigned years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire model run and cannot be assigned specific years. 
-This 30-m output is in megagrams CO2e/ha 2001-2020 (i.e. densities) and includes all tree cover densities ("full extent"):
+This 30-m output is in megagrams (Mg) CO2e/ha 2001-2020 (i.e. densities) and includes all tree cover densities ("full extent"):
 `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`.
 However, the model is designed to be used specifically for forests, so the model creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well 
@@ -55,7 +60,7 @@ outputs for each key output (gross emissions, gross removals, net flux) as well
    `(((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
 
 The per hectare outputs are used for making pixel-level maps (essentially showing emission and removal factors), 
-while the per pixel outputs are used for analyses because the values
+while the per pixel outputs are used for getting total values within areas because the values
 of those pixels can be summed within areas of interest. 
 (The pixels of the per hectare outputs should not be summed but they can be averaged in areas of interest.)
 Statistics from this model are always based on the "forest extent" rasters, not the "full extent" rasters.
@@ -70,7 +75,7 @@ carbon pool densities in the year of tree cover loss, and the number of years in
 
 Almost all model output have metadata associated with them, viewable using the `gdalinfo` command line utility (https://gdal.org/programs/gdalinfo.html). 
 Metadata includes units, date created, model version, geographic extent, and more. Unfortunately, the metadata are not viewable in ArcMap
-or in the versions of these files downloadable from the Global Forest Watch Open Data Portal.
+or in the versions of these files downloadable from the Global Forest Watch Open Data Portal (https://data.globalforestwatch.org/).
 
 #### 4-km outputs
 
@@ -88,11 +93,13 @@ There are two ways to run the model: as a series of individual scripts, or from 
 Which one to use depends on what you are trying to do. Generally, the individual scripts (which correspond to model stages) are
 more appropriate for development and testing, while the master script is better for running
 the main part of the model from start to finish in one go. In either case, the code must be cloned from this repository.
-Run at scale, both options iterate through a list of ~275 10x10 degree tiles. (Different model stages have different numbers of tiles.)
+Run globally, both options iterate through a list of ~275 10x10 degree tiles. (Different model stages have different numbers of tiles.)
 Run all tiles in the model extent fully through one model stage before starting on the next stage. 
 (The master script does this automatically.) If a user wants to run the model on just one or a few tiles, 
 that can be done through a command line argument (`--tile-id-list` or `-l`). 
-If individual tiles are listed, only those will be downloaded and run. This is a natural system for testing. 
+If individual tiles are listed, only those will be downloaded and run. This is a natural system for testing or for
+running the model for individual countries. 
+For example, to run the model for Madagascar, only tiles 10S_040E, 10S_050E, and 20S_040E need to be run. 
 
 The model runs inside a Docker container. Once you have Docker configured on your system, have cloned this repository, 
 and have configured access to Amazon Web Services, you can do the following on the command line in the same folder as the repository on your system.
@@ -100,7 +107,9 @@ This will enter the command line in the Docker container.
 
 For runs on my local computer, I use `docker-compose` so that the Docker is mapped to my computer's drives. 
 I do this for development and testing. If running on another computer, you will need to change the local 
-folder being mapped in `docker-compose.yaml` to fit your computer's directory structure.
+folder being mapped in `docker-compose.yaml` to fit your computer's directory structure. 
+You will also need to either provide your own AWS secret key and access key or change the docker-compose code
+to not use them.
 `docker-compose build`
 `docker-compose run --rm -e AWS_SECRET_ACCESS_KEY=... -e AWS_ACCESS_KEY_ID=... carbon-budget`
 
@@ -113,8 +122,9 @@ Depending on what exactly the user is running, the user may have to change lots 
 Unfortunately, I can't really give better guidance than that; it really depends on what part of the model is being run and how.
 (I want to make the situations under which users change folder dates more consistent eventually.)
 
-The model can be run either using multiple processors or one processor. The former is for full model runs,
-while the latter is for model development. The user can switch between these two versions by commenting out
+The model can be run either using multiple processors or one processor. The former is for large scale model runs,
+while the latter is for model development or running on small-ish countries that use only a few tiles. 
+The user can switch between these two versions by commenting out
 the appropriate code chunks in each script. The single-processor option is commented out by default. 
 One important thing to note is that if a user tries to use too many processors, the system will run out of memory and
 can crash (particularly on AWS EC2 instances). Thus, it is important not to use too many processors at once.
@@ -139,7 +149,7 @@ then initiate the actual work done on each tile in the script without the `mp_` 
 The order in which the individual stages must be run is very specific; many scripts depend on
 the outputs of other scripts. Looking at the files that must be downloaded for the 
 script to run will show what files must already be created and therefore what scripts must have already been
-run. Alternatively, you can look at `run_full_model.py` to see the order in which model stages are run. 
+run. Alternatively, you can look at the top of `run_full_model.py` to see the order in which model stages are run. 
 The date component of the output directory on s3 generally must be changed in `constants_and_names.py`
 for each output file unless a date argument is provided on the command line. 
 
@@ -150,27 +160,30 @@ the appropriate code chunks.
 #### Master script 
 The master script runs through all of the non-preparatory scripts in the model: some removal factor creation, gross removals, carbon
 pool generation, gross emissions, net flux, and aggregation. It includes all the arguments needed to run
-every script. The user can control what model components are run to some extent and set the date part of 
+every script. Thus, the table below also explains the potential arguments for the individual model stages. 
+The user can control what model components are run to some extent and set the date part of 
 the output directories. The emissions C++ code has to be be compiled before running the master script (see below).
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
 they are run very infrequently.
 
 `python run_full_model.py -t std -s all -r true -d 20200822 -l all -ce loss -p biomass_soil -tcd 30 -ma true -us true -ln "This will run the entire standard model, including creating mangrove and US removal factor tiles, on all tiles and output everything in s3 folders with the date 20200822."`
 
-| Argument | Required/Optional | Description | 
-| -------- | ----------- | ------ |
-| `model-type` | Required | Standard model (`std`) or a sensitivity analysis. Refer to `constants_and_names.py` for valid list of sensitivity analyses. |
-| `stages` | Required | The model stage at which the model should start. `all` will run the following stages in this order: model_extent, forest_age_category_IPCC, annual_removals_IPCC, annual_removals_all_forest_types, gain_year_count, gross_removals_all_forest_types, carbon_pools, gross_emissions, net_flux, aggregate, create_supplementary_outputs |
-| `run-through` | Required | Options: true or false. true: run stage provided in `stages` argument and all following stages. false: run only stage in `stages` argument. |
-| `run-date` | Required | Date of run. Must be format YYYYMMDD. This sets the output folder in s3. |
-| `tile-id-list` | Required | List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all |
-| `carbon-pool-extent` | Optional | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
-| `pools-to-use` | Optional | Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
-| `tcd-threshold` | Optional | Tree cover density threshold above which pixels will be included in the aggregation. |
-| `std-net-flux-aggreg` | Optional | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
-| `mangroves` | Optional | Create mangrove removal factor tiles as the first stage. true or false |
-| `us-rates` | Optional | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). true or false |
-| `log-note` | Optional | Adds text to the beginning of the log |
+| Argument | Short argument | Required/Optional | Relevant stage | Description | 
+| -------- | ----- | ----------- | ------- | ------ |
+| `model-type` | `-t` | Required | All | Standard model (`std`) or a sensitivity analysis. Refer to `constants_and_names.py` for valid list of sensitivity analyses. |
+| `stages` | `-s` | Required | All | The model stage at which the model should start. `all` will run the following stages in this order: model_extent, forest_age_category_IPCC, annual_removals_IPCC, annual_removals_all_forest_types, gain_year_count, gross_removals_all_forest_types, carbon_pools, gross_emissions, net_flux, aggregate, create_supplementary_outputs |
+| `run-through` | `-r` | Optional | All | If activated, run stage provided in `stages` argument and all following stages. Otherwise, run only stage in `stages` argument. Activated with flag. |
+| `run-date` | `-d` | Required | All | Date of run. Must be format YYYYMMDD. This sets the output folder in s3. |
+| `tile-id-list` | `-l` | Required | All | List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all |
+| `no-upload` | `-nu` | Optional | All | No files are uploaded to s3 during or after model run (including logs and model outputs). Use for testing or completely local runs. |
+| `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
+| `pools-to-use` | `-p` | Optional | Emissions| Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
+| `tcd-threshold` | `-tcd`| Optional | Aggregation | Tree cover density threshold above which pixels will be included in the aggregation. |
+| `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
+| `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag. |
+| `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag. |
+| `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local model runs. |
+| `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 
 ##### Running the emissions model
 The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.
@@ -180,9 +193,13 @@ The command for compiling the C++ script is (subbing in the actual file name):
 
 `c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].exe -lgdal`
 
+For the standard model and the sensitivity analyses that don't specifically affect emissions, it is:
+
+`c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal`
+
 ### Sensitivity analysis
 Several variations of the model are included; these are the sensitivity variants, as they use different inputs or parameters. 
-They can be run by changing the `model-type` argument from `std` to an option found in `constants_and_names.py`. 
+They can be run by changing the `--model-type` (`-t`) argument from `std` to an option found in `constants_and_names.py`. 
 Each sensitivity analysis variant starts at a different stage in the model and runs to the final stage,
 except that sensitivity analyses do not include the creation of the supplementary outputs (per pixel tiles, forest extent tiles).
 Some use all tiles and some use a smaller extent.
@@ -262,8 +279,8 @@ At the least, it needs a certain type of memory configuration on the EC2 instanc
 Otherwise, I do not know the limitations and constraints on running this model. 
 
 ### Contact information
-David Gibbs
+David Gibbs: david.gibbs@wri.org
+
+Nancy Harris: nancy.harris@wri.org
 
 Global Forest Watch, World Resources Institute, Washington, D.C.
-
-david.gibbs@wri.org

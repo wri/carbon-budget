@@ -12,7 +12,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-def hansen_burnyear(tile_id):
+def hansen_burnyear(tile_id, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -160,5 +160,5 @@ def hansen_burnyear(tile_id):
         os.remove(out_tile_no_tag)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_burn_year)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_burn_year, no_upload)
 

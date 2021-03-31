@@ -57,10 +57,10 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN git config --global user.email dagibbs22@gmail.com
 
 ## Check out the branch that I'm currently using for model development
-#RUN git checkout model_v_1.2.0
+#RUN git checkout model_v_1.2.1
 #
 ## Makes sure the latest version of the current branch is downloaded
-#RUN git pull origin model_v_1.2.0
+#RUN git pull origin model_v_1.2.1
 
 ## Compile C++ scripts
 #RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \

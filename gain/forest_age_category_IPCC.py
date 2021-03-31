@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
+def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_upload):
 
     uu.print_log("Assigning forest age categories:", tile_id)
 
@@ -208,4 +208,4 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type):
             dst.write_band(1, dst_data, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
+    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)

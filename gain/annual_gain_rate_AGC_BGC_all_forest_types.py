@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sensit_type):
+def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload):
 
     uu.print_log("Mapping removal rate source and AGB and BGB removal rates:", tile_id)
 
@@ -323,4 +323,4 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             stdev_annual_gain_AGC_all_forest_types_dst.write_band(1, stdev_annual_gain_AGC_all_forest_types_window, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_removal_forest_type)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_removal_forest_type, no_upload)

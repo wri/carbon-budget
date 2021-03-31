@@ -24,7 +24,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit_type):
+def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit_type, no_upload):
 
     # start time
     start = datetime.datetime.now()
@@ -145,4 +145,4 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
     uu.print_log("  Output tiles created for {}...".format(tile_id))
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, output_patterns[0])
+    uu.end_of_fx_summary(start, tile_id, output_patterns[0], no_upload)

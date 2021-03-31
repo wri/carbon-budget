@@ -40,6 +40,8 @@ import universal_util as uu
 
 def main ():
 
+    no_upload=False
+
     # Create the output log
     uu.initiate_log()
 
@@ -113,7 +115,8 @@ def main ():
         out_pattern = cn.pattern_US_forest_age_cat_processed
         dt = 'Int16'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                         no_upload=no_upload), US_tile_id_list)
 
         uu.upload_final_set(cn.US_forest_age_cat_processed_dir, cn.pattern_US_forest_age_cat_processed)
 
@@ -135,7 +138,8 @@ def main ():
         out_pattern = cn.pattern_FIA_forest_group_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), US_tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
+                         no_upload=no_upload), US_tile_id_list)
 
         uu.upload_final_set(cn.FIA_forest_group_processed_dir, cn.pattern_FIA_forest_group_processed)
 
