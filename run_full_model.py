@@ -94,6 +94,11 @@ def main ():
     # Start time for script
     script_start = datetime.datetime.now()
 
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        no_upload = True
+        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
+
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload,
                     save_intermediates=save_intermediates,
@@ -437,7 +442,8 @@ def main ():
         uu.print_log(":::::Creating carbon pool tiles")
         start = datetime.datetime.now()
 
-        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date=run_date, no_upload=no_upload)
+        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date=run_date, no_upload=no_upload,
+                               save_intermediates=save_intermediates)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -546,11 +552,9 @@ def main ():
         tiles_to_delete = []
         tiles_to_delete.extend(glob.glob('*aux.xml'))
 
-        uu.print_log("  Deleting", len(tiles_to_delete), "aux.xml files:", tiles_to_delete)
-
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted unneeded tiles")
+        uu.print_log(":::::Deleted {0} aux.xml files: {1}".formt(len(tiles_to_delete), tiles_to_delete), "\n")
 
 
         uu.print_log(":::::Creating 4x4 km aggregate maps")

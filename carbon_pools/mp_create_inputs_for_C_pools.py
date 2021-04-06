@@ -14,7 +14,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
+def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
     sensit_type = 'std'
@@ -44,11 +44,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
 
     uu.print_log("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
     cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
-
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Copying elevation (srtm) files")
     uu.s3_folder_download(cn.srtm_raw_dir, './srtm', sensit_type)
@@ -60,16 +56,20 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None):
     processes = int(cn.count/2)
     uu.print_log('Inputs for C emitted_pools max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(create_inputs_for_C_pools.create_input_files, tile_id_list)
+    pool.map(partial(create_inputs_for_C_pools.create_input_files, no_upload=no_upload), tile_id_list)
 
     # # For single processor use
     # for tile_id in tile_id_list:
     #
-    #     create_inputs_for_C_pools.create_input_files(tile_id)
+    #     create_inputs_for_C_pools.create_input_files(tile_id, no_upload)
 
-    uu.print_log("Uploading output files")
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        uu.print_log("Uploading output files")
+        for i in range(0, len(output_dir_list)):
+            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
@@ -80,11 +80,19 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+    no_upload = args.no_upload
+
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        no_upload = True
+        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
-    uu.initiate_log(tile_id_list, run_date=run_date)
+    uu.initiate_log(tile_id_list, run_date=run_date, no_upload=no_upload)
 
-    mp_create_inputs_for_C_pools(tile_id_list, run_date=run_date)
+    mp_create_inputs_for_C_pools(tile_id_list, run_date=run_date, no_upload=no_upload)

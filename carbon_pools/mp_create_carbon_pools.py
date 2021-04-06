@@ -35,7 +35,8 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
 import create_carbon_pools
 
-def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None, no_upload = None):
+def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None, no_upload = None,
+                           save_intermediates = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -142,10 +143,13 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             download_dict[cn.loss_dir] = [cn.pattern_loss]
 
 
-    for key, values in download_dict.items():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
+    if uu.check_aws_creds():
+
+        for key, values in download_dict.items():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -162,9 +166,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-    uu.log_subprocess_output_full(cmd)
+    if uu.check_aws_creds():
+
+        # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None
 
@@ -225,15 +231,17 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     uu.check_storage()
 
-    uu.print_log(":::::Freeing up memory for belowground carbon creation; deleting unneeded tiles")
-    tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
-    uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    if not save_intermediates:
 
-    for tile_to_delete in tiles_to_delete:
-        os.remove(tile_to_delete)
-    uu.print_log(":::::Deleted unneeded tiles")
-    uu.check_storage()
+        uu.print_log(":::::Freeing up memory for belowground carbon creation; deleting unneeded tiles")
+        tiles_to_delete = glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
 
 
     uu.print_log("Creating tiles of belowground carbon in {}".format(carbon_pool_extent))
@@ -336,19 +344,21 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     uu.check_storage()
 
-    uu.print_log(":::::Freeing up memory for soil and total carbon creation; deleting unneeded tiles")
-    tiles_to_delete = []
-    tiles_to_delete .extend(glob.glob('*{}*tif'.format(cn.pattern_elevation)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
-    tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-    uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+    if not save_intermediates:
 
-    for tile_to_delete in tiles_to_delete:
-        os.remove(tile_to_delete)
-    uu.print_log(":::::Deleted unneeded tiles")
-    uu.check_storage()
+        uu.print_log(":::::Freeing up memory for soil and total carbon creation; deleting unneeded tiles")
+        tiles_to_delete = []
+        tiles_to_delete .extend(glob.glob('*{}*tif'.format(cn.pattern_elevation)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_JPL_unmasked_processed)))
+        tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
+        uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+
+        for tile_to_delete in tiles_to_delete:
+            os.remove(tile_to_delete)
+        uu.print_log(":::::Deleted unneeded tiles")
+        uu.check_storage()
 
 
     if 'loss' in carbon_pool_extent:
@@ -450,7 +460,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             uu.upload_final_set(output_dir_list[5], output_pattern_list[5])
             uu.upload_final_set(output_dir_list[11], output_pattern_list[11])
 
-    uu.check_storage()
+        uu.check_storage()
 
 
 if __name__ == '__main__':
@@ -468,20 +478,29 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--save-intermediates', '-si', action='store_true',
+                        help='Saves intermediate model outputs rather than deleting them to save storage')
     args = parser.parse_args()
     sensit_type = args.model_type
     tile_id_list = args.tile_id_list
     carbon_pool_extent = args.carbon_pool_extent  # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
     run_date = args.run_date
     no_upload = args.no_upload
+    save_intermediates = args.save_intermediates
+
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        no_upload = True
+        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date,
-                    carbon_pool_extent=carbon_pool_extent, no_upload=no_upload)
+                    carbon_pool_extent=carbon_pool_extent, no_upload=no_upload, save_intermediates=save_intermediates)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_create_carbon_pools(sensit_type=sensit_type, tile_id_list=tile_id_list,
-                           carbon_pool_extent=carbon_pool_extent, run_date=run_date, no_upload=no_upload)
+                           carbon_pool_extent=carbon_pool_extent, run_date=run_date, no_upload=no_upload,
+                           save_intermediates=save_intermediates)

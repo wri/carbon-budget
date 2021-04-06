@@ -13,7 +13,7 @@ import universal_util as uu
 import constants_and_names as cn
 
 
-def create_input_files(tile_id):
+def create_input_files(tile_id, no_upload):
 
     # Start time
     start = datetime.datetime.now()
@@ -96,4 +96,4 @@ def create_input_files(tile_id):
         dst_bor_tem_trop.write_band(1, bor_tem_trop_window, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_precip)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_precip, no_upload)
