@@ -39,13 +39,23 @@ def upload_log():
 
 
 # Creates the log with a starting line
-def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=None, save_intermediates=None,
-                 stage_input=None, run_through=None, carbon_pool_extent=None,
+def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=None,
+                 save_intermediates=None, stage_input=None, run_through=None, carbon_pool_extent=None,
                  emitted_pools=None, thresh=None, std_net_flux=None,
                  include_mangroves=None, include_us=None, log_note=None):
 
-    logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log), format='%(levelname)s @ %(asctime)s: %(message)s',
-                        datefmt='%Y/%m/%d %I:%M:%S %p', level=logging.INFO)
+    # For some reason, logging gets turned off when AWS credentials aren't provided.
+    # This restores logging without AWS credentials.
+    if not check_aws_creds():
+        # https://stackoverflow.com/a/49202811
+        for handler in logging.root.handlers[:]:
+            logging.root.removeHandler(handler)
+
+    logging.basicConfig(filename=os.path.join(cn.docker_app, cn.model_log),
+                        format='%(levelname)s @ %(asctime)s: %(message)s',
+                        datefmt='%Y/%m/%d %I:%M:%S %p',
+                        level=logging.INFO)
+
     logging.info("Log notes: {}".format(log_note))
     logging.info("Model version: {}".format(cn.version))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
@@ -61,6 +71,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=N
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
     logging.info("Do not upload anything to s3: {}".format(no_upload))
+    logging.info("AWS credentials supplied: {}".format(check_aws_creds()))
     logging.info("Save intermediate outputs: {}".format(save_intermediates))
     logging.info("AWS ec2 instance type and AMI ID:")
 
@@ -201,6 +212,18 @@ def log_subprocess_output_full(cmd):
 
         # # After the subprocess finishes, the log is uploaded to s3
         # upload_log()
+
+
+# Checks if Amazon Web Services credentials are in the environment. Both the access key and secret key are needed.
+def check_aws_creds():
+
+    try:
+        key = os.environ['AWS_ACCESS_KEY_ID']
+        secret = os.environ['AWS_SECRET_ACCESS_KEY']
+        return True
+
+    except:
+        return False
 
 
 # Checks the OS for how much storage is available in the system, what's being used, and what percent is being used
@@ -1067,28 +1090,6 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksizex, blocksizey,
     return out_tif
 
 
-def mp_rasterize(tile_id, in_shape, out_pattern, blocksizex, blocksizey, tr, ot, anodata, name_field):
-
-    # Start time
-    start = datetime.datetime.now()
-
-    print_log("Getting extent of", tile_id)
-    xmin, ymin, xmax, ymax = coords(tile_id)
-
-    out_tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
-
-    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
-           '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksizex), '-co', 'BLOCKYSIZE={}'.format(blocksizey),
-           '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-tr', tr, tr, '-ot', ot, '-a', name_field, '-a_nodata',
-           anodata, in_shape, out_tile]
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        log_subprocess_output(process.stdout)
-
-    end_of_fx_summary(start, tile_id, out_pattern)
-
-
 # Creates a tile of all 0s for any tile passed to it.
 # Uses the Hansen loss tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
@@ -1156,6 +1157,7 @@ def create_blank_tile_txt():
     blank_tiles.close()
 
 
+# Delete all blank tiles and the txt that listed them
 def list_and_delete_blank_tiles():
 
     blank_tiles_list = open(os.path.join(cn.docker_tmp, cn.blank_tile_txt)).read().splitlines()
@@ -1325,8 +1327,16 @@ def tile_id_list_check(tile_id_list):
         return tile_id_list
     # Checks tile id list input validity against the pixel area tiles
     else:
-        possible_tile_list = tile_list_s3(cn.pixel_area_dir)
         tile_id_list = list(tile_id_list.split(","))
+
+        creds = check_aws_creds()
+
+        # Stops checking tiles list against s3 if connection to s3 is disabled
+        if not creds:
+            return tile_id_list
+
+        # Continues to check submitted tile list against s3 if connection to s3 is enabled
+        possible_tile_list = tile_list_s3(cn.pixel_area_dir)
 
         for tile_id in tile_id_list:
             if tile_id not in possible_tile_list:
@@ -1344,6 +1354,7 @@ def replace_output_dir_date(output_dir_list, run_date):
     print_log(output_dir_list)
     print_log("")
     return output_dir_list
+
 
 # Adds various metadata tags to the raster
 def add_rasterio_tags(output_dst, sensit_type):
@@ -1381,6 +1392,7 @@ def add_universal_metadata_tags(output_raster, sensit_type):
            '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years),
            output_raster]
     log_subprocess_output_full(cmd)
+
 
 # Adds metadata tags to raster.
 # Certain tags are included for all rasters, while other tags can be customized for each input set.

@@ -27,21 +27,21 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
     # Opens the input tiles if they exist. If one of the inputs doesn't exist,
     try:
         gain_rate_AGC_src = rasterio.open(gain_rate_AGC)
-        uu.print_log("    Aboveground removal factor tile for", tile_id)
+        uu.print_log("    Aboveground removal factor tile found for", tile_id)
     except:
-        uu.print_log("    No aboveground removal factor tile {}. Not creating gross removals.".format(tile_id))
+        uu.print_log("    No aboveground removal factor tile found for {}. Not creating gross removals.".format(tile_id))
         return
     try:
         gain_rate_BGC_src = rasterio.open(gain_rate_BGC)
-        uu.print_log("    Belowground removal factor tile for", tile_id)
+        uu.print_log("    Belowground removal factor tile found for", tile_id)
     except:
-        uu.print_log("    No belowground removal factor tile {}. Not creating gross removals.".format(tile_id))
+        uu.print_log("    No belowground removal factor tile found for {}. Not creating gross removals.".format(tile_id))
         return
     try:
         gain_year_count_src = rasterio.open(gain_year_count)
-        uu.print_log("    Gain year count tile for", tile_id)
+        uu.print_log("    Gain year count tile found for", tile_id)
     except:
-        uu.print_log("    No gain year count tile for {}. Not creating gross removals.".format(tile_id))
+        uu.print_log("    No gain year count tile found for {}. Not creating gross removals.".format(tile_id))
         return
 
 

@@ -75,13 +75,15 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
                             cn.pattern_net_flux_per_pixel_forest_extent
     ]
 
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
+    if uu.check_aws_creds():
 
-    # Pixel area tiles-- necessary for calculating per pixel values
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list_outer)
-    # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for masking to forest extent
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list_outer)
-    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list_outer)
-    uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list_outer)
+        # Pixel area tiles-- necessary for calculating per pixel values
+        uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list_outer)
+        # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for masking to forest extent
+        uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list_outer)
+        uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list_outer)
+        uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list_outer)
 
     uu.print_log("Model outputs to process are:", download_dict)
 
@@ -114,8 +116,11 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
         uu.print_log(tile_id_list_input)
         uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_input))) + "\n")
 
-        uu.print_log("Downloading tiles from", input_dir)
-        uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, sensit_type, tile_id_list_input)
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
+        if uu.check_aws_creds():
+
+            uu.print_log("Downloading tiles from", input_dir)
+            uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, sensit_type, tile_id_list_input)
 
         # Blank list of output patterns, populated below
         output_patterns = []
@@ -197,6 +202,11 @@ if __name__ == '__main__':
     tile_id_list = args.tile_id_list
     run_date = args.run_date
     no_upload = args.no_upload
+
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        no_upload = True
+        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)

@@ -45,10 +45,7 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]
-    # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    with process.stdout:
-        uu.log_subprocess_output(process.stdout)
+    uu.log_subprocess_output_full(cmd)
 
 
     # List of output directories and output file name patterns
@@ -85,6 +82,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
+
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        no_upload = True
+        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)

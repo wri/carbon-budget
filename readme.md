@@ -25,6 +25,12 @@ Many inputs can be processed the same way (e.g., many rasters can be processed u
 The input processing scripts are scattered among almost all the folders, unfortunately, a historical legacy of how I built this out
 which I haven't fixed yet. The data prep scripts are generally in the folder for which their outputs are most relevant.
 
+Inputs can either be downloaded from AWS s3 storage or used if found locally in the folder `/usr/local/tiles/` in the Docker container.
+The model looks for files locally before downloading them. 
+The model can still be run without a connection to AWS s3 if all necessary inputs are stored in the correct local folder.
+This option is feasible for running the model on a handful of tiles but not for large areas 
+because the tiles will need too much storage. 
+
 ### Outputs
 There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all for 2001-2020. 
 These are produced at two resolutions: 0.00025 x 0.00025 degrees 
@@ -35,8 +41,9 @@ Model runs also automatically generate a txt log. This log includes nearly every
 This log is useful for documenting model runs and checking for mistakes/errors in retrospect, although it does not capture errors that terminate the model.
 For example, users can examine it to see if the correct input tiles were downloaded or if the intended tiles were used during the model run.  
 
-Output rasters and model logs are uploaded to s3 unless the `--no-upload` flag (`-nu`) is activated as a command line argument.
-When this is activated for any model stage, neither raster outputs nor logs are uploaded to s3. This is good for local test runs or versions
+Output rasters and model logs are uploaded to s3 unless the `--no-upload` flag (`-nu`) is activated as a command line argument
+or no AWS s3 credentials are supplied to the Docker container.
+When either of these happens, neither raster outputs nor logs are uploaded to s3. This is good for local test runs or versions
 of the model that are independent of s3 (that is, inputs are stored locally and no on s3, and the user does not have 
 a connection to s3 storage or s3 credentials).
 
@@ -90,31 +97,46 @@ Net flux at both scales can be positive or negative depending on the balance of 
 
 ### Running the model
 There are two ways to run the model: as a series of individual scripts, or from a master script, which runs the individual scripts sequentially.
-Which one to use depends on what you are trying to do. Generally, the individual scripts (which correspond to model stages) are
+Which one to use depends on what you are trying to do. Generally, the individual scripts (which correspond to specific model stages) are
 more appropriate for development and testing, while the master script is better for running
 the main part of the model from start to finish in one go. In either case, the code must be cloned from this repository.
 Run globally, both options iterate through a list of ~275 10x10 degree tiles. (Different model stages have different numbers of tiles.)
 Run all tiles in the model extent fully through one model stage before starting on the next stage. 
 (The master script does this automatically.) If a user wants to run the model on just one or a few tiles, 
 that can be done through a command line argument (`--tile-id-list` or `-l`). 
-If individual tiles are listed, only those will be downloaded and run. This is a natural system for testing or for
-running the model for individual countries. 
+If individual tiles are listed, only those will be run. This is a natural system for testing or for
+running the model for individual countries. You can see the tile boundaries in pixel_area_tile_footprints.zip.
 For example, to run the model for Madagascar, only tiles 10S_040E, 10S_050E, and 20S_040E need to be run. 
 
 The model runs inside a Docker container. Once you have Docker configured on your system, have cloned this repository, 
-and have configured access to Amazon Web Services, you can do the following on the command line in the same folder as the repository on your system.
+and have configured access to AWS (if desired), 
+you can do the following on the command line in the same folder as the repository on your system.
 This will enter the command line in the Docker container. 
 
-For runs on my local computer, I use `docker-compose` so that the Docker is mapped to my computer's drives. 
+For runs on a local computer, use `docker-compose` so that the Docker is mapped to my computer's drives. 
 I do this for development and testing. If running on another computer, you will need to change the local 
-folder being mapped in `docker-compose.yaml` to fit your computer's directory structure. 
-You will also need to either provide your own AWS secret key and access key or change the docker-compose code
-to not use them.
+folder being mapped in `docker-compose.yaml` to match your computer's directory structure. 
+If you want the model to be able to download from and upload to s3, you will also need to provide 
+your own AWS secret key and access key as environment variables (`-e`) in the `docker-compose run` command.
+
 `docker-compose build`
+
 `docker-compose run --rm -e AWS_SECRET_ACCESS_KEY=... -e AWS_ACCESS_KEY_ID=... carbon-budget`
 
-For runs on an AWS r5d spot machine (for full model runs), I use `docker build`.
+If you don't have AWS credentials, you can still run the model in the docker container but downloads and uploads will 
+not occur. In this situation, you need all the basic input files for all tiles in the docker folder `/usr/local/tiles/`
+on your computer.
+
+`docker-compose build`
+
+`docker-compose run --rm carbon-budget`
+
+For runs on an AWS r5d spot machine (for full model runs), use `docker build`. 
+You need to supply AWS credentials for the model to work because otherwise you won't be able to get input tiles onto
+the spot machine or output tiles out of the spot machine.
+
 `docker build . -t gfw/carbon-budget`
+
 `docker run --rm -it -e AWS_SECRET_ACCESS_KEY=... -e AWS_ACCESS_KEY_ID=... gfw/carbon-budget`
 
 Before doing a model run, confirm that the dates of the relevant input and output s3 folders are correct in `constants_and_names.py`. 
@@ -166,7 +188,7 @@ the output directories. The emissions C++ code has to be be compiled before runn
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
 they are run very infrequently.
 
-`python run_full_model.py -t std -s all -r true -d 20200822 -l all -ce loss -p biomass_soil -tcd 30 -ma true -us true -ln "This will run the entire standard model, including creating mangrove and US removal factor tiles, on all tiles and output everything in s3 folders with the date 20200822."`
+`python run_full_model.py -t std -s all -r -d 20219999 -l all -ce loss -p biomass_soil -tcd 30 -ma -us -si -ln "This will run the entire standard model, including creating mangrove and US removal factor tiles, on all tiles and output everything in s3 folders with the date 20219999. It will save intermediate files."`
 
 | Argument | Short argument | Required/Optional | Relevant stage | Description | 
 | -------- | ----- | ----------- | ------- | ------ |
@@ -176,6 +198,7 @@ they are run very infrequently.
 | `run-date` | `-d` | Required | All | Date of run. Must be format YYYYMMDD. This sets the output folder in s3. |
 | `tile-id-list` | `-l` | Required | All | List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all |
 | `no-upload` | `-nu` | Optional | All | No files are uploaded to s3 during or after model run (including logs and model outputs). Use for testing or completely local runs. |
+| `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 | `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
 | `pools-to-use` | `-p` | Optional | Emissions| Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
 | `tcd-threshold` | `-tcd`| Optional | Aggregation | Tree cover density threshold above which pixels will be included in the aggregation. |
@@ -183,7 +206,6 @@ they are run very infrequently.
 | `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag. |
 | `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag. |
 | `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local model runs. |
-| `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 
 ##### Running the emissions model
 The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.
@@ -221,14 +243,14 @@ Some use all tiles and some use a smaller extent.
 For the current general configuration of the model, these are the changes that need to be made to update the
 model with a new year of tree cover loss data. In the order in which the changes would be needed for rerunning the model:
 
-1) Update the model version in `constants_and_names.py`.
+1) Update the model version variable `version` in `constants_and_names.py`.
 
 2) Change the tree cover loss tile source to the new tree cover loss tiles in `constants_and_names.py`. If the tree cover 
 loss tile pattern is different from the previous year, that will need to be changed in several places in various scripts, unfortunately.
 
-3) Change the number of loss years in `constants_and_names.py`.
+3) Change the number of loss years variable `loss_years` in `constants_and_names.py`.
 
-4) Make sure that and changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
+4) Make sure that changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
    and the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still make sense.
 
 5) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py`.
@@ -248,18 +270,18 @@ model outputs from all stages have the same version in their metadata and the sa
 that are actually being changed.
 
 
-### Modifying the model
+### Other modifications to the model
 It is recommended that any changes to the model be tested in a local Docker instance before running on an EC2 instance.
-I like to output files to test folders with dates 20219999 because that is clearly not a real run date. 
+I like to output files to test folders on s3 with dates 20219999 because that is clearly not a real run date. 
 A standard development route is: 
 
 1) Make changes to a single model script and run using the single processor option on a single tile (easiest for debugging) in local Docker.
 
 2) Run single script on a few representative tiles using a single processor in local Docker.
 
-3) Run single script on a few representative tiles using multiple processor option.
+3) Run single script on a few representative tiles using multiple processor option in local Docker.
 
-4) Run the single script from the master script on a few representative tiles using multiple processor option to 
+4) Run the master script on a few representative tiles using multiple processor option in local Docker to 
    confirm that changes work when using master script.
 
 5) Run single script on a few representative tiles using multiple processors on EC2 instance (need to commit and push changes to GitHub first).
@@ -268,15 +290,17 @@ A standard development route is:
    If the changes likely affected memory usage, make sure to watch memory with `htop` to make sure that too much memory isn't required. 
    If too much memory is needed, reduce the number of processors being called in the script. 
 
-Depending on the complexity of the changes being made, some of these steps can be ommitted. 
+Depending on the complexity of the changes being made, some of these steps can be ommitted. Or if only a few tiles are 
+being modeled (for a small country), only steps 1-4 need to be done.  
 
 ### Dependencies
-Theoretically, this model should run anywhere that the correct Docker container can be started and there is access to the AWS s3 bucket. 
+Theoretically, this model should run anywhere that the correct Docker container can be started 
+and there is access to the AWS s3 bucket or all inputs are in the correct folder in the Docker container. 
 The Docker container should be self-sufficient in that it is configured to include the right Python packages, C++ compiler, GDAL, etc.
 It is described in `Dockerfile`, with Python requirements (installed during Docker creation) in `requirements.txt`.
 On an AWS EC2 instance, I have only run it on r5d instance types but it might be able to run on others.
 At the least, it needs a certain type of memory configuration on the EC2 instance (at least one large SSD volume, I believe). 
-Otherwise, I do not know the limitations and constraints on running this model. 
+Otherwise, I do not know the limitations and constraints on running this model in an EC2 instance. 
 
 ### Contact information
 David Gibbs: david.gibbs@wri.org
