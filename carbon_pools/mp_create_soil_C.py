@@ -70,33 +70,33 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
                    '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
     uu.log_subprocess_output_full(cmd)
 
-    uu.print_log("Unzipping mangrove soil C rasters...")
-    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
-    uu.log_subprocess_output_full(cmd)
-
-    # Mangrove soil receives precedence over mineral soil
-    uu.print_log("Making mangrove soil C vrt...")
-    check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
-    uu.print_log("Done making mangrove soil C vrt")
-
-    uu.print_log("Making mangrove soil C tiles...")
-
-    if cn.count == 96:
-        processes = 32   # 32 processors = 570 GB peak
-    else:
-        processes = int(cn.count/3)
-    uu.print_log('Mangrove soil C max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(create_soil_C.create_mangrove_soil_C, no_upload=no_upload), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
+    # uu.print_log("Unzipping mangrove soil C rasters...")
+    # cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
+    # uu.log_subprocess_output_full(cmd)
     #
-    #     create_soil_C.create_mangrove_soil_C(tile_id, no_Upload)
-
-    uu.print_log('Done making mangrove soil C tiles', '\n')
+    # # Mangrove soil receives precedence over mineral soil
+    # uu.print_log("Making mangrove soil C vrt...")
+    # check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    # uu.print_log("Done making mangrove soil C vrt")
+    #
+    # uu.print_log("Making mangrove soil C tiles...")
+    #
+    # if cn.count == 96:
+    #     processes = 32   # 32 processors = 570 GB peak
+    # else:
+    #     processes = int(cn.count/3)
+    # uu.print_log('Mangrove soil C max processors=', processes)
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(create_soil_C.create_mangrove_soil_C, no_upload=no_upload), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for tile_id in tile_id_list:
+    # #
+    # #     create_soil_C.create_mangrove_soil_C(tile_id, no_Upload)
+    #
+    # uu.print_log('Done making mangrove soil C tiles', '\n')
 
     uu.print_log("Making mineral soil C vrt...")
     check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
