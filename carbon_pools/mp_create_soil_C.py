@@ -104,7 +104,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
 
     # Creates mineral soil C density tiles
     source_raster = 'mineral_soil_C.vrt'
-    out_pattern = 'mineral_soil'
+    out_pattern = cn.pattern_soil_C_full_extent_2000_non_mang
     dt = 'Int16'
     if cn.count == 96:
         processes = 50  # 32 processors = 100 GB peak; 50 = XXX GB peak
@@ -124,7 +124,15 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
 
     uu.print_log("Done making non-mangrove soil C tiles", "\n")
 
-    # If no_upload flag is not activated, output is uploaded
+    output_pattern = cn.pattern_soil_C_full_extent_2000_non_mang
+    processes = 50 # 50 processors = 550 GB peak
+    uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    pool.close()
+    pool.join()
+
+    # If no_upload flag is not activated, output is uploaded to s3
     if not no_upload:
 
         uu.print_log("Uploading non-mangrove soil C density tiles")
