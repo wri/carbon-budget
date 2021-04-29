@@ -287,7 +287,7 @@ def tile_list_s3(source, sensit_type='std'):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = Popen(['aws', 's3', 'ls', new_source], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', new_source, '--no--sign-request'], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
