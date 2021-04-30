@@ -824,7 +824,7 @@ def s3_file_download(source, dest, sensit_type):
                 bucket = 'gfw2-data'
                 folder = source[15:]
             s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
-            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
+            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors', '--no-sign-request']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
             print_log("")
@@ -892,7 +892,8 @@ def s3_file_download(source, dest, sensit_type):
                 folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
             s3.Object(bucket, folder).load()
-            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors', '--no-sign-request']
+            print(cmd)
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
             print_log("")
