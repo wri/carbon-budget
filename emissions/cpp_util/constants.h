@@ -34,6 +34,7 @@ namespace constants
 
     constexpr char legal_Amazon_loss[] = "_legal_Amazon_annual_loss_2001_2019.tif";
 
+    constexpr char lossyear[] = "GFW2020_";
     constexpr char burnyear[] = "_burnyear_with_Hansen_loss.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";

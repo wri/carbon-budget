@@ -95,7 +95,7 @@ string litter_name = infolder + tile_id + constants::litter_C_emis_year + ".tif"
 string soil_name = infolder + tile_id + constants::soil_C_emis_year + ".tif";
 
 // Other inputs
-string loss_name = infolder + tile_id + ".tif";
+string loss_name = infolder + constants::lossyear + tile_id + ".tif";
 string burn_name = infolder + tile_id + constants::burnyear;
 string ecozone_name = infolder + tile_id + constants::fao_ecozones;
 string climate_name = infolder + tile_id + constants::climate_zones;
