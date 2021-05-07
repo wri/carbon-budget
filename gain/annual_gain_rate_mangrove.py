@@ -11,8 +11,8 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Necessary to suppress a pandas error later on
-np.set_printoptions(threshold=np.nan)
+# Necessary to suppress a pandas error later on. https://github.com/numpy/numpy/issues/12987
+np.set_printoptions(threshold=sys.maxsize)
 
 def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict, gain_below_dict, stdev_dict):
 

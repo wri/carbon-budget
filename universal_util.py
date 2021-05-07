@@ -893,7 +893,6 @@ def s3_file_download(source, dest, sensit_type):
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
             s3.Object(bucket, folder).load()
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-            print(cmd)
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
             print_log("")

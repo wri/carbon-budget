@@ -1,7 +1,7 @@
 '''
 git clone https://github.com/wri/carbon-budget
 spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
-c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 python run_full_model.py -t std -s forest_age_category_natrl_forest -r false -d 20209999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "This is a log note"
 python run_full_model.py -t std -s all -r -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true -ln "This is a log note"
 
@@ -90,6 +90,7 @@ def main ():
     no_upload = args.no_upload
     save_intermediates = args.save_intermediates
     log_note = args.log_note
+
 
     # Start time for script
     script_start = datetime.datetime.now()
@@ -554,7 +555,7 @@ def main ():
 
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted {0} aux.xml files: {1}".formt(len(tiles_to_delete), tiles_to_delete), "\n")
+        uu.print_log(":::::Deleted {0} aux.xml files: {1}".format(len(tiles_to_delete), tiles_to_delete), "\n")
 
 
         uu.print_log(":::::Creating 4x4 km aggregate maps")
