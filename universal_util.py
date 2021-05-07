@@ -587,13 +587,8 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            if pattern == '':  # For Hansen loss tiles, which have no pattern
-                if tile_name.endswith('.tif'):
-                    tile_id = get_tile_id(tile_name)
-                    file_list.append(tile_id)
-
             # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -649,9 +644,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern == cn.pattern_loss:   # For Hansen loss tiles
-                source = '{0}{1}.tif'.format(source_dir, tile_id)
-            elif pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:   # For tiles that do not have the tile_id first
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:  # For every other type of tile
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
@@ -674,26 +667,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     local_tile_count = len(glob.glob('*{}*.tif'.format(pattern)))
 
     # For tile types that have the tile_id after the pattern
-    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area]:
+    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
 
         local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
-
-
-    # Because loss tiles don't have a pattern after the tile_id, thee count of loss tiles on the spot machine
-    # needs to be handled separately.
-    if pattern == '':
-
-        local_tile_count = 0
-
-        all_local_tiles = glob.glob('*tif')
-
-        for tile in all_local_tiles:
-
-            # Loss tiles are 12 characters long (just [tile_id].tif). Only tiles with that length name are counted.
-            # Using regex to identify the loss tiles would be better but I couldn't get that to work.
-            if len(tile) == 12:
-                local_tile_count = local_tile_count + 1
-
 
     print_log("There are", local_tile_count, "tiles on the spot machine with the pattern", pattern)
 
