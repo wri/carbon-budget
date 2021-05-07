@@ -554,7 +554,7 @@ def main ():
 
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted {0} aux.xml files: {1}".formt(len(tiles_to_delete), tiles_to_delete), "\n")
+        uu.print_log(":::::Deleted {0} aux.xml files: {1}".format(len(tiles_to_delete), tiles_to_delete), "\n")
 
 
         uu.print_log(":::::Creating 4x4 km aggregate maps")

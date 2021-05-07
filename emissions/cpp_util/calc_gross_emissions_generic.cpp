@@ -103,7 +103,7 @@ if (sensit_type != "std") {
 }
 
 // Other inputs
-string loss_name = infolder + tile_id + ".tif";
+string loss_name = infolder + constants::lossyear + tile_id + ".tif";
 
 if (sensit_type == "legal_Amazon_loss") {
     loss_name = infolder + tile_id + constants::legal_Amazon_loss;

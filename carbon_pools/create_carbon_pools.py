@@ -70,7 +70,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
         loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
         uu.print_log("    Hansen loss tile found for {}".format(tile_id))
-        loss_year = '{0}.tif'.format(tile_id)
+        loss_year = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
 
     # This input is required to exist
     loss_year_src = rasterio.open(loss_year)
