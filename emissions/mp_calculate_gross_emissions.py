@@ -5,12 +5,12 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
 From carbon-budget/emissions/, do:
-c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 (for the standard model and some sensitivity analysis versions).
 calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
 and convert_to_grassland), do:
-c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
+c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
 Run by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE] -l [TILE_LIST] -d [RUN_DATE]
 The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.

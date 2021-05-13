@@ -78,11 +78,11 @@ count = multiprocessing.cpu_count()
 s3_base_dir = 's3://gfw2-data/climate/carbon_model/'
 
 # Directory for all tiles in the Docker container
-docker_base_dir = '/home/dgibbs/downloads/'
+docker_base_dir = '/home/{}/downloads/'.format(os.environ['USER'])
 
-docker_tmp = '/usr/local/tmp'
+docker_tmp = '/home/{}/carbon-budget'.format(os.environ['USER'])
 
-docker_app = '/home/dgibbs/carbon-budget'
+docker_app = '/home/{}/carbon-budget'.format(os.environ['USER'])
 
 c_emis_compile_dst = '{0}/emissions/cpp_util'.format(docker_app)
 

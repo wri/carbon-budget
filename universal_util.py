@@ -287,7 +287,7 @@ def tile_list_s3(source, sensit_type='std'):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = Popen(['aws', 's3', 'ls', new_source, '--no--sign-request'], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', new_source], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -800,7 +800,7 @@ def s3_file_download(source, dest, sensit_type):
                 bucket = 'gfw2-data'
                 folder = source[15:]
             s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
-            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors', '--no-sign-request']
+            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
             print_log("")
@@ -868,8 +868,7 @@ def s3_file_download(source, dest, sensit_type):
                 folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
             s3.Object(bucket, folder).load()
-            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors', '--no-sign-request']
-            print(cmd)
+            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
             print_log("")
