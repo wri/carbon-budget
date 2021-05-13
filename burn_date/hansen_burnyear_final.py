@@ -23,7 +23,7 @@ def hansen_burnyear(tile_id, no_upload):
     # once metadata tags have been added.
     out_tile_no_tag = '{0}_{1}_no_tag.tif'.format(tile_id, cn.pattern_burn_year)
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_burn_year)
-    loss = '{0}.tif'.format(tile_id)
+    loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
 
     # Does not continue processing tile if no loss (because there will not be any output)
     if not os.path.exists(loss):

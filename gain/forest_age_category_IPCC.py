@@ -48,7 +48,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_uploa
     elif sensit_type == 'Mekong_loss':
         loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
     else:
-        loss = '{0}.tif'.format(tile_id)
+        loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
         uu.print_log("Using Hansen loss tile {0} for {1} model run".format(tile_id, sensit_type))
 
     uu.print_log("  Assigning age categories")

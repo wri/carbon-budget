@@ -68,7 +68,7 @@ def create_combined_soil_C(tile_id, no_upload):
 
     # Input files
     mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
-    mineral_soil = '{0}_mineral_soil.tif'.format(tile_id)
+    mineral_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000_non_mang)
 
     # Output file
     combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
@@ -116,7 +116,7 @@ def create_combined_soil_C(tile_id, no_upload):
 
         # If there is no mangrove soil C tile, the final output of the mineral soil function needs to receive the
         # correct final name.
-        os.rename('{0}_{1}.tif'.format(tile_id, 'mineral_soil'), combined_soil)
+        os.rename('{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000_non_mang), combined_soil)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000, no_upload)
