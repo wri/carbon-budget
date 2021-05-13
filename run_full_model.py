@@ -2,12 +2,12 @@
 git clone https://github.com/wri/carbon-budget
 spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
 c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-python run_full_model.py -t std -s forest_age_category_natrl_forest -r false -d 20209999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "This is a log note"
-python run_full_model.py -t std -s all -r -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true -ln "This is a log note"
+python run_full_model.py -si -nu -t std -s forest_age_category_natrl_forest -r false -d 20219999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "This is a log note"
+python run_full_model.py -si -nu -t std -s all -r -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true -ln "This is a log note"
 
-python run_full_model.py -t std -s all -r -d 20200822 -l all -ce loss,2000 -p biomass_soil -tcd 30 -ma true -ln "First attempt at running full standard model on all tiles for model v1.2.0. Hopefully this will be the sole, definitive run of standard model v1.2.0."
+python run_full_model.py -si -nu -t std -s all -r -d 20200822 -l all -ce loss,2000 -p biomass_soil -tcd 30 -ma true -ln "First attempt at running full standard model on all tiles for model v1.2.0. Hopefully this will be the sole, definitive run of standard model v1.2.0."
 
-python run_full_model.py -t biomass_swap -s all -r -d 20200919 -l all -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Running sensitivity analysis for model v1.2.0"
+python run_full_model.py -si -nu -t biomass_swap -s all -r -d 20200919 -l all -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Running sensitivity analysis for model v1.2.0"
 
 '''
 
