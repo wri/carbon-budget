@@ -176,7 +176,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name="mangrove gain, for model")
+                               sheet_name="mangrove gain, for model", engine='openpyxl')
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
