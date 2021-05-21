@@ -22,6 +22,9 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+if 'GDAL_DATA' in os.environ: 
+    del os.environ['GDAL_DATA']
+
 # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
 # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
 def rewindow(tile, no_upload):
@@ -145,6 +148,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
+    print(xmin, ymin, xmax, ymax)
 
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
