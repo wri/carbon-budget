@@ -150,6 +150,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             dir = key
             pattern = values[0]
             uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+    else:
+        for key, values in download_dict.items():
+            dir = key
+            pattern = values[0]
+            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list) 
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -169,6 +174,9 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if uu.check_aws_creds():
 
         # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        uu.log_subprocess_output_full(cmd)
+    else:
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
         uu.log_subprocess_output_full(cmd)
 
