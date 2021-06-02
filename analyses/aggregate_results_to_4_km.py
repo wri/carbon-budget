@@ -148,7 +148,6 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     tile_id = uu.get_tile_id(tile)
     tile_type = uu.get_tile_type(tile)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
-    print(xmin, ymin, xmax, ymax)
 
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
