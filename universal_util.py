@@ -34,7 +34,7 @@ def upload_log():
     lag = random()*2
     time.sleep(lag)
 
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet', '--no-sign-request']
     check_call(cmd)
 
 
@@ -287,7 +287,7 @@ def tile_list_s3(source, sensit_type='std'):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = Popen(['aws', 's3', 'ls', new_source], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', new_source, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -320,7 +320,7 @@ def tile_list_s3(source, sensit_type='std'):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', source, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -401,14 +401,14 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         set2 = set2.replace('standard', sensit_type)
 
 
-    out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', set1, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
     # Writes the output string to a text file for easier interpretation
     set1_tiles = open("set1.txt", "wb")
     set1_tiles.write(stdout)
     set1_tiles.close()
 
-    out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', set2, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
     stdout2, stderr2 = out.communicate()
     # Writes the output string to a text file for easier interpretation
     set2_tiles = open("set2.txt", "wb")
@@ -452,7 +452,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         set1 = set1.replace(sensit_type, 'standard')
         print_log("  Looking for alternative tile set in {}".format(set1))
 
-        out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
+        out = Popen(['aws', 's3', 'ls', set1, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
         stdout, stderr = out.communicate()
         # Writes the output string to a text file for easier interpretation
         set1_tiles = open("set1.txt", "wb")
@@ -483,7 +483,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         set2 = set2.replace(sensit_type, 'standard')
         print_log("  Looking for alternative tile set in {}".format(set2))
 
-        out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
+        out = Popen(['aws', 's3', 'ls', set2, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
         stdout2, stderr2 = out.communicate()
         # Writes the output string to a text file for easier interpretation
         set2_tiles = open("set2.txt", "wb")
@@ -516,7 +516,7 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         else:
             set3 = set3.replace('standard', sensit_type)
 
-        out = Popen(['aws', 's3', 'ls', set3], stdout=PIPE, stderr=STDOUT)
+        out = Popen(['aws', 's3', 'ls', set3, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
         stdout3, stderr3 = out.communicate()
         # Writes the output string to a text file for easier interpretation
         set3_tiles = open("set3.txt", "wb")
@@ -570,7 +570,7 @@ def count_tiles_s3(source, pattern=None):
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
-    out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
+    out = Popen(['aws', 's3', 'ls', source, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
     stdout, stderr = out.communicate()
 
     # Writes the output string to a text file for easier interpretation
@@ -711,7 +711,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log("Source directory used:", source_final)
 
-            cmd = ['aws', 's3', 'cp', source_final, dest, '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             log_subprocess_output_full(cmd)
 
@@ -725,7 +725,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log("Source directory used:", source)
 
-            cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             log_subprocess_output_full(cmd)
 
@@ -745,7 +745,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("Tiles with pattern", pattern, "are not on spot machine. Downloading...")
 
-        cmd = ['aws', 's3', 'cp', source, dest, '--recursive', '--exclude', '*tiled/*',
+        cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
                '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
 
         # cmd = ['aws', 's3', 'cp', source, dest, '--recursive',
@@ -799,8 +799,8 @@ def s3_file_download(source, dest, sensit_type):
             else:
                 bucket = 'gfw2-data'
                 folder = source[15:]
-            s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
-            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--only-show-errors']
+            #s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
+            cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--no-sign-request', '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
             print_log("")
@@ -833,8 +833,8 @@ def s3_file_download(source, dest, sensit_type):
                 bucket = 'gfw2-data'
                 folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object(bucket, folder).load()
-            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            #s3.Object(bucket, folder).load()
+            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
             log_subprocess_output_full(cmd)
             print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source))
             print_log("")
@@ -867,8 +867,9 @@ def s3_file_download(source, dest, sensit_type):
                 bucket = 'gfw2-data'
                 folder = source[15:]
             # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            s3.Object(bucket, folder).load()
-            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+            #s3.Object(bucket, folder).load()
+            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
+            print(cmd)
             log_subprocess_output_full(cmd)
             print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
             print_log("")
@@ -885,7 +886,7 @@ def upload_final_set(upload_dir, pattern):
     print_log("Uploading tiles with pattern {0} to {1}".format(pattern, upload_dir))
 
     cmd = ['aws', 's3', 'cp', cn.docker_base_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
-           '--recursive', '--no-progress']
+           '--recursive', '--no-progress', '--no-sign-request']
     try:
         log_subprocess_output_full(cmd)
         print_log("  Upload of tiles with {} pattern complete!".format(pattern))
@@ -902,7 +903,7 @@ def upload_final(upload_dir, tile_id, pattern):
     file = '{}_{}.tif'.format(tile_id, pattern)
 
     print_log("Uploading {}".format(file))
-    cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
+    cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-sign-request', '--no-progress']
 
     try:
         log_subprocess_output_full(cmd)
@@ -1099,11 +1100,11 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         # Preferentially uses Hansen loss tile as the template for creating a blank plantation tile
         # (tile extent, resolution, pixel alignment, compression, etc.).
         # If the tile is already on the spot machine, it uses the downloaded tile.
-        if os.path.exists(os.path.join(folder, '{0}.tif'.format(tile_id))):
+        if os.path.exists(os.path.join(folder, '{0}_{1}.tif'.format(cn.pattern_loss, tile_id))):
             print_log("Hansen loss tile exists for {}. Using that as template for blank tile.".format(tile_id))
             cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
-                   '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, pattern),
-                   '{0}/{1}.tif'.format(folder, tile_id)]
+                   '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
+                   '{0}{1}_{2}.tif'.format(folder, cn.pattern_loss, tile_id)]
             check_call(cmd)
 
         # If the Hansen loss tile isn't already on the spot machine
