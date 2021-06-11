@@ -1427,13 +1427,13 @@ def rewindow(tile_id, download_pattern_name, no_upload):
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               in_tile, "temp.vrt"]
+               in_tile, "{}_temp.vrt".format(tile_id)]
         log_subprocess_output_full(cmd)
 
-        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', "temp.vrt", out_tile]
+        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW',  "{}_temp.vrt".format(tile_id), out_tile]
         log_subprocess_output_full(cmd)
 
-        os.remove("temp.vrt")
+        os.remove("{}_temp.vrt".format(tile_id))
 
     else:
         print_log("{} does not exist. Not rewindowing".format(in_tile))
