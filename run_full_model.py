@@ -58,8 +58,8 @@ def main ():
                         help='Time period for which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--emitted-pools-to-use', '-p', required=False,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
-    parser.add_argument('--tcd-threshold', '-tcd', required=False,
-                        help='Tree cover density threshold above which pixels will be included in the aggregation.')
+    parser.add_argument('--tcd-threshold', '-tcd', required=False, default=cn.canopy_threshold,
+                        help='Tree cover density threshold above which pixels will be included in the aggregation. Default is 30.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', action='store_true',
@@ -608,9 +608,10 @@ def main ():
             uu.print_log("Modifying output directory and file name pattern based on sensitivity analysis")
             output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
 
-        # Changes the date in the output directories. This date was used during the model run.
+        # A date can optionally be provided by the full model script or a run of this script.
         # This replaces the date in constants_and_names.
-        if run_date:
+        # Only done if output upload is enabled.
+        if run_date is not None and no_upload is not None:
             output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
         for output in output_dir_list:

@@ -39,7 +39,8 @@ def mp_peatland_processing(tile_id_list, run_date = None):
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
@@ -99,7 +100,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+        description='Creates tiles of the extent of peatlands')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

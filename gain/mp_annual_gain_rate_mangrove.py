@@ -141,8 +141,11 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     #           gain_above_dict, gain_below_dict, stdev_dict)
 
 
-    for i in range(0, len(output_dir_list)):
-        uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+    # If no_upload flag is not activated, output is uploaded
+    if not no_upload:
+
+        for i in range(0, len(output_dir_list)):
+            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
 
 if __name__ == '__main__':
@@ -150,7 +153,7 @@ if __name__ == '__main__':
     # The arguments for what kind of model run is being run (standard conditions or a sensitivity analysis) and
     # the tiles to include
     parser = argparse.ArgumentParser(
-        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+        description='Create tiles of removal factors for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,

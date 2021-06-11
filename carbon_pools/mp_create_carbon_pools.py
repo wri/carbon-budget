@@ -162,7 +162,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
@@ -467,7 +468,7 @@ if __name__ == '__main__':
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(
-        description='Create tiles of the number of years of carbon gain for mangrove forests')
+        description='Creates tiles of carbon pool densities in the year of loss or in 2000')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,

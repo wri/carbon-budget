@@ -1,15 +1,21 @@
 '''
-This script creates maps of model outputs at roughly 10km resolution (0.1x0.1 degrees), where each output pixel
+This script creates maps of model outputs at roughly 5km resolution (0.05x0.05 degrees), where each output pixel
 represents the total value in the pixel (not the density) (hence, the aggregated results).
+This is currently set up for annual removal rate, gross removals, gross emissions, and net flux.
 It iterates through all the model outputs that are supplied.
-First, it rewindows the model output, pixel area tile, and tcd tile into 400x400 (0.1x0.1 degree) windows, instead of the native
+The rewindowed pixel area tiles, tcd, Hansen gain, and mangrove biomass tiles must already be created and in s3
+(created using mp_rewindow_tiles.py).
+First, this script rewindows the model output into 200x200 (0.05x0.05 degree) windows, instead of the native
 40000x1 pixel windows.
-Then it calculates the per pixel value for each model output pixel and sums those values within each 0.1x0.1 degree
+Then it calculates the per pixel value for each model output pixel and sums those values within each 0.05x0.05 degree
 aggregated pixel.
-It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
-converts cumulative gross CO2 emissions to gross CO2 emissions per year.
-The user has to supply a tcd threshold for which forest pixels to include in the results.
+It converts emissions, removals, and net flux from totals over the model period to annual values.
+For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
+The user has to supply a tcd threshold for which forest pixels to include in the results. Defaults to cn.canopy_threshold.
+For sensitivity analysis, the s3 folder with the aggregations for the standard model must be specified.
+sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
 '''
+
 
 import numpy as np
 from subprocess import Popen, PIPE, STDOUT, check_call
@@ -21,113 +27,6 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-
-# Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
-# which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-def rewindow(tile, no_upload):
-
-    # start time
-    start = datetime.datetime.now()
-
-    uu.print_log("Rewindowing {} to 200x200 pixel windows (0.04 degree x 0.04 degree)...". format(tile))
-
-    # Extracts the tile id, tile type, and bounding box for the tile
-    tile_id = uu.get_tile_id(tile)
-    tile_type = uu.get_tile_type(tile)
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
-
-    # Raster name for 400x400 pixel tiles (intermediate output)
-    input_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
-    area_tile = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
-    pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
-    tcd_tile = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
-    gain_tile = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    gain_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_gain, tile_id)
-    mangrove_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-    mangrove_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-
-    # Only rewindows the necessary files if they haven't already been processed (just in case
-    # this was run on the spot machine before)
-
-    if not os.path.exists(input_rewindow):
-        uu.print_log("Model output for {} not rewindowed. Rewindowing...".format(tile_id))
-
-        # Converts the tile of interest to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               tile, input_rewindow]
-        uu.log_subprocess_output_full(cmd)
-
-    if not os.path.exists(tcd_rewindow):
-        uu.print_log("Canopy cover for {} not rewindowed. Rewindowing...".format(tile_id))
-
-        # Converts the tcd tile to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               tcd_tile, tcd_rewindow]
-        uu.log_subprocess_output_full(cmd)
-
-    else:
-
-        uu.print_log("Canopy cover for {} already rewindowed.".format(tile_id))
-
-    if not os.path.exists(pixel_area_rewindow):
-        uu.print_log("Pixel area for {} not rewindowed. Rewindowing...".format(tile_id))
-
-        # Converts the pixel area tile to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               area_tile, pixel_area_rewindow]
-        uu.log_subprocess_output_full(cmd)
-
-    else:
-
-        uu.print_log("Pixel area for {} already rewindowed.".format(tile_id))
-
-    if not os.path.exists(gain_rewindow):
-        uu.print_log("Hansen gain for {} not rewindowed. Rewindowing...".format(tile_id))
-
-        # Converts the pixel area tile to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               gain_tile, gain_rewindow]
-        uu.log_subprocess_output_full(cmd)
-
-    else:
-
-        uu.print_log("Hansen gain for {} already rewindowed.".format(tile_id))
-
-    if os.path.exists(mangrove_tile):
-        uu.print_log("Mangrove for {} not rewindowed. Rewindowing...".format(tile_id))
-
-        if not os.path.exists(mangrove_tile_rewindow):
-
-            # Converts the pixel area tile to the 400x400 pixel windows
-            cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
-                   '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-                   '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-                   '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-                   mangrove_tile, mangrove_tile_rewindow]
-            uu.log_subprocess_output_full(cmd)
-
-        else:
-
-            uu.print_log("Mangrove tile for {} already rewindowed.".format(tile_id))
-    else:
-
-        uu.print_log("No mangrove tile found for {}".format(tile_id))
-
-    # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_rewindow'.format(tile_type), no_upload)
 
 
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
@@ -148,10 +47,10 @@ def aggregate(tile, thresh, sensit_type, no_upload):
 
     # Name of inputs
     focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
-    pixel_area_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_pixel_area, tile_id)
-    tcd_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_tcd, tile_id)
-    gain_rewindow = '{0}_{1}_rewindow.tif'.format(cn.pattern_gain, tile_id)
-    mangrove_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    pixel_area_rewindow = '{0}_{1}.tif'.format(cn.pattern_pixel_area_rewindow, tile_id)
+    tcd_rewindow = '{0}_{1}.tif'.format(cn.pattern_tcd_rewindow, tile_id)
+    gain_rewindow = '{0}_{1}.tif'.format(cn.pattern_gain_rewindow, tile_id)
+    mangrove_rewindow = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000_rewindow)
 
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)

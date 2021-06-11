@@ -56,9 +56,10 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
     output_dir_list = [cn.burn_year_dir]
     output_pattern_list = [cn.pattern_burn_year]
 
-    # A date can optionally be provided.
+    # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
     global_grid_hv = ["h00v08", "h00v09", "h00v10", "h01v07", "h01v08", "h01v09", "h01v10", "h01v11", "h02v06",

@@ -66,7 +66,8 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
@@ -120,7 +121,7 @@ if __name__ == '__main__':
     # The arguments for what kind of model run is being run (standard conditions or a sensitivity analysis) and
     # the tiles to include
     parser = argparse.ArgumentParser(
-        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+        description='Create tiles of gross removals over the model period')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
