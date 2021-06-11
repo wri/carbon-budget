@@ -1395,7 +1395,7 @@ def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
     log_subprocess_output_full(cmd)
 
 
-# Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+# Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
 # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
 def rewindow(tile_id, download_pattern_name, no_upload):
 
@@ -1418,16 +1418,25 @@ def rewindow(tile_id, download_pattern_name, no_upload):
     if os.path.exists(in_tile):
         print_log("{0} exists. Rewindowing to {1} at 200x200 pixel windows...". format(in_tile, out_tile))
 
-        # Converts the tcd tile to the 400x400 pixel windows
-        cmd = ['gdalwarp', '-co', 'COMPRESS=LZW', '-overwrite', '-dstnodata', '0',
+        # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
+        # Solution was to use gdalwarp without COMPRESS=LZW to a vrt, then use gdal_translate,
+        # per https://gis.stackexchange.com/questions/89444/file-size-inflation-normal-with-gdalwarp
+
+        # Converts the tcd tile to the 160x160 pixel windows
+        cmd = ['gdalwarp', '-co', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               in_tile, out_tile]
+               in_tile, "temp.vrt"]
         log_subprocess_output_full(cmd)
+
+        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW', "temp.vrt", out_tile]
+        log_subprocess_output_full(cmd)
+
+        os.remove("temp.vrt")
 
     else:
         print_log("{} does not exist. Not rewindowing".format(in_tile))
 
     # Prints information about the tile that was just processed
-    end_of_fx_summary(start, tile_id, download_pattern_name, no_upload)
+    end_of_fx_summary(start, tile_id, "rewindow", no_upload)

@@ -30,8 +30,8 @@ import universal_util as uu
 
 
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-# and sums those values in each 400x400 pixel window.
-# The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
+# and sums those values in each 160x160 pixel window.
+# The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
@@ -74,7 +74,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
 
     out_raster = "{0}_{1}_0_4deg.tif".format(tile_id, tile_type)
 
-    # Iterates across the windows (400x400 30m pixels) of the input tile
+    # Iterates across the windows (160x160 30m pixels) of the input tile
     for idx, window in windows:
 
         # Creates windows for each input tile
