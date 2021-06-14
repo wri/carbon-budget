@@ -131,6 +131,8 @@ mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2_Tiff.zip'
 # Processed mangrove aboveground biomass in the year 2000
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
 mangrove_biomass_2000_dir = os.path.join(s3_base_dir, 'mangrove_biomass/processed/standard/20190220/')
+pattern_mangrove_biomass_2000_rewindow = 'mangrove_agb_t_ha_2000_rewindow'
+mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrove_biomass/20210611/')
 
 
 ######
@@ -140,6 +142,9 @@ mangrove_biomass_2000_dir = os.path.join(s3_base_dir, 'mangrove_biomass/processe
 # The area of each pixel in m^2
 pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
+pattern_pixel_area_rewindow = 'hanson_2013_area_rewindow'
+pixel_area_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/pixel_area/20210611/')
+
 
 # Spreadsheet with annual gain rates
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
@@ -152,10 +157,14 @@ loss_dir = 's3://gfw2-data/forest_change/hansen_2020/'
 # Hansen gain tiles (2001-2012)
 pattern_gain = 'Hansen_GFC2015_gain'
 gain_dir = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
+pattern_gain_rewindow = 'Hansen_GFC2015_gain_rewindow'
+gain_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/tree_cover_gain_2001_2012/20210611/')
 
 # Tree cover density 2000 tiles
 pattern_tcd = 'Hansen_GFC2014_treecover2000'
 tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
+pattern_tcd_rewindow = 'Hansen_GFC2014_treecover2000_rewindow'
+tcd_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/2000_treecover_density/20210611/')
 
 # Intact forest landscape 2000 tiles
 pattern_ifl = 'res_ifl_2000'

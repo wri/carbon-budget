@@ -32,7 +32,8 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 

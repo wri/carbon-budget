@@ -1,16 +1,18 @@
 '''
-This script creates maps of model outputs at roughly 10km resolution (0.1x0.1 degrees), where each output pixel
+This script creates maps of model outputs at roughly 5km resolution (0.05x0.05 degrees), where each output pixel
 represents the total value in the pixel (not the density) (hence, the aggregated results).
-This is currently only set up for gross emissions from biomass+soil and net flux from biomass+soil.
+This is currently set up for annual removal rate, gross removals, gross emissions, and net flux.
 It iterates through all the model outputs that are supplied.
-First, it rewindows the model output, pixel area tile, and tcd tile into 400x400 (0.1x0.1 degree) windows, instead of the native
+The rewindowed pixel area tiles, tcd, Hansen gain, and mangrove biomass tiles must already be created and in s3
+(created using mp_rewindow_tiles.py).
+First, this script rewindows the model output into 200x200 (0.05x0.05 degree) windows, instead of the native
 40000x1 pixel windows.
-Then it calculates the per pixel value for each model output pixel and sums those values within each 0.1x0.1 degree
+Then it calculates the per pixel value for each model output pixel and sums those values within each 0.05x0.05 degree
 aggregated pixel.
-It converts cumulative carbon gain to CO2 gain per year, converts cumulative CO2 flux to CO2 flux per year, and
-converts cumulative gross CO2 emissions to gross CO2 emissions per year.
+It converts emissions, removals, and net flux from totals over the model period to annual values.
 For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
-The user has to supply a tcd threshold for which forest pixels to include in the results.
+The user has to supply a tcd threshold for which forest pixels to include in the results. Defaults to cn.canopy_threshold.
+For sensitivity analysis, the s3 folder with the aggregations for the standard model must be specified.
 sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
 '''
 
@@ -29,21 +31,10 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import aggregate_results_to_4_km
 
-if 'GDAL_DATA' in os.environ: 
-    del os.environ['GDAL_DATA']
 
 def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
-
-    # If a full model run is specified, the correct set of tiles for the particular script is listed
-    if tile_id_list == 'all':
-        # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
-
-    uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
-
 
     # Files to download for this script
     download_dict = {
@@ -61,20 +52,11 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
     if uu.check_aws_creds():
 
         # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-        uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(cn.pixel_area_rewindow_dir, cn.pattern_pixel_area_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
         # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
-        uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
-        uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list)
-        uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list)
-     
-    else:
-        # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-        uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list)
-        # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
-        uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
-        uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list)
-        uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list)
-        
+        uu.s3_flexible_download(cn.tcd_rewindow_dir, cn.pattern_tcd_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(cn.gain_rewindow_dir, cn.pattern_gain_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(cn.mangrove_biomass_2000_rewindow_dir, cn.pattern_mangrove_biomass_2000_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
 
     uu.print_log("Model outputs to process are:", download_dict)
 
@@ -89,7 +71,8 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
@@ -106,6 +89,10 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         else:
             uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
             
+
+        if tile_id_list == 'all':
+            # List of tiles to run in the model
+            tile_id_list = uu.tile_list_s3(dir, sensit_type)
 
         # Gets an actual tile id to use as a dummy in creating the actual tile pattern
         local_tile_list = uu.tile_list_spot_machine(cn.docker_base_dir, download_pattern_name)
@@ -125,7 +112,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
             continue
 
-        # Lists the tiles of the particular type that is being iterates through.
+        # Lists the tiles of the particular type that is being iterated through.
         # Excludes all intermediate files
         tile_list = uu.tile_list_spot_machine(".", "{}.tif".format(pattern))
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
@@ -136,22 +123,21 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_list)), download_pattern) + "\n")
+        uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_list)), download_pattern_name) + "\n")
         uu.print_log("Processing:", dir, "; ", pattern)
 
-        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 400x400 pixels,
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 200x200 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-        # For multiprocessor use. count/2 used about 400 GB of memory on an r4.16xlarge machine, so that was okay.
         if cn.count == 96:
             if sensit_type == 'biomass_swap':
                 processes = 12  # 12 processors = XXX GB peak
             else:
-                processes = 16  # 12 processors = 140 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+                processes = 16  # 16 processors = XXX GB peak
         else:
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(aggregate_results_to_4_km.rewindow, no_upload=no_upload), tile_list)
+        pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name, no_upload=no_upload), tile_id_list)
         # Added these in response to error12: Cannot allocate memory error.
         # This fix was mentioned here: of https://stackoverflow.com/questions/26717120/python-cannot-allocate-memory-using-multiprocessing-pool
         # Could also try this: https://stackoverflow.com/questions/42584525/python-multiprocessing-debugging-oserror-errno-12-cannot-allocate-memory
@@ -159,16 +145,17 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         pool.join()
 
         # # For single processor use
-        # for tile in tile_list:
+        # for tile_id in tile_id_list:
         #
-        #     aggregate_results_to_4_km.rewindow(til, no_upload)
+        #     uu.rewindow(tile_id, download_pattern_name,no_upload)
+
 
         # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # and sums those values in each 400x400 pixel window.
-        # The sum for each 400x400 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # 0.1x0.1 degree resolution (approximately 10m in the tropics).
+        # and sums those values in each 200x200 pixel window.
+        # The sum for each 200x200 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.05x0.05 degree resolution (approximately 10m in the tropics).
         # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # The 0.1x0.1 degree tile is output.
+        # The 0.05x0.05 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         if cn.count == 96:
             if sensit_type == 'biomass_swap':
@@ -239,11 +226,13 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         for vrt in vrtList:
             os.remove(vrt)
 
-        for tile_name in tile_list:
-            tile_id = uu.get_tile_id(tile_name)
-            # os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
+        # for tile_name in tile_list:
+        #     tile_id = uu.get_tile_id(tile_name)
+        #     # os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+        #     os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
+
+        os.quit()
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
@@ -296,13 +285,13 @@ if __name__ == '__main__':
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(
-        description='Create tiles of the number of years of carbon gain for mangrove forests')
+        description='Create maps of model outputs at aggregated/coarser resolution')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
-    parser.add_argument('--tcd-threshold', '-tcd', required=True,
-                        help='Tree cover density threshold above which pixels will be included in the aggregation.')
+    parser.add_argument('--tcd-threshold', '-tcd', required=False, default=cn.canopy_threshold,
+                        help='Tree cover density threshold above which pixels will be included in the aggregation. Default is 30.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--no-upload', '-nu', action='store_true',

@@ -171,7 +171,8 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
+    # Only done if output upload is enabled.
+    if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
     uu.print_log(output_dir_list)
@@ -264,7 +265,7 @@ if __name__ == '__main__':
 
     # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
     # and which model type is being run (standard or sensitivity analysis)
-    parser = argparse.ArgumentParser(description='Calculate gross emissions')
+    parser = argparse.ArgumentParser(description='Calculates gross emissions')
     parser.add_argument('--emitted-pools-to-use', '-p', required=True,
                         help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
     parser.add_argument('--tile_id_list', '-l', required=True,

@@ -66,7 +66,7 @@ def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+        description='Create tiles of the aboveground carbon density for mangroves')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

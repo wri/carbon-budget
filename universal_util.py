@@ -644,7 +644,8 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss,
+                           cn.pattern_gain_rewindow, cn.pattern_tcd_rewindow, cn.pattern_pixel_area_rewindow]:   # For tiles that do not have the tile_id first
                 source = '{0}{1}_{2}.tif'.format(source_dir, pattern, tile_id)
             else:  # For every other type of tile
                 source = '{0}{1}_{2}.tif'.format(source_dir, tile_id, pattern)
@@ -1393,3 +1394,50 @@ def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
     cmd += [output_raster]
 
     log_subprocess_output_full(cmd)
+
+# Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
+# which is the resolution of the output tiles. This allows the 30x30 m pixels in each window to be summed
+# into 0.04x0.04 degree rasters.
+def rewindow(tile_id, download_pattern_name, no_upload):
+
+    # start time
+    start = datetime.datetime.now()
+
+    # These tiles have the tile_id after the pattern
+    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
+        in_tile = "{0}_{1}.tif".format(download_pattern_name, tile_id)
+        out_tile = "{0}_rewindow_{1}.tif".format(download_pattern_name, tile_id)
+
+    else:
+        in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
+        out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
+
+    # Extracts bounding box for the tile
+    xmin, ymin, xmax, ymax = coords(tile_id)
+
+
+    if os.path.exists(in_tile):
+        print_log("{0} exists. Rewindowing to {1} at 200x200 pixel windows...". format(in_tile, out_tile))
+
+        # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
+        # Solution was to use gdalwarp without COMPRESS=LZW to a vrt, then use gdal_translate,
+        # per https://gis.stackexchange.com/questions/89444/file-size-inflation-normal-with-gdalwarp
+
+        # Converts the tcd tile to the 160x160 pixel windows
+        cmd = ['gdalwarp', '-co', '-overwrite', '-dstnodata', '0',
+               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
+               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
+               in_tile, "{}_temp.vrt".format(tile_id)]
+        log_subprocess_output_full(cmd)
+
+        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW',  "{}_temp.vrt".format(tile_id), out_tile]
+        log_subprocess_output_full(cmd)
+
+        os.remove("{}_temp.vrt".format(tile_id))
+
+    else:
+        print_log("{} does not exist. Not rewindowing".format(in_tile))
+
+    # Prints information about the tile that was just processed
+    end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name), no_upload)

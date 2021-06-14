@@ -12,6 +12,7 @@ It essentially spatially applies IPCC national greenhouse gas inventory rules (2
 It covers only forests converting to non-forests, non-forests converted to forests and forests remaining forests (no other land 
 use transitions). The model is described and published in Harris et al. (2021) Nature Climate Change
 "Global maps of twenty-first century forest carbon fluxes" (https://www.nature.com/articles/s41558-020-00976-6).
+Although the published model covered 2001-2019, the same methods were used to update the model to include 2020.  
 
 ### Inputs
 Well over twenty inputs are needed to run this model. Most are spatial, but some are tabular.
@@ -23,19 +24,19 @@ ecozones, tree cover extent in 2000, elevation, etc. Different inputs are needed
 steps in the model. This repository includes scripts for processing all of the needed inputs. 
 Many inputs can be processed the same way (e.g., many rasters can be processed using the same gdal function) but some need special treatment.
 The input processing scripts are scattered among almost all the folders, unfortunately, a historical legacy of how I built this out
-which I haven't fixed yet. The data prep scripts are generally in the folder for which their outputs are most relevant.
+which I haven't fixed. The data prep scripts are generally in the folder for which their outputs are most relevant.
 
 Inputs can either be downloaded from AWS s3 storage or used if found locally in the folder `/usr/local/tiles/` in the Docker container.
 The model looks for files locally before downloading them. 
 The model can still be run without a connection to AWS s3 if all necessary inputs are stored in the correct local folder.
 This option is feasible for running the model on a handful of tiles but not for large areas 
-because the tiles will need too much storage. 
+because the tiles will need too much local storage. 
 
 ### Outputs
-There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all for 2001-2020. 
+There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all totaled for 2001-2020. 
 These are produced at two resolutions: 0.00025 x 0.00025 degrees 
 (approximately 30 x 30 m at the equator) in 10 x 10 degree rasters (to make outputs a 
-manageable size), and 0.04 x 0.04 degrees (approximately 4 x 4 km at the equator) as global rasters.
+manageable size), and 0.05 x 0.05 degrees (approximately 4 x 4 km at the equator) as global rasters.
 
 Model runs also automatically generate a txt log. This log includes nearly everything that is output in the console.
 This log is useful for documenting model runs and checking for mistakes/errors in retrospect, although it does not capture errors that terminate the model.
@@ -68,7 +69,7 @@ outputs for each key output (gross emissions, gross removals, net flux) as well
 
 The per hectare outputs are used for making pixel-level maps (essentially showing emission and removal factors), 
 while the per pixel outputs are used for getting total values within areas because the values
-of those pixels can be summed within areas of interest. 
+of those pixels can be summed within areas of interest. The per pixel maps are `per hectare * pixel area/10000`.
 (The pixels of the per hectare outputs should not be summed but they can be averaged in areas of interest.)
 Statistics from this model are always based on the "forest extent" rasters, not the "full extent" rasters.
 The full model extent outputs should generally not be used but are created by the model in case they are needed.
@@ -88,7 +89,9 @@ or in the versions of these files downloadable from the Global Forest Watch Open
 
 The 4-km outputs are used for static large-scale maps, like in publications and presentations. 
 The units are Mt CO2e/pixel/year (in order to show absolute values). They are created using the "forest extent" 
-per pixel 30-m rasters, not the "full extent" 30-m rasters. 
+per pixel 30-m rasters, not the "full extent" 30-m rasters. They should not be used for analysis. 
+
+#### A note on signs
 
 Although gross emissions are traditionally given positive (+) values and
 gross removals are traditionally given negative (-) values, the 30-m gross removals rasters are positive, while the 4-km gross removals rasters are negative. 
@@ -96,22 +99,27 @@ Net flux at both scales can be positive or negative depending on the balance of 
 
 
 ### Running the model
+The model runs from the command line inside a Linux Docker container. 
+Once you have Docker configured on your system, have cloned this repository, 
+and have configured access to AWS (if desired, or have the input files stored locally), 
+you will be able to run the model. 
+
 There are two ways to run the model: as a series of individual scripts, or from a master script, which runs the individual scripts sequentially.
 Which one to use depends on what you are trying to do. Generally, the individual scripts (which correspond to specific model stages) are
 more appropriate for development and testing, while the master script is better for running
-the main part of the model from start to finish in one go. In either case, the code must be cloned from this repository.
+the main part of the model from start to finish in one go. In either case, the code must be cloned from this repository
+(on the command line in the folder you want to clone to, `git clone https://github.com/wri/carbon-budget`).
 Run globally, both options iterate through a list of ~275 10x10 degree tiles. (Different model stages have different numbers of tiles.)
 Run all tiles in the model extent fully through one model stage before starting on the next stage. 
 (The master script does this automatically.) If a user wants to run the model on just one or a few tiles, 
 that can be done through a command line argument (`--tile-id-list` or `-l`). 
 If individual tiles are listed, only those will be run. This is a natural system for testing or for
 running the model for individual countries. You can see the tile boundaries in pixel_area_tile_footprints.zip.
-For example, to run the model for Madagascar, only tiles 10S_040E, 10S_050E, and 20S_040E need to be run. 
+For example, to run the model for Madagascar, only tiles 10S_040E, 10S_050E, and 20S_040E need to be run and the
+command line argument would be `-l 10S_040E,10S_050E,20S_040E`. 
 
-The model runs inside a Docker container. Once you have Docker configured on your system, have cloned this repository, 
-and have configured access to AWS (if desired), 
-you can do the following on the command line in the same folder as the repository on your system.
-This will enter the command line in the Docker container. 
+You can do the following on the command line in the same folder as the repository on your system.
+This will enter the command line in the Docker container
 
 For runs on a local computer, use `docker-compose` so that the Docker is mapped to my computer's drives. 
 I do this for development and testing. If running on another computer, you will need to change the local 
@@ -201,7 +209,7 @@ they are run very infrequently.
 | `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 | `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
 | `pools-to-use` | `-p` | Optional | Emissions| Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
-| `tcd-threshold` | `-tcd`| Optional | Aggregation | Tree cover density threshold above which pixels will be included in the aggregation. |
+| `tcd-threshold` | `-tcd`| Optional | Aggregation | Tree cover density threshold above which pixels will be included in the aggregation. Defaults to 30. |
 | `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
 | `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag. |
 | `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag. |
