@@ -127,7 +127,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             if sensit_type == 'biomass_swap':
                 processes = 12  # 12 processors = XXX GB peak
             else:
-                processes = 16  # 12 processors = 140 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+                processes = 16  # 16 processors = XXX GB peak
         else:
             processes = 8
         uu.print_log('Rewindow max processors=', processes)

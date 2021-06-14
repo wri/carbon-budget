@@ -1396,7 +1396,8 @@ def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
 
 
 # Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
-# which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
+# which is the resolution of the output tiles. This allows the 30x30 m pixels in each window to be summed
+# into 0.04x0.04 degree rasters.
 def rewindow(tile_id, download_pattern_name, no_upload):
 
     # start time
@@ -1439,4 +1440,4 @@ def rewindow(tile_id, download_pattern_name, no_upload):
         print_log("{} does not exist. Not rewindowing".format(in_tile))
 
     # Prints information about the tile that was just processed
-    end_of_fx_summary(start, tile_id, "rewindow", no_upload)
+    end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name), no_upload)
