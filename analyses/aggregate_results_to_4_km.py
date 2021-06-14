@@ -28,7 +28,6 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-
 # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
 # and sums those values in each 160x160 pixel window.
 # The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at

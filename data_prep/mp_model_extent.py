@@ -65,13 +65,13 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
     output_pattern_list = [cn.pattern_model_extent]
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-    if uu.check_aws_creds():
+    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
+    # if uu.check_aws_creds():
 
-        for key, values in download_dict.items():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -89,7 +89,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
 
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
-
+    '''
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
@@ -105,10 +105,11 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
     pool.map(partial(model_extent.model_extent, pattern=pattern, sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
+    '''
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     model_extent.model_extent(tile_id, pattern, sensit_type, no_upload)
+    # For single processor use
+    for tile_id in tile_id_list:
+        model_extent.model_extent(tile_id, pattern, sensit_type, no_upload)
 
     output_pattern = output_pattern_list[0]
     if cn.count <= 2:  # For local tests

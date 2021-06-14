@@ -31,6 +31,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import aggregate_results_to_4_km
 
+
 def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
@@ -84,6 +85,10 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         if uu.check_aws_creds():
 
             uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
+            
+        else:
+            uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
+            
 
         if tile_id_list == 'all':
             # List of tiles to run in the model

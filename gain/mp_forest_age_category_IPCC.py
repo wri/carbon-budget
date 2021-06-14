@@ -17,6 +17,7 @@ from functools import partial
 import pandas as pd
 import datetime
 import argparse
+import openpyxl
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
@@ -91,13 +92,17 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
 
     if uu.check_aws_creds():
         # Table with IPCC Table 4.9 default gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
         uu.log_subprocess_output_full(cmd)
+    else:
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+        uu.log_subprocess_output_full(cmd) 
 
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name = "natrl fores gain, for std model")
+                               sheet_name = "natrl fores gain, for std model",
+                               engine='openpyxl')
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
