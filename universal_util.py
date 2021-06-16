@@ -102,6 +102,9 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=N
 
     logging.info("Available processors: {}".format(cn.count) + "\n")
 
+    os.remove("ami_id.txt")
+    os.remove("instance_type.txt")
+
     # Suppresses logging from rasterio and botocore below ERROR level for the entire model
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
     logging.getLogger("botocore").setLevel(logging.ERROR)  # "Found credentials in environment variables." is logged by botocore: https://github.com/boto/botocore/issues/1841

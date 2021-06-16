@@ -226,13 +226,11 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         for vrt in vrtList:
             os.remove(vrt)
 
-        # for tile_name in tile_list:
-        #     tile_id = uu.get_tile_id(tile_name)
-        #     # os.remove('{0}_{1}.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-        #     os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
-
-        os.quit()
+        for tile_name in tile_list:
+            tile_id = uu.get_tile_id(tile_name)
+            # os.remove('{0}_{1}.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
