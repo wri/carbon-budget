@@ -29,6 +29,9 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import aggregate_results_to_4_km
 
+if 'GDAL_DATA' in os.environ: 
+    del os.environ['GDAL_DATA']
+
 def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux = None, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
@@ -63,6 +66,15 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
         uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list)
         uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list)
+     
+    else:
+        # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+        uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list)
+        # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
+        uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list)
+        
 
     uu.print_log("Model outputs to process are:", download_dict)
 
@@ -90,6 +102,10 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         if uu.check_aws_creds():
 
             uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
+            
+        else:
+            uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
+            
 
         # Gets an actual tile id to use as a dummy in creating the actual tile pattern
         local_tile_list = uu.tile_list_spot_machine(cn.docker_base_dir, download_pattern_name)

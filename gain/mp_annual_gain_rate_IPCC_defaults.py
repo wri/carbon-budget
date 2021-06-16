@@ -19,6 +19,7 @@ import multiprocessing
 from functools import partial
 import argparse
 import pandas as pd
+import openpyxl
 import datetime
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
@@ -92,14 +93,14 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     if sensit_type == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon gain rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name = "natrl fores gain, no_prim_gain")
+                                   sheet_name = "natrl fores gain, no_prim_gain", engine='openpyxl')
         uu.print_log("Using no_primary_gain IPCC default rates for tile creation")
 
     # All other analyses use the standard removal rates
     else:
         # Imports the table with the ecozone-continent codes and the biomass gain rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name = "natrl fores gain, for std model")
+                                   sheet_name = "natrl fores gain, for std model", engine='openpyxl')
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -147,14 +148,14 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     if sensit_type == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon gain rates
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores stdv, no_prim_gain")
+                                   sheet_name="natrl fores stdv, no_prim_gain", engine='openpyxl',)
         uu.print_log("Using no_primary_gain IPCC default standard deviations for tile creation")
 
     # All other analyses use the standard removal rates
     else:
         # Imports the table with the ecozone-continent codes and the biomass gain rate standard deviations
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores stdv, for std model")
+                                   sheet_name="natrl fores stdv, for std model", engine='openpyxl',)
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     stdev_table_simplified = stdev_table.drop_duplicates(subset='gainEcoCon', keep='first')
