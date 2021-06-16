@@ -36,7 +36,7 @@ because the tiles will need too much local storage.
 There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all totaled for 2001-2020. 
 These are produced at two resolutions: 0.00025 x 0.00025 degrees 
 (approximately 30 x 30 m at the equator) in 10 x 10 degree rasters (to make outputs a 
-manageable size), and 0.05 x 0.05 degrees (approximately 4 x 4 km at the equator) as global rasters.
+manageable size), and 0.04 x 0.04 degrees (approximately 4 x 4 km at the equator) as global rasters.
 
 Model runs also automatically generate a txt log. This log includes nearly everything that is output in the console.
 This log is useful for documenting model runs and checking for mistakes/errors in retrospect, although it does not capture errors that terminate the model.

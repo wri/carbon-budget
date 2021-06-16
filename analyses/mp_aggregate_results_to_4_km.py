@@ -1,13 +1,13 @@
 '''
-This script creates maps of model outputs at roughly 5km resolution (0.05x0.05 degrees), where each output pixel
+This script creates maps of model outputs at roughly 5km resolution (0.04x0.04 degrees), where each output pixel
 represents the total value in the pixel (not the density) (hence, the aggregated results).
 This is currently set up for annual removal rate, gross removals, gross emissions, and net flux.
 It iterates through all the model outputs that are supplied.
 The rewindowed pixel area tiles, tcd, Hansen gain, and mangrove biomass tiles must already be created and in s3
 (created using mp_rewindow_tiles.py).
-First, this script rewindows the model output into 200x200 (0.05x0.05 degree) windows, instead of the native
+First, this script rewindows the model output into 160x160 (0.04x0.04 degree) windows, instead of the native
 40000x1 pixel windows.
-Then it calculates the per pixel value for each model output pixel and sums those values within each 0.05x0.05 degree
+Then it calculates the per pixel value for each model output pixel and sums those values within each 0.04x0.04 degree
 aggregated pixel.
 It converts emissions, removals, and net flux from totals over the model period to annual values.
 For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
@@ -126,7 +126,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_list)), download_pattern_name) + "\n")
         uu.print_log("Processing:", dir, "; ", pattern)
 
-        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 200x200 pixels,
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
         if cn.count == 96:
             if sensit_type == 'biomass_swap':
@@ -151,11 +151,11 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
 
         # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # and sums those values in each 200x200 pixel window.
-        # The sum for each 200x200 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # 0.05x0.05 degree resolution (approximately 10m in the tropics).
+        # and sums those values in each 160x160 pixel window.
+        # The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.04x0.04 degree resolution (approximately 10m in the tropics).
         # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # The 0.05x0.05 degree tile is output.
+        # The 0.04x0.04 degree tile is output.
         # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
         if cn.count == 96:
             if sensit_type == 'biomass_swap':

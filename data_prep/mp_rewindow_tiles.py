@@ -1,9 +1,9 @@
 '''
-Rewindows tiles from 40000x1 pixels to 200x200 pixels for use in aggregate map creation.
+Rewindows tiles from 40000x1 pixels to 160x160 pixels for use in aggregate map creation.
 Specifically, does tiles that are not model outputs but are used in aggregate map creation:
 tree cover density, pixel area, Hansen gain, and mangrove biomass.
 This must be done before the model is run so that the aggregate maps can be created successfully
-(aggregate map pixels are the sum of the rewindowed 200x200 pixel windows).
+(aggregate map pixels are the sum of the rewindowed 160x160 pixel windows).
 '''
 
 
@@ -71,7 +71,7 @@ def mp_rewindow_tiles(tile_id_list, run_date = None, no_upload = None):
         uu.print_log("Processing:", dir, "; ", download_pattern_name)
 
 
-        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 200x200 pixels
+        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels
         if cn.count == 96:
             processes = 38  # 35 processors = 640 GB peak; 38 = XXX GB peak; 55 > 720 GB peak
         else:
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(
-        description='Creates 200x200 pixel rewindowed basic input tiles (TCD, gain, mangroves, pixel area)')
+        description='Creates 160x160 pixel rewindowed basic input tiles (TCD, gain, mangroves, pixel area)')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

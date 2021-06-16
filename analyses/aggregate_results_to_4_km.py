@@ -1,13 +1,13 @@
 '''
-This script creates maps of model outputs at roughly 5km resolution (0.05x0.05 degrees), where each output pixel
+This script creates maps of model outputs at roughly 5km resolution (0.04x0.04 degrees), where each output pixel
 represents the total value in the pixel (not the density) (hence, the aggregated results).
 This is currently set up for annual removal rate, gross removals, gross emissions, and net flux.
 It iterates through all the model outputs that are supplied.
 The rewindowed pixel area tiles, tcd, Hansen gain, and mangrove biomass tiles must already be created and in s3
 (created using mp_rewindow_tiles.py).
-First, this script rewindows the model output into 200x200 (0.05x0.05 degree) windows, instead of the native
+First, this script rewindows the model output into 160x160 (0.04x0.04 degree) windows, instead of the native
 40000x1 pixel windows.
-Then it calculates the per pixel value for each model output pixel and sums those values within each 0.05x0.05 degree
+Then it calculates the per pixel value for each model output pixel and sums those values within each 0.04x0.04 degree
 aggregated pixel.
 It converts emissions, removals, and net flux from totals over the model period to annual values.
 For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
@@ -68,7 +68,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    #2D array in which the 0.05x0.05 deg aggregated sums will be stored
+    #2D array in which the 0.04x0.04 deg aggregated sums will be stored
     sum_array = np.zeros([250,250], 'float32')
 
     out_raster = "{0}_{1}_0_4deg.tif".format(tile_id, tile_type)
