@@ -783,7 +783,7 @@ def s3_file_download(source, dest, sensit_type):
         # Doesn't download the tile if sensitivity version is already on the spot machine
         print_log("Option 1: Checking if {} is already on spot machine...".format(file_name_sens))
         if os.path.exists(file_name_sens):
-            print_log("  Option 1 success:", file_name_sens, "already downloaded" + "\n")
+            print_log("  Option 1 success:", file_name_sens, "already downloaded", "\n")
             return
         else:
             print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name_sens))
@@ -794,7 +794,7 @@ def s3_file_download(source, dest, sensit_type):
             log_subprocess_output_full(cmd)
 
             if os.path.exists(file_name_sens):
-                print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens) + "\n")
+                print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens), "\n")
                 return
             else:
                 print_log("  Option 2 failure: Tile {0}/{1} not found on s3. Looking for standard model source...".format(dir_sens, file_name_sens))
@@ -805,7 +805,7 @@ def s3_file_download(source, dest, sensit_type):
         # for this date.
         print_log("Option 3: Checking if standard version {} is already on spot machine...".format(file_name))
         if os.path.exists(file_name):
-            print_log("  Option 3 success:", file_name, "already downloaded" + "\n")
+            print_log("  Option 3 success:", file_name, "already downloaded", "\n")
             return
         else:
             print_log("  Option 3 failure: {} is not already on spot machine. ".format(file_name))
@@ -817,16 +817,16 @@ def s3_file_download(source, dest, sensit_type):
             log_subprocess_output_full(cmd)
 
             if os.path.exists(file_name):
-                print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source) + "\n")
+                print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source), "\n")
                 return
             else:
-                print_log("  Option 4 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
+                print_log("  Option 4 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source), "\n")
 
     # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
     else:
         print_log("Option 1: Checking if {} is already on spot machine...".format(file_name))
         if os.path.exists(os.path.join(dest, file_name)):
-            print_log("  Option 1 success:", os.path.join(dest, file_name), "already downloaded" + "\n")
+            print_log("  Option 1 success:", os.path.join(dest, file_name), "already downloaded", "\n")
             return
         else:
             print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name))
@@ -839,10 +839,10 @@ def s3_file_download(source, dest, sensit_type):
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
             log_subprocess_output_full(cmd)
             if os.path.exists(os.path.join(dest, file_name)):
-                print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
+                print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source), "\n")
                 return
             else:
-                print_log("  Option 2 failure: Tile {} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
+                print_log("  Option 2 failure: Tile {} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source), "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -1283,7 +1283,7 @@ def tile_id_list_check(tile_id_list):
             if tile_id not in possible_tile_list:
                 exception_log('Tile_id {} not valid'.format(tile_id))
         else:
-            print_log("{} tiles have been supplied for running through the model".format(str(len(tile_id_list))) + "\n")
+            print_log("{} tiles have been supplied for running through the model".format(str(len(tile_id_list))), "\n")
             return tile_id_list
 
 
@@ -1292,7 +1292,7 @@ def replace_output_dir_date(output_dir_list, run_date):
 
     print_log("Changing output directory date based on date provided with model run-through")
     output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
-    print_log(output_dir_list + "\n")
+    print_log(output_dir_list, "\n")
     return output_dir_list
 
 
