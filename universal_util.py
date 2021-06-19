@@ -97,13 +97,13 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=N
         for line in ami_lines:
             logging.info("  AMI ID: {}".format(line.strip()))
 
+        os.remove("ami_id.txt")
+        os.remove("instance_type.txt")
+
     except:
         logging.info("  Not running on AWS ec2 instance")
 
     logging.info("Available processors: {}".format(cn.count) + "\n")
-
-    os.remove("ami_id.txt")
-    os.remove("instance_type.txt")
 
     # Suppresses logging from rasterio and botocore below ERROR level for the entire model
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
@@ -150,7 +150,7 @@ def exception_log(no_upload, *args):
     # Adds the exception to the log txt
     logging.info(full_statement, stack_info=True)
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         # Need to upload log before the exception stops the script
@@ -220,12 +220,11 @@ def log_subprocess_output_full(cmd):
 # Checks if Amazon Web Services credentials are in the environment. Both the access key and secret key are needed.
 def check_aws_creds():
 
-    try:
-        key = os.environ['AWS_ACCESS_KEY_ID']
-        secret = os.environ['AWS_SECRET_ACCESS_KEY']
+    if ('AWS_ACCESS_KEY_ID' in os.environ) and ('AWS_SECRET_ACCESS_KEY' in os.environ):
+        # print_log("s3 credentials found. Uploading and downloading enabled.")
         return True
-
-    except:
+    else:
+        # print_log("s3 credentials not found. Uploading to s3 disabled but downloading enabled.")
         return False
 
 
@@ -752,8 +751,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
                '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
 
-        # cmd = ['aws', 's3', 'cp', source, dest, '--recursive',
-        #        '--exclude', '*', '--include', '{}'.format(pattern), '--no-progress']
         log_subprocess_output_full(cmd)
 
         print_log('\n')
@@ -764,8 +761,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
 def s3_file_download(source, dest, sensit_type):
-
-    s3 = boto3.resource('s3')
 
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
@@ -794,26 +789,16 @@ def s3_file_download(source, dest, sensit_type):
             print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name_sens))
             print_log("Option 2: Checking for sensitivity analysis tile {0}/{1} on s3...".format(dir_sens[15:], file_name_sens))
 
-        # If not already downloaded, first tries to download the sensitivity analysis version
-        try:
-            # Determines which bucket to check
-            if 'gfw-data-lake' in source:
-                bucket = 'gfw-data-lake'
-                folder = source[19:]
-            else:
-                bucket = 'gfw2-data'
-                folder = source[15:]
-            #s3.Object(bucket, '{0}/{1}'.format(folder, file_name_sens)).load()
+            # If not already downloaded, first tries to download the sensitivity analysis version
             cmd = ['aws', 's3', 'cp', '{0}/{1}'.format(dir_sens, file_name_sens), dest, '--no-sign-request', '--only-show-errors']
             log_subprocess_output_full(cmd)
-            print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens))
-            print_log("")
-            return
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                print_log("  Option 2 failure: Tile {0}/{1} not found on s3. Looking for standard model source...".format(dir_sens, file_name_sens))
+
+            if os.path.exists(file_name_sens):
+                print_log("  Option 2 success: Sensitivity analysis tile {0}/{1} found on s3 and downloaded".format(dir_sens, file_name_sens) + "\n")
+                return
             else:
-                print_log("  Option 2 failure: Some other error occurred while looking for {0}/{1}".format(dir_sens, file_name_sens))
+                print_log("  Option 2 failure: Tile {0}/{1} not found on s3. Looking for standard model source...".format(dir_sens, file_name_sens))
+
 
         # Next option is to use standard version of tile if on spot machine.
         # This can happen despite it being a sensitivity run because this input file doesn't have a sensitivity version
@@ -826,29 +811,16 @@ def s3_file_download(source, dest, sensit_type):
             print_log("  Option 3 failure: {} is not already on spot machine. ".format(file_name))
             print_log("Option 4: Looking for standard version of {} to download...".format(file_name))
 
-        # If not already downloaded, final optionis to try to download the standard version of the tile.
-        # If this doesn't work, the script throws a fatal error because no variant of this tile was found.
-        try:
-            # Determines which bucket to check
-            if 'gfw-data-lake' in source:
-                bucket = 'gfw-data-lake'
-                folder = source[19:]
-            else:
-                bucket = 'gfw2-data'
-                folder = source[15:]
-            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            #s3.Object(bucket, folder).load()
+            # If not already downloaded, final option is to try to download the standard version of the tile.
+            # If this doesn't work, the script throws a fatal error because no variant of this tile was found.
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
             log_subprocess_output_full(cmd)
-            print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source))
-            print_log("")
-            return
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                print_log("  Option 4 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source))
+
+            if os.path.exists(file_name):
+                print_log("  Option 4 success: Standard tile {} found on s3 and downloaded".format(source) + "\n")
+                return
             else:
-                print_log("  Option 4 failure: Some other error occurred while looking for {0}".format(source))
-            print_log("")
+                print_log("  Option 4 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
 
     # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
     else:
@@ -860,29 +832,17 @@ def s3_file_download(source, dest, sensit_type):
             print_log("  Option 1 failure: {0} is not already on spot machine.".format(file_name))
             print_log("Option 2: Checking for tile {} on s3...".format(source))
 
-        source = os.path.join(dir, file_name)
 
-        try:
-            # Determines which bucket to check
-            if 'gfw-data-lake' in source:
-                bucket = 'gfw-data-lake'
-                folder = source[19:]
-            else:
-                bucket = 'gfw2-data'
-                folder = source[15:]
-            # Based on https://www.thetopsites.net/article/50187246.shtml#:~:text=Fastest%20way%20to%20find%20out,does%20not%20exist%22%20if%20s3.
-            #s3.Object(bucket, folder).load()
+            # If the tile isn't already downloaded, download is attempted
+            source = os.path.join(dir, file_name)
+
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
-            print(cmd)
             log_subprocess_output_full(cmd)
-            print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
-            print_log("")
-            return
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                print_log("  Option 2 failure: Tile {0} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
+            if os.path.exists(os.path.join(dest, file_name)):
+                print_log("  Option 2 success: Tile {} found on s3 and downloaded".format(source) + "\n")
+                return
             else:
-                print_log("  Option 2 failure: Some other error occurred while looking for {0}".format(source) + "\n")
+                print_log("  Option 2 failure: Tile {} not found on s3. Tile not found but it seems it should be. Check file paths and names.".format(source) + "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -1332,8 +1292,7 @@ def replace_output_dir_date(output_dir_list, run_date):
 
     print_log("Changing output directory date based on date provided with model run-through")
     output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
-    print_log(output_dir_list)
-    print_log("")
+    print_log(output_dir_list + "\n")
     return output_dir_list
 
 
@@ -1424,17 +1383,19 @@ def rewindow(tile_id, download_pattern_name, no_upload):
 
         # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
         # Solution was to use gdalwarp without COMPRESS=LZW to a vrt, then use gdal_translate,
-        # per https://gis.stackexchange.com/questions/89444/file-size-inflation-normal-with-gdalwarp
+        # per https://gis.stackexchange.com/questions/89444/file-size-inflation-normal-with-gdalwarp.
+        # The rewindowing has to be done during gdal_translate; rewindowing won't be reflected in the final tif in gdalwarp
 
         # Converts the tcd tile to the 160x160 pixel windows
         cmd = ['gdalwarp', '-co', '-overwrite', '-dstnodata', '0',
                '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
                '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
                in_tile, "{}_temp.vrt".format(tile_id)]
         log_subprocess_output_full(cmd)
 
-        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW',  "{}_temp.vrt".format(tile_id), out_tile]
+        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW',
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
+               "{}_temp.vrt".format(tile_id), out_tile]
         log_subprocess_output_full(cmd)
 
         os.remove("{}_temp.vrt".format(tile_id))

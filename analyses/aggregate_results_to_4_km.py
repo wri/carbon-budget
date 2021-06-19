@@ -96,11 +96,12 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
 
-        # Sums the pixels to create a total value for the 0.1x0.1 deg pixel
+        # Sums the pixels to create a total value for the 0.04x0.04 deg pixel
         non_zero_pixel_sum = np.sum(per_pixel_value)
 
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
+
 
     # Converts the annual carbon gain values annual gain in megatonnes and makes negative (because removals are negative)
     if cn.pattern_annual_gain_AGC_all_types in tile_type:

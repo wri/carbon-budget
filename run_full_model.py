@@ -97,8 +97,16 @@ def main ():
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
+        uu.print_log("s3 credentials not found. Uploading to s3 disabled but downloading enabled.")
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
+
+
+    # Forces intermediate files to not be deleted if files can't be uploaded to s3.
+    # Rationale is that if uploads to s3 are not occurring, intermediate files can't be downloaded during the model
+    # run and therefore must exist locally.
+    if no_upload == True:
+        save_intermediates = True
+
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload,
@@ -388,7 +396,7 @@ def main ():
     # Creates tiles of gross removals for all forest types (aboveground, belowground, and above+belowground)
     if 'gross_removals_all_forest_types' in actual_stages:
 
-        uu.print_log(":::::Creating gross removals for all forest types combined (above + belowground) tiles'")
+        uu.print_log(":::::Creating gross removals for all forest types combined (above + belowground) tiles")
         start = datetime.datetime.now()
 
         mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
@@ -625,7 +633,7 @@ def main ():
     script_elapsed_time = script_end - script_start
     uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.upload_log()

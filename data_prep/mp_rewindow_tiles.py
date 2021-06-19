@@ -57,15 +57,13 @@ def mp_rewindow_tiles(tile_id_list, run_date = None, no_upload = None):
 
         download_pattern_name = download_pattern[0]
 
-        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-        if uu.check_aws_creds():
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        # If a full model run is specified, the correct set of tiles for the particular script is listed
+        if tile_id_list == 'all':
+            # List of tiles to run in the model
+            tile_id_list = uu.tile_list_s3(dir, sensit_type)
 
-            # If a full model run is specified, the correct set of tiles for the particular script is listed
-            if tile_id_list == 'all':
-                # List of tiles to run in the model
-                tile_id_list = uu.tile_list_s3(dir, sensit_type)
-
-            uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
 
         uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_id_list)), download_pattern_name) + "\n")
         uu.print_log("Processing:", dir, "; ", download_pattern_name)
@@ -89,7 +87,7 @@ def mp_rewindow_tiles(tile_id_list, run_date = None, no_upload = None):
         #     uu.rewindow(tile_id, download_pattern_name, no_upload)
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.print_log("Tiles processed. Uploading to s3 now...")
@@ -117,7 +115,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

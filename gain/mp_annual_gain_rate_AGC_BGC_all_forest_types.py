@@ -67,13 +67,11 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
                            cn.pattern_annual_gain_AGC_BGC_all_types, cn.pattern_stdev_annual_gain_AGC_all_types]
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-    if uu.check_aws_creds():
-
-        for key, values in download_dict.items():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -129,7 +127,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_
             pool.join()
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         for i in range(0, len(output_dir_list)):
@@ -159,7 +157,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)

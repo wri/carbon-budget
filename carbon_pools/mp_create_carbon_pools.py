@@ -143,18 +143,11 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             download_dict[cn.loss_dir] = [cn.pattern_loss]
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-    if uu.check_aws_creds():
-
-        for key, values in download_dict.items():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
-    else:
-        for key, values in download_dict.items():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list) 
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -171,21 +164,15 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-
-    if uu.check_aws_creds():
-
-        # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        uu.log_subprocess_output_full(cmd)
-    else:
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        uu.log_subprocess_output_full(cmd)
+    # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name="mangrove gain, for model", engine='openpyxl')
+                               sheet_name="mangrove gain, for model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -229,7 +216,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # for tile_id in tile_id_list:
     #     create_carbon_pools.create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload)
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         if carbon_pool_extent in ['loss', '2000']:
@@ -278,7 +265,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # for tile_id in tile_id_list:
     #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_upload)
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         if carbon_pool_extent in ['loss', '2000']:
@@ -339,7 +326,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # for tile_id in tile_id_list:
     #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type, no_upload)
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         if carbon_pool_extent in ['loss', '2000']:
@@ -403,7 +390,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         # for tile_id in tile_id_list:
         #     create_carbon_pools.create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload)
 
-        # If no_upload flag is not activated, output is uploaded
+        # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
         if not no_upload:
 
             # If pools in 2000 weren't generated, soil carbon in emissions extent is 4.
@@ -460,7 +447,7 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # for tile_id in tile_id_list:
     #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload)
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         if carbon_pool_extent in ['loss', '2000']:
@@ -500,7 +487,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date,

@@ -65,7 +65,7 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None
     #     create_inputs_for_C_pools.create_input_files(tile_id, no_upload)
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.print_log("Uploading output files")
@@ -91,7 +91,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list, run_date=run_date, no_upload=no_upload)
