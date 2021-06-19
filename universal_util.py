@@ -34,7 +34,7 @@ def upload_log():
     lag = random()*2
     time.sleep(lag)
 
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--quiet', '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.docker_app, cn.model_log), cn.model_log_dir, '--only-show-errors']
     check_call(cmd)
 
 
@@ -850,7 +850,7 @@ def upload_final_set(upload_dir, pattern):
     print_log("Uploading tiles with pattern {0} to {1}".format(pattern, upload_dir))
 
     cmd = ['aws', 's3', 'cp', cn.docker_base_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
-           '--recursive', '--no-progress', '--no-sign-request']
+           '--recursive', '--no-progress']
     try:
         log_subprocess_output_full(cmd)
         print_log("  Upload of tiles with {} pattern complete!".format(pattern))
