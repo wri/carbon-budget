@@ -1374,31 +1374,19 @@ def rewindow(tile_id, download_pattern_name, no_upload):
         in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
         out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
 
-    # Extracts bounding box for the tile
-    xmin, ymin, xmax, ymax = coords(tile_id)
 
-
+    # Only rewindows if the tile exists
     if os.path.exists(in_tile):
-        print_log("{0} exists. Rewindowing to {1} at 160x160 pixel windows...". format(in_tile, out_tile))
+        print_log("{0} exists. Rewindowing to {1} at {2}x{3} pixel windows...".format(in_tile, out_tile, cn.agg_pixel_window, cn.agg_pixel_window))
 
         # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
-        # Solution was to use gdalwarp without COMPRESS=LZW to a vrt, then use gdal_translate,
-        # per https://gis.stackexchange.com/questions/89444/file-size-inflation-normal-with-gdalwarp.
-        # The rewindowing has to be done during gdal_translate; rewindowing won't be reflected in the final tif in gdalwarp
-
-        # Converts the tcd tile to the 160x160 pixel windows
-        cmd = ['gdalwarp', '-co', '-overwrite', '-dstnodata', '0',
-               '-te', str(xmin), str(ymin), str(xmax), str(ymax), '-tap',
-               '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               in_tile, "{}_temp.vrt".format(tile_id)]
+        # Solution was to use gdal_translate instead, although, for unclear reasons, this still inflates the size
+        # of the pixel area tiles but not other tiles.
+        cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE',
+               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(cn.agg_pixel_window), '-co', 'BLOCKYSIZE={}'.format(cn.agg_pixel_window),
+               in_tile, out_tile]
         log_subprocess_output_full(cmd)
 
-        cmd = ['gdal_translate', '-co', 'COMPRESS=LZW',
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=160', '-co', 'BLOCKYSIZE=160',
-               "{}_temp.vrt".format(tile_id), out_tile]
-        log_subprocess_output_full(cmd)
-
-        os.remove("{}_temp.vrt".format(tile_id))
 
     else:
         print_log("{} does not exist. Not rewindowing".format(in_tile))

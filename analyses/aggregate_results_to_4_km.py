@@ -136,7 +136,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     with rasterio.open(out_raster, 'w',
-                                driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
+                                driver='GTiff', compress='LZW', nodata='0', dtype='float32', count=1,
                                 height=250, width=250,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04)) as aggregated:
         aggregated.write(sum_array, 1)
