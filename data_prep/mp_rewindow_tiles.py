@@ -71,7 +71,7 @@ def mp_rewindow_tiles(tile_id_list, run_date = None, no_upload = None):
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels
         if cn.count == 96:
-            processes = 62  # 40 processors = 480 GB peak; 62 = XXX GB peak
+            processes = 54  # 40 processors = 480 GB peak; 62 = >750 GB peak
         else:
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
