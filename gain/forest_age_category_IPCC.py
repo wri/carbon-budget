@@ -22,7 +22,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_uploa
     tropics = 0
 
     # Criteria for assigning a tile to the tropics
-    if (ymax > -30) & (ymax <= 30) :
+    if (ymax > -30) & (ymax <= 30):
 
         tropics = 1
 

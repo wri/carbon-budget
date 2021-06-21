@@ -49,14 +49,12 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         uu.exception_log(no_upload, 'Invalid tcd. Please provide an integer between 0 and 99.')
 
 
-    if uu.check_aws_creds():
-
-        # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-        uu.s3_flexible_download(cn.pixel_area_rewindow_dir, cn.pattern_pixel_area_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
-        # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
-        uu.s3_flexible_download(cn.tcd_rewindow_dir, cn.pattern_tcd_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
-        uu.s3_flexible_download(cn.gain_rewindow_dir, cn.pattern_gain_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
-        uu.s3_flexible_download(cn.mangrove_biomass_2000_rewindow_dir, cn.pattern_mangrove_biomass_2000_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
+    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
+    uu.s3_flexible_download(cn.pixel_area_rewindow_dir, cn.pattern_pixel_area_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
+    # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
+    uu.s3_flexible_download(cn.tcd_rewindow_dir, cn.pattern_tcd_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.gain_rewindow_dir, cn.pattern_gain_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
+    uu.s3_flexible_download(cn.mangrove_biomass_2000_rewindow_dir, cn.pattern_mangrove_biomass_2000_rewindow, cn.docker_base_dir, sensit_type, tile_id_list)
 
     uu.print_log("Model outputs to process are:", download_dict)
 
@@ -81,13 +79,8 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
         download_pattern_name = download_pattern[0]
 
-        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-        if uu.check_aws_creds():
-
-            uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
-            
-        else:
-            uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
+        # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+        uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
             
 
         if tile_id_list == 'all':
@@ -107,8 +100,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
         # For sensitivity analysis runs, only aggregates the tiles if they were created as part of the sensitivity analysis
         if (sensit_type != 'std') & (sensit_type not in pattern):
-            uu.print_log("{} not a sensitivity analysis output. Skipping aggregation...".format(pattern))
-            uu.print_log("")
+            uu.print_log("{} not a sensitivity analysis output. Skipping aggregation...".format(pattern) + "\n")
 
             continue
 
@@ -215,7 +207,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             uu.log_subprocess_output_full(cmd)
 
 
-        # If no_upload flag is not activated, output is uploaded
+        # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
         if not no_upload:
 
             uu.print_log("Tiles processed. Uploading to s3 now...")
@@ -228,7 +220,6 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
         for tile_name in tile_list:
             tile_id = uu.get_tile_id(tile_name)
-            # os.remove('{0}_{1}.tif'.format(tile_id, pattern))
             os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
             os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
 
@@ -268,7 +259,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             uu.print_log("Creating map of which pixels change sign and which stay the same between standard and {}".format(sensit_type))
             aggregate_results_to_4_km.sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload)
 
-            # If no_upload flag is not activated, output is uploaded
+            # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
             if not no_upload:
 
                 uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
@@ -305,7 +296,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux,

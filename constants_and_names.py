@@ -57,11 +57,15 @@ deadwood_to_above_trop_wet_mang = 0.123
 deadwood_to_above_trop_dry_mang = 0.258
 deadwood_to_above_subtrop_mang = 0.258
 
-# The size of a Hansen loss pixel, in decimal degrees
+# The size of a Hansen loss/Landsat pixel, in decimal degrees (approximately 30x30 m at the equator)
 Hansen_res = 0.00025
 
+# Number of rows and columns of pixels in a 10x10 degree tile
 tile_width = 10 / Hansen_res
 tile_height = 10 / Hansen_res
+
+# Pixel window sizes for aggregated rasters
+agg_pixel_window = int(tile_width * 0.004)
 
 # m2 per hectare
 m2_per_ha = 100 * 100
@@ -78,11 +82,11 @@ count = multiprocessing.cpu_count()
 s3_base_dir = 's3://gfw2-data/climate/carbon_model/'
 
 # Directory for all tiles in the Docker container
-docker_base_dir = '/home/{}/downloads/'.format(os.environ['USER'])
+docker_base_dir = '/usr/local/tiles/'
 
-docker_tmp = '/home/{}/carbon-budget'.format(os.environ['USER'])
+docker_tmp = '/usr/local/tmp'
 
-docker_app = '/home/{}/carbon-budget'.format(os.environ['USER'])
+docker_app = '/usr/local/app'
 
 c_emis_compile_dst = '{0}/emissions/cpp_util'.format(docker_app)
 
@@ -132,7 +136,7 @@ mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2_Tiff.zip'
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
 mangrove_biomass_2000_dir = os.path.join(s3_base_dir, 'mangrove_biomass/processed/standard/20190220/')
 pattern_mangrove_biomass_2000_rewindow = 'mangrove_agb_t_ha_2000_rewindow'
-mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrove_biomass/20210611/')
+mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrove_biomass/20210621/')
 
 
 ######
@@ -143,7 +147,7 @@ mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrov
 pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 pattern_pixel_area_rewindow = 'hanson_2013_area_rewindow'
-pixel_area_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/pixel_area/20210611/')
+pixel_area_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/pixel_area/20210621/')
 
 
 # Spreadsheet with annual gain rates
@@ -158,13 +162,13 @@ loss_dir = 's3://gfw2-data/forest_change/hansen_2020/'
 pattern_gain = 'Hansen_GFC2015_gain'
 gain_dir = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
 pattern_gain_rewindow = 'Hansen_GFC2015_gain_rewindow'
-gain_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/tree_cover_gain_2001_2012/20210611/')
+gain_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/tree_cover_gain_2001_2012/20210621/')
 
 # Tree cover density 2000 tiles
 pattern_tcd = 'Hansen_GFC2014_treecover2000'
 tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
 pattern_tcd_rewindow = 'Hansen_GFC2014_treecover2000_rewindow'
-tcd_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/2000_treecover_density/20210611/')
+tcd_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/2000_treecover_density/20210621/')
 
 # Intact forest landscape 2000 tiles
 pattern_ifl = 'res_ifl_2000'

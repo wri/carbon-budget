@@ -153,7 +153,7 @@ def main ():
 
 
     # Table with US-specific removal rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir, '--no-sign-request']
 
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)

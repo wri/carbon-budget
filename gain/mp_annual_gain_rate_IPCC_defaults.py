@@ -19,7 +19,6 @@ import multiprocessing
 from functools import partial
 import argparse
 import pandas as pd
-import openpyxl
 import datetime
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
@@ -72,20 +71,15 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-    if uu.check_aws_creds():
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
-        for key, values in download_dict.items():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
-
-
-    if uu.check_aws_creds():
-
-        # Table with IPCC Table 4.9 default gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-        uu.log_subprocess_output_full(cmd)
+    # Table with IPCC Table 4.9 default gain rates
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    uu.log_subprocess_output_full(cmd)
 
 
     ### To make the removal factor dictionaries
@@ -94,14 +88,14 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     if sensit_type == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon gain rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name = "natrl fores gain, no_prim_gain", engine='openpyxl')
+                                   sheet_name = "natrl fores gain, no_prim_gain")
         uu.print_log("Using no_primary_gain IPCC default rates for tile creation")
 
     # All other analyses use the standard removal rates
     else:
         # Imports the table with the ecozone-continent codes and the biomass gain rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name = "natrl fores gain, for std model", engine='openpyxl')
+                                   sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -149,14 +143,14 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     if sensit_type == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon gain rates
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores stdv, no_prim_gain", engine='openpyxl',)
+                                   sheet_name="natrl fores stdv, no_prim_gain")
         uu.print_log("Using no_primary_gain IPCC default standard deviations for tile creation")
 
     # All other analyses use the standard removal rates
     else:
         # Imports the table with the ecozone-continent codes and the biomass gain rate standard deviations
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores stdv, for std model", engine='openpyxl',)
+                                   sheet_name="natrl fores stdv, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     stdev_table_simplified = stdev_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -223,7 +217,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     #       gain_table_dict, stdev_table_dict, output_pattern_list, no_upload)
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         for i in range(0, len(output_dir_list)):
@@ -253,7 +247,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)

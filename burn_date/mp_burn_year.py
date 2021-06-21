@@ -229,7 +229,7 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
     #     hansen_burnyear_final.hansen_burnyear(tile_id, no_upload)
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])

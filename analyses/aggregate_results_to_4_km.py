@@ -96,11 +96,12 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         # Calculates the per-pixel value from the input tile value (/ha to /pixel)
         per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
 
-        # Sums the pixels to create a total value for the 0.1x0.1 deg pixel
+        # Sums the pixels to create a total value for the 0.04x0.04 deg pixel
         non_zero_pixel_sum = np.sum(per_pixel_value)
 
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
+
 
     # Converts the annual carbon gain values annual gain in megatonnes and makes negative (because removals are negative)
     if cn.pattern_annual_gain_AGC_all_types in tile_type:
@@ -135,7 +136,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     with rasterio.open(out_raster, 'w',
-                                driver='GTiff', compress='lzw', nodata='0', dtype='float32', count=1,
+                                driver='GTiff', compress='LZW', nodata='0', dtype='float32', count=1,
                                 height=250, width=250,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04)) as aggregated:
         aggregated.write(sum_array, 1)

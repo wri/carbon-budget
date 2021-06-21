@@ -28,9 +28,8 @@ which I haven't fixed. The data prep scripts are generally in the folder for whi
 
 Inputs can either be downloaded from AWS s3 storage or used if found locally in the folder `/usr/local/tiles/` in the Docker container.
 The model looks for files locally before downloading them. 
-The model can still be run without a connection to AWS s3 if all necessary inputs are stored in the correct local folder.
-This option is feasible for running the model on a handful of tiles but not for large areas 
-because the tiles will need too much local storage. 
+The model can still be run without AWS credentials; inputs will be downloaded from s3 but outputs will not be uploaded to s3.
+In that case, outputs will only be stored locally.
 
 ### Outputs
 There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all totaled for 2001-2020. 
@@ -205,7 +204,7 @@ they are run very infrequently.
 | `run-through` | `-r` | Optional | All | If activated, run stage provided in `stages` argument and all following stages. Otherwise, run only stage in `stages` argument. Activated with flag. |
 | `run-date` | `-d` | Required | All | Date of run. Must be format YYYYMMDD. This sets the output folder in s3. |
 | `tile-id-list` | `-l` | Required | All | List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all |
-| `no-upload` | `-nu` | Optional | All | No files are uploaded to s3 during or after model run (including logs and model outputs). Use for testing or completely local runs. |
+| `no-upload` | `-nu` | Optional | All | No files are uploaded to s3 during or after model run (including logs and model outputs). Use for testing to save time. When AWS credentials are not available, upload is automatically disabled and this flag does not have to be manually activated. |
 | `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 | `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
 | `pools-to-use` | `-p` | Optional | Emissions| Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
@@ -213,7 +212,7 @@ they are run very infrequently.
 | `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
 | `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag. |
 | `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag. |
-| `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local model runs. |
+| `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local model runs. If uploading to s3 is not enabled, intermediate files are automatically saved. |
 
 ##### Running the emissions model
 The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.

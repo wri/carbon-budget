@@ -132,7 +132,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     pool.close()
     pool.join()
 
-    # If no_upload flag is not activated, output is uploaded to s3
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
     if not no_upload:
 
         uu.print_log("Uploading non-mangrove soil C density tiles")
@@ -158,7 +158,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
 
     uu.print_log("Done making combined soil C tiles")
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.print_log("Uploading combined soil C density tiles")
@@ -271,7 +271,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
             pool.join()
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.print_log("Uploading soil C density standard deviation tiles")
@@ -296,7 +296,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list, run_date=run_date)

@@ -65,9 +65,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
     output_pattern_list = [cn.pattern_model_extent]
 
 
-    # # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-    # if uu.check_aws_creds():
-
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
@@ -89,15 +87,14 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
 
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
-    '''
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
         if sensit_type == 'biomass_swap':
             processes = 38
         else:
-            processes = 42 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
-            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = XXX GB peak
+            processes = 45 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
+            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = 631 GB peak; 45 = XXX GB peak
     else:
         processes = 3
     uu.print_log('Model extent processors=', processes)
@@ -105,11 +102,11 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
     pool.map(partial(model_extent.model_extent, pattern=pattern, sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
-    '''
 
-    # For single processor use
-    for tile_id in tile_id_list:
-        model_extent.model_extent(tile_id, pattern, sensit_type, no_upload)
+    # # For single processor use
+    # for tile_id in tile_id_list:
+    #     model_extent.model_extent(tile_id, pattern, sensit_type, no_upload)
+
 
     output_pattern = output_pattern_list[0]
     if cn.count <= 2:  # For local tests
@@ -129,7 +126,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
         pool.join()
 
 
-    # If no_upload flag is not activated, output is uploaded
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
@@ -158,7 +155,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)

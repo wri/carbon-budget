@@ -17,7 +17,6 @@ from functools import partial
 import pandas as pd
 import datetime
 import argparse
-import openpyxl
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
@@ -68,13 +67,11 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
     output_pattern_list = [cn.pattern_age_cat_IPCC]
 
 
-    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
-    if uu.check_aws_creds():
-
-        for key, values in download_dict.items():
-            dir = key
-            pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -90,19 +87,14 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    if uu.check_aws_creds():
-        # Table with IPCC Table 4.9 default gain rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
-        uu.log_subprocess_output_full(cmd)
-    else:
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
-        uu.log_subprocess_output_full(cmd) 
+    # Table with IPCC Table 4.9 default gain rates
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    uu.log_subprocess_output_full(cmd)
 
 
     # Imports the table with the ecozone-continent codes and the carbon gain rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name = "natrl fores gain, for std model",
-                               engine='openpyxl')
+                               sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -140,7 +132,8 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
     #
     #     forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_upload)
 
-    # If no_upload flag is not activated, output is uploaded
+
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
@@ -169,7 +162,6 @@ if __name__ == '__main__':
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
-        uu.print_log("s3 credentials not found. Uploading to s3 disabled.")
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
