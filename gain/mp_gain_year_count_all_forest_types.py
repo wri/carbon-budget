@@ -77,7 +77,6 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     pattern = output_pattern_list[0]
 
     # Creates gain year count tiles using only pixels that had only loss
-    # count/3 maxes out at about 300 GB
     if cn.count == 96:
         processes = 90   # 66 = 310 GB peak; 75 = 380 GB peak; 90 = 480 GB peak
     else:
@@ -86,6 +85,8 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_only,
                      sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
+
+    sys.quit()
 
     if cn.count == 96:
         processes = 90   # 66 = 330 GB peak; 75 = 380 GB peak; 90 = 530 GB peak
