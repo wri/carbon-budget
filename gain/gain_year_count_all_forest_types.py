@@ -39,8 +39,7 @@ def create_gain_year_count_loss_only(tile_id, sensit_type, no_upload):
         loss_outfilename = '{}_growth_years_loss_only.tif'.format(tile_id)
         loss_outfilearg = '--outfile={}'.format(loss_outfilename)
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_calc, loss_outfilearg,
-               # '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
     else:
         uu.print_log("No loss tile found for {}. Skipping loss only pixel gain year count.".format(tile_id))

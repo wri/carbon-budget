@@ -86,8 +86,6 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
     pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_only,
                      sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
 
-    sys.quit()
-
     if cn.count == 96:
         processes = 90   # 66 = 330 GB peak; 75 = 380 GB peak; 90 = 530 GB peak
     else:

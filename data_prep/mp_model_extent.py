@@ -94,7 +94,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
             processes = 38
         else:
             processes = 42 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
-            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = XXX GB peak
+            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = 631 GB peak
     else:
         processes = 3
     uu.print_log('Model extent processors=', processes)
