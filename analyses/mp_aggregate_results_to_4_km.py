@@ -176,8 +176,8 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
         uu.print_log(out_pattern)
 
-        # Produces a single raster of all the 10x10 tiles (0.4 degree resolution)
-        cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=LZW',
+        # Produces a single raster of all the 10x10 tiles (0.04 degree resolution)
+        cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=DEFLATE',
                '-tr', '0.04', '0.04',
                out_vrt, '{}.tif'.format(out_pattern)]
         uu.log_subprocess_output_full(cmd)

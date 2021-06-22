@@ -43,7 +43,7 @@ def create_peat_mask_tiles(tile_id):
         calc = '--calc=(A==14)'
         peat_mask_out_filearg = '--outfile={}'.format(out_tile_no_tag)
         cmd = ['gdal_calc.py', '-A', out_intermediate, calc, peat_mask_out_filearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Byte', '--quiet']
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type=Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("{} created.".format(tile_id))
@@ -57,7 +57,7 @@ def create_peat_mask_tiles(tile_id):
         uu.print_log("{} is inside CIFOR band. Using CIFOR/Jukka combination...".format(tile_id))
 
         # Combines CIFOR and Jukka (if it occurs there)
-        cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+        cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
                '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
                '-dstnodata', '0', '-overwrite', '{}'.format(cn.cifor_peat_file), 'jukka_peat.tif', out_tile_no_tag]
         uu.log_subprocess_output_full(cmd)
@@ -91,7 +91,7 @@ def create_peat_mask_tiles(tile_id):
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='lzw',
+            compress='DEFLATE',
             nodata=0
         )
 

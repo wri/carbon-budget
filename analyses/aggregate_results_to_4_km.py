@@ -136,7 +136,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     # from the 2D array created by rasterio above
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     with rasterio.open(out_raster, 'w',
-                                driver='GTiff', compress='LZW', nodata='0', dtype='float32', count=1,
+                                driver='GTiff', compress='DEFLATE', nodata='0', dtype='float32', count=1,
                                 height=250, width=250,
                                 crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04)) as aggregated:
         aggregated.write(sum_array, 1)
@@ -208,9 +208,9 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
     perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
     perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
     # cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
-    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
+    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--quiet']
     cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
-           '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
+           '--overwrite', '--co', 'COMPRESS=DEFLATE', '--quiet']
     uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed

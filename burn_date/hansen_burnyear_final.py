@@ -134,7 +134,7 @@ def hansen_burnyear(tile_id, no_upload):
             kwargs.update(
                 driver='GTiff',
                 count=1,
-                compress='lzw',
+                compress='DEFLATE',
                 nodata=0
             )
 

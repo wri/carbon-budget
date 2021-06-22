@@ -220,7 +220,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     calc = '--calc=(A-B)/3'
     out_filearg = '--outfile={}'.format(soil_C_stdev_global)
     cmd = ['gdal_calc.py', '-A', vrt_CI95, '-B', vrt_CI05, calc, out_filearg,
-           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--type=Float32']
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type=Float32']
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log("{} created.".format(soil_C_stdev_global))

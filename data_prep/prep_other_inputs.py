@@ -26,7 +26,7 @@ def rasterize_pre_2000_plantations(tile_id):
 
     out_tile = '{0}_{1}.tif'.format(tile_id, cn.pattern_plant_pre_2000)
 
-    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=DEFLATE', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
           '{}.shp'.format(cn.pattern_plant_pre_2000_raw), out_tile]
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
@@ -51,7 +51,7 @@ def create_climate_zone_tiles(tile_id):
     # Rather than the usual 40000x1 windows, this creates 1024x1024 windows for filling in missing values (see below).
     # The output of gdalwarp ("climate_zone_intermediate") is not used anywhere else.
     uu.print_log("Warping climate zone tile", tile_id)
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-tap', '-te',
            str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', 'Byte', '-overwrite',
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE=1024', '-co', 'BLOCKYSIZE=1024',
@@ -82,7 +82,7 @@ def create_climate_zone_tiles(tile_id):
     kwargs.update(
         driver='GTiff',
         count=1,
-        compress='lzw',
+        compress='DEFLATE',
         nodata=0
     )
 

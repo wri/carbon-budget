@@ -29,7 +29,7 @@ def clip_year_tiles(tile_year_list, no_upload):
     uu.print_log("Clipping burn year vrt to {0} for {1}".format(tile_id, year))
 
     clipped_raster = "ba_clipped_{0}_{1}.tif".format(year, tile_id)
-    cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=LZW', '-a_nodata', '0']
+    cmd = ['gdal_translate', '-ot', 'Byte', '-co', 'COMPRESS=DEFLATE', '-a_nodata', '0']
     cmd += [vrt_name, clipped_raster, '-tr', '.00025', '.00025']
     cmd += ['-projwin', str(xmin), str(ymax), str(xmax), str(ymin)]
     uu.log_subprocess_output_full(cmd)
@@ -39,7 +39,7 @@ def clip_year_tiles(tile_year_list, no_upload):
     recoded_output = "ba_{0}_{1}.tif".format(year, tile_id)
     outfile = '--outfile={}'.format(recoded_output)
 
-    cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--quiet']
+    cmd = ['gdal_calc.py', '-A', clipped_raster, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--quiet']
     uu.log_subprocess_output_full(cmd)
 
     # Only copies to s3 if the tile has data.

@@ -45,7 +45,7 @@ def main ():
     # the earlier loss gets)
     uu.print_log("Merging all loss years within model range...")
     loss_composite = "Mekong_loss_2001_2015.tif"
-    cmd = ['gdal_merge.py', '-o', loss_composite, '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-ot', 'Byte',
+    cmd = ['gdal_merge.py', '-o', loss_composite, '-co', 'COMPRESS=DEFLATE', '-a_nodata', '0', '-ot', 'Byte',
            "Mekong_loss_recoded_2015.tif", "Mekong_loss_recoded_2014.tif", "Mekong_loss_recoded_2013.tif",
            "Mekong_loss_recoded_2012.tif", "Mekong_loss_recoded_2011.tif", "Mekong_loss_recoded_2010.tif",
            "Mekong_loss_recoded_2009.tif", "Mekong_loss_recoded_2008.tif", "Mekong_loss_recoded_2007.tif",

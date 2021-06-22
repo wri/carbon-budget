@@ -59,7 +59,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     kwargs.update(
         driver='GTiff',
         count=1,
-        compress='lzw',
+        compress='DEFLATE',
         nodata=0,
         dtype='float32'
     )

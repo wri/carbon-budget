@@ -66,7 +66,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
 
     # Converts the Jukka peat shapefile to a raster
     uu.print_log('Rasterizing jukka peat...')
-    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=LZW', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=DEFLATE', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
           '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.jukka_peat_shp, jukka_tif]
     uu.log_subprocess_output_full(cmd)
     uu.print_log('   Jukka peat rasterized')

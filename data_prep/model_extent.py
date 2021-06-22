@@ -55,7 +55,7 @@ def model_extent(tile_id, pattern, sensit_type, no_upload):
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='lzw',
+            compress='DEFLATE',
             nodata=0
         )
 

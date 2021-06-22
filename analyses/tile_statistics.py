@@ -50,7 +50,7 @@ def create_tile_statistics(tile, sensit_type, tile_stats_txt):
     out = '--outfile={}'.format(outname)
 
     uu.print_log("Converting {} from /ha to /pixel...".format(tile))
-    cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=LZW',
+    cmd = ['gdal_calc.py', '-A', tile, '-B', area_tile, calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE',
            '--overwrite', '--quiet']
     uu.log_subprocess_output_full(cmd)
 

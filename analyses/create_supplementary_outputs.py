@@ -68,7 +68,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
     kwargs.update(
         driver='GTiff',
         count=1,
-        compress='lzw',
+        compress='DEFLATE',
         nodata=0,
         dtype='float32'
     )

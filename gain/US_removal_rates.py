@@ -41,7 +41,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='LZW',
+            compress='DEFLATE',
             nodata=0,
             dtype='float32'
         )
