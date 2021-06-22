@@ -997,7 +997,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt, no_upload):
 
     out_tile = '{0}_{1}.tif'.format(tile_id, out_pattern)
 
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_tile]
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
@@ -1008,7 +1008,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt, no_upload):
 
 def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
-    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=LZW', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
+    cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
@@ -1017,7 +1017,7 @@ def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksizex, blocksizey, tr=None, ot=None, name_field=None, anodata=None):
-    cmd = ['gdal_rasterize', '-co', 'COMPRESS=LZW',
+    cmd = ['gdal_rasterize', '-co', 'COMPRESS=DEFLATE',
 
            # Input raster is ingested as 1024x1024 pixel tiles (rather than the default of 1 pixel wide strips
            '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(blocksizex), '-co', 'BLOCKYSIZE={}'.format(blocksizey),
@@ -1066,7 +1066,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
         # If the tile is already on the spot machine, it uses the downloaded tile.
         if os.path.exists(os.path.join(folder, '{0}_{1}.tif'.format(cn.pattern_loss, tile_id))):
             print_log("Hansen loss tile exists for {}. Using that as template for blank tile.".format(tile_id))
-            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=DEFLATE', '-ot', 'Byte',
                    '-o', '{0}{1}_{2}.tif'.format(folder, tile_id, pattern),
                    '{0}{1}_{2}.tif'.format(folder, cn.pattern_loss, tile_id)]
             check_call(cmd)
@@ -1084,7 +1084,7 @@ def make_blank_tile(tile_id, pattern, folder, sensit_type):
 
             # Uses either the Hansen loss tile or pixel area tile as a template tile,
             # with the output name corresponding to the model type
-            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=LZW', '-ot', 'Byte',
+            cmd = ['gdal_merge.py', '-createonly', '-init', '0', '-co', 'COMPRESS=DEFLATE', '-ot', 'Byte',
                    '-o', '{0}/{1}_{2}.tif'.format(folder, tile_id, full_pattern),
                    '{0}/{1}_{2}.tif'.format(folder, tile_id, 'empty_tile_template')]
             check_call(cmd)
@@ -1161,7 +1161,7 @@ def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
         calc = '--calc=A*(B==0)'
         loss_outfilearg = '--outfile={}'.format(out_name)
         cmd = ['gdal_calc.py', '-A', tile_to_mask, '-B', pre_2000_vrt,
-               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=LZW', '--quiet']
+               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--quiet']
         check_call(cmd)
 
     # Basically, does nothing if there is no pre-2000 plantation and the output name is the same as the
@@ -1381,7 +1381,7 @@ def rewindow(tile_id, download_pattern_name, no_upload):
 
         # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
         # Solution was to use gdal_translate instead, although, for unclear reasons, this still inflates the size
-        # of the pixel area tiles but not other tiles.
+        # of the pixel area tiles but not other tiles using LZW. DEFLATE makes all outputs smaller.
         cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE',
                '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(cn.agg_pixel_window), '-co', 'BLOCKYSIZE={}'.format(cn.agg_pixel_window),
                in_tile, out_tile]

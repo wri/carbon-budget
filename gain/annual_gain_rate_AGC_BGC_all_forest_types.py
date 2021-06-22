@@ -55,7 +55,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='lzw',
+            compress='DEFLATE',
             nodata=0
         )
 

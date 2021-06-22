@@ -277,7 +277,7 @@ GDALRasterBand *OUTBAND20;
 OGRSpatialReference oSRS;
 char *OUTPRJ = NULL;
 char **papszOptions = NULL;
-papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "LZW" );
+papszOptions = CSLSetNameValue( papszOptions, "COMPRESS", "DEFLATE" );
 OUTDRIVER = GetGDALDriverManager()->GetDriverByName("GTIFF");
 if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );

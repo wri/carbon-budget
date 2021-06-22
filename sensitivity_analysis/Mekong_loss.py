@@ -27,7 +27,7 @@ def recode_tiles(annual_loss):
         recoded_output = "Mekong_loss_recoded_{}.tif".format(year)
         outfile = '--outfile={}'.format(recoded_output)
 
-        cmd = ['gdal_calc.py', '-A', annual_loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=LZW', '--quiet']
+        cmd = ['gdal_calc.py', '-A', annual_loss, calc, outfile, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--quiet']
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
         with process.stdout:

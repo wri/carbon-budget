@@ -51,7 +51,7 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='lzw',
+            compress='DEFLATE',
             nodata=0,
             dtype='float32'
         )

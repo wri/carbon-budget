@@ -97,7 +97,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_uploa
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='lzw',
+            compress='DEFLATE',
             nodata=0
         )
 

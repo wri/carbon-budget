@@ -62,7 +62,7 @@ def create_continent_ecozone_tiles(tile_id):
         kwargs.update(
             driver='GTiff',
             count=1,
-            compress='lzw',
+            compress='DEFLATE',
             nodata=0
         )
 

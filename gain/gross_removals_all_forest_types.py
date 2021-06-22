@@ -55,7 +55,7 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
     kwargs.update(
         driver='GTiff',
         count=1,
-        compress='lzw',
+        compress='DEFLATE',
         nodata=0
     )
 

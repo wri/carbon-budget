@@ -96,7 +96,7 @@ def main ():
         # This merges all six rasters together, so it takes a lot of memory and time. It seems to repeatedly max out
         # at about 300 GB as it progresses abot 15% each time; then the memory drops back to 0 and slowly increases.
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_forest_extent_2000_merged),
-               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
+               '-co', 'COMPRESS=DEFLATE', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                raw_forest_extent_inputs[0], raw_forest_extent_inputs[1], raw_forest_extent_inputs[2],
                raw_forest_extent_inputs[3], raw_forest_extent_inputs[4], raw_forest_extent_inputs[5]]
         uu.log_subprocess_output_full(cmd)
@@ -149,7 +149,7 @@ def main ():
         # This took about 8 minutes.
         uu.print_log("Merging input loss rasters into a composite for all years...")
         cmd = ['gdal_merge.py', '-o', '{}.tif'.format(cn.pattern_Brazil_annual_loss_merged),
-               '-co', 'COMPRESS=LZW', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
+               '-co', 'COMPRESS=DEFLATE', '-a_nodata', '0', '-n', '0', '-ot', 'Byte', '-ps', '{}'.format(pixelSizeX), '{}'.format(pixelSizeY),
                'Prodes2019_annual_loss_2008_2019.tif', 'Prodes2014_annual_loss_2001_2007.tif']
         uu.log_subprocess_output_full(cmd)
         uu.print_log("  Loss rasters combined into composite")

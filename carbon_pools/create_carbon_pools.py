@@ -124,7 +124,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
     kwargs.update(
         driver='GTiff',
         count=1,
-        compress='lzw',
+        compress='DEFLATE',
         nodata=0,
         dtype='float32'
     )
@@ -271,7 +271,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
         AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
         AGC_2000_src = rasterio.open(AGC_2000)
         kwargs = AGC_2000_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_BGC_2000]
         if sensit_type != 'std':
@@ -292,7 +292,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
         AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
         AGC_emis_year_src = rasterio.open(AGC_emis_year)
         kwargs = AGC_emis_year_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
         output_pattern_list = [cn.pattern_BGC_emis_year]
         if sensit_type != 'std':
@@ -398,7 +398,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
         AGC_2000_src = rasterio.open(AGC_2000)
         kwargs = AGC_2000_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_deadwood_2000, cn.pattern_litter_2000]
         if sensit_type != 'std':
@@ -429,7 +429,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
         AGC_emis_year_src = rasterio.open(AGC_emis_year)
         kwargs = AGC_emis_year_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
 
         output_pattern_list = [cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000]
@@ -713,7 +713,7 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
     kwargs.update(
         driver='GTiff',
         count=1,
-        compress='lzw',
+        compress='DEFLATE',
         nodata=0,
         dtype='uint16'
     )
@@ -780,7 +780,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
             uu.print_log("    No soil C 2000 tile found for", tile_id)
 
         kwargs = AGC_2000_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_total_C_2000]
         if sensit_type != 'std':
@@ -814,7 +814,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
             uu.print_log("    No soil C emission year tile found for", tile_id)
 
         kwargs = AGC_emis_year_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='lzw', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
         output_pattern_list = [cn.pattern_total_C_emis_year]
         if sensit_type != 'std':
