@@ -59,7 +59,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)
 
-    # Opens standard model gain rate tile
+    # Opens standard model removals rate tile
     with rasterio.open(annual_gain_standard) as annual_gain_standard_src:
 
         # Grabs metadata about the tif, like its location/projection/cell size
@@ -96,7 +96,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             US_forest_group_window = US_forest_group_src.read(1, window=window)
             US_region_window = US_region_src.read(1, window=window)
 
-            # Masks the three input tiles (age category, forest group, FIA region) to the pixels to the standard gain model extent
+            # Masks the three input tiles (age category, forest group, FIA region) to the pixels to the standard removals model extent
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
             US_forest_group_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_forest_group_window).filled(0).astype('uint16')
             US_region_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_region_window).filled(0).astype('uint16')
@@ -105,12 +105,12 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             # make the codes (dictionary key) match. Then, combines the three rasters. These values now match the key values in the spreadsheet.
             group_region_age_combined_window = (age_cat_masked_window * 10 + US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
 
-            # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
-            # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
+            # Applies the dictionary of group-region-age removals rates to the group-region-age numpy array to
+            # get annual removals rates (metric tons aboveground biomass/yr) for each pixel that has removals in the standard model
             for key, value in gain_table_group_region_age_dict.items():
                 annual_gain_standard_window[group_region_age_combined_window == key] = value
 
-            # Replaces all values that have Hansen gain pixels with 0 so that they can be filled with Hansen gain pixel-specific
+            # Replaces all values that have Hansen gain pixels with 0 so that they can be filled with Hansen removals pixel-specific
             # values (rates for youngest forest age category)
             agb_without_gain_pixel_window = np.ma.masked_where(gain_window != 0, annual_gain_standard_window).filled(0)
 
@@ -119,8 +119,8 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             agb_with_gain_pixel_window = (US_forest_group_masked_window * 100 + US_region_masked_window).astype('float32')
             agb_with_gain_pixel_window = np.ma.masked_where((gain_window == 0) & (annual_gain_standard_window != 0), agb_with_gain_pixel_window).filled(0)
 
-            # Applies the dictionary of region-age-group gain rates to the region-age-group array to
-            # get annual gain rates (metric tons aboveground biomass/yr) for each pixel that has gain in the standard model
+            # Applies the dictionary of region-age-group removals rates to the region-age-group array to
+            # get annual removals rates (metric tons aboveground biomass/yr) for each pixel that has removals in the standard model
             for key, value in gain_table_group_region_dict.items():
                 agb_with_gain_pixel_window[agb_with_gain_pixel_window == key] = value
 
@@ -128,7 +128,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             # removal rates that has has values only where there are Hansen gain pixels
             agb_dst_window = agb_without_gain_pixel_window + agb_with_gain_pixel_window
 
-            # The maximum rate in the US-specific gain rate dictionary
+            # The maximum rate in the US-specific removals rate dictionary
             max_rate = max(gain_table_group_region_age_dict.values())
 
             # Any pixel that has a rate 1.2x as large as the largest rate in the dictionary gets assigned the standard model's rate

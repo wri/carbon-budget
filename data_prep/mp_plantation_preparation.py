@@ -357,27 +357,27 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         pool.join()
 
 
-    ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
-    ### from 1x1 degree planted forest gain rate and type tiles
+    ### All script entry points meet here: creation of 10x10 degree planted forest removals rate and rtpe tiles
+    ### from 1x1 degree planted forest removals rate and type tiles
 
-    # Name of the vrt of 1x1 planted forest gain rate tiles
+    # Name of the vrt of 1x1 planted forest removals rate tiles
     plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
 
-    # Creates a mosaic of all the 1x1 plantation gain rate tiles
-    uu.print_log("Creating vrt of 1x1 plantation gain rate tiles")
+    # Creates a mosaic of all the 1x1 plantation removals rate tiles
+    uu.print_log("Creating vrt of 1x1 plantation removals rate tiles")
     os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
 
-    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # Creates 10x10 degree tiles of plantation removals rate by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
     processes = 20
-    uu.print_log('Create 10x10 plantation gain rate max processors=', processes)
+    uu.print_log('Create 10x10 plantation removals rate max processors=', processes)
     pool = Pool(processes)
     pool.map(partial(plantation_preparation.create_10x10_plantation_gain, plant_gain_1x1_vrt=plant_gain_1x1_vrt), planted_lat_tile_list)
     pool.close()
     pool.join()
 
-    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # Creates 10x10 degree tiles of plantation removals rate by iterating over the set of pixel area tiles supplied
     #at the start of the script that are in latitudes with planted forests.
     # For single processor use
     #for tile in planted_lat_tile_list:
@@ -410,14 +410,14 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
 
 
-    # Name of the vrt of 1x1 planted forest gain rate standard deviation tiles
+    # Name of the vrt of 1x1 planted forest removals rate standard deviation tiles
     plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
 
-    # Creates a mosaic of all the 1x1 plantation gain rate standard deviation tiles
-    uu.print_log("Creating vrt of 1x1 plantation gain rate standard deviation tiles")
+    # Creates a mosaic of all the 1x1 plantation removals rate standard deviation tiles
+    uu.print_log("Creating vrt of 1x1 plantation removals rate standard deviation tiles")
     os.system('gdalbuildvrt {} plant_stdev_*.tif'.format(plant_stdev_1x1_vrt))
 
-    # Creates 10x10 degree tiles of plantation gain rate standard deviation by iterating over the set of pixel area tiles supplied
+    # Creates 10x10 degree tiles of plantation removals rate standard deviation by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
     num_of_processes = 26
@@ -429,7 +429,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
+    parser = argparse.ArgumentParser(description='Create planted forest carbon removals rate tiles')
     parser.add_argument('--gadm-tile-index', '-gi', required=True,
                         help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
     parser.add_argument('--planted-tile-index', '-pi', required=True,

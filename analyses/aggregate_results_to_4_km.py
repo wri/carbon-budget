@@ -103,11 +103,11 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
 
-    # Converts the annual carbon gain values annual gain in megatonnes and makes negative (because removals are negative)
+    # Converts the annual carbon removals values annual removals in megatonnes and makes negative (because removals are negative)
     if cn.pattern_annual_gain_AGC_all_types in tile_type:
         sum_array = sum_array / cn.tonnes_to_megatonnes * -1
 
-    # Converts the cumulative CO2 gain values to annualized CO2 in megatonnes and makes negative (because removals are negative)
+    # Converts the cumulative CO2 removals values to annualized CO2 in megatonnes and makes negative (because removals are negative)
     if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 

@@ -195,7 +195,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+        description='Create tiles of the annual AGB and BGB removals rates for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,

@@ -19,13 +19,13 @@ import logging
 import constants_and_names as cn
 import universal_util as uu
 from data_prep.mp_model_extent import mp_model_extent
-from gain.mp_annual_gain_rate_mangrove import mp_annual_gain_rate_mangrove
-from gain.mp_US_removal_rates import mp_US_removal_rates
-from gain.mp_forest_age_category_IPCC import mp_forest_age_category_IPCC
-from gain.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_IPCC_defaults
-from gain.mp_annual_gain_rate_AGC_BGC_all_forest_types import mp_annual_gain_rate_AGC_BGC_all_forest_types
-from gain.mp_gain_year_count_all_forest_types import mp_gain_year_count_all_forest_types
-from gain.mp_gross_removals_all_forest_types import mp_gross_removals_all_forest_types
+from removals.mp_annual_gain_rate_mangrove import mp_annual_gain_rate_mangrove
+from removals.mp_US_removal_rates import mp_US_removal_rates
+from removals.mp_forest_age_category_IPCC import mp_forest_age_category_IPCC
+from removals.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_IPCC_defaults
+from removals.mp_annual_gain_rate_AGC_BGC_all_forest_types import mp_annual_gain_rate_AGC_BGC_all_forest_types
+from removals.mp_gain_year_count_all_forest_types import mp_gain_year_count_all_forest_types
+from removals.mp_gross_removals_all_forest_types import mp_gross_removals_all_forest_types
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
@@ -260,7 +260,7 @@ def main ():
                         cn.net_flux_per_pixel_forest_extent_dir]
 
 
-    # Creates tiles of annual AGB and BGB gain rate and AGB stdev for mangroves using the standard model
+    # Creates tiles of annual AGB and BGB removals rate and AGB stdev for mangroves using the standard model
     # removal function
     if 'annual_removals_mangrove' in actual_stages:
 
@@ -275,7 +275,7 @@ def main ():
         uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
 
 
-    # Creates tiles of annual AGC+BGC gain rate and AGC stdev for US-specific removals using the standard model
+    # Creates tiles of annual AGC+BGC removals rate and AGC stdev for US-specific removals using the standard model
     # removal function
     if 'annual_removals_us' in actual_stages:
 
@@ -318,7 +318,7 @@ def main ():
         uu.print_log(":::::Processing time for forest_age_category_IPCC:", elapsed_time, "\n", "\n")
 
 
-    # Creates tiles of annual AGB and BGB gain rates using IPCC Table 4.9 defaults
+    # Creates tiles of annual AGB and BGB removals rates using IPCC Table 4.9 defaults
     if 'annual_removals_IPCC' in actual_stages:
 
         uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults")

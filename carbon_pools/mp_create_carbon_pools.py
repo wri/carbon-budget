@@ -6,8 +6,8 @@ of WHRC and mangrove biomass 2000, while total carbon is to the extent of WHRC A
 
 It also creates carbon emitted_pools for the year of loss/emissions-- only for pixels that had loss that are within the model.
 To do this, it adds CO2 (carbon) accumulated since 2000 to the C (biomass) 2000 stock, so that the CO2 (carbon) emitted is 2000 + gains
-until loss. (For Hansen loss+gain pixels, only the portion of C that is accumulated before loss is included in the
-lost carbon (lossyr-1), not the entire carbon gain of the pixel.) Because the emissions year carbon emitted_pools depend on
+until loss. (For Hansen loss+removals pixels, only the portion of C that is accumulated before loss is included in the
+lost carbon (lossyr-1), not the entire carbon removals of the pixel.) Because the emissions year carbon emitted_pools depend on
 carbon removals, any time the removals model changes, the emissions year carbon emitted_pools need to be regenerated.
 
 The carbon emitted_pools in 2000 are not used for the flux model at all; they are purely for illustrative purposes. Only the
@@ -164,13 +164,13 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-    # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+    # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
     uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None
 
-    # Imports the table with the ecozone-continent codes and the carbon gain rates
+    # Imports the table with the ecozone-continent codes and the carbon removals rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                sheet_name="mangrove gain, for model")
 

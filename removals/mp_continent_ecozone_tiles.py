@@ -6,14 +6,14 @@
 ### continents assigned to it. The creation of the continent-ecozone shapefile was done in ArcMap.
 ### In the resulting ecozone-continent shapefile, the final field has continent and ecozone concatenated.
 ### That ecozone-continent field can be parsed to get the ecozone and continent for every pixel,
-### which are necessary for assigning gain rates to pixels.
+### which are necessary for assigning removals rates to pixels.
 ### This script also breaks the input tiles into windows that are 1024 pixels on each side and assigns all pixels that
 ### don't have a continent-ecozone code to the most common code in that window.
 ### This is done to expand the extent of the continent-ecozone tiles to include pixels that don't have a continent-ecozone
 ### code because they are just outside the original shapefile.
 ### It is necessary to expand the continent-ecozone codes into those nearby areas because otherwise some forest age category
-### pixels are outside the continent-ecozone pixels and can't have gain rates assigned to them.
-### This maneuver provides the necessary continent-ecozone information to assign gain rates.
+### pixels are outside the continent-ecozone pixels and can't have removals rates assigned to them.
+### This maneuver provides the necessary continent-ecozone information to assign removals rates.
 
 
 import multiprocessing

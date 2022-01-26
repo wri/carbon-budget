@@ -3,7 +3,7 @@ This script creates tiles of forest age category across the entire model extent 
 The age categories are: <= 20 year old secondary forest (1), >20 year old secondary forest (2), and primary forest (3).
 The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
 The output tiles have 3 possible values, each value representing an end of the decision tree.
-The forest age category tiles are inputs for assigning gain rates to
+The forest age category tiles are inputs for assigning removals rates to
 non-mangrove, non-planted, non-European, non-US, older secondary and primary forests.pixels.
 The extent of this layer is greater than the extent of the rates which are based on this, though.
 This assigns forest age category to all pixels within the model but they are ultimately only used for
@@ -23,7 +23,7 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'gain'))
+sys.path.append(os.path.join(cn.docker_app,'removals'))
 import forest_age_category_IPCC
 
 def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_upload = None):
@@ -87,19 +87,19 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Table with IPCC Table 4.9 default gain rates
+    # Table with IPCC Table 4.9 default removals rates
     cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
     uu.log_subprocess_output_full(cmd)
 
 
-    # Imports the table with the ecozone-continent codes and the carbon gain rates
+    # Imports the table with the ecozone-continent codes and the carbon removals rates
     gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-    # Converts the continent-ecozone codes and young forest gain rates to a dictionary
+    # Converts the continent-ecozone codes and young forest removals rates to a dictionary
     gain_table_dict = pd.Series(gain_table_simplified.growth_secondary_less_20.values,index=gain_table_simplified.gainEcoCon).to_dict()
 
     # Adds a dictionary entry for where the ecozone-continent code is 0 (not in a continent)

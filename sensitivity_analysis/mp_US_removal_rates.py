@@ -17,7 +17,7 @@ The actual age category cutoffs are different for the SE/SC regions and the rest
 as already incorporated that, so the youngest category (1000) means 0-20 years for non-south and 0-10 years for south, etc.
 After Hansenizing region, group, and age category, this script creates two dictionaries: one with removal rates by
 region-group-age combinations and another with the youngest rate for each region-group combination.
-The first dictionary is applied to all standard gain model pixels according to their region-group-age combination
+The first dictionary is applied to all standard removals model pixels according to their region-group-age combination
 but then is overwritten for any Hansen gain pixel with the youngest rate for that region-group combination applied
 (using the second dictionary). That is because we can assume that any Hansen gain pixel is in the youngest age category,
 i.e. it is more specific information than the Pan et al. forest age category raster, so we give that info priority.
@@ -164,7 +164,7 @@ def main ():
     gain_table = pd.read_excel("{}".format(cn.table_US_removal_rate),
                                sheet_name="US_rates_for_model")
 
-    # Converts gain table from wide to long, so each region-group-age category has its own row
+    # Converts removals table from wide to long, so each region-group-age category has its own row
     gain_table_group_region_by_age = pd.melt(gain_table, id_vars=['FIA_region_code', 'forest_group_code'],
                                       value_vars=['growth_young', 'growth_middle',
                                                   'growth_old'])
@@ -174,14 +174,14 @@ def main ():
     age_dict = {'growth_young': 1000, 'growth_middle': 2000, 'growth_old': 3000}
 
     # Creates a unique value for each forest group-region-age category in the table.
-    # Although these rates are applied to all standard gain model pixels at first, they are not ultimately used for
+    # Although these rates are applied to all standard removals model pixels at first, they are not ultimately used for
     # pixels that have Hansen gain (see below).
     gain_table_group_region_age = gain_table_group_region_by_age.replace({"variable": age_dict})
     gain_table_group_region_age['age_cat'] = gain_table_group_region_age['variable']*10
     gain_table_group_region_age['group_region_age_combined'] = gain_table_group_region_age['age_cat'] + \
                                               gain_table_group_region_age['forest_group_code']*100 + \
                                               gain_table_group_region_age['FIA_region_code']
-    # Converts the forest group-region-age codes and corresponding gain rates to a dictionary,
+    # Converts the forest group-region-age codes and corresponding removals rates to a dictionary,
     # where the key is the unique group-region-age code and the value is the AGB removal rate.
     gain_table_group_region_age_dict = pd.Series(gain_table_group_region_age.value.values, index=gain_table_group_region_age.group_region_age_combined).to_dict()
     uu.print_log(gain_table_group_region_age_dict)
@@ -193,7 +193,7 @@ def main ():
     gain_table_group_region = gain_table_group_region_age.drop(gain_table_group_region_age[gain_table_group_region_age.age_cat != 10000].index)
     gain_table_group_region['group_region_combined'] = gain_table_group_region['forest_group_code']*100 + \
                                                        gain_table_group_region['FIA_region_code']
-    # Converts the forest group-region codes and corresponding gain rates to a dictionary,
+    # Converts the forest group-region codes and corresponding removals rates to a dictionary,
     # where the key is the unique group-region code (youngest age category) and the value is the AGB removal rate.
     gain_table_group_region_dict = pd.Series(gain_table_group_region.value.values, index=gain_table_group_region.group_region_combined).to_dict()
     uu.print_log(gain_table_group_region_dict)

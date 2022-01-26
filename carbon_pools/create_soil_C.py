@@ -87,7 +87,7 @@ def create_combined_soil_C(tile_id, no_upload):
         mineral_soil_src = rasterio.open(mineral_soil)
 
         # Updates kwargs for the output dataset.
-        # Need to update data type to float 32 so that it can handle fractional gain rates
+        # Need to update data type to float 32 so that it can handle fractional removal rates
         kwargs.update(
             driver='GTiff',
             count=1,

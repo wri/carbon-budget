@@ -6,7 +6,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Calculates cumulative aboveground carbon dioxide gain in mangroves
+# Calculates cumulative aboveground carbon dioxide removals in mangroves
 def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload):
 
     uu.print_log("Calculating cumulative CO2 removals:", tile_id)
