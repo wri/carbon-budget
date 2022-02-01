@@ -99,16 +99,16 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
 
     '''
     Downloading the hdf files from the sftp burned area site is done outside the script in the sftp shell on the command line.
-    This will download all the 2020 hdfs to the spot machine. It will take a few minutes before the first
+    This will download all the 2021 hdfs to the spot machine. It will take a few minutes before the first
     hdf is downloaded but then it should go quickly.
-    Change 2020 to other year for future years of downloads. 
+    Change 2021 to other year for future years of downloads. 
     https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf, page 24, section 4.1.3
 
     sftp fire@fuoco.geog.umd.edu
     [For password] burnt
     cd data/MODIS/C6/MCD64A1/HDF
     ls [to check that it's the folder with all the tile folders]
-    get h??v??/MCD64A1.A2020*
+    get h??v??/MCD64A1.A2021*
     bye    //exits the stfp shell
     '''
 
@@ -138,11 +138,16 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
     # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
     # Downloads all MODIS hv tiles from s3,
     # makes a mosaic for each year, and warps to Hansen extent.
-    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2021 goes from 2001 to 2020).
+    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2022 goes from 2001 to 2021).
     # This only needs to be done for the most recent year of data.
     # NOTE: The first time I ran this for the 2020 TCL update, I got an error about uploading the log to s3
     # after most of the tiles were processed. I didn't know why it happened, so I reran the step and it went fine.
-    for year in range(2020, 2021):
+
+    start_year = 2000 + cn.loss_years
+    end_year = 2000 + cn.loss_years + 1
+
+    # Assumes that only the last year of fires are being processed
+    for year in range(start_year, end_year):
 
         uu.print_log("Processing", year)
 
@@ -177,8 +182,8 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
         # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
         # so I'm leaving it like that.
         vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
-        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite',
-               vrt_name, vrt_wgs84]
+        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', cn.Hansen_res, cn.Hansen_res,
+               '-overwrite', vrt_name, vrt_wgs84]
         uu.log_subprocess_output_full(cmd)
 
         # Creates a list of lists, with year and tile id to send to multi processor
