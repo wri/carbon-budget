@@ -408,7 +408,7 @@ def main ():
         uu.print_log(":::::Creating tiles of gain year count for all removal pixels")
         start = datetime.datetime.now()
 
-        mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
+        mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = run_date, no_upload=no_upload)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
