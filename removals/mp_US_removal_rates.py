@@ -93,7 +93,8 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
 
 
     # Table with US-specific removal rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir, '--no-sign-request']
+    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir, '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
     uu.log_subprocess_output_full(cmd)
 
 

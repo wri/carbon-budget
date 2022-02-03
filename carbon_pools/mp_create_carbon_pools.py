@@ -165,7 +165,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None

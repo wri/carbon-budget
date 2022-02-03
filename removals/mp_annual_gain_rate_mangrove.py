@@ -61,7 +61,8 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     uu.log_subprocess_output_full(cmd)
 
 

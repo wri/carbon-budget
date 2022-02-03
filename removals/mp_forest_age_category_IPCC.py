@@ -88,7 +88,8 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
 
 
     # Table with IPCC Table 4.9 default removals rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     uu.log_subprocess_output_full(cmd)
 
 

@@ -155,7 +155,7 @@ gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2020)
-pattern_loss = 'GFW2021'
+pattern_loss = 'GFW2020'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2020/'
 
 # Hansen removals tiles (2001-2012)
