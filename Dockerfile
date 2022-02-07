@@ -1,6 +1,8 @@
 # Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
 # FROM osgeo/gdal:ubuntu-small-3.0.4
-FROM osgeo/gdal:ubuntu-full-3.0.4   # Use this if downloading hdf files for burn year analysis
+
+# Use this if downloading hdf files for burn year analysis
+FROM osgeo/gdal:ubuntu-full-3.0.4
 
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
