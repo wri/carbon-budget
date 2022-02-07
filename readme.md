@@ -215,7 +215,7 @@ they are run very infrequently.
 These are some sample commands for running the flux model in various configurations. You wouldn't necessarily want to use all of these;
 they simply illustrate different configurations for the command line arguments.
 
-Run 00N_110E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
+Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil:
 
 `python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`

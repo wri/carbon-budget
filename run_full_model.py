@@ -8,29 +8,13 @@ spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
 Compile C++ emissions modulte (for standard model and sensitivity analyses that using standard emissions model)
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 
-Sample commands for running the flux model in various configurations. You wouldn't necessarily want to use all of these;
-they simply illustrate different configurations for the command line arguments.
-
-Run 00N_110E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
+Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
-python run_full_model.py -si -t std -s all -r -d 20229999 -l all -ce loss -p biomass_soil -tcd 30 -ln "00N_110E test"
-
-Run 00N_110E in standard model; save intermediate outputs; don't upload outputs to s3;
-start at forest_age_category_IPCC step; run all stages after that; get carbon pools at time of loss; emissions from biomass and soil
-python run_full_model.py -si -nu -t std -s forest_age_category_IPCC -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_110E test"
-
-Run 00N_000E and 00N_110E in standard model; don't save intermediate outputs; do upload outputs to s3;
-run model_extent step; don't run sunsequent steps; run mangrove step beforehand; get carbon pools at time of loss; emissions from biomass and soil
-python run_full_model.py -t std -s model_extent -d 20229999 -l 00N_000E,00N_110E -ce loss -p biomass_soil -tcd 30 -ma true -ln "00N_110E test"
+python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
 
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
 run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
 python run_full_model.py -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "00N_110E test"
-
-Run three tiles in biomass_swap sensitivity analysis; don't upload intermediates (forces saving of intermediate outputs);
-run model_extent stage; don't continue after that stage (no run-through); get carbon pools at time of loss; emissions from biomass and soil;
-compare aggregated outputs to specified file (although not used in this specific launch because only the first step runs)
-python run_full_model.py -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Running sensitivity analysis for model v1.2.0"
 
 '''
 

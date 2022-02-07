@@ -1,14 +1,15 @@
 '''
 Creates tiles of when tree cover loss coincides with burning or preceded burning by one year.
 There are four steps to this: 1) acquire raw hdfs from MODIS burned area sftp; 2) make tifs of burned area for
-each year in each MODUS h-v tile; 3) make annual Hansen-style (extent, res, etc.) tiles of burned area;
+each year in each MODIS h-v tile; 3) make annual Hansen-style (extent, res, etc.) tiles of burned area;
 4) make tiles of where TCL and burning coincided (same year or with 1 year lag).
 To update this, steps 1-3 can be run on only the latest year of MODIS burned area product. Only step 4 needs to be run
 on the entire time series. That is, steps 1-3 operate on burned area products separately for each year, so adding
 another year of data won't change steps 1-3 for preceding years.
 
 NOTE: The step in which hdf files are opened and converted to tifs (step 2) requires
-osgeo/gdal:ubuntu-full-X.X.X Docker image. The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
+osgeo/gdal:ubuntu-full-X.X.X Docker image (change in Dockerfile).
+The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
 the hdf files on the ftp site. The rest of the burned area analysis can be done with a 'small' version of the Docker image
 (though that would require terminating the Docker container and restarting it, which would only make sense if the
 analysis was being continued later).
@@ -206,6 +207,8 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
         #     clip_year_tiles.clip_year_tiles(tile_year, no_upload)
 
         uu.print_log("Processing for {} done. Moving to next year.".format(year))
+
+    os.quit()
 
     # Step 4:
     # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
