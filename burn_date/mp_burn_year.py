@@ -139,82 +139,81 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
     # # # For single processor use
     # # for hv_tile in global_grid_hv:
     # #     stack_ba_hv.stack_ba_hv(hv_tile)
+    #
+    #
+    # # Step 3:
+    # # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
+    # # Downloads all MODIS hv tiles from s3,
+    # # makes a mosaic for each year, and warps to Hansen extent.
+    # # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2022 goes from 2001 to 2021).
+    # # This only needs to be done for the most recent year of data.
+    # # NOTE: The first time I ran this for the 2020 TCL update, I got an error about uploading the log to s3
+    # # after most of the tiles were processed. I didn't know why it happened, so I reran the step and it went fine.
+    #
+    # start_year = 2000 + cn.loss_years
+    # end_year = 2000 + cn.loss_years + 1
+    #
+    # # Assumes that only the last year of fires are being processed
+    # for year in range(start_year, end_year):
+    #
+    #     uu.print_log("Processing", year)
+    #
+    #     # Downloads all hv tifs for this year
+    #     include = '{0}_*.tif'.format(year)
+    #     year_tifs_folder = "{}_year_tifs".format(year)
+    #     utilities.makedir(year_tifs_folder)
+    #
+    #     uu.print_log("Downloading MODIS burn date files from s3...")
+    #
+    #     cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
+    #     cmd += ['--recursive', '--exclude', "*", '--include', include]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     uu.print_log("Creating vrt of MODIS files...")
+    #
+    #     vrt_name = "global_vrt_{}.vrt".format(year)
+    #
+    #     # Builds list of vrt files
+    #     with open('vrt_files.txt', 'w') as vrt_files:
+    #         vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
+    #         for tif in vrt_tifs:
+    #             vrt_files.write(tif + "\n")
+    #
+    #     # Creates vrt with wgs84 MODIS tiles.
+    #     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     uu.print_log("Reprojecting vrt...")
+    #
+    #     # Builds new vrt and virtually project it
+    #     # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
+    #     # so I'm leaving it like that.
+    #     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
+    #     cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+    #            '-overwrite', vrt_name, vrt_wgs84]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     # Creates a list of lists, with year and tile id to send to multi processor
+    #     tile_year_list = []
+    #     for tile_id in tile_id_list:
+    #         tile_year_list.append([tile_id, year])
+    #
+    #     # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
+    #     # the global vrt has pixels representing burned or not. This process clips the global VRT
+    #     # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
+    #     # year burned and NoData.
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(processes=count-5)
+    #     pool.map(partial(clip_year_tiles.clip_year_tiles, no_upload=no_upload), tile_year_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #     # # For single processor use
+    #     # for tile_year in tile_year_list:
+    #     #     clip_year_tiles.clip_year_tiles(tile_year, no_upload)
+    #
+    #     uu.print_log("Processing for {} done. Moving to next year.".format(year))
 
-
-    # Step 3:
-    # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
-    # Downloads all MODIS hv tiles from s3,
-    # makes a mosaic for each year, and warps to Hansen extent.
-    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2022 goes from 2001 to 2021).
-    # This only needs to be done for the most recent year of data.
-    # NOTE: The first time I ran this for the 2020 TCL update, I got an error about uploading the log to s3
-    # after most of the tiles were processed. I didn't know why it happened, so I reran the step and it went fine.
-
-    start_year = 2000 + cn.loss_years
-    end_year = 2000 + cn.loss_years + 1
-
-    # Assumes that only the last year of fires are being processed
-    for year in range(start_year, end_year):
-
-        uu.print_log("Processing", year)
-
-        # Downloads all hv tifs for this year
-        include = '{0}_*.tif'.format(year)
-        year_tifs_folder = "{}_year_tifs".format(year)
-        utilities.makedir(year_tifs_folder)
-
-        uu.print_log("Downloading MODIS burn date files from s3...")
-
-        cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
-        cmd += ['--recursive', '--exclude', "*", '--include', include]
-        uu.log_subprocess_output_full(cmd)
-
-        uu.print_log("Creating vrt of MODIS files...")
-
-        vrt_name = "global_vrt_{}.vrt".format(year)
-
-        # Builds list of vrt files
-        with open('vrt_files.txt', 'w') as vrt_files:
-            vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
-            for tif in vrt_tifs:
-                vrt_files.write(tif + "\n")
-
-        # Creates vrt with wgs84 MODIS tiles.
-        cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
-        uu.log_subprocess_output_full(cmd)
-
-        uu.print_log("Reprojecting vrt...")
-
-        # Builds new vrt and virtually project it
-        # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
-        # so I'm leaving it like that.
-        vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
-        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
-               '-overwrite', vrt_name, vrt_wgs84]
-        uu.log_subprocess_output_full(cmd)
-
-        # Creates a list of lists, with year and tile id to send to multi processor
-        tile_year_list = []
-        for tile_id in tile_id_list:
-            tile_year_list.append([tile_id, year])
-
-        # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
-        # the global vrt has pixels representing burned or not. This process clips the global VRT
-        # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
-        # year burned and NoData.
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=count-5)
-        pool.map(partial(clip_year_tiles.clip_year_tiles, no_upload=no_upload), tile_year_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_year in tile_year_list:
-        #     clip_year_tiles.clip_year_tiles(tile_year, no_upload)
-
-        uu.print_log("Processing for {} done. Moving to next year.".format(year))
-
-    os.quit()
 
     # Step 4:
     # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
