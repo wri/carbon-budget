@@ -100,18 +100,24 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
 
     '''
     Downloading the hdf files from the sftp burned area site is done outside the script in the sftp shell on the command line.
-    This will download all the 2021 hdfs to the spot machine. It will take a few minutes before the first
-    hdf is downloaded but then it should go quickly.
+    This will download all the 2021 hdfs to the spot machine. There will be a pause of a few minutes before the first
+    hdf is downloaded but then it should go quickly (5 minutes for 2021 data).
     Change 2021 to other year for future years of downloads. 
     https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf, page 24, section 4.1.3
+
+    Change directory to /app/burn_date/ and download hdfs into burn_date folder:
 
     sftp fire@fuoco.geog.umd.edu
     [For password] burnt
     cd data/MODIS/C6/MCD64A1/HDF
-    ls [to check that it's the folder with all the tile folders]
+    ls [to check that it's the folder with all the h-v tile folders]
     get h??v??/MCD64A1.A2021*
     bye    //exits the stfp shell
+    
+    Before moving to the next step, confirm that all months of burned area data were downloaded. 
+    The last month will have the format MCD64A1.A20**336.h... or so.
     '''
+
 
     # Uploads the latest year of raw burn area hdfs to s3.
     # All hdfs go in this folder
