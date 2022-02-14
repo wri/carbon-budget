@@ -119,26 +119,26 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
     '''
 
 
-    # Uploads the latest year of raw burn area hdfs to s3.
-    # All hdfs go in this folder
-    cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
-    uu.log_subprocess_output_full(cmd)
-
-
-    # Step 2:
-    # Makes burned area rasters for each year for each MODIS horizontal-vertical tile.
-    # This only needs to be done for the most recent year of data (set in stach_ba_hv).
-    uu.print_log("Stacking hdf into MODIS burned area tifs by year and MODIS hv tile...")
-
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=count - 10)
-    pool.map(stack_ba_hv.stack_ba_hv, global_grid_hv)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for hv_tile in global_grid_hv:
-    #     stack_ba_hv.stack_ba_hv(hv_tile)
+    # # Uploads the latest year of raw burn area hdfs to s3.
+    # # All hdfs go in this folder
+    # cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
+    # uu.log_subprocess_output_full(cmd)
+    #
+    #
+    # # Step 2:
+    # # Makes burned area rasters for each year for each MODIS horizontal-vertical tile.
+    # # This only needs to be done for the most recent year of data (set in stach_ba_hv).
+    # uu.print_log("Stacking hdf into MODIS burned area tifs by year and MODIS hv tile...")
+    #
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=count - 10)
+    # pool.map(stack_ba_hv.stack_ba_hv, global_grid_hv)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for hv_tile in global_grid_hv:
+    # #     stack_ba_hv.stack_ba_hv(hv_tile)
 
 
     # Step 3:
@@ -189,7 +189,7 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
         # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
         # so I'm leaving it like that.
         vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
-        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', cn.Hansen_res, cn.Hansen_res,
+        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-overwrite', vrt_name, vrt_wgs84]
         uu.log_subprocess_output_full(cmd)
 
