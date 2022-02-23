@@ -243,17 +243,18 @@ def check_storage():
 
 
 def check_memory():
-
     """
-    Obtains the absolute number of RAM bytes currently in use by the system.
+    Obtains the absolute number of RAM gigabytes currently in use by the system.
     :returns: System RAM usage in gigabytes.
     :rtype: int
     https://www.pragmaticlinux.com/2020/12/monitor-cpu-and-ram-usage-in-python-with-psutil/
     The outputs from this don't exactly match the memory shown in htop but I think it's close enough to be useful.
+    It seems to slightly over-estimate memory usage (by ~1-2 GB).
     """
     used_memory = (psutil.virtual_memory().total - psutil.virtual_memory().available)/1024/1024/1000
     total_memory = psutil.virtual_memory().total/1024/1024/1000
-    print_log(f"Memory usage is: {used_memory} GB out of {total_memory}")
+    percent_memory = used_memory/total_memory*100
+    print_log(f"Memory usage is: {round(used_memory,2)} GB out of {round(total_memory,2)} = {round(percent_memory,1)}% usage")
 
 
 # Not currently using because it shows 1 when using with multiprocessing
@@ -1028,10 +1029,12 @@ def get_raster_nodata_value(tile):
 # Prints information about the tile that was just processed: how long it took and how many tiles have been completed
 def end_of_fx_summary(start, tile_id, pattern, no_upload):
 
+    # Checking memory at this point (end of the function) seems to record memory usage when it is at its peak
+    check_memory()
+
     end = datetime.datetime.now()
     elapsed_time = end-start
     print_log("Processing time for tile", tile_id, ":", elapsed_time)
-    check_memory()
 
     count_completed_tiles(pattern)
 
