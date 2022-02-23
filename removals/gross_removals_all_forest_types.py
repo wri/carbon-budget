@@ -86,6 +86,8 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
     cumulative_gain_AGCO2_BGCO2_dst.update_tags(
         extent='Full model extent')
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 

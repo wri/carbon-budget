@@ -9,7 +9,6 @@ pixels and mangrove pixels outside of (PRODES extent AND WHRC AGB) are not inclu
 
 
 import multiprocessing
-import tracemalloc
 from functools import partial
 import pandas as pd
 import datetime

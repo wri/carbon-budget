@@ -8,12 +8,10 @@ import rasterio
 import logging
 import csv
 import psutil
-import functools
 from shutil import copyfile
 import os
 import multiprocessing
 from multiprocessing.pool import Pool
-from functools import partial
 from shutil import copy
 import re
 import pandas as pd
@@ -242,19 +240,20 @@ def check_storage():
                  "; Percent storage used:", percent_storage_used)
 
 
+# Obtains the absolute number of RAM gigabytes currently in use by the entire system (all processors).
+# https://www.pragmaticlinux.com/2020/12/monitor-cpu-and-ram-usage-in-python-with-psutil/
+# The outputs from this don't exactly match the memory shown in htop but I think it's close enough to be useful.
+# It seems to slightly over-estimate memory usage (by ~1-2 GB).
 def check_memory():
-    """
-    Obtains the absolute number of RAM gigabytes currently in use by the system.
-    :returns: System RAM usage in gigabytes.
-    :rtype: int
-    https://www.pragmaticlinux.com/2020/12/monitor-cpu-and-ram-usage-in-python-with-psutil/
-    The outputs from this don't exactly match the memory shown in htop but I think it's close enough to be useful.
-    It seems to slightly over-estimate memory usage (by ~1-2 GB).
-    """
+
     used_memory = (psutil.virtual_memory().total - psutil.virtual_memory().available)/1024/1024/1000
     total_memory = psutil.virtual_memory().total/1024/1024/1000
     percent_memory = used_memory/total_memory*100
     print_log(f"Memory usage is: {round(used_memory,2)} GB out of {round(total_memory,2)} = {round(percent_memory,1)}% usage")
+
+    if percent_memory > 93:
+        print_log("WARNING: MEMORY USAGE DANGEROUSLY HIGH! TERMINATING PROGRAM.")  # Not sure if this is necessary
+        exception_log("EXCEPTION: MEMORY USAGE DANGEROUSLY HIGH! TERMINATING PROGRAM.")
 
 
 # Not currently using because it shows 1 when using with multiprocessing
@@ -1432,6 +1431,7 @@ def rewindow(tile_id, download_pattern_name, no_upload):
         in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
         out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
 
+    check_memory()
 
     # Only rewindows if the tile exists
     if os.path.exists(in_tile):

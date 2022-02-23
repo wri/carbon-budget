@@ -15,6 +15,8 @@ def calc_emissions(tile_id, emitted_pools, sensit_type, folder, no_upload):
 
     start = datetime.datetime.now()
 
+    uu.check_memory()
+
     # Runs the correct c++ script given the emitted_pools (biomass+soil or soil_only) and model type selected.
     # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.

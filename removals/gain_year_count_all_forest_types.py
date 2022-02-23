@@ -27,11 +27,13 @@ def create_gain_year_count_loss_only(tile_id, sensit_type, no_upload):
 
     uu.print_log("Gain year count for loss only pixels:", tile_id)
 
+    # Names of the loss, gain and tree cover density tiles
+    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+
     # start time
     start = datetime.datetime.now()
 
-    # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    uu.check_memory()
 
     if os.path.exists(loss):
         uu.print_log("Loss tile found for {}. Using it in loss only pixel gain year count.".format(tile_id))
@@ -53,11 +55,13 @@ def create_gain_year_count_gain_only_standard(tile_id, sensit_type, no_upload):
 
     uu.print_log("Gain year count for gain only pixels using standard function:", tile_id)
 
+    # Names of the loss, gain and tree cover density tiles
+    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+
     # start time
     start = datetime.datetime.now()
 
-    # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    uu.check_memory()
 
     if os.path.exists(loss):
         uu.print_log("Loss tile found for {}. Using it in gain only pixel gain year count.".format(tile_id))
@@ -90,6 +94,8 @@ def create_gain_year_count_gain_only_maxgain(tile_id, sensit_type, no_upload):
 
     # start time
     start = datetime.datetime.now()
+
+    uu.check_memory()
 
     if os.path.exists(loss):
         uu.print_log("Loss tile found for {}. Using it in gain only pixel gain year count.".format(tile_id))
@@ -124,6 +130,8 @@ def create_gain_year_count_no_change_standard(tile_id, sensit_type, no_upload):
     # start time
     start = datetime.datetime.now()
 
+    uu.check_memory()
+
     if os.path.exists(loss):
         uu.print_log("Loss tile found for {}. Using it in no change pixel gain year count.".format(tile_id))
         no_change_calc = '--calc=(A==0)*(B==0)*(C>0)*{}'.format(cn.loss_years)
@@ -157,6 +165,8 @@ def create_gain_year_count_no_change_legal_Amazon_loss(tile_id, sensit_type, no_
     # start time
     start = datetime.datetime.now()
 
+    uu.check_memory()
+
     # For unclear reasons, gdal_calc doesn't register the 0 (NoData) pixels in the loss tile, so I have to convert it
     # to a vrt so that the 0 pixels are recognized.
     # This was the case with PRODES loss in model v.1.1.2.
@@ -187,6 +197,8 @@ def create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type, no_uploa
     # start time
     start = datetime.datetime.now()
 
+    uu.check_memory()
+
     if os.path.exists(loss):
         uu.print_log("Loss tile found for {}. Using it in loss and gain pixel gain year count.".format(tile_id))
         loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C>0)*((A-1)+floor(({}+1-A)/2)))'.format(cn.loss_years)
@@ -213,6 +225,8 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id, sensit_type, no_upload
 
     # start time
     start = datetime.datetime.now()
+
+    uu.check_memory()
 
     if os.path.exists(loss):
         uu.print_log("Loss tile found for {}. Using it in loss and gain pixel gain year count".format(tile_id))
@@ -299,6 +313,8 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type, no_upload):
             source='Gain years are assigned based on the combination of Hansen loss and gain in each pixel. There are four combinations: neither loss nor gain, loss only, gain only, loss and gain.')
         gain_year_count_merged_dst.update_tags(
             extent='Full model extent')
+
+        uu.check_memory()
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:

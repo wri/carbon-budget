@@ -73,6 +73,8 @@ def aggregate(tile, thresh, sensit_type, no_upload):
 
     out_raster = "{0}_{1}_0_4deg.tif".format(tile_id, tile_type)
 
+    uu.check_memory()
+
     # Iterates across the windows (160x160 30m pixels) of the input tile
     for idx, window in windows:
 

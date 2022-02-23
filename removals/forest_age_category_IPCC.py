@@ -116,6 +116,8 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_uploa
 
         uu.print_log("    Assigning IPCC age categories for", tile_id)
 
+        uu.check_memory()
+
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
 

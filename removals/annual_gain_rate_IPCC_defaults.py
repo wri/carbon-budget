@@ -95,6 +95,8 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     dst_stdev_above.update_tags(
         extent='Full model extent, even though these standard deviations will not be used over the full model extent')
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 

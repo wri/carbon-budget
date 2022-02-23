@@ -162,6 +162,8 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
 
     uu.print_log("  Creating aboveground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
@@ -325,6 +327,8 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
         uu.print_log("    No Removal forest type tile found for", tile_id)
 
     uu.print_log("  Creating belowground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -499,6 +503,8 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         uu.print_log("    No Continent-ecozone tile found for", tile_id)
 
     uu.print_log("  Creating deadwood and litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -732,6 +738,8 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
 
     uu.print_log("  Creating soil carbon density for loss pixels in {}...".format(tile_id))
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
@@ -832,6 +840,8 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
 
 
     uu.print_log("  Creating total carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:

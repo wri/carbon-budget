@@ -73,6 +73,8 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
     net_flux_dst.update_tags(
         scale='Negative values are net sinks. Positive values are net sources.')
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 

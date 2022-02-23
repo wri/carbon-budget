@@ -112,6 +112,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
         per_pixel_forest_extent_dst.update_tags(
             scale='Negative values are net sinks. Positive values are net sources.')
 
+    uu.check_memory()
 
     # Iterates across the windows of the input tiles
     for idx, window in windows:
