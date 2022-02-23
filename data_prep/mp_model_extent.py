@@ -9,6 +9,7 @@ pixels and mangrove pixels outside of (PRODES extent AND WHRC AGB) are not inclu
 
 
 import multiprocessing
+import tracemalloc
 from functools import partial
 import pandas as pd
 import datetime
@@ -21,6 +22,7 @@ import constants_and_names as cn
 import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'data_prep'))
 import model_extent
+
 
 def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None):
 
@@ -84,9 +86,9 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
     if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
+
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
@@ -159,9 +161,15 @@ if __name__ == '__main__':
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
 
+    # tracemalloc.start()
+
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_model_extent(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+
+    # current, peak = tracemalloc.get_traced_memory()
+    # print(f"Current memory usage is {current / 10 ** 6}MB; Peak was {peak / 10 ** 6}MB")
+    # tracemalloc.stop()
 

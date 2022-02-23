@@ -7,6 +7,8 @@ import datetime
 import rasterio
 import logging
 import csv
+import psutil
+import functools
 from shutil import copyfile
 import os
 import multiprocessing
@@ -238,6 +240,39 @@ def check_storage():
     percent_storage_used = df_output_lines[5][4]
     print_log("Storage used:", used_storage, "; Available storage:", available_storage,
                  "; Percent storage used:", percent_storage_used)
+
+
+def check_memory():
+
+    """
+    Obtains the absolute number of RAM bytes currently in use by the system.
+    :returns: System RAM usage in gigabytes.
+    :rtype: int
+    https://www.pragmaticlinux.com/2020/12/monitor-cpu-and-ram-usage-in-python-with-psutil/
+    The outputs from this don't exactly match the memory shown in htop but I think it's close enough to be useful.
+    """
+    used_memory = (psutil.virtual_memory().total - psutil.virtual_memory().available)/1024/1024/1000
+    total_memory = psutil.virtual_memory().total/1024/1024/1000
+    print_log(f"Memory usage is: {used_memory} GB out of {total_memory}")
+
+
+# Not currently using because it shows 1 when using with multiprocessing
+# (although it seems to work fine when not using multiprocessing)
+def counter(func):
+    """
+    A decorator that counts and prints the number of times a function has been executed
+    https://stackoverflow.com/a/1594484 way down at the bottom of the post in the examples section
+    """
+
+    @functools.wraps(func)
+    def wrapper_count(*args, **kwargs):
+        wrapper_count.count = wrapper_count.count + 1
+        print("Number of times {0} has been used: {1}".format(func.__name__, wrapper_count.count))
+        res = func(*args, **kwargs)
+        return res
+
+    wrapper_count.count = 0
+    return wrapper_count
 
 
 # Gets the tile id from the full tile name using a regular expression
@@ -996,6 +1031,8 @@ def end_of_fx_summary(start, tile_id, pattern, no_upload):
     end = datetime.datetime.now()
     elapsed_time = end-start
     print_log("Processing time for tile", tile_id, ":", elapsed_time)
+    check_memory()
+
     count_completed_tiles(pattern)
 
     # If no_upload flag is not activated, log is uploaded

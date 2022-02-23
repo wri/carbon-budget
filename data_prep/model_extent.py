@@ -8,6 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+# @uu.counter
 def model_extent(tile_id, pattern, sensit_type, no_upload):
 
     # I don't know why, but this needs to be here and not just in mp_model_extent
@@ -103,6 +104,8 @@ def model_extent(tile_id, pattern, sensit_type, no_upload):
 
 
         uu.print_log("  Creating model extent for {}".format(tile_id))
+
+        uu.check_memory()
 
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
