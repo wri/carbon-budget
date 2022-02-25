@@ -41,11 +41,28 @@ RUN mkdir -p ${TILES}
 WORKDIR ${DIR}
 COPY . .
 
-# set environment variables
+
+# Set environment variables
 ENV AWS_SHARED_CREDENTIALS_FILE $SECRETS_PATH/.aws/credentials
 ENV AWS_CONFIG_FILE $SECRETS_PATH/.aws/config
+# https://www.postgresql.org/docs/current/libpq-envars.html
+ENV PGUSER postgres
+ENV PGDATABASE=ubuntu
 
-# Install missing python dependencies
+
+#######################################
+# Activate postgres and enable connection to it
+# Copies config file that allows user postgres to enter psql shell,
+# as shown here: https://stackoverflow.com/a/26735105 (change peer to trust).
+# Commented out the start/restart commands because even with running them, postgres isn't running when the container is created.
+# So there's no point in starting posgres here if it's not active when the instance opens.
+#######################################
+RUN cp pg_hba.conf /etc/postgresql/10/main/
+# RUN pg_ctlcluster 10 main start
+# RUN service postgresql restart
+
+
+# Install missing Python dependencies
 RUN pip3 install -r requirements.txt
 
 # Link gdal libraries
@@ -59,10 +76,10 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN git config --global user.email dagibbs22@gmail.com
 
 ## Check out the branch that I'm currently using for model development
-#RUN git checkout model_v_1.2.1
+#RUN git checkout model_v_1.2.2
 #
 ## Makes sure the latest version of the current branch is downloaded
-#RUN git pull origin model_v_1.2.1
+#RUN git pull origin model_v_1.2.2
 
 ## Compile C++ scripts
 #RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
