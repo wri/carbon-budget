@@ -46,10 +46,10 @@ command line argument. Supply the rest of the global tiles (the unchanged tiles)
 '''
 
 """
-### Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
-### of commands than as a script. Below are the instructions for creating a single PostGIS table of all plantations.
-### This assumes that the plantation gdb has one feature class for each country with plantations and that
-### each country's feature class's attribute table has a growth rate column named "growth".
+Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
+of commands than as a script. Below are the instructions for creating a single PostGIS table of all plantations.
+This assumes that the plantation gdb has one feature class for each country with plantations and that
+each country's feature class's attribute table has a growth rate column named "growth".
 
 # Start a r5d.24xlarge spot machine
 spotutil new r5d.24xlarge dgibbs_wri
@@ -68,7 +68,8 @@ service postgresql restart
 pg_lsclusters
 
 # Create a postgres database called ubuntu. I tried adding RUN createdb ubuntu to the Dockerfile after RUN service postgresql restart
-# but got the error: createdb: could not connect to database template1: could not connect to server: No such file or directory.
+# but got the error: 
+# createdb: could not connect to database template1: could not connect to server: No such file or directory.
 #         Is the server running locally and accepting
 # So I'm adding that step here.
 createdb ubuntu
