@@ -3,7 +3,7 @@ Clone repositoroy:
 git clone https://github.com/wri/carbon-budget
 
 Create spot machine using spotutil:
-spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
+spotutil new r5d.24xlarge dgibbs_wri
 
 Compile C++ emissions modulte (for standard model and sensitivity analyses that using standard emissions model)
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
