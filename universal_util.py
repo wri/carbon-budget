@@ -251,7 +251,7 @@ def check_memory():
     percent_memory = used_memory/total_memory*100
     print_log(f"Memory usage is: {round(used_memory,2)} GB out of {round(total_memory,2)} = {round(percent_memory,1)}% usage")
 
-    if percent_memory > 93:
+    if percent_memory > 96:
         print_log("WARNING: MEMORY USAGE DANGEROUSLY HIGH! TERMINATING PROGRAM.")  # Not sure if this is necessary
         exception_log("EXCEPTION: MEMORY USAGE DANGEROUSLY HIGH! TERMINATING PROGRAM.")
 
