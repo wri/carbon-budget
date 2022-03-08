@@ -304,7 +304,9 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
             if sensit_type == 'biomass_swap':
                 processes = 10  # 10 processors = XXX GB peak
             else:
-                processes = 15  # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly); 15 = 700 GB peak
+                # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly);
+                # 15 = 700 GB peak once but also too much memory another time, so back to 14
+                processes = 14
         else: # For 2000, or loss & 2000
             ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
             ### There wouldn't have been enough room for all deadwood and litter otherwise.

@@ -3,17 +3,34 @@ yum install -y rsync git nano htop tmux
 
 #######################################
 # Mount the ephemeral SSD storage.
-# If two volumes exist, merge them and mount jointly.
-# If one volume exists, just mount that.
+# If four volumes exist, merge them and mount jointly.
+# If only two volumes exist, merge them and mount jointly.
+# If only one volume exists, just mount that.
+# Regardless of how many volumes there are, the name of the folder they are mounted to is the same.
 #######################################
 # Name of the second volume (if it exists)
-SSD=nvme2n1
+SSD2=nvme2n1
+
+# Name of the fourth volume (if it exists)
+SSD4=nvme4n1
 
 # Checks if the second volume exists
-CHECK=$(lsblk -l | grep $SSD)
+CHECK2=$(lsblk -l | grep $SSD2)
 
-# Regardless of whether there are one or two volumes, the name of the folder they are mounted to is the same.
-if [[ $CHECK ]]
+# Checks if the fourth volume exists
+CHECK4=$(lsblk -l | grep $SSD4)
+
+# Checks for four volumes first, then for two volumes
+if [[ $CHECK4 ]]
+then
+  # Fourth SSD volume found
+  # Follows https://objectivefs.com/howto/how-to-raid-ec2-instance-stores
+  sudo mdadm --create --verbose /dev/md0 --level=0 --name=MY_RAID --chunk=64 --raid-devices=4 /dev/nvme1n1 /dev/nvme2n1 /dev/nvme3n1 /dev/nvme4n1  #requires superuser status to use sudo, and doesn't work without sudo
+  sudo mkfs.ext4 -L MY_RAID /dev/md0  #requires sudo to determine file system size
+  sudo mkdir -p /mnt/ext  # doesn’t need sudo but adding for consistency
+  sudo mount -t ext4 /dev/md0 /mnt/ext  # needs sudo because only root can use --types option
+
+elif [[ $CHECK2 ]]
 then
   # Second SSD volume found
   # Follows https://objectivefs.com/howto/how-to-raid-ec2-instance-stores
@@ -21,6 +38,7 @@ then
   sudo mkfs.ext4 -L MY_RAID /dev/md0  #requires sudo to determine file system size
   sudo mkdir -p /mnt/ext  # doesn’t need sudo but adding for consistency
   sudo mount -t ext4 /dev/md0 /mnt/ext  # needs sudo because only root can use --types option
+
 else
   # Only one SSD volume
   mkfs.ext4 /dev/nvme1n1
