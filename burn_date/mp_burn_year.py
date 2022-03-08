@@ -220,7 +220,7 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
     # or preceded TCL by one year.
     # This needs to be done on all years each time burned area is updated.
 
-    # Downloads the loss tiles
+    # Downloads the loss tiles. The step 3 burn year tiles are downloaded within hansen_burnyear
     uu.s3_folder_download(cn.loss_dir, '.', 'std', cn.pattern_loss)
 
     uu.print_log("Extracting burn year data that coincides with tree cover loss...")
