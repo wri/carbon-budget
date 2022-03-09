@@ -632,8 +632,10 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip('\n').split(" "))
             tile_name = line.strip('\n').split(" ")[num - 1]
 
-            # For gain, tcd, and pixel area tiles, which have the tile_id after the the pattern
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
+            # which have the tile_id after the the pattern
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss,
+                           cn.pattern_gain_rewindow, cn.pattern_tcd_rewindow, cn.pattern_pixel_area_rewindow]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -757,10 +759,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log("Source directory used:", source_final)
 
-            # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
             print_log('\n')
@@ -773,10 +775,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log("Source directory used:", source)
 
-            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']            
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
             print_log('\n')
@@ -795,10 +797,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("Tiles with pattern", pattern, "are not on spot machine. Downloading...")
 
-        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-               # '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
         cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+        #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
 
         log_subprocess_output_full(cmd)
 
