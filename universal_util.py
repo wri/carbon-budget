@@ -684,7 +684,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
     if tile_id_list == 'all':
         s3_folder_download(source_dir, dest, sensit_type, pattern)
 
-    # For downloading test tiles (twenty or fewer). Chose 10 because the US removals sensitivity analysis uses 16 tiles.
+    # For downloading test tiles (twenty or fewer).
     elif len(tile_id_list) <= 20:
 
         # Creates a full download name (path and file)
@@ -757,10 +757,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log("Source directory used:", source_final)
 
-            # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
             print_log('\n')
@@ -773,10 +773,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log("Source directory used:", source)
 
-            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']            
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
             print_log('\n')
@@ -795,10 +795,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("Tiles with pattern", pattern, "are not on spot machine. Downloading...")
 
-        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-               # '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
         cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+        #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
 
         log_subprocess_output_full(cmd)
 
@@ -1422,14 +1422,17 @@ def rewindow(tile_id, download_pattern_name, no_upload):
     # start time
     start = datetime.datetime.now()
 
-    # These tiles have the tile_id after the pattern
-    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
-        in_tile = "{0}_{1}.tif".format(download_pattern_name, tile_id)
-        out_tile = "{0}_rewindow_{1}.tif".format(download_pattern_name, tile_id)
+    # # These tiles have the tile_id after the pattern
+    # if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
+    #     in_tile = "{0}_{1}.tif".format(download_pattern_name, tile_id)
+    #     out_tile = "{0}_rewindow_{1}.tif".format(download_pattern_name, tile_id)
+    #
+    # else:
+    #     in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
+    #     out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
 
-    else:
-        in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
-        out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
+    in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
+    out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
 
     check_memory()
 
