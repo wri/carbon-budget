@@ -1424,17 +1424,14 @@ def rewindow(tile_id, download_pattern_name, no_upload):
     # start time
     start = datetime.datetime.now()
 
-    # # These tiles have the tile_id after the pattern
-    # if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
-    #     in_tile = "{0}_{1}.tif".format(download_pattern_name, tile_id)
-    #     out_tile = "{0}_rewindow_{1}.tif".format(download_pattern_name, tile_id)
-    #
-    # else:
-    #     in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
-    #     out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
+    # These tiles have the tile_id after the pattern
+    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
+        in_tile = "{0}_{1}.tif".format(download_pattern_name, tile_id)
+        out_tile = "{0}_rewindow_{1}.tif".format(download_pattern_name, tile_id)
 
-    in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
-    out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
+    else:
+        in_tile = "{0}_{1}.tif".format(tile_id, download_pattern_name)
+        out_tile = "{0}_{1}_rewindow.tif".format(tile_id, download_pattern_name)
 
     check_memory()
 
