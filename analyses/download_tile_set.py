@@ -1,8 +1,15 @@
+'''
+This script downloads the listed tiles and creates overviews for them for easy viewing in ArcMap.
+It must be run in the Docker container, and so tiles are downloaded to and overviewed in the folder of the Docker container where
+all other tiles are downloaded.
+'''
+
 import multiprocessing
 from functools import partial
 import pandas as pd
 import datetime
 import argparse
+import glob
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
@@ -10,11 +17,74 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def download_tile_set(sensit_type, tile_id_list, run_date = None):
+def download_tile_set(sensit_type, tile_id_list):
 
-    print("test")
+    uu.print_log("Downloading all tiles for: ", tile_id_list)
 
+    wd = os.path.join(cn.docker_base_dir,"spot_download")
 
+    os.chdir(wd)
+
+    download_dict = {
+        cn.model_extent_dir: [cn.pattern_model_extent],
+        cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
+        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
+        cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults],
+        cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults],
+        cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
+        cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+        cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types],
+        cn.annual_gain_AGC_BGC_all_types_dir: [cn.pattern_annual_gain_AGC_BGC_all_types],
+        cn.stdev_annual_gain_AGC_all_types_dir: [cn.pattern_stdev_annual_gain_AGC_all_types],
+        cn.gain_year_count_dir: [cn.pattern_gain_year_count],
+        cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types],
+        cn.cumul_gain_BGCO2_all_types_dir: [cn.pattern_cumul_gain_BGCO2_all_types],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        cn.AGC_emis_year_dir: [cn.pattern_AGC_emis_year],
+        cn.BGC_emis_year_dir: [cn.pattern_BGC_emis_year],
+        cn.deadwood_emis_year_2000_dir: [cn.pattern_deadwood_emis_year_2000],
+        cn.litter_emis_year_2000_dir: [cn.pattern_litter_emis_year_2000],
+        cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
+        cn.total_C_emis_year_dir: [cn.pattern_total_C_emis_year],
+
+        # cn.gross_emis_commod_biomass_soil_dir: [cn.pattern_gross_emis_commod_biomass_soil],
+        # cn.gross_emis_shifting_ag_biomass_soil_dir: [cn.pattern_gross_emis_shifting_ag_biomass_soil],
+        # cn.gross_emis_forestry_biomass_soil_dir: [cn.pattern_gross_emis_forestry_biomass_soil],
+        # cn.gross_emis_wildfire_biomass_soil_dir: [cn.pattern_gross_emis_wildfire_biomass_soil],
+        # cn.gross_emis_urban_biomass_soil_dir: [cn.pattern_gross_emis_urban_biomass_soil],
+        # cn.gross_emis_no_driver_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+        cn.gross_emis_co2_only_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil],
+        cn.gross_emis_non_co2_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil],
+        cn.gross_emis_nodes_biomass_soil_dir: [cn.pattern_gross_emis_nodes_biomass_soil],
+        cn.net_flux_dir: [cn.pattern_net_flux],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_forest_extent],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_forest_extent],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent],
+        cn.net_flux_per_pixel_full_extent_dir: [cn.pattern_net_flux_per_pixel_full_extent],
+        cn.net_flux_forest_extent_dir: [cn.pattern_net_flux_forest_extent],
+        cn.net_flux_per_pixel_forest_extent_dir: [cn.pattern_net_flux_per_pixel_forest_extent]
+    }
+
+    # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
+    for key, values in download_dict.items():
+        dir = key
+        pattern = values[0]
+        uu.s3_flexible_download(dir, pattern, wd, sensit_type, tile_id_list)
+
+    tile_list = glob.glob('*tif')
+    uu.print_log("Tiles for pyramiding: ", tile_list)
+
+    for tile in tile_list:
+        uu.print_log("Pyramiding ", tile)
+        cmd = ['gdaladdo', '-ro', tile, '2', '4', '8', '16', '32']
+        uu.log_subprocess_output_full(cmd)
+
+    uu.print_log("Pyramiding done")
 
 
 if __name__ == '__main__':
@@ -41,4 +111,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    download_tile_set(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    download_tile_set(sensit_type=sensit_type, tile_id_list=tile_id_list)
