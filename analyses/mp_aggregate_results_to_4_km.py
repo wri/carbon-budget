@@ -38,8 +38,8 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
     # Files to download for this script
     download_dict = {
-             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+             # cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
              cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
              cn.net_flux_dir: [cn.pattern_net_flux]
              }
