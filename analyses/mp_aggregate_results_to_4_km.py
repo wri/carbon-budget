@@ -81,7 +81,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         uu.s3_flexible_download(dir, download_pattern_name, cn.docker_base_dir, sensit_type, tile_id_list)
-            
+
 
         if tile_id_list == 'all':
             # List of tiles to run in the model
@@ -222,6 +222,12 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
             tile_id = uu.get_tile_id(tile_name)
             os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
             os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
+
+    # Need to delete rewindowed tiles so they aren't confused with the normal tiles for creation of supplementary outputs
+    rewindow_list = glob.glob('*rewindow*tif')
+    for rewindow_tile in rewindow_list:
+        os.remove(rewindow_tile)
+    uu.print_log("Deleted all rewindowed tiles")
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
