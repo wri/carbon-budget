@@ -79,9 +79,11 @@ def download_tile_set(sensit_type, tile_id_list):
     tile_list = glob.glob('*tif')
     uu.print_log("Tiles for pyramiding: ", tile_list)
 
+    # https://gis.stackexchange.com/questions/160459/comparing-use-of-gdal-to-build-raster-pyramids-or-overviews-versus-arcmap
+    # Example 3 from https://gdal.org/programs/gdaladdo.html
     for tile in tile_list:
         uu.print_log("Pyramiding ", tile)
-        cmd = ['gdaladdo', '-ro', tile, '2', '4', '8', '16', '32']
+        cmd = ['gdaladdo', '-ro', '--config COMPRESS_OVERVIEW DEFLATE', tile, '2', '4', '8', '16', '32']
         uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Pyramiding done")
