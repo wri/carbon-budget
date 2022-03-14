@@ -6,6 +6,7 @@ all other tiles are downloaded.
 
 import multiprocessing
 from functools import partial
+from osgeo import gdal
 import pandas as pd
 import datetime
 import argparse
@@ -76,15 +77,21 @@ def download_tile_set(sensit_type, tile_id_list):
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, wd, sensit_type, tile_id_list)
 
+    cmd = ['aws', 's3', 'cp', cn.output_aggreg_dir, wd, '--recursive']
+    uu.log_subprocess_output_full(cmd)
+
     tile_list = glob.glob('*tif')
     uu.print_log("Tiles for pyramiding: ", tile_list)
 
     # https://gis.stackexchange.com/questions/160459/comparing-use-of-gdal-to-build-raster-pyramids-or-overviews-versus-arcmap
     # Example 3 from https://gdal.org/programs/gdaladdo.html
+    # https://stackoverflow.com/questions/33158526/how-to-correctly-use-gdaladdo-in-a-python-program
     for tile in tile_list:
         uu.print_log("Pyramiding ", tile)
-        cmd = ['gdaladdo', '-ro', '--config COMPRESS_OVERVIEW DEFLATE', tile, '2', '4', '8', '16', '32']
-        uu.log_subprocess_output_full(cmd)
+        Image = gdal.Open(tile, 0)  # 0 = read-only, 1 = read-write.
+        gdal.SetConfigOption('COMPRESS_OVERVIEW', 'DEFLATE')
+        Image.BuildOverviews('NEAREST', [2, 4, 8, 16, 32], gdal.TermProgress_nocb)
+        del Image  # close the dataset (Python object and pointers)
 
     uu.print_log("Pyramiding done")
 
