@@ -222,7 +222,7 @@ plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs
 
 # Drivers of tree cover loss
 drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
-pattern_drivers_raw = 'Final_Classification_2021__reproj_nearest_0-005_0-005_deg__20220308.tif'
+pattern_drivers_raw = 'Final_Classification_2021__reproj_nearest_0-005_0-005_deg__20220316.tif'
 pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2021/20220316/')
 
