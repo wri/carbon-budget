@@ -51,8 +51,6 @@ def forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_uploa
         loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
         uu.print_log("Using Hansen loss tile {0} for {1} model run".format(tile_id, sensit_type))
 
-    uu.print_log("  Assigning age categories")
-
     # Opens biomass tile
     with rasterio.open(model_extent) as model_extent_src:
 

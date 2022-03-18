@@ -13,7 +13,7 @@ It converts emissions, removals, and net flux from totals over the model period 
 For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
 The user has to supply a tcd threshold for which forest pixels to include in the results. Defaults to cn.canopy_threshold.
 For sensitivity analysis, the s3 folder with the aggregations for the standard model must be specified.
-sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
+sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
 '''
 
 
@@ -38,9 +38,9 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
     # Files to download for this script
     download_dict = {
-             # cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-             # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
-             # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
+             cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+             cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
              cn.net_flux_dir: [cn.pattern_net_flux]
              }
 
@@ -110,7 +110,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         # from https://stackoverflow.com/questions/12666897/removing-an-item-from-list-matching-a-substring
         tile_list = [i for i in tile_list if not ('hanson_2013' in i)]
         tile_list = [i for i in tile_list if not ('rewindow' in i)]
-        tile_list = [i for i in tile_list if not ('0_4deg' in i)]
+        tile_list = [i for i in tile_list if not ('0_04deg' in i)]
         tile_list = [i for i in tile_list if not ('.ovr' in i)]
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
@@ -169,8 +169,8 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         #     aggregate_results_to_4_km.aggregate(tile, thresh, sensit_type, no_upload)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-        out_vrt = "{}_0_4deg.vrt".format(pattern)
-        os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_0_4deg*.tif'.format(out_vrt, pattern))
+        out_vrt = "{}_0_04deg.vrt".format(pattern)
+        os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_0_04deg*.tif'.format(out_vrt, pattern))
 
         # Creates the output name for the 10km map
         out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, sensit_type)
@@ -221,7 +221,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
         for tile_name in tile_list:
             tile_id = uu.get_tile_id(tile_name)
             os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_0_4deg.tif'.format(tile_id, pattern))
+            os.remove('{0}_{1}_0_04deg.tif'.format(tile_id, pattern))
 
     # Need to delete rewindowed tiles so they aren't confused with the normal tiles for creation of supplementary outputs
     rewindow_list = glob.glob('*rewindow*tif')

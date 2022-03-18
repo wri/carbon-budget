@@ -45,7 +45,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
 
     # Files to download for this script
     download_dict = {
-        # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
         cn.net_flux_dir: [cn.pattern_net_flux]
     }

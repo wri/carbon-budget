@@ -542,7 +542,7 @@ gross_emis_nodes_biomass_soil_dir = '{0}gross_emissions/decision_tree_nodes/biom
 ### Emissions from soil only
 
 # Date to include in the output directory
-emis_run_date_soil_only = '20220316'
+emis_run_date_soil_only = '20220318'
 
 pattern_gross_emis_commod_soil_only = 'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{}'.format(loss_years)
 gross_emis_commod_soil_only_dir = '{0}gross_emissions/commodities/soil_only/standard/{1}/'.format(s3_base_dir, emis_run_date_soil_only)
@@ -618,11 +618,11 @@ net_flux_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_f
 ### 4x4 km aggregation tiles for mapping
 ######
 
-pattern_aggreg = '0_4deg_modelv{}'.format(version_filename)
-pattern_aggreg_sensit_perc_diff = 'net_flux_0_4deg_modelv{}_perc_diff_std'.format(version_filename)
-pattern_aggreg_sensit_sign_change = 'net_flux_0_4deg_modelv{}_sign_change_std'.format(version_filename)
+pattern_aggreg = '0_04deg_modelv{}'.format(version_filename)
+pattern_aggreg_sensit_perc_diff = 'net_flux_0_04deg_modelv{}_perc_diff_std'.format(version_filename)
+pattern_aggreg_sensit_sign_change = 'net_flux_0_04deg_modelv{}_sign_change_std'.format(version_filename)
 
-output_aggreg_dir = os.path.join(s3_base_dir, '0_4deg_output_aggregation/biomass_soil/standard/20220316/')
+output_aggreg_dir = os.path.join(s3_base_dir, '0_04deg_output_aggregation/biomass_soil/standard/20220316/')
 
 
 

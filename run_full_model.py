@@ -227,44 +227,43 @@ def main ():
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
     # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
-    if 'gross_emissions' in actual_stages:
-        if emitted_pools == 'biomass_soil':
-            output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
-                               cn.gross_emis_shifting_ag_biomass_soil_dir,
-                               cn.gross_emis_forestry_biomass_soil_dir,
-                               cn.gross_emis_wildfire_biomass_soil_dir,
-                               cn.gross_emis_urban_biomass_soil_dir,
-                               cn.gross_emis_no_driver_biomass_soil_dir,
-                               cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_nodes_biomass_soil_dir]
+    if emitted_pools == 'biomass_soil':
+        output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
+                           cn.gross_emis_shifting_ag_biomass_soil_dir,
+                           cn.gross_emis_forestry_biomass_soil_dir,
+                           cn.gross_emis_wildfire_biomass_soil_dir,
+                           cn.gross_emis_urban_biomass_soil_dir,
+                           cn.gross_emis_no_driver_biomass_soil_dir,
+                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_nodes_biomass_soil_dir]
 
-        else:
-            output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
-                                   cn.gross_emis_shifting_ag_soil_only_dir,
-                                   cn.gross_emis_forestry_soil_only_dir,
-                                   cn.gross_emis_wildfire_soil_only_dir,
-                                   cn.gross_emis_urban_soil_only_dir,
-                                   cn.gross_emis_no_driver_soil_only_dir,
-                                   cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                                   cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                                   cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                                   cn.gross_emis_nodes_soil_only_dir]
+    else:
+        output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
+                               cn.gross_emis_shifting_ag_soil_only_dir,
+                               cn.gross_emis_forestry_soil_only_dir,
+                               cn.gross_emis_wildfire_soil_only_dir,
+                               cn.gross_emis_urban_soil_only_dir,
+                               cn.gross_emis_no_driver_soil_only_dir,
+                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                               cn.gross_emis_nodes_soil_only_dir]
 
     output_dir_list = output_dir_list + [cn.net_flux_dir]
 
-    if 'create_supplementary_outputs' in actual_stages:
-        output_dir_list = output_dir_list + \
-                        [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
-                        cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
-                        cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir,
-                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir,
-                        cn.gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir,
-                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir,
-                        cn.net_flux_per_pixel_full_extent_dir,
-                        cn.net_flux_forest_extent_dir,
-                        cn.net_flux_per_pixel_forest_extent_dir]
+    # Supplementary outputs
+    output_dir_list = output_dir_list + \
+                    [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir,
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir,
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir,
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir,
+                    cn.net_flux_per_pixel_full_extent_dir,
+                    cn.net_flux_forest_extent_dir,
+                    cn.net_flux_per_pixel_forest_extent_dir]
 
 
     # Creates tiles of annual AGB and BGB removals rate and AGB stdev for mangroves using the standard model

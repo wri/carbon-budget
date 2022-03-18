@@ -19,7 +19,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     # The key in the dictionary is the forest age category decision tree endpoints.
     age_dict = {0: 0, 1: 10000, 2: 20000, 3: 30000}
 
-    uu.print_log("Processing:", tile_id)
+    uu.print_log("Creating IPCC default biomass removals rates and standard deviation for {}".format(tile_id))
 
     # Start time
     start = datetime.datetime.now()
@@ -33,20 +33,18 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     BGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     AGB_IPCC_default_gain_stdev = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
 
-    uu.print_log("  Creating IPCC default biomass removals rates and standard deviation for {}".format(tile_id))
-
     # Opens the input tiles if they exist. kips tile if either input doesn't exist.
     try:
         age_cat_src = rasterio.open(age_cat)
-        uu.print_log("   Age category tile found for {}".format(tile_id))
+        uu.print_log("  Age category tile found for {}".format(tile_id))
     except:
-        return uu.print_log("   No age category tile found for {}. Skipping tile.".format(tile_id))
+        return uu.print_log("  No age category tile found for {}. Skipping tile.".format(tile_id))
 
     try:
         cont_eco_src = rasterio.open(cont_eco)
-        uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
+        uu.print_log("  Continent-ecozone tile found for {}".format(tile_id))
     except:
-        return uu.print_log("   No continent-ecozone tile found for {}. Skipping tile.".format(tile_id))
+        return uu.print_log("  No continent-ecozone tile found for {}. Skipping tile.".format(tile_id))
 
     # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
     kwargs = cont_eco_src.meta

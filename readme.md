@@ -239,7 +239,7 @@ Run three tiles in biomass_swap sensitivity analysis; don't upload intermediates
 run model_extent stage; don't continue after that stage (no run-through); get carbon pools at time of loss; emissions from biomass and soil;
 compare aggregated outputs to specified file (although not used in this specific launch because only the first step runs):
 
-`python run_full_model.py -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
+`python run_full_model.py -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
 
 
 ##### Running the emissions model
