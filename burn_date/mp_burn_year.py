@@ -1,14 +1,15 @@
 '''
 Creates tiles of when tree cover loss coincides with burning or preceded burning by one year.
 There are four steps to this: 1) acquire raw hdfs from MODIS burned area sftp; 2) make tifs of burned area for
-each year in each MODUS h-v tile; 3) make annual Hansen-style (extent, res, etc.) tiles of burned area;
+each year in each MODIS h-v tile; 3) make annual Hansen-style (extent, res, etc.) tiles of burned area;
 4) make tiles of where TCL and burning coincided (same year or with 1 year lag).
 To update this, steps 1-3 can be run on only the latest year of MODIS burned area product. Only step 4 needs to be run
 on the entire time series. That is, steps 1-3 operate on burned area products separately for each year, so adding
 another year of data won't change steps 1-3 for preceding years.
 
 NOTE: The step in which hdf files are opened and converted to tifs (step 2) requires
-osgeo/gdal:ubuntu-full-X.X.X Docker image. The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
+osgeo/gdal:ubuntu-full-X.X.X Docker image (change in Dockerfile).
+The "small' Docker image doesn't have an hdf driver in gdal, so it can't read
 the hdf files on the ftp site. The rest of the burned area analysis can be done with a 'small' version of the Docker image
 (though that would require terminating the Docker container and restarting it, which would only make sense if the
 analysis was being continued later).
@@ -99,115 +100,127 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
 
     '''
     Downloading the hdf files from the sftp burned area site is done outside the script in the sftp shell on the command line.
-    This will download all the 2020 hdfs to the spot machine. It will take a few minutes before the first
-    hdf is downloaded but then it should go quickly.
-    Change 2020 to other year for future years of downloads. 
+    This will download all the 2021 hdfs to the spot machine. There will be a pause of a few minutes before the first
+    hdf is downloaded but then it should go quickly (5 minutes for 2021 data).
+    Change 2021 to other year for future years of downloads. 
     https://modis-fire.umd.edu/files/MODIS_C6_BA_User_Guide_1.3.pdf, page 24, section 4.1.3
+
+    Change directory to /app/burn_date/ and download hdfs into burn_date folder:
 
     sftp fire@fuoco.geog.umd.edu
     [For password] burnt
     cd data/MODIS/C6/MCD64A1/HDF
-    ls [to check that it's the folder with all the tile folders]
-    get h??v??/MCD64A1.A2020*
+    ls [to check that it's the folder with all the h-v tile folders]
+    get h??v??/MCD64A1.A2021*
     bye    //exits the stfp shell
+    
+    Before moving to the next step, confirm that all months of burned area data were downloaded. 
+    The last month will have the format MCD64A1.A20**336.h... or so.
     '''
 
-    # Uploads the latest year of raw burn area hdfs to s3.
-    # All hdfs go in this folder
-    cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
-    uu.log_subprocess_output_full(cmd)
 
+    # # Uploads the latest year of raw burn area hdfs to s3.
+    # # All hdfs go in this folder
+    # cmd = ['aws', 's3', 'cp', '{0}/burn_date/'.format(cn.docker_app), cn.burn_year_hdf_raw_dir, '--recursive', '--exclude', '*', '--include', '*hdf']
+    # uu.log_subprocess_output_full(cmd)
+    #
+    #
+    # # Step 2:
+    # # Makes burned area rasters for each year for each MODIS horizontal-vertical tile.
+    # # This only needs to be done for the most recent year of data (set in stach_ba_hv).
+    # uu.print_log("Stacking hdf into MODIS burned area tifs by year and MODIS hv tile...")
+    #
+    # count = multiprocessing.cpu_count()
+    # pool = multiprocessing.Pool(processes=count - 10)
+    # pool.map(stack_ba_hv.stack_ba_hv, global_grid_hv)
+    # pool.close()
+    # pool.join()
+    #
+    # # # For single processor use
+    # # for hv_tile in global_grid_hv:
+    # #     stack_ba_hv.stack_ba_hv(hv_tile)
+    #
+    #
+    # # Step 3:
+    # # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
+    # # Downloads all MODIS hv tiles from s3,
+    # # makes a mosaic for each year, and warps to Hansen extent.
+    # # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2022 goes from 2001 to 2021).
+    # # This only needs to be done for the most recent year of data.
+    # # NOTE: The first time I ran this for the 2020 TCL update, I got an error about uploading the log to s3
+    # # after most of the tiles were processed. I didn't know why it happened, so I reran the step and it went fine.
+    #
+    # start_year = 2000 + cn.loss_years
+    # end_year = 2000 + cn.loss_years + 1
+    #
+    # # Assumes that only the last year of fires are being processed
+    # for year in range(start_year, end_year):
+    #
+    #     uu.print_log("Processing", year)
+    #
+    #     # Downloads all hv tifs for this year
+    #     include = '{0}_*.tif'.format(year)
+    #     year_tifs_folder = "{}_year_tifs".format(year)
+    #     utilities.makedir(year_tifs_folder)
+    #
+    #     uu.print_log("Downloading MODIS burn date files from s3...")
+    #
+    #     cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
+    #     cmd += ['--recursive', '--exclude', "*", '--include', include]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     uu.print_log("Creating vrt of MODIS files...")
+    #
+    #     vrt_name = "global_vrt_{}.vrt".format(year)
+    #
+    #     # Builds list of vrt files
+    #     with open('vrt_files.txt', 'w') as vrt_files:
+    #         vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
+    #         for tif in vrt_tifs:
+    #             vrt_files.write(tif + "\n")
+    #
+    #     # Creates vrt with wgs84 MODIS tiles.
+    #     cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     uu.print_log("Reprojecting vrt...")
+    #
+    #     # Builds new vrt and virtually project it
+    #     # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
+    #     # so I'm leaving it like that.
+    #     vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
+    #     cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+    #            '-overwrite', vrt_name, vrt_wgs84]
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     # Creates a list of lists, with year and tile id to send to multi processor
+    #     tile_year_list = []
+    #     for tile_id in tile_id_list:
+    #         tile_year_list.append([tile_id, year])
+    #
+    #     # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
+    #     # the global vrt has pixels representing burned or not. This process clips the global VRT
+    #     # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
+    #     # year burned and NoData.
+    #     count = multiprocessing.cpu_count()
+    #     pool = multiprocessing.Pool(processes=count-5)
+    #     pool.map(partial(clip_year_tiles.clip_year_tiles, no_upload=no_upload), tile_year_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    #     # # For single processor use
+    #     # for tile_year in tile_year_list:
+    #     #     clip_year_tiles.clip_year_tiles(tile_year, no_upload)
+    #
+    #     uu.print_log("Processing for {} done. Moving to next year.".format(year))
 
-    # Step 2:
-    # Makes burned area rasters for each year for each MODIS horizontal-vertical tile.
-    # This only needs to be done for the most recent year of data (set in stach_ba_hv).
-    uu.print_log("Stacking hdf into MODIS burned area tifs by year and MODIS hv tile...")
-
-    count = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=count - 10)
-    pool.map(stack_ba_hv.stack_ba_hv, global_grid_hv)
-    pool.close()
-    pool.join()
-
-    # # For single processor use
-    # for hv_tile in global_grid_hv:
-    #     stack_ba_hv.stack_ba_hv(hv_tile)
-
-
-    # Step 3:
-    # Creates a 10x10 degree wgs 84 tile of .00025 res burned year.
-    # Downloads all MODIS hv tiles from s3,
-    # makes a mosaic for each year, and warps to Hansen extent.
-    # Range is inclusive at lower end and exclusive at upper end (e.g., 2001, 2021 goes from 2001 to 2020).
-    # This only needs to be done for the most recent year of data.
-    # NOTE: The first time I ran this for the 2020 TCL update, I got an error about uploading the log to s3
-    # after most of the tiles were processed. I didn't know why it happened, so I reran the step and it went fine.
-    for year in range(2020, 2021):
-
-        uu.print_log("Processing", year)
-
-        # Downloads all hv tifs for this year
-        include = '{0}_*.tif'.format(year)
-        year_tifs_folder = "{}_year_tifs".format(year)
-        utilities.makedir(year_tifs_folder)
-
-        uu.print_log("Downloading MODIS burn date files from s3...")
-
-        cmd = ['aws', 's3', 'cp', cn.burn_year_stacked_hv_tif_dir, year_tifs_folder]
-        cmd += ['--recursive', '--exclude', "*", '--include', include]
-        uu.log_subprocess_output_full(cmd)
-
-        uu.print_log("Creating vrt of MODIS files...")
-
-        vrt_name = "global_vrt_{}.vrt".format(year)
-
-        # Builds list of vrt files
-        with open('vrt_files.txt', 'w') as vrt_files:
-            vrt_tifs = glob.glob(year_tifs_folder + "/*.tif")
-            for tif in vrt_tifs:
-                vrt_files.write(tif + "\n")
-
-        # Creates vrt with wgs84 MODIS tiles.
-        cmd = ['gdalbuildvrt', '-input_file_list', 'vrt_files.txt', vrt_name]
-        uu.log_subprocess_output_full(cmd)
-
-        uu.print_log("Reprojecting vrt...")
-
-        # Builds new vrt and virtually project it
-        # This reprojection could be done as part of the clip_year_tiles function but Sam had it out here like this and
-        # so I'm leaving it like that.
-        vrt_wgs84 = 'global_vrt_{}_wgs84.vrt'.format(year)
-        cmd = ['gdalwarp', '-of', 'VRT', '-t_srs', "EPSG:4326", '-tap', '-tr', '.00025', '.00025', '-overwrite',
-               vrt_name, vrt_wgs84]
-        uu.log_subprocess_output_full(cmd)
-
-        # Creates a list of lists, with year and tile id to send to multi processor
-        tile_year_list = []
-        for tile_id in tile_id_list:
-            tile_year_list.append([tile_id, year])
-
-        # Given a list of tiles and years ['00N_000E', 2017] and a VRT of burn data,
-        # the global vrt has pixels representing burned or not. This process clips the global VRT
-        # and changes the pixel value to represent the year the pixel was burned. Each tile has value of
-        # year burned and NoData.
-        count = multiprocessing.cpu_count()
-        pool = multiprocessing.Pool(processes=count-5)
-        pool.map(partial(clip_year_tiles.clip_year_tiles, no_upload=no_upload), tile_year_list)
-        pool.close()
-        pool.join()
-
-        # # For single processor use
-        # for tile_year in tile_year_list:
-        #     clip_year_tiles.clip_year_tiles(tile_year, no_upload)
-
-        uu.print_log("Processing for {} done. Moving to next year.".format(year))
 
     # Step 4:
     # Creates a single Hansen tile covering all years that represents where burning coincided with tree cover loss
     # or preceded TCL by one year.
     # This needs to be done on all years each time burned area is updated.
 
-    # Downloads the loss tiles
+    # Downloads the loss tiles. The step 3 burn year tiles are downloaded within hansen_burnyear
     uu.s3_folder_download(cn.loss_dir, '.', 'std', cn.pattern_loss)
 
     uu.print_log("Extracting burn year data that coincides with tree cover loss...")

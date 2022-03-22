@@ -21,7 +21,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = True):
+def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -172,6 +172,8 @@ def mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = No
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
+
+        print("in upload area")
 
         # Intermediate output tiles for checking outputs
         uu.upload_final_set(output_dir_list[0], "growth_years_loss_only")

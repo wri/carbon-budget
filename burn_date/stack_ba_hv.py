@@ -11,7 +11,11 @@ import universal_util as uu
 
 def stack_ba_hv(hv_tile):
 
-    for year in range(2020, 2021): # End year is not included in burn year product
+    start_year = 2000 + cn.loss_years
+    end_year = 2000 + cn.loss_years + 1
+
+    # Assumes that only the last year of fires are being processed
+    for year in range(start_year, end_year): # End year is not included in burn year product
 
         # Download hdf files from s3 into folders by h and v
         output_dir = utilities.makedir('{0}/{1}/raw/'.format(hv_tile, year))

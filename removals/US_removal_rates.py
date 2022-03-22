@@ -79,7 +79,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             ### For removal factors
 
-            # Creates empty windows (arrays) that will store gain rates. There are separate arrays for
+            # Creates empty windows (arrays) that will store removals rates. There are separate arrays for
             # no Hansen gain pixels and for Hansen gain pixels. These are later combined.
             # Pixels without and with Hansen gain are treated separately because gain pixels automatically get the youngest
             # removal rate, regardless of their age category.
@@ -98,8 +98,8 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             group_region_age_combined_window = np.ma.masked_where(US_region_window == 0, group_region_age_combined_window).filled(0)
             group_region_age_combined_window = np.ma.masked_where(gain_window != 0, group_region_age_combined_window).filled(0)
 
-            # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
-            # get annual gain rates (Mg AGC+BGC/ha/yr) for each non-Hansen gain pixel
+            # Applies the dictionary of group-region-age removals rates to the group-region-age numpy array to
+            # get annual removals rates (Mg AGC+BGC/ha/yr) for each non-Hansen gain pixel
             for key, value in gain_table_group_region_age_dict.items():
                 agc_bgc_without_gain_pixel_window[group_region_age_combined_window == key] = value
 
@@ -118,8 +118,8 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             group_region_combined_window = np.ma.masked_where(US_region_window == 0, group_region_combined_window).filled(0)
             group_region_combined_window = np.ma.masked_where(gain_window == 0, group_region_combined_window).filled(0)
 
-            # Applies the dictionary of group-region gain rates to the group-region numpy array to
-            # get annual gain rates (Mg AGC+BGC/ha/yr) for each pixel that doesn't have Hansen gain
+            # Applies the dictionary of group-region removals rates to the group-region numpy array to
+            # get annual removals rates (Mg AGC+BGC/ha/yr) for each pixel that doesn't have Hansen gain
             for key, value in gain_table_group_region_dict.items():
                 agc_bgc_with_gain_pixel_window[group_region_combined_window == key] = value
 
@@ -135,18 +135,18 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
 
             # Creates empty windows (arrays) that will store stdev. There are separate arrays for
             # no Hansen gain pixels and for Hansen gain pixels. These are later combined.
-            # Pixels without and with Hansen gain are treated separately because gain pixels automatically get the youngest
+            # Pixels without and with Hansen gain are treated separately because removals pixels automatically get the youngest
             # removal rate stdev, regardless of their age category.
             stdev_agc_bgc_without_gain_pixel_window = np.zeros((window.height, window.width), dtype='float32')
             stdev_agc_bgc_with_gain_pixel_window = np.zeros((window.height, window.width), dtype='float32')
 
-            # Applies the dictionary of group-region-age gain rates to the group-region-age numpy array to
-            # get annual gain rates (Mg AGC+BGC/ha/yr) for each non-Hansen gain pixel
+            # Applies the dictionary of group-region-age removals rates to the group-region-age numpy array to
+            # get annual removals rates (Mg AGC+BGC/ha/yr) for each non-Hansen gain pixel
             for key, value in stdev_table_group_region_age_dict.items():
                 stdev_agc_bgc_without_gain_pixel_window[group_region_age_combined_window == key] = value
 
-            # Applies the dictionary of group-region gain rates to the group-region numpy array to
-            # get annual gain rates (Mg AGC+BGC/ha/yr) for each pixel that doesn't have Hansen gain
+            # Applies the dictionary of group-region removals rates to the group-region numpy array to
+            # get annual removals rates (Mg AGC+BGC/ha/yr) for each pixel that doesn't have Hansen gain
             for key, value in stdev_table_group_region_dict.items():
                 stdev_agc_bgc_with_gain_pixel_window[group_region_combined_window == key] = value
 

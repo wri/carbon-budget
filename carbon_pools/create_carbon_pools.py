@@ -13,7 +13,7 @@ import universal_util as uu
 def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet,  subtropical):
 
     # Creates x_pool:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
-    # the "mangType" field in the gain rate spreadsheet.
+    # the "mangType" field in the removals rate spreadsheet.
     # If the assignment of mangTypes to ecozones changes, that column in the spreadsheet may need to change and the
     # keys in this dictionary would need to change accordingly.
     # Key 4 is water, so there shouldn't be any mangrove values there.
@@ -21,7 +21,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
                        '3': subtropical, '4': '100'}
     type_ratio_dict_final = {int(k): float(v) for k, v in list(type_ratio_dict.items())}
 
-    # Applies the x_pool:aboveground biomass ratios for the three mangrove types to the annual aboveground gain rates to
+    # Applies the x_pool:aboveground biomass ratios for the three mangrove types to the annual aboveground removals rates to
     # create a column of x_pool:AGB
     gain_table_simplified['x_pool_AGB_ratio'] = gain_table_simplified['mangType'].map(type_ratio_dict_final)
 
@@ -162,6 +162,8 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
 
     uu.print_log("  Creating aboveground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
@@ -213,7 +215,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
             # print(agc_2000_model_extent_window[0][0:5])
 
             # Creates a mask based on whether the pixels had loss and gain in them. Loss&gain pixels are 1, all else are 0.
-            # This is used to determine how much post-2000 carbon gain to add to AGC2000 pixels.
+            # This is used to determine how much post-2000 carbon removals to add to AGC2000 pixels.
             loss_gain_mask = np.ma.masked_where(loss_year_window == 0, gain_window).filled(0)
 
             # Loss pixels that also have gain pixels are treated differently from loss-only pixels.
@@ -226,7 +228,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
 
 
             # Calculates AGC in emission year for pixels that had loss & gain (excludes loss_gain_mask = 0).
-            # To do this, it adds only the portion of the gain that occurred before the loss year to the carbon in 2000.
+            # To do this, it adds only the portion of the removals that occurred before the loss year to the carbon in 2000.
             gain_before_loss = annual_gain_AGC_window * (loss_year_window - 1)
             AGC_emis_year_loss_and_gain = agc_2000_model_extent_window + gain_before_loss
             AGC_emis_year_loss_and_gain_masked = np.ma.masked_where(loss_gain_mask == 0, AGC_emis_year_loss_and_gain).filled(0)
@@ -325,6 +327,8 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
         uu.print_log("    No Removal forest type tile found for", tile_id)
 
     uu.print_log("  Creating belowground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -499,6 +503,8 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         uu.print_log("    No Continent-ecozone tile found for", tile_id)
 
     uu.print_log("  Creating deadwood and litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
@@ -732,6 +738,8 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
 
     uu.print_log("  Creating soil carbon density for loss pixels in {}...".format(tile_id))
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
@@ -832,6 +840,8 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
 
 
     uu.print_log("  Creating total carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:

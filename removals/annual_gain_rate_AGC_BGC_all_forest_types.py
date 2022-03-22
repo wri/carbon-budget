@@ -167,6 +167,8 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
 
         uu.print_log("  Creating removal model forest type tile, AGC removal factor tile, BGC removal factor tile, and AGC removal factor standard deviation tile for {}".format(tile_id))
 
+        uu.check_memory()
+
         # Iterates across the windows (1 pixel strips) of the input tile
         for idx, window in windows:
 

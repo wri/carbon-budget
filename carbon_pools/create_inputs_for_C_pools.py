@@ -48,7 +48,7 @@ def create_input_files(tile_id, no_upload):
     windows = bor_tem_trop_src.block_windows(1)
 
     # Updates kwargs for the output dataset.
-    # Need to update data type to float 32 so that it can handle fractional gain rates
+    # Need to update data type to float 32 so that it can handle fractional removal rates
     kwargs.update(
         driver='GTiff',
         count=1,

@@ -5,7 +5,7 @@ It also creates assigns aboveground removal rate standard deviations for the ful
 (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to the entire model extent.
 The standard deviation tiles are used in the uncertainty analysis.
 It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
-Essentially, this does some processing of the IPCC gain rate table, then uses it as a dictionary that it applies
+Essentially, this does some processing of the IPCC removals rate table, then uses it as a dictionary that it applies
 to every pixel in every tile.
 Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
 processed IPCC table.
@@ -26,7 +26,7 @@ import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'gain'))
+sys.path.append(os.path.join(cn.docker_app,'removals'))
 import annual_gain_rate_IPCC_defaults
 
 os.chdir(cn.docker_base_dir)
@@ -77,8 +77,9 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
-    # Table with IPCC Table 4.9 default gain rates
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    # Table with IPCC Table 4.9 default removals rates
+    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
     uu.log_subprocess_output_full(cmd)
 
 
@@ -86,21 +87,21 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
 
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
     if sensit_type == 'no_primary_gain':
-        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        # Imports the table with the ecozone-continent codes and the carbon removals rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name = "natrl fores gain, no_prim_gain")
         uu.print_log("Using no_primary_gain IPCC default rates for tile creation")
 
     # All other analyses use the standard removal rates
     else:
-        # Imports the table with the ecozone-continent codes and the biomass gain rates
+        # Imports the table with the ecozone-continent codes and the biomass removals rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-    # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
+    # Converts removals table from wide to long, so each continent-ecozone-age category has its own row
     gain_table_cont_eco_age = pd.melt(gain_table_simplified, id_vars = ['gainEcoCon'], value_vars = ['growth_primary', 'growth_secondary_greater_20', 'growth_secondary_less_20'])
     gain_table_cont_eco_age = gain_table_cont_eco_age.dropna()
 
@@ -122,7 +123,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     # Merges the table of just continent-ecozone codes and the table of  continent-ecozone-age codes
     gain_table_all_combos = pd.concat([gain_table_con_eco_only, gain_table_cont_eco_age])
 
-    # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+    # Converts the continent-ecozone-age codes and corresponding removals rates to a dictionary
     gain_table_dict = pd.Series(gain_table_all_combos.value.values,index=gain_table_all_combos.cont_eco_age).to_dict()
 
     # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
@@ -141,21 +142,21 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
 
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
     if sensit_type == 'no_primary_gain':
-        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        # Imports the table with the ecozone-continent codes and the carbon removals rates
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name="natrl fores stdv, no_prim_gain")
         uu.print_log("Using no_primary_gain IPCC default standard deviations for tile creation")
 
     # All other analyses use the standard removal rates
     else:
-        # Imports the table with the ecozone-continent codes and the biomass gain rate standard deviations
+        # Imports the table with the ecozone-continent codes and the biomass removals rate standard deviations
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name="natrl fores stdv, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     stdev_table_simplified = stdev_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-    # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
+    # Converts removals table from wide to long, so each continent-ecozone-age category has its own row
     stdev_table_cont_eco_age = pd.melt(stdev_table_simplified, id_vars = ['gainEcoCon'], value_vars = ['stdev_primary', 'stdev_secondary_greater_20', 'stdev_secondary_less_20'])
     stdev_table_cont_eco_age = stdev_table_cont_eco_age.dropna()
 
@@ -178,7 +179,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     # Merges the table of just continent-ecozone codes and the table of  continent-ecozone-age codes
     stdev_table_all_combos = pd.concat([stdev_table_con_eco_only, stdev_table_cont_eco_age])
 
-    # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+    # Converts the continent-ecozone-age codes and corresponding removals rates to a dictionary
     stdev_table_dict = pd.Series(stdev_table_all_combos.value.values,index=stdev_table_all_combos.cont_eco_age).to_dict()
 
     # Adds a dictionary entry for where the ecozone-continent-age code is 0 (not in a continent)
@@ -202,7 +203,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
             processes = 30  # 30 processors = 725 GB peak
     else:
         processes = 2
-    uu.print_log('Annual gain rate natural forest max processors=', processes)
+    uu.print_log('Annual removals rate natural forest max processors=', processes)
     pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate, sensit_type=sensit_type,
                      gain_table_dict=gain_table_dict, stdev_table_dict=stdev_table_dict,

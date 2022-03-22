@@ -305,7 +305,7 @@ def main ():
         uu.upload_final_set(stage_output_dir_list[3], stage_output_pattern_list[3])
 
 
-    # Creates tiles of annual AGB and BGB gain rate for non-mangrove, non-planted forest using the standard model
+    # Creates tiles of annual AGB and BGB removals rate for non-mangrove, non-planted forest using the standard model
     # removal function
     if 'annual_removals' in actual_stages:
 
@@ -340,7 +340,7 @@ def main ():
             uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
-        # Table with IPCC Table 4.9 default gain rates
+        # Table with IPCC Table 4.9 default removals rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
@@ -350,14 +350,14 @@ def main ():
 
         pd.options.mode.chained_assignment = None
 
-        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        # Imports the table with the ecozone-continent codes and the carbon removals rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name="natrl fores gain, for std model")
 
         # Removes rows with duplicate codes (N. and S. America for the same ecozone)
         gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
-        # Converts gain table from wide to long, so each continent-ecozone-age category has its own row
+        # Converts removals table from wide to long, so each continent-ecozone-age category has its own row
         gain_table_cont_eco_age = pd.melt(gain_table_simplified, id_vars=['gainEcoCon'],
                                           value_vars=['growth_primary', 'growth_secondary_greater_20',
                                                       'growth_secondary_less_20'])
@@ -382,7 +382,7 @@ def main ():
         # Merges the table of just continent-ecozone codes and the table of continent-ecozone-age codes
         gain_table_all_combos = pd.concat([gain_table_con_eco_only, gain_table_cont_eco_age])
 
-        # Converts the continent-ecozone-age codes and corresponding gain rates to a dictionary
+        # Converts the continent-ecozone-age codes and corresponding removals rates to a dictionary
         gain_table_dict = pd.Series(gain_table_all_combos.value.values,
                                     index=gain_table_all_combos.cont_eco_age).to_dict()
 
@@ -421,7 +421,7 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
 
 
-    # Creates tiles of cumulative AGCO2 and BGCO2 gain rate for non-mangrove, non-planted forest using the standard model
+    # Creates tiles of cumulative AGCO2 and BGCO2 removals rate for non-mangrove, non-planted forest using the standard model
     # removal function
     if 'cumulative_removals' in actual_stages:
 
@@ -456,13 +456,13 @@ def main ():
             uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
 
 
-        # Calculates cumulative aboveground carbon gain in non-mangrove planted forests
+        # Calculates cumulative aboveground carbon removals in non-mangrove planted forests
         output_pattern_list = stage_output_pattern_list
         pool = multiprocessing.Pool(int(cn.count/3))
         pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_AGCO2, output_pattern_list=output_pattern_list,
                          sensit_type=sensit_type), tile_id_list)
 
-        # Calculates cumulative belowground carbon gain in non-mangrove planted forests
+        # Calculates cumulative belowground carbon removals in non-mangrove planted forests
         pool = multiprocessing.Pool(int(cn.count/3))
         pool.map(partial(cumulative_gain_natrl_forest.cumulative_gain_BGCO2, output_pattern_list=output_pattern_list,
                          sensit_type=sensit_type), tile_id_list)
@@ -482,7 +482,7 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[i], stage_output_pattern_list[i])
 
 
-    # Creates tiles of annual gain rate and cumulative removals for all forest types (above + belowground)
+    # Creates tiles of annual removals rate and cumulative removals for all forest types (above + belowground)
     if 'removals_merged' in actual_stages:
 
         uu.print_log('Creating annual and cumulative removals for all forest types combined (above + belowground)')
@@ -602,7 +602,7 @@ def main ():
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[10:16])
 
 
-        # Table with IPCC Wetland Supplement Table 4.4 default mangrove gain rates
+        # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
         cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
@@ -613,7 +613,7 @@ def main ():
 
         pd.options.mode.chained_assignment = None
 
-        # Imports the table with the ecozone-continent codes and the carbon gain rates
+        # Imports the table with the ecozone-continent codes and the carbon removals rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name="mangrove gain, for model")
 

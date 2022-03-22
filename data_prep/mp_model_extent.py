@@ -22,6 +22,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'data_prep'))
 import model_extent
 
+
 def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
@@ -84,9 +85,9 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
     if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
+
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
@@ -94,7 +95,7 @@ def mp_model_extent(sensit_type, tile_id_list, run_date = None, no_upload = None
             processes = 38
         else:
             processes = 45 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
-            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = 631 GB peak; 45 = XXX GB peak
+            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = 631 GB peak; 43 = 690 GB peak; 45 = too high
     else:
         processes = 3
     uu.print_log('Model extent processors=', processes)

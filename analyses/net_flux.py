@@ -16,7 +16,7 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
     # Start time
     start = datetime.datetime.now()
 
-    # Names of the gain and emissions tiles
+    # Names of the removals and emissions tiles
     removals_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)
     emissions_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
 
@@ -73,6 +73,8 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
     net_flux_dst.update_tags(
         scale='Negative values are net sinks. Positive values are net sources.')
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tile
     for idx, window in windows:
 
@@ -86,7 +88,7 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
         except:
             emissions_window = np.zeros((window.height, window.width)).astype('float32')
 
-        # Subtracts gain that from loss
+        # Subtracts removals from emissions to calculate net flux (negative is net sink, positive is net source)
         dst_data = emissions_window - removals_window
 
         net_flux_dst.write_band(1, dst_data, window=window)

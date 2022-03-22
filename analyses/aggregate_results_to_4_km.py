@@ -13,7 +13,7 @@ It converts emissions, removals, and net flux from totals over the model period 
 For sensitivity analysis runs, it only processes outputs which actually have a sensitivity analysis version.
 The user has to supply a tcd threshold for which forest pixels to include in the results. Defaults to cn.canopy_threshold.
 For sensitivity analysis, the s3 folder with the aggregations for the standard model must be specified.
-sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
+sample command: python mp_aggregate_results_to_4_km.py -tcd 30 -t no_shifting_ag -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200901/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200901.tif
 '''
 
 
@@ -71,7 +71,9 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     #2D array in which the 0.04x0.04 deg aggregated sums will be stored
     sum_array = np.zeros([250,250], 'float32')
 
-    out_raster = "{0}_{1}_0_4deg.tif".format(tile_id, tile_type)
+    out_raster = "{0}_{1}_0_04deg.tif".format(tile_id, tile_type)
+
+    uu.check_memory()
 
     # Iterates across the windows (160x160 30m pixels) of the input tile
     for idx, window in windows:
@@ -103,11 +105,11 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
 
-    # Converts the annual carbon gain values annual gain in megatonnes and makes negative (because removals are negative)
+    # Converts the annual carbon removals values annual removals in megatonnes and makes negative (because removals are negative)
     if cn.pattern_annual_gain_AGC_all_types in tile_type:
         sum_array = sum_array / cn.tonnes_to_megatonnes * -1
 
-    # Converts the cumulative CO2 gain values to annualized CO2 in megatonnes and makes negative (because removals are negative)
+    # Converts the cumulative CO2 removals values to annualized CO2 in megatonnes and makes negative (because removals are negative)
     if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
@@ -183,7 +185,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         # aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_0_4deg'.format(tile_type), no_upload)
+    uu.end_of_fx_summary(start, tile_id, '{}_0_04deg'.format(tile_type), no_upload)
 
 
 # Calculates the percent difference between the standard model's net flux output

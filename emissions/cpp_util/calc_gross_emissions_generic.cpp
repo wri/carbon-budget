@@ -848,7 +848,7 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-				else
+				else  // Forestry, not peat
 				{
 					if (burn_data[x] > 0) // Forestry, not peat, burned
 					{

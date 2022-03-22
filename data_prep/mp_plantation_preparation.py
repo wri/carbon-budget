@@ -46,19 +46,43 @@ command line argument. Supply the rest of the global tiles (the unchanged tiles)
 '''
 
 """
-### Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
-### of commands than as a script. Below are the instructions for creating a single PostGIS table of all plantations.
-### This assumes that the plantation gdb has one feature class for each country with plantations and that
-### each country's feature class's attribute table has a growth rate column named "growth".
+Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
+of commands than as a script. Below are the instructions for creating a single PostGIS table of all plantations.
+This assumes that the plantation gdb has one feature class for each country with plantations and that
+each country's feature class's attribute table has a growth rate column named "growth".
 
-# Start a r.16xlarge spot machine
-spotutil new r4.16xlarge dgibbs_wri
+# Start a r5d.24xlarge spot machine
+spotutil new r5d.24xlarge dgibbs_wri
+
+# Change directory to where the data are kept in the docker
+cd /usr/local/tiles/
 
 # Copy zipped plantation gdb with growth rate field in tables
 aws s3 cp s3://gfw-files/plantations/final/global/plantations_v3_1.gdb.zip .
 
 # Unzip the zipped plantation gdb. This can take several minutes.
 unzip plantations_v3_1.gdb.zip
+
+# Start the postgres service and check that it has actually started
+service postgresql restart
+pg_lsclusters
+
+# Create a postgres database called ubuntu. I tried adding RUN createdb ubuntu to the Dockerfile after RUN service postgresql restart
+# but got the error: 
+# createdb: could not connect to database template1: could not connect to server: No such file or directory.
+#         Is the server running locally and accepting
+# So I'm adding that step here.
+createdb ubuntu
+
+# Enter the postgres database called ubuntu and add the postgis exension to it
+psql
+CREATE EXTENSION postgis;
+\q
+
+
+##### NOTE: I HAVEN'T ACTUALLY CHECKED THAT THE BELOW PROCEDURES REALLY RESULT IN A TABLE THAT CAN BE RASTERIZED CORRECTLY.
+##### I JUST CHECKED THAT ROWS WERE BEING ADDED TO THE TABLE
+
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
@@ -67,6 +91,8 @@ ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -progress -nln all
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
 \d+ all_plant;
+SELECT * FROM all_plant LIMIT 2;   # To see what the first two rows look like
+SELECT COUNT (*) FROM all_plant;   # Should be 697 for CMR in plantations v3.1
 
 # Delete all rows from the table so that it is now empty
 DELETE FROM all_plant;
@@ -81,12 +107,14 @@ ogrinfo plantations_v3_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -
 more out.txt
 q
 
-# Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table
+# Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table.
+# I think it's okay that there's a message "Warning 1: organizePolygons() received a polygon with more than 100 parts. The processing may be really slow.  You can skip the processing by setting METHOD=SKIP, or only make it analyze counter-clock wise parts by setting METHOD=ONLY_CCW if you can assume that the outline of holes is counter-clock wise defined"
+# It just seems to mean that the processing is slow, but the processing methods haven't changed. 
 while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp, SD_error FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
-CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(wkb_geometry);
+CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(shape);
 
 # Adds a new column to the table and stores the plantation type reclassified as 1 (palm), 2 (wood fiber), or 3 (other)
 ALTER TABLE all_plant ADD COLUMN type_reclass SMALLINT;
@@ -95,10 +123,6 @@ UPDATE all_plant SET type_reclass = ( CASE WHEN species_simp = 'Oil Palm ' then 
 
 # Exit Postgres shell
 \q
-
-# Install a Python package that is needed for certain processing routes below
-sudo pip install simpledbf
-
 """
 
 import plantation_preparation
@@ -116,7 +140,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 
-def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
+def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -133,24 +157,33 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
     if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
         uu.exception_log('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
 
-    # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
-    total_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
-    uu.print_log("Number of possible 10x10 tiles to evaluate:", len(total_tile_list))
 
-    # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
-    # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
-    # This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
-    # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
-    planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
-    planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
-    planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
-    planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
-    planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
-    planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
-    # planted_lat_tile_list = ['10N_080W']
+    # If a full model run is specified, the correct set of tiles for the particular script is listed
+    if tile_id_list == 'all':
+        # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
+        total_tile_list = uu.tile_list_s3(cn.pixel_area_dir)
 
-    uu.print_log(planted_lat_tile_list)
-    uu.print_log("Number of 10x10 tiles to evaluate after extreme latitudes have been removed:", len(planted_lat_tile_list))
+        # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
+        # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
+        # This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
+        # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
+        planted_lat_tile_list = [tile for tile in total_tile_list if '90N' not in tile]
+        planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80N' not in tile]
+        planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '50S' not in tile]
+        planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '60S' not in tile]
+        planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
+        planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
+        uu.print_log(planted_lat_tile_list)
+        uu.print_log("There are {} tiles to process after extreme latitudes have been removed".format(str(len(planted_lat_tile_list))) + "\n")
+    else:
+        planted_lat_tile_list = tile_id_list
+        uu.print_log("There are {} tiles to process".format(str(len(planted_lat_tile_list))) + "\n")
+
+
+    ################# Stopped updating plantation processing script to use tile_id_list argument here.
+    ################# But I didn't check the earlier work, either.
+
+
 
 
     # If a planted forest extent 1x1 tile index shapefile isn't supplied
@@ -357,27 +390,27 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
         pool.join()
 
 
-    ### All script entry points meet here: creation of 10x10 degree planted forest gain rate and rtpe tiles
-    ### from 1x1 degree planted forest gain rate and type tiles
+    ### All script entry points meet here: creation of 10x10 degree planted forest removals rate and rtpe tiles
+    ### from 1x1 degree planted forest removals rate and type tiles
 
-    # Name of the vrt of 1x1 planted forest gain rate tiles
+    # Name of the vrt of 1x1 planted forest removals rate tiles
     plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
 
-    # Creates a mosaic of all the 1x1 plantation gain rate tiles
-    uu.print_log("Creating vrt of 1x1 plantation gain rate tiles")
+    # Creates a mosaic of all the 1x1 plantation removals rate tiles
+    uu.print_log("Creating vrt of 1x1 plantation removals rate tiles")
     os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
 
-    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # Creates 10x10 degree tiles of plantation removals rate by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
     processes = 20
-    uu.print_log('Create 10x10 plantation gain rate max processors=', processes)
+    uu.print_log('Create 10x10 plantation removals rate max processors=', processes)
     pool = Pool(processes)
     pool.map(partial(plantation_preparation.create_10x10_plantation_gain, plant_gain_1x1_vrt=plant_gain_1x1_vrt), planted_lat_tile_list)
     pool.close()
     pool.join()
 
-    # Creates 10x10 degree tiles of plantation gain rate by iterating over the set of pixel area tiles supplied
+    # Creates 10x10 degree tiles of plantation removals rate by iterating over the set of pixel area tiles supplied
     #at the start of the script that are in latitudes with planted forests.
     # For single processor use
     #for tile in planted_lat_tile_list:
@@ -410,14 +443,14 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
 
 
-    # Name of the vrt of 1x1 planted forest gain rate standard deviation tiles
+    # Name of the vrt of 1x1 planted forest removals rate standard deviation tiles
     plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
 
-    # Creates a mosaic of all the 1x1 plantation gain rate standard deviation tiles
-    uu.print_log("Creating vrt of 1x1 plantation gain rate standard deviation tiles")
+    # Creates a mosaic of all the 1x1 plantation removals rate standard deviation tiles
+    uu.print_log("Creating vrt of 1x1 plantation removals rate standard deviation tiles")
     os.system('gdalbuildvrt {} plant_stdev_*.tif'.format(plant_stdev_1x1_vrt))
 
-    # Creates 10x10 degree tiles of plantation gain rate standard deviation by iterating over the set of pixel area tiles supplied
+    # Creates 10x10 degree tiles of plantation removals rate standard deviation by iterating over the set of pixel area tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     # For multiprocessor use
     num_of_processes = 26
@@ -429,16 +462,22 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description='Create planted forest carbon gain rate tiles')
+    parser = argparse.ArgumentParser(description='Create planted forest carbon removals rate tiles')
     parser.add_argument('--gadm-tile-index', '-gi', required=True,
                         help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
     parser.add_argument('--planted-tile-index', '-pi', required=True,
                         help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
-    # # This is the beginning of adding a way to have the model run on a selected area, rather than globally. I didn't finish implementing it, though.
-    # parser.add_argument('--bounding-box', '-bb', required=False, type=int, nargs='+',
-    #                     help='The bounding box of the tiles to be update, supplied in the order min-x, max-x, min-y, max-y. They must be at 10 degree increments.')
+    parser.add_argument('--tile_id_list', '-l', required=True,
+                        help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
+    parser.add_argument('--run-date', '-d', required=False,
+                        help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
 
     args = parser.parse_args()
+    tile_id_list = args.tile_id_list
+    run_date = args.run_date
+    no_upload = args.no_upload
 
     # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
     gadm_index = os.path.split(args.gadm_tile_index)
@@ -450,7 +489,16 @@ if __name__ == '__main__':
     planted_index_shp = planted_index[1]
     planted_index_shp = planted_index_shp[:-4]
 
-    # Create the output log
-    uu.initiate_log()
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        no_upload = True
 
-    mp_plantation_preparation(gadm_index_shp=gadm_index_shp, planted_index_shp=planted_index_shp)
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(sensit_type)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
+
+    mp_plantation_preparation(gadm_index_shp=gadm_index_shp, planted_index_shp=planted_index_shp,
+                              tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

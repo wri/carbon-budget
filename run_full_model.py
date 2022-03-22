@@ -1,13 +1,20 @@
 '''
+Clone repositoroy:
 git clone https://github.com/wri/carbon-budget
-spotutil new r4.16xlarge dgibbs_wri --disk_size 1024
-c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-python run_full_model.py -si -nu -t std -s forest_age_category_natrl_forest -r false -d 20219999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "This is a log note"
-python run_full_model.py -si -nu -t std -s all -r -d 20200327 -l all -ce loss -p biomass_soil -tcd 30 -ma true -pl true -ln "This is a log note"
 
-python run_full_model.py -si -nu -t std -s all -r -d 20200822 -l all -ce loss,2000 -p biomass_soil -tcd 30 -ma true -ln "First attempt at running full standard model on all tiles for model v1.2.0. Hopefully this will be the sole, definitive run of standard model v1.2.0."
+Create spot machine using spotutil:
+spotutil new r5d.24xlarge dgibbs_wri
 
-python run_full_model.py -si -nu -t biomass_swap -s all -r -d 20200919 -l all -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_4deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Running sensitivity analysis for model v1.2.0"
+Compile C++ emissions modulte (for standard model and sensitivity analyses that using standard emissions model)
+c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+
+Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
+starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
+python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+
+FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
+run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
+python run_full_model.py -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Running all tiles"
 
 '''
 
@@ -19,13 +26,13 @@ import logging
 import constants_and_names as cn
 import universal_util as uu
 from data_prep.mp_model_extent import mp_model_extent
-from gain.mp_annual_gain_rate_mangrove import mp_annual_gain_rate_mangrove
-from gain.mp_US_removal_rates import mp_US_removal_rates
-from gain.mp_forest_age_category_IPCC import mp_forest_age_category_IPCC
-from gain.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_IPCC_defaults
-from gain.mp_annual_gain_rate_AGC_BGC_all_forest_types import mp_annual_gain_rate_AGC_BGC_all_forest_types
-from gain.mp_gain_year_count_all_forest_types import mp_gain_year_count_all_forest_types
-from gain.mp_gross_removals_all_forest_types import mp_gross_removals_all_forest_types
+from removals.mp_annual_gain_rate_mangrove import mp_annual_gain_rate_mangrove
+from removals.mp_US_removal_rates import mp_US_removal_rates
+from removals.mp_forest_age_category_IPCC import mp_forest_age_category_IPCC
+from removals.mp_annual_gain_rate_IPCC_defaults import mp_annual_gain_rate_IPCC_defaults
+from removals.mp_annual_gain_rate_AGC_BGC_all_forest_types import mp_annual_gain_rate_AGC_BGC_all_forest_types
+from removals.mp_gain_year_count_all_forest_types import mp_gain_year_count_all_forest_types
+from removals.mp_gross_removals_all_forest_types import mp_gross_removals_all_forest_types
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
@@ -220,47 +227,46 @@ def main ():
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
     # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
-    if 'gross_emissions' in actual_stages:
-        if emitted_pools == 'biomass_soil':
-            output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
-                               cn.gross_emis_shifting_ag_biomass_soil_dir,
-                               cn.gross_emis_forestry_biomass_soil_dir,
-                               cn.gross_emis_wildfire_biomass_soil_dir,
-                               cn.gross_emis_urban_biomass_soil_dir,
-                               cn.gross_emis_no_driver_biomass_soil_dir,
-                               cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                               cn.gross_emis_nodes_biomass_soil_dir]
+    if emitted_pools == 'biomass_soil':
+        output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
+                           cn.gross_emis_shifting_ag_biomass_soil_dir,
+                           cn.gross_emis_forestry_biomass_soil_dir,
+                           cn.gross_emis_wildfire_biomass_soil_dir,
+                           cn.gross_emis_urban_biomass_soil_dir,
+                           cn.gross_emis_no_driver_biomass_soil_dir,
+                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_nodes_biomass_soil_dir]
 
-        else:
-            output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
-                                   cn.gross_emis_shifting_ag_soil_only_dir,
-                                   cn.gross_emis_forestry_soil_only_dir,
-                                   cn.gross_emis_wildfire_soil_only_dir,
-                                   cn.gross_emis_urban_soil_only_dir,
-                                   cn.gross_emis_no_driver_soil_only_dir,
-                                   cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                                   cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                                   cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                                   cn.gross_emis_nodes_soil_only_dir]
+    else:
+        output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
+                               cn.gross_emis_shifting_ag_soil_only_dir,
+                               cn.gross_emis_forestry_soil_only_dir,
+                               cn.gross_emis_wildfire_soil_only_dir,
+                               cn.gross_emis_urban_soil_only_dir,
+                               cn.gross_emis_no_driver_soil_only_dir,
+                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                               cn.gross_emis_nodes_soil_only_dir]
 
     output_dir_list = output_dir_list + [cn.net_flux_dir]
 
-    if 'create_supplementary_outputs' in actual_stages:
-        output_dir_list = output_dir_list + \
-                        [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
-                        cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
-                        cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir,
-                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir,
-                        cn.gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir,
-                        cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir,
-                        cn.net_flux_per_pixel_full_extent_dir,
-                        cn.net_flux_forest_extent_dir,
-                        cn.net_flux_per_pixel_forest_extent_dir]
+    # Supplementary outputs
+    output_dir_list = output_dir_list + \
+                    [cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
+                    cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir,
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir,
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir,
+                    cn.gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir,
+                    cn.net_flux_per_pixel_full_extent_dir,
+                    cn.net_flux_forest_extent_dir,
+                    cn.net_flux_per_pixel_forest_extent_dir]
 
 
-    # Creates tiles of annual AGB and BGB gain rate and AGB stdev for mangroves using the standard model
+    # Creates tiles of annual AGB and BGB removals rate and AGB stdev for mangroves using the standard model
     # removal function
     if 'annual_removals_mangrove' in actual_stages:
 
@@ -275,7 +281,7 @@ def main ():
         uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
 
 
-    # Creates tiles of annual AGC+BGC gain rate and AGC stdev for US-specific removals using the standard model
+    # Creates tiles of annual AGC+BGC removals rate and AGC stdev for US-specific removals using the standard model
     # removal function
     if 'annual_removals_us' in actual_stages:
 
@@ -318,7 +324,7 @@ def main ():
         uu.print_log(":::::Processing time for forest_age_category_IPCC:", elapsed_time, "\n", "\n")
 
 
-    # Creates tiles of annual AGB and BGB gain rates using IPCC Table 4.9 defaults
+    # Creates tiles of annual AGB and BGB removals rates using IPCC Table 4.9 defaults
     if 'annual_removals_IPCC' in actual_stages:
 
         uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults")
@@ -353,20 +359,20 @@ def main ():
             uu.print_log(":::::Freeing up memory for gain year count creation by deleting unneeded tiles")
             tiles_to_delete = []
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_mangrove)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_mangrove)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_natrl_forest_young)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_IPCC_defaults)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_IPCC_defaults)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_IPCC_defaults)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_IPCC_defaults)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_all_types)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGB_mangrove)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)))
@@ -385,7 +391,7 @@ def main ():
         uu.print_log(":::::Creating tiles of gain year count for all removal pixels")
         start = datetime.datetime.now()
 
-        mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = run_date)
+        mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = run_date, no_upload=no_upload)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -414,8 +420,8 @@ def main ():
 
             uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
             tiles_to_delete = []
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_model_extent)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_model_extent)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_IPCC_defaults)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_IPCC_defaults)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGC_all_types)))
@@ -426,14 +432,6 @@ def main ():
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGB_mangrove)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_all_types)))
             uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
 
             for tile_to_delete in tiles_to_delete:
@@ -472,7 +470,7 @@ def main ():
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
+            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
             uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")

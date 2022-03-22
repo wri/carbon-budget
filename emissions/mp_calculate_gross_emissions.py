@@ -173,7 +173,6 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     if run_date is not None and no_upload is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
-    uu.print_log(output_dir_list)
     uu.print_log(output_pattern_list)
 
 

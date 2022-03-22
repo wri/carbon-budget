@@ -19,7 +19,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     # The key in the dictionary is the forest age category decision tree endpoints.
     age_dict = {0: 0, 1: 10000, 2: 20000, 3: 30000}
 
-    uu.print_log("Processing:", tile_id)
+    uu.print_log("Creating IPCC default biomass removals rates and standard deviation for {}".format(tile_id))
 
     # Start time
     start = datetime.datetime.now()
@@ -28,25 +28,23 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     age_cat = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_IPCC)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
 
-    # Names of the output natural forest gain rate tiles (above and belowground)
+    # Names of the output natural forest removals rate tiles (above and belowground)
     AGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     BGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     AGB_IPCC_default_gain_stdev = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
 
-    uu.print_log("  Creating IPCC default biomass gain rates and standard deviation for {}".format(tile_id))
-
     # Opens the input tiles if they exist. kips tile if either input doesn't exist.
     try:
         age_cat_src = rasterio.open(age_cat)
-        uu.print_log("   Age category tile found for {}".format(tile_id))
+        uu.print_log("  Age category tile found for {}".format(tile_id))
     except:
-        return uu.print_log("   No age category tile found for {}. Skipping tile.".format(tile_id))
+        return uu.print_log("  No age category tile found for {}. Skipping tile.".format(tile_id))
 
     try:
         cont_eco_src = rasterio.open(cont_eco)
-        uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
+        uu.print_log("  Continent-ecozone tile found for {}".format(tile_id))
     except:
-        return uu.print_log("   No continent-ecozone tile found for {}. Skipping tile.".format(tile_id))
+        return uu.print_log("  No continent-ecozone tile found for {}. Skipping tile.".format(tile_id))
 
     # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
     kwargs = cont_eco_src.meta
@@ -55,7 +53,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     windows = cont_eco_src.block_windows(1)
 
     # Updates kwargs for the output dataset.
-    # Need to update data type to float 32 so that it can handle fractional gain rates
+    # Need to update data type to float 32 so that it can handle fractional removals rates
     kwargs.update(
         driver='GTiff',
         count=1,
@@ -64,7 +62,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
         dtype='float32'
     )
 
-    # The output files, aboveground and belowground biomass gain rates
+    # The output files, aboveground and belowground biomass removals rates
     dst_above = rasterio.open(AGB_IPCC_default_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
     uu.add_rasterio_tags(dst_above, sensit_type)
@@ -95,6 +93,8 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     dst_stdev_above.update_tags(
         extent='Full model extent, even though these standard deviations will not be used over the full model extent')
 
+    uu.check_memory()
+
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:
 
@@ -116,11 +116,11 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
         cont_eco_age = cont_eco_window + age_recode
 
         ## Aboveground removal factors
-        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates
+        # Converts the continent-ecozone array to float so that the values can be replaced with fractional removals rates
         gain_rate_AGB = cont_eco_age.astype('float32')
 
-        # Applies the dictionary of continent-ecozone-age gain rates to the continent-ecozone-age array to
-        # get annual gain rates (metric tons aboveground biomass/yr) for each pixel
+        # Applies the dictionary of continent-ecozone-age removals rates to the continent-ecozone-age array to
+        # get annual removals rates (metric tons aboveground biomass/yr) for each pixel
         for key, value in gain_table_dict.items():
             gain_rate_AGB[gain_rate_AGB == key] = value
 
@@ -138,8 +138,8 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
         # Converts the continent-ecozone array to float so that the values can be replaced with fractional standard deviations
         gain_stdev_AGB = cont_eco_age.astype('float32')
 
-        # Applies the dictionary of continent-ecozone-age gain rate standard deviations to the continent-ecozone-age array to
-        # get annual gain rate standard deviations (metric tons aboveground biomass/yr) for each pixel
+        # Applies the dictionary of continent-ecozone-age removals rate standard deviations to the continent-ecozone-age array to
+        # get annual removals rate standard deviations (metric tons aboveground biomass/yr) for each pixel
         for key, value in stdev_table_dict.items():
             gain_stdev_AGB[gain_stdev_AGB == key] = value
 

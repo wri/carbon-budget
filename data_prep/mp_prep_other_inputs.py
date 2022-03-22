@@ -144,7 +144,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     #     processes = 80  # 32 processors = 210 GB peak; 60 = 370 GB peak; 80 = XXX GB peak
     # else:
     #     processes = int(cn.count/2)
-    # uu.print_log("Creating young natural forest gain rate tiles with {} processors...".format(processes))
+    # uu.print_log("Creating young natural forest removals rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
     # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
@@ -196,7 +196,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     #     processes = 60  # 32 processors = 60 GB peak; 60 = XXX GB peak
     # else:
     #     processes = int(cn.count/2)
-    # uu.print_log("Creating European natural forest gain rate tiles with {} processors...".format(processes))
+    # uu.print_log("Creating European natural forest removals rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
     # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
@@ -210,7 +210,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     #     processes = 32  # 32 processors = 60 GB peak; 60 = XXX GB peak
     # else:
     #     processes = int(cn.count/2)
-    # uu.print_log("Creating standard deviation for European natural forest gain rate tiles with {} processors...".format(processes))
+    # uu.print_log("Creating standard deviation for European natural forest removals rate tiles with {} processors...".format(processes))
     # pool = multiprocessing.Pool(processes)
     # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
     # pool.close()
@@ -342,7 +342,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Create tiles of the annual AGB and BGB gain rates for mangrove forests')
+        description='Create tiles of the annual AGB and BGB removals rates for mangrove forests')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

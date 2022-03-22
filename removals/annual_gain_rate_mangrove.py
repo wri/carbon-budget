@@ -1,6 +1,6 @@
-### Creates tiles of annual aboveground and belowground biomass gain rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
+### Creates tiles of annual aboveground and belowground biomass removals rates for mangroves using IPCC Wetlands Supplement Table 4.4 rates.
 ### Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC
-### gain rate table.
+### removals rate table.
 
 import datetime
 import numpy as np
@@ -32,12 +32,12 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
     mangrove_biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
     cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
 
-    # Names of the output aboveground and belowground mangrove gain rate tiles
+    # Names of the output aboveground and belowground mangrove removals rate tiles
     AGB_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
     BGB_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
     AGB_gain_stdev = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
 
-    uu.print_log("  Reading input files and creating aboveground and belowground biomass gain rates for {}".format(tile_id))
+    uu.print_log("  Reading input files and creating aboveground and belowground biomass removals rates for {}".format(tile_id))
 
     cont_eco_src = rasterio.open(cont_eco)
     mangrove_AGB_src = rasterio.open(mangrove_biomass)
@@ -49,7 +49,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
     windows = cont_eco_src.block_windows(1)
 
     # Updates kwargs for the output dataset.
-    # Need to update data type to float 32 so that it can handle fractional gain rates
+    # Need to update data type to float 32 so that it can handle fractional removals rates
     kwargs.update(
         driver='GTiff',
         count=1,
@@ -95,9 +95,9 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
         cont_eco = cont_eco_src.read(1, window=window)
         mangrove_AGB = mangrove_AGB_src.read(1, window=window)
 
-        # Converts the continent-ecozone array to float so that the values can be replaced with fractional gain rates.
-        # Creates two copies: one for aboveground gain and one for belowground gain.
-        # Creating only one copy of the cont_eco raster made it so that belowground gain rates weren't being
+        # Converts the continent-ecozone array to float so that the values can be replaced with fractional removals rates.
+        # Creates two copies: one for aboveground removals and one for belowground removals.
+        # Creating only one copy of the cont_eco raster made it so that belowground removals rates weren't being
         # written correctly for some reason.
         cont_eco_above = cont_eco.astype('float32')
         cont_eco_below = cont_eco.astype('float32')
@@ -108,19 +108,19 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
         mangrove_AGB[mangrove_AGB > 0] = 1
 
 
-        # Applies the dictionary of continent-ecozone aboveground gain rates to the continent-ecozone array to
-        # get annual aboveground gain rates (metric tons aboveground biomass/yr) for each pixel
+        # Applies the dictionary of continent-ecozone aboveground removals rates to the continent-ecozone array to
+        # get annual aboveground removals rates (metric tons aboveground biomass/yr) for each pixel
         for key, value in gain_above_dict.items():
             cont_eco_above[cont_eco_above == key] = value
 
-        # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
+        # Masks out pixels without mangroves, leaving removals rates in only pixels with mangroves
         dst_above_data = cont_eco_above * mangrove_AGB
 
         # Writes the output window to the output
         dst_above.write_band(1, dst_above_data, window=window)
 
 
-        # Same as above but for belowground gain rates
+        # Same as above but for belowground removals rates
         for key, value in gain_below_dict.items():
             cont_eco_below[cont_eco_below == key] = value
 
@@ -129,12 +129,12 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
         dst_below.write_band(1, dst_below_data, window=window)
 
 
-        # Applies the dictionary of continent-ecozone aboveground gain rate standard deviations to the continent-ecozone array to
-        # get annual aboveground gain rate standard deviations (metric tons aboveground biomass/yr) for each pixel
+        # Applies the dictionary of continent-ecozone aboveground removals rate standard deviations to the continent-ecozone array to
+        # get annual aboveground removals rate standard deviations (metric tons aboveground biomass/yr) for each pixel
         for key, value in stdev_dict.items():
             cont_eco_stdev[cont_eco_stdev == key] = value
 
-        # Masks out pixels without mangroves, leaving gain rates in only pixels with mangroves
+        # Masks out pixels without mangroves, leaving removals rates in only pixels with mangroves
         dst_stdev = cont_eco_stdev * mangrove_AGB
 
         # Writes the output window to the output

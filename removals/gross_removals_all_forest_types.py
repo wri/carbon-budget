@@ -6,7 +6,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Calculates cumulative aboveground carbon dioxide gain in mangroves
+# Calculates cumulative aboveground carbon dioxide removals in mangroves
 def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload):
 
     uu.print_log("Calculating cumulative CO2 removals:", tile_id)
@@ -85,6 +85,8 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
         source='annual removal factors and gain year count')
     cumulative_gain_AGCO2_BGCO2_dst.update_tags(
         extent='Full model extent')
+
+    uu.check_memory()
 
     # Iterates across the windows (1 pixel strips) of the input tiles
     for idx, window in windows:

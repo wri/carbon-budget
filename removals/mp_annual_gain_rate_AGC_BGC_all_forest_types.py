@@ -1,36 +1,37 @@
 '''
-This script calculates the cumulative above and belowground carbon dioxide gain (removals) for all forest types
-for the duration of the model.
-It multiplies the annual aboveground and belowground carbon removal factors by the number of years of gain and the C to CO2 conversion.
-It then sums the aboveground and belowground gross removals to get gross removals for all forest types in both emitted_pools.
-That is the final gross removals for the entire model.
-Note that gross removals from this script are reported as positive values.
+Creates tiles of annual aboveground and belowground removal rates for the entire model extent (all forest types).
+Also, creates tiles that show what the source of the removal factor is each for each pixel. This can correspond to
+particular forest types (mangrove, planted, natural) or data sources (US, Europe, young natural forests from Cook-Patton et al.,
+older natural forests from IPCC defaults).
+The current hierarchy where pixels overlap is: mangrove > Europe > planted forests > US forests > Cook-Patton et al.
+rates for young secondary forests > IPCC defaults for old secondary and primary forests.
+This hierarchy is reflected in the removal rates and the forest type rasters.
+The different removal rate inputs are in different units but all are standardized to AGC/ha/yr and BGC/ha/yr.
 '''
 
+
 import multiprocessing
-import argparse
-import os
-import datetime
 from functools import partial
+import pandas as pd
+import datetime
+import argparse
+from subprocess import Popen, PIPE, STDOUT, check_call
+import os
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'gain'))
-import gross_removals_all_forest_types
+sys.path.append(os.path.join(cn.docker_app,'removals'))
+import annual_gain_rate_AGC_BGC_all_forest_types
 
-def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = True):
+def mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = None):
 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        # tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
-        gain_year_count_tile_id_list = uu.tile_list_s3(cn.gain_year_count_dir, sensit_type=sensit_type)
-        annual_removals_tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, sensit_type=sensit_type)
-        tile_id_list = list(set(gain_year_count_tile_id_list).intersection(annual_removals_tile_id_list))
-        uu.print_log("Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:")
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -38,15 +39,32 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
 
     # Files to download for this script.
     download_dict = {
-        cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
-        cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types],
-        cn.gain_year_count_dir: [cn.pattern_gain_year_count]
+        cn.model_extent_dir: [cn.pattern_model_extent],
+        cn.annual_gain_AGB_mangrove_dir: [cn.pattern_annual_gain_AGB_mangrove],
+        cn.annual_gain_BGB_mangrove_dir: [cn.pattern_annual_gain_BGB_mangrove],
+        cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe],
+        cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked],
+        cn.annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_annual_gain_AGC_BGC_natrl_forest_US],
+        cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
+        cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
+        cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
+
+        cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove],
+        cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe],
+        cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked],
+        cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US],
+        cn.stdev_annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_stdev_annual_gain_AGC_natrl_forest_young],
+        cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults]
     }
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.cumul_gain_AGCO2_all_types_dir, cn.cumul_gain_BGCO2_all_types_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir]
-    output_pattern_list = [cn.pattern_cumul_gain_AGCO2_all_types, cn.pattern_cumul_gain_BGCO2_all_types, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
+    output_dir_list = [cn.removal_forest_type_dir,
+                       cn.annual_gain_AGC_all_types_dir, cn.annual_gain_BGC_all_types_dir,
+                       cn.annual_gain_AGC_BGC_all_types_dir, cn.stdev_annual_gain_AGC_all_types_dir]
+    output_pattern_list = [cn.pattern_removal_forest_type,
+                           cn.pattern_annual_gain_AGC_all_types, cn.pattern_annual_gain_BGC_all_types,
+                           cn.pattern_annual_gain_AGC_BGC_all_types, cn.pattern_stdev_annual_gain_AGC_all_types]
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -69,24 +87,25 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
         output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
 
 
-    # Calculates gross removals
+    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
         if sensit_type == 'biomass_swap':
-            processes = 18
+            processes = 13
         else:
-            processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
+            processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = >680 GB peak
     else:
         processes = 2
-    uu.print_log('Gross removals max processors=', processes)
+    uu.print_log('Removal factor processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
-                     sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
+    pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
+                     output_pattern_list=output_pattern_list, sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload)
+    #     annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, sensit_type, no_upload)
 
     # Checks the gross removals outputs for tiles with no data
     for output_pattern in output_pattern_list:
@@ -99,13 +118,14 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
             pool.close()
             pool.join()
         else:
-            processes = 55  # 55 processors = 670 GB peak
+            processes = 55  # 50 processors = XXX GB peak
             uu.print_log(
                 "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
+
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
@@ -119,7 +139,7 @@ if __name__ == '__main__':
     # The arguments for what kind of model run is being run (standard conditions or a sensitivity analysis) and
     # the tiles to include
     parser = argparse.ArgumentParser(
-        description='Create tiles of gross removals over the model period')
+        description='Create tiles of removal factors for all forest types')
     parser.add_argument('--model-type', '-t', required=True,
                         help='{}'.format(cn.model_type_arg_help))
     parser.add_argument('--tile_id_list', '-l', required=True,
@@ -145,4 +165,6 @@ if __name__ == '__main__':
     uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_gross_removals_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list,
+                                                 run_date=run_date, no_upload=no_upload)
+
