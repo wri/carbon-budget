@@ -188,6 +188,17 @@ run. Alternatively, you can look at the top of `run_full_model.py` to see the or
 The date component of the output directory on s3 generally must be changed in `constants_and_names.py`
 for each output file. 
 
+##### Running the emissions model
+The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.
+There are a few different versions of the emissions script: one for the standard model and a few other for
+sensitivity analyses.
+The command for compiling the C++ script is (subbing in the actual file name): 
+
+`c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].exe -lgdal`
+
+For the standard model and the sensitivity analyses that don't specifically affect emissions, it is:
+
+`c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal`
 
 #### Master script 
 The master script runs through all of the non-preparatory scripts in the model: some removal factor creation, gross removals, carbon
@@ -250,18 +261,6 @@ compare aggregated outputs to specified file (although not used in this specific
 
 `python run_full_model.py -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
 
-
-##### Running the emissions model
-The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.
-There are a few different versions of the emissions script: one for the standard model and a few other for
-sensitivitity analyses.
-The command for compiling the C++ script is (subbing in the actual file name): 
-
-`c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].exe -lgdal`
-
-For the standard model and the sensitivity analyses that don't specifically affect emissions, it is:
-
-`c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal`
 
 ### Sensitivity analysis
 Several variations of the model are included; these are the sensitivity variants, as they use different inputs or parameters. 
