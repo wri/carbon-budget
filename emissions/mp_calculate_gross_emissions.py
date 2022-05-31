@@ -13,8 +13,8 @@ and convert_to_grassland), do:
 c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
 Run by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE] -l [TILE_LIST] -d [RUN_DATE]
 The Python script will call the compiled C++ code as needed.
-The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled.
-The --emitted_pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
+The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled separately.
+The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
 The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
 Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
 Emissions from all drivers is also output as emissions due to CO2 only and emissions due to other GHG (CH4 and N2O).
