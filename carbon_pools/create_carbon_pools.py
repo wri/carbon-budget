@@ -380,7 +380,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
 
 # Creates deadwood and litter carbon tiles (in 2000 and/or in loss year)
 def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type, no_upload):
-
+    windows = []
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
@@ -555,17 +555,9 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             # If they all have the same name (e.g., elev_mask and condition_mask are reused), then at least the condition_mask_4
             # equation won't work properly.)
 
-            # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
-            elev_mask_1 = elevation_window <= 2000
-            precip_mask_1 = precip_window <= 1000
-            ecozone_mask_1 = bor_tem_trop_window == 1
-            condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
-            agb_masked_1 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_1))
-            deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_non_mangrove
-            deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
-            litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
-            litter_2000_output = litter_2000_output + litter_masked.filled(0)
-
+            deadwood_2000_output, litter_2000_output = arid_pools(bor_tem_trop_window, deadwood_2000_output,
+                                                                  elevation_window, litter_2000_output,
+                                                                  natrl_forest_biomass_window, precip_window)
 
             # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
             elev_mask_2 = elevation_window <= 2000
@@ -683,6 +675,20 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_emis_year_2000, no_upload)
     else:
         uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_2000, no_upload)
+
+
+def arid_pools(elevation_window, precip_window, bor_tem_trop_window, natrl_forest_biomass_window, deadwood_2000_output, litter_2000_output):
+    # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
+    elev_mask_1 = elevation_window <= 2000
+    precip_mask_1 = precip_window <= 1000
+    ecozone_mask_1 = bor_tem_trop_window == 1
+    condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
+    agb_masked_1 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_1))
+    deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_non_mangrove
+    deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
+    litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
+    litter_2000_output = litter_2000_output + litter_masked.filled(0)
+    return deadwood_2000_output, litter_2000_output
 
 
 # Creates soil carbon tiles in loss pixels only
