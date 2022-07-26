@@ -4,9 +4,8 @@ import pandas as pd
 import os
 import numpy as np
 import rasterio
-sys.path.append('../')
-import constants_and_names as cn
-import universal_util as uu
+from .. import constants_and_names as cn
+from .. import universal_util as uu
 
 
 # Creates a dictionary of biomass in belowground, deadwood, and litter emitted_pools to aboveground biomass pool

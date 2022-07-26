@@ -2,7 +2,7 @@ from subprocess import Popen, PIPE, STDOUT, check_call
 import glob
 import boto3
 import botocore
-import constants_and_names as cn
+from . import constants_and_names as cn
 import datetime
 import rasterio
 import logging
