@@ -12,3 +12,7 @@ simpledbf~=0.2.6
 virtualenv~=16.0.0
 xlrd~=1.1.0
 psutil
+pytest
+pylint
+flake8
+coverage
