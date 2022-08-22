@@ -4,11 +4,11 @@ boto3
 botocore
 netCDF4
 numpy>=1.18.5
+openpyxl
 pandas
 psycopg2
 rasterio
 scipy
 simpledbf
 virtualenv
-xlrd
 psutil

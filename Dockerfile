@@ -15,7 +15,7 @@ ENV SECRETS_PATH /usr/secrets
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Install dependencies
-# PostGIS extension versio based on https://computingforgeeks.com/how-to-install-postgis-on-ubuntu-linux/
+# PostGIS extension version based on https://computingforgeeks.com/how-to-install-postgis-on-ubuntu-linux/
 RUN apt-get update -y && apt-get install -y \
     make \
     automake \
@@ -84,7 +84,8 @@ RUN git config --global user.email dagibbs22@gmail.com
 #RUN git pull origin model_v_1.2.2
 
 ## Compile C++ scripts
-#RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
+RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+#    RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
 #    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
 #    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
 #    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal

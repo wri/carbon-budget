@@ -12,10 +12,13 @@ Run 00N_000E in standard model; save intermediate outputs; do upload outputs to 
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
 python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
 
+Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
+starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
+python run_full_model.py -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
 run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
 python run_full_model.py -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Running all tiles"
-
 '''
 
 import argparse
