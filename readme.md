@@ -208,7 +208,7 @@ every script. Thus, the table below also explains the potential arguments for th
 The user can control what model components are run to some extent and set the date part of 
 the output directories. The emissions C++ code has to be be compiled before running the master script (see below).
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
-they are run very infrequently.
+they are run very infrequently. 
 
 | Argument | Short argument | Required/Optional | Relevant stage | Description | 
 | -------- | ----- | ----------- | ------- | ------ |
