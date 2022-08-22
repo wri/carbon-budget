@@ -1,8 +1,9 @@
-# Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
-FROM osgeo/gdal:ubuntu-small-3.0.4
+# Use osgeo GDAL image.
+#Ubuntu 20.04.4 LTS, Python 3.8.10, GDAL 3.4.2
+FROM osgeo/gdal:ubuntu-small-3.4.2
 
 # # Use this if downloading hdf files for burn year analysis
-# FROM osgeo/gdal:ubuntu-full-3.0.4
+# FROM osgeo/gdal:ubuntu-full-3.4.2
 
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
@@ -14,16 +15,17 @@ ENV SECRETS_PATH /usr/secrets
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Install dependencies
+# PostGIS extension versio based on https://computingforgeeks.com/how-to-install-postgis-on-ubuntu-linux/
 RUN apt-get update -y && apt-get install -y \
     make \
     automake \
     g++ \
     gcc \
     libpq-dev \
-    postgresql-10 \
-    postgresql-server-dev-10 \
-    postgresql-contrib-10 \
-    postgresql-10-postgis-2.4 \
+    postgresql-12 \
+    postgresql-server-dev-12 \
+    postgresql-contrib-12 \
+    postgresql-12-postgis-3 \
     python3-pip \
     wget \
     nano \
@@ -57,20 +59,20 @@ ENV PGDATABASE=ubuntu
 # Commented out the start/restart commands because even with running them, postgres isn't running when the container is created.
 # So there's no point in starting posgres here if it's not active when the instance opens.
 #######################################
-RUN cp pg_hba.conf /etc/postgresql/10/main/
+RUN cp pg_hba.conf /etc/postgresql/12/main/
 # RUN pg_ctlcluster 10 main start
 # RUN service postgresql restart
 
 
 # Install missing Python dependencies
-RUN pip3 install -r requirements.txt
+# RUN pip3 install -r requirements.txt
 
 # Link gdal libraries
 RUN cd /usr/include && ln -s ./ gdal
 
-# Somehow, this makes gdal_calc.py accessible from anywhere in the Docker
-#https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# # Somehow, this makes gdal_calc.py accessible from anywhere in the Docker
+# #https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
+# RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Enable ec2 to interact with GitHub
 RUN git config --global user.email dagibbs22@gmail.com
