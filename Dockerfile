@@ -1,8 +1,9 @@
-# Use osgeo GDAL image. It builds off Ubuntu 18.04 and uses GDAL 3.0.4
-FROM osgeo/gdal:ubuntu-small-3.0.4
+# Use osgeo GDAL image.
+#Ubuntu 20.04.4 LTS, Python 3.8.10, GDAL 3.4.2
+FROM osgeo/gdal:ubuntu-small-3.4.2
 
 # # Use this if downloading hdf files for burn year analysis
-# FROM osgeo/gdal:ubuntu-full-3.0.4
+# FROM osgeo/gdal:ubuntu-full-3.4.2
 
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
@@ -14,16 +15,17 @@ ENV SECRETS_PATH /usr/secrets
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Install dependencies
+# PostGIS extension version based on https://computingforgeeks.com/how-to-install-postgis-on-ubuntu-linux/
 RUN apt-get update -y && apt-get install -y \
     make \
     automake \
     g++ \
     gcc \
     libpq-dev \
-    postgresql-10 \
-    postgresql-server-dev-10 \
-    postgresql-contrib-10 \
-    postgresql-10-postgis-2.4 \
+    postgresql-12 \
+    postgresql-server-dev-12 \
+    postgresql-contrib-12 \
+    postgresql-12-postgis-3 \
     python3-pip \
     wget \
     nano \
@@ -57,7 +59,7 @@ ENV PGDATABASE=ubuntu
 # Commented out the start/restart commands because even with running them, postgres isn't running when the container is created.
 # So there's no point in starting posgres here if it's not active when the instance opens.
 #######################################
-RUN cp pg_hba.conf /etc/postgresql/10/main/
+RUN cp pg_hba.conf /etc/postgresql/12/main/
 # RUN pg_ctlcluster 10 main start
 # RUN service postgresql restart
 
@@ -68,9 +70,9 @@ RUN pip3 install -r requirements.txt
 # Link gdal libraries
 RUN cd /usr/include && ln -s ./ gdal
 
-# Somehow, this makes gdal_calc.py accessible from anywhere in the Docker
-#https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# # Somehow, this makes gdal_calc.py accessible from anywhere in the Docker
+# #https://www.continualintegration.com/miscellaneous-articles/all/how-do-you-troubleshoot-usr-bin-env-python-no-such-file-or-directory/
+# RUN ln -s /usr/bin/python3 /usr/bin/python
 
 # Enable ec2 to interact with GitHub
 RUN git config --global user.email dagibbs22@gmail.com
@@ -82,7 +84,8 @@ RUN git config --global user.email dagibbs22@gmail.com
 #RUN git pull origin model_v_1.2.2
 
 ## Compile C++ scripts
-#RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
+RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+#    RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
 #    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
 #    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
 #    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
