@@ -1,3 +1,5 @@
+"""Functions to create carbon pools"""
+
 import datetime
 import sys
 import pandas as pd

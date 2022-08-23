@@ -297,7 +297,7 @@ if __name__ == '__main__':
     std_net_flux = args.std_net_flux_aggreg
     thresh = args.tcd_threshold
     thresh = int(thresh)
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():

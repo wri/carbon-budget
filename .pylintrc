@@ -1,0 +1,5 @@
+# .pylintrc
+
+[MASTER]
+
+disable=line-too-long

@@ -97,7 +97,7 @@ def main ():
     std_net_flux = args.std_net_flux_aggreg
     include_mangroves = args.mangroves
     include_us = args.us_rates
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
     save_intermediates = args.save_intermediates
     log_note = args.log_note
 

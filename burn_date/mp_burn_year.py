@@ -263,7 +263,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Create the output log
     uu.initiate_log(tile_id_list=tile_id_list, sensit_type='std', run_date=run_date, no_upload=no_upload)
