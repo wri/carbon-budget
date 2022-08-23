@@ -34,10 +34,9 @@ import universal_util as uu
 def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None, no_upload = None,
                            save_intermediates = None):
     """
-    Parameters
     :param sensit_type: sensitivity analysis type (basic model is std)
     :param tile_id_list: list of tile ids to process
-    :param carbon_pool_extent: loss-only or 2000 extent (loss or 2000)
+    :param carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
     :param run_date: run date (YYYYMMDD)
     :param no_upload: upload outputs to s3 or not
     :param save_intermediates: delete or save intermediates
