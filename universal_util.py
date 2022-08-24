@@ -26,6 +26,10 @@ date_today = d.strftime('%Y_%m_%d')
 date_time_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 # date_time_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
 
+# globals
+global TEST
+TEST = 'hello'
+
 # Uploads the output log to the designated s3 folder
 def upload_log():
 

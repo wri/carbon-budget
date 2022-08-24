@@ -2,4 +2,4 @@
 
 [MASTER]
 
-disable=line-too-long
+disable=line-too-long, redefined-outer-name, invalid-name

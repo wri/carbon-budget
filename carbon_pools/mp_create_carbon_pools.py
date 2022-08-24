@@ -18,6 +18,8 @@ emitted_pools in 2000 only need to be updated if mangrove AGB, WHRC AGB, or soil
 Which carbon emitted_pools are being generated (2000 and/or loss pixels) is controlled through the command line argument --carbon-pool-extent (-ce).
 This extent argument determines which AGC function is used and how the outputs of the other emitted_pools' scripts are named.
 Carbon emitted_pools in both 2000 and in the year of loss can be created in a single run by using '2000,loss' or 'loss,2000'.
+
+python mp_create_carbon_pools.py -t std -l 00N_000E -d 20229999 -si -nu -ce loss
 """
 
 import argparse
@@ -26,10 +28,13 @@ import glob
 import multiprocessing
 import os
 import pandas as pd
+import sys
 
-import create_carbon_pools
+sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
+import create_carbon_pools
 
 def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date = None, no_upload = None,
                            save_intermediates = None):
@@ -42,6 +47,8 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     :param save_intermediates: delete or save intermediates
     :return: set of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
     """
+
+    print(uu.TEST)
 
     os.chdir(cn.docker_base_dir)
 
