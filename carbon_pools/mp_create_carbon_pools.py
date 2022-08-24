@@ -48,8 +48,6 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     :return: set of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
     """
 
-    print(uu.TEST)
-
     os.chdir(cn.docker_base_dir)
 
     if (sensit_type != 'std') & (carbon_pool_extent != 'loss'):
@@ -58,6 +56,10 @@ def mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_da
     # Checks the validity of the carbon_pool_extent argument
     if (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
         uu.exception_log(no_upload, "Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+
+    print(cn.NO_UPLOAD)
+
+    sys.quit()
 
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed.

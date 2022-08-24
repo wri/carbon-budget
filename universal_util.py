@@ -26,10 +26,6 @@ date_today = d.strftime('%Y_%m_%d')
 date_time_today = d.strftime('%Y%m%d_%h%m%s') # for Linux
 # date_time_today = d.strftime('%Y%m%d_%H%M%S') # for Windows
 
-# globals
-global TEST
-TEST = 'hello'
-
 # Uploads the output log to the designated s3 folder
 def upload_log():
 
@@ -43,7 +39,8 @@ def upload_log():
 
 
 # Creates the log with a starting line
-def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=None,
+def initiate_log(tile_id_list=None, sensit_type=None, run_date=None,
+                 # no_upload=None,
                  save_intermediates=None, stage_input=None, run_through=None, carbon_pool_extent=None,
                  emitted_pools=None, thresh=None, std_net_flux=None,
                  include_mangroves=None, include_us=None, log_note=None):
@@ -74,7 +71,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=N
     logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
     logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
     logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
-    logging.info("Do not upload anything to s3: {}".format(no_upload))
+    logging.info("Do not upload anything to s3: {}".format(cn.NO_UPLOAD))
     logging.info("AWS credentials supplied: {}".format(check_aws_creds()))
     logging.info("Save intermediate outputs: {}".format(save_intermediates))
     logging.info("AWS ec2 instance type and AMI ID:")
@@ -114,7 +111,7 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None, no_upload=N
     logging.getLogger("botocore").setLevel(logging.ERROR)  # "Found credentials in environment variables." is logged by botocore: https://github.com/boto/botocore/issues/1841
 
     # If no_upload flag is not activated, log is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
         upload_log()
 
 

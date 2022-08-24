@@ -12,6 +12,11 @@ version = '1.2.2'
 version_filename = version.replace('.', '_')
 
 
+# Global variables that can be modified by the command line
+global NO_UPLOAD
+NO_UPLOAD = False
+
+
 # Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.
 loss_years = 21
 

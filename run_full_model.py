@@ -101,31 +101,28 @@ def main ():
     save_intermediates = args.save_intermediates
     log_note = args.log_note
 
-    print(uu.TEST)
-
-    uu.TEST = "not hello"
-
-    print(uu.TEST)
-
-
     # Start time for script
     script_start = datetime.datetime.now()
+
+    # If command says not to upload, sets global variable to not upload
+    if no_upload == True:
+        cn.NO_UPLOAD = True
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         uu.print_log("s3 credentials not found. Uploading to s3 disabled but downloading enabled.")
-        no_upload = True
+        cn.NO_UPLOAD = True
 
 
     # Forces intermediate files to not be deleted if files can't be uploaded to s3.
     # Rationale is that if uploads to s3 are not occurring, intermediate files can't be downloaded during the model
     # run and therefore must exist locally.
-    if no_upload == True:
+    if cn.NO_UPLOAD == True:
         save_intermediates = True
 
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload,
+    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date,
                     save_intermediates=save_intermediates,
                     stage_input=stage_input, run_through=run_through, carbon_pool_extent=carbon_pool_extent,
                     emitted_pools=emitted_pools, thresh=thresh, std_net_flux=std_net_flux,
