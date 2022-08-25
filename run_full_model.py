@@ -561,7 +561,7 @@ def main ():
         uu.print_log(":::::Creating 4x4 km aggregate maps")
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_4_km(thresh, tile_id_list, std_net_flux=std_net_flux)
+        mp_aggregate_results_to_4_km(cn.THRESH, tile_id_list, std_net_flux=cn.STD_NET_FLUX)
 
         end = datetime.datetime.now()
         elapsed_time = end - start

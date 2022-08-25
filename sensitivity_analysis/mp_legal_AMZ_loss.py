@@ -109,8 +109,8 @@ def main ():
         out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                         no_upload=no_upload), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         upload_dir = master_output_dir_list[0]
@@ -163,8 +163,8 @@ def main ():
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                         no_upload=no_upload), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
         uu.print_log("  PRODES composite loss raster warped to Hansen tiles")
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.

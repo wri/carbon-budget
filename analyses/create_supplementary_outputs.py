@@ -80,7 +80,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns):
 
     # Adds metadata tags to the output rasters
 
-    uu.add_rasterio_tags(per_pixel_full_extent_dst, cn.SENSIT_TYPE)
+    uu.add_rasterio_tags(per_pixel_full_extent_dst)
     per_pixel_full_extent_dst.update_tags(
         units='Mg CO2e/pixel over model duration (2001-20{})'.format(cn.loss_years))
     per_pixel_full_extent_dst.update_tags(
@@ -88,7 +88,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns):
     per_pixel_full_extent_dst.update_tags(
         extent='Full model extent: ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations')
 
-    uu.add_rasterio_tags(per_hectare_forest_extent_dst, cn.SENSIT_TYPE)
+    uu.add_rasterio_tags(per_hectare_forest_extent_dst)
     per_hectare_forest_extent_dst.update_tags(
         units='Mg CO2e/hectare over model duration (2001-20{})'.format(cn.loss_years))
     per_hectare_forest_extent_dst.update_tags(
@@ -96,7 +96,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns):
     per_hectare_forest_extent_dst.update_tags(
         extent='Forest extent: ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations')
 
-    uu.add_rasterio_tags(per_pixel_forest_extent_dst, cn.SENSIT_TYPE)
+    uu.add_rasterio_tags(per_pixel_forest_extent_dst)
     per_pixel_forest_extent_dst.update_tags(
         units='Mg CO2e/pixel over model duration (2001-20{})'.format(cn.loss_years))
     per_pixel_forest_extent_dst.update_tags(

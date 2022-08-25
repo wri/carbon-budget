@@ -78,8 +78,8 @@ def mp_rewindow_tiles(tile_id_list, run_date = None, no_upload = None):
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name,
-                         no_upload=no_upload), tile_id_list)
+        pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
+                 tile_id_list)
         pool.close()
         pool.join()
 

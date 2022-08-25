@@ -51,7 +51,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         agc_bgc_stdev_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]), 'w', **kwargs)
 
         # Adds metadata tags to the output rasters
-        uu.add_rasterio_tags(agc_bgc_rate_dst, 'std')
+        uu.add_rasterio_tags(agc_bgc_rate_dst)
         agc_bgc_rate_dst.update_tags(
             units='megagrams aboveground+belowground carbon/ha/yr')
         agc_bgc_rate_dst.update_tags(
@@ -59,7 +59,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         agc_bgc_rate_dst.update_tags(
             extent='Continental USA. Applies to pixels for which an FIA region, FIA forest group, and Pan et al. forest age category are available or interpolated.')
 
-        uu.add_rasterio_tags(agc_bgc_stdev_dst, 'std')
+        uu.add_rasterio_tags(agc_bgc_stdev_dst)
         agc_bgc_stdev_dst.update_tags(
             units='standard deviation of removal factor, in megagrams aboveground+belowground carbon/ha/yr')
         agc_bgc_stdev_dst.update_tags(

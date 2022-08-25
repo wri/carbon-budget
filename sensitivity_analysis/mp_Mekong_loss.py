@@ -60,7 +60,8 @@ def main ():
     source_raster = loss_composite
     out_pattern = cn.pattern_Mekong_loss_processed
     dt = 'Byte'
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
 
     # This is necessary for changing NoData values to 0s (so they are recognized as 0s)
     pool.map(Mekong_loss.recode_tiles, tile_id_list)

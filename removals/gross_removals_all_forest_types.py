@@ -61,7 +61,7 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list):
 
     # The output files: aboveground gross removals, belowground gross removals, above+belowground gross removals. Adds metadata tags
     cumulative_gain_AGCO2_dst = rasterio.open(cumulative_gain_AGCO2, 'w', **kwargs)
-    uu.add_rasterio_tags(cumulative_gain_AGCO2_dst, cn.SENSIT_TYPE)
+    uu.add_rasterio_tags(cumulative_gain_AGCO2_dst)
     cumulative_gain_AGCO2_dst.update_tags(
         units='megagrams aboveground CO2/ha over entire model period')
     cumulative_gain_AGCO2_dst.update_tags(
@@ -70,7 +70,7 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list):
         extent='Full model extent')
 
     cumulative_gain_BGCO2_dst = rasterio.open(cumulative_gain_BGCO2, 'w', **kwargs)
-    uu.add_rasterio_tags(cumulative_gain_BGCO2_dst, cn.SENSIT_TYPE)
+    uu.add_rasterio_tags(cumulative_gain_BGCO2_dst)
     cumulative_gain_BGCO2_dst.update_tags(
         units='megagrams belowground CO2/ha over entire model period')
     cumulative_gain_BGCO2_dst.update_tags(

@@ -46,13 +46,13 @@ def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
     processes=int(cn.count/4)
     uu.print_log('Mangrove preprocessing max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                     no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
 
     # # For single processor use, for testing purposes
     # for tile_id in tile_id_list:
     #
-    #     mangrove_processing.create_mangrove_tiles(tile_id, source_raster, out_pattern, no_upload)
+    #     mangrove_processing.create_mangrove_tiles(tile_id, source_raster, out_pattern)
 
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.mangrove_biomass_2000_dir

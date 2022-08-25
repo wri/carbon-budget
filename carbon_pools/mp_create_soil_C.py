@@ -112,8 +112,8 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
         processes = int(cn.count/2)
     uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                     no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
     pool.close()
     pool.join()
 
@@ -236,8 +236,8 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
         processes = 2
     uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                     no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
     pool.close()
     pool.join()
 

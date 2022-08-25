@@ -152,7 +152,7 @@ def create_AGC(tile_id, carbon_pool_extent):
         AGC_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_AGC_2000 = rasterio.open(AGC_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_AGC_2000, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_AGC_2000)
         dst_AGC_2000.update_tags(
             units='megagrams aboveground carbon (AGC)/ha')
         dst_AGC_2000.update_tags(
@@ -166,7 +166,7 @@ def create_AGC(tile_id, carbon_pool_extent):
         AGC_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_AGC_emis_year = rasterio.open(AGC_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_AGC_emis_year, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_AGC_emis_year)
         dst_AGC_emis_year.update_tags(
             units='megagrams aboveground carbon (AGC)/ha')
         dst_AGC_emis_year.update_tags(
@@ -302,7 +302,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         BGC_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_BGC_2000 = rasterio.open(BGC_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_BGC_2000, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_BGC_2000)
         dst_BGC_2000.update_tags(
             units='megagrams belowground carbon (BGC)/ha')
         dst_BGC_2000.update_tags(
@@ -323,7 +323,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         BGC_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_BGC_emis_year, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_BGC_emis_year)
         dst_BGC_emis_year.update_tags(
             units='megagrams belowground carbon (BGC)/ha')
         dst_BGC_emis_year.update_tags(
@@ -440,7 +440,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_2000 = rasterio.open(deadwood_2000, 'w', **kwargs)
         dst_litter_2000 = rasterio.open(litter_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_deadwood_2000, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_deadwood_2000)
         dst_deadwood_2000.update_tags(
             units='megagrams deadwood carbon/ha')
         dst_deadwood_2000.update_tags(
@@ -448,7 +448,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_2000.update_tags(
             extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_litter_2000, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_litter_2000)
         dst_litter_2000.update_tags(
             units='megagrams litter carbon/ha')
         dst_litter_2000.update_tags(
@@ -472,7 +472,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_emis_year = rasterio.open(deadwood_emis_year, 'w', **kwargs)
         dst_litter_emis_year = rasterio.open(litter_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_deadwood_emis_year, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_deadwood_emis_year)
         dst_deadwood_emis_year.update_tags(
             units='megagrams deadwood carbon/ha')
         dst_deadwood_emis_year.update_tags(
@@ -480,7 +480,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_litter_emis_year, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_litter_emis_year)
         dst_litter_emis_year.update_tags(
             units='megagrams litter carbon/ha')
         dst_litter_emis_year.update_tags(
@@ -761,7 +761,7 @@ def create_soil_emis_extent(tile_id, pattern):
     dst_soil_emis_year = rasterio.open(soil_emis_year, 'w', **kwargs)
 
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_soil_emis_year, cn.SENSIT_TYPE)
+    uu.add_rasterio_tags(dst_soil_emis_year)
     dst_soil_emis_year.update_tags(
         units='megagrams soil carbon/ha')
     dst_soil_emis_year.update_tags(
@@ -834,7 +834,7 @@ def create_total_C(tile_id, carbon_pool_extent):
         total_C_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_total_C_2000 = rasterio.open(total_C_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_total_C_2000, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_total_C_2000)
         dst_total_C_2000.update_tags(
             units='megagrams total (all emitted_pools) carbon/ha')
         dst_total_C_2000.update_tags(
@@ -868,7 +868,7 @@ def create_total_C(tile_id, carbon_pool_extent):
         total_C_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_total_C_emis_year = rasterio.open(total_C_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_total_C_emis_year, cn.SENSIT_TYPE)
+        uu.add_rasterio_tags(dst_total_C_emis_year)
         dst_total_C_emis_year.update_tags(
             units='megagrams total (all emitted_pools) carbon/ha')
         dst_total_C_emis_year.update_tags(

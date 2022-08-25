@@ -174,7 +174,7 @@ def mp_aggregate_results_to_4_km(thresh, tile_id_list, std_net_flux = None):
         os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_0_04deg*.tif'.format(out_vrt, pattern))
 
         # Creates the output name for the 10km map
-        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh, cn.SENSIT_TYPE)
+        out_pattern = uu.name_aggregated_output(download_pattern_name, thresh)
         uu.print_log(out_pattern)
 
         # Produces a single raster of all the 10x10 tiles (0.04 degree resolution)
@@ -315,4 +315,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_aggregate_results_to_4_km(tile_id_list=tile_id_list, thresh=thresh, std_net_flux=std_net_flux)
+    mp_aggregate_results_to_4_km(tile_id_list=tile_id_list, thresh=cn.THRESH, std_net_flux=cn.STD_NET_FLUX)

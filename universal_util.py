@@ -653,7 +653,6 @@ def count_tiles_s3(source, pattern=None):
     return len(file_list)
 
 
-
 # Gets the bounding coordinates of a tile
 def coords(tile_id):
     NS = tile_id.split("_")[0][-1:]
@@ -1043,7 +1042,7 @@ def end_of_fx_summary(start, tile_id, pattern):
 
 
 # Warps raster to Hansen tiles using multiple processors
-def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt, no_upload):
+def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
 
     # Start time
     start = datetime.datetime.now()
@@ -1059,7 +1058,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt, no_upload):
     with process.stdout:
         log_subprocess_output(process.stdout)
 
-    end_of_fx_summary(start, tile_id, out_pattern, no_upload)
+    end_of_fx_summary(start, tile_id, out_pattern)
 
 
 def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
@@ -1090,13 +1089,13 @@ def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksizex, blocksizey,
 # Creates a tile of all 0s for any tile passed to it.
 # Uses the Hansen loss tile for information about the tile.
 # Based on https://gis.stackexchange.com/questions/220753/how-do-i-create-blank-geotiff-with-same-spatial-properties-as-existing-geotiff
-def make_blank_tile(tile_id, pattern, folder, sensit_type):
+def make_blank_tile(tile_id, pattern, folder):
 
     # Creates tile names for standard and sensitivity analyses.
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
     # Thus, it has to be prepared for either one.
     file_name = '{0}{1}_{2}.tif'.format(folder, tile_id, pattern)
-    file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, sensit_type)
+    file_name_sens = '{0}{1}_{2}_{3}.tif'.format(folder, tile_id, pattern, cn.SENSIT_TYPE)
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
@@ -1169,7 +1168,7 @@ def list_and_delete_blank_tiles():
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
-def name_aggregated_output(pattern, thresh, sensit_type):
+def name_aggregated_output(pattern, thresh):
 
     out_pattern = re.sub('ha_', '', pattern)
     # print out_pattern
@@ -1184,12 +1183,7 @@ def name_aggregated_output(pattern, thresh, sensit_type):
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y%m%d")
 
-    # print thresh
-    # print cn.pattern_aggreg
-    # print sensit_type
-    # print date_formatted
-
-    out_name = '{0}_tcd{1}_{2}_{3}_{4}'.format(out_pattern, thresh, cn.pattern_aggreg, sensit_type, date_formatted)
+    out_name = '{0}_tcd{1}_{2}_{3}_{4}'.format(out_pattern, thresh, cn.pattern_aggreg, cn.SENSIT_TYPE, date_formatted)
 
     # print out_name
 
@@ -1353,12 +1347,14 @@ def replace_output_dir_date(output_dir_list, run_date):
 
 
 # Adds various metadata tags to the raster
-def add_rasterio_tags(output_dst, sensit_type):
+def add_rasterio_tags(output_dst):
 
     # based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
 
-    if sensit_type == 'std':
+    if cn.SENSIT_TYPE == 'std':
         sensit_type = 'standard model'
+    else:
+        sensit_type = cn.SENSIT_TYPE
 
     output_dst.update_tags(
         model_version=cn.version)
@@ -1416,7 +1412,7 @@ def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
 # Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
 # which is the resolution of the output tiles. This allows the 30x30 m pixels in each window to be summed
 # into 0.04x0.04 degree rasters.
-def rewindow(tile_id, download_pattern_name, no_upload):
+def rewindow(tile_id, download_pattern_name):
 
     # start time
     start = datetime.datetime.now()
