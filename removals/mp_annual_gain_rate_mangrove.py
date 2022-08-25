@@ -19,7 +19,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'removals'))
 import annual_gain_rate_mangrove
 
-def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
+def mp_annual_gain_rate_mangrove(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
     pd.options.mode.chained_assignment = None
@@ -49,15 +49,15 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list, if AWS credentials are found
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
@@ -128,7 +128,7 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
         processes = 4
     uu.print_log('Mangrove annual removals rate max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, sensit_type=sensit_type, output_pattern_list=output_pattern_list,
+    pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, output_pattern_list=output_pattern_list,
                      gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict, stdev_dict=stdev_dict), tile_id_list)
     pool.close()
     pool.join()
@@ -136,7 +136,7 @@ def mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = None):
     # # For single processor use
     # for tile in tile_id_list:
     #
-    #     annual_gain_rate_mangrove.annual_gain_rate(tile, sensit_type, output_pattern_list,
+    #     annual_gain_rate_mangrove.annual_gain_rate(tile, output_pattern_list,
     #           gain_above_dict, gain_below_dict, stdev_dict)
 
 
@@ -159,21 +159,26 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
-
+        cn.NO_UPLOAD = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
+    uu.initiate_log(tile_id_list=tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_annual_gain_rate_mangrove(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_annual_gain_rate_mangrove(tile_id_list=tile_id_list)

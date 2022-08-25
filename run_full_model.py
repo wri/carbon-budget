@@ -154,40 +154,40 @@ def main ():
 
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
-    if ('carbon_pools' in actual_stages) & (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
-        uu.exception_log(no_upload, "Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+    if ('carbon_pools' in actual_stages) & (cn.CARBON_POOL_EXTENT not in ['loss', '2000', 'loss,2000', '2000,loss']):
+        uu.exception_log(cn.NO_UPLOAD, "Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
     if 'gross_emissions' in actual_stages:
 
-        if emitted_pools == 'biomass_soil':
+        if cn.EMITTED_POOLS == 'biomass_soil':
             # Some sensitivity analyses have specific gross emissions scripts.
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
-            if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
-                if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, sensit_type)):
-                    uu.print_log("C++ for {} already compiled.".format(sensit_type))
+            if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
+                if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, cn.SENSIT_TYPE)):
+                    uu.print_log("C++ for {} already compiled.".format(cn.SENSIT_TYPE))
                 else:
-                    uu.exception_log(no_upload, 'Must compile standard {} model C++...'.format(sensit_type))
+                    uu.exception_log(cn.NO_UPLOAD, 'Must compile standard {} model C++...'.format(cn.SENSIT_TYPE))
             else:
                 if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
                     uu.print_log("C++ for generic emissions already compiled.")
                 else:
-                    uu.exception_log(no_upload, 'Must compile generic emissions C++...')
+                    uu.exception_log(cn.NO_UPLOAD, 'Must compile generic emissions C++...')
 
-        elif (emitted_pools == 'soil_only') & (sensit_type == 'std'):
+        elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
             if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
-                uu.exception_log(no_upload, 'Must compile soil_only C++...')
+                uu.exception_log(cn.NO_UPLOAD, 'Must compile soil_only C++...')
 
         else:
-            uu.exception_log(no_upload, 'Pool and/or sensitivity analysis option not valid for gross emissions')
+            uu.exception_log(cn.NO_UPLOAD, 'Pool and/or sensitivity analysis option not valid for gross emissions')
 
     # Checks whether the canopy cover argument is valid up front.
     if 'aggregate' in actual_stages:
-        if thresh < 0 or thresh > 99:
-            uu.exception_log(no_upload, 'Invalid tcd. Please provide an integer between 0 and 99.')
+        if cn.THRESH < 0 or cn.THRESH > 99:
+            uu.exception_log(cn.NO_UPLOAD, 'Invalid tcd. Please provide an integer between 0 and 99.')
         else:
             pass
 
@@ -239,7 +239,7 @@ def main ():
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
     # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
-    if emitted_pools == 'biomass_soil':
+    if cn.EMITTED_POOLS == 'biomass_soil':
         output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
                            cn.gross_emis_shifting_ag_biomass_soil_dir,
                            cn.gross_emis_forestry_biomass_soil_dir,
@@ -285,7 +285,7 @@ def main ():
         uu.print_log(":::::Creating tiles of annual removals for mangrove")
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = run_date)
+        mp_annual_gain_rate_mangrove(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -300,7 +300,7 @@ def main ():
         uu.print_log(":::::Creating tiles of annual removals for US")
         start = datetime.datetime.now()
 
-        mp_US_removal_rates(sensit_type, tile_id_list, run_date = run_date)
+        mp_US_removal_rates(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -314,7 +314,7 @@ def main ():
         uu.print_log(":::::Creating tiles of model extent")
         start = datetime.datetime.now()
 
-        mp_model_extent(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_model_extent(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -328,7 +328,7 @@ def main ():
         uu.print_log(":::::Creating tiles of forest age categories for IPCC removal rates")
         start = datetime.datetime.now()
 
-        mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_forest_age_category_IPCC(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -342,7 +342,7 @@ def main ():
         uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults")
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_annual_gain_rate_IPCC_defaults(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -355,7 +355,7 @@ def main ():
         uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates for all forest types")
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -403,7 +403,7 @@ def main ():
         uu.print_log(":::::Creating tiles of gain year count for all removal pixels")
         start = datetime.datetime.now()
 
-        mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = run_date, no_upload=no_upload)
+        mp_gain_year_count_all_forest_types(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -417,7 +417,7 @@ def main ():
         uu.print_log(":::::Creating gross removals for all forest types combined (above + belowground) tiles")
         start = datetime.datetime.now()
 
-        mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_gross_removals_all_forest_types(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start

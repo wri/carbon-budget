@@ -1025,7 +1025,7 @@ def get_raster_nodata_value(tile):
 
 
 # Prints information about the tile that was just processed: how long it took and how many tiles have been completed
-def end_of_fx_summary(start, tile_id, pattern, no_upload):
+def end_of_fx_summary(start, tile_id, pattern):
 
     # Checking memory at this point (end of the function) seems to record memory usage when it is at its peak
     check_memory()
@@ -1037,7 +1037,7 @@ def end_of_fx_summary(start, tile_id, pattern, no_upload):
     count_completed_tiles(pattern)
 
     # If no_upload flag is not activated, log is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
         # Uploads the log as each tile is finished
         upload_log()
 
