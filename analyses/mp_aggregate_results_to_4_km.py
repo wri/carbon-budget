@@ -46,7 +46,7 @@ def mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux
 
     # Checks whether the canopy cover argument is valid
     if thresh < 0 or thresh > 99:
-        uu.exception_log(no_upload, 'Invalid tcd. Please provide an integer between 0 and 99.')
+        uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
 
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
@@ -304,8 +304,7 @@ if __name__ == '__main__':
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, thresh=thresh, std_net_flux=std_net_flux,
-                    no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

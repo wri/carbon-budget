@@ -39,7 +39,7 @@ def upload_log():
 
 
 # Creates the log with a starting line
-def initiate_log(tile_id_list=None):
+def initiate_log(tile_id_list):
 
     # For some reason, logging gets turned off when AWS credentials aren't provided.
     # This restores logging without AWS credentials.
@@ -135,7 +135,7 @@ def print_log(*args):
 
 
 # Logs fatal errors to the log txt, uploads to s3, and then terminates the program with an exception in the console
-def exception_log(no_upload, *args):
+def exception_log(*args):
 
     # Empty string
     full_statement = str(object='')
@@ -148,7 +148,7 @@ def exception_log(no_upload, *args):
     logging.info(full_statement, stack_info=True)
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
         # Need to upload log before the exception stops the script
         upload_log()

@@ -112,7 +112,7 @@ if __name__ == '__main__':
     sensit_type='std'
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)

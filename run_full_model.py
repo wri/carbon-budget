@@ -103,26 +103,8 @@ def main ():
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        cn.NO_UPLOAD = True
-
-    if cn.THRESH is not None:
-        cn.THRESH = int(cn.THRESH)
-
-    # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list)
-
-    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(cn.SENSIT_TYPE)
-    tile_id_list = uu.tile_id_list_check(tile_id_list)
-
-    # Start time for script
-    script_start = datetime.datetime.now()
-
-    # Disables upload to s3 if no AWS credentials are found in environment
-    if not uu.check_aws_creds():
         uu.print_log("s3 credentials not found. Uploading to s3 disabled but downloading enabled.")
         cn.NO_UPLOAD = True
-
 
     # Forces intermediate files to not be deleted if files can't be uploaded to s3.
     # Rationale is that if uploads to s3 are not occurring, intermediate files can't be downloaded during the model
@@ -130,14 +112,21 @@ def main ():
     if cn.NO_UPLOAD == True:
         cn.SAVE_INTERMEDIATES = True
 
+    if cn.THRESH is not None:
+        cn.THRESH = int(cn.THRESH)
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list)
+    uu.initiate_log(tile_id_list)
 
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(cn.SENSIT_TYPE)
+
+    # Start time for script
+    script_start = datetime.datetime.now()
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (cn.STAGE_INPUT not in model_stages):
-        uu.exception_log(cn.NO_UPLOAD, 'Invalid stage selection. Please provide a stage from', model_stages)
+        uu.exception_log('Invalid stage selection. Please provide a stage from', model_stages)
     else:
         pass
 
@@ -155,7 +144,7 @@ def main ():
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
     if ('carbon_pools' in actual_stages) & (cn.CARBON_POOL_EXTENT not in ['loss', '2000', 'loss,2000', '2000,loss']):
-        uu.exception_log(cn.NO_UPLOAD, "Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
@@ -168,26 +157,26 @@ def main ():
                 if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, cn.SENSIT_TYPE)):
                     uu.print_log("C++ for {} already compiled.".format(cn.SENSIT_TYPE))
                 else:
-                    uu.exception_log(cn.NO_UPLOAD, 'Must compile standard {} model C++...'.format(cn.SENSIT_TYPE))
+                    uu.exception_log('Must compile standard {} model C++...'.format(cn.SENSIT_TYPE))
             else:
                 if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
                     uu.print_log("C++ for generic emissions already compiled.")
                 else:
-                    uu.exception_log(cn.NO_UPLOAD, 'Must compile generic emissions C++...')
+                    uu.exception_log('Must compile generic emissions C++...')
 
         elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
             if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
-                uu.exception_log(cn.NO_UPLOAD, 'Must compile soil_only C++...')
+                uu.exception_log('Must compile soil_only C++...')
 
         else:
-            uu.exception_log(cn.NO_UPLOAD, 'Pool and/or sensitivity analysis option not valid for gross emissions')
+            uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
 
     # Checks whether the canopy cover argument is valid up front.
     if 'aggregate' in actual_stages:
         if cn.THRESH < 0 or cn.THRESH > 99:
-            uu.exception_log(cn.NO_UPLOAD, 'Invalid tcd. Please provide an integer between 0 and 99.')
+            uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
         else:
             pass
 
@@ -228,12 +217,12 @@ def main ():
 
     # Adds the carbon directories depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
     if 'carbon_pools' in actual_stages:
-        if 'loss' in carbon_pool_extent:
+        if 'loss' in cn.CARBON_POOL_EXTENT:
             output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir,
                                                  cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir,
                                                  cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
 
-        if '2000' in carbon_pool_extent:
+        if '2000' in cn.CARBON_POOL_EXTENT:
             output_dir_list = output_dir_list + [cn.AGC_2000_dir, cn.BGC_2000_dir,
                                                  cn.deadwood_2000_dir, cn.litter_2000_dir,
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
@@ -455,8 +444,7 @@ def main ():
         uu.print_log(":::::Creating carbon pool tiles")
         start = datetime.datetime.now()
 
-        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date=run_date, no_upload=no_upload,
-                               save_intermediates=save_intermediates)
+        mp_create_carbon_pools(tile_id_list, cn.CARBON_POOL_EXTENT)
 
         end = datetime.datetime.now()
         elapsed_time = end - start

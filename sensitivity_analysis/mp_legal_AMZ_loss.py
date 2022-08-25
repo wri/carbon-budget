@@ -46,11 +46,11 @@ def main ():
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (stage_input not in Brazil_stages):
-        uu.exception_log(no_upload, 'Invalid stage selection. Please provide a stage from', Brazil_stages)
+        uu.exception_log('Invalid stage selection. Please provide a stage from', Brazil_stages)
     else:
         pass
     if (run_through not in ['true', 'false']):
-        uu.exception_log(no_upload, 'Invalid run through option. Please enter true or false.')
+        uu.exception_log('Invalid run through option. Please enter true or false.')
     else:
         pass
 
@@ -675,7 +675,7 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[0], stage_output_pattern_list[0])
 
         else:
-            uu.exception_log(no_upload, "Extent argument not valid")
+            uu.exception_log("Extent argument not valid")
 
         uu.print_log("Creating tiles of belowground carbon")
         # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
@@ -749,7 +749,7 @@ def main ():
             uu.print_log("Skipping soil for 2000 carbon pool calculation")
 
         else:
-            uu.exception_log(no_upload, "Extent argument not valid")
+            uu.exception_log("Extent argument not valid")
 
         uu.print_log("Creating tiles of total carbon")
         # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory

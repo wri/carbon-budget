@@ -83,6 +83,6 @@ if __name__ == '__main__':
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)

@@ -266,7 +266,7 @@ if __name__ == '__main__':
     no_upload = args.NO_UPLOAD
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type='std', run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)

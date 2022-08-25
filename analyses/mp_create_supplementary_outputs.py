@@ -132,7 +132,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
         elif "net_flux" in input_pattern:
             output_patterns = output_pattern_list[6:9]
         else:
-            uu.exception_log(no_upload, "No output patterns found for input pattern. Please check.")
+            uu.exception_log("No output patterns found for input pattern. Please check.")
 
         uu.print_log("Input pattern:", input_pattern)
         uu.print_log("Output patterns:", output_patterns)
@@ -205,7 +205,7 @@ if __name__ == '__main__':
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)
