@@ -28,7 +28,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import create_supplementary_outputs
 
-def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, no_upload = None):
+def mp_create_supplementary_outputs(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
 
@@ -37,7 +37,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list_outer == 'all':
         # List of tiles to run in the model
-        tile_id_list_outer = uu.tile_list_s3(cn.net_flux_dir, sensit_type)
+        tile_id_list_outer = uu.tile_list_s3(cn.net_flux_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list_outer)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_outer))) + "\n")
@@ -77,24 +77,24 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     # Pixel area tiles-- necessary for calculating per pixel values
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, sensit_type, tile_id_list_outer)
+    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for masking to forest extent
-    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, sensit_type, tile_id_list_outer)
-    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, sensit_type, tile_id_list_outer)
-    uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, sensit_type, tile_id_list_outer)
+    uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
+    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
+    uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
 
     uu.print_log("Model outputs to process are:", download_dict)
 
     # If the model run isn't the standard one, the output directory is changed
-    if sensit_type != 'std':
+    if cn.SENSIT_TYPE != 'std':
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     # Only done if output upload is enabled.
-    if run_date is not None and no_upload is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # Iterates through input tile sets
@@ -108,7 +108,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
         # A new list is named so that tile_id_list stays as the command line argument.
         if tile_id_list == 'all':
             # List of tiles to run in the model
-            tile_id_list_input = uu.tile_list_s3(input_dir, sensit_type)
+            tile_id_list_input = uu.tile_list_s3(input_dir, cn.SENSIT_TYPE)
         else:
             tile_id_list_input = tile_id_list_outer
 
@@ -117,7 +117,7 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         uu.print_log("Downloading tiles from", input_dir)
-        uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, sensit_type, tile_id_list_input)
+        uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_input)
 
         # Blank list of output patterns, populated below
         output_patterns = []
@@ -146,13 +146,14 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
         uu.print_log("Creating derivative outputs for {0} with {1} processors...".format(input_pattern, processes))
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_supplementary_outputs.create_supplementary_outputs, input_pattern=input_pattern,
-                         output_patterns=output_patterns, sensit_type=sensit_type, no_upload=no_upload), tile_id_list_input)
+                         output_patterns=output_patterns),
+                 tile_id_list_input)
         pool.close()
         pool.join()
 
         # # For single processor use
         # for tile_id in tile_id_list_input:
-        #     create_supplementary_outputs.create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit_type, no_upload)
+        #     create_supplementary_outputs.create_supplementary_outputs(tile_id, input_pattern, output_patterns)
 
         # Checks the two forest extent output tiles created from each input tile for whether there is data in them.
         # Because the extent is restricted in the forest extent pixels, some tiles with pixels in the full extent
@@ -174,8 +175,8 @@ def mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date = None, 
                 pool.join()
 
 
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+    if not cn.NO_UPLOAD:
 
         for i in range(0, len(output_dir_list)):
             uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
@@ -195,21 +196,23 @@ if __name__ == '__main__':
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
-    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
     uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_create_supplementary_outputs(sensit_type=sensit_type, tile_id_list=tile_id_list,
-                                    run_date=run_date, no_upload=no_upload)
+    mp_create_supplementary_outputs(tile_id_list=tile_id_list)

@@ -9,7 +9,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def net_calc(tile_id, pattern, sensit_type, no_upload):
+def net_calc(tile_id, pattern):
 
     uu.print_log("Calculating net flux for", tile_id)
 
@@ -17,8 +17,8 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
     start = datetime.datetime.now()
 
     # Names of the removals and emissions tiles
-    removals_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)
-    emissions_in = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
+    removals_in = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)
+    emissions_in = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
 
     # Output net emissions file
     net_flux = '{0}_{1}.tif'.format(tile_id, pattern)
@@ -63,7 +63,7 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
     net_flux_dst = rasterio.open(net_flux, 'w', **kwargs)
 
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(net_flux_dst, sensit_type)
+    uu.add_rasterio_tags(net_flux_dst, cn.SENSIT_TYPE)
     net_flux_dst.update_tags(
         units='Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years))
     net_flux_dst.update_tags(
@@ -94,4 +94,4 @@ def net_calc(tile_id, pattern, sensit_type, no_upload):
         net_flux_dst.write_band(1, dst_data, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)
+    uu.end_of_fx_summary(start, tile_id, pattern)

@@ -34,7 +34,7 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'emissions'))
 import calculate_gross_emissions
 
-def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_date = None, no_upload = None):
+def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
 
     os.chdir(cn.docker_base_dir)
 
@@ -44,7 +44,7 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, sensit_type)
+        tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -67,9 +67,9 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     }
 
     # Special loss tiles for the Brazil and Mekong sensitivity analyses
-    if sensit_type == 'legal_Amazon_loss':
+    if cn.SENSIT_TYPE == 'legal_Amazon_loss':
         download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
-    elif sensit_type == 'Mekong_loss':
+    elif cn.SENSIT_TYPE == 'Mekong_loss':
         download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
     else:
         download_dict[cn.loss_dir] = [cn.pattern_loss]
@@ -108,19 +108,19 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
 
         # Some sensitivity analyses have specific gross emissions scripts.
         # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
-        if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
-            # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(sensit_type)):
-            if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, sensit_type)):
-                uu.print_log("C++ for {} already compiled.".format(sensit_type))
+        if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
+            # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(cn.SENSIT_TYPE)):
+            if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, cn.SENSIT_TYPE)):
+                uu.print_log("C++ for {} already compiled.".format(cn.SENSIT_TYPE))
             else:
-                uu.exception_log('Must compile {} model C++...'.format(sensit_type))
+                uu.exception_log('Must compile {} model C++...'.format(cn.SENSIT_TYPE))
         else:
             if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
                 uu.print_log("C++ for generic emissions already compiled.")
             else:
                 uu.exception_log('Must compile generic emissions C++...')
 
-    elif (emitted_pools == 'soil_only') & (sensit_type == 'std'):
+    elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
         if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
             uu.print_log("C++ for soil_only already compiled.")
 
@@ -158,20 +158,20 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
+    if cn.SENSIT_TYPE != 'std':
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+        output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
+        output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     # Only done if output upload is enabled.
-    if run_date is not None and no_upload is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
     uu.print_log(output_pattern_list)
 
@@ -194,22 +194,22 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
 
     for pattern in pattern_list:
         pool = multiprocessing.Pool(processes=80)  # 60 = 100 GB peak; 80 =  XXX GB peak
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder,
-                                             sensit_type=sensit_type), tile_id_list)
+        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder),
+                 tile_id_list)
         pool.close()
         pool.join()
 
     # # For single processor use
     # for pattern in pattern_list:
     #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder, sensit_type)
+    #         uu.make_blank_tile(tile, pattern, folder)
 
 
     # Calculates gross emissions for each tile
     # count/4 uses about 390 GB on a r4.16xlarge spot machine.
     # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
     if cn.count == 96:
-        if sensit_type == 'biomass_swap':
+        if cn.SENSIT_TYPE == 'biomass_swap':
             processes = 15 # 15 processors = XXX GB peak
         else:
             processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
@@ -217,14 +217,15 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
         processes = 9
     uu.print_log('Gross emissions max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools, sensit_type=sensit_type,
-                     folder=folder, no_upload=no_upload), tile_id_list)
+    pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools,
+                     folder=folder),
+             tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, emitted_pools, sensit_type, folder, no_upload)
+    #       calculate_gross_emissions.calc_emissions(tile, emitted_pools, folder)
 
 
     # Print the list of blank created tiles, delete the tiles, and delete their text file
@@ -242,17 +243,17 @@ def mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_d
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(calculate_gross_emissions.add_metadata_tags, pattern=pattern, sensit_type=sensit_type),
+        pool.map(partial(calculate_gross_emissions.add_metadata_tags, pattern=pattern),
                  tile_id_list)
         pool.close()
         pool.join()
 
         # for tile_id in tile_id_list:
-        #     calculate_gross_emissions.add_metadata_tags(tile_id, pattern, sensit_type)
+        #     calculate_gross_emissions.add_metadata_tags(tile_id, pattern)
 
 
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+    if not cn.NO_UPLOAD:
 
         for i in range(0, len(output_dir_list)):
             uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
@@ -274,26 +275,34 @@ if __name__ == '__main__':
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+
+
+
+
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+    cn.EMITTED_POOLS = args.emitted_pools_to_use
+
     tile_id_list = args.tile_id_list
-    emitted_pools = args.emitted_pools_to_use
-    run_date = args.run_date
-    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
     uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_calculate_gross_emissions(sensit_type=sensit_type, tile_id_list=tile_id_list, emitted_pools=emitted_pools,
-                                 run_date=run_date, no_upload=no_upload)
+    mp_calculate_gross_emissions(tile_id_list, cn.EMITTED_POOLS)

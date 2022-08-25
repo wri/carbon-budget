@@ -355,7 +355,7 @@ def main ():
     # Creates tiles of the number of years of removals for all model pixels (across all forest types)
     if 'gain_year_count' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
             uu.print_log(":::::Freeing up memory for gain year count creation by deleting unneeded tiles")
             tiles_to_delete = []
@@ -417,7 +417,7 @@ def main ():
     # Creates carbon emitted_pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
             uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
             tiles_to_delete = []
@@ -455,7 +455,7 @@ def main ():
     # Creates gross emissions tiles by driver, gas, and all emissions combined
     if 'gross_emissions' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
             uu.print_log(":::::Freeing up memory for gross emissions creation by deleting unneeded tiles")
             tiles_to_delete = []
@@ -486,7 +486,7 @@ def main ():
         uu.print_log(":::::Creating gross emissions tiles")
         start = datetime.datetime.now()
 
-        mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_date=run_date, no_upload=no_upload)
+        mp_calculate_gross_emissions(tile_id_list, cn.EMITTED_POOLS)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -497,7 +497,7 @@ def main ():
     # Creates net flux tiles (gross emissions - gross removals)
     if 'net_flux' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
             uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
             tiles_to_delete = []
@@ -535,7 +535,7 @@ def main ():
         uu.print_log(":::::Creating net flux tiles")
         start = datetime.datetime.now()
 
-        mp_net_flux(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_net_flux(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -561,8 +561,7 @@ def main ():
         uu.print_log(":::::Creating 4x4 km aggregate maps")
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux=std_net_flux,
-                                     run_date=run_date, no_upload=no_upload)
+        mp_aggregate_results_to_4_km(thresh, tile_id_list, std_net_flux=std_net_flux)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -573,7 +572,7 @@ def main ():
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
     if 'create_supplementary_outputs' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
             uu.print_log(":::::Deleting rewindowed tiles")
             tiles_to_delete = []
@@ -589,7 +588,7 @@ def main ():
         uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
         start = datetime.datetime.now()
 
-        mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_create_supplementary_outputs(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start

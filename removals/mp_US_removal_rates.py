@@ -243,4 +243,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_US_removal_rates(tile_id_list=tile_id_list)
+    mp_US_removal_rates(tile_id_list)

@@ -149,4 +149,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_gross_removals_all_forest_types(tile_id_list=tile_id_list)
+    mp_gross_removals_all_forest_types(tile_id_list)

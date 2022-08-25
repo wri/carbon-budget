@@ -52,11 +52,6 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     if (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
         uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
 
-    print(cn.NO_UPLOAD)
-
-    sys.quit()
-
-
     # If a full model run is specified, the correct set of tiles for the particular script is listed.
     # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant
     # because there must be loss pixels for emissions-year carbon pools to exist.
@@ -218,8 +213,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         processes = 2
     uu.print_log(f'AGC loss year max processors={processes}')
     with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(create_carbon_pools.create_AGC,
-                         carbon_pool_extent=carbon_pool_extent),
+        pool.map(partial(create_carbon_pools.create_AGC, carbon_pool_extent=carbon_pool_extent),
                  tile_id_list)
         pool.close()
         pool.join()
