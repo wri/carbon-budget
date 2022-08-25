@@ -9,7 +9,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # @uu.counter
-def model_extent(tile_id, pattern, sensit_type, no_upload):
+def model_extent(tile_id, pattern):
 
     # I don't know why, but this needs to be here and not just in mp_model_extent
     os.chdir(cn.docker_base_dir)
@@ -26,20 +26,20 @@ def model_extent(tile_id, pattern, sensit_type, no_upload):
 
     # Tree cover tile name depends on the sensitivity analysis.
     # PRODES extent 2000 stands in for Hansen TCD
-    if sensit_type == 'legal_Amazon_loss':
+    if cn.SENSIT_TYPE == 'legal_Amazon_loss':
         tcd = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_forest_extent_2000_processed)
-        uu.print_log("Using PRODES extent 2000 tile {0} for {1} sensitivity analysis".format(tile_id, sensit_type))
+        uu.print_log("Using PRODES extent 2000 tile {0} for {1} sensitivity analysis".format(tile_id, cn.SENSIT_TYPE))
     else:
         tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-        uu.print_log("Using Hansen tcd tile {0} for {1} model run".format(tile_id, sensit_type))
+        uu.print_log("Using Hansen tcd tile {0} for {1} model run".format(tile_id, cn.SENSIT_TYPE))
 
     # Biomass tile name depends on the sensitivity analysis
-    if sensit_type == 'biomass_swap':
+    if cn.SENSIT_TYPE == 'biomass_swap':
         biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
-        uu.print_log("Using JPL biomass tile {0} for {1} sensitivity analysis".format(tile_id, sensit_type))
+        uu.print_log("Using JPL biomass tile {0} for {1} sensitivity analysis".format(tile_id, cn.SENSIT_TYPE))
     else:
         biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-        uu.print_log("Using WHRC biomass tile {0} for {1} model run".format(tile_id, sensit_type))
+        uu.print_log("Using WHRC biomass tile {0} for {1} model run".format(tile_id, cn.SENSIT_TYPE))
 
     out_tile = '{0}_{1}.tif'.format(tile_id, pattern)
 
@@ -90,10 +90,10 @@ def model_extent(tile_id, pattern, sensit_type, no_upload):
         dst = rasterio.open(out_tile, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst, sensit_type)
+        uu.add_rasterio_tags(dst, cn.SENSIT_TYPE)
         dst.update_tags(
             units='unitless. 1 = in model extent. 0 = not in model extent')
-        if sensit_type == 'biomass_swap':
+        if cn.SENSIT_TYPE == 'biomass_swap':
             dst.update_tags(
                 source='Pixels with ((Hansen 2000 tree cover AND NASA JPL AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
         else:
@@ -138,7 +138,7 @@ def model_extent(tile_id, pattern, sensit_type, no_upload):
             tcd_with_biomass_window = np.where((biomass_window > 0) & (tcd_window > 0), 1, 0)
 
             # For all moel types except legal_Amazon_loss sensitivity analysis
-            if sensit_type != 'legal_Amazon_loss':
+            if cn.SENSIT_TYPE != 'legal_Amazon_loss':
 
                 # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain
                 forest_extent = np.where((tcd_with_biomass_window == 1) | (mangrove_window > 1) | (gain_window == 1), 1, 0)
@@ -159,4 +159,4 @@ def model_extent(tile_id, pattern, sensit_type, no_upload):
 
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)
+    uu.end_of_fx_summary(start, tile_id, pattern)

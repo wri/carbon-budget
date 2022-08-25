@@ -10,7 +10,7 @@ import universal_util as uu
 # Necessary to suppress a pandas error later on. https://github.com/numpy/numpy/issues/12987
 np.set_printoptions(threshold=sys.maxsize)
 
-def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, output_pattern_list, no_upload):
+def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_list):
 
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
@@ -25,8 +25,8 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     start = datetime.datetime.now()
 
     # Names of the forest age category and continent-ecozone tiles
-    age_cat = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_IPCC)
-    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    age_cat = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_age_cat_IPCC)
+    cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
 
     # Names of the output natural forest removals rate tiles (above and belowground)
     AGB_IPCC_default_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
@@ -65,7 +65,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
     # The output files, aboveground and belowground biomass removals rates
     dst_above = rasterio.open(AGB_IPCC_default_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_above, sensit_type)
+    uu.add_rasterio_tags(dst_above, cn.SENSIT_TYPE)
     dst_above.update_tags(
         units='megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_above.update_tags(
@@ -75,7 +75,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
 
     dst_below = rasterio.open(BGB_IPCC_default_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_below, sensit_type)
+    uu.add_rasterio_tags(dst_below, cn.SENSIT_TYPE)
     dst_below.update_tags(
         units='megagrams belowground biomass (AGB or dry matter)/ha/yr')
     dst_below.update_tags(
@@ -85,7 +85,7 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
 
     dst_stdev_above = rasterio.open(AGB_IPCC_default_gain_stdev, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_stdev_above, sensit_type)
+    uu.add_rasterio_tags(dst_stdev_above, cn.SENSIT_TYPE)
     dst_stdev_above.update_tags(
         units='standard deviation, in terms of megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_stdev_above.update_tags(
@@ -147,4 +147,4 @@ def annual_gain_rate(tile_id, sensit_type, gain_table_dict, stdev_table_dict, ou
         dst_stdev_above.write_band(1, gain_stdev_AGB, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0], no_upload)
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])

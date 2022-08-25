@@ -31,7 +31,7 @@ import annual_gain_rate_IPCC_defaults
 
 os.chdir(cn.docker_base_dir)
 
-def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None, no_upload = None):
+def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
     pd.options.mode.chained_assignment = None
@@ -40,7 +40,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
@@ -59,23 +59,23 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
+    if cn.SENSIT_TYPE != 'std':
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+        output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
+        output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     # Only done if output upload is enabled.
-    if run_date is not None and no_upload is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
     # Table with IPCC Table 4.9 default removals rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
@@ -86,7 +86,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     ### To make the removal factor dictionaries
 
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
-    if sensit_type == 'no_primary_gain':
+    if cn.SENSIT_TYPE == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon removals rates
         gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name = "natrl fores gain, no_prim_gain")
@@ -141,7 +141,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     ### To make the removal factor standard deviation dictionary
 
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
-    if sensit_type == 'no_primary_gain':
+    if cn.SENSIT_TYPE == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon removals rates
         stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
                                    sheet_name="natrl fores stdv, no_prim_gain")
@@ -197,7 +197,7 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
     if cn.count == 96:
-        if sensit_type == 'biomass_swap':
+        if cn.SENSIT_TYPE == 'biomass_swap':
             processes = 24 # 24 processors = 590 GB peak
         else:
             processes = 30  # 30 processors = 725 GB peak
@@ -205,21 +205,21 @@ def mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date = None
         processes = 2
     uu.print_log('Annual removals rate natural forest max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate, sensit_type=sensit_type,
+    pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate,
                      gain_table_dict=gain_table_dict, stdev_table_dict=stdev_table_dict,
-                     output_pattern_list=output_pattern_list, no_upload=no_upload), tile_id_list)
+                     output_pattern_list=output_pattern_list), tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
     #
-    #     annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id, sensit_type,
-    #       gain_table_dict, stdev_table_dict, output_pattern_list, no_upload)
+    #     annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id,
+    #       gain_table_dict, stdev_table_dict, output_pattern_list)
 
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
         for i in range(0, len(output_dir_list)):
             uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
@@ -240,20 +240,24 @@ if __name__ == '__main__':
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
-    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list=tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_annual_gain_rate_IPCC_defaults(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    mp_annual_gain_rate_IPCC_defaults(tile_id_list=tile_id_list)

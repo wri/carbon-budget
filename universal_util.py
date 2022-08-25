@@ -39,11 +39,7 @@ def upload_log():
 
 
 # Creates the log with a starting line
-def initiate_log(tile_id_list=None, sensit_type=None, run_date=None,
-                 # no_upload=None,
-                 save_intermediates=None, stage_input=None, run_through=None, carbon_pool_extent=None,
-                 emitted_pools=None, thresh=None, std_net_flux=None,
-                 include_mangroves=None, include_us=None, log_note=None):
+def initiate_log(tile_id_list=None):
 
     # For some reason, logging gets turned off when AWS credentials aren't provided.
     # This restores logging without AWS credentials.
@@ -57,23 +53,23 @@ def initiate_log(tile_id_list=None, sensit_type=None, run_date=None,
                         datefmt='%Y/%m/%d %I:%M:%S %p',
                         level=logging.INFO)
 
-    logging.info("Log notes: {}".format(log_note))
+    logging.info("Log notes: {}".format(cn.LOG_NOTE))
     logging.info("Model version: {}".format(cn.version))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
-    logging.info("Sensitivity analysis type: {}".format(sensit_type))
-    logging.info("Model stage argument: {}".format(stage_input))
-    logging.info("Run model stages after the initial selected stage: {}".format(run_through))
-    logging.info("Run date: {}".format(run_date))
+    logging.info("Sensitivity analysis type: {}".format(cn.SENSIT_TYPE))
+    logging.info("Model stage argument: {}".format(cn.STAGE_INPUT))
+    logging.info("Run model stages after the initial selected stage: {}".format(cn.RUN_THROUGH))
+    logging.info("Run date: {}".format(cn.RUN_DATE))
     logging.info("Tile ID list: {}".format(tile_id_list))
-    logging.info("Carbon emitted_pools to generate (optional): {}".format(carbon_pool_extent))
-    logging.info("Emissions emitted_pools (optional): {}".format(emitted_pools))
-    logging.info("TCD threshold for aggregated map (optional): {}".format(thresh))
-    logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(std_net_flux))
-    logging.info("Include mangrove removal scripts in model run (optional): {}".format(include_mangroves))
-    logging.info("Include US removal scripts in model run (optional): {}".format(include_us))
+    logging.info("Carbon emitted_pools to generate (optional): {}".format(cn.CARBON_POOL_EXTENT))
+    logging.info("Emissions emitted_pools (optional): {}".format(cn.EMITTED_POOLS))
+    logging.info("TCD threshold for aggregated map (optional): {}".format(cn.THRESH))
+    logging.info("Standard net flux for comparison with sensitivity analysis net flux (optional): {}".format(cn.STD_NET_FLUX))
+    logging.info("Include mangrove removal scripts in model run (optional): {}".format(cn.INCLUDE_MANGROVES))
+    logging.info("Include US removal scripts in model run (optional): {}".format(cn.INCLUDE_US))
     logging.info("Do not upload anything to s3: {}".format(cn.NO_UPLOAD))
     logging.info("AWS credentials supplied: {}".format(check_aws_creds()))
-    logging.info("Save intermediate outputs: {}".format(save_intermediates))
+    logging.info("Save intermediate outputs: {}".format(cn.SAVE_INTERMEDIATES))
     logging.info("AWS ec2 instance type and AMI ID:")
 
     # https://stackoverflow.com/questions/13735051/how-to-capture-curl-output-to-a-file

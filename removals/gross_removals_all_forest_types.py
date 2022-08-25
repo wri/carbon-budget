@@ -7,7 +7,7 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Calculates cumulative aboveground carbon dioxide removals in mangroves
-def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload):
+def gross_removals_all_forest_types(tile_id, output_pattern_list):
 
     uu.print_log("Calculating cumulative CO2 removals:", tile_id)
 
@@ -15,9 +15,9 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
     start = datetime.datetime.now()
 
     # Names of the input tiles, modified according to sensitivity analysis
-    gain_rate_AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_all_types)
-    gain_rate_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_BGC_all_types)
-    gain_year_count = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_gain_year_count)
+    gain_rate_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
+    gain_rate_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_BGC_all_types)
+    gain_year_count = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_gain_year_count)
 
     # Names of the output removal tiles
     cumulative_gain_AGCO2 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
@@ -61,7 +61,7 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
 
     # The output files: aboveground gross removals, belowground gross removals, above+belowground gross removals. Adds metadata tags
     cumulative_gain_AGCO2_dst = rasterio.open(cumulative_gain_AGCO2, 'w', **kwargs)
-    uu.add_rasterio_tags(cumulative_gain_AGCO2_dst, sensit_type)
+    uu.add_rasterio_tags(cumulative_gain_AGCO2_dst, cn.SENSIT_TYPE)
     cumulative_gain_AGCO2_dst.update_tags(
         units='megagrams aboveground CO2/ha over entire model period')
     cumulative_gain_AGCO2_dst.update_tags(
@@ -70,7 +70,7 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
         extent='Full model extent')
 
     cumulative_gain_BGCO2_dst = rasterio.open(cumulative_gain_BGCO2, 'w', **kwargs)
-    uu.add_rasterio_tags(cumulative_gain_BGCO2_dst, sensit_type)
+    uu.add_rasterio_tags(cumulative_gain_BGCO2_dst, cn.SENSIT_TYPE)
     cumulative_gain_BGCO2_dst.update_tags(
         units='megagrams belowground CO2/ha over entire model period')
     cumulative_gain_BGCO2_dst.update_tags(
@@ -108,4 +108,4 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, n
 
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0], no_upload)
+    uu.end_of_fx_summary(start, tile_id, output_pattern_list[0])

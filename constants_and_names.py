@@ -15,6 +15,30 @@ version_filename = version.replace('.', '_')
 # Global variables that can be modified by the command line
 global NO_UPLOAD
 NO_UPLOAD = False
+global SENSIT_TYPE
+SENSIT_TYPE = 'std'
+global RUN_DATE
+RUN_DATE = None
+global STAGE_INPUT
+STAGE_INPUT = ''
+global RUN_THROUGH
+RUN_THROUGH = True
+global CARBON_POOL_EXTENT
+CARBON_POOL_EXTENT = ''
+global EMITTED_POOLS
+EMITTED_POOLS = ''
+global THRESH
+THRESH = ''
+global STD_NET_FLUX
+STD_NET_FLUX = ''
+global INCLUDE_MANGROVES
+INCLUDE_MANGROVES = False
+global INCLUDE_US
+INCLUDE_US = False
+global SAVE_INTERMEDIATES
+SAVE_INTERMEDIATES = True
+global LOG_NOTE
+LOG_NOTE = ''
 
 
 # Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.

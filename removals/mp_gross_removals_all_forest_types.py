@@ -19,16 +19,16 @@ import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'removals'))
 import gross_removals_all_forest_types
 
-def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = None, no_upload = True):
+def mp_gross_removals_all_forest_types(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        # tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
-        gain_year_count_tile_id_list = uu.tile_list_s3(cn.gain_year_count_dir, sensit_type=sensit_type)
-        annual_removals_tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, sensit_type=sensit_type)
+        # tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
+        gain_year_count_tile_id_list = uu.tile_list_s3(cn.gain_year_count_dir, cn.SENSIT_TYPE)
+        annual_removals_tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, cn.SENSIT_TYPE)
         tile_id_list = list(set(gain_year_count_tile_id_list).intersection(annual_removals_tile_id_list))
         uu.print_log("Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:")
 
@@ -53,25 +53,25 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
+    if cn.SENSIT_TYPE != 'std':
         uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+        output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
+        output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     # Only done if output upload is enabled.
-    if run_date is not None and no_upload is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # Calculates gross removals
     if cn.count == 96:
-        if sensit_type == 'biomass_swap':
+        if cn.SENSIT_TYPE == 'biomass_swap':
             processes = 18
         else:
             processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
@@ -79,14 +79,15 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
         processes = 2
     uu.print_log('Gross removals max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types, output_pattern_list=output_pattern_list,
-                     sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
+    pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types,
+                     output_pattern_list=output_pattern_list),
+             tile_id_list)
     pool.close()
     pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
-    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload)
+    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list)
 
     # Checks the gross removals outputs for tiles with no data
     for output_pattern in output_pattern_list:
@@ -107,8 +108,8 @@ def mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date = Non
             pool.close()
             pool.join()
 
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+    if not cn.NO_UPLOAD:
 
         for i in range(0, len(output_dir_list)):
             uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
@@ -129,20 +130,23 @@ if __name__ == '__main__':
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
-    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list=tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_gross_removals_all_forest_types(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    mp_gross_removals_all_forest_types(tile_id_list=tile_id_list)

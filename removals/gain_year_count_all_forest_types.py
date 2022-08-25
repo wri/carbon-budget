@@ -9,26 +9,26 @@ import constants_and_names as cn
 import universal_util as uu
 
 # Gets the names of the input tiles
-def tile_names(tile_id, sensit_type):
+def tile_names(tile_id):
 
     # Names of the loss, gain, and model extent tiles
-    if sensit_type == 'legal_Amazon_loss':
+    if cn.SENSIT_TYPE == 'legal_Amazon_loss':
         loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
     else:
         loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
     gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
+    model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
 
     return loss, gain, model_extent
 
 
 # Creates gain year count tiles for pixels that only had loss
-def create_gain_year_count_loss_only(tile_id, sensit_type, no_upload):
+def create_gain_year_count_loss_only(tile_id):
 
     uu.print_log("Gain year count for loss only pixels:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -47,16 +47,16 @@ def create_gain_year_count_loss_only(tile_id, sensit_type, no_upload):
         uu.print_log("No loss tile found for {}. Skipping loss only pixel gain year count.".format(tile_id))
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_only')
 
 
 # Creates gain year count tiles for pixels that only had gain
-def create_gain_year_count_gain_only_standard(tile_id, sensit_type, no_upload):
+def create_gain_year_count_gain_only_standard(tile_id):
 
     uu.print_log("Gain year count for gain only pixels using standard function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -82,16 +82,16 @@ def create_gain_year_count_gain_only_standard(tile_id, sensit_type, no_upload):
         uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
 
 
 # Creates gain year count tiles for pixels that only had gain
-def create_gain_year_count_gain_only_maxgain(tile_id, sensit_type, no_upload):
+def create_gain_year_count_gain_only_maxgain(tile_id):
 
     uu.print_log("Gain year count for gain only pixels using maxgain function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -116,17 +116,17 @@ def create_gain_year_count_gain_only_maxgain(tile_id, sensit_type, no_upload):
         uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_gain_only')
 
 
 # Creates gain year count tiles for pixels that had neither loss not gain.
 # For all models except legal_Amazon_loss.
-def create_gain_year_count_no_change_standard(tile_id, sensit_type, no_upload):
+def create_gain_year_count_no_change_standard(tile_id):
 
     uu.print_log("Gain year count for pixels with neither loss nor gain:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -151,17 +151,17 @@ def create_gain_year_count_no_change_standard(tile_id, sensit_type, no_upload):
         uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
 
 
 # Creates gain year count tiles for pixels that did not have loss (doesn't matter if they had gain or not).
 # For legal_Amazon_loss sensitivity analysis.
-def create_gain_year_count_no_change_legal_Amazon_loss(tile_id, sensit_type, no_upload):
+def create_gain_year_count_no_change_legal_Amazon_loss(tile_id):
 
     uu.print_log("Gain year count for pixels without loss for legal_Amazon_loss:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -180,20 +180,20 @@ def create_gain_year_count_no_change_legal_Amazon_loss(tile_id, sensit_type, no_
     cmd = ['gdal_calc.py', '-A', loss_vrt, '-B', model_extent, no_change_calc,
            no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
     uu.log_subprocess_output_full(cmd)
-    
+
     os.remove(loss_vrt)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_no_change')
 
 
 # Creates gain year count tiles for pixels that had both loss and gain
-def create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type, no_upload):
+def create_gain_year_count_loss_and_gain_standard(tile_id):
 
     uu.print_log("Loss and gain pixel processing using standard function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -213,16 +213,16 @@ def create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type, no_uploa
 
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
 
 
 # Creates gain year count tiles for pixels that had both loss and gain
-def create_gain_year_count_loss_and_gain_maxgain(tile_id, sensit_type, no_upload):
+def create_gain_year_count_loss_and_gain_maxgain(tile_id):
 
     uu.print_log("Loss and gain pixel processing using maxgain function:", tile_id)
 
     # Names of the loss, gain and tree cover density tiles
-    loss, gain, model_extent = tile_names(tile_id, sensit_type)
+    loss, gain, model_extent = tile_names(tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -241,11 +241,11 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id, sensit_type, no_upload
         uu.print_log("  No loss tile found for {}. Skipping loss and gain pixel gain year count.".format(tile_id))
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain', no_upload)
+    uu.end_of_fx_summary(start, tile_id, 'growth_years_loss_and_gain')
 
 
 # Merges the four gain year count tiles above to create a single gain year count tile
-def create_gain_year_count_merge(tile_id, pattern, sensit_type, no_upload):
+def create_gain_year_count_merge(tile_id, pattern):
 
     uu.print_log("Merging loss, gain, no change, and loss/gain pixels into single gain year count raster for {}".format(tile_id))
 
@@ -303,7 +303,7 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type, no_upload):
         gain_year_count_merged_dst = rasterio.open(gain_year_count_merged, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(gain_year_count_merged_dst, sensit_type)
+        uu.add_rasterio_tags(gain_year_count_merged_dst, cn.SENSIT_TYPE)
         gain_year_count_merged_dst.update_tags(
             units='years')
         gain_year_count_merged_dst.update_tags(
@@ -344,4 +344,4 @@ def create_gain_year_count_merge(tile_id, pattern, sensit_type, no_upload):
             gain_year_count_merged_dst.write_band(1, gain_year_count_merged_window, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)
+    uu.end_of_fx_summary(start, tile_id, pattern)

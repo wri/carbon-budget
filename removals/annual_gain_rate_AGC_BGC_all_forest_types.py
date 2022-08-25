@@ -8,7 +8,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload):
+def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
 
     uu.print_log("Mapping removal rate source and AGB and BGB removal rates:", tile_id)
 
@@ -17,23 +17,23 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
 
     # Names of the input tiles
     # Removal factors
-    model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
+    model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
     mangrove_AGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
     mangrove_BGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
-    europe_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
-    plantations_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
-    us_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
-    young_AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
-    age_category = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_IPCC)
-    ipcc_AGB_default = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
+    europe_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
+    plantations_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
+    us_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
+    young_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
+    age_category = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_age_cat_IPCC)
+    ipcc_AGB_default = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
 
     # Removal factor standard deviations
     mangrove_AGB_stdev = '{0}_{1}.tif'.format(tile_id, cn.pattern_stdev_annual_gain_AGB_mangrove)
-    europe_AGC_BGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
-    plantations_AGC_BGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
-    us_AGC_BGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
-    young_AGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)
-    ipcc_AGB_default_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
+    europe_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
+    plantations_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
+    us_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
+    young_AGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)
+    ipcc_AGB_default_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
 
     # Names of the output tiles
     removal_forest_type = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
@@ -113,7 +113,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+        uu.add_rasterio_tags(removal_forest_type_dst, cn.SENSIT_TYPE)
         removal_forest_type_dst.update_tags(
             key='6: mangroves. 5: European-specific rates. 4: planted forests. 3: US-specific rates. 2: young (<20 year) secondary forests. 1: old (>20 year) secondary forests and primary forests. Priority goes to the highest number.')
         removal_forest_type_dst.update_tags(
@@ -130,7 +130,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
         stdev_annual_gain_AGC_all_forest_types_dst = rasterio.open(stdev_annual_gain_AGC_all_forest_types, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_AGC_all_forest_types_dst, sensit_type)
+        uu.add_rasterio_tags(annual_gain_AGC_all_forest_types_dst, cn.SENSIT_TYPE)
         annual_gain_AGC_all_forest_types_dst.update_tags(
             units='megagrams aboveground carbon/ha/yr')
         annual_gain_AGC_all_forest_types_dst.update_tags(
@@ -139,7 +139,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_BGC_all_forest_types_dst, sensit_type)
+        uu.add_rasterio_tags(annual_gain_BGC_all_forest_types_dst, cn.SENSIT_TYPE)
         annual_gain_BGC_all_forest_types_dst.update_tags(
             units='megagrams belowground carbon/ha/yr')
         annual_gain_BGC_all_forest_types_dst.update_tags(
@@ -148,7 +148,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_AGC_BGC_all_forest_types_dst, sensit_type)
+        uu.add_rasterio_tags(annual_gain_AGC_BGC_all_forest_types_dst, cn.SENSIT_TYPE)
         annual_gain_AGC_BGC_all_forest_types_dst.update_tags(
             units='megagrams aboveground + belowground carbon/ha/yr')
         annual_gain_AGC_BGC_all_forest_types_dst.update_tags(
@@ -157,7 +157,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(stdev_annual_gain_AGC_all_forest_types_dst, sensit_type)
+        uu.add_rasterio_tags(stdev_annual_gain_AGC_all_forest_types_dst, cn.SENSIT_TYPE)
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
             units='standard deviation for removal factor, in terms of megagrams aboveground carbon/ha/yr')
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
@@ -195,7 +195,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                 # that don't have rates under this sensitivity analysis to still be included in the model.
                 # Unfortunately, model_extent is slightly different from the IPCC rate extent (no IPCC rates where
                 # there is no ecozone information), but this is a very small difference and not worth worrying about.
-                if sensit_type == 'no_primary_gain':
+                if cn.SENSIT_TYPE == 'no_primary_gain':
                     removal_forest_type_window = np.where(model_extent_window != 0,
                                                           cn.old_natural_rank,
                                                           removal_forest_type_window).astype('uint8')
@@ -237,7 +237,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             except:
                 pass
 
-            if sensit_type != 'US_removals':
+            if cn.SENSIT_TYPE != 'US_removals':
                 try:
                     us_AGC_BGC_rate_window = us_AGC_BGC_src.read(1, window=window)
                     us_AGC_BGC_stdev_window = us_AGC_BGC_stdev_src.read(1, window=window)
@@ -325,4 +325,4 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             stdev_annual_gain_AGC_all_forest_types_dst.write_band(1, stdev_annual_gain_AGC_all_forest_types_window, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_removal_forest_type, no_upload)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_removal_forest_type)

@@ -84,29 +84,39 @@ def main ():
                         help='Note to include in log header about model run.')
     args = parser.parse_args()
 
-    sensit_type = args.model_type
-    stage_input = args.stages
-    run_through = args.run_through
-    run_date = args.run_date
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.STAGE_INPUT = args.stages
+    cn.RUN_THROUGH = args.run_through
+    cn.RUN_DATE = args.run_date
+    cn.CARBON_POOL_EXTENT = args.carbon_pool_extent
+    cn.EMITTED_POOLS = args.emitted_pools_to_use
+    cn.THRESH = args.tcd_threshold
+    cn.STD_NET_FLUX = args.std_net_flux_aggreg
+    cn.INCLUDE_MANGROVES = args.mangroves
+    cn.INCLUDE_US = args.us_rates
+    cn.NO_UPLOAD = args.no_upload
+    cn.SAVE_INTERMEDIATES = args.save_intermediates
+    cn.LOG_NOTE = args.log_note
+
     tile_id_list = args.tile_id_list
-    carbon_pool_extent = args.carbon_pool_extent
-    emitted_pools = args.emitted_pools_to_use
-    thresh = args.tcd_threshold
-    if thresh is not None:
-        thresh = int(thresh)
-    std_net_flux = args.std_net_flux_aggreg
-    include_mangroves = args.mangroves
-    include_us = args.us_rates
-    no_upload = args.no_upload
-    save_intermediates = args.save_intermediates
-    log_note = args.log_note
+
+    # Disables upload to s3 if no AWS credentials are found in environment
+    if not uu.check_aws_creds():
+        cn.NO_UPLOAD = True
+
+    if cn.THRESH is not None:
+        cn.THRESH = int(cn.THRESH)
+
+    # Create the output log
+    uu.initiate_log(tile_id_list=tile_id_list)
+
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(cn.SENSIT_TYPE)
+    tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     # Start time for script
     script_start = datetime.datetime.now()
-
-    # If command says not to upload, sets global variable to not upload
-    if no_upload == True:
-        cn.NO_UPLOAD = True
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
@@ -118,33 +128,29 @@ def main ():
     # Rationale is that if uploads to s3 are not occurring, intermediate files can't be downloaded during the model
     # run and therefore must exist locally.
     if cn.NO_UPLOAD == True:
-        save_intermediates = True
+        cn.SAVE_INTERMEDIATES = True
 
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date,
-                    save_intermediates=save_intermediates,
-                    stage_input=stage_input, run_through=run_through, carbon_pool_extent=carbon_pool_extent,
-                    emitted_pools=emitted_pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, include_us=include_us, log_note=log_note)
+    uu.initiate_log(tile_id_list=tile_id_list)
 
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
-    if (stage_input not in model_stages):
-        uu.exception_log(no_upload, 'Invalid stage selection. Please provide a stage from', model_stages)
+    if (cn.STAGE_INPUT not in model_stages):
+        uu.exception_log(cn.NO_UPLOAD, 'Invalid stage selection. Please provide a stage from', model_stages)
     else:
         pass
 
     # Generates the list of stages to run
-    actual_stages = uu.analysis_stages(model_stages, stage_input, run_through, sensit_type,
-                                       include_mangroves = include_mangroves, include_us=include_us)
+    actual_stages = uu.analysis_stages(model_stages, cn.STAGE_INPUT, cn.RUN_THROUGH, cn.SENSIT_TYPE,
+                                       include_mangroves = cn.INCLUDE_MANGROVES, include_us=cn.INCLUDE_US)
     uu.print_log("Analysis stages to run:", actual_stages)
 
     # Reports how much storage is being used with files
     uu.check_storage()
 
     # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
 
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
