@@ -96,10 +96,11 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
             processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = >680 GB peak
     else:
         processes = 2
-    uu.print_log('Removal factor processors=', processes)
+    uu.print_log(f'Removal factor processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
-                     output_pattern_list=output_pattern_list), tile_id_list)
+                     output_pattern_list=output_pattern_list),
+             tile_id_list)
     pool.close()
     pool.join()
 
@@ -111,16 +112,14 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
     for output_pattern in output_pattern_list:
         if cn.count <= 2:  # For local tests
             processes = 1
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
-                output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
         else:
             processes = 55  # 50 processors = XXX GB peak
-            uu.print_log(
-                "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()

@@ -88,21 +88,20 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
     if cn.SENSIT_TYPE == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon removals rates
-        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name = "natrl fores gain, no_prim_gain")
-        uu.print_log("Using no_primary_gain IPCC default rates for tile creation")
+        gain_table = pd.read_excel(cn.gain_spreadsheet, sheet_name = "natrl fores gain, no_prim_gain")
+        uu.print_log('Using no_primary_gain IPCC default rates for tile creation')
 
     # All other analyses use the standard removal rates
     else:
         # Imports the table with the ecozone-continent codes and the biomass removals rates
-        gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name = "natrl fores gain, for std model")
+        gain_table = pd.read_excel(cn.gain_spreadsheet, sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
 
     # Converts removals table from wide to long, so each continent-ecozone-age category has its own row
-    gain_table_cont_eco_age = pd.melt(gain_table_simplified, id_vars = ['gainEcoCon'], value_vars = ['growth_primary', 'growth_secondary_greater_20', 'growth_secondary_less_20'])
+    gain_table_cont_eco_age = pd.melt(gain_table_simplified, id_vars = ['gainEcoCon'],
+                            value_vars = ['growth_primary', 'growth_secondary_greater_20', 'growth_secondary_less_20'])
     gain_table_cont_eco_age = gain_table_cont_eco_age.dropna()
 
     # Creates a table that has just the continent-ecozone combinations for adding to the dictionary.
@@ -143,15 +142,13 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
     # Special removal rate table for no_primary_gain sensitivity analysis: primary forests and IFLs have removal rate of 0
     if cn.SENSIT_TYPE == 'no_primary_gain':
         # Imports the table with the ecozone-continent codes and the carbon removals rates
-        stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores stdv, no_prim_gain")
-        uu.print_log("Using no_primary_gain IPCC default standard deviations for tile creation")
+        stdev_table = pd.read_excel(cn.gain_spreadsheet, sheet_name="natrl fores stdv, no_prim_gain")
+        uu.print_log('Using no_primary_gain IPCC default standard deviations for tile creation')
 
     # All other analyses use the standard removal rates
     else:
         # Imports the table with the ecozone-continent codes and the biomass removals rate standard deviations
-        stdev_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                                   sheet_name="natrl fores stdv, for std model")
+        stdev_table = pd.read_excel(cn.gain_spreadsheet, sheet_name="natrl fores stdv, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     stdev_table_simplified = stdev_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -203,11 +200,12 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
             processes = 30  # 30 processors = 725 GB peak
     else:
         processes = 2
-    uu.print_log('Annual removals rate natural forest max processors=', processes)
+    uu.print_log(f'Annual removals rate natural forest max processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate,
                      gain_table_dict=gain_table_dict, stdev_table_dict=stdev_table_dict,
-                     output_pattern_list=output_pattern_list), tile_id_list)
+                     output_pattern_list=output_pattern_list),
+             tile_id_list)
     pool.close()
     pool.join()
 

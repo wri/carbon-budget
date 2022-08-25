@@ -81,7 +81,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
         processes = 90   # 66 = 310 GB peak; 75 = 380 GB peak; 90 = 480 GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log('Gain year count loss only pixels max processors=', processes)
+    uu.print_log(f'Gain year count loss only pixels max processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_loss_only),
              tile_id_list)
@@ -90,14 +90,14 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
         processes = 90   # 66 = 330 GB peak; 75 = 380 GB peak; 90 = 530 GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log('Gain year count gain only pixels max processors=', processes)
+    uu.print_log(f'Gain year count gain only pixels max processors={processes}')
     pool = multiprocessing.Pool(processes)
     if cn.SENSIT_TYPE == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_gain_only_maxgain),
                  tile_id_list)
     if cn.SENSIT_TYPE == 'legal_Amazon_loss':
-        uu.print_log("Gain-only pixels do not apply to legal_Amazon_loss sensitivity analysis. Skipping this step.")
+        uu.print_log('Gain-only pixels do not apply to legal_Amazon_loss sensitivity analysis. Skipping this step.')
     else:
         # Creates gain year count tiles using only pixels that had only gain
         pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_gain_only_standard),
@@ -108,7 +108,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
         processes = 90   # 66 = 360 GB peak; 88 = 430 GB peak; 90 = 510 GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log('Gain year count no change pixels max processors=', processes)
+    uu.print_log(f'Gain year count no change pixels max processors={processes}')
     pool = multiprocessing.Pool(processes)
     if cn.SENSIT_TYPE == 'legal_Amazon_loss':
         pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_no_change_legal_Amazon_loss),
@@ -121,7 +121,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
         processes = 90   # 66 = 370 GB peak; 88 = 430 GB peak; 90 = 550 GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log('Gain year count loss & gain pixels max processors=', processes)
+    uu.print_log(f'Gain year count loss & gain pixels max processors={processes}')
     pool = multiprocessing.Pool(processes)
     if cn.SENSIT_TYPE == 'maxgain':
         # Creates gain year count tiles using only pixels that had only gain
@@ -139,7 +139,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
         processes = 1
     else:
         processes = int(cn.count/4)
-    uu.print_log('Gain year count gain merge all combos max processors=', processes)
+    uu.print_log(f'Gain year count gain merge all combos max processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gain_year_count_all_forest_types.create_gain_year_count_merge, pattern=pattern),
              tile_id_list)

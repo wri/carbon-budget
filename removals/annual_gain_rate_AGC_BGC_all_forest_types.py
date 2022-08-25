@@ -10,7 +10,7 @@ import universal_util as uu
 
 def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
 
-    uu.print_log("Mapping removal rate source and AGB and BGB removal rates:", tile_id)
+    uu.print_log(f'Mapping removal rate source and AGB and BGB removal rates: {tile_id}')
 
     # Start time
     start = datetime.datetime.now()
@@ -18,8 +18,8 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     # Names of the input tiles
     # Removal factors
     model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
-    mangrove_AGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
-    mangrove_BGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
+    mangrove_AGB = f'{tile_id}_{cn.pattern_annual_gain_AGB_mangrove}.tif'
+    mangrove_BGB = f'{tile_id}_{cn.pattern_annual_gain_BGB_mangrove}.tif'
     europe_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
     plantations_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
     us_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
@@ -28,7 +28,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     ipcc_AGB_default = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
 
     # Removal factor standard deviations
-    mangrove_AGB_stdev = '{0}_{1}.tif'.format(tile_id, cn.pattern_stdev_annual_gain_AGB_mangrove)
+    mangrove_AGB_stdev = f'{tile_id}_{cn.pattern_stdev_annual_gain_AGB_mangrove}.tif'
     europe_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
     plantations_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
     us_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
@@ -36,11 +36,11 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     ipcc_AGB_default_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
 
     # Names of the output tiles
-    removal_forest_type = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
-    annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
-    annual_gain_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
-    annual_gain_AGC_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[3]) # Not used further in the model. Created just for reference.
-    stdev_annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[4])
+    removal_forest_type = f'{tile_id}_{output_pattern_list[0]}.tif'
+    annual_gain_AGC_all_forest_types = f'{tile_id}_{output_pattern_list[1]}.tif'
+    annual_gain_BGC_all_forest_types = f'{tile_id}_{output_pattern_list[2]}.tif'
+    annual_gain_AGC_BGC_all_forest_types = f'{tile_id}_{output_pattern_list[3]}.tif' # Not used further in the model. Created just for reference.
+    stdev_annual_gain_AGC_all_forest_types = f'{tile_id}_{output_pattern_list[4]}.tif'
 
     # Opens biomass tile
     with rasterio.open(model_extent) as model_extent_src:
@@ -64,50 +64,50 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             mangrove_AGB_src = rasterio.open(mangrove_AGB)
             mangrove_BGB_src = rasterio.open(mangrove_BGB)
             mangrove_AGB_stdev_src = rasterio.open(mangrove_AGB_stdev)
-            uu.print_log("    Mangrove tiles (AGB and BGB) for {}".format(tile_id))
+            uu.print_log(f'    Mangrove tiles (AGB and BGB) for {tile_id}')
         except:
-            uu.print_log("    No mangrove tile for {}".format(tile_id))
+            uu.print_log(f'    No mangrove tile for {tile_id}')
 
         try:
             europe_AGC_BGC_src = rasterio.open(europe_AGC_BGC)
             europe_AGC_BGC_stdev_src = rasterio.open(europe_AGC_BGC_stdev)
-            uu.print_log("    Europe removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    Europe removal factor tile for {tile_id}')
         except:
-            uu.print_log("    No Europe removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    No Europe removal factor tile for {tile_id}')
 
         try:
             plantations_AGC_BGC_src = rasterio.open(plantations_AGC_BGC)
             plantations_AGC_BGC_stdev_src = rasterio.open(plantations_AGC_BGC_stdev)
-            uu.print_log("    Planted forest tile for {}".format(tile_id))
+            uu.print_log(f'    Planted forest tile for {tile_id}')
         except:
-            uu.print_log("    No planted forest tile for {}".format(tile_id))
+            uu.print_log(f'    No planted forest tile for {tile_id}')
 
         try:
             us_AGC_BGC_src = rasterio.open(us_AGC_BGC)
             us_AGC_BGC_stdev_src = rasterio.open(us_AGC_BGC_stdev)
-            uu.print_log("    US removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    US removal factor tile for {tile_id}')
         except:
-            uu.print_log("    No US removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    No US removal factor tile for {tile_id}')
 
         try:
             young_AGC_src = rasterio.open(young_AGC)
             young_AGC_stdev_src = rasterio.open(young_AGC_stdev)
-            uu.print_log("    Young forest removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    Young forest removal factor tile for {tile_id}')
         except:
-            uu.print_log("    No young forest removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    No young forest removal factor tile for {tile_id}')
 
         try:
             age_category_src = rasterio.open(age_category)
-            uu.print_log("    Age category tile for {}".format(tile_id))
+            uu.print_log(f'    Age category tile for {tile_id}')
         except:
-            uu.print_log("    No age category tile for {}".format(tile_id))
+            uu.print_log(f'    No age category tile for {tile_id}')
 
         try:
             ipcc_AGB_default_src = rasterio.open(ipcc_AGB_default)
             ipcc_AGB_default_stdev_src = rasterio.open(ipcc_AGB_default_stdev)
-            uu.print_log("    IPCC default removal rate tile for {}".format(tile_id))
+            uu.print_log(f'    IPCC default removal rate tile for {tile_id}')
         except:
-            uu.print_log("    No IPCC default removal rate tile for {}".format(tile_id))
+            uu.print_log(f'"    No IPCC default removal rate tile for {tile_id}')
 
         # Opens the output tile, giving it the arguments of the input tiles
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)
@@ -165,7 +165,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
             extent='Full model extent')
 
-        uu.print_log("  Creating removal model forest type tile, AGC removal factor tile, BGC removal factor tile, and AGC removal factor standard deviation tile for {}".format(tile_id))
+        uu.print_log(f'  Creating removal model forest type tile, AGC removal factor tile, BGC removal factor tile, and AGC removal factor standard deviation tile for {tile_id}')
 
         uu.check_memory()
 

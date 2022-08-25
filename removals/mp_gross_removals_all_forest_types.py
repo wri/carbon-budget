@@ -30,7 +30,7 @@ def mp_gross_removals_all_forest_types(tile_id_list):
         gain_year_count_tile_id_list = uu.tile_list_s3(cn.gain_year_count_dir, cn.SENSIT_TYPE)
         annual_removals_tile_id_list = uu.tile_list_s3(cn.annual_gain_AGC_all_types_dir, cn.SENSIT_TYPE)
         tile_id_list = list(set(gain_year_count_tile_id_list).intersection(annual_removals_tile_id_list))
-        uu.print_log("Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:")
+        uu.print_log('Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:')
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
@@ -77,7 +77,7 @@ def mp_gross_removals_all_forest_types(tile_id_list):
             processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
     else:
         processes = 2
-    uu.print_log('Gross removals max processors=', processes)
+    uu.print_log(f'Gross removals max processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types,
                      output_pattern_list=output_pattern_list),
@@ -93,16 +93,14 @@ def mp_gross_removals_all_forest_types(tile_id_list):
     for output_pattern in output_pattern_list:
         if cn.count <= 2:  # For local tests
             processes = 1
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
-                output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
         else:
             processes = 55  # 55 processors = 670 GB peak
-            uu.print_log(
-                "Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()

@@ -625,7 +625,7 @@ def main ():
     uu.print_log(f':::::Processing time for entire run: {script_elapsed_time}', '\n')
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
         uu.upload_log()
 

@@ -9,7 +9,7 @@ import universal_util as uu
 # Calculates cumulative aboveground carbon dioxide removals in mangroves
 def gross_removals_all_forest_types(tile_id, output_pattern_list):
 
-    uu.print_log("Calculating cumulative CO2 removals:", tile_id)
+    uu.print_log(f'Calculating cumulative CO2 removals: {tile_id}')
 
     # Start time
     start = datetime.datetime.now()
@@ -20,28 +20,28 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list):
     gain_year_count = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_gain_year_count)
 
     # Names of the output removal tiles
-    cumulative_gain_AGCO2 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
-    cumulative_gain_BGCO2 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
-    cumulative_gain_AGCO2_BGCO2 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
+    cumulative_gain_AGCO2 = f'{tile_id}_{output_pattern_list[0]}.tif'
+    cumulative_gain_BGCO2 = f'{tile_id}_{output_pattern_list[1]}.tif'
+    cumulative_gain_AGCO2_BGCO2 = f'{tile_id}_{output_pattern_list[2]}.tif'
 
     # Opens the input tiles if they exist. If one of the inputs doesn't exist,
     try:
         gain_rate_AGC_src = rasterio.open(gain_rate_AGC)
-        uu.print_log("    Aboveground removal factor tile found for", tile_id)
+        uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
     except:
-        uu.print_log("    No aboveground removal factor tile found for {}. Not creating gross removals.".format(tile_id))
+        uu.print_log(f'    No aboveground removal factor tile found for {tile_id}. Not creating gross removals.')
         return
     try:
         gain_rate_BGC_src = rasterio.open(gain_rate_BGC)
-        uu.print_log("    Belowground removal factor tile found for", tile_id)
+        uu.print_log(f'    Belowground removal factor tile found for {tile_id}')
     except:
-        uu.print_log("    No belowground removal factor tile found for {}. Not creating gross removals.".format(tile_id))
+        uu.print_log(f'    No belowground removal factor tile found for {tile_id}. Not creating gross removals.')
         return
     try:
         gain_year_count_src = rasterio.open(gain_year_count)
-        uu.print_log("    Gain year count tile found for", tile_id)
+        uu.print_log(f'    Gain year count tile found for {tile_id}')
     except:
-        uu.print_log("    No gain year count tile found for {}. Not creating gross removals.".format(tile_id))
+        uu.print_log(f'    No gain year count tile found for {tile_id}. Not creating gross removals.')
         return
 
 
