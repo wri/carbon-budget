@@ -37,7 +37,7 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
         tile_id_list = uu.create_combined_tile_list(cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
     # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped

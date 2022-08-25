@@ -154,18 +154,18 @@ def main ():
             # Some sensitivity analyses have specific gross emissions scripts.
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
             if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
-                if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, cn.SENSIT_TYPE)):
+                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
                     uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
                 else:
                     uu.exception_log(f'Must compile standard {cn.SENSIT_TYPE} model C++...')
             else:
-                if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
+                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
                     uu.print_log('C++ for generic emissions already compiled.')
                 else:
                     uu.exception_log('Must compile generic emissions C++...')
 
         elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
-            if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
+            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
                 uu.print_log('C++ for generic emissions already compiled.')
             else:
                 uu.exception_log('Must compile soil_only C++...')
@@ -314,7 +314,7 @@ def main ():
     # Creates age category tiles for natural forests
     if 'forest_age_category_IPCC' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of forest age categories for IPCC removal rates")
+        uu.print_log(f':::::Creating tiles of forest age categories for IPCC removal rates')
         start = datetime.datetime.now()
 
         mp_forest_age_category_IPCC(tile_id_list)
@@ -322,13 +322,13 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for forest_age_category_IPCC:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for forest_age_category_IPCC: {elapsed_time}', '\n', '\n')
 
 
     # Creates tiles of annual AGB and BGB removals rates using IPCC Table 4.9 defaults
     if 'annual_removals_IPCC' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults")
+        uu.print_log(f':::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults')
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_IPCC_defaults(tile_id_list)
@@ -336,12 +336,12 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_IPCC:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for annual_gain_rate_IPCC: {elapsed_time}', '\n', '\n')
 
 
     # Creates tiles of annual AGC and BGC removal factors for the entire model, combining removal factors from all forest types
     if 'annual_removals_all_forest_types' in actual_stages:
-        uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates for all forest types")
+        uu.print_log(f':::::Creating tiles of annual aboveground and belowground removal rates for all forest types')
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list)
@@ -349,7 +349,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_AGC_BGC_all_forest_types:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for annual_gain_rate_AGC_BGC_all_forest_types: {elapsed_time}', '\n', '\n')
 
 
     # Creates tiles of the number of years of removals for all model pixels (across all forest types)
@@ -357,7 +357,7 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for gain year count creation by deleting unneeded tiles")
+            uu.print_log(f':::::Freeing up memory for gain year count creation by deleting unneeded tiles')
             tiles_to_delete = []
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
@@ -381,15 +381,15 @@ def main ():
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_all_types)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating tiles of gain year count for all removal pixels")
+        uu.print_log(':::::Creating tiles of gain year count for all removal pixels')
         start = datetime.datetime.now()
 
         mp_gain_year_count_all_forest_types(tile_id_list)
@@ -397,13 +397,13 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gain_year_count:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for gain_year_count: {elapsed_time}', '\n', '\n')
 
 
     # Creates tiles of gross removals for all forest types (aboveground, belowground, and above+belowground)
     if 'gross_removals_all_forest_types' in actual_stages:
 
-        uu.print_log(":::::Creating gross removals for all forest types combined (above + belowground) tiles")
+        uu.print_log(':::::Creating gross removals for all forest types combined (above + belowground) tiles')
         start = datetime.datetime.now()
 
         mp_gross_removals_all_forest_types(tile_id_list)
@@ -411,7 +411,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gross_removals_all_forest_types:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for gross_removals_all_forest_types: {elapsed_time}', '\n', '\n')
 
 
     # Creates carbon emitted_pools in loss year
@@ -419,7 +419,7 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
             tiles_to_delete = []
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_model_extent)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
@@ -433,15 +433,15 @@ def main ():
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating carbon pool tiles")
+        uu.print_log(':::::Creating carbon pool tiles')
         start = datetime.datetime.now()
 
         mp_create_carbon_pools(tile_id_list, cn.CARBON_POOL_EXTENT)
@@ -449,7 +449,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for create_carbon_pools:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for create_carbon_pools: {elapsed_time}', '\n', '\n')
 
 
     # Creates gross emissions tiles by driver, gas, and all emissions combined
@@ -457,7 +457,7 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for gross emissions creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for gross emissions creation by deleting unneeded tiles')
             tiles_to_delete = []
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_2000)))
@@ -473,17 +473,17 @@ def main ():
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
             # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             uu.print_log(tiles_to_delete)
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating gross emissions tiles")
+        uu.print_log(':::::Creating gross emissions tiles')
         start = datetime.datetime.now()
 
         mp_calculate_gross_emissions(tile_id_list, cn.EMITTED_POOLS)
@@ -491,7 +491,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for gross_emissions: {elapsed_time}', '\n', '\n')
 
 
     # Creates net flux tiles (gross emissions - gross removals)
@@ -499,7 +499,7 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for net flux creation by deleting unneeded tiles')
             tiles_to_delete = []
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)))
@@ -524,15 +524,15 @@ def main ():
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_bor_tem_trop_processed)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_burn_year)))
             tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating net flux tiles")
+        uu.print_log(':::::Creating net flux tiles')
         start = datetime.datetime.now()
 
         mp_net_flux(tile_id_list)
@@ -540,7 +540,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for net_flux:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for net_flux: {elapsed_time}', '\n', '\n')
 
 
     # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
@@ -549,16 +549,16 @@ def main ():
 
         # aux.xml files need to be deleted because otherwise they'll be included in the aggregation iteration.
         # They are created by using check_and_delete_if_empty_light()
-        uu.print_log(":::::Deleting any aux.xml files")
+        uu.print_log(':::::Deleting any aux.xml files')
         tiles_to_delete = []
         tiles_to_delete.extend(glob.glob('*aux.xml'))
 
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted {0} aux.xml files: {1}".format(len(tiles_to_delete), tiles_to_delete), '\n')
+        uu.print_log(f':::::Deleted {len(tiles_to_delete)} aux.xml files: {tiles_to_delete}', '\n')
 
 
-        uu.print_log(":::::Creating 4x4 km aggregate maps")
+        uu.print_log(':::::Creating 4x4 km aggregate maps')
         start = datetime.datetime.now()
 
         mp_aggregate_results_to_4_km(tile_id_list, cn.THRESH, std_net_flux=cn.STD_NET_FLUX)
@@ -566,7 +566,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for aggregate:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for aggregate: {elapsed_time}', '\n', '\n')
 
 
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
@@ -574,18 +574,18 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Deleting rewindowed tiles")
+            uu.print_log(':::::Deleting rewindowed tiles')
             tiles_to_delete = []
             tiles_to_delete.extend(glob.glob('*rewindow*tif'))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
+        uu.print_log(':::::Creating supplementary versions of main model outputs (forest extent, per pixel)')
         start = datetime.datetime.now()
 
         mp_create_supplementary_outputs(tile_id_list)
@@ -593,20 +593,20 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for supplementary output raster creation:", elapsed_time, '\n', '\n')
+        uu.print_log(f':::::Processing time for supplementary output raster creation: {elapsed_time}', '\n', '\n')
 
 
     # If no_upload flag is activated, tiles on s3 aren't counted
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
-        uu.print_log(":::::Counting tiles output to each folder")
+        uu.print_log(':::::Counting tiles output to each folder')
 
         # Modifies output directory names to make them match those used during the model run.
         # The tiles in each of these directories and counted and logged.
         # If the model run isn't the standard one, the output directory and file names are changed
-        if sensit_type != 'std':
-            uu.print_log("Modifying output directory and file name pattern based on sensitivity analysis")
-            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        if cn.SENSIT_TYPE != 'std':
+            uu.print_log('Modifying output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
 
         # A date can optionally be provided by the full model script or a run of this script.
         # This replaces the date in constants_and_names.
@@ -617,17 +617,18 @@ def main ():
         for output in output_dir_list:
 
             tile_count = uu.count_tiles_s3(output)
-            uu.print_log("Total tiles in", output, ": ", tile_count)
+            uu.print_log(f'Total tiles in {output}: {tile_count}')
 
 
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
-    uu.print_log(":::::Processing time for entire run:", script_elapsed_time, '\n')
+    uu.print_log(f':::::Processing time for entire run: {script_elapsed_time}', '\n')
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
 
         uu.upload_log()
+
 
 if __name__ == '__main__':
     main()

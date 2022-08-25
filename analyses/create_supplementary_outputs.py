@@ -36,7 +36,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns):
     focal_tile = '{0}_{1}.tif'.format(tile_id, input_pattern)
     pixel_area = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
     tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    gain = f'{cn.pattern_gain}_{tile_id}.tif'
     mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
 
     # Names of outputs.

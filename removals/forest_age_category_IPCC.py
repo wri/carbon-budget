@@ -26,30 +26,30 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
 
         tropics = 1
 
-    uu.print_log("  Tile {} in tropics:".format(tile_id), tropics)
+    uu.print_log(f'  Tile {tile_id} in tropics: {tropics}')
 
-    # Names of the input tiles
-    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    # Names of the input tilRes
+    gain = f'{cn.pattern_gain}_{tile_id}.tif'
     model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
     ifl_primary = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_ifl_primary)
     cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
 
     # Biomass tile name depends on the sensitivity analysis
     if cn.SENSIT_TYPE == 'biomass_swap':
-        biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
-        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(cn.SENSIT_TYPE))
+        biomass = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
+        uu.print_log(f'Using JPL biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
     else:
-        biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(cn.SENSIT_TYPE))
+        biomass = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
+        uu.print_log(f'Using WHRC biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
 
     if cn.SENSIT_TYPE == 'legal_Amazon_loss':
-        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
-        uu.print_log("Using PRODES loss tile {0} for {1} sensitivity analysis".format(tile_id, cn.SENSIT_TYPE))
+        loss = f'{tile_id}_{cn.pattern_Brazil_annual_loss_processed}.tif'
+        uu.print_log(f'Using PRODES loss tile {tile_id} for {cn.SENSIT_TYPE} sensitivity analysis')
     elif cn.SENSIT_TYPE == 'Mekong_loss':
-        loss = '{0}_{1}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+        loss = f'{tile_id}_{cn.pattern_Mekong_loss_processed}.tif'
     else:
-        loss = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
-        uu.print_log("Using Hansen loss tile {0} for {1} model run".format(tile_id, cn.SENSIT_TYPE))
+        loss = f'{cn.pattern_loss}_{tile_id}.tif'
+        uu.print_log(f'Using Hansen loss tile {tile_id} for {cn.SENSIT_TYPE} model run')
 
     # Opens biomass tile
     with rasterio.open(model_extent) as model_extent_src:
@@ -63,33 +63,33 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
         # Opens the input tiles if they exist
         try:
             cont_eco_src = rasterio.open(cont_eco)
-            uu.print_log("   Continent-ecozone tile found for {}".format(tile_id))
+            uu.print_log(f'   Continent-ecozone tile found for {tile_id}')
         except:
-            uu.print_log("   No continent-ecozone tile found for {}".format(tile_id))
+            uu.print_log(f'   No continent-ecozone tile found for {tile_id}')
 
         try:
             gain_src = rasterio.open(gain)
-            uu.print_log("   Gain tile found for {}".format(tile_id))
+            uu.print_log(f'   Gain tile found for {tile_id}')
         except:
-            uu.print_log("   No gain tile found for {}".format(tile_id))
+            uu.print_log(f'   No gain tile found for {tile_id}')
 
         try:
             biomass_src = rasterio.open(biomass)
-            uu.print_log("   Biomass tile found for {}".format(tile_id))
+            uu.print_log(f'   Biomass tile found for {tile_id}')
         except:
-            uu.print_log("   No biomass tile found for {}".format(tile_id))
+            uu.print_log(f'   No biomass tile found for {tile_id}')
 
         try:
             loss_src = rasterio.open(loss)
-            uu.print_log("   Loss tile found for {}".format(tile_id))
+            uu.print_log(f'   Loss tile found for {tile_id}')
         except:
-            uu.print_log("   No loss tile found for {}".format(tile_id))
+            uu.print_log(f'   No loss tile found for {tile_id}')
 
         try:
             ifl_primary_src = rasterio.open(ifl_primary)
-            uu.print_log("   IFL-primary forest tile found for {}".format(tile_id))
+            uu.print_log(f'   IFL-primary forest tile found for {tile_id}')
         except:
-            uu.print_log("   No IFL-primary forest tile found for {}".format(tile_id))
+            uu.print_log(f'   No IFL-primary forest tile found for {tile_id}')
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -100,7 +100,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
         )
 
         # Opens the output tile, giving it the arguments of the input tiles
-        dst = rasterio.open('{0}_{1}.tif'.format(tile_id, pattern), 'w', **kwargs)
+        dst = rasterio.open(f'{tile_id}_{pattern}.tif', 'w', **kwargs)
 
         # Adds metadata tags to the output raster
         uu.add_universal_metadata_rasterio(dst)
@@ -112,7 +112,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
             extent='Full model extent, even though these age categories will not be used over the full model extent. They apply to just the rates from IPCC defaults.')
 
 
-        uu.print_log("    Assigning IPCC age categories for", tile_id)
+        uu.print_log(f'    Assigning IPCC age categories for {tile_id}')
 
         uu.check_memory()
 

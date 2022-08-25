@@ -87,7 +87,7 @@ def mp_create_supplementary_outputs(tile_id_list):
 
     # If the model run isn't the standard one, the output directory is changed
     if cn.SENSIT_TYPE != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
         output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
 
     # A date can optionally be provided by the full model script or a run of this script.

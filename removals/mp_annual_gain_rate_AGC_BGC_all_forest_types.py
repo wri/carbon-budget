@@ -34,7 +34,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
         tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
     # Files to download for this script.
@@ -76,7 +76,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
         output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
         output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 

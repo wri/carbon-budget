@@ -36,7 +36,7 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
         tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
     # Files to download for this script.
@@ -76,7 +76,7 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
         output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
         output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
@@ -94,8 +94,7 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
 
 
     # Imports the table with the ecozone-continent codes and the carbon removals rates
-    gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name = "natrl fores gain, for std model")
+    gain_table = pd.read_excel(f'{cn.gain_spreadsheet}', sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -121,10 +120,10 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
             processes = 42 # 30 processors=460 GB peak; 36 = 550 GB peak; 40 = XXX GB peak
     else:
         processes = 2
-    uu.print_log('Natural forest age category max processors=', processes)
+    uu.print_log(f'Natural forest age category max processors={processes}')
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict,
-                     pattern=pattern), tile_id_list)
+    pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict, pattern=pattern),
+             tile_id_list)
     pool.close()
     pool.join()
 

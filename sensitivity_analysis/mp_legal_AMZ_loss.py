@@ -78,7 +78,7 @@ def main ():
         # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
         # tile_id_list = ['50N_130W'] # test tiles
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
         # Downloads input rasters and lists them
         uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_base_dir, sensit_type)
@@ -126,7 +126,7 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
         # Downloads input rasters and lists them
         cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
@@ -193,7 +193,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -205,7 +205,7 @@ def main ():
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
@@ -250,7 +250,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -262,7 +262,7 @@ def main ():
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
@@ -322,13 +322,13 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (annual removals).
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[4:6])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[4:6])
 
@@ -438,13 +438,13 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[6:8])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[6:8])
 
@@ -510,13 +510,13 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[8:10])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[8:10])
 
@@ -588,7 +588,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
         for key, values in download_dict.items():
             dir = key
@@ -597,7 +597,7 @@ def main ():
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[10:16])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[10:16])
 

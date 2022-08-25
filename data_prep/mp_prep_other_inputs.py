@@ -34,7 +34,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
                                              )
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
     '''
     Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
@@ -80,7 +80,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # If the model run isn't the standard one, the output directory and file names are changed
     if sensit_type != 'std':
 
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
         output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
         output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 

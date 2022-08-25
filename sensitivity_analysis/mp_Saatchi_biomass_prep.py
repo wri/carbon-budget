@@ -27,7 +27,7 @@ def main ():
     # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
     # tile_id_list = ['00N_110E'] # test tile
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
     # By definition, this script is for the biomass swap analysis (replacing WHRC AGB with Saatchi/JPL AGB)
     sensit_type = 'biomass_swap'

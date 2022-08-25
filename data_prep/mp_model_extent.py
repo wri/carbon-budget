@@ -41,7 +41,7 @@ def mp_model_extent(tile_id_list):
                                              )
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
     # Files to download for this script.
@@ -75,7 +75,7 @@ def mp_model_extent(tile_id_list):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
         output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
         output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
@@ -112,15 +112,14 @@ def mp_model_extent(tile_id_list):
     output_pattern = output_pattern_list[0]
     if cn.count <= 2:  # For local tests
         processes = 1
-        uu.print_log(
-            "Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+        uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {output_pattern} processors using light function...')
         pool = multiprocessing.Pool(processes)
         pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
         pool.close()
         pool.join()
     else:
         processes = 58  # 50 processors = 620 GB peak; 55 = 640 GB; 58 = 650 GB (continues to increase very slowly several hundred tiles in)
-        uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+        uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {output_pattern} processors using light function...')
         pool = multiprocessing.Pool(processes)
         pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
         pool.close()

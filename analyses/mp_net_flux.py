@@ -25,7 +25,7 @@ def mp_net_flux(tile_id_list):
                                                     sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
     # Files to download for this script
@@ -49,7 +49,7 @@ def mp_net_flux(tile_id_list):
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
         output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
         output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 

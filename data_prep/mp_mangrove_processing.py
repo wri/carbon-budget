@@ -23,7 +23,7 @@ def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
         tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
 
 
     # Downloads zipped raw mangrove files
