@@ -8,7 +8,7 @@ import datetime
 ########     ########
 
 # Model version
-version = '1.2.2'
+version = '1.2.3'
 version_filename = version.replace('.', '_')
 
 

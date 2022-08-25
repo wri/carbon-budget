@@ -243,7 +243,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
             processes = 9
         uu.print_log('Adding metadata tags max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(calculate_gross_emissions.add_metadata_tags, pattern=pattern),
+        pool.map(partial(uu.add_emissions_metadata, pattern=pattern),
                  tile_id_list)
         pool.close()
         pool.join()

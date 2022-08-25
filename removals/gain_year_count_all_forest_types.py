@@ -303,7 +303,7 @@ def create_gain_year_count_merge(tile_id, pattern):
         gain_year_count_merged_dst = rasterio.open(gain_year_count_merged, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(gain_year_count_merged_dst)
+        uu.add_universal_metadata_rasterio(gain_year_count_merged_dst)
         gain_year_count_merged_dst.update_tags(
             units='years')
         gain_year_count_merged_dst.update_tags(

@@ -126,14 +126,14 @@ def main ():
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
     if (cn.STAGE_INPUT not in model_stages):
-        uu.exception_log('Invalid stage selection. Please provide a stage from', model_stages)
+        uu.exception_log(f'Invalid stage selection. Please provide a stage from {model_stages}')
     else:
         pass
 
     # Generates the list of stages to run
     actual_stages = uu.analysis_stages(model_stages, cn.STAGE_INPUT, cn.RUN_THROUGH, cn.SENSIT_TYPE,
                                        include_mangroves = cn.INCLUDE_MANGROVES, include_us=cn.INCLUDE_US)
-    uu.print_log("Analysis stages to run:", actual_stages)
+    uu.print_log(f'Analysis stages to run: {actual_stages}')
 
     # Reports how much storage is being used with files
     uu.check_storage()
@@ -144,7 +144,7 @@ def main ():
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
     if ('carbon_pools' in actual_stages) & (cn.CARBON_POOL_EXTENT not in ['loss', '2000', 'loss,2000', '2000,loss']):
-        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+        uu.exception_log('Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.')
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
@@ -155,18 +155,18 @@ def main ():
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
             if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
                 if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, cn.SENSIT_TYPE)):
-                    uu.print_log("C++ for {} already compiled.".format(cn.SENSIT_TYPE))
+                    uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
                 else:
-                    uu.exception_log('Must compile standard {} model C++...'.format(cn.SENSIT_TYPE))
+                    uu.exception_log(f'Must compile standard {cn.SENSIT_TYPE} model C++...')
             else:
                 if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
-                    uu.print_log("C++ for generic emissions already compiled.")
+                    uu.print_log('C++ for generic emissions already compiled.')
                 else:
                     uu.exception_log('Must compile generic emissions C++...')
 
         elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
             if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
-                uu.print_log("C++ for generic emissions already compiled.")
+                uu.print_log('C++ for generic emissions already compiled.')
             else:
                 uu.exception_log('Must compile soil_only C++...')
 
@@ -184,7 +184,7 @@ def main ():
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))), "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
     # Otherwise, check that the tile list argument is valid. "all" is the way to specify that all tiles should be processed
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
@@ -271,7 +271,7 @@ def main ():
     # removal function
     if 'annual_removals_mangrove' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of annual removals for mangrove")
+        uu.print_log(':::::Creating tiles of annual removals for mangrove')
         start = datetime.datetime.now()
 
         mp_annual_gain_rate_mangrove(tile_id_list)
@@ -279,14 +279,14 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
+        uu.print_log(f':::::Processing time for annual_gain_rate_mangrove: {elapsed_time}', '\n', '\n')
 
 
     # Creates tiles of annual AGC+BGC removals rate and AGC stdev for US-specific removals using the standard model
     # removal function
     if 'annual_removals_us' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of annual removals for US")
+        uu.print_log(':::::Creating tiles of annual removals for US')
         start = datetime.datetime.now()
 
         mp_US_removal_rates(tile_id_list)
@@ -294,13 +294,13 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_us:", elapsed_time, "\n")
+        uu.print_log(f':::::Processing time for annual_gain_rate_us: {elapsed_time}', '\n', '\n')
 
 
     # Creates model extent tiles
     if 'model_extent' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of model extent")
+        uu.print_log(':::::Creating tiles of model extent')
         start = datetime.datetime.now()
 
         mp_model_extent(tile_id_list)
@@ -308,7 +308,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for model_extent:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for model_extent: {elapsed_time}', '\n', '\n')
 
 
     # Creates age category tiles for natural forests
@@ -322,7 +322,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for forest_age_category_IPCC:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for forest_age_category_IPCC:", elapsed_time, '\n', '\n')
 
 
     # Creates tiles of annual AGB and BGB removals rates using IPCC Table 4.9 defaults
@@ -336,7 +336,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_IPCC:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for annual_gain_rate_IPCC:", elapsed_time, '\n', '\n')
 
 
     # Creates tiles of annual AGC and BGC removal factors for the entire model, combining removal factors from all forest types
@@ -349,7 +349,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_AGC_BGC_all_forest_types:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for annual_gain_rate_AGC_BGC_all_forest_types:", elapsed_time, '\n', '\n')
 
 
     # Creates tiles of the number of years of removals for all model pixels (across all forest types)
@@ -397,7 +397,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gain_year_count:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for gain_year_count:", elapsed_time, '\n', '\n')
 
 
     # Creates tiles of gross removals for all forest types (aboveground, belowground, and above+belowground)
@@ -411,7 +411,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gross_removals_all_forest_types:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for gross_removals_all_forest_types:", elapsed_time, '\n', '\n')
 
 
     # Creates carbon emitted_pools in loss year
@@ -449,7 +449,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for create_carbon_pools:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for create_carbon_pools:", elapsed_time, '\n', '\n')
 
 
     # Creates gross emissions tiles by driver, gas, and all emissions combined
@@ -491,7 +491,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, '\n', '\n')
 
 
     # Creates net flux tiles (gross emissions - gross removals)
@@ -540,7 +540,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for net_flux:", elapsed_time, '\n', '\n')
 
 
     # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
@@ -555,18 +555,18 @@ def main ():
 
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted {0} aux.xml files: {1}".format(len(tiles_to_delete), tiles_to_delete), "\n")
+        uu.print_log(":::::Deleted {0} aux.xml files: {1}".format(len(tiles_to_delete), tiles_to_delete), '\n')
 
 
         uu.print_log(":::::Creating 4x4 km aggregate maps")
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_4_km(cn.THRESH, tile_id_list, std_net_flux=cn.STD_NET_FLUX)
+        mp_aggregate_results_to_4_km(tile_id_list, cn.THRESH, std_net_flux=cn.STD_NET_FLUX)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for aggregate:", elapsed_time, '\n', '\n')
 
 
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
@@ -593,7 +593,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for supplementary output raster creation:", elapsed_time, "\n", "\n")
+        uu.print_log(":::::Processing time for supplementary output raster creation:", elapsed_time, '\n', '\n')
 
 
     # If no_upload flag is activated, tiles on s3 aren't counted
@@ -622,7 +622,7 @@ def main ():
 
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
-    uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
+    uu.print_log(":::::Processing time for entire run:", script_elapsed_time, '\n')
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:

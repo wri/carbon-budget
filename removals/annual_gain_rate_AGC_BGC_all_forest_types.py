@@ -113,7 +113,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(removal_forest_type_dst)
+        uu.add_universal_metadata_rasterio(removal_forest_type_dst)
         removal_forest_type_dst.update_tags(
             key='6: mangroves. 5: European-specific rates. 4: planted forests. 3: US-specific rates. 2: young (<20 year) secondary forests. 1: old (>20 year) secondary forests and primary forests. Priority goes to the highest number.')
         removal_forest_type_dst.update_tags(
@@ -130,7 +130,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
         stdev_annual_gain_AGC_all_forest_types_dst = rasterio.open(stdev_annual_gain_AGC_all_forest_types, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_AGC_all_forest_types_dst)
+        uu.add_universal_metadata_rasterio(annual_gain_AGC_all_forest_types_dst)
         annual_gain_AGC_all_forest_types_dst.update_tags(
             units='megagrams aboveground carbon/ha/yr')
         annual_gain_AGC_all_forest_types_dst.update_tags(
@@ -139,7 +139,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_BGC_all_forest_types_dst)
+        uu.add_universal_metadata_rasterio(annual_gain_BGC_all_forest_types_dst)
         annual_gain_BGC_all_forest_types_dst.update_tags(
             units='megagrams belowground carbon/ha/yr')
         annual_gain_BGC_all_forest_types_dst.update_tags(
@@ -148,7 +148,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_AGC_BGC_all_forest_types_dst)
+        uu.add_universal_metadata_rasterio(annual_gain_AGC_BGC_all_forest_types_dst)
         annual_gain_AGC_BGC_all_forest_types_dst.update_tags(
             units='megagrams aboveground + belowground carbon/ha/yr')
         annual_gain_AGC_BGC_all_forest_types_dst.update_tags(
@@ -157,7 +157,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(stdev_annual_gain_AGC_all_forest_types_dst)
+        uu.add_universal_metadata_rasterio(stdev_annual_gain_AGC_all_forest_types_dst)
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
             units='standard deviation for removal factor, in terms of megagrams aboveground carbon/ha/yr')
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(

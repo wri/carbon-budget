@@ -63,7 +63,7 @@ def net_calc(tile_id, pattern):
     net_flux_dst = rasterio.open(net_flux, 'w', **kwargs)
 
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(net_flux_dst)
+    uu.add_universal_metadata_rasterio(net_flux_dst)
     net_flux_dst.update_tags(
         units='Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years))
     net_flux_dst.update_tags(

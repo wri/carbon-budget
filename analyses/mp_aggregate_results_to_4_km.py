@@ -32,7 +32,7 @@ sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import aggregate_results_to_4_km
 
 
-def mp_aggregate_results_to_4_km(thresh, tile_id_list, std_net_flux = None):
+def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
     os.chdir(cn.docker_base_dir)
 
@@ -185,7 +185,7 @@ def mp_aggregate_results_to_4_km(thresh, tile_id_list, std_net_flux = None):
 
 
         # Adds metadata tags to output rasters
-        uu.add_universal_metadata_tags('{0}.tif'.format(out_pattern), cn.SENSIT_TYPE)
+        uu.add_universal_metadata_gdal('{0}.tif'.format(out_pattern))
 
         # Units are different for annual removal factor, so metadata has to reflect that
         if 'annual_removal_factor' in out_pattern:
@@ -315,4 +315,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_aggregate_results_to_4_km(tile_id_list=tile_id_list, thresh=cn.THRESH, std_net_flux=cn.STD_NET_FLUX)
+    mp_aggregate_results_to_4_km(tile_id_list, cn.THRESH, std_net_flux=cn.STD_NET_FLUX)

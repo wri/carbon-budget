@@ -90,7 +90,7 @@ def model_extent(tile_id, pattern):
         dst = rasterio.open(out_tile, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst)
+        uu.add_universal_metadata_rasterio(dst)
         dst.update_tags(
             units='unitless. 1 = in model extent. 0 = not in model extent')
         if cn.SENSIT_TYPE == 'biomass_swap':

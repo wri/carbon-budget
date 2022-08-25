@@ -243,7 +243,7 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux):
         dst = rasterio.open('{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_sign_change, cn.SENSIT_TYPE, date_formatted), 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst)
+        uu.add_universal_metadata_rasterio(dst)
         dst.update_tags(
             key='1=stays net source. 2=stays net sink. 3=changes from net source to net sink. 4=changes from net sink to net source.')
         dst.update_tags(

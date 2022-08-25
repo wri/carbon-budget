@@ -53,16 +53,3 @@ def calc_emissions(tile_id, emitted_pools, folder):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)
 
-
-# Adds metadata tags to the output rasters
-def add_metadata_tags(tile_id, pattern):
-
-    # Adds metadata tags to output rasters
-    uu.add_universal_metadata_tags('{0}_{1}.tif'.format(tile_id, pattern), cn.SENSIT_TYPE)
-
-    cmd = ['gdal_edit.py', '-mo',
-           'units=Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years),
-           '-mo', 'source=many data sources',
-           '-mo', 'extent=Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)',
-           '{0}_{1}.tif'.format(tile_id, pattern)]
-    uu.log_subprocess_output_full(cmd)

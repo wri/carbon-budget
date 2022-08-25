@@ -60,7 +60,7 @@ def annual_gain_rate(tile_id, output_pattern_list, gain_above_dict, gain_below_d
 
     dst_above = rasterio.open(AGB_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_above)
+    uu.add_universal_metadata_rasterio(dst_above)
     dst_above.update_tags(
         units='megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_above.update_tags(
@@ -70,7 +70,7 @@ def annual_gain_rate(tile_id, output_pattern_list, gain_above_dict, gain_below_d
 
     dst_below = rasterio.open(BGB_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_below)
+    uu.add_universal_metadata_rasterio(dst_below)
     dst_below.update_tags(
         units='megagrams belowground biomass (BGB or dry matter)/ha/yr')
     dst_below.update_tags(
@@ -80,7 +80,7 @@ def annual_gain_rate(tile_id, output_pattern_list, gain_above_dict, gain_below_d
 
     dst_stdev_above = rasterio.open(AGB_gain_stdev, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_stdev_above)
+    uu.add_universal_metadata_rasterio(dst_stdev_above)
     dst_stdev_above.update_tags(
         units='standard deviation, in terms of megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_stdev_above.update_tags(

@@ -98,7 +98,7 @@ def create_peat_mask_tiles(tile_id):
         out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(out_tile_tagged)
+        uu.add_universal_metadata_rasterio(out_tile_tagged)
         out_tile_tagged.update_tags(
             key='1 = peat. 0 = not peat.')
         out_tile_tagged.update_tags(

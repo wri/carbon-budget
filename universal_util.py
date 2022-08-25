@@ -53,10 +53,15 @@ def initiate_log(tile_id_list):
                         datefmt='%Y/%m/%d %I:%M:%S %p',
                         level=logging.INFO)
 
+    if cn.SENSIT_TYPE == 'std':
+        sensit_type = 'standard model'
+    else:
+        sensit_type = cn.SENSIT_TYPE
+
     logging.info("Log notes: {}".format(cn.LOG_NOTE))
     logging.info("Model version: {}".format(cn.version))
     logging.info("This is the start of the log for this model run. Below are the command line arguments for this run.")
-    logging.info("Sensitivity analysis type: {}".format(cn.SENSIT_TYPE))
+    logging.info("Sensitivity analysis type: {}".format(sensit_type))
     logging.info("Model stage argument: {}".format(cn.STAGE_INPUT))
     logging.info("Run model stages after the initial selected stage: {}".format(cn.RUN_THROUGH))
     logging.info("Run date: {}".format(cn.RUN_DATE))
@@ -1347,7 +1352,7 @@ def replace_output_dir_date(output_dir_list, run_date):
 
 
 # Adds various metadata tags to the raster
-def add_rasterio_tags(output_dst):
+def add_universal_metadata_rasterio(output_dst):
 
     # based on https://rasterio.readthedocs.io/en/latest/topics/tags.html
 
@@ -1373,41 +1378,33 @@ def add_rasterio_tags(output_dst):
     return output_dst
 
 
-def add_universal_metadata_tags(output_raster, sensit_type):
+def add_universal_metadata_gdal(output_raster):
 
     print_log("Adding universal metadata tags to", output_raster)
 
-    cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
+    cmd = ['gdal_edit.py',
+           '-mo', 'model_version={}'.format(cn.version),
            '-mo', 'date_created={}'.format(date_today),
-           '-mo', 'model_type={}'.format(sensit_type),
+           '-mo', 'model_type={}'.format(cn.SENSIT_TYPE),
            '-mo', 'originator=Global Forest Watch at the World Resources Institute',
            '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years),
            output_raster]
     log_subprocess_output_full(cmd)
 
 
-# Adds metadata tags to raster.
-# Certain tags are included for all rasters, while other tags can be customized for each input set.
-def add_metadata_tags(tile_id, output_pattern, sensit_type, metadata_list):
+# Adds metadata tags to the output rasters
+def add_emissions_metadata(tile_id, pattern):
 
-    output_raster = '{0}_{1}.tif'.format(tile_id, output_pattern)
+    # Adds metadata tags to output rasters
+    add_universal_metadata_gdal('{0}_{1}.tif'.format(tile_id, pattern))
 
-    print_log("Adding metadata tags to", output_raster)
-
-    # Universal metadata tags
-    cmd = ['gdal_edit.py', '-mo', 'model_version={}'.format(cn.version),
-           '-mo', 'date_created={}'.format(date_today),
-           '-mo', 'model_type={}'.format(sensit_type),
-           '-mo', 'originator=Global Forest Watch at the World Resources Institute',
-           '-mo', 'model_year_range=2001 through 20{}'.format(cn.loss_years)]
-
-    # Metadata tags specifically for this dataset
-    for metadata in metadata_list:
-        cmd += ['-mo', metadata]
-
-    cmd += [output_raster]
-
+    cmd = ['gdal_edit.py', '-mo',
+           'units=Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years),
+           '-mo', 'source=many data sources',
+           '-mo', 'extent=Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)',
+           '{0}_{1}.tif'.format(tile_id, pattern)]
     log_subprocess_output_full(cmd)
+
 
 # Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
 # which is the resolution of the output tiles. This allows the 30x30 m pixels in each window to be summed
@@ -1445,4 +1442,4 @@ def rewindow(tile_id, download_pattern_name):
         print_log("{} does not exist. Not rewindowing".format(in_tile))
 
     # Prints information about the tile that was just processed
-    end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name), no_upload)
+    end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name))
