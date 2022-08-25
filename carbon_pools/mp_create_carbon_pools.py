@@ -46,11 +46,11 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     os.chdir(cn.docker_base_dir)
 
     if (cn.SENSIT_TYPE != 'std') & (carbon_pool_extent != 'loss'):
-        uu.exception_log("Sensitivity analysis run must use 'loss' extent")
+        uu.exception_log("Sensitivity analysis run must use loss extent")
 
     # Checks the validity of the carbon_pool_extent argument
     if (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
-        uu.exception_log("Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+        uu.exception_log('Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.')
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed.
     # For runs generating carbon pools in emissions year, only tiles with model extent and loss are relevant
@@ -59,7 +59,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         # Lists the tiles that have both model extent and loss pixels, both being necessary precursors for emissions
         model_extent_tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type=cn.SENSIT_TYPE)
         loss_tile_id_list = uu.tile_list_s3(cn.loss_dir, sensit_type=cn.SENSIT_TYPE)
-        uu.print_log("Carbon pool at emissions year is combination of model_extent and loss tiles:")
+        uu.print_log('Carbon pool at emissions year is combination of model_extent and loss tiles:')
         tile_id_list = list(set(model_extent_tile_id_list).intersection(loss_tile_id_list))
 
     # For runs generating carbon pools in 2000, all model extent tiles are relevant.

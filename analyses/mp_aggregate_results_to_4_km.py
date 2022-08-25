@@ -56,7 +56,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
     uu.s3_flexible_download(cn.gain_rewindow_dir, cn.pattern_gain_rewindow, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
     uu.s3_flexible_download(cn.mangrove_biomass_2000_rewindow_dir, cn.pattern_mangrove_biomass_2000_rewindow, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
-    uu.print_log("Model outputs to process are:", download_dict)
+    uu.print_log(f'Model outputs to process are: {download_dict}')
 
     # List of output directories. Modified later for sensitivity analysis.
     # Output pattern is determined later.
@@ -100,7 +100,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         # For sensitivity analysis runs, only aggregates the tiles if they were created as part of the sensitivity analysis
         if (cn.SENSIT_TYPE != 'std') & (cn.SENSIT_TYPE not in pattern):
-            uu.print_log("{} not a sensitivity analysis output. Skipping aggregation...".format(pattern) + "\n")
+            uu.print_log(f'{pattern} not a sensitivity analysis output. Skipping aggregation...', '\n')
 
             continue
 
@@ -115,8 +115,8 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        uu.print_log("There are {0} tiles to process for pattern {1}".format(str(len(tile_list)), download_pattern_name) + "\n")
-        uu.print_log("Processing:", dir, "; ", pattern)
+        uu.print_log(f'There are {str(len(tile_list))} tiles to process for pattern {download_pattern_name}', '\n')
+        uu.print_log(f'Processing: {dir}; {pattern}')
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
         # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
@@ -127,7 +127,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
                 processes = 16  # 16 processors = XXX GB peak
         else:
             processes = 8
-        uu.print_log('Rewindow max processors=', processes)
+        uu.print_log(f'Rewindow max processors= {processes}')
         pool = multiprocessing.Pool(processes)
         pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
                  tile_id_list)
@@ -157,7 +157,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
                 processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
         else:
             processes = 8
-        uu.print_log('Conversion to per pixel and aggregate max processors=', processes)
+        uu.print_log(f'Conversion to per pixel and aggregate max processors={processes}')
         pool = multiprocessing.Pool(processes)
         pool.map(partial(aggregate_results_to_4_km.aggregate, thresh=thresh),
                  tile_list)
@@ -170,7 +170,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
         #     aggregate_results_to_4_km.aggregate(tile, thresh)
 
         # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-        out_vrt = "{}_0_04deg.vrt".format(pattern)
+        out_vrt = f'{pattern}_0_04deg.vrt'
         os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_0_04deg*.tif'.format(out_vrt, pattern))
 
         # Creates the output name for the 10km map
@@ -185,7 +185,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
 
         # Adds metadata tags to output rasters
-        uu.add_universal_metadata_gdal('{0}.tif'.format(out_pattern))
+        uu.add_universal_metadata_gdal(f'{out_pattern}.tif')
 
         # Units are different for annual removal factor, so metadata has to reflect that
         if 'annual_removal_factor' in out_pattern:
@@ -194,7 +194,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
                    '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                    '-mo', 'extent=Global',
                    '-mo', 'scale=negative values are removals',
-                   '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
+                   '-mo', f'treecover_density_threshold={thresh} (only model pixels with canopy cover > {thresh} are included in aggregation',
                    '{0}.tif'.format(out_pattern)]
             uu.log_subprocess_output_full(cmd)
 
@@ -203,7 +203,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
                    '-mo', 'units=Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees',
                    '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                    '-mo', 'extent=Global',
-                   '-mo', 'treecover_density_threshold={0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh),
+                   '-mo', f'treecover_density_threshold={thresh} (only model pixels with canopy cover > {thresh} are included in aggregation'
                    '{0}.tif'.format(out_pattern)]
             uu.log_subprocess_output_full(cmd)
 
@@ -221,14 +221,14 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         for tile_name in tile_list:
             tile_id = uu.get_tile_id(tile_name)
-            os.remove('{0}_{1}_rewindow.tif'.format(tile_id, pattern))
-            os.remove('{0}_{1}_0_04deg.tif'.format(tile_id, pattern))
+            os.remove(f'{tile_id}_{pattern}_rewindow.tif')
+            os.remove(f'{tile_id}_{pattern}_0_04deg.tif')
 
     # Need to delete rewindowed tiles so they aren't confused with the normal tiles for creation of supplementary outputs
     rewindow_list = glob.glob('*rewindow*tif')
     for rewindow_tile in rewindow_list:
         os.remove(rewindow_tile)
-    uu.print_log("Deleted all rewindowed tiles")
+    uu.print_log('Deleted all rewindowed tiles')
 
 
     # Compares the net flux from the standard model and the sensitivity analysis in two ways.
@@ -242,7 +242,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         if std_net_flux:
 
-            uu.print_log("Standard aggregated flux results provided. Creating comparison maps.")
+            uu.print_log('Standard aggregated flux results provided. Creating comparison maps.')
 
             # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
             uu.s3_file_download(std_net_flux, cn.docker_base_dir, cn.SENSIT_TYPE)
@@ -254,16 +254,16 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
                 # Identifies the sensitivity model net flux map
                 sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(cn.SENSIT_TYPE))[0]
 
-                uu.print_log("Standard model net flux:", std_aggreg_flux)
-                uu.print_log("Sensitivity model net flux:", sensit_aggreg_flux)
+                uu.print_log(f'Standard model net flux: {std_aggreg_flux}')
+                uu.print_log(f'Sensitivity model net flux: {sensit_aggreg_flux}')
 
             except:
                 uu.print_log('Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
 
-            uu.print_log("Creating map of percent difference between standard and {} net flux".format(cn.SENSIT_TYPE))
+            uu.print_log(f'Creating map of percent difference between standard and {cn.SENSIT_TYPE} net flux')
             aggregate_results_to_4_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux)
 
-            uu.print_log("Creating map of which pixels change sign and which stay the same between standard and {}".format(cn.SENSIT_TYPE))
+            uu.print_log(f'Creating map of which pixels change sign and which stay the same between standard and {cn.SENSIT_TYPE}')
             aggregate_results_to_4_km.sign_change(std_aggreg_flux, sensit_aggreg_flux)
 
             # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
@@ -274,7 +274,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         else:
 
-            uu.print_log("No standard aggregated flux results provided. Not creating comparison maps.")
+            uu.print_log('No standard aggregated flux results provided. Not creating comparison maps.')
 
 
 if __name__ == '__main__':

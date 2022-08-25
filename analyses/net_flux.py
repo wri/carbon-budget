@@ -21,7 +21,7 @@ def net_calc(tile_id, pattern):
     emissions_in = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
 
     # Output net emissions file
-    net_flux = '{0}_{1}.tif'.format(tile_id, pattern)
+    net_flux = f'{tile_id}_{pattern}.tif'
 
     try:
         removals_src = rasterio.open(removals_in)
@@ -29,9 +29,9 @@ def net_calc(tile_id, pattern):
         kwargs = removals_src.meta
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = removals_src.block_windows(1)
-        uu.print_log("   Gross removals tile found for {}".format(removals_in))
+        uu.print_log(f'   Gross removals tile found for {removals_in}')
     except:
-        uu.print_log("   No gross removals tile found for {}".format(removals_in))
+        uu.print_log(f'   No gross removals tile found for {removals_in}')
 
     try:
         emissions_src = rasterio.open(emissions_in)
@@ -39,9 +39,9 @@ def net_calc(tile_id, pattern):
         kwargs = emissions_src.meta
         # Grabs the windows of the tile (stripes) so we can iterate over the entire tif without running out of memory
         windows = emissions_src.block_windows(1)
-        uu.print_log("   Gross emissions tile found for {}".format(emissions_in))
+        uu.print_log(f'   Gross emissions tile found for {emissions_in}')
     except:
-        uu.print_log("   No gross emissions tile found for {}".format(emissions_in))
+        uu.print_log(f'   No gross emissions tile found for {emissions_in}')
 
     # Skips the tile if there is neither a gross emissions nor a gross removals tile.
     # This should only occur for biomass_swap sensitivity analysis, which gets its net flux tile list from
@@ -56,7 +56,7 @@ def net_calc(tile_id, pattern):
             dtype='float32'
         )
     except:
-        uu.print_log("No gross emissions or gross removals for {}. Skipping tile.".format(tile_id))
+        uu.print_log(f'No gross emissions or gross removals for {tile_id}. Skipping tile.')
         return
 
     # Opens the output tile, giving it the arguments of the input tiles
@@ -65,7 +65,7 @@ def net_calc(tile_id, pattern):
     # Adds metadata tags to the output raster
     uu.add_universal_metadata_rasterio(net_flux_dst)
     net_flux_dst.update_tags(
-        units='Mg CO2e/ha over model duration (2001-20{})'.format(cn.loss_years))
+        units=f'Mg CO2e/ha over model duration (2001-20{cn.loss_years})')
     net_flux_dst.update_tags(
         source='Gross emissions - gross removals')
     net_flux_dst.update_tags(

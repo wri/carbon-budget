@@ -69,7 +69,7 @@ def mp_net_flux(tile_id_list):
             processes = 40   # 38 = 690 GB peak; 40 = 715 GB peak
     else:
         processes = 9
-    uu.print_log('Net flux max processors=', processes)
+    uu.print_log(f'Net flux max processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(net_flux.net_calc, pattern=pattern),
              tile_id_list)

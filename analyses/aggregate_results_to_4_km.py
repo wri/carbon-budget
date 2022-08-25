@@ -45,11 +45,11 @@ def aggregate(tile, thresh):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # Name of inputs
-    focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
-    pixel_area_rewindow = '{0}_{1}.tif'.format(cn.pattern_pixel_area_rewindow, tile_id)
-    tcd_rewindow = '{0}_{1}.tif'.format(cn.pattern_tcd_rewindow, tile_id)
-    gain_rewindow = '{0}_{1}.tif'.format(cn.pattern_gain_rewindow, tile_id)
-    mangrove_rewindow = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000_rewindow)
+    focal_tile_rewindow = f'{tile_id}_{tile_type}_rewindow.tif'
+    pixel_area_rewindow = f'{cn.pattern_pixel_area_rewindow}_{tile_id}.tif'
+    tcd_rewindow = f'{cn.pattern_tcd_rewindow}_{tile_id}.tif'
+    gain_rewindow = f'{cn.pattern_gain_rewindow}_{tile_id}.tif'
+    mangrove_rewindow = f'{tile_id}_{cn.pattern_mangrove_biomass_2000_rewindow}.tif'
 
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)
@@ -59,11 +59,11 @@ def aggregate(tile, thresh):
 
     try:
         mangrove_src = rasterio.open(mangrove_rewindow)
-        uu.print_log("    Mangrove tile found for {}".format(tile_id))
+        uu.print_log(f'    Mangrove tile found for {tile_id}')
     except:
-        uu.print_log("    No mangrove tile found for {}".format(tile_id))
+        uu.print_log(f'    No mangrove tile found for {tile_id}')
 
-    uu.print_log("  Converting {} to per-pixel values...".format(tile))
+    uu.print_log(f'  Converting {tile} to per-pixel values...')
 
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
@@ -71,7 +71,7 @@ def aggregate(tile, thresh):
     #2D array in which the 0.04x0.04 deg aggregated sums will be stored
     sum_array = np.zeros([250,250], 'float32')
 
-    out_raster = "{0}_{1}_0_04deg.tif".format(tile_id, tile_type)
+    out_raster = f'{tile_id}_{tile_type}_0_04deg.tif'
 
     uu.check_memory()
 
@@ -129,7 +129,7 @@ def aggregate(tile, thresh):
     if cn.pattern_net_flux in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
-    uu.print_log("  Creating aggregated tile for {}...".format(tile))
+    uu.print_log(f'  Creating aggregated tile for {tile}...')
 
     # Converts array to the same output type as the raster that is created below
     sum_array = np.float32(sum_array)
@@ -185,7 +185,7 @@ def aggregate(tile, thresh):
         # aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_0_04deg'.format(tile_type))
+    uu.end_of_fx_summary(start, tile_id, f'{tile_type}_0_04deg')
 
 
 # Calculates the percent difference between the standard model's net flux output

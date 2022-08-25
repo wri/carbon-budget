@@ -40,7 +40,7 @@ def mp_create_supplementary_outputs(tile_id_list):
         tile_id_list_outer = uu.tile_list_s3(cn.net_flux_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list_outer)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_outer))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', '\n')
 
 
     # Files to download for this script
@@ -83,7 +83,7 @@ def mp_create_supplementary_outputs(tile_id_list):
     uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
 
-    uu.print_log("Model outputs to process are:", download_dict)
+    uu.print_log(f'Model outputs to process are: {download_dict}')
 
     # If the model run isn't the standard one, the output directory is changed
     if cn.SENSIT_TYPE != 'std':
@@ -113,10 +113,10 @@ def mp_create_supplementary_outputs(tile_id_list):
             tile_id_list_input = tile_id_list_outer
 
         uu.print_log(tile_id_list_input)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list_input))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list_input))} tiles to process', '\n')
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
-        uu.print_log("Downloading tiles from", input_dir)
+        uu.print_log(f'Downloading tiles from {input_dir}')
         uu.s3_flexible_download(input_dir, input_pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_input)
 
         # Blank list of output patterns, populated below
@@ -132,10 +132,10 @@ def mp_create_supplementary_outputs(tile_id_list):
         elif "net_flux" in input_pattern:
             output_patterns = output_pattern_list[6:9]
         else:
-            uu.exception_log("No output patterns found for input pattern. Please check.")
+            uu.exception_log('No output patterns found for input pattern. Please check.')
 
-        uu.print_log("Input pattern:", input_pattern)
-        uu.print_log("Output patterns:", output_patterns)
+        uu.print_log(f'Input pattern: {input_pattern}')
+        uu.print_log(f'Output patterns: {output_patterns}')
 
         # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
         # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
@@ -143,7 +143,7 @@ def mp_create_supplementary_outputs(tile_id_list):
             processes = 18
         else:
             processes = 2
-        uu.print_log("Creating derivative outputs for {0} with {1} processors...".format(input_pattern, processes))
+        uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
         pool = multiprocessing.Pool(processes)
         pool.map(partial(create_supplementary_outputs.create_supplementary_outputs, input_pattern=input_pattern,
                          output_patterns=output_patterns),
@@ -161,14 +161,14 @@ def mp_create_supplementary_outputs(tile_id_list):
         for output_pattern in output_patterns[1:3]:
             if cn.count <= 2:  # For local tests
                 processes = 1
-                uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+                uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
                 pool = multiprocessing.Pool(processes)
                 pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list_input)
                 pool.close()
                 pool.join()
             else:
                 processes = 55  # 50 processors = 560 GB peak for gross removals; 55 = XXX GB peak
-                uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+                uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
                 pool = multiprocessing.Pool(processes)
                 pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list_input)
                 pool.close()

@@ -110,19 +110,19 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
         # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
         if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
             # if os.path.exists('../carbon-budget/emissions/cpp_util/calc_gross_emissions_{}.exe'.format(cn.SENSIT_TYPE)):
-            if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, cn.SENSIT_TYPE)):
-                uu.print_log("C++ for {} already compiled.".format(cn.SENSIT_TYPE))
+            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
+                uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
             else:
-                uu.exception_log('Must compile {} model C++...'.format(cn.SENSIT_TYPE))
+                uu.exception_log(f'Must compile {cn.SENSIT_TYPE} model C++...')
         else:
-            if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
-                uu.print_log("C++ for generic emissions already compiled.")
+            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
+                uu.print_log('C++ for generic emissions already compiled.')
             else:
                 uu.exception_log('Must compile generic emissions C++...')
 
     elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
-        if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
-            uu.print_log("C++ for soil_only already compiled.")
+        if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
+            uu.print_log('C++ for soil_only already compiled.')
 
             # Output file directories for soil_only. Must be in same order as output pattern directories.
             output_dir_list = [cn.gross_emis_commod_soil_only_dir,
@@ -181,7 +181,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     # This function creates "dummy" tiles for all Hansen tiles that currently have non-existent tiles.
     # That way, the C++ script gets all the necessary input files.
     # If it doesn't get the necessary inputs, it skips that tile.
-    uu.print_log("Making blank tiles for inputs that don't currently exist")
+    uu.print_log('Making blank tiles for inputs that do not currently exist')
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_burn_year, cn.pattern_climate_zone,
@@ -215,7 +215,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
             processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
     else:
         processes = 9
-    uu.print_log('Gross emissions max processors=', processes)
+    uu.print_log(f'Gross emissions max processors={processes}')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools,
                      folder=folder),
@@ -235,13 +235,13 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     for i in range(0, len(output_pattern_list)):
         pattern = output_pattern_list[i]
 
-        uu.print_log("Adding metadata tags for pattern {}".format(pattern))
+        uu.print_log(f'Adding metadata tags for pattern {pattern}')
 
         if cn.count == 96:
             processes = 75  # 45 processors = ~30 GB peak; 55 = XXX GB peak; 75 = XXX GB peak
         else:
             processes = 9
-        uu.print_log('Adding metadata tags max processors=', processes)
+        uu.print_log(f'Adding metadata tags max processors={processes}')
         pool = multiprocessing.Pool(processes)
         pool.map(partial(uu.add_emissions_metadata, pattern=pattern),
                  tile_id_list)
@@ -275,11 +275,6 @@ if __name__ == '__main__':
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-
-
-
-
-
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
