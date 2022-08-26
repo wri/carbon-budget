@@ -78,7 +78,7 @@ def main ():
         # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
         # tile_id_list = ['50N_130W'] # test tiles
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
         uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_base_dir, sensit_type)
@@ -126,7 +126,7 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
         cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
@@ -193,7 +193,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -250,7 +250,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
@@ -296,10 +296,10 @@ def main ():
             # legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
 
         # Intermediate output tiles for checking outputs
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_loss_only")
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_gain_only")
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_no_change")
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_loss_and_gain")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_loss_only")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_gain_only")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_no_change")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_loss_and_gain")
 
         # Uploads output from this stage
         uu.upload_final_set(stage_output_dir_list[3], stage_output_pattern_list[3])
@@ -322,7 +322,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
@@ -438,7 +438,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
@@ -510,7 +510,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
@@ -588,7 +588,7 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         for key, values in download_dict.items():
             dir = key

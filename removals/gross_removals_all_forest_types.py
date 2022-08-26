@@ -1,13 +1,23 @@
+"""
+Function to create gross removals tiles
+"""
+
 import datetime
 import rasterio
-from subprocess import Popen, PIPE, STDOUT, check_call
+
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Calculates cumulative aboveground carbon dioxide removals in mangroves
 def gross_removals_all_forest_types(tile_id, output_pattern_list):
+    """
+    Calculates cumulative aboveground carbon dioxide removals in mangroves
+    :param tile_id: tile to be processed, identified by its tile id
+    :param output_pattern_list: pattern for output tile names
+    :return: 3 tiles: gross aboveground removals, belowground removals, aboveground+belowground removals
+        Units: Mg CO2/ha over entire model period.
+    """
 
     uu.print_log(f'Calculating cumulative CO2 removals: {tile_id}')
 
@@ -28,21 +38,18 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list):
     try:
         gain_rate_AGC_src = rasterio.open(gain_rate_AGC)
         uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
-    except:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No aboveground removal factor tile found for {tile_id}. Not creating gross removals.')
-        return
     try:
         gain_rate_BGC_src = rasterio.open(gain_rate_BGC)
         uu.print_log(f'    Belowground removal factor tile found for {tile_id}')
-    except:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No belowground removal factor tile found for {tile_id}. Not creating gross removals.')
-        return
     try:
         gain_year_count_src = rasterio.open(gain_year_count)
         uu.print_log(f'    Gain year count tile found for {tile_id}')
-    except:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No gain year count tile found for {tile_id}. Not creating gross removals.')
-        return
 
 
     # Grabs metadata for an input tile

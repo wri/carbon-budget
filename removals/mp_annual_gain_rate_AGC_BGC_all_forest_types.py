@@ -1,4 +1,4 @@
-'''
+"""
 Creates tiles of annual aboveground and belowground removal rates for the entire model extent (all forest types).
 Also, creates tiles that show what the source of the removal factor is each for each pixel. This can correspond to
 particular forest types (mangrove, planted, natural) or data sources (US, Europe, young natural forests from Cook-Patton et al.,
@@ -7,17 +7,15 @@ The current hierarchy where pixels overlap is: mangrove > Europe > planted fores
 rates for young secondary forests > IPCC defaults for old secondary and primary forests.
 This hierarchy is reflected in the removal rates and the forest type rasters.
 The different removal rate inputs are in different units but all are standardized to AGC/ha/yr and BGC/ha/yr.
-'''
+"""
 
 
-import multiprocessing
-from functools import partial
-import pandas as pd
-import datetime
 import argparse
-from subprocess import Popen, PIPE, STDOUT, check_call
+from functools import partial
+import multiprocessing
 import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -25,6 +23,13 @@ sys.path.append(os.path.join(cn.docker_app,'removals'))
 import annual_gain_rate_AGC_BGC_all_forest_types
 
 def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: 5 sets of tiles with annual removal factors combined from all removal factor sources:
+        removal forest type, aboveground rate, belowground rate, aboveground+belowground rate,
+        standard deviation for aboveground rate.
+        Units: Mg carbon/ha/yr (including for standard deviation tiles)
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -34,7 +39,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
         tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script.
@@ -69,9 +74,9 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -97,12 +102,12 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
     else:
         processes = 2
     uu.print_log(f'Removal factor processors={processes}')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
-                     output_pattern_list=output_pattern_list),
-             tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
+                         output_pattern_list=output_pattern_list),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -113,24 +118,24 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
         if cn.count <= 2:  # For local tests
             processes = 1
             uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+                pool.close()
+                pool.join()
         else:
             processes = 55  # 50 processors = XXX GB peak
             uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+                pool.close()
+                pool.join()
 
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
 
-        for i in range(0, len(output_dir_list)):
-            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+        for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+            uu.upload_final_set(output_dir, output_pattern)
 
 
 if __name__ == '__main__':
@@ -140,7 +145,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of removal factors for all forest types')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
@@ -169,4 +174,3 @@ if __name__ == '__main__':
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list)
-

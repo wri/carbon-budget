@@ -94,37 +94,37 @@ def create_AGC(tile_id, carbon_pool_extent):
     try:
         annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
         uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No aboveground removal factor tile for {tile_id}')
 
     try:
         cumul_gain_AGCO2_src = rasterio.open(cumul_gain_AGCO2)
         uu.print_log(f'    Gross aboveground removal tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No gross aboveground removal tile for {tile_id}')
 
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         uu.print_log(f'    Mangrove tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No mangrove tile for {tile_id}')
 
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
         uu.print_log(f'    Biomass found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No biomass found for {tile_id}')
 
     try:
         gain_src = rasterio.open(gain)
         uu.print_log(f'    Gain tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No gain tile found for {tile_id}')
 
     try:
         removal_forest_type_src = rasterio.open(removal_forest_type)
         uu.print_log(f'    Removal type tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No removal type tile found for {tile_id}')
 
 
@@ -186,27 +186,27 @@ def create_AGC(tile_id, carbon_pool_extent):
         loss_year_window = loss_year_src.read(1, window=window)
         try:
             annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             annual_gain_AGC_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             cumul_gain_AGCO2_window = cumul_gain_AGCO2_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             cumul_gain_AGCO2_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             removal_forest_type_window = removal_forest_type_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             removal_forest_type_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             gain_window = gain_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             gain_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             mangrove_biomass_2000_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             natrl_forest_biomass_2000_window = np.zeros((window.height, window.width), dtype='uint8')
 
 
@@ -338,13 +338,13 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
     try:
         cont_ecozone_src = rasterio.open(cont_ecozone)
         uu.print_log(f'    Continent-ecozone tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No Continent-ecozone tile found for {tile_id}')
 
     try:
         removal_forest_type_src = rasterio.open(removal_forest_type)
         uu.print_log(f'    Removal forest type tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No Removal forest type tile found for {tile_id}')
 
     uu.print_log(f'  Creating belowground carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
@@ -357,12 +357,12 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         # Creates windows from inputs that are used regardless of whether calculating BGC2000 or BGC in emissions year
         try:
             cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-        except FileNotFoundError:
+        except UnboundLocalError:
             cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
 
         try:
             removal_forest_type_window = removal_forest_type_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             removal_forest_type_window = np.zeros((window.height, window.width))
 
         # Applies the mangrove BGB:AGB ratios (3 different ratios) to the ecozone raster to create a raster of BGB:AGB ratios
@@ -493,41 +493,41 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
     try:
         precip_src = rasterio.open(precip)
         uu.print_log(f'    Precipitation tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No precipitation tile biomass for {tile_id}')
 
     try:
         elevation_src = rasterio.open(elevation)
         uu.print_log(f'    Elevation tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No elevation tile biomass for {tile_id}')
 
     # Opens the mangrove biomass tile if it exists
     try:
         bor_tem_trop_src = rasterio.open(bor_tem_trop)
         uu.print_log(f'    Boreal/temperate/tropical tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No boreal/temperate/tropical tile biomass for {tile_id}')
 
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         uu.print_log(f'    Mangrove biomass found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No mangrove biomass for {tile_id}')
 
     # Opens the WHRC/JPL biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
         uu.print_log(f'    Biomass found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No biomass for {tile_id}')
 
     # Opens the continent-ecozone tile if it exists
     try:
         cont_ecozone_src = rasterio.open(cont_eco)
         uu.print_log(f'    Continent-ecozone tile found for {tile_id}')
-    except FileNotFoundError:
+    except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No Continent-ecozone tile found for {tile_id}')
 
     uu.print_log(f'  Creating deadwood and litter carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
@@ -549,27 +549,27 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         # # clipping to AGC2000; I'm doing that just as a formality. It feels more complete.
         # try:
         #     AGC_2000_window = AGC_2000_src.read(1, window=window)
-        # except FileNotFoundError:
+        # except UnboundLocalError:
         #     AGC_2000_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             AGC_emis_year_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-        except FileNotFoundError:
+        except UnboundLocalError:
             cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             bor_tem_trop_window = np.zeros((window.height, window.width))
         try:
             precip_window = precip_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             precip_window = np.zeros((window.height, window.width))
         try:
             elevation_window = elevation_src.read(1, window=window)
-        except FileNotFoundError:
+        except UnboundLocalError:
             elevation_window = np.zeros((window.height, window.width))
 
         # This allows the script to bypass the few tiles that have mangrove biomass but not WHRC biomass
@@ -669,7 +669,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             # Same as above but for litter
             try:
                 cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-            except FileNotFoundError:
+            except UnboundLocalError:
                 cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
 
             # Applies the mangrove deadwood:AGB ratios (2 different ratios) to the ecozone raster to create a raster of deadwood:AGB ratios
@@ -822,7 +822,7 @@ def create_total_C(tile_id, carbon_pool_extent):
         try:
             soil_2000_src = rasterio.open(soil_2000)
             uu.print_log(f'   Soil C 2000 tile found for {tile_id}')
-        except FileNotFoundError:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'    No soil C 2000 tile found for {tile_id}')
 
         kwargs = AGC_2000_src.meta
@@ -856,7 +856,7 @@ def create_total_C(tile_id, carbon_pool_extent):
         try:
             soil_emis_year_src = rasterio.open(soil_emis_year)
             uu.print_log(f'   Soil C emission year tile found for {tile_id}')
-        except FileNotFoundError:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'    No soil C emission year tile found for {tile_id}')
 
         kwargs = AGC_emis_year_src.meta
@@ -893,7 +893,7 @@ def create_total_C(tile_id, carbon_pool_extent):
             litter_2000_window = litter_2000_src.read(1, window=window)
             try:
                 soil_2000_window = soil_2000_src.read(1, window=window)
-            except FileNotFoundError:
+            except UnboundLocalError:
                 soil_2000_window = np.zeros((window.height, window.width))
 
             total_C_2000_window = AGC_2000_window + BGC_2000_window + deadwood_2000_window + litter_2000_window + soil_2000_window
@@ -914,7 +914,7 @@ def create_total_C(tile_id, carbon_pool_extent):
             litter_emis_year_window = litter_emis_year_src.read(1, window=window)
             try:
                 soil_emis_year_window = soil_emis_year_src.read(1, window=window)
-            except FileNotFoundError:
+            except UnboundLocalError:
                 soil_emis_year_window = np.zeros((window.height, window.width))
 
             total_C_emis_year_window = AGC_emis_year_window + BGC_emis_year_window + deadwood_emis_year_window + litter_emis_year_window + soil_emis_year_window

@@ -26,7 +26,7 @@ def main ():
     tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ['50N_130W'] # test tiles
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Downloads the Mekong loss folder. Each year of loss has its own raster

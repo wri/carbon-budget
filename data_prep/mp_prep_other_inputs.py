@@ -34,7 +34,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
                                              )
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
     '''
     Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
@@ -331,7 +331,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
-        uu.print_log('\n')
+        uu.print_log("\n")
 
 
     # Uploads output tiles to s3

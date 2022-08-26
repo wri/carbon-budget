@@ -490,7 +490,7 @@ if __name__ == '__main__':
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
     cn.SAVE_INTERMEDIATES = args.save_intermediates
-    cn.CARBON_POOL_EXTENT = carbon_pool_extent # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
+    cn.CARBON_POOL_EXTENT = args.carbon_pool_extent # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
 
     tile_id_list = args.tile_id_list
 

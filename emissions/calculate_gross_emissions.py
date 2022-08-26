@@ -1,15 +1,26 @@
-from subprocess import Popen, PIPE, STDOUT, check_call
+"""
+Function to call C++ executable that calculates gross emissions
+"""
+
 import datetime
-import rasterio
-from shutil import copyfile
-import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-# Calls the c++ script to calculate gross emissions
 def calc_emissions(tile_id, emitted_pools, folder):
+    """
+    Calls the c++ script to calculate gross emissions
+    :param tile_id: tile to be processed, identified by its tile id
+    :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
+        Options are: soil_only or biomass_soil.
+    :param folder:
+    :return: 10 tiles: 6 tiles with emissions for each driver; CO2 emissions from all drivers;
+        non-CO2 emissions from all drivers; all gases (CO2 and non-CO2 from all drivers);
+        emissions decision tree nodes (used for QC).
+        Units: Mg CO2e/ha over entire model period.
+    """
 
     uu.print_log(f'Calculating gross emissions for {tile_id} using {cn.SENSIT_TYPE} model type...')
 
@@ -52,4 +63,3 @@ def calc_emissions(tile_id, emitted_pools, folder):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)
-

@@ -1,6 +1,4 @@
-'''
-This script assigns annual aboveground and belowground removal rates for the full model extent according to IPCC Table 4.9 defaults
-(in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to the entire model extent.
+"""
 It also creates assigns aboveground removal rate standard deviations for the full model extent according to IPCC Table 4.9 defaults
 (in the units of IPCC Table 4.9 (currently tonnes biomass/ha/yr)) to the entire model extent.
 The standard deviation tiles are used in the uncertainty analysis.
@@ -13,16 +11,15 @@ The extent of these removal rates is greater than what is ultimately used in the
 everywhere there's a forest age category, continent, and ecozone.
 You can think of this as the IPCC default rate that would be applied if no other data were available for that pixel.
 The belowground removal rates are purely the aboveground removal rates with the above:below ratio applied to them.
-'''
+"""
 
 import multiprocessing
 from functools import partial
 import argparse
 import pandas as pd
-import datetime
-from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -32,6 +29,12 @@ import annual_gain_rate_IPCC_defaults
 os.chdir(cn.docker_base_dir)
 
 def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: set of tiles with annual removal factors according to IPCC Volume 4 Table 4.9:
+        aboveground rate, belowground rate, standard deviation for aboveground rate.
+        Units: Mg biomass/ha/yr (including for standard deviation tiles)
+    """
 
     os.chdir(cn.docker_base_dir)
     pd.options.mode.chained_assignment = None
@@ -43,7 +46,7 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
         tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script.
@@ -73,9 +76,9 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
     # Table with IPCC Table 4.9 default removals rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
@@ -201,13 +204,13 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
     else:
         processes = 2
     uu.print_log(f'Annual removals rate natural forest max processors={processes}')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate,
-                     gain_table_dict=gain_table_dict, stdev_table_dict=stdev_table_dict,
-                     output_pattern_list=output_pattern_list),
-             tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(annual_gain_rate_IPCC_defaults.annual_gain_rate,
+                         gain_table_dict=gain_table_dict, stdev_table_dict=stdev_table_dict,
+                         output_pattern_list=output_pattern_list),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -219,8 +222,8 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
 
-        for i in range(0, len(output_dir_list)):
-            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+        for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+            uu.upload_final_set(output_dir, output_pattern)
 
 
 if __name__ == '__main__':
@@ -230,7 +233,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of removal factors according to IPCC defaults')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

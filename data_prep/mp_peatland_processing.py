@@ -29,7 +29,7 @@ def mp_peatland_processing(tile_id_list, run_date = None):
         tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # List of output directories and output file name patterns

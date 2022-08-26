@@ -40,7 +40,7 @@ def mp_create_supplementary_outputs(tile_id_list):
         tile_id_list_outer = uu.tile_list_s3(cn.net_flux_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list_outer)
-    uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', "\n")
 
 
     # Files to download for this script
@@ -113,7 +113,7 @@ def mp_create_supplementary_outputs(tile_id_list):
             tile_id_list_input = tile_id_list_outer
 
         uu.print_log(tile_id_list_input)
-        uu.print_log(f'There are {str(len(tile_id_list_input))} tiles to process', '\n')
+        uu.print_log(f'There are {str(len(tile_id_list_input))} tiles to process', "\n")
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         uu.print_log(f'Downloading tiles from {input_dir}')
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of model outputs at forest extent and per-pixel values')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

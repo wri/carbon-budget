@@ -1,18 +1,18 @@
-'''
+"""
 This script calculates the cumulative above and belowground carbon dioxide removals (removals) for all forest types
 for the duration of the model.
 It multiplies the annual aboveground and belowground carbon removal factors by the number of years of removals and the C to CO2 conversion.
 It then sums the aboveground and belowground gross removals to get gross removals for all forest types in both emitted_pools.
 That is the final gross removals for the entire model.
 Note that gross removals from this script are reported as positive values.
-'''
+"""
 
-import multiprocessing
 import argparse
-import os
-import datetime
 from functools import partial
+import multiprocessing
+import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -20,6 +20,11 @@ sys.path.append(os.path.join(cn.docker_app,'removals'))
 import gross_removals_all_forest_types
 
 def mp_gross_removals_all_forest_types(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: 3 set of tiles: gross aboveground removals, belowground removals, aboveground+belowground removals
+        Units: Mg CO2/ha over entire model period.
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -33,7 +38,7 @@ def mp_gross_removals_all_forest_types(tile_id_list):
         uu.print_log('Gross removals tile_id_list is combination of gain_year_count and annual_removals tiles:')
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script.
@@ -51,9 +56,9 @@ def mp_gross_removals_all_forest_types(tile_id_list):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -78,12 +83,12 @@ def mp_gross_removals_all_forest_types(tile_id_list):
     else:
         processes = 2
     uu.print_log(f'Gross removals max processors={processes}')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types,
-                     output_pattern_list=output_pattern_list),
-             tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types,
+                         output_pattern_list=output_pattern_list),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -94,23 +99,23 @@ def mp_gross_removals_all_forest_types(tile_id_list):
         if cn.count <= 2:  # For local tests
             processes = 1
             uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+                pool.close()
+                pool.join()
         else:
             processes = 55  # 55 processors = 670 GB peak
             uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-            pool.close()
-            pool.join()
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+                pool.close()
+                pool.join()
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
 
-        for i in range(0, len(output_dir_list)):
-            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+        for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+            uu.upload_final_set(output_dir, output_pattern)
 
 
 if __name__ == '__main__':
@@ -120,7 +125,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of gross removals over the model period')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,

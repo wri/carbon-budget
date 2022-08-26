@@ -1,8 +1,12 @@
+"""
+Function to create removal factor tiles according to IPCC defaults
+"""
+
 import datetime
 import numpy as np
 import rasterio
-import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -11,6 +15,14 @@ import universal_util as uu
 np.set_printoptions(threshold=sys.maxsize)
 
 def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_list):
+    """
+    :param tile_id: tile to be processed, identified by its tile id
+    :param gain_table_dict: dictionary of removal factors by continent, ecozone, and age
+    :param stdev_table_dict: dictionary of standard deviations for removal factors by continent, ecozone, and age
+    :param output_pattern_list: patterns for output tile names
+    :return: 3 tiles: aboveground rate, belowground rate, standard deviation for aboveground rate (IPCC rates)
+        Units: Mg biomass/ha/yr (including for standard deviation tiles)
+    """
 
     # Converts the forest age category decision tree output values to the three age categories--
     # 10000: primary forest; 20000: secondary forest > 20 years; 30000: secondary forest <= 20 years
@@ -19,7 +31,7 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
     # The key in the dictionary is the forest age category decision tree endpoints.
     age_dict = {0: 0, 1: 10000, 2: 20000, 3: 30000}
 
-    uu.print_log("Creating IPCC default biomass removals rates and standard deviation for {}".format(tile_id))
+    uu.print_log(f'Creating IPCC default biomass removals rates and standard deviation for {tile_id}')
 
     # Start time
     start = datetime.datetime.now()
@@ -37,13 +49,13 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
     try:
         age_cat_src = rasterio.open(age_cat)
         uu.print_log(f'  Age category tile found for {tile_id}')
-    except:
+    except rasterio.errors.RasterioIOError:
         return uu.print_log(f'  No age category tile found for {tile_id}. Skipping tile.')
 
     try:
         cont_eco_src = rasterio.open(cont_eco)
         uu.print_log(f'  Continent-ecozone tile found for {tile_id}')
-    except:
+    except rasterio.errors.RasterioIOError:
         return uu.print_log(f'  No continent-ecozone tile found for {tile_id}. Skipping tile.')
 
     # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
@@ -101,12 +113,12 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
         # Creates a processing window for each input raster
         try:
             cont_eco_window = cont_eco_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             cont_eco_window = np.zeros((window.height, window.width), dtype='uint8')
 
         try:
             age_cat_window = age_cat_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             age_cat_window = np.zeros((window.height, window.width), dtype='uint8')
 
         # Recodes the input forest age category array with 10 different decision tree end values into the 3 actual age categories

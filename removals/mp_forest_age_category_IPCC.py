@@ -1,4 +1,4 @@
-'''
+"""
 This script creates tiles of forest age category across the entire model extent (all pixels) according to a decision tree.
 The age categories are: <= 20 year old secondary forest (1), >20 year old secondary forest (2), and primary forest (3).
 The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
@@ -9,24 +9,27 @@ The extent of this layer is greater than the extent of the rates which are based
 This assigns forest age category to all pixels within the model but they are ultimately only used for
 non-mangrove, non-planted, non-European, non-US, older secondary and primary forest pixels.
 You can think of the output from this script as being the age category if IPCC Table 4.9 rates were to be applied there.
-'''
+"""
 
 
-import multiprocessing
+import argparse
 from functools import partial
 import pandas as pd
-import datetime
-import argparse
-from subprocess import Popen, PIPE, STDOUT, check_call
+import multiprocessing
 import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'removals'))
 import forest_age_category_IPCC
 
-def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
+def mp_forest_age_category_IPCC(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: set of tiles denoting three broad forest age categories: 1- young (<20), 2- middle, 3- old/primary
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -36,7 +39,7 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
         tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script.
@@ -69,9 +72,9 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -121,11 +124,11 @@ def mp_forest_age_category_IPCC(tile_id_list, no_upload = None):
     else:
         processes = 2
     uu.print_log(f'Natural forest age category max processors={processes}')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict, pattern=pattern),
-             tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict, pattern=pattern),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -146,7 +149,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of the forest age category (<20 years, >20 years secondary, primary)')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
@@ -174,4 +177,3 @@ if __name__ == '__main__':
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_forest_age_category_IPCC(tile_id_list)
-

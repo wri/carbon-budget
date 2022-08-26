@@ -1,21 +1,18 @@
-'''
+"""
 This script creates a binary raster of the model extent at the pixel level.
 The model extent is ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations
 The rest of the model uses this to mask its extent.
 For biomass_swap sensitivity analysis, NASA JPL AGB 2000 replaces WHRC 2000.
 For legal_Amazon_loss sensitivity analysis, PRODES 2000 forest extent replaces Hansen tree cover 2000 and Hansen gain
 pixels and mangrove pixels outside of (PRODES extent AND WHRC AGB) are not included.
-'''
+"""
 
-
-import multiprocessing
-from functools import partial
-import pandas as pd
-import datetime
 import argparse
-from subprocess import Popen, PIPE, STDOUT, check_call
+from functools import partial
+import multiprocessing
 import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -24,6 +21,10 @@ import model_extent
 
 
 def mp_model_extent(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: 1 set of tiles where pixels = 1 are included in the model and pixels = 0 are not included in the model
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -41,7 +42,7 @@ def mp_model_extent(tile_id_list):
                                              )
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script.
@@ -68,9 +69,9 @@ def mp_model_extent(tile_id_list):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -99,10 +100,10 @@ def mp_model_extent(tile_id_list):
     else:
         processes = 3
     uu.print_log('Model extent processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(model_extent.model_extent, pattern=pattern), tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(model_extent.model_extent, pattern=pattern), tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -113,17 +114,17 @@ def mp_model_extent(tile_id_list):
     if cn.count <= 2:  # For local tests
         processes = 1
         uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {output_pattern} processors using light function...')
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
-        pool.close()
-        pool.join()
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
     else:
         processes = 58  # 50 processors = 620 GB peak; 55 = 640 GB; 58 = 650 GB (continues to increase very slowly several hundred tiles in)
         uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {output_pattern} processors using light function...')
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-        pool.close()
-        pool.join()
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
 
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
@@ -139,7 +140,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of the pixels included in the model (model extent)')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
@@ -167,4 +168,3 @@ if __name__ == '__main__':
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_model_extent(tile_id_list=tile_id_list)
-

@@ -1,4 +1,4 @@
-'''
+"""
 This script calculates the gross emissions in tonnes CO2e/ha for every loss pixel.
 The properties of each pixel determine the appropriate emissions equation, the constants for the equation, and the
 carbon pool values that go into the equation.
@@ -20,14 +20,14 @@ Emissions from each driver (including loss that had no driver assigned) gets its
 Emissions from all drivers is also output as emissions due to CO2 only and emissions due to other GHG (CH4 and N2O).
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
-'''
+"""
 
-import multiprocessing
 import argparse
-import datetime
-import os
 from functools import partial
+import multiprocessing
+import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -35,6 +35,15 @@ sys.path.append(os.path.join(cn.docker_app,'emissions'))
 import calculate_gross_emissions
 
 def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
+    """
+    :param tile_id_list: list of tile ids to process
+    :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
+        Options are: soil_only or biomass_soil.
+    :return: 10 sets of tiles: 6 sets of tiles with emissions for each driver; CO2 emissions from all drivers;
+        non-CO2 emissions from all drivers; all gases (CO2 and non-CO2 from all drivers);
+        emissions decision tree nodes (used for QC).
+        Units: Mg CO2e/ha over entire model period.
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -47,7 +56,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
         tile_id_list = uu.tile_list_s3(cn.AGC_emis_year_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script
@@ -156,9 +165,9 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
-        pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        directory = key
+        output_pattern = values[0]
+        uu.s3_flexible_download(directory, output_pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -192,12 +201,13 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     # This will be iterated through to delete the tiles at the end of the script.
     uu.create_blank_tile_txt()
 
-    for pattern in pattern_list:
-        pool = multiprocessing.Pool(processes=80)  # 60 = 100 GB peak; 80 =  XXX GB peak
-        pool.map(partial(uu.make_blank_tile, pattern=pattern, folder=folder),
-                 tile_id_list)
-        pool.close()
-        pool.join()
+    processes=80 # 60 = 100 GB peak; 80 =  XXX GB peak
+    for output_pattern in pattern_list:
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(uu.make_blank_tile, pattern=output_pattern, folder=folder),
+                     tile_id_list)
+            pool.close()
+            pool.join()
 
     # # For single processor use
     # for pattern in pattern_list:
@@ -216,12 +226,12 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     else:
         processes = 9
     uu.print_log(f'Gross emissions max processors={processes}')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools,
-                     folder=folder),
-             tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools,
+                         folder=folder),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile in tile_id_list:
@@ -232,21 +242,20 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     uu.list_and_delete_blank_tiles()
 
 
-    for i in range(0, len(output_pattern_list)):
-        pattern = output_pattern_list[i]
+    for i, output_pattern in enumerate(output_pattern_list):
 
-        uu.print_log(f'Adding metadata tags for pattern {pattern}')
+        uu.print_log(f'Adding metadata tags for pattern {output_pattern}')
 
         if cn.count == 96:
             processes = 75  # 45 processors = ~30 GB peak; 55 = XXX GB peak; 75 = XXX GB peak
         else:
             processes = 9
         uu.print_log(f'Adding metadata tags max processors={processes}')
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.add_emissions_metadata, pattern=pattern),
-                 tile_id_list)
-        pool.close()
-        pool.join()
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(uu.add_emissions_metadata, output_pattern=output_pattern),
+                     tile_id_list)
+            pool.close()
+            pool.join()
 
         # for tile_id in tile_id_list:
         #     calculate_gross_emissions.add_metadata_tags(tile_id, pattern)
@@ -255,8 +264,8 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
 
-        for i in range(0, len(output_dir_list)):
-            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+        for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+            uu.upload_final_set(output_dir, output_pattern)
 
 
 if __name__ == '__main__':
@@ -269,7 +278,7 @@ if __name__ == '__main__':
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
@@ -293,7 +302,6 @@ if __name__ == '__main__':
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(cn.SENSIT_TYPE)
-    tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')

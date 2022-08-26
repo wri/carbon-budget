@@ -100,7 +100,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         # For sensitivity analysis runs, only aggregates the tiles if they were created as part of the sensitivity analysis
         if (cn.SENSIT_TYPE != 'std') & (cn.SENSIT_TYPE not in pattern):
-            uu.print_log(f'{pattern} not a sensitivity analysis output. Skipping aggregation...', '\n')
+            uu.print_log(f'{pattern} not a sensitivity analysis output. Skipping aggregation...', "\n")
 
             continue
 
@@ -115,7 +115,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
 
         # tile_list = ['00N_070W_cumul_gain_AGCO2_BGCO2_t_ha_all_forest_types_2001_15_biomass_swap.tif']  # test tiles
 
-        uu.print_log(f'There are {str(len(tile_list))} tiles to process for pattern {download_pattern_name}', '\n')
+        uu.print_log(f'There are {str(len(tile_list))} tiles to process for pattern {download_pattern_name}', "\n")
         uu.print_log(f'Processing: {dir}; {pattern}')
 
         # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
@@ -283,7 +283,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create maps of model outputs at aggregated/coarser resolution')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--tcd-threshold', '-tcd', required=False, default=cn.canopy_threshold,

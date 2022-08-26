@@ -41,7 +41,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
                                              )
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # List of output directories and output file name patterns
@@ -96,7 +96,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     #
     #     create_soil_C.create_mangrove_soil_C(tile_id, no_Upload)
 
-    uu.print_log('Done making mangrove soil C tiles', '\n')
+    uu.print_log('Done making mangrove soil C tiles', "\n")
 
     uu.print_log("Making mineral soil C vrt...")
     check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)

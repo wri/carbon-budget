@@ -105,7 +105,7 @@ def initiate_log(tile_id_list):
     except:
         logging.info('  Not running on AWS ec2 instance')
 
-    logging.info(f'Available processors: {cn.count}', '\n')
+    logging.info(f"Available processors: {cn.count}")
 
     # Suppresses logging from rasterio and botocore below ERROR level for the entire model
     logging.getLogger("rasterio").setLevel(logging.ERROR)  # https://www.tutorialspoint.com/How-to-disable-logging-from-imported-modules-in-Python
@@ -167,7 +167,7 @@ def exception_log(*args):
 def log_subprocess_output(pipe):
 
     # Reads all the output into a string
-    for full_out in iter(pipe.readline, b''): # b'\n'-separated lines
+    for full_out in iter(pipe.readline, b''): # b"\n"-separated lines
 
         # Separates the string into an array, where each entry is one line of output
         line_array = full_out.splitlines()
@@ -200,7 +200,7 @@ def log_subprocess_output_full(cmd):
     with pipe:
 
         # Reads all the output into a string
-        for full_out in iter(pipe.readline, b''):  # b'\n'-separated lines
+        for full_out in iter(pipe.readline, b''):  # b"\n"-separated lines
 
             # Separates the string into an array, where each entry is one line of output
             line_array = full_out.splitlines()
@@ -321,7 +321,7 @@ def tile_list_s3(source, sensit_type='std'):
     else:
         new_source = source.replace('standard', sensit_type)
 
-    print_log('\n' + f'Creating list of tiles in {new_source}')
+    print_log("\n" + f'Creating list of tiles in {new_source}')
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -339,8 +339,8 @@ def tile_list_s3(source, sensit_type='std'):
     # Iterates through the text file to get the names of the tiles and appends them to list
     with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
         for line in tile:
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
@@ -355,7 +355,7 @@ def tile_list_s3(source, sensit_type='std'):
     # In case the change of directories to look for sensitivity versions yields an empty folder.
     # This could be done better by using boto3 to check the potential s3 folders for files upfront but I couldn't figure
     # out how to do that.
-    print_log('\n' + f'Creating list of tiles in {source}')
+    print_log("\n" + f'Creating list of tiles in {source}')
 
     ## For an s3 folder in a bucket using AWSCLI
     # Captures the list of the files in the folder
@@ -373,8 +373,8 @@ def tile_list_s3(source, sensit_type='std'):
     # Iterates through the text file to get the names of the tiles and appends them to list
     with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
         for line in tile:
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
@@ -402,8 +402,8 @@ def tile_list_spot_machine(source, pattern):
     # Iterates through the text file to get the names of the tiles and appends them to list
     with open(os.path.join(cn.docker_tmp, 'tiles.txt'), 'r') as tile:
         for line in tile:
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
             # Only files with the specified pattern will be in the tile list
             if pattern in tile_name:
@@ -465,8 +465,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
     with open("set1.txt", 'r') as tile:
 
         for line in tile:
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
@@ -478,8 +478,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
     with open("set2.txt", 'r') as tile:
 
         for line in tile:
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
             # Only tifs will be in the tile list
             if '.tif' in tile_name:
@@ -509,8 +509,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         with open("set1.txt", 'r') as tile:
 
             for line in tile:
-                num = len(line.strip('\n').split(" "))
-                tile_name = line.strip('\n').split(" ")[num - 1]
+                num = len(line.strip("\n").split(" "))
+                tile_name = line.strip("\n").split(" ")[num - 1]
 
                 # Only tifs will be in the tile list
                 if '.tif' in tile_name:
@@ -540,8 +540,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         with open("set2.txt", 'r') as tile:
 
             for line in tile:
-                num = len(line.strip('\n').split(" "))
-                tile_name = line.strip('\n').split(" ")[num - 1]
+                num = len(line.strip("\n").split(" "))
+                tile_name = line.strip("\n").split(" ")[num - 1]
 
                 # Only tifs will be in the tile list
                 if '.tif' in tile_name:
@@ -574,8 +574,8 @@ def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
         with open("set3.txt", 'r') as tile:
 
             for line in tile:
-                num = len(line.strip('\n').split(" "))
-                tile_name = line.strip('\n').split(" ")[num - 1]
+                num = len(line.strip("\n").split(" "))
+                tile_name = line.strip("\n").split(" ")[num - 1]
 
                 # Only tifs will be in the tile list
                 if '.tif' in tile_name:
@@ -630,8 +630,8 @@ def count_tiles_s3(source, pattern=None):
     # Iterates through the text file to get the names of the tiles and appends them to list
     with open(os.path.join(cn.docker_tmp, tile_list_name), 'r') as tile:
         for line in tile:
-            num = len(line.strip('\n').split(" "))
-            tile_name = line.strip('\n').split(" ")[num - 1]
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
             # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
@@ -750,7 +750,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
-            print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', '\n')
+            print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
             return
 
         # If there appears to be a full set of tiles in the sensitivity analysis folder (7 is semi arbitrary),
@@ -765,7 +765,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
-            print_log('\n')
+            print_log("\n")
 
         # If there are fewer than 7 files in the sensitivity folder (i.e., either folder doesn't exist or it just has
         # a few test tiles), the standard folder is downloaded.
@@ -781,7 +781,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
-            print_log('\n')
+            print_log("\n")
 
     # For the standard model, the standard folder is downloaded.
     else:
@@ -792,7 +792,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
-            print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', '\n')
+            print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
             return
 
         print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
@@ -804,7 +804,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         log_subprocess_output_full(cmd)
 
-        print_log('\n')
+        print_log("\n")
 
 
 # Downloads individual tiles from s3
@@ -834,7 +834,7 @@ def s3_file_download(source, dest, sensit_type):
         # Doesn't download the tile if sensitivity version is already on the spot machine
         print_log(f'Option 1: Checking if {file_name_sens} is already on spot machine...')
         if os.path.exists(file_name_sens):
-            print_log(f'  Option 1 success: {file_name_sens} already downloaded', '\n')
+            print_log(f'  Option 1 success: {file_name_sens} already downloaded', "\n")
             return
         else:
             print_log(f'  Option 1 failure: {file_name_sens} is not already on spot machine.')
@@ -846,7 +846,7 @@ def s3_file_download(source, dest, sensit_type):
             log_subprocess_output_full(cmd)
 
             if os.path.exists(file_name_sens):
-                print_log(f'  Option 2 success: Sensitivity analysis tile {dir_sens}/{file_name_sens} found on s3 and downloaded', '\n')
+                print_log(f'  Option 2 success: Sensitivity analysis tile {dir_sens}/{file_name_sens} found on s3 and downloaded', "\n")
                 return
             else:
                 print_log(f'  Option 2 failure: Tile {dir_sens}/{file_name_sens} not found on s3. Looking for standard model source...')
@@ -857,7 +857,7 @@ def s3_file_download(source, dest, sensit_type):
         # for this date.
         print_log(f'Option 3: Checking if standard version {file_name} is already on spot machine...')
         if os.path.exists(file_name):
-            print_log(f'  Option 3 success: {file_name} already downloaded', '\n')
+            print_log(f'  Option 3 success: {file_name} already downloaded', "\n")
             return
         else:
             print_log(f'  Option 3 failure: {file_name} is not already on spot machine. ')
@@ -870,16 +870,16 @@ def s3_file_download(source, dest, sensit_type):
             log_subprocess_output_full(cmd)
 
             if os.path.exists(file_name):
-                print_log(f'  Option 4 success: Standard tile {source} found on s3 and downloaded', '\n')
+                print_log(f'  Option 4 success: Standard tile {source} found on s3 and downloaded', "\n")
                 return
             else:
-                print_log(f'  Option 4 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', '\n')
+                print_log(f'  Option 4 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
 
     # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
     else:
         print_log(f'Option 1: Checking if {file_name} is already on spot machine...')
         if os.path.exists(os.path.join(dest, file_name)):
-            print_log(f'  Option 1 success: {os.path.join(dest, file_name)} already downloaded', '\n')
+            print_log(f'  Option 1 success: {os.path.join(dest, file_name)} already downloaded', "\n")
             return
         else:
             print_log(f'  Option 1 failure: {file_name} is not already on spot machine.')
@@ -893,10 +893,10 @@ def s3_file_download(source, dest, sensit_type):
             cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
             log_subprocess_output_full(cmd)
             if os.path.exists(os.path.join(dest, file_name)):
-                print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', '\n')
+                print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
                 return
             else:
-                print_log(f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', '\n')
+                print_log(f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -1099,7 +1099,7 @@ def make_blank_tile(tile_id, pattern, folder):
     # Going into this, the function doesn't know whether there should be a standard tile or a sensitivity tile.
     # Thus, it has to be prepared for either one.
     file_name = f'{folder}{tile_id}_{pattern}.tif'
-    file_name_sens = f'{folder}{tile_id}_{pattern}_{SENSIT_TYPE}.tif'
+    file_name_sens = f'{folder}{tile_id}_{pattern}_{cn.SENSIT_TYPE}.tif'
 
     # Checks if the standard file exists. If it does, a blank tile isn't created.
     if os.path.exists(file_name):
@@ -1249,7 +1249,7 @@ def alter_dirs(sensit_type, raw_dir_list):
 
     processed_dir_list = [d.replace('standard', sensit_type) for d in raw_dir_list]
 
-    print_log(f'Processed output directory list: {processed_dir_list}', '\n')
+    print_log(f'Processed output directory list: {processed_dir_list}', "\n")
     return processed_dir_list
 
 
@@ -1260,7 +1260,7 @@ def alter_patterns(sensit_type, raw_pattern_list):
 
     processed_pattern_list = [(d + '_' + sensit_type) for d in raw_pattern_list]
 
-    print_log(f'Processed output pattern list: {processed_pattern_list}', '\n')
+    print_log(f'Processed output pattern list: {processed_pattern_list}', "\n")
     return processed_pattern_list
 
 
@@ -1337,7 +1337,7 @@ def tile_id_list_check(tile_id_list):
             if tile_id not in possible_tile_list:
                 exception_log(f'Tile_id {tile_id} not valid')
         else:
-            print_log(f'{str(len(tile_id_list))} tiles have been supplied for running through the model', '\n')
+            print_log(f'{str(len(tile_id_list))} tiles have been supplied for running through the model', "\n")
             return tile_id_list
 
 
@@ -1346,7 +1346,7 @@ def replace_output_dir_date(output_dir_list, run_date):
 
     print_log('Changing output directory date based on date provided with model run-through')
     output_dir_list = [output_dir.replace(output_dir[-9:-1], run_date) for output_dir in output_dir_list]
-    print_log(output_dir_list, '\n')
+    print_log(output_dir_list, "\n")
     return output_dir_list
 
 
@@ -1392,16 +1392,16 @@ def add_universal_metadata_gdal(output_raster):
 
 
 # Adds metadata tags to the output rasters
-def add_emissions_metadata(tile_id, pattern):
+def add_emissions_metadata(tile_id, output_pattern):
 
     # Adds metadata tags to output rasters
-    add_universal_metadata_gdal(f'{tile_id}_{pattern}.tif')
+    add_universal_metadata_gdal(f'{tile_id}_{output_pattern}.tif')
 
     cmd = ['gdal_edit.py', '-mo',
            f'units=Mg CO2e/ha over model duration (2001-20{cn.loss_years})',
            '-mo', 'source=many data sources',
            '-mo', 'extent=Tree cover loss pixels within model extent (and tree cover loss driver, if applicable)',
-           f'{tile_id}_{pattern}.tif']
+           f'{tile_id}_{output_pattern}.tif']
     log_subprocess_output_full(cmd)
 
 

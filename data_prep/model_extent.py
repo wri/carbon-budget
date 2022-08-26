@@ -1,15 +1,24 @@
+"""
+Function to create model extent tiles
+"""
+
 import datetime
 import numpy as np
 import os
 import rasterio
-import logging
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 # @uu.counter
 def model_extent(tile_id, pattern):
+    """
+    :param tile_id: tile to be processed, identified by its tile id
+    :param pattern: pattern for output tile names
+    :return: tile where pixels = 1 are included in the model and pixels = 0 are not included in the model
+    """
 
     # I don't know why, but this needs to be here and not just in mp_model_extent
     os.chdir(cn.docker_base_dir)
@@ -64,25 +73,25 @@ def model_extent(tile_id, pattern):
         try:
             mangroves_src = rasterio.open(mangrove)
             uu.print_log(f'  Mangrove tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'  No mangrove tile found for {tile_id}')
 
         try:
             gain_src = rasterio.open(gain)
             uu.print_log(f'  Gain tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'  No gain tile found for {tile_id}')
 
         try:
             biomass_src = rasterio.open(biomass)
             uu.print_log(f'  Biomass tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'  No biomass tile found for {tile_id}')
 
         try:
             pre_2000_plantations_src = rasterio.open(pre_2000_plantations)
             uu.print_log(f'  Pre-2000 plantation tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'  No pre-2000 plantation tile found for {tile_id}')
 
 
@@ -115,23 +124,23 @@ def model_extent(tile_id, pattern):
             # If the tile does not exist, it creates an array of 0s.
             try:
                 mangrove_window = mangroves_src.read(1, window=window).astype('uint8')
-            except:
+            except UnboundLocalError:
                 mangrove_window = np.zeros((window.height, window.width), dtype=int)
             try:
                 gain_window = gain_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 gain_window = np.zeros((window.height, window.width), dtype=int)
             try:
                 biomass_window = biomass_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 biomass_window = np.zeros((window.height, window.width), dtype=int)
             try:
                 tcd_window = tcd_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 tcd_window = np.zeros((window.height, window.width), dtype=int)
             try:
                 pre_2000_plantations_window = pre_2000_plantations_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 pre_2000_plantations_window = np.zeros((window.height, window.width), dtype=int)
 
             # Array of pixels that have both biomass and tree cover density
@@ -155,8 +164,6 @@ def model_extent(tile_id, pattern):
 
             # Writes the output window to the output
             dst.write_band(1, forest_extent, window=window)
-
-
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, pattern)

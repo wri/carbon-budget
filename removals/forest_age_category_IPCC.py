@@ -1,14 +1,22 @@
+"""
+Function to create forest age category tiles
+"""
+
 import datetime
 import numpy as np
-import os
 import rasterio
-import logging
 import sys
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 def forest_age_category(tile_id, gain_table_dict, pattern):
+    """
+    :param tile_id: tile to be processed, identified by its tile id
+    :param gain_table_dict: dictionary of removal factors by continent, ecozone, and forest age category
+    :param pattern: pattern for output tile names
+    :return: tile denoting three broad forest age categories: 1- young (<20), 2- middle, 3- old/primary
+    """
 
     uu.print_log("Assigning forest age categories:", tile_id)
 
@@ -64,31 +72,31 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
         try:
             cont_eco_src = rasterio.open(cont_eco)
             uu.print_log(f'   Continent-ecozone tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'   No continent-ecozone tile found for {tile_id}')
 
         try:
             gain_src = rasterio.open(gain)
             uu.print_log(f'   Gain tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'   No gain tile found for {tile_id}')
 
         try:
             biomass_src = rasterio.open(biomass)
             uu.print_log(f'   Biomass tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'   No biomass tile found for {tile_id}')
 
         try:
             loss_src = rasterio.open(loss)
             uu.print_log(f'   Loss tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'   No loss tile found for {tile_id}')
 
         try:
             ifl_primary_src = rasterio.open(ifl_primary)
             uu.print_log(f'   IFL-primary forest tile found for {tile_id}')
-        except:
+        except rasterio.errors.RasterioIOError:
             uu.print_log(f'   No IFL-primary forest tile found for {tile_id}')
 
         # Updates kwargs for the output dataset
@@ -111,7 +119,6 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
         dst.update_tags(
             extent='Full model extent, even though these age categories will not be used over the full model extent. They apply to just the rates from IPCC defaults.')
 
-
         uu.print_log(f'    Assigning IPCC age categories for {tile_id}')
 
         uu.check_memory()
@@ -124,27 +131,27 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
 
             try:
                 loss_window = loss_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 loss_window = np.zeros((window.height, window.width), dtype='uint8')
 
             try:
                 gain_window = gain_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 gain_window = np.zeros((window.height, window.width), dtype='uint8')
 
             try:
                 cont_eco_window = cont_eco_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 cont_eco_window = np.zeros((window.height, window.width), dtype='uint8')
 
             try:
                 biomass_window = biomass_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 biomass_window = np.zeros((window.height, window.width), dtype='float32')
 
             try:
                 ifl_primary_window = ifl_primary_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 ifl_primary_window = np.zeros((window.height, window.width), dtype='uint8')
 
             # Creates a numpy array that has the <=20 year secondary forest growth rate x 20

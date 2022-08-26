@@ -1,12 +1,14 @@
-### Calculates the net emissions over the study period, with units of Mg CO2e/ha on a pixel-by-pixel basis.
-### This only uses gross emissions from biomass+soil (doesn't run with gross emissions from soil_only).
+"""
+Calculates the net GHG flux over the study period, with units of Mg CO2e/ha on a pixel-by-pixel basis.
+This only uses gross emissions from biomass+soil (doesn't run with gross emissions from soil_only).
+"""
 
-import multiprocessing
 import argparse
-import os
-import datetime
 from functools import partial
+import multiprocessing
+import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
@@ -14,6 +16,11 @@ sys.path.append(os.path.join(cn.docker_app,'analyses'))
 import net_flux
 
 def mp_net_flux(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: 1 set of tiles with net GHG flux (gross emissions minus gross removals).
+        Units: Mg CO2e/ha over the model period
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -25,7 +32,7 @@ def mp_net_flux(tile_id_list):
                                                     sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', '\n')
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script
@@ -42,9 +49,9 @@ def mp_net_flux(tile_id_list):
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -70,11 +77,11 @@ def mp_net_flux(tile_id_list):
     else:
         processes = 9
     uu.print_log(f'Net flux max processors={processes}')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(net_flux.net_calc, pattern=pattern),
-             tile_id_list)
-    pool.close()
-    pool.join()
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(net_flux.net_calc, pattern=pattern),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
@@ -92,7 +99,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Creates tiles of net GHG flux over model period')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
