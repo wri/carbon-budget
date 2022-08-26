@@ -50,7 +50,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
+def mp_US_removal_rates(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
 
@@ -59,7 +59,7 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
         tile_id_list = uu.tile_list_s3(cn.FIA_regions_processed_dir)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
     # Files to download for this script
     download_dict = {cn.gain_dir: [cn.pattern_gain],
@@ -77,19 +77,19 @@ def mp_US_removal_rates(sensit_type, tile_id_list, run_date):
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+    if cn.SENSIT_TYPE != 'std':
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+        output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
+        output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
-    if run_date is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # Table with US-specific removal rates
@@ -216,25 +216,31 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of removal factors for the US using US rates')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
+    parser.add_argument('--no-upload', '-nu', action='store_true',
+                       help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_US_removal_rates(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date)
+    mp_US_removal_rates(tile_id_list)

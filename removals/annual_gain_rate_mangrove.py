@@ -14,7 +14,7 @@ import universal_util as uu
 # Necessary to suppress a pandas error later on. https://github.com/numpy/numpy/issues/12987
 np.set_printoptions(threshold=sys.maxsize)
 
-def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict, gain_below_dict, stdev_dict):
+def annual_gain_rate(tile_id, output_pattern_list, gain_above_dict, gain_below_dict, stdev_dict):
 
     uu.print_log("Processing:", tile_id)
 
@@ -29,8 +29,8 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
         return
 
     # Name of the input files
-    mangrove_biomass = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    mangrove_biomass = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_mangrove_biomass_2000)
+    cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
 
     # Names of the output aboveground and belowground mangrove removals rate tiles
     AGB_gain_rate = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
@@ -60,7 +60,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
     dst_above = rasterio.open(AGB_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_above, sensit_type)
+    uu.add_universal_metadata_rasterio(dst_above)
     dst_above.update_tags(
         units='megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_above.update_tags(
@@ -70,7 +70,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
     dst_below = rasterio.open(BGB_gain_rate, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_below, sensit_type)
+    uu.add_universal_metadata_rasterio(dst_below)
     dst_below.update_tags(
         units='megagrams belowground biomass (BGB or dry matter)/ha/yr')
     dst_below.update_tags(
@@ -80,7 +80,7 @@ def annual_gain_rate(tile_id, sensit_type, output_pattern_list, gain_above_dict,
 
     dst_stdev_above = rasterio.open(AGB_gain_stdev, 'w', **kwargs)
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_stdev_above, sensit_type)
+    uu.add_universal_metadata_rasterio(dst_stdev_above)
     dst_stdev_above.update_tags(
         units='standard deviation, in terms of megagrams aboveground biomass (AGB or dry matter)/ha/yr')
     dst_stdev_above.update_tags(

@@ -24,7 +24,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit_type, no_upload):
+def create_supplementary_outputs(tile_id, input_pattern, output_patterns):
 
     # start time
     start = datetime.datetime.now()
@@ -33,18 +33,18 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
     tile_id = uu.get_tile_id(tile_id)
 
     # Names of inputs
-    focal_tile = '{0}_{1}.tif'.format(tile_id, input_pattern)
-    pixel_area = '{0}_{1}.tif'.format(cn.pattern_pixel_area, tile_id)
-    tcd = '{0}_{1}.tif'.format(cn.pattern_tcd, tile_id)
-    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
-    mangrove = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
+    focal_tile = f'{tile_id}_{input_pattern}.tif'
+    pixel_area = f'{cn.pattern_pixel_area}_{tile_id}.tif'
+    tcd = f'{cn.pattern_tcd}_{tile_id}.tif'
+    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
 
     # Names of outputs.
     # Requires that output patterns be listed in main script in the correct order for here
     # (currently, per pixel full extent, per hectare forest extent, per pixel forest extent).
-    per_pixel_full_extent = '{0}_{1}.tif'.format(tile_id, output_patterns[0])
-    per_hectare_forest_extent = '{0}_{1}.tif'.format(tile_id, output_patterns[1])
-    per_pixel_forest_extent = '{0}_{1}.tif'.format(tile_id, output_patterns[2])
+    per_pixel_full_extent = f'{tile_id}_{output_patterns[0]}.tif'
+    per_hectare_forest_extent = f'{tile_id}_{output_patterns[1]}.tif'
+    per_pixel_forest_extent = f'{tile_id}_{output_patterns[2]}.tif'
 
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile)
@@ -59,11 +59,11 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
 
     try:
         mangrove_src = rasterio.open(mangrove)
-        uu.print_log("    Mangrove tile found for {}".format(tile_id))
+        uu.print_log(f'    Mangrove tile found for {tile_id}')
     except:
-        uu.print_log("    No mangrove tile found for {}".format(tile_id))
+        uu.print_log(f'    No mangrove tile found for {tile_id}')
 
-    uu.print_log("  Creating outputs for {}...".format(focal_tile))
+    uu.print_log(f'  Creating outputs for {focal_tile}...')
 
     kwargs.update(
         driver='GTiff',
@@ -80,25 +80,25 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
 
     # Adds metadata tags to the output rasters
 
-    uu.add_rasterio_tags(per_pixel_full_extent_dst, sensit_type)
+    uu.add_universal_metadata_rasterio(per_pixel_full_extent_dst)
     per_pixel_full_extent_dst.update_tags(
-        units='Mg CO2e/pixel over model duration (2001-20{})'.format(cn.loss_years))
+        units=f'Mg CO2e/pixel over model duration (2001-20{cn.loss_years})')
     per_pixel_full_extent_dst.update_tags(
         source='per hectare full model extent tile')
     per_pixel_full_extent_dst.update_tags(
         extent='Full model extent: ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations')
 
-    uu.add_rasterio_tags(per_hectare_forest_extent_dst, sensit_type)
+    uu.add_universal_metadata_rasterio(per_hectare_forest_extent_dst)
     per_hectare_forest_extent_dst.update_tags(
-        units='Mg CO2e/hectare over model duration (2001-20{})'.format(cn.loss_years))
+        units=f'Mg CO2e/hectare over model duration (2001-20{cn.loss_years})')
     per_hectare_forest_extent_dst.update_tags(
         source='per hectare full model extent tile')
     per_hectare_forest_extent_dst.update_tags(
         extent='Forest extent: ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations')
 
-    uu.add_rasterio_tags(per_pixel_forest_extent_dst, sensit_type)
+    uu.add_universal_metadata_rasterio(per_pixel_forest_extent_dst)
     per_pixel_forest_extent_dst.update_tags(
-        units='Mg CO2e/pixel over model duration (2001-20{})'.format(cn.loss_years))
+        units=f'Mg CO2e/pixel over model duration (2001-20{cn.loss_years})')
     per_pixel_forest_extent_dst.update_tags(
         source='per hectare forest model extent tile')
     per_pixel_forest_extent_dst.update_tags(
@@ -143,7 +143,7 @@ def create_supplementary_outputs(tile_id, input_pattern, output_patterns, sensit
         per_hectare_forest_extent_dst.write_band(1, dst_window_per_hectare_forest_extent, window=window)
         per_pixel_forest_extent_dst.write_band(1, dst_window_per_pixel_forest_extent, window=window)
 
-    uu.print_log("  Output tiles created for {}...".format(tile_id))
+    uu.print_log(f'  Output tiles created for {tile_id}...')
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, output_patterns[0], no_upload)
+    uu.end_of_fx_summary(start, tile_id, output_patterns[0])

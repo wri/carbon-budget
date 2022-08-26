@@ -141,7 +141,7 @@ def hansen_burnyear(tile_id, no_upload):
             out_tile_tagged = rasterio.open(out_tile, 'w', **kwargs)
 
             # Adds metadata tags to the output raster
-            uu.add_rasterio_tags(out_tile_tagged, 'std')
+            uu.add_universal_metadata_rasterio(out_tile_tagged)
             out_tile_tagged.update_tags(
                 units='year (2001, 2002, 2003...)')
             out_tile_tagged.update_tags(

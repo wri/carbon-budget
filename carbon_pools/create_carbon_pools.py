@@ -1,16 +1,26 @@
+"""Functions to create carbon pools (Mg C/ha)"""
+
 import datetime
-import sys
-import pandas as pd
 import os
-import numpy as np
 import rasterio
+import sys
+import numpy as np
+import pandas as pd
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 
-# Creates a dictionary of biomass in belowground, deadwood, and litter emitted_pools to aboveground biomass pool
 def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet,  subtropical):
+    """
+    Creates a dictionary of biomass in belowground, deadwood, and litter emitted_pools to aboveground biomass pool
+    :param gain_table_simplified: Table of removal factors for mangroves
+    :param tropical_dry: Belowground:aboveground biomass ratio for tropical dry mangroves
+    :param tropical_wet: Belowground:aboveground biomass ratio for tropical wet mangroves
+    :param subtropical: Belowground:aboveground biomass ratio for subtropical mangroves
+    :return: BGB:AGB ratio for mangroves
+    """
 
     # Creates x_pool:aboveground biomass ratio dictionary for the three mangrove types, where the keys correspond to
     # the "mangType" field in the removals rate spreadsheet.
@@ -38,39 +48,44 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
     return mang_x_pool_AGB_ratio
 
 
-# Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
-def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
+def create_AGC(tile_id, carbon_pool_extent):
+    """
+    Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
+    :param tile_id: tile to be processed, identified by its tile id
+    :param carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
+    :return: Aboveground carbon density in the specified pixels for the specified years (Mg C/ha)
+    """
 
     # Start time
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    removal_forest_type = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_removal_forest_type)
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    gain = uu.sensit_tile_rename(sensit_type, cn.pattern_gain, tile_id)
-    annual_gain_AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_all_types)
-    cumul_gain_AGCO2 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
+    removal_forest_type = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_removal_forest_type)
+    mangrove_biomass_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_mangrove_biomass_2000)
+    gain = uu.sensit_tile_rename(cn.SENSIT_TYPE, cn.pattern_gain, tile_id)
+    annual_gain_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
+    cumul_gain_AGCO2 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
 
     # Biomass tile name depends on the sensitivity analysis
-    if sensit_type == 'biomass_swap':
-        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
-        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
+    if cn.SENSIT_TYPE == 'biomass_swap':
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
+        uu.print_log(f'Using JPL biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
     else:
-        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
+        uu.print_log(f'Using WHRC biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
 
-    uu.print_log("  Reading input files for {}...".format(tile_id))
+    uu.print_log(f'  Reading input files for {tile_id}...')
 
     # Loss tile name depends on the sensitivity analysis
-    if sensit_type == 'legal_Amazon_loss':
-        uu.print_log("    Brazil-specific loss tile found for {}".format(tile_id))
-        loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Brazil_annual_loss_processed)
-    elif os.path.exists('{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)):
-        uu.print_log("    Mekong-specific loss tile found for {}".format(tile_id))
-        loss_year = '{}_{}.tif'.format(tile_id, cn.pattern_Mekong_loss_processed)
+    if cn.SENSIT_TYPE == 'legal_Amazon_loss':
+        uu.print_log(f'    Brazil-specific loss tile found for {tile_id}')
+        loss_year = f'{tile_id}_{cn.pattern_Brazil_annual_loss_processed}.tif'
+    elif os.path.exists(f'{tile_id}_{cn.pattern_Mekong_loss_processed}.tif'):
+        uu.print_log(f'    Mekong-specific loss tile found for {tile_id}')
+        loss_year = f'{tile_id}_{cn.pattern_Mekong_loss_processed}.tif'
     else:
-        uu.print_log("    Hansen loss tile found for {}".format(tile_id))
-        loss_year = '{0}_{1}.tif'.format(cn.pattern_loss, tile_id)
+        uu.print_log(f'    Hansen loss tile found for {tile_id}')
+        loss_year = f'{cn.pattern_loss}_{tile_id}.tif'
 
     # This input is required to exist
     loss_year_src = rasterio.open(loss_year)
@@ -78,39 +93,39 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
     # Opens the input tiles if they exist
     try:
         annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
-        uu.print_log("    Aboveground removal factor tile found for", tile_id)
-    except:
-        uu.print_log("    No aboveground removal factor tile for", tile_id)
+        uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No aboveground removal factor tile for {tile_id}')
 
     try:
         cumul_gain_AGCO2_src = rasterio.open(cumul_gain_AGCO2)
-        uu.print_log("    Gross aboveground removal tile found for", tile_id)
-    except:
-        uu.print_log("    No gross aboveground removal tile for", tile_id)
+        uu.print_log(f'    Gross aboveground removal tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No gross aboveground removal tile for {tile_id}')
 
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        uu.print_log("    Mangrove tile found for", tile_id)
-    except:
-        uu.print_log("    No mangrove tile for", tile_id)
+        uu.print_log(f'    Mangrove tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No mangrove tile for {tile_id}')
 
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log("    Biomass found for", tile_id)
-    except:
-        uu.print_log("    No biomass found for", tile_id)
+        uu.print_log(f'    Biomass found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No biomass found for {tile_id}')
 
     try:
         gain_src = rasterio.open(gain)
-        uu.print_log("    Gain tile found for", tile_id)
-    except:
-        uu.print_log("    No gain tile found for", tile_id)
+        uu.print_log(f'    Gain tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No gain tile found for {tile_id}')
 
     try:
         removal_forest_type_src = rasterio.open(removal_forest_type)
-        uu.print_log("    Removal type tile found for", tile_id)
-    except:
-        uu.print_log("    No removal type tile found for", tile_id)
+        uu.print_log(f'    Removal type tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No removal type tile found for {tile_id}')
 
 
     # Grabs the windows of a tile to iterate over the entire tif without running out of memory
@@ -132,12 +147,12 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
     # The output files: aboveground carbon density in 2000 and in the year of loss. Creates names and rasters to write to.
     if '2000' in carbon_pool_extent:
         output_pattern_list = [cn.pattern_AGC_2000]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        AGC_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        AGC_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_AGC_2000 = rasterio.open(AGC_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_AGC_2000, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_AGC_2000)
         dst_AGC_2000.update_tags(
             units='megagrams aboveground carbon (AGC)/ha')
         dst_AGC_2000.update_tags(
@@ -146,12 +161,12 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
             extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
     if 'loss' in carbon_pool_extent:
         output_pattern_list = [cn.pattern_AGC_emis_year]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        AGC_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        AGC_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_AGC_emis_year = rasterio.open(AGC_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_AGC_emis_year, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_AGC_emis_year)
         dst_AGC_emis_year.update_tags(
             units='megagrams aboveground carbon (AGC)/ha')
         dst_AGC_emis_year.update_tags(
@@ -160,7 +175,7 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
             extent='tree cover loss pixels within model extent')
 
 
-    uu.print_log("  Creating aboveground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log(f'  Creating aboveground carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 
     uu.check_memory()
 
@@ -171,27 +186,27 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
         loss_year_window = loss_year_src.read(1, window=window)
         try:
             annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             annual_gain_AGC_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             cumul_gain_AGCO2_window = cumul_gain_AGCO2_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             cumul_gain_AGCO2_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             removal_forest_type_window = removal_forest_type_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             removal_forest_type_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             gain_window = gain_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             gain_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             mangrove_biomass_2000_window = mangrove_biomass_2000_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             mangrove_biomass_2000_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             natrl_forest_biomass_2000_window = natrl_forest_biomass_2000_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             natrl_forest_biomass_2000_window = np.zeros((window.height, window.width), dtype='uint8')
 
 
@@ -254,34 +269,40 @@ def create_AGC(tile_id, sensit_type, carbon_pool_extent, no_upload):
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_emis_year)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_2000, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_AGC_2000)
 
 
-# Creates belowground carbon tiles (both in 2000 and loss year)
-def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_upload):
+def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
+    """
+    Creates belowground carbon tiles (both in 2000 and loss year)
+    :param tile_id: tile to be processed, identified by its tile id
+    :param mang_BGB_AGB_ratio: BGB:AGB ratio for mangroves
+    :param carbon_pool_extent: carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
+    :return: Belowground carbon density in the specified pixels for the specified years (Mg C/ha)
+    """
 
     start = datetime.datetime.now()
 
     # Names of the input tiles
-    removal_forest_type = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_removal_forest_type)
-    cont_ecozone = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
+    removal_forest_type = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_removal_forest_type)
+    cont_ecozone = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
 
     # For BGC 2000, opens AGC, names the output tile, creates the output tile
     if '2000' in carbon_pool_extent:
-        AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
+        AGC_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_2000)
         AGC_2000_src = rasterio.open(AGC_2000)
         kwargs = AGC_2000_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_BGC_2000]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        BGC_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        BGC_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_BGC_2000 = rasterio.open(BGC_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_BGC_2000, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_BGC_2000)
         dst_BGC_2000.update_tags(
             units='megagrams belowground carbon (BGC)/ha')
         dst_BGC_2000.update_tags(
@@ -291,18 +312,18 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
 
     # For BGC in emissions year, opens AGC, names the output tile, creates the output tile
     if 'loss' in carbon_pool_extent:
-        AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
+        AGC_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_emis_year)
         AGC_emis_year_src = rasterio.open(AGC_emis_year)
         kwargs = AGC_emis_year_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
         output_pattern_list = [cn.pattern_BGC_emis_year]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        BGC_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        BGC_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_BGC_emis_year, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_BGC_emis_year)
         dst_BGC_emis_year.update_tags(
             units='megagrams belowground carbon (BGC)/ha')
         dst_BGC_emis_year.update_tags(
@@ -311,22 +332,22 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
             extent='tree cover loss pixels within model extent')
 
 
-    uu.print_log("  Reading input files for {}...".format(tile_id))
+    uu.print_log(f'  Reading input files for {tile_id}')
 
     # Opens inputs that are used regardless of whether calculating BGC2000 or BGC in emissions year
     try:
         cont_ecozone_src = rasterio.open(cont_ecozone)
-        uu.print_log("    Continent-ecozone tile found for", tile_id)
-    except:
-        uu.print_log("    No Continent-ecozone tile found for", tile_id)
+        uu.print_log(f'    Continent-ecozone tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No Continent-ecozone tile found for {tile_id}')
 
     try:
         removal_forest_type_src = rasterio.open(removal_forest_type)
-        uu.print_log("    Removal forest type tile found for", tile_id)
-    except:
-        uu.print_log("    No Removal forest type tile found for", tile_id)
+        uu.print_log(f'    Removal forest type tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No Removal forest type tile found for {tile_id}')
 
-    uu.print_log("  Creating belowground carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log(f'  Creating belowground carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 
     uu.check_memory()
 
@@ -336,12 +357,12 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
         # Creates windows from inputs that are used regardless of whether calculating BGC2000 or BGC in emissions year
         try:
             cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-        except:
+        except UnboundLocalError:
             cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
 
         try:
             removal_forest_type_window = removal_forest_type_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             removal_forest_type_window = np.zeros((window.height, window.width))
 
         # Applies the mangrove BGB:AGB ratios (3 different ratios) to the ecozone raster to create a raster of BGB:AGB ratios
@@ -374,45 +395,52 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent, sensit_type, no_
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_emis_year)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_2000, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_BGC_2000)
 
 
-# Creates deadwood and litter carbon tiles (in 2000 and/or in loss year)
-def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent, sensit_type, no_upload):
+def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent):
+    """
+    Creates deadwood and litter carbon tiles (in 2000 and/or in loss year)
+    :param tile_id: tile to be processed, identified by its tile id
+    :param mang_deadwood_AGB_ratio: ratio of deadwood carbon to aboveground carbon for mangroves
+    :param mang_litter_AGB_ratio: ratio of litter carbon to aboveground carbon for mangroves
+    :param carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
+    :return: Deadwood and litter carbon density tiles in the specified pixels for the specified years (Mg C/ha)
+    """
 
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    mangrove_biomass_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_mangrove_biomass_2000)
-    bor_tem_trop = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_bor_tem_trop_processed)
-    cont_eco = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_cont_eco_processed)
-    precip = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_precip)
-    elevation = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_elevation)
-    if sensit_type == 'biomass_swap':
-        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_JPL_unmasked_processed)
-        uu.print_log("Using JPL biomass tile for {} sensitivity analysis".format(sensit_type))
+    mangrove_biomass_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_mangrove_biomass_2000)
+    bor_tem_trop = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_bor_tem_trop_processed)
+    cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
+    precip = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_precip)
+    elevation = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_elevation)
+    if cn.SENSIT_TYPE == 'biomass_swap':
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
+        uu.print_log(f'Using JPL biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
     else:
-        natrl_forest_biomass_2000 = '{0}_{1}.tif'.format(tile_id, cn.pattern_WHRC_biomass_2000_unmasked)
-        uu.print_log("Using WHRC biomass tile for {} sensitivity analysis".format(sensit_type))
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
+        uu.print_log(f'Using WHRC biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
 
     # For deadwood and litter 2000, opens AGC, names the output tiles, creates the output tiles
     if '2000' in carbon_pool_extent:
-        AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
+        AGC_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_2000)
         AGC_2000_src = rasterio.open(AGC_2000)
         kwargs = AGC_2000_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_deadwood_2000, cn.pattern_litter_2000]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        deadwood_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
-        litter_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        deadwood_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
+        litter_2000 = f'{tile_id}_{output_pattern_list[1]}.tif'
         dst_deadwood_2000 = rasterio.open(deadwood_2000, 'w', **kwargs)
         dst_litter_2000 = rasterio.open(litter_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_deadwood_2000, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_deadwood_2000)
         dst_deadwood_2000.update_tags(
             units='megagrams deadwood carbon/ha')
         dst_deadwood_2000.update_tags(
@@ -420,7 +448,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_2000.update_tags(
             extent='aboveground biomass in 2000 (WHRC if standard model, JPL if biomass_swap sensitivity analysis) and mangrove AGB. Mangrove AGB has precedence.')
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_litter_2000, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_litter_2000)
         dst_litter_2000.update_tags(
             units='megagrams litter carbon/ha')
         dst_litter_2000.update_tags(
@@ -430,21 +458,21 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
     # For deadwood and litter in emissions year, opens AGC, names the output tiles, creates the output tiles
     if 'loss' in carbon_pool_extent:
-        AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
+        AGC_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_emis_year)
         AGC_emis_year_src = rasterio.open(AGC_emis_year)
         kwargs = AGC_emis_year_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
 
         output_pattern_list = [cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        deadwood_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
-        litter_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        deadwood_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
+        litter_emis_year = f'{tile_id}_{output_pattern_list[1]}.tif'
         dst_deadwood_emis_year = rasterio.open(deadwood_emis_year, 'w', **kwargs)
         dst_litter_emis_year = rasterio.open(litter_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_deadwood_emis_year, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_deadwood_emis_year)
         dst_deadwood_emis_year.update_tags(
             units='megagrams deadwood carbon/ha')
         dst_deadwood_emis_year.update_tags(
@@ -452,7 +480,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_deadwood_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_litter_emis_year, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_litter_emis_year)
         dst_litter_emis_year.update_tags(
             units='megagrams litter carbon/ha')
         dst_litter_emis_year.update_tags(
@@ -460,49 +488,49 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         dst_litter_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
 
-    uu.print_log("  Reading input files for {}...".format(tile_id))
+    uu.print_log(f'  Reading input files for {tile_id}')
 
     try:
         precip_src = rasterio.open(precip)
-        uu.print_log("    Precipitation tile found for", tile_id)
-    except:
-        uu.print_log("    No precipitation tile biomass for", tile_id)
+        uu.print_log(f'    Precipitation tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No precipitation tile biomass for {tile_id}')
 
     try:
         elevation_src = rasterio.open(elevation)
-        uu.print_log("    Elevation tile found for", tile_id)
-    except:
-        uu.print_log("    No elevation tile biomass for", tile_id)
+        uu.print_log(f'    Elevation tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No elevation tile biomass for {tile_id}')
 
     # Opens the mangrove biomass tile if it exists
     try:
         bor_tem_trop_src = rasterio.open(bor_tem_trop)
-        uu.print_log("    Boreal/temperate/tropical tile found for", tile_id)
-    except:
-        uu.print_log("    No boreal/temperate/tropical tile biomass for", tile_id)
+        uu.print_log(f'    Boreal/temperate/tropical tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No boreal/temperate/tropical tile biomass for {tile_id}')
 
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        uu.print_log("    Mangrove biomass found for", tile_id)
-    except:
-        uu.print_log("    No mangrove biomass for", tile_id)
+        uu.print_log(f'    Mangrove biomass found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No mangrove biomass for {tile_id}')
 
     # Opens the WHRC/JPL biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log("    Biomass found for", tile_id)
-    except:
-        uu.print_log("    No biomass for", tile_id)
+        uu.print_log(f'    Biomass found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No biomass for {tile_id}')
 
     # Opens the continent-ecozone tile if it exists
     try:
         cont_ecozone_src = rasterio.open(cont_eco)
-        uu.print_log("    Continent-ecozone tile found for", tile_id)
-    except:
-        uu.print_log("    No Continent-ecozone tile found for", tile_id)
+        uu.print_log(f'    Continent-ecozone tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No Continent-ecozone tile found for {tile_id}')
 
-    uu.print_log("  Creating deadwood and litter carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log(f'  Creating deadwood and litter carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 
     uu.check_memory()
 
@@ -521,27 +549,27 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         # # clipping to AGC2000; I'm doing that just as a formality. It feels more complete.
         # try:
         #     AGC_2000_window = AGC_2000_src.read(1, window=window)
-        # except:
+        # except UnboundLocalError:
         #     AGC_2000_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             AGC_emis_year_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-        except:
+        except UnboundLocalError:
             cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
         try:
             bor_tem_trop_window = bor_tem_trop_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             bor_tem_trop_window = np.zeros((window.height, window.width))
         try:
             precip_window = precip_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             precip_window = np.zeros((window.height, window.width))
         try:
             elevation_window = elevation_src.read(1, window=window)
-        except:
+        except UnboundLocalError:
             elevation_window = np.zeros((window.height, window.width))
 
         # This allows the script to bypass the few tiles that have mangrove biomass but not WHRC biomass
@@ -641,7 +669,7 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
             # Same as above but for litter
             try:
                 cont_ecozone_window = cont_ecozone_src.read(1, window=window).astype('float32')
-            except:
+            except UnboundLocalError:
                 cont_ecozone_window = np.zeros((window.height, window.width), dtype='float32')
 
             # Applies the mangrove deadwood:AGB ratios (2 different ratios) to the ecozone raster to create a raster of deadwood:AGB ratios
@@ -681,29 +709,34 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_emis_year_2000, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_emis_year_2000)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_2000, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_deadwood_2000)
 
 
-# Creates soil carbon tiles in loss pixels only
-def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
+def create_soil_emis_extent(tile_id, pattern):
+    """
+    Creates soil carbon tiles in loss pixels only
+    :param tile_id: tile to be processed, identified by its tile id
+    :param pattern: tile pattern to be processed
+    :return: Soil organic carbon density tile in the specified pixels for the specified years (Mg C/ha)
+    """
 
     start = datetime.datetime.now()
 
     # Names of the input tiles. Creates the names even if the files don't exist.
-    soil_full_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000)
-    AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
+    soil_full_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_soil_C_full_extent_2000)
+    AGC_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_emis_year)
 
     if os.path.exists(soil_full_extent) & os.path.exists(AGC_emis_year):
-        uu.print_log("Soil C 2000 and loss found for {}. Proceeding with soil C in loss extent.".format(tile_id))
+        uu.print_log(f'Soil C 2000 and loss found for {tile_id}. Proceeding with soil C in loss extent.')
     else:
-        return uu.print_log("Soil C 2000 and/or loss not found for {}. Skipping soil C in loss extent.".format(tile_id))
+        return uu.print_log(f'Soil C 2000 and/or loss not found for {tile_id}. Skipping soil C in loss extent.')
 
     # Name of output tile
-    soil_emis_year = '{0}_{1}.tif'.format(tile_id, pattern)
+    soil_emis_year = f'{tile_id}_{pattern}.tif'
 
-    uu.print_log("  Reading input files for {}...".format(tile_id))
+    uu.print_log(f'  Reading input files for {tile_id}...')
 
     # Both of these tiles should exist and thus be able to be opened
     soil_full_extent_src = rasterio.open(soil_full_extent)
@@ -728,7 +761,7 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
     dst_soil_emis_year = rasterio.open(soil_emis_year, 'w', **kwargs)
 
     # Adds metadata tags to the output raster
-    uu.add_rasterio_tags(dst_soil_emis_year, sensit_type)
+    uu.add_universal_metadata_rasterio(dst_soil_emis_year)
     dst_soil_emis_year.update_tags(
         units='megagrams soil carbon/ha')
     dst_soil_emis_year.update_tags(
@@ -736,7 +769,7 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
     dst_soil_emis_year.update_tags(
         extent='tree cover loss pixels')
 
-    uu.print_log("  Creating soil carbon density for loss pixels in {}...".format(tile_id))
+    uu.print_log(f'  Creating soil carbon density for loss pixels in {tile_id}...')
 
     uu.check_memory()
 
@@ -758,11 +791,16 @@ def create_soil_emis_extent(tile_id, pattern, sensit_type, no_upload):
         dst_soil_emis_year.write_band(1, soil_output, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern, no_upload)
+    uu.end_of_fx_summary(start, tile_id, pattern)
 
 
-# Creates total carbon tiles (both in 2000 and loss year)
-def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
+def create_total_C(tile_id, carbon_pool_extent):
+    """
+    Creates total carbon tiles (both in 2000 and loss year)
+    :param tile_id: tile to be processed, identified by its tile id
+    :param carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
+    :return: Total carbon density tile in the specified pixels for the specified years (Mg C/ha)
+    """
 
     start = datetime.datetime.now()
 
@@ -772,31 +810,31 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
     # If litter in 2000 is being created, is uses the 2000 AGC tile.
     # The other inputs tiles aren't affected by whether the output is for 2000 or for the loss year.
     if '2000' in carbon_pool_extent:
-        AGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_2000)
-        BGC_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_2000)
-        deadwood_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_2000)
-        litter_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_2000)
-        soil_2000 = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_full_extent_2000)
+        AGC_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_2000)
+        BGC_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGC_2000)
+        deadwood_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_deadwood_2000)
+        litter_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_litter_2000)
+        soil_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_soil_C_full_extent_2000)
         AGC_2000_src = rasterio.open(AGC_2000)
         BGC_2000_src = rasterio.open(BGC_2000)
         deadwood_2000_src = rasterio.open(deadwood_2000)
         litter_2000_src = rasterio.open(litter_2000)
         try:
             soil_2000_src = rasterio.open(soil_2000)
-            uu.print_log("   Soil C 2000 tile found for", tile_id)
-        except:
-            uu.print_log("    No soil C 2000 tile found for", tile_id)
+            uu.print_log(f'   Soil C 2000 tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    No soil C 2000 tile found for {tile_id}')
 
         kwargs = AGC_2000_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_total_C_2000]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        total_C_2000 = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        total_C_2000 = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_total_C_2000 = rasterio.open(total_C_2000, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_total_C_2000, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_total_C_2000)
         dst_total_C_2000.update_tags(
             units='megagrams total (all emitted_pools) carbon/ha')
         dst_total_C_2000.update_tags(
@@ -806,31 +844,31 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
 
 
     if 'loss' in carbon_pool_extent:
-        AGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_AGC_emis_year)
-        BGC_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_BGC_emis_year)
-        deadwood_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_deadwood_emis_year_2000)
-        litter_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_litter_emis_year_2000)
-        soil_emis_year = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_soil_C_emis_year_2000)
+        AGC_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_emis_year)
+        BGC_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGC_emis_year)
+        deadwood_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_deadwood_emis_year_2000)
+        litter_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_litter_emis_year_2000)
+        soil_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_soil_C_emis_year_2000)
         AGC_emis_year_src = rasterio.open(AGC_emis_year)
         BGC_emis_year_src = rasterio.open(BGC_emis_year)
         deadwood_emis_year_src = rasterio.open(deadwood_emis_year)
         litter_emis_year_src = rasterio.open(litter_emis_year)
         try:
             soil_emis_year_src = rasterio.open(soil_emis_year)
-            uu.print_log("   Soil C emission year tile found for", tile_id)
-        except:
-            uu.print_log("    No soil C emission year tile found for", tile_id)
+            uu.print_log(f'   Soil C emission year tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    No soil C emission year tile found for {tile_id}')
 
         kwargs = AGC_emis_year_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
         windows = AGC_emis_year_src.block_windows(1)
         output_pattern_list = [cn.pattern_total_C_emis_year]
-        if sensit_type != 'std':
-            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
-        total_C_emis_year = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
+        if cn.SENSIT_TYPE != 'std':
+            output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
+        total_C_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
         dst_total_C_emis_year = rasterio.open(total_C_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst_total_C_emis_year, sensit_type)
+        uu.add_universal_metadata_rasterio(dst_total_C_emis_year)
         dst_total_C_emis_year.update_tags(
             units='megagrams total (all emitted_pools) carbon/ha')
         dst_total_C_emis_year.update_tags(
@@ -839,7 +877,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
             extent='tree cover loss pixels within model extent')
 
 
-    uu.print_log("  Creating total carbon density for {0} using carbon_pool_extent '{1}'...".format(tile_id, carbon_pool_extent))
+    uu.print_log(f'  Creating total carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}...')
 
     uu.check_memory()
 
@@ -855,7 +893,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
             litter_2000_window = litter_2000_src.read(1, window=window)
             try:
                 soil_2000_window = soil_2000_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 soil_2000_window = np.zeros((window.height, window.width))
 
             total_C_2000_window = AGC_2000_window + BGC_2000_window + deadwood_2000_window + litter_2000_window + soil_2000_window
@@ -876,7 +914,7 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
             litter_emis_year_window = litter_emis_year_src.read(1, window=window)
             try:
                 soil_emis_year_window = soil_emis_year_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 soil_emis_year_window = np.zeros((window.height, window.width))
 
             total_C_emis_year_window = AGC_emis_year_window + BGC_emis_year_window + deadwood_emis_year_window + litter_emis_year_window + soil_emis_year_window
@@ -890,6 +928,6 @@ def create_total_C(tile_id, carbon_pool_extent, sensit_type, no_upload):
 
     # Prints information about the tile that was just processed
     if 'loss' in carbon_pool_extent:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_emis_year, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_emis_year)
     else:
-        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_2000, no_upload)
+        uu.end_of_fx_summary(start, tile_id, cn.pattern_total_C_2000)

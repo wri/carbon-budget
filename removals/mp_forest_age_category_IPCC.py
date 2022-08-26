@@ -1,4 +1,4 @@
-'''
+"""
 This script creates tiles of forest age category across the entire model extent (all pixels) according to a decision tree.
 The age categories are: <= 20 year old secondary forest (1), >20 year old secondary forest (2), and primary forest (3).
 The decision tree is implemented as a series of numpy array statements rather than as nested if statements or gdal_calc operations.
@@ -9,34 +9,37 @@ The extent of this layer is greater than the extent of the rates which are based
 This assigns forest age category to all pixels within the model but they are ultimately only used for
 non-mangrove, non-planted, non-European, non-US, older secondary and primary forest pixels.
 You can think of the output from this script as being the age category if IPCC Table 4.9 rates were to be applied there.
-'''
+"""
 
 
-import multiprocessing
+import argparse
 from functools import partial
 import pandas as pd
-import datetime
-import argparse
-from subprocess import Popen, PIPE, STDOUT, check_call
+import multiprocessing
 import os
 import sys
+
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 sys.path.append(os.path.join(cn.docker_app,'removals'))
 import forest_age_category_IPCC
 
-def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_upload = None):
+def mp_forest_age_category_IPCC(tile_id_list):
+    """
+    :param tile_id_list: list of tile ids to process
+    :return: set of tiles denoting three broad forest age categories: 1- young (<20), 2- middle, 3- old/primary
+    """
 
     os.chdir(cn.docker_base_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, sensit_type)
+        tile_id_list = uu.tile_list_s3(cn.model_extent_dir, cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Files to download for this script.
@@ -48,15 +51,15 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
     }
 
     # Adds the correct loss tile to the download dictionary depending on the model run
-    if sensit_type == 'legal_Amazon_loss':
+    if cn.SENSIT_TYPE == 'legal_Amazon_loss':
         download_dict[cn.Brazil_annual_loss_processed_dir] = [cn.pattern_Brazil_annual_loss_processed]
-    elif sensit_type == 'Mekong_loss':
+    elif cn.SENSIT_TYPE == 'Mekong_loss':
         download_dict[cn.Mekong_loss_processed_dir] = [cn.pattern_Mekong_loss_processed]
     else:
         download_dict[cn.loss_dir] = [cn.pattern_loss]
 
     # Adds the correct biomass tile to the download dictionary depending on the model run
-    if sensit_type == 'biomass_swap':
+    if cn.SENSIT_TYPE == 'biomass_swap':
         download_dict[cn.JPL_processed_dir] = [cn.pattern_JPL_unmasked_processed]
     else:
         download_dict[cn.WHRC_biomass_2000_unmasked_dir] = [cn.pattern_WHRC_biomass_2000_unmasked]
@@ -69,22 +72,22 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
 
     # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
     for key, values in download_dict.items():
-        dir = key
+        directory = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
-    if sensit_type != 'std':
-        uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
-        output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
-        output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+    if cn.SENSIT_TYPE != 'std':
+        uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+        output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
+        output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
 
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     # Only done if output upload is enabled.
-    if run_date is not None and no_upload is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # Table with IPCC Table 4.9 default removals rates
@@ -94,8 +97,7 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
 
 
     # Imports the table with the ecozone-continent codes and the carbon removals rates
-    gain_table = pd.read_excel("{}".format(cn.gain_spreadsheet),
-                               sheet_name = "natrl fores gain, for std model")
+    gain_table = pd.read_excel(f'{cn.gain_spreadsheet}', sheet_name = "natrl fores gain, for std model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
     gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
@@ -115,27 +117,27 @@ def mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date = None, no_u
     # With processes=30, peak usage was about 350 GB using WHRC AGB.
     # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
     if cn.count == 96:
-        if sensit_type == 'biomass_swap':
+        if cn.SENSIT_TYPE == 'biomass_swap':
             processes = 32 # 32 processors = 610 GB peak
         else:
             processes = 42 # 30 processors=460 GB peak; 36 = 550 GB peak; 40 = XXX GB peak
     else:
         processes = 2
-    uu.print_log('Natural forest age category max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict,
-                     pattern=pattern, sensit_type=sensit_type, no_upload=no_upload), tile_id_list)
-    pool.close()
-    pool.join()
+    uu.print_log(f'Natural forest age category max processors={processes}')
+    with multiprocessing.Pool(processes) as pool:
+        pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict, pattern=pattern),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
     # # For single processor use
     # for tile_id in tile_id_list:
     #
-    #     forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern, sensit_type, no_upload)
+    #     forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern)
 
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
@@ -147,7 +149,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of the forest age category (<20 years, >20 years secondary, primary)')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
@@ -155,21 +157,23 @@ if __name__ == '__main__':
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
-    no_upload = args.no_upload
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_forest_age_category_IPCC(sensit_type=sensit_type, tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
-
+    mp_forest_age_category_IPCC(tile_id_list)

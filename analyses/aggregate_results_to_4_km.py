@@ -34,7 +34,7 @@ import universal_util as uu
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile, thresh, sensit_type, no_upload):
+def aggregate(tile, thresh):
 
     # start time
     start = datetime.datetime.now()
@@ -45,11 +45,11 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
     # Name of inputs
-    focal_tile_rewindow = '{0}_{1}_rewindow.tif'.format(tile_id, tile_type)
-    pixel_area_rewindow = '{0}_{1}.tif'.format(cn.pattern_pixel_area_rewindow, tile_id)
-    tcd_rewindow = '{0}_{1}.tif'.format(cn.pattern_tcd_rewindow, tile_id)
-    gain_rewindow = '{0}_{1}.tif'.format(cn.pattern_gain_rewindow, tile_id)
-    mangrove_rewindow = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000_rewindow)
+    focal_tile_rewindow = f'{tile_id}_{tile_type}_rewindow.tif'
+    pixel_area_rewindow = f'{cn.pattern_pixel_area_rewindow}_{tile_id}.tif'
+    tcd_rewindow = f'{cn.pattern_tcd_rewindow}_{tile_id}.tif'
+    gain_rewindow = f'{cn.pattern_gain_rewindow}_{tile_id}.tif'
+    mangrove_rewindow = f'{tile_id}_{cn.pattern_mangrove_biomass_2000_rewindow}.tif'
 
     # Opens input tiles for rasterio
     in_src = rasterio.open(focal_tile_rewindow)
@@ -59,11 +59,11 @@ def aggregate(tile, thresh, sensit_type, no_upload):
 
     try:
         mangrove_src = rasterio.open(mangrove_rewindow)
-        uu.print_log("    Mangrove tile found for {}".format(tile_id))
+        uu.print_log(f'    Mangrove tile found for {tile_id}')
     except:
-        uu.print_log("    No mangrove tile found for {}".format(tile_id))
+        uu.print_log(f'    No mangrove tile found for {tile_id}')
 
-    uu.print_log("  Converting {} to per-pixel values...".format(tile))
+    uu.print_log(f'  Converting {tile} to per-pixel values...')
 
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
@@ -71,7 +71,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     #2D array in which the 0.04x0.04 deg aggregated sums will be stored
     sum_array = np.zeros([250,250], 'float32')
 
-    out_raster = "{0}_{1}_0_04deg.tif".format(tile_id, tile_type)
+    out_raster = f'{tile_id}_{tile_type}_0_04deg.tif'
 
     uu.check_memory()
 
@@ -129,7 +129,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
     if cn.pattern_net_flux in tile_type:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
-    uu.print_log("  Creating aggregated tile for {}...".format(tile))
+    uu.print_log(f'  Creating aggregated tile for {tile}...')
 
     # Converts array to the same output type as the raster that is created below
     sum_array = np.float32(sum_array)
@@ -148,7 +148,7 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         # print(aggregated)
         # aggregated.update_tags(a="1")
         # print(aggregated.tags())
-        # uu.add_rasterio_tags(aggregated, sensit_type)
+        # uu.add_rasterio_tags(aggregated)
         # print(aggregated.tags())
         # if cn.pattern_annual_gain_AGC_all_types in tile_type:
         #     aggregated.update_tags(units='Mg aboveground carbon/pixel, where pixels are 0.04x0.04 degrees)',
@@ -185,12 +185,12 @@ def aggregate(tile, thresh, sensit_type, no_upload):
         # aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, '{}_0_04deg'.format(tile_type), no_upload)
+    uu.end_of_fx_summary(start, tile_id, f'{tile_type}_0_04deg')
 
 
 # Calculates the percent difference between the standard model's net flux output
 # and the sensitivity model's net flux output
-def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
+def percent_diff(std_aggreg_flux, sensit_aggreg_flux):
 
     # start time
     start = datetime.datetime.now()
@@ -207,7 +207,7 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
     # fine for all the other analyses, though (including legal_Amazon_loss).
     # Maybe that divide by 0 is throwing off other values now.
     perc_diff_calc = '--calc=(A-B)/absolute(B)*100'
-    perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, sensit_type, date_formatted)
+    perc_diff_outfilename = '{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_perc_diff, cn.SENSIT_TYPE, date_formatted)
     perc_diff_outfilearg = '--outfile={}'.format(perc_diff_outfilename)
     # cmd = ['gdal_calc.py', '-A', sensit_aggreg_flux, '-B', std_aggreg_flux, perc_diff_calc, perc_diff_outfilearg,
     #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--quiet']
@@ -216,11 +216,11 @@ def percent_diff(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
     uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux, no_upload)
+    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)
 
 
 # Maps where the sources stay sources, sinks stay sinks, sources become sinks, and sinks become sources
-def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
+def sign_change(std_aggreg_flux, sensit_aggreg_flux):
 
     # start time
     start = datetime.datetime.now()
@@ -240,14 +240,14 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
         sensit_src = rasterio.open(sensit_aggreg_flux)
 
         # Creates the sign change raster
-        dst = rasterio.open('{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_sign_change, sensit_type, date_formatted), 'w', **kwargs)
+        dst = rasterio.open('{0}_{1}_{2}.tif'.format(cn.pattern_aggreg_sensit_sign_change, cn.SENSIT_TYPE, date_formatted), 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(dst, sensit_type)
+        uu.add_universal_metadata_rasterio(dst)
         dst.update_tags(
             key='1=stays net source. 2=stays net sink. 3=changes from net source to net sink. 4=changes from net sink to net source.')
         dst.update_tags(
-            source='Comparison of net flux at 0.04x0.04 degrees from standard model to net flux from {} sensitivity analysis'.format(sensit_type))
+            source='Comparison of net flux at 0.04x0.04 degrees from standard model to net flux from {} sensitivity analysis'.format(cn.SENSIT_TYPE))
         dst.update_tags(
             extent='Global')
 
@@ -273,4 +273,4 @@ def sign_change(std_aggreg_flux, sensit_aggreg_flux, sensit_type, no_upload):
 
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux, no_upload)
+    uu.end_of_fx_summary(start, 'global', sensit_aggreg_flux)

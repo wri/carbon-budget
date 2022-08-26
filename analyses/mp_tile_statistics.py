@@ -197,7 +197,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create tiles of the annual AGB and BGB removals rates for mangrove forests')
     parser.add_argument('--model-type', '-t', required=True,
-                        help='{}'.format(cn.model_type_arg_help))
+                        help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     args = parser.parse_args()
@@ -205,7 +205,7 @@ if __name__ == '__main__':
     tile_id_list = args.tile_id_list
 
     # Create the output log
-    uu.initiate_log(sensit_type=sensit_type, tile_id_list=tile_id_list)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

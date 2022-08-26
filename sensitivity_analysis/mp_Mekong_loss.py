@@ -26,7 +26,7 @@ def main ():
     tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ['50N_130W'] # test tiles
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Downloads the Mekong loss folder. Each year of loss has its own raster
@@ -60,7 +60,8 @@ def main ():
     source_raster = loss_composite
     out_pattern = cn.pattern_Mekong_loss_processed
     dt = 'Byte'
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
 
     # This is necessary for changing NoData values to 0s (so they are recognized as 0s)
     pool.map(Mekong_loss.recode_tiles, tile_id_list)

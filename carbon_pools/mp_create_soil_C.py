@@ -41,7 +41,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
                                              )
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # List of output directories and output file name patterns
@@ -96,7 +96,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     #
     #     create_soil_C.create_mangrove_soil_C(tile_id, no_Upload)
 
-    uu.print_log('Done making mangrove soil C tiles', '\n')
+    uu.print_log('Done making mangrove soil C tiles', "\n")
 
     uu.print_log("Making mineral soil C vrt...")
     check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
@@ -112,8 +112,8 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
         processes = int(cn.count/2)
     uu.print_log("Creating mineral soil C density tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                     no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
     pool.close()
     pool.join()
 
@@ -236,8 +236,8 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
         processes = 2
     uu.print_log("Creating mineral soil C stock stdev tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                     no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
     pool.close()
     pool.join()
 
@@ -291,14 +291,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list, run_date=run_date)
+    uu.initiate_log(tile_id_list)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
     mp_create_soil_C(tile_id_list=tile_id_list, no_upload=no_upload)

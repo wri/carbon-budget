@@ -51,7 +51,7 @@ def mp_burn_year(tile_id_list, run_date = None, no_upload = None):
         tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
     # List of output directories and output file name patterns
     output_dir_list = [cn.burn_year_dir]
@@ -263,10 +263,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type='std', run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)

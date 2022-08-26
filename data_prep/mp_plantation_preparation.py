@@ -477,7 +477,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
     gadm_index = os.path.split(args.gadm_tile_index)
@@ -494,7 +494,7 @@ if __name__ == '__main__':
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

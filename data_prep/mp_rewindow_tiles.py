@@ -78,8 +78,8 @@ def mp_rewindow_tiles(tile_id_list, run_date = None, no_upload = None):
             processes = 8
         uu.print_log('Rewindow max processors=', processes)
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name,
-                         no_upload=no_upload), tile_id_list)
+        pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
+                 tile_id_list)
         pool.close()
         pool.join()
 
@@ -112,14 +112,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)

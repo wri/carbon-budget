@@ -1,9 +1,15 @@
-'''
-Clone repositoroy:
+"""
+Clone repository:
 git clone https://github.com/wri/carbon-budget
 
 Create spot machine using spotutil:
 spotutil new r5d.24xlarge dgibbs_wri
+
+Build Docker container:
+docker build . -t gfw/carbon-budget
+
+Enter Docker container:
+docker run --rm -it -e AWS_SECRET_ACCESS_KEY=[] -e AWS_ACCESS_KEY_ID=[] gfw/carbon-budget
 
 Compile C++ emissions modulte (for standard model and sensitivity analyses that using standard emissions model)
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
@@ -19,13 +25,13 @@ python run_full_model.py -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce lo
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
 run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
 python run_full_model.py -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Running all tiles"
-'''
+"""
 
 import argparse
-import os
-import glob
 import datetime
-import logging
+import glob
+import os
+
 import constants_and_names as cn
 import universal_util as uu
 from data_prep.mp_model_extent import mp_model_extent
@@ -43,6 +49,10 @@ from analyses.mp_aggregate_results_to_4_km import mp_aggregate_results_to_4_km
 from analyses.mp_create_supplementary_outputs import mp_create_supplementary_outputs
 
 def main ():
+    """
+    Runs the entire forest GHG flux model or a subset of stages
+    :return: Sets of output tiles for the selected stages
+    """
 
     os.chdir(cn.docker_base_dir)
 
@@ -55,9 +65,9 @@ def main ():
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
     parser = argparse.ArgumentParser(description='Run the full carbon flux model')
-    parser.add_argument('--model-type', '-t', required=True, help='{}'.format(cn.model_type_arg_help))
+    parser.add_argument('--model-type', '-t', required=True, help=f'{cn.model_type_arg_help}')
     parser.add_argument('--stages', '-s', required=True,
-                        help='Stages for running the flux model. Options are {}'.format(model_stages))
+                        help=f'Stages for running the flux model. Options are {model_stages}')
     parser.add_argument('--run-through', '-r', action='store_true',
                         help='If activated, run named stage and all following stages. If not activated, run the selected stage only.')
     parser.add_argument('--run-date', '-d', required=False,
@@ -84,101 +94,99 @@ def main ():
                         help='Note to include in log header about model run.')
     args = parser.parse_args()
 
-    sensit_type = args.model_type
-    stage_input = args.stages
-    run_through = args.run_through
-    run_date = args.run_date
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+    cn.STAGE_INPUT = args.stages
+    cn.RUN_THROUGH = args.run_through
+    cn.RUN_DATE = args.run_date
+    cn.CARBON_POOL_EXTENT = args.carbon_pool_extent
+    cn.EMITTED_POOLS = args.emitted_pools_to_use
+    cn.THRESH = args.tcd_threshold
+    cn.STD_NET_FLUX = args.std_net_flux_aggreg
+    cn.INCLUDE_MANGROVES = args.mangroves
+    cn.INCLUDE_US = args.us_rates
+    cn.NO_UPLOAD = args.no_upload
+    cn.SAVE_INTERMEDIATES = args.save_intermediates
+    cn.LOG_NOTE = args.log_note
+
     tile_id_list = args.tile_id_list
-    carbon_pool_extent = args.carbon_pool_extent
-    emitted_pools = args.emitted_pools_to_use
-    thresh = args.tcd_threshold
-    if thresh is not None:
-        thresh = int(thresh)
-    std_net_flux = args.std_net_flux_aggreg
-    include_mangroves = args.mangroves
-    include_us = args.us_rates
-    no_upload = args.no_upload
-    save_intermediates = args.save_intermediates
-    log_note = args.log_note
-
-
-    # Start time for script
-    script_start = datetime.datetime.now()
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         uu.print_log("s3 credentials not found. Uploading to s3 disabled but downloading enabled.")
-        no_upload = True
-
+        cn.NO_UPLOAD = True
 
     # Forces intermediate files to not be deleted if files can't be uploaded to s3.
     # Rationale is that if uploads to s3 are not occurring, intermediate files can't be downloaded during the model
     # run and therefore must exist locally.
-    if no_upload == True:
-        save_intermediates = True
+    if cn.NO_UPLOAD:
+        cn.SAVE_INTERMEDIATES = True
 
+    if cn.THRESH is not None:
+        cn.THRESH = int(cn.THRESH)
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload,
-                    save_intermediates=save_intermediates,
-                    stage_input=stage_input, run_through=run_through, carbon_pool_extent=carbon_pool_extent,
-                    emitted_pools=emitted_pools, thresh=thresh, std_net_flux=std_net_flux,
-                    include_mangroves=include_mangroves, include_us=include_us, log_note=log_note)
+    uu.initiate_log(tile_id_list)
 
+    # Checks whether the sensitivity analysis and tile_id_list arguments are valid
+    uu.check_sensit_type(cn.SENSIT_TYPE)
+
+    # Start time for script
+    script_start = datetime.datetime.now()
 
     # Checks the validity of the model stage arguments. If either one is invalid, the script ends.
-    if (stage_input not in model_stages):
-        uu.exception_log(no_upload, 'Invalid stage selection. Please provide a stage from', model_stages)
+    if cn.STAGE_INPUT not in model_stages:
+        uu.exception_log(f'Invalid stage selection. Please provide a stage from {model_stages}')
     else:
         pass
 
     # Generates the list of stages to run
-    actual_stages = uu.analysis_stages(model_stages, stage_input, run_through, sensit_type,
-                                       include_mangroves = include_mangroves, include_us=include_us)
-    uu.print_log("Analysis stages to run:", actual_stages)
+    actual_stages = uu.analysis_stages(model_stages, cn.STAGE_INPUT, cn.RUN_THROUGH, cn.SENSIT_TYPE,
+                                       include_mangroves = cn.INCLUDE_MANGROVES, include_us=cn.INCLUDE_US)
+    uu.print_log(f'Analysis stages to run: {actual_stages}')
 
     # Reports how much storage is being used with files
     uu.check_storage()
 
     # Checks whether the sensitivity analysis argument is valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
 
     # Checks if the carbon pool type is specified if the stages to run includes carbon pool generation.
     # Does this up front so the user knows before the run begins that information is missing.
-    if ('carbon_pools' in actual_stages) & (carbon_pool_extent not in ['loss', '2000', 'loss,2000', '2000,loss']):
-        uu.exception_log(no_upload, "Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.")
+    if ('carbon_pools' in actual_stages) & (cn.CARBON_POOL_EXTENT not in ['loss', '2000', 'loss,2000', '2000,loss']):
+        uu.exception_log('Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.')
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
     if 'gross_emissions' in actual_stages:
 
-        if emitted_pools == 'biomass_soil':
+        if cn.EMITTED_POOLS == 'biomass_soil':
             # Some sensitivity analyses have specific gross emissions scripts.
             # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
-            if sensit_type in ['no_shifting_ag', 'convert_to_grassland']:
-                if os.path.exists('{0}/calc_gross_emissions_{1}.exe'.format(cn.c_emis_compile_dst, sensit_type)):
-                    uu.print_log("C++ for {} already compiled.".format(sensit_type))
+            if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
+                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
+                    uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
                 else:
-                    uu.exception_log(no_upload, 'Must compile standard {} model C++...'.format(sensit_type))
+                    uu.exception_log(f'Must compile standard {cn.SENSIT_TYPE} model C++...')
             else:
-                if os.path.exists('{0}/calc_gross_emissions_generic.exe'.format(cn.c_emis_compile_dst)):
-                    uu.print_log("C++ for generic emissions already compiled.")
+                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
+                    uu.print_log('C++ for generic emissions already compiled.')
                 else:
-                    uu.exception_log(no_upload, 'Must compile generic emissions C++...')
+                    uu.exception_log('Must compile generic emissions C++...')
 
-        elif (emitted_pools == 'soil_only') & (sensit_type == 'std'):
-            if os.path.exists('{0}/calc_gross_emissions_soil_only.exe'.format(cn.c_emis_compile_dst)):
-                uu.print_log("C++ for generic emissions already compiled.")
+        elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
+            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
+                uu.print_log('C++ for generic emissions already compiled.')
             else:
-                uu.exception_log(no_upload, 'Must compile soil_only C++...')
+                uu.exception_log('Must compile soil_only C++...')
 
         else:
-            uu.exception_log(no_upload, 'Pool and/or sensitivity analysis option not valid for gross emissions')
+            uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
 
     # Checks whether the canopy cover argument is valid up front.
     if 'aggregate' in actual_stages:
-        if thresh < 0 or thresh > 99:
-            uu.exception_log(no_upload, 'Invalid tcd. Please provide an integer between 0 and 99.')
+        if cn.THRESH < 0 or cn.THRESH > 99:
+            uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
         else:
             pass
 
@@ -186,7 +194,7 @@ def main ():
     if 's3://' in tile_id_list:
         tile_id_list = uu.tile_list_s3(tile_id_list, 'std')
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))), "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
     # Otherwise, check that the tile list argument is valid. "all" is the way to specify that all tiles should be processed
     else:
         tile_id_list = uu.tile_id_list_check(tile_id_list)
@@ -219,18 +227,18 @@ def main ():
 
     # Adds the carbon directories depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
     if 'carbon_pools' in actual_stages:
-        if 'loss' in carbon_pool_extent:
+        if 'loss' in cn.CARBON_POOL_EXTENT:
             output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir,
                                                  cn.deadwood_emis_year_2000_dir, cn.litter_emis_year_2000_dir,
                                                  cn.soil_C_emis_year_2000_dir, cn.total_C_emis_year_dir]
 
-        if '2000' in carbon_pool_extent:
+        if '2000' in cn.CARBON_POOL_EXTENT:
             output_dir_list = output_dir_list + [cn.AGC_2000_dir, cn.BGC_2000_dir,
                                                  cn.deadwood_2000_dir, cn.litter_2000_dir,
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
     # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
-    if emitted_pools == 'biomass_soil':
+    if cn.EMITTED_POOLS == 'biomass_soil':
         output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
                            cn.gross_emis_shifting_ag_biomass_soil_dir,
                            cn.gross_emis_forestry_biomass_soil_dir,
@@ -273,277 +281,276 @@ def main ():
     # removal function
     if 'annual_removals_mangrove' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of annual removals for mangrove")
+        uu.print_log(':::::Creating tiles of annual removals for mangrove')
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_mangrove(sensit_type, tile_id_list, run_date = run_date)
+        mp_annual_gain_rate_mangrove(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_mangrove:", elapsed_time, "\n")
+        uu.print_log(f':::::Processing time for annual_gain_rate_mangrove: {elapsed_time}', "\n", "\n")
 
 
     # Creates tiles of annual AGC+BGC removals rate and AGC stdev for US-specific removals using the standard model
     # removal function
     if 'annual_removals_us' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of annual removals for US")
+        uu.print_log(':::::Creating tiles of annual removals for US')
         start = datetime.datetime.now()
 
-        mp_US_removal_rates(sensit_type, tile_id_list, run_date = run_date)
+        mp_US_removal_rates(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_us:", elapsed_time, "\n")
+        uu.print_log(f':::::Processing time for annual_gain_rate_us: {elapsed_time}', "\n", "\n")
 
 
     # Creates model extent tiles
     if 'model_extent' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of model extent")
+        uu.print_log(':::::Creating tiles of model extent')
         start = datetime.datetime.now()
 
-        mp_model_extent(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_model_extent(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for model_extent:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for model_extent: {elapsed_time}', "\n", "\n")
 
 
     # Creates age category tiles for natural forests
     if 'forest_age_category_IPCC' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of forest age categories for IPCC removal rates")
+        uu.print_log(':::::Creating tiles of forest age categories for IPCC removal rates')
         start = datetime.datetime.now()
 
-        mp_forest_age_category_IPCC(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_forest_age_category_IPCC(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for forest_age_category_IPCC:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for forest_age_category_IPCC: {elapsed_time}', "\n", "\n")
 
 
     # Creates tiles of annual AGB and BGB removals rates using IPCC Table 4.9 defaults
     if 'annual_removals_IPCC' in actual_stages:
 
-        uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults")
+        uu.print_log(':::::Creating tiles of annual aboveground and belowground removal rates using IPCC defaults')
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_IPCC_defaults(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_annual_gain_rate_IPCC_defaults(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_IPCC:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for annual_gain_rate_IPCC: {elapsed_time}', "\n", "\n")
 
 
     # Creates tiles of annual AGC and BGC removal factors for the entire model, combining removal factors from all forest types
     if 'annual_removals_all_forest_types' in actual_stages:
-        uu.print_log(":::::Creating tiles of annual aboveground and belowground removal rates for all forest types")
+        uu.print_log(':::::Creating tiles of annual aboveground and belowground removal rates for all forest types')
         start = datetime.datetime.now()
 
-        mp_annual_gain_rate_AGC_BGC_all_forest_types(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for annual_gain_rate_AGC_BGC_all_forest_types:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for annual_gain_rate_AGC_BGC_all_forest_types: {elapsed_time}', "\n", "\n")
 
 
     # Creates tiles of the number of years of removals for all model pixels (across all forest types)
     if 'gain_year_count' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for gain year count creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for gain year count creation by deleting unneeded tiles')
             tiles_to_delete = []
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_mangrove)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_mangrove)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_natrl_forest_young)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_IPCC_defaults)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_IPCC_defaults)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_all_types)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGB_mangrove)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_stdev_annual_gain_AGC_all_types)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_mangrove_biomass_2000}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_WHRC_biomass_2000_unmasked}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGB_mangrove}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_BGB_mangrove}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_BGC_natrl_forest_US}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_natrl_forest_young}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_age_cat_IPCC}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGB_IPCC_defaults}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_BGB_IPCC_defaults}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_BGC_all_types}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_ifl_primary}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_planted_forest_type_unmasked}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_plant_pre_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGB_mangrove}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGC_natrl_forest_young}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGB_IPCC_defaults}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_stdev_annual_gain_AGC_all_types}*tif'))
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating tiles of gain year count for all removal pixels")
+        uu.print_log(':::::Creating tiles of gain year count for all removal pixels')
         start = datetime.datetime.now()
 
-        mp_gain_year_count_all_forest_types(sensit_type, tile_id_list, run_date = run_date, no_upload=no_upload)
+        mp_gain_year_count_all_forest_types(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gain_year_count:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for gain_year_count: {elapsed_time}', "\n", "\n")
 
 
     # Creates tiles of gross removals for all forest types (aboveground, belowground, and above+belowground)
     if 'gross_removals_all_forest_types' in actual_stages:
 
-        uu.print_log(":::::Creating gross removals for all forest types combined (above + belowground) tiles")
+        uu.print_log(':::::Creating gross removals for all forest types combined (above + belowground) tiles')
         start = datetime.datetime.now()
 
-        mp_gross_removals_all_forest_types(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_gross_removals_all_forest_types(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gross_removals_all_forest_types:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for gross_removals_all_forest_types: {elapsed_time}', "\n", "\n")
 
 
     # Creates carbon emitted_pools in loss year
     if 'carbon_pools' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for carbon pool creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for carbon pool creation by deleting unneeded tiles')
             tiles_to_delete = []
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_model_extent)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_age_cat_IPCC)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGB_IPCC_defaults)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGB_IPCC_defaults)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_BGC_all_types)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_BGC_all_types)))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_model_extent}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_age_cat_IPCC}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGB_IPCC_defaults}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_BGB_IPCC_defaults}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_BGC_all_types}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_BGC_all_types}*tif'))
             tiles_to_delete.extend(glob.glob('*growth_years*tif'))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gain_year_count)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_BGCO2_all_types)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_BGCO2_all_types)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gain_year_count}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_cumul_gain_BGCO2_all_types}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_cumul_gain_AGCO2_BGCO2_all_types}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_ifl_primary}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_planted_forest_type_unmasked}*tif'))
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating carbon pool tiles")
+        uu.print_log(':::::Creating carbon pool tiles')
         start = datetime.datetime.now()
 
-        mp_create_carbon_pools(sensit_type, tile_id_list, carbon_pool_extent, run_date=run_date, no_upload=no_upload,
-                               save_intermediates=save_intermediates)
+        mp_create_carbon_pools(tile_id_list, cn.CARBON_POOL_EXTENT)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for create_carbon_pools:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for create_carbon_pools: {elapsed_time}', "\n", "\n")
 
 
     # Creates gross emissions tiles by driver, gas, and all emissions combined
     if 'gross_emissions' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for gross emissions creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for gross emissions creation by deleting unneeded tiles')
             tiles_to_delete = []
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_deadwood_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_litter_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_total_C_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_elevation)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_precip)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_annual_gain_AGC_all_types)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cumul_gain_AGCO2_all_types)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_cont_eco_processed)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_WHRC_biomass_2000_unmasked)))
-            # tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_mangrove_biomass_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_removal_forest_type)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_removal_forest_type}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_AGC_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_deadwood_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_litter_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_total_C_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_elevation}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_precip}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_annual_gain_AGC_all_types}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_cumul_gain_AGCO2_all_types}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_cont_eco_processed}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_WHRC_biomass_2000_unmasked}*tif'))
+            # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_mangrove_biomass_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_removal_forest_type}*tif'))
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             uu.print_log(tiles_to_delete)
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating gross emissions tiles")
+        uu.print_log(':::::Creating gross emissions tiles')
         start = datetime.datetime.now()
 
-        mp_calculate_gross_emissions(sensit_type, tile_id_list, emitted_pools, run_date=run_date, no_upload=no_upload)
+        mp_calculate_gross_emissions(tile_id_list, cn.EMITTED_POOLS)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for gross_emissions:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for gross_emissions: {elapsed_time}', "\n", "\n")
 
 
     # Creates net flux tiles (gross emissions - gross removals)
     if 'net_flux' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Freeing up memory for net flux creation by deleting unneeded tiles")
+            uu.print_log(':::::Freeing up memory for net flux creation by deleting unneeded tiles')
             tiles_to_delete = []
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_commod_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_shifting_ag_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_forestry_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_wildfire_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_urban_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_no_driver_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_gross_emis_nodes_biomass_soil)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_AGC_emis_year)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_BGC_emis_year)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_deadwood_emis_year_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_litter_emis_year_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_soil_C_emis_year_2000)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_total_C_emis_year)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_peat_mask)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_ifl_primary)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_planted_forest_type_unmasked)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_drivers)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_climate_zone)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_bor_tem_trop_processed)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_burn_year)))
-            tiles_to_delete.extend(glob.glob('*{}*tif'.format(cn.pattern_plant_pre_2000)))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_commod_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_shifting_ag_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_forestry_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_wildfire_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_urban_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_no_driver_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_AGC_emis_year}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_emis_year}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_deadwood_emis_year_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_litter_emis_year_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_soil_C_emis_year_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_total_C_emis_year}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_peat_mask}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_ifl_primary}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_planted_forest_type_unmasked}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_drivers}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_climate_zone}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_bor_tem_trop_processed}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_burn_year}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_plant_pre_2000}*tif'))
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating net flux tiles")
+        uu.print_log(':::::Creating net flux tiles')
         start = datetime.datetime.now()
 
-        mp_net_flux(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_net_flux(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for net_flux:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for net_flux: {elapsed_time}', "\n", "\n")
 
 
     # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
@@ -552,86 +559,86 @@ def main ():
 
         # aux.xml files need to be deleted because otherwise they'll be included in the aggregation iteration.
         # They are created by using check_and_delete_if_empty_light()
-        uu.print_log(":::::Deleting any aux.xml files")
+        uu.print_log(':::::Deleting any aux.xml files')
         tiles_to_delete = []
         tiles_to_delete.extend(glob.glob('*aux.xml'))
 
         for tile_to_delete in tiles_to_delete:
             os.remove(tile_to_delete)
-        uu.print_log(":::::Deleted {0} aux.xml files: {1}".format(len(tiles_to_delete), tiles_to_delete), "\n")
+        uu.print_log(f':::::Deleted {len(tiles_to_delete)} aux.xml files: {tiles_to_delete}', "\n")
 
 
-        uu.print_log(":::::Creating 4x4 km aggregate maps")
+        uu.print_log(':::::Creating 4x4 km aggregate maps')
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_4_km(sensit_type, thresh, tile_id_list, std_net_flux=std_net_flux,
-                                     run_date=run_date, no_upload=no_upload)
+        mp_aggregate_results_to_4_km(tile_id_list, cn.THRESH, std_net_flux=cn.STD_NET_FLUX)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for aggregate:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for aggregate: {elapsed_time}', "\n", "\n")
 
 
     # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
     if 'create_supplementary_outputs' in actual_stages:
 
-        if not save_intermediates:
+        if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(":::::Deleting rewindowed tiles")
+            uu.print_log(':::::Deleting rewindowed tiles')
             tiles_to_delete = []
             tiles_to_delete.extend(glob.glob('*rewindow*tif'))
-            uu.print_log("  Deleting", len(tiles_to_delete), "tiles...")
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
                 os.remove(tile_to_delete)
-            uu.print_log(":::::Deleted unneeded tiles")
+            uu.print_log(':::::Deleted unneeded tiles')
 
         uu.check_storage()
 
-        uu.print_log(":::::Creating supplementary versions of main model outputs (forest extent, per pixel)")
+        uu.print_log(':::::Creating supplementary versions of main model outputs (forest extent, per pixel)')
         start = datetime.datetime.now()
 
-        mp_create_supplementary_outputs(sensit_type, tile_id_list, run_date=run_date, no_upload=no_upload)
+        mp_create_supplementary_outputs(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(":::::Processing time for supplementary output raster creation:", elapsed_time, "\n", "\n")
+        uu.print_log(f':::::Processing time for supplementary output raster creation: {elapsed_time}', "\n", "\n")
 
 
     # If no_upload flag is activated, tiles on s3 aren't counted
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
-        uu.print_log(":::::Counting tiles output to each folder")
+        uu.print_log(':::::Counting tiles output to each folder')
 
         # Modifies output directory names to make them match those used during the model run.
         # The tiles in each of these directories and counted and logged.
         # If the model run isn't the standard one, the output directory and file names are changed
-        if sensit_type != 'std':
-            uu.print_log("Modifying output directory and file name pattern based on sensitivity analysis")
-            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+        if cn.SENSIT_TYPE != 'std':
+            uu.print_log('Modifying output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(cn.SENSIT_TYPE, output_dir_list)
 
         # A date can optionally be provided by the full model script or a run of this script.
         # This replaces the date in constants_and_names.
         # Only done if output upload is enabled.
-        if run_date is not None and no_upload is not None:
-            output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+        if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+            output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
         for output in output_dir_list:
 
             tile_count = uu.count_tiles_s3(output)
-            uu.print_log("Total tiles in", output, ": ", tile_count)
+            uu.print_log(f'Total tiles in {output}: {tile_count}')
 
 
     script_end = datetime.datetime.now()
     script_elapsed_time = script_end - script_start
-    uu.print_log(":::::Processing time for entire run:", script_elapsed_time, "\n")
+    uu.print_log(f':::::Processing time for entire run: {script_elapsed_time}', "\n")
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-    if not no_upload:
+    if not cn.NO_UPLOAD:
 
         uu.upload_log()
+
 
 if __name__ == '__main__':
     main()

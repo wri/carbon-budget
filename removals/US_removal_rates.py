@@ -18,7 +18,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
     start = datetime.datetime.now()
 
     # Names of the input tiles
-    gain = '{0}_{1}.tif'.format(cn.pattern_gain, tile_id)
+    gain = f'{cn.pattern_gain}_{tile_id}.tif'
     US_age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest_US)
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)
@@ -51,7 +51,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         agc_bgc_stdev_dst = rasterio.open('{0}_{1}.tif'.format(tile_id, output_pattern_list[1]), 'w', **kwargs)
 
         # Adds metadata tags to the output rasters
-        uu.add_rasterio_tags(agc_bgc_rate_dst, 'std')
+        uu.add_universal_metadata_rasterio(agc_bgc_rate_dst)
         agc_bgc_rate_dst.update_tags(
             units='megagrams aboveground+belowground carbon/ha/yr')
         agc_bgc_rate_dst.update_tags(
@@ -59,7 +59,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         agc_bgc_rate_dst.update_tags(
             extent='Continental USA. Applies to pixels for which an FIA region, FIA forest group, and Pan et al. forest age category are available or interpolated.')
 
-        uu.add_rasterio_tags(agc_bgc_stdev_dst, 'std')
+        uu.add_universal_metadata_rasterio(agc_bgc_stdev_dst)
         agc_bgc_stdev_dst.update_tags(
             units='standard deviation of removal factor, in megagrams aboveground+belowground carbon/ha/yr')
         agc_bgc_stdev_dst.update_tags(

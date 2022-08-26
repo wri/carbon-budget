@@ -23,7 +23,7 @@ def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
         tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Downloads zipped raw mangrove files
@@ -46,13 +46,13 @@ def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
     processes=int(cn.count/4)
     uu.print_log('Mangrove preprocessing max processors=', processes)
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                     no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
 
     # # For single processor use, for testing purposes
     # for tile_id in tile_id_list:
     #
-    #     mangrove_processing.create_mangrove_tiles(tile_id, source_raster, out_pattern, no_upload)
+    #     mangrove_processing.create_mangrove_tiles(tile_id, source_raster, out_pattern)
 
     # Checks if each tile has data in it. Only tiles with data are uploaded.
     upload_dir = cn.mangrove_biomass_2000_dir
@@ -76,13 +76,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     mp_mangrove_processing(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
