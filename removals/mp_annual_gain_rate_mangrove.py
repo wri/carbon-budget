@@ -119,30 +119,29 @@ def mp_annual_gain_rate_mangrove(tile_id_list):
     stdev_dict = {float(key): value for key, value in stdev_dict.items()}
 
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
-    if cn.count == 96:
-        processes = 20    #26 processors = >740 GB peak; 18 = 550 GB peak; 20 = 610 GB peak; 23 = 700 GB peak; 24 > 750 GB peak
-    else:
-        processes = 4
-    uu.print_log('Mangrove annual removals rate max processors=', processes)
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, output_pattern_list=output_pattern_list,
-                     gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict, stdev_dict=stdev_dict), tile_id_list)
-    pool.close()
-    pool.join()
+    if cn.SINGLE_PROCESSOR:
+        for tile in tile_id_list:
+            annual_gain_rate_mangrove.annual_gain_rate(tile, output_pattern_list, gain_above_dict, gain_below_dict, stdev_dict)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #
-    #     annual_gain_rate_mangrove.annual_gain_rate(tile, output_pattern_list,
-    #           gain_above_dict, gain_below_dict, stdev_dict)
+    else:
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        # Ran with 18 processors on r4.16xlarge (430 GB memory peak)
+        if cn.count == 96:
+            processes = 20    #26 processors = >740 GB peak; 18 = 550 GB peak; 20 = 610 GB peak; 23 = 700 GB peak; 24 > 750 GB peak
+        else:
+            processes = 4
+        uu.print_log('Mangrove annual removals rate max processors=', processes)
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(annual_gain_rate_mangrove.annual_gain_rate, output_pattern_list=output_pattern_list,
+                         gain_above_dict=gain_above_dict, gain_below_dict=gain_below_dict, stdev_dict=stdev_dict),
+                 tile_id_list)
+        pool.close()
+        pool.join()
 
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not no_upload:
-
         for i in range(0, len(output_dir_list)):
             uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
@@ -161,12 +160,15 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 

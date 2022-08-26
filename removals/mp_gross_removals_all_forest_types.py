@@ -74,25 +74,26 @@ def mp_gross_removals_all_forest_types(tile_id_list):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
-    # Calculates gross removals
-    if cn.count == 96:
-        if cn.SENSIT_TYPE == 'biomass_swap':
-            processes = 18
-        else:
-            processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
-    else:
-        processes = 2
-    uu.print_log(f'Gross removals max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types,
-                         output_pattern_list=output_pattern_list),
-                 tile_id_list)
-        pool.close()
-        pool.join()
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list)
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     gross_removals_all_forest_types.gross_removals_all_forest_types(tile_id, output_pattern_list)
+    else:
+        if cn.count == 96:
+            if cn.SENSIT_TYPE == 'biomass_swap':
+                processes = 18
+            else:
+                processes = 22   # 50 processors > 740 GB peak; 25 = >740 GB peak; 15 = 490 GB peak; 20 = 590 GB peak; 22 = 710 GB peak
+        else:
+            processes = 2
+        uu.print_log(f'Gross removals max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(gross_removals_all_forest_types.gross_removals_all_forest_types,
+                             output_pattern_list=output_pattern_list),
+                     tile_id_list)
+            pool.close()
+            pool.join()
+
 
     # Checks the gross removals outputs for tiles with no data
     for output_pattern in output_pattern_list:
@@ -113,7 +114,6 @@ def mp_gross_removals_all_forest_types(tile_id_list):
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
-
         for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
             uu.upload_final_set(output_dir, output_pattern)
 
@@ -132,12 +132,15 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 

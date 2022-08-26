@@ -19,8 +19,12 @@ starting from the beginning; get carbon pools at time of loss; emissions from bi
 python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
 
 Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
+starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil; use multiprocessing
 python run_full_model.py -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+
+Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
+starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil; use singelprocessing
+python run_full_model.py -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -sp -ln "00N_000E test"
 
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
 run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
@@ -88,6 +92,8 @@ def main ():
                         help='Include US removal rate and standard deviation tile creation step (before model extent).')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     parser.add_argument('--save-intermediates', '-si', action='store_true',
                         help='Saves intermediate model outputs rather than deleting them to save storage')
     parser.add_argument('--log-note', '-ln', required=False,
@@ -106,6 +112,7 @@ def main ():
     cn.INCLUDE_MANGROVES = args.mangroves
     cn.INCLUDE_US = args.us_rates
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
     cn.SAVE_INTERMEDIATES = args.save_intermediates
     cn.LOG_NOTE = args.log_note
 

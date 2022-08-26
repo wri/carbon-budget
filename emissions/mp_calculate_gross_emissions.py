@@ -201,64 +201,68 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     # This will be iterated through to delete the tiles at the end of the script.
     uu.create_blank_tile_txt()
 
-    processes=80 # 60 = 100 GB peak; 80 =  XXX GB peak
-    for output_pattern in pattern_list:
-        with multiprocessing.Pool(processes) as pool:
-            pool.map(partial(uu.make_blank_tile, pattern=output_pattern, folder=folder),
-                     tile_id_list)
-            pool.close()
-            pool.join()
+    if cn.SINGLE_PROCESSOR:
+        for pattern in pattern_list:
+            for tile in tile_id_list:
+                uu.make_blank_tile(tile, pattern, folder)
 
-    # # For single processor use
-    # for pattern in pattern_list:
-    #     for tile in tile_id_list:
-    #         uu.make_blank_tile(tile, pattern, folder)
+    else:
+        processes=80 # 60 = 100 GB peak; 80 =  XXX GB peak
+        for output_pattern in pattern_list:
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(uu.make_blank_tile, pattern=output_pattern, folder=folder),
+                         tile_id_list)
+                pool.close()
+                pool.join()
 
 
     # Calculates gross emissions for each tile
-    # count/4 uses about 390 GB on a r4.16xlarge spot machine.
-    # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
-    if cn.count == 96:
-        if cn.SENSIT_TYPE == 'biomass_swap':
-            processes = 15 # 15 processors = XXX GB peak
-        else:
-            processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
-    else:
-        processes = 9
-    uu.print_log(f'Gross emissions max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools,
-                         folder=folder),
-                 tile_id_list)
-        pool.close()
-        pool.join()
+    if cn.SINGLE_PROCESSOR:
+        for tile in tile_id_list:
+              calculate_gross_emissions.calc_emissions(tile, emitted_pools, folder)
 
-    # # For single processor use
-    # for tile in tile_id_list:
-    #       calculate_gross_emissions.calc_emissions(tile, emitted_pools, folder)
+    else:
+        # count/4 uses about 390 GB on a r4.16xlarge spot machine.
+        # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+        if cn.count == 96:
+            if cn.SENSIT_TYPE == 'biomass_swap':
+                processes = 15 # 15 processors = XXX GB peak
+            else:
+                processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
+        else:
+            processes = 9
+        uu.print_log(f'Gross emissions max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(calculate_gross_emissions.calc_emissions, emitted_pools=emitted_pools,
+                             folder=folder),
+                     tile_id_list)
+            pool.close()
+            pool.join()
 
 
     # Print the list of blank created tiles, delete the tiles, and delete their text file
     uu.list_and_delete_blank_tiles()
 
-
     for i, output_pattern in enumerate(output_pattern_list):
 
         uu.print_log(f'Adding metadata tags for pattern {output_pattern}')
 
-        if cn.count == 96:
-            processes = 75  # 45 processors = ~30 GB peak; 55 = XXX GB peak; 75 = XXX GB peak
-        else:
-            processes = 9
-        uu.print_log(f'Adding metadata tags max processors={processes}')
-        with multiprocessing.Pool(processes) as pool:
-            pool.map(partial(uu.add_emissions_metadata, output_pattern=output_pattern),
-                     tile_id_list)
-            pool.close()
-            pool.join()
+        if cn.SINGLE_PROCESSOR:
+            for tile_id in tile_id_list:
+                calculate_gross_emissions.add_metadata_tags(tile_id, output_pattern)
 
-        # for tile_id in tile_id_list:
-        #     calculate_gross_emissions.add_metadata_tags(tile_id, pattern)
+        else:
+            if cn.count == 96:
+                processes = 75  # 45 processors = ~30 GB peak; 55 = XXX GB peak; 75 = XXX GB peak
+            else:
+                processes = 9
+            uu.print_log(f'Adding metadata tags max processors={processes}')
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(uu.add_emissions_metadata, output_pattern=output_pattern),
+                         tile_id_list)
+                pool.close()
+                pool.join()
+
 
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
@@ -273,8 +277,6 @@ if __name__ == '__main__':
     # Two arguments for the script: whether only emissions from biomass (soil_only) is being calculated or emissions from biomass and soil (biomass_soil),
     # and which model type is being run (standard or sensitivity analysis)
     parser = argparse.ArgumentParser(description='Calculates gross emissions')
-    parser.add_argument('--emitted-pools-to-use', '-p', required=True,
-                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--model-type', '-t', required=True,
@@ -283,12 +285,17 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
+    parser.add_argument('--emitted-pools-to-use', '-p', required=True,
+                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
     cn.EMITTED_POOLS = args.emitted_pools_to_use
 
     tile_id_list = args.tile_id_list

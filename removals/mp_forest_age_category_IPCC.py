@@ -112,33 +112,31 @@ def mp_forest_age_category_IPCC(tile_id_list):
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    # With processes=30, peak usage was about 350 GB using WHRC AGB.
-    # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
-    if cn.count == 96:
-        if cn.SENSIT_TYPE == 'biomass_swap':
-            processes = 32 # 32 processors = 610 GB peak
-        else:
-            processes = 42 # 30 processors=460 GB peak; 36 = 550 GB peak; 40 = XXX GB peak
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern)
+
     else:
-        processes = 2
-    uu.print_log(f'Natural forest age category max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict, pattern=pattern),
-                 tile_id_list)
-        pool.close()
-        pool.join()
-
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #
-    #     forest_age_category_IPCC.forest_age_category(tile_id, gain_table_dict, pattern)
-
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        # With processes=30, peak usage was about 350 GB using WHRC AGB.
+        # processes=26 maxes out above 480 GB for biomass_swap, so better to use fewer than that.
+        if cn.count == 96:
+            if cn.SENSIT_TYPE == 'biomass_swap':
+                processes = 32 # 32 processors = 610 GB peak
+            else:
+                processes = 42 # 30 processors=460 GB peak; 36 = 550 GB peak; 40 = XXX GB peak
+        else:
+            processes = 2
+        uu.print_log(f'Natural forest age category max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(forest_age_category_IPCC.forest_age_category, gain_table_dict=gain_table_dict, pattern=pattern),
+                     tile_id_list)
+            pool.close()
+            pool.join()
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
-
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
@@ -156,12 +154,15 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 

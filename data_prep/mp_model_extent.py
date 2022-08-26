@@ -89,27 +89,28 @@ def mp_model_extent(tile_id_list):
     # Creates a single filename pattern to pass to the multiprocessor call
     pattern = output_pattern_list[0]
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    if cn.count == 96:
-        if cn.SENSIT_TYPE == 'biomass_swap':
-            processes = 38
-        else:
-            processes = 45 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
-            # 36 = 550 GB peak; 40 = 590 GB peak; 42 = 631 GB peak; 43 = 690 GB peak; 45 = too high
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            model_extent.model_extent(tile_id, pattern)
+
     else:
-        processes = 3
-    uu.print_log('Model extent processors=', processes)
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(model_extent.model_extent, pattern=pattern), tile_id_list)
-        pool.close()
-        pool.join()
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        if cn.count == 96:
+            if cn.SENSIT_TYPE == 'biomass_swap':
+                processes = 38
+            else:
+                processes = 45 # 30 processors = 480 GB peak (sporadic decreases followed by sustained increases);
+                # 36 = 550 GB peak; 40 = 590 GB peak; 42 = 631 GB peak; 43 = 690 GB peak; 45 = too high
+        else:
+            processes = 3
+        uu.print_log('Model extent processors=', processes)
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(model_extent.model_extent, pattern=pattern), tile_id_list)
+            pool.close()
+            pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     model_extent.model_extent(tile_id, pattern)
-
-
+    # No single-processor versions of these check-if-empty functions
     output_pattern = output_pattern_list[0]
     if cn.count <= 2:  # For local tests
         processes = 1
@@ -129,7 +130,6 @@ def mp_model_extent(tile_id_list):
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
-
         uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
 
@@ -147,12 +147,15 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 
