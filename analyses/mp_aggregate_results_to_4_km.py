@@ -203,7 +203,7 @@ def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):
                    '-mo', 'units=Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees',
                    '-mo', 'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                    '-mo', 'extent=Global',
-                   '-mo', f'treecover_density_threshold={thresh} (only model pixels with canopy cover > {thresh} are included in aggregation'
+                   '-mo', f'treecover_density_threshold={thresh} (only model pixels with canopy cover > {thresh} are included in aggregation',
                    '{0}.tif'.format(out_pattern)]
             uu.log_subprocess_output_full(cmd)
 
