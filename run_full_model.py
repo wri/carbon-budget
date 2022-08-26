@@ -5,6 +5,12 @@ git clone https://github.com/wri/carbon-budget
 Create spot machine using spotutil:
 spotutil new r5d.24xlarge dgibbs_wri
 
+Build Docker container:
+docker build . -t gfw/carbon-budget
+
+Enter Docker container:
+docker run --rm -it -e AWS_SECRET_ACCESS_KEY=[] -e AWS_ACCESS_KEY_ID=[] gfw/carbon-budget
+
 Compile C++ emissions modulte (for standard model and sensitivity analyses that using standard emissions model)
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 
