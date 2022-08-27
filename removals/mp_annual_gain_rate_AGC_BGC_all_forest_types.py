@@ -94,7 +94,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
 
     if cn.SINGLE_PROCESSOR:
         for tile_id in tile_id_list:
-            annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id)
+            annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list)
 
     else:
         # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function

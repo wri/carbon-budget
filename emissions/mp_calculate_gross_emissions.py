@@ -249,7 +249,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
 
         if cn.SINGLE_PROCESSOR:
             for tile_id in tile_id_list:
-                calculate_gross_emissions.add_metadata_tags(tile_id, output_pattern)
+                uu.add_emissions_metadata(tile_id, output_pattern)
 
         else:
             if cn.count == 96:
