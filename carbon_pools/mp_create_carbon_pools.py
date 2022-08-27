@@ -199,28 +199,31 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                                                                                             cn.litter_to_above_subtrop_mang)
 
     uu.print_log(f'Creating tiles of aboveground carbon in {carbon_pool_extent}')
-    if cn.count == 96:
-        # More processors can be used for loss carbon pools than for 2000 carbon pools
-        if carbon_pool_extent == 'loss':
-            if cn.SENSIT_TYPE == 'biomass_swap':
-                processes = 16  # 16 processors = XXX GB peak
-            else:
-                processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
-                # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 690 GB peak (stops at 600, then increases slowly); 21 > 750 GB peak
-        else: # For 2000, or loss & 2000
-            processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log(f'AGC loss year max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(create_carbon_pools.create_AGC, carbon_pool_extent=carbon_pool_extent),
-                 tile_id_list)
-        pool.close()
-        pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_AGC(tile_id, carbon_pool_extent)
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            create_carbon_pools.create_AGC(tile_id, carbon_pool_extent)
+
+    else:
+        if cn.count == 96:
+            # More processors can be used for loss carbon pools than for 2000 carbon pools
+            if carbon_pool_extent == 'loss':
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 16  # 16 processors = XXX GB peak
+                else:
+                    processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
+                    # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 690 GB peak (stops at 600, then increases slowly); 21 > 750 GB peak
+            else: # For 2000, or loss & 2000
+                processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
+        else:
+            processes = 2
+        uu.print_log(f'AGC loss year max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(create_carbon_pools.create_AGC, carbon_pool_extent=carbon_pool_extent),
+                     tile_id_list)
+            pool.close()
+            pool.join()
+
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
@@ -247,29 +250,31 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
 
 
     uu.print_log(f'Creating tiles of belowground carbon in {carbon_pool_extent}')
-    # Creates a single filename pattern to pass to the multiprocessor call
-    if cn.count == 96:
-        # More processors can be used for loss carbon pools than for 2000 carbon pools
-        if carbon_pool_extent == 'loss':
-            if cn.SENSIT_TYPE == 'biomass_swap':
-                processes = 30  # 30 processors = XXX GB peak
-            else:
-                processes = 39  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 690 GB peak; 39 = XXX GB peak
-        else: # For 2000, or loss & 2000
-            processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log(f'BGC max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
-                         carbon_pool_extent=carbon_pool_extent),
-                 tile_id_list)
-        pool.close()
-        pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent)
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            create_carbon_pools.create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent)
+
+    else:
+        if cn.count == 96:
+            # More processors can be used for loss carbon pools than for 2000 carbon pools
+            if carbon_pool_extent == 'loss':
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 30  # 30 processors = XXX GB peak
+                else:
+                    processes = 39  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 690 GB peak; 39 = XXX GB peak
+            else: # For 2000, or loss & 2000
+                processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
+        else:
+            processes = 2
+        uu.print_log(f'BGC max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(create_carbon_pools.create_BGC, mang_BGB_AGB_ratio=mang_BGB_AGB_ratio,
+                             carbon_pool_extent=carbon_pool_extent),
+                     tile_id_list)
+            pool.close()
+            pool.join()
+
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
@@ -303,35 +308,39 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
 
 
     uu.print_log(f'Creating tiles of deadwood and litter carbon in {carbon_pool_extent}')
-    if cn.count == 96:
-        # More processors can be used for loss carbon pools than for 2000 carbon pools
-        if carbon_pool_extent == 'loss':
-            if cn.SENSIT_TYPE == 'biomass_swap':
-                processes = 10  # 10 processors = XXX GB peak
-            else:
-                # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly);
-                # 15 = 700 GB peak once but also too much memory another time, so back to 14
-                processes = 14
-        else: # For 2000, or loss & 2000
-            ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
-            ### There wouldn't have been enough room for all deadwood and litter otherwise.
-            ### For example, when deadwood and litter generation started getting up to around 50N, I deleted
-            ### 00N precip, elevation, and WHRC AGB. I deleted all of those from 30N to 20S.
-            processes = 16  # 7 processors = 320 GB peak; 14 = 620 GB peak; 16 = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log(f'Deadwood and litter max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(create_carbon_pools.create_deadwood_litter, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
-                    mang_litter_AGB_ratio=mang_litter_AGB_ratio,
-                    carbon_pool_extent=carbon_pool_extent),
-                 tile_id_list)
-        pool.close()
-        pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent)
+    if cn.SINGLE_PROCESSOR:
+        # For single processor use
+        for tile_id in tile_id_list:
+            create_carbon_pools.create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent)
+
+    else:
+        if cn.count == 96:
+            # More processors can be used for loss carbon pools than for 2000 carbon pools
+            if carbon_pool_extent == 'loss':
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 10  # 10 processors = XXX GB peak
+                else:
+                    # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly);
+                    # 15 = 700 GB peak once but also too much memory another time, so back to 14
+                    processes = 14
+            else: # For 2000, or loss & 2000
+                ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
+                ### There wouldn't have been enough room for all deadwood and litter otherwise.
+                ### For example, when deadwood and litter generation started getting up to around 50N, I deleted
+                ### 00N precip, elevation, and WHRC AGB. I deleted all of those from 30N to 20S.
+                processes = 16  # 7 processors = 320 GB peak; 14 = 620 GB peak; 16 = XXX GB peak
+        else:
+            processes = 2
+        uu.print_log(f'Deadwood and litter max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(create_carbon_pools.create_deadwood_litter, mang_deadwood_AGB_ratio=mang_deadwood_AGB_ratio,
+                        mang_litter_AGB_ratio=mang_litter_AGB_ratio,
+                        carbon_pool_extent=carbon_pool_extent),
+                     tile_id_list)
+            pool.close()
+            pool.join()
+
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
@@ -375,27 +384,30 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         else:
             pattern = output_pattern_list[10]
 
-        if cn.count == 96:
-            # More processors can be used for loss carbon pools than for 2000 carbon pools
-            if carbon_pool_extent == 'loss':
-                if cn.SENSIT_TYPE == 'biomass_swap':
-                    processes = 36  # 36 processors = XXX GB peak
-                else:
-                    processes = 44  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 44 = XXX GB peak
-            else: # For 2000, or loss & 2000
-                processes = 12  # 12 processors = XXX GB peak
-        else:
-            processes = 2
-        uu.print_log(f'Soil carbon loss year max processors={processes}')
-        with multiprocessing.Pool(processes) as pool:
-            pool.map(partial(create_carbon_pools.create_soil_emis_extent, pattern=pattern),
-                     tile_id_list)
-            pool.close()
-            pool.join()
+        if cn.SINGLE_PROCESSOR:
+            # For single processor use
+            for tile_id in tile_id_list:
+                create_carbon_pools.create_soil_emis_extent(tile_id, pattern)
 
-        # # For single processor use
-        # for tile_id in tile_id_list:
-        #     create_carbon_pools.create_soil_emis_extent(tile_id, pattern)
+        else:
+            if cn.count == 96:
+                # More processors can be used for loss carbon pools than for 2000 carbon pools
+                if carbon_pool_extent == 'loss':
+                    if cn.SENSIT_TYPE == 'biomass_swap':
+                        processes = 36  # 36 processors = XXX GB peak
+                    else:
+                        processes = 44  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 44 = XXX GB peak
+                else: # For 2000, or loss & 2000
+                    processes = 12  # 12 processors = XXX GB peak
+            else:
+                processes = 2
+            uu.print_log(f'Soil carbon loss year max processors={processes}')
+            with multiprocessing.Pool(processes) as pool:
+                pool.map(partial(create_carbon_pools.create_soil_emis_extent, pattern=pattern),
+                         tile_id_list)
+                pool.close()
+                pool.join()
+
 
         # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
         if not cn.NO_UPLOAD:
@@ -414,9 +426,6 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         uu.check_storage()
 
 
-    # 825 GB isn't enough space to create deadwood and litter 2000 while having AGC and BGC 2000 on.
-    # Thus must delete BGC and soil C 2000 for creation of deadwood and litter, then copy them back to spot machine
-    # for total C 2000 calculation.
     if '2000' in carbon_pool_extent:
 
         # Files to download for total C 2000. Previously deleted to save space
@@ -432,27 +441,30 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
 
 
     uu.print_log('Creating tiles of total carbon')
-    if cn.count == 96:
-        # More processors can be used for loss carbon pools than for 2000 carbon pools
-        if carbon_pool_extent == 'loss':
-            if cn.SENSIT_TYPE == 'biomass_swap':
-                processes = 14  # 14 processors = XXX GB peak
-            else:
-                processes = 19  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = 660 GB peak; 19 = XXX GB peak
-        else: # For 2000, or loss & 2000
-            processes = 12  # 12 processors = XXX GB peak
-    else:
-        processes = 2
-    uu.print_log(f'Total carbon loss year max processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent),
-                 tile_id_list)
-        pool.close()
-        pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     create_carbon_pools.create_total_C(tile_id, carbon_pool_extent)
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            create_carbon_pools.create_total_C(tile_id, carbon_pool_extent)
+
+    else:
+        if cn.count == 96:
+            # More processors can be used for loss carbon pools than for 2000 carbon pools
+            if carbon_pool_extent == 'loss':
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 14  # 14 processors = XXX GB peak
+                else:
+                    processes = 19  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = 660 GB peak; 19 = XXX GB peak
+            else: # For 2000, or loss & 2000
+                processes = 12  # 12 processors = XXX GB peak
+        else:
+            processes = 2
+        uu.print_log(f'Total carbon loss year max processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(create_carbon_pools.create_total_C, carbon_pool_extent=carbon_pool_extent),
+                     tile_id_list)
+            pool.close()
+            pool.join()
+
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
@@ -475,20 +487,23 @@ if __name__ == '__main__':
                         help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
-    parser.add_argument('--carbon_pool_extent', '-ce', required=True,
-                        help='Extent over which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     parser.add_argument('--save-intermediates', '-si', action='store_true',
                         help='Saves intermediate model outputs rather than deleting them to save storage')
+    parser.add_argument('--carbon_pool_extent', '-ce', required=True,
+                        help='Extent over which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
     cn.SAVE_INTERMEDIATES = args.save_intermediates
     cn.CARBON_POOL_EXTENT = args.carbon_pool_extent # Tells the pool creation functions to calculate carbon emitted_pools as they were at the year of loss in loss pixels only
 

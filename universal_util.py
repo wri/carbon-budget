@@ -75,6 +75,7 @@ def initiate_log(tile_id_list):
     logging.info(f'Do not upload anything to s3: {cn.NO_UPLOAD}')
     logging.info(f'AWS credentials supplied: {check_aws_creds()}')
     logging.info(f'Save intermediate outputs: {cn.SAVE_INTERMEDIATES}')
+    logging.info(f'Use single processor: {cn.SINGLE_PROCESSOR}')
     logging.info(f'AWS ec2 instance type and AMI ID:')
 
     # https://stackoverflow.com/questions/13735051/how-to-capture-curl-output-to-a-file

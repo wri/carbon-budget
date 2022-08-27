@@ -92,27 +92,30 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
-    # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
-    # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
-    if cn.count == 96:
-        if cn.SENSIT_TYPE == 'biomass_swap':
-            processes = 13
-        else:
-            processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = >680 GB peak
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list)
+
     else:
-        processes = 2
-    uu.print_log(f'Removal factor processors={processes}')
-    with multiprocessing.Pool(processes) as pool:
-        pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
-                         output_pattern_list=output_pattern_list),
-                 tile_id_list)
-        pool.close()
-        pool.join()
+        # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
+        # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
+        if cn.count == 96:
+            if cn.SENSIT_TYPE == 'biomass_swap':
+                processes = 13
+            else:
+                processes = 17  # 30 processors > 740 GB peak; 18 = >740 GB peak; 16 = 660 GB peak; 17 = >680 GB peak
+        else:
+            processes = 2
+        uu.print_log(f'Removal factor processors={processes}')
+        with multiprocessing.Pool(processes) as pool:
+            pool.map(partial(annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types,
+                             output_pattern_list=output_pattern_list),
+                     tile_id_list)
+            pool.close()
+            pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #     annual_gain_rate_AGC_BGC_all_forest_types.annual_gain_rate_AGC_BGC_all_forest_types(tile_id)
 
+    # No single-processor versions of these check-if-empty functions
     # Checks the gross removals outputs for tiles with no data
     for output_pattern in output_pattern_list:
         if cn.count <= 2:  # For local tests
@@ -133,7 +136,6 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
-
         for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
             uu.upload_final_set(output_dir, output_pattern)
 
@@ -152,6 +154,8 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
 
@@ -159,6 +163,7 @@ if __name__ == '__main__':
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 

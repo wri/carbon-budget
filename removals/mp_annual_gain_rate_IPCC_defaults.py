@@ -193,6 +193,9 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
     # Converts all the keys (continent-ecozone-age codes) to float type
     stdev_table_dict = {float(key): value for key, value in stdev_table_dict.items()}
 
+    if cn.SINGLE_PROCESSOR:
+        for tile_id in tile_id_list:
+            annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_list)
 
     # This configuration of the multiprocessing call is necessary for passing multiple arguments to the main function
     # It is based on the example here: http://spencerimp.blogspot.com/2015/12/python-multiprocess-with-multiple.html
@@ -212,16 +215,9 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
         pool.close()
         pool.join()
 
-    # # For single processor use
-    # for tile_id in tile_id_list:
-    #
-    #     annual_gain_rate_IPCC_defaults.annual_gain_rate(tile_id,
-    #       gain_table_dict, stdev_table_dict, output_pattern_list)
-
 
     # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
-
         for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
             uu.upload_final_set(output_dir, output_pattern)
 
@@ -240,6 +236,8 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
 
@@ -247,6 +245,7 @@ if __name__ == '__main__':
     cn.SENSIT_TYPE = args.model_type
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 
