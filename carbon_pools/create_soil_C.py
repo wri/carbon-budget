@@ -14,7 +14,7 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 import datetime
-from subprocess import Popen, PIPE, STDOUT, check_call
+
 import numpy as np
 import rasterio
 import os
