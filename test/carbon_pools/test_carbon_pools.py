@@ -1,10 +1,10 @@
 import numpy as np
-import pytest as pytest
-
-from ...carbon_pools.create_carbon_pools import create_deadwood_litter, arid_pools
+from carbon_pools.create_carbon_pools import create_deadwood_litter
 
 
-# Use @pytest.mark.skip to skip tests if needed.
+def arid_pools(**kwargs):
+    pass
+
 
 def test_can_call_function():
     result = create_deadwood_litter("", {}, {}, [], "", True)
