@@ -15,7 +15,7 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 from subprocess import Popen, PIPE, STDOUT, check_call
-import create_soil_C
+from . import create_soil_C
 from functools import partial
 import multiprocessing
 import datetime
