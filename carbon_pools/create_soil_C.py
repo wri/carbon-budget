@@ -14,14 +14,14 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 import datetime
-from subprocess import Popen, PIPE, STDOUT, check_call
+import os
+
 import numpy as np
 import rasterio
-import os
-import sys
-sys.path.append('../')
-import universal_util as uu
+
 import constants_and_names as cn
+import universal_util as uu
+
 
 # Creates 10x10 mangrove soil C tiles
 def create_mangrove_soil_C(tile_id, no_upload):
