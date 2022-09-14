@@ -14,15 +14,17 @@ getting mineral soil C values out.
 So, I switched to this somewhat more convoluted method that uses both gdal and rasterio/numpy.
 '''
 
-from subprocess import check_call
-from . import create_soil_C
-from functools import partial
-import multiprocessing
-import glob
 import argparse
+from functools import partial
+import glob
+import multiprocessing
 import os
+from subprocess import check_call
+
 import constants_and_names as cn
 import universal_util as uu
+from . import create_soil_C
+
 
 def mp_create_soil_C(tile_id_list, no_upload=None):
 
