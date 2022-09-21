@@ -182,7 +182,7 @@ pixel_area_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/pixel_area/2021062
 
 
 # Spreadsheet with annual removals rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20200820.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20220914.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2021)
