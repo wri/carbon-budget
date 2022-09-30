@@ -673,23 +673,18 @@ def deadwood_litter_equations(bor_tem_trop_window, deadwood_2000_output, elevati
     # For some reason, the masks need to be named different variables for each equation.
     # If they all have the same name (e.g., elev_mask and condition_mask are reused), then at least the condition_mask_4
     # equation won't work properly.)
+    is_low_elevation = elevation_window <= 2000
+    is_low_precip = precip_window <= 1000
+    is_mid_precip = (not is_low_precip) & (precip_window <= 1600)
+    is_high_precip = precip_window > 1600
+    is_tropical_climate = bor_tem_trop_window == 1
 
-    # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
-    elev_mask_1 = elevation_window <= 2000
-    precip_mask_1 = precip_window <= 1000
-    ecozone_mask_1 = bor_tem_trop_window == 1
-    condition_mask_1 = elev_mask_1 & precip_mask_1 & ecozone_mask_1
-    agb_masked_1 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_1))
-    deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_non_mangrove
-    deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
-    litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
-    litter_2000_output = litter_2000_output + litter_masked.filled(0)
+    deadwood_2000_output, litter_2000_output = low_elevation_low_precip_tropical(
+        deadwood_2000_output, litter_2000_output, is_low_precip,
+        is_tropical_climate, is_low_elevation, natrl_forest_biomass_window)
 
     # Equation for elevation <= 2000, 1000 < precip <= 1600, bor/temp/trop = 1 (tropical)
-    elev_mask_2 = elevation_window <= 2000
-    precip_mask_2 = (precip_window > 1000) & (precip_window <= 1600)
-    ecozone_mask_2 = bor_tem_trop_window == 1
-    condition_mask_2 = elev_mask_2 & precip_mask_2 & ecozone_mask_2
+    condition_mask_2 = is_low_elevation & is_mid_precip & is_tropical_climate
     agb_masked_2 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_2))
     deadwood_masked = agb_masked_2 * 0.01 * cn.biomass_to_c_non_mangrove
     deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
@@ -697,10 +692,7 @@ def deadwood_litter_equations(bor_tem_trop_window, deadwood_2000_output, elevati
     litter_2000_output = litter_2000_output + litter_masked.filled(0)
 
     # Equation for elevation <= 2000, precip > 1600, bor/temp/trop = 1 (tropical)
-    elev_mask_3 = elevation_window <= 2000
-    precip_mask_3 = precip_window > 1600
-    ecozone_mask_3 = bor_tem_trop_window == 1
-    condition_mask_3 = elev_mask_3 & precip_mask_3 & ecozone_mask_3
+    condition_mask_3 = is_low_elevation & is_high_precip & is_tropical_climate
     agb_masked_3 = np.ma.array(natrl_forest_biomass_window, mask=np.invert(condition_mask_3))
     deadwood_masked = agb_masked_3 * 0.06 * cn.biomass_to_c_non_mangrove
     deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
@@ -708,9 +700,7 @@ def deadwood_litter_equations(bor_tem_trop_window, deadwood_2000_output, elevati
     litter_2000_output = litter_2000_output + litter_masked.filled(0)
 
     # Equation for elevation > 2000, precip = any value, bor/temp/trop = 1 (tropical)
-    elev_mask_4 = elevation_window > 2000
-    ecozone_mask_4 = bor_tem_trop_window == 1
-    condition_mask_4 = elev_mask_4 & ecozone_mask_4
+    condition_mask_4 = (not is_low_elevation) & is_tropical_climate
     agb_masked_4 = np.ma.array(natrl_forest_biomass_window,  mask=np.invert(condition_mask_4))
     deadwood_masked = agb_masked_4 * 0.07 * cn.biomass_to_c_non_mangrove
     deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
@@ -718,8 +708,7 @@ def deadwood_litter_equations(bor_tem_trop_window, deadwood_2000_output, elevati
     litter_2000_output = litter_2000_output + litter_masked.filled(0)
 
     # Equation for elevation = any value, precip = any value, bor/temp/trop = 2 or 3 (boreal or temperate)
-    ecozone_mask_5 = bor_tem_trop_window != 1
-    condition_mask_5 = ecozone_mask_5
+    condition_mask_5 = (not is_tropical_climate)
     agb_masked_5 = np.ma.array(natrl_forest_biomass_window,  mask=np.invert(condition_mask_5))
     deadwood_masked = agb_masked_5 * 0.08 * cn.biomass_to_c_non_mangrove
     deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
@@ -728,6 +717,21 @@ def deadwood_litter_equations(bor_tem_trop_window, deadwood_2000_output, elevati
     deadwood_2000_output = deadwood_2000_output.astype('float32')
     litter_2000_output = litter_2000_output.astype('float32')
 
+    return deadwood_2000_output, litter_2000_output
+
+
+def low_elevation_low_precip_tropical(deadwood_2000_output, litter_2000_output,
+                                      is_low_precip, is_tropical_climate,
+                                      is_low_elevation,
+                                      natrl_forest_biomass_window):
+    # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
+    condition_mask_1 = is_low_elevation & is_low_precip & is_tropical_climate
+    agb_masked_1 = np.ma.array(natrl_forest_biomass_window,
+                               mask=np.invert(condition_mask_1))
+    deadwood_masked = agb_masked_1 * 0.02 * cn.biomass_to_c_non_mangrove
+    deadwood_2000_output = deadwood_2000_output + deadwood_masked.filled(0)
+    litter_masked = agb_masked_1 * 0.04 * cn.biomass_to_c_non_mangrove_litter
+    litter_2000_output = litter_2000_output + litter_masked.filled(0)
     return deadwood_2000_output, litter_2000_output
 
 
