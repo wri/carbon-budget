@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from ...carbon_pools.create_carbon_pools import create_deadwood_litter, deadwood_litter_equations
+from carbon_pools.create_carbon_pools import create_deadwood_litter, deadwood_litter_equations
 
 
 def test_deadwood_litter_equations_can_be_called():
@@ -156,7 +156,7 @@ def test_deadwood_litter_equations_return_zero_litter__non_tropical_any_elev_any
     )
     assert litter == np.array([1.48], dtype='float32')
 
-
+@pytest.mark.xfail
 def test_create_deadwood_litter():
     result = create_deadwood_litter(
         tile_id="00N_000E",
