@@ -724,7 +724,7 @@ def low_elevation_low_precip_tropical(deadwood_2000_output, litter_2000_output,
                                       is_low_precip, is_tropical_climate,
                                       is_low_elevation,
                                       natrl_forest_biomass_window):
-    # Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical)
+    """ Equation for elevation <= 2000, precip <= 1000, bor/temp/trop = 1 (tropical) """
     condition_mask_1 = is_low_elevation & is_low_precip & is_tropical_climate
     agb_masked_1 = np.ma.array(natrl_forest_biomass_window,
                                mask=np.invert(condition_mask_1))
