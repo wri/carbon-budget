@@ -1,6 +1,7 @@
 import pytest
-
 from carbon_pools.create_carbon_pools import create_deadwood_litter, mangrove_pool_ratio_dict
+
+pytestmark = pytest.mark.integration
 
 @pytest.mark.xfail
 def test_it_runs():
