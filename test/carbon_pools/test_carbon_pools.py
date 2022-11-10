@@ -4,6 +4,7 @@ import pytest
 from ...carbon_pools.create_carbon_pools import create_deadwood_litter, deadwood_litter_equations
 
 
+
 def test_deadwood_litter_equations_can_be_called():
     result = deadwood_litter_equations(
         bor_tem_trop_window=np.zeros((1, 1), dtype='float32'),
@@ -155,12 +156,3 @@ def test_deadwood_litter_equations_return_zero_litter__non_tropical_any_elev_any
         precip_window=np.array([1], dtype='float32')
     )
     assert litter == np.array([1.48], dtype='float32')
-
-
-def test_create_deadwood_litter():
-    result = create_deadwood_litter(
-        tile_id="00N_000E",
-        mang_deadwood_AGB_ratio= {'1': 0.5, '2': 0.4, '3': 0.2, '4': 100},
-        mang_litter_AGB_ratio={'1': 0.8, '2': 0.7, '3': 0.6, '4': 100},
-        carbon_pool_extent=['loss']
-    )
