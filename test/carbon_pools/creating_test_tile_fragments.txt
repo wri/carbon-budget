@@ -4,22 +4,27 @@ root@662a49403f35:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLA
 Creating output file that is 40000P x 20L.
 Processing 00N_000E_mangrove_agb_t_ha_2000.tif [1/1] : 0Using internal nodata values (e.g. 0) for image 00N_000E_mangrove_agb_t_ha_2000.tif.
 ...10...20...30...40...50...60...70...80...90...100 - done.
-root@662a49403f35:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLATE -tr 0.00025 0.00025 -tap -te 0 -.005 10 0 -dstnodata 0 -overwrite 00N_000E_fao_ecozones_bor_tem_tro_processed.tif 00N_000E_fao_ecozones_bor_tem_tro_processed_top_005deg.tif
+
+root@a4e6c23dc087:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLATE -tr 0.00025 0.00025 -tap -te 0 -.005 10 0 -dstnodata 0 -overwrite 00N_000E_fao_ecozones_continents_processed.tif 00N_000E_fao_ecozones_continents_processed_top_005deg.tif
 Creating output file that is 40000P x 20L.
-Processing 00N_000E_fao_ecozones_bor_tem_tro_processed.tif [1/1] : 0Using internal nodata values (e.g. 0) for image 00N_000E_fao_ecozones_bor_tem_tro_processed.tif.
+Processing 00N_000E_fao_ecozones_continents_processed.tif [1/1] : 0Using internal nodata values (e.g. 0) for image 00N_000E_fao_ecozones_continents_processed.tif.
 ...10...20...30...40...50...60...70...80...90...100 - done.
+
 root@662a49403f35:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLATE -tr 0.00025 0.00025 -tap -te 0 -.005 10 0 -dstnodata 0 -overwrite 00N_000E_precip_mm_annual.tif 00N_000E_precip_mm_annual_top_005deg.tif
 Creating output file that is 40000P x 20L.
 Processing 00N_000E_precip_mm_annual.tif [1/1] : 0Using internal nodata values (e.g. 0) for image 00N_000E_precip_mm_annual.tif.
 ...10...20...30...40...50...60...70...80...90...100 - done.
+
 root@662a49403f35:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLATE -tr 0.00025 0.00025 -tap -te 0 -.005 10 0 -dstnodata 0 -overwrite 00N_000E_elevation.tif 00N_000E_elevation_top_005deg.tif
 Creating output file that is 40000P x 20L.
 Processing 00N_000E_elevation.tif [1/1] : 0Using internal nodata values (e.g. 0) for image 00N_000E_elevation.tif.
 ...10...20...30...40...50...60...70...80...90...100 - done.
+
 root@662a49403f35:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLATE -tr 0.00025 0.00025 -tap -te 0 -.005 10 0 -dstnodata 0 -overwrite 00N_000E_t_aboveground_biomass_ha_2000.tif 00N_000E_t_aboveground_biomass_ha_2000_top_005deg.tif
 Creating output file that is 40000P x 20L.
 Processing 00N_000E_t_aboveground_biomass_ha_2000.tif [1/1] : 0Using internal nodata values (e.g. -0) for image 00N_000E_t_aboveground_biomass_ha_2000.tif.
 ...10...20...30...40...50...60...70...80...90...100 - done.
+
 root@662a49403f35:/usr/local/tiles# gdalwarp -t_srs EPSG:4326 -co COMPRESS=DEFLATE -tr 0.00025 0.00025 -tap -te 0 -.005 10 0 -dstnodata 0 -overwrite 00N_000E_Mg_AGC_ha_emis_year.tif 00N_000E_Mg_AGC_ha_emis_year_top_005deg.tif
 Creating output file that is 40000P x 20L.
 Processing 00N_000E_Mg_AGC_ha_emis_year.tif [1/1] : 0Using internal nodata values (e.g. 0) for image 00N_000E_Mg_AGC_ha_emis_year.tif.

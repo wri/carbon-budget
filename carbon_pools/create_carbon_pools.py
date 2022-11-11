@@ -462,8 +462,8 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         output_pattern_list = [cn.pattern_deadwood_emis_year_2000, cn.pattern_litter_emis_year_2000]
         if cn.SENSIT_TYPE != 'std':
             output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
-        deadwood_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
-        litter_emis_year = f'{tile_id}_{output_pattern_list[1]}.tif'
+        deadwood_emis_year = uu.make_tile_name(tile_id, output_pattern_list[0])
+        litter_emis_year = uu.make_tile_name(tile_id, output_pattern_list[1])
         dst_deadwood_emis_year = rasterio.open(deadwood_emis_year, 'w', **kwargs)
         dst_litter_emis_year = rasterio.open(litter_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster

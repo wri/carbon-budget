@@ -294,7 +294,7 @@ def get_tile_type(tile_name):
     return tile_type
 
 
-# Gets the tile id from the full tile name using a regular expression
+# Gets the tile name from the full tile name using a regular expression
 def get_tile_name(tile):
 
     tile_name = os.path.split(tile)[1]
@@ -308,6 +308,12 @@ def get_tile_dir(tile):
     tile_dir = os.path.split(tile)[0]
 
     return tile_dir
+
+
+# Makes a complete tile name out of component tile id and pattern
+def make_tile_name(tile_id, pattern):
+
+    return f"{tile_id}_{pattern}.tif"
 
 
 # Lists the tiles in a folder in s3
@@ -1290,7 +1296,6 @@ def sensit_tile_rename_biomass(sensit_type, tile_id):
         print_log(f'Using WHRC biomass tile for {sensit_type} sensitivity analysis')
 
     return natrl_forest_biomass_2000
-
 
 # Determines what stages should actually be run
 def analysis_stages(stage_list, stage_input, run_through, sensit_type,
