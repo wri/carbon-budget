@@ -1278,6 +1278,19 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
     return processed_name
 
+# Creates the correct input biomass tile name for processing based on the sensitivity analysis being done.
+# Because there are actual different input biomass tiles, this doesn't fit well within sensit_tile_rename().
+def sensit_tile_rename_biomass(sensit_type, tile_id):
+
+    if cn.SENSIT_TYPE == 'biomass_swap':
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
+        print_log(f'Using JPL biomass tile for {sensit_type} sensitivity analysis')
+    else:
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
+        print_log(f'Using WHRC biomass tile for {sensit_type} sensitivity analysis')
+
+    return natrl_forest_biomass_2000
+
 
 # Determines what stages should actually be run
 def analysis_stages(stage_list, stage_input, run_through, sensit_type,
