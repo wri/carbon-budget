@@ -43,14 +43,9 @@ def model_extent(tile_id, pattern):
         uu.print_log(f'Using Hansen tcd tile {tile_id} for {cn.SENSIT_TYPE} model run')
 
     # Biomass tile name depends on the sensitivity analysis
-    if cn.SENSIT_TYPE == 'biomass_swap':
-        biomass = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
-        uu.print_log(f'Using JPL biomass tile {tile_id} for {cn.SENSIT_TYPE} sensitivity analysis')
-    else:
-        biomass = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
-        uu.print_log(f'Using WHRC biomass tile {tile_id} for {cn.SENSIT_TYPE} model run')
+    biomass = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)
 
-    out_tile = f'{tile_id}_{pattern}.tif'
+    out_tile = uu.make_tile_name(tile_id, pattern)
 
     # Opens biomass tile
     with rasterio.open(tcd) as tcd_src:

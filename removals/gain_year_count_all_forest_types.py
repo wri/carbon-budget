@@ -300,7 +300,7 @@ def create_gain_year_count_merge(tile_id, pattern):
     loss_and_gain_gain_years = f'{tile_id}_gain_year_count_loss_and_gain.tif'
 
     # Names of the output tiles
-    gain_year_count_merged = f'{tile_id}_{pattern}.tif'
+    gain_year_count_merged = uu.make_tile_name(tile_id, pattern)
 
     # Opens no change gain year count tile. This should exist for all tiles.
     with rasterio.open(no_change_gain_years) as no_change_gain_years_src:

@@ -65,14 +65,7 @@ def create_AGC(tile_id, carbon_pool_extent):
     gain = uu.sensit_tile_rename(cn.SENSIT_TYPE, cn.pattern_gain, tile_id)
     annual_gain_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
     cumul_gain_AGCO2 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
-
-    # Biomass tile name depends on the sensitivity analysis
-    if cn.SENSIT_TYPE == 'biomass_swap':
-        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
-        uu.print_log(f'Using JPL biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
-    else:
-        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
-        uu.print_log(f'Using WHRC biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
+    natrl_forest_biomass_2000 = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)
 
     uu.print_log(f'  Reading input files for {tile_id}...')
 
@@ -746,7 +739,7 @@ def create_soil_emis_extent(tile_id, pattern):
         return uu.print_log(f'Soil C 2000 and/or loss not found for {tile_id}. Skipping soil C in loss extent.')
 
     # Name of output tile
-    soil_emis_year = f'{tile_id}_{pattern}.tif'
+    soil_emis_year = uu.make_tile_name(tile_id, pattern)
 
     uu.print_log(f'  Reading input files for {tile_id}...')
 

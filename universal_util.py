@@ -313,7 +313,7 @@ def get_tile_dir(tile):
 # Makes a complete tile name out of component tile id and pattern
 def make_tile_name(tile_id, pattern):
 
-    return f"{tile_id}_{pattern}.tif"
+    return f'{tile_id}_{pattern}.tif'
 
 
 # Lists the tiles in a folder in s3
@@ -1290,10 +1290,10 @@ def sensit_tile_rename_biomass(sensit_type, tile_id):
 
     if cn.SENSIT_TYPE == 'biomass_swap':
         natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
-        print_log(f'Using JPL biomass tile for {sensit_type} sensitivity analysis')
+        print_log(f'Using JPL biomass tile {tile_id} for {sensit_type} sensitivity analysis')
     else:
         natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
-        print_log(f'Using WHRC biomass tile for {sensit_type} sensitivity analysis')
+        print_log(f'Using WHRC biomass tile {tile_id} for {sensit_type} model run')
 
     return natrl_forest_biomass_2000
 
