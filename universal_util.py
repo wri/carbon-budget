@@ -1466,10 +1466,14 @@ def rewindow(tile_id, download_pattern_name):
 
 def make_test_tile(tile_id, pattern, test_suffix, out_dir, xmin, ymin, xmax, ymax):
 
-    in_file = f"{cn.docker_base_dir}{tile_id}_{pattern}.tif"
-    out_file = f"{out_dir}{tile_id}_{pattern}_{test_suffix}.tif"
+    in_file = f'{cn.docker_base_dir}{tile_id}_{pattern}.tif'
+    out_file = f'{out_dir}{tile_id}_{pattern}_{test_suffix}.tif'
 
-    print_log(f"Making test tile {out_file}")
+    if os.path.exists(out_file):
+        print_log(f'{out_file} already exists. Not creating.')
+        return
+
+    print_log(f'Making test tile {out_file}')
 
     cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
            '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),

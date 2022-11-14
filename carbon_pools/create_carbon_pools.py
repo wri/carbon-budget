@@ -402,7 +402,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
 
 def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_ratio, carbon_pool_extent):
     """
-    Creates deadwood and litter carbon tiles (in 2000 and/or in loss year)
+    Creates deadwood and litter carbon tiles using AGC in 2000 (with loss extent or 2000 forest extent)
     :param tile_id: tile to be processed, identified by its tile id
     :param mang_deadwood_AGB_ratio: ratio of deadwood carbon to aboveground carbon for mangroves
     :param mang_litter_AGB_ratio: ratio of litter carbon to aboveground carbon for mangroves
