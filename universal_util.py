@@ -1461,3 +1461,18 @@ def rewindow(tile_id, download_pattern_name):
 
     # Prints information about the tile that was just processed
     end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name))
+
+
+
+def make_test_tile(tile_id, pattern, test_suffix, out_dir, xmin, ymin, xmax, ymax):
+
+    in_file = f"{cn.docker_base_dir}{tile_id}_{pattern}.tif"
+    out_file = f"/usr/local/app/test/test_data/{tile_id}_{pattern}_{test_suffix}.tif"
+
+    print_log(f"Making test tile {out_file}")
+
+    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
+           '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', in_file, out_file]
+    log_subprocess_output_full(cmd)
+

@@ -1,6 +1,8 @@
 import glob
 import os
 import pytest
+import universal_util as uu
+import constants_and_names as cn
 from unittest.mock import patch
 from carbon_pools.create_carbon_pools import create_deadwood_litter, mangrove_pool_ratio_dict
 
@@ -8,6 +10,7 @@ pytestmark = pytest.mark.integration
 
 # run from /usr/local/app/test
 # pytest -m integration
+# Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
 
 # @pytest.mark.xfail
 @patch("universal_util.sensit_tile_rename")
@@ -15,6 +18,8 @@ pytestmark = pytest.mark.integration
 @patch("universal_util.make_tile_name")
 @patch("universal_util.upload_log")
 def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake):
+
+    uu.make_test_tile("00N_000E", cn.pattern_mangrove_biomass_2000, "top_005deg", "test_data", 0, -0.005, 10, 0)
 
     out_tests = glob.glob('test_data/tmp_out/*.tif')
     for f in out_tests:
