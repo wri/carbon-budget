@@ -1467,7 +1467,7 @@ def rewindow(tile_id, download_pattern_name):
 def make_test_tile(tile_id, pattern, test_suffix, out_dir, xmin, ymin, xmax, ymax):
 
     in_file = f"{cn.docker_base_dir}{tile_id}_{pattern}.tif"
-    out_file = f"/usr/local/app/test/test_data/{tile_id}_{pattern}_{test_suffix}.tif"
+    out_file = f"{out_dir}{tile_id}_{pattern}_{test_suffix}.tif"
 
     print_log(f"Making test tile {out_file}")
 

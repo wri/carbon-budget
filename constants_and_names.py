@@ -119,6 +119,8 @@ docker_tmp = '/usr/local/tmp'
 
 docker_app = '/usr/local/app'
 
+test_data_dir = '/usr/local/app/test/test_data/'
+
 c_emis_compile_dst = '{0}/emissions/cpp_util'.format(docker_app)
 
 # Model log
