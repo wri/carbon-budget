@@ -1464,23 +1464,30 @@ def rewindow(tile_id, download_pattern_name):
 
 
 # Makes tiles of specified size for testing purposes using vsis3 (rather than downloading full rasters to Docker instance)
-def make_test_tile(tile_id, key, pattern, test_suffix, out_dir, xmin, ymin, xmax, ymax):
+def make_test_tiles(tile_id, input_dict, test_suffix, out_dir, xmin, ymin, xmax, ymax):
 
-    # Directory for vsis3 for input file
-    s3_dir = f'{key}'[5:]
-    vsis3_dir = f'/vsis3/{s3_dir}'
+    print("here")
 
-    in_file = f'{vsis3_dir}{tile_id}_{pattern}.tif'
-    out_file = f'{out_dir}{tile_id}_{pattern}_{test_suffix}.tif'
+    for key, pattern in input_dict.items():
 
-    if os.path.exists(out_file):
-        print_log(f'{out_file} already exists. Not creating.')
-        return
+        print(key)
+        print(pattern)
 
-    print_log(f'Making test tile {out_file}')
+        # Directory for vsis3 for input file
+        s3_dir = f'{key}'[5:]
+        vsis3_dir = f'/vsis3/{s3_dir}'
 
-    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
-           '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', in_file, out_file]
-    log_subprocess_output_full(cmd)
+        in_file = f'{vsis3_dir}{tile_id}_{pattern}.tif'
+        out_file = f'{out_dir}{tile_id}_{pattern}_{test_suffix}.tif'
+
+        if os.path.exists(out_file):
+            print_log(f'{out_file} already exists. Not creating.')
+            return
+
+        print_log(f'Making test tile {out_file}')
+
+        cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
+               '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+               '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', in_file, out_file]
+        log_subprocess_output_full(cmd)
 

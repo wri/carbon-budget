@@ -11,6 +11,28 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+def prepare_gain_table():
+    """
+    Loads the mangrove gain rate spreadsheet and turns it into a Pandas table
+    :return: Pandas table of removal factors for mangroves
+    """
+
+    # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
+    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+    uu.log_subprocess_output_full(cmd)
+
+    pd.options.mode.chained_assignment = None
+
+    # Imports the table with the ecozone-continent codes and the carbon removals rates
+    gain_table = pd.read_excel(f'{cn.docker_base_dir}{cn.gain_spreadsheet}',
+                               sheet_name="mangrove gain, for model")
+
+    # Removes rows with duplicate codes (N. and S. America for the same ecozone)
+    gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+
+    return gain_table_simplified
+
 
 def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet,  subtropical):
     """
