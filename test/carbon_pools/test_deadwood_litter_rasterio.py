@@ -35,7 +35,7 @@ def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_bioma
                   cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year}
 
     for key, value in input_dict.items():
-        uu.make_test_tile("00N_000E", key, value, "top_005deg", cn.test_data_dir, 0, -0.005, 10, 0)
+        uu.make_test_tile("00N_000E", key, value, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
 
     out_tests = glob.glob('test_data/tmp_out/*.tif')
     for f in out_tests:
@@ -44,15 +44,15 @@ def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_bioma
 
     # arrange
     def fake_impl_sensit_tile_rename(sensit_type, tile_id, raw_pattern):
-        return f"test_data/{tile_id}_{raw_pattern}_top_005deg.tif"
+        return f"test_data/{tile_id}_{raw_pattern}_{cn.pattern_test_suffix}.tif"
     sensit_tile_rename_fake.side_effect = fake_impl_sensit_tile_rename
 
     def fake_impl_sensit_tile_rename_biomass(sensit_type, tile_id):
-        return f"test_data/{tile_id}_t_aboveground_biomass_ha_2000_top_005deg.tif"
+        return f"test_data/{tile_id}_t_aboveground_biomass_ha_2000_{cn.pattern_test_suffix}.tif"
     sensit_tile_rename_biomass_fake.side_effect = fake_impl_sensit_tile_rename_biomass
 
     def fake_impl_make_tile_name(tile_id, out_pattern):
-        return f"test_data/tmp_out/{tile_id}_{out_pattern}_top_005deg.tif"
+        return f"test_data/tmp_out/{tile_id}_{out_pattern}_{cn.pattern_test_suffix}.tif"
     make_tile_name_fake.side_effect = fake_impl_make_tile_name
 
     # act

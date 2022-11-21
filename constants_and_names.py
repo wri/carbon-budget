@@ -119,8 +119,6 @@ docker_tmp = '/usr/local/tmp'
 
 docker_app = '/usr/local/app'
 
-test_data_dir = '/usr/local/app/test/test_data/'
-
 c_emis_compile_dst = '{0}/emissions/cpp_util'.format(docker_app)
 
 # Model log
@@ -711,6 +709,11 @@ pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
 stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200828/')
 
 
+### Testing materials
+######
+
+test_data_dir = '/usr/local/app/test/test_data/'
+pattern_test_suffix= "top_005deg"
 
 ### Sensitivity analysis
 ######
