@@ -19,12 +19,23 @@ pytestmark = pytest.mark.integration
 @patch("universal_util.upload_log")
 def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake):
 
-    deadwood_litter_inputs = [cn.pattern_mangrove_biomass_2000, cn.pattern_cont_eco_processed,
+    input_dir_list = [cn.mangrove_biomass_2000_dir, cn.cont_eco_dir,
+                      cn.precip_processed_dir, cn.elevation_processed_dir, cn.bor_tem_trop_processed_dir,
+                      cn.WHRC_biomass_2000_unmasked_dir, cn.AGC_emis_year_dir]
+    input_pattern_list = [cn.pattern_mangrove_biomass_2000, cn.pattern_cont_eco_processed,
                                 cn.pattern_precip, cn.pattern_elevation, cn.pattern_bor_tem_trop_processed,
                                 cn.pattern_WHRC_biomass_2000_unmasked, cn.pattern_AGC_emis_year]
 
-    for pattern in deadwood_litter_inputs:
-        uu.make_test_tile("00N_000E", pattern, "top_005deg", cn.test_data_dir, 0, -0.005, 10, 0)
+    input_dict = {cn.mangrove_biomass_2000_dir: cn.pattern_mangrove_biomass_2000,
+                  cn.cont_eco_dir: cn.pattern_cont_eco_processed,
+                  cn.precip_processed_dir: cn.pattern_precip,
+                  cn.elevation_processed_dir: cn.pattern_elevation,
+                  cn.bor_tem_trop_processed_dir: cn.pattern_bor_tem_trop_processed,
+                  cn.WHRC_biomass_2000_unmasked_dir: cn.pattern_WHRC_biomass_2000_unmasked,
+                  cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year}
+
+    for key, value in input_dict.items():
+        uu.make_test_tile("00N_000E", key, value, "top_005deg", cn.test_data_dir, 0, -0.005, 10, 0)
 
     out_tests = glob.glob('test_data/tmp_out/*.tif')
     for f in out_tests:
