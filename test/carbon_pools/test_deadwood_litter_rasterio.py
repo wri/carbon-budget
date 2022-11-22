@@ -69,6 +69,13 @@ def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_bioma
     # Makes tiles in specified test area
     uu.make_test_tiles("00N_000E", input_dict, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
 
+    # Dictionary of tiles previously made for this step, for comparison
+    comparison_dict = {cn.deadwood_emis_year_2000_dir: cn.pattern_deadwood_emis_year_2000,
+                  cn.litter_emis_year_2000_dir: cn.pattern_litter_emis_year_2000}
+
+    # Makes comparison tiles in specified test area
+    uu.make_test_tiles("00N_000E", comparison_dict, f'comparison_{cn.pattern_test_suffix}', cn.test_data_dir, 0, -0.005, 10, 0)
+
     # Deletes outputs of previous run if they exist
     print(delete_old_outputs)
 
