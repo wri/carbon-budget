@@ -1,6 +1,8 @@
 import glob
+import numpy as np
 import os
 import pytest
+import rasterio
 import universal_util as uu
 import constants_and_names as cn
 from unittest.mock import patch
@@ -46,6 +48,14 @@ def create_litter_dictionary():
                                                         cn.litter_to_above_subtrop_mang)
 
     return mang_litter_AGB_ratio
+
+
+# https://github.com/rasterio/rasterio/issues/1107
+def rasters_equal(fn1, fn2):
+    arr1 = rasterio.open(fn1).read()
+    arr2 = rasterio.open(fn2).read()
+    return np.all(arr1 == arr2)
+
 
 
 # @pytest.mark.xfail
@@ -99,10 +109,25 @@ def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_bioma
     make_tile_name_fake.side_effect = fake_impl_make_tile_name
 
     # act
-    result = create_deadwood_litter(tile_id="00N_000E",
-                                    mang_deadwood_AGB_ratio=deadwood_dict,
-                                    mang_litter_AGB_ratio=litter_dict,
-                                    carbon_pool_extent=['loss'])
+    create_deadwood_litter(tile_id="00N_000E",
+                            mang_deadwood_AGB_ratio=deadwood_dict,
+                            mang_litter_AGB_ratio=litter_dict,
+                            carbon_pool_extent=['loss'])
+
+    # print(rasters_equal(f'{cn.test_data_dir}00N_000E_Mg_deadwood_C_ha_emis_year_2000_comparison_top_005deg.tif',
+                  # f'{cn.test_data_dir}tmp_out/00N_000E_Mg_litter_C_ha_emis_year_2000_top_005deg.tif'))
+
+    fn1= f'{cn.test_data_dir}00N_000E_Mg_deadwood_C_ha_emis_year_2000_comparison_top_005deg.tif'
+    fn2= f'{cn.test_data_dir}tmp_out/00N_000E_Mg_deadwood_C_ha_emis_year_2000_top_005deg.tif'
+
+    arr1 = rasterio.open(fn1).read()
+    arr2 = rasterio.open(fn2).read()
+
 
     #assert
-    assert result == "emissions"
+    # assert rasters_equal(f'{cn.test_data_dir}00N_000E_Mg_deadwood_C_ha_emis_year_2000_comparison_top_005deg.tif',
+    #                      f'{cn.test_data_dir}tmp_out/00N_000E_Mg_deadwood_C_ha_emis_year_2000_top_005deg.tif')
+
+    np.testing.assert_equal(arr1,arr2,verbose=False)
+
+    # np.testing.assert_allclose(1.12543,1.13543,rtol=1e-5, atol=0)

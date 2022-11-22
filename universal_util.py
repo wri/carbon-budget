@@ -1466,12 +1466,7 @@ def rewindow(tile_id, download_pattern_name):
 # Makes tiles of specified size for testing purposes using vsis3 (rather than downloading full rasters to Docker instance)
 def make_test_tiles(tile_id, input_dict, test_suffix, out_dir, xmin, ymin, xmax, ymax):
 
-    print("here")
-
     for key, pattern in input_dict.items():
-
-        print(key)
-        print(pattern)
 
         # Directory for vsis3 for input file
         s3_dir = f'{key}'[5:]
@@ -1490,4 +1485,7 @@ def make_test_tiles(tile_id, input_dict, test_suffix, out_dir, xmin, ymin, xmax,
                '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
                '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', in_file, out_file]
         log_subprocess_output_full(cmd)
+
+
+# def make_test_arrays_and_difference(raster1, raster2):
 
