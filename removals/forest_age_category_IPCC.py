@@ -162,6 +162,8 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
 
             # For every model version except legal_Amazon_loss sensitivity analysis, which has its own rules about age assignment
 
+            #### Try using this in the future: https://gis.stackexchange.com/questions/419445/comparing-two-rasters-based-on-a-complex-set-of-rules
+
             if cn.SENSIT_TYPE != 'legal_Amazon_loss':
                 # No change pixels- no loss or gain
                 if tropics == 0:

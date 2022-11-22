@@ -11,14 +11,14 @@ from carbon_pools.create_carbon_pools import prepare_gain_table, create_deadwood
 pytestmark = pytest.mark.integration
 
 # run from /usr/local/app/test
-# pytest -m integration
+# pytest -m integration -s
 # Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
 
 # Deletes outputs of previous run if they exist
 @pytest.fixture
 def delete_old_outputs():
 
-    out_tests = glob.glob(f'{cn.test_data_dir}tmp_out/*.tif')
+    out_tests = glob.glob(f'{cn.test_data_out_dir}*.tif')
     for f in out_tests:
         os.remove(f)
         print(f"Deleted {f}")
@@ -50,23 +50,17 @@ def create_litter_dictionary():
     return mang_litter_AGB_ratio
 
 
-# https://github.com/rasterio/rasterio/issues/1107
-def rasters_equal(fn1, fn2):
-    arr1 = rasterio.open(fn1).read()
-    arr2 = rasterio.open(fn2).read()
-    return np.all(arr1 == arr2)
-
-
-
 # @pytest.mark.xfail
 @patch("universal_util.sensit_tile_rename")
 @patch("universal_util.sensit_tile_rename_biomass")
 @patch("universal_util.make_tile_name")
 @patch("universal_util.upload_log")
-def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake,
+def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake,
                  delete_old_outputs, create_deadwood_dictionary, create_litter_dictionary):
 
-    # arrange
+    tile_id = "00N_000E"
+
+    ### arrange
     # Dictionary of tiles needed for test
     input_dict = {cn.mangrove_biomass_2000_dir: cn.pattern_mangrove_biomass_2000,
                   cn.cont_eco_dir: cn.pattern_cont_eco_processed,
@@ -77,14 +71,14 @@ def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_bioma
                   cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year}
 
     # Makes tiles in specified test area
-    uu.make_test_tiles("00N_000E", input_dict, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
+    uu.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
 
     # Dictionary of tiles previously made for this step, for comparison
     comparison_dict = {cn.deadwood_emis_year_2000_dir: cn.pattern_deadwood_emis_year_2000,
                   cn.litter_emis_year_2000_dir: cn.pattern_litter_emis_year_2000}
 
     # Makes comparison tiles in specified test area
-    uu.make_test_tiles("00N_000E", comparison_dict, f'comparison_{cn.pattern_test_suffix}', cn.test_data_dir, 0, -0.005, 10, 0)
+    uu.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
 
     # Deletes outputs of previous run if they exist
     print(delete_old_outputs)
@@ -108,26 +102,38 @@ def test_it_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_bioma
         return f"test_data/tmp_out/{tile_id}_{out_pattern}_{cn.pattern_test_suffix}.tif"
     make_tile_name_fake.side_effect = fake_impl_make_tile_name
 
-    # act
-    create_deadwood_litter(tile_id="00N_000E",
+    ### act
+    # Creates the fragment output tiles
+    create_deadwood_litter(tile_id=tile_id,
                             mang_deadwood_AGB_ratio=deadwood_dict,
                             mang_litter_AGB_ratio=litter_dict,
                             carbon_pool_extent=['loss'])
 
-    # print(rasters_equal(f'{cn.test_data_dir}00N_000E_Mg_deadwood_C_ha_emis_year_2000_comparison_top_005deg.tif',
-                  # f'{cn.test_data_dir}tmp_out/00N_000E_Mg_litter_C_ha_emis_year_2000_top_005deg.tif'))
+    ### assert for deadwood
+    # The original and new rasters that need to be compared
+    original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'
+    new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_test_suffix}.tif'
 
-    fn1= f'{cn.test_data_dir}00N_000E_Mg_deadwood_C_ha_emis_year_2000_comparison_top_005deg.tif'
-    fn2= f'{cn.test_data_dir}tmp_out/00N_000E_Mg_deadwood_C_ha_emis_year_2000_top_005deg.tif'
+    # Converts the original and new rasters into numpy arrays for comparison.
+    # Also creates a difference raster for visualization (not used in testing).
+    # original_raster is from the previous run of the model. new_raster is the developmental version.
+    array_original, array_new, difference = uu.make_test_arrays_and_difference(original_raster, new_raster,
+                                                                        tile_id, cn.pattern_deadwood_emis_year_2000)
 
-    arr1 = rasterio.open(fn1).read()
-    arr2 = rasterio.open(fn2).read()
+    # https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_equal.html#numpy.testing.assert_equal
+    np.testing.assert_equal(array_original, array_new)
 
+    ### assert for litter
+    # The original and new rasters that need to be compared
+    original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'
+    new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_test_suffix}.tif'
 
-    #assert
-    # assert rasters_equal(f'{cn.test_data_dir}00N_000E_Mg_deadwood_C_ha_emis_year_2000_comparison_top_005deg.tif',
-    #                      f'{cn.test_data_dir}tmp_out/00N_000E_Mg_deadwood_C_ha_emis_year_2000_top_005deg.tif')
+    # Converts the original and new rasters into numpy arrays for comparison.
+    # Also creates a difference raster for visualization (not used in testing).
+    # original_raster is from the previous run of the model. new_raster is the developmental version.
+    array_original, array_new, difference = uu.make_test_arrays_and_difference(original_raster, new_raster,
+                                                                        tile_id, cn.pattern_litter_emis_year_2000)
 
-    np.testing.assert_equal(arr1,arr2,verbose=False)
+    # https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_equal.html#numpy.testing.assert_equal
+    np.testing.assert_equal(array_original, array_new)
 
-    # np.testing.assert_allclose(1.12543,1.13543,rtol=1e-5, atol=0)
