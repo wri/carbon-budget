@@ -20,7 +20,7 @@ def delete_old_outputs():
 
 
 # Makes mangrove deadwood:AGC dictionary for different continent-ecozone combinations
-@pytest.fixture
+@pytest.fixture(scope='session')
 def create_deadwood_dictionary():
 
     gain_table_simplified = prepare_gain_table()
@@ -34,7 +34,7 @@ def create_deadwood_dictionary():
 
 
 # Makes mangrove litter:AGC dictionary for different continent-ecozone combinations
-@pytest.fixture
+@pytest.fixture(scope='session')
 def create_litter_dictionary():
 
     gain_table_simplified = prepare_gain_table()

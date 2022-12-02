@@ -55,10 +55,11 @@ def assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id,
         dsm_meta = src.profile
 
     diff_saved = f'{cn.test_data_out_dir}{tile_id}_{pattern}_{cn.pattern_test_suffix}_difference.tif'
-    print(diff_saved)
 
     with rasterio.open(diff_saved, 'w', **dsm_meta) as diff_out:
         diff_out.write(difference)
 
     # https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_equal.html#numpy.testing.assert_equal
     np.testing.assert_equal(array_original, array_new)
+
+    print('\n')
