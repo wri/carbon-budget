@@ -6,48 +6,13 @@ import rasterio
 import universal_util as uu
 import constants_and_names as cn
 from unittest.mock import patch
-from carbon_pools.create_carbon_pools import prepare_gain_table, create_deadwood_litter, mangrove_pool_ratio_dict
+from carbon_pools.create_carbon_pools import create_deadwood_litter
 
 pytestmark = pytest.mark.integration
 
 # run from /usr/local/app/test
 # pytest -m integration -s
 # Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
-
-# Deletes outputs of previous run if they exist
-@pytest.fixture
-def delete_old_outputs():
-
-    out_tests = glob.glob(f'{cn.test_data_out_dir}*.tif')
-    for f in out_tests:
-        os.remove(f)
-        print(f"Deleted {f}")
-
-# Makes mangrove deadwood:AGC dictionary for different continent-ecozone combinations
-@pytest.fixture
-def create_deadwood_dictionary():
-
-    gain_table_simplified = prepare_gain_table()
-
-    mang_deadwood_AGB_ratio = mangrove_pool_ratio_dict(gain_table_simplified,
-                                                        cn.deadwood_to_above_trop_dry_mang,
-                                                        cn.deadwood_to_above_trop_wet_mang,
-                                                        cn.deadwood_to_above_subtrop_mang)
-
-    return mang_deadwood_AGB_ratio
-
-# Makes mangrove litter:AGC dictionary for different continent-ecozone combinations
-@pytest.fixture
-def create_litter_dictionary():
-
-    gain_table_simplified = prepare_gain_table()
-
-    mang_litter_AGB_ratio = mangrove_pool_ratio_dict(gain_table_simplified,
-                                                        cn.litter_to_above_trop_dry_mang,
-                                                        cn.litter_to_above_trop_wet_mang,
-                                                        cn.litter_to_above_subtrop_mang)
-
-    return mang_litter_AGB_ratio
 
 
 # @pytest.mark.xfail
@@ -112,7 +77,7 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     ### assert for deadwood
     # The original and new rasters that need to be compared
     original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'
-    new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_test_suffix}.tif'
+    new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_test_suffix}.tif'
 
     # Converts the original and new rasters into numpy arrays for comparison.
     # Also creates a difference raster for visualization (not used in testing).
