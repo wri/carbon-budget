@@ -6,9 +6,6 @@ import rasterio
 import universal_util as uu
 import constants_and_names as cn
 
-def quick_test():
-    uu.print_log(f"hello quick test")
-
 # Makes test tile fragments of specified size for testing purposes using vsis3 (rather than downloading full rasters to Docker instance)
 def make_test_tiles(tile_id, input_dict, test_suffix, out_dir, xmin, ymin, xmax, ymax):
 
