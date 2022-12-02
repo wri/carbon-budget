@@ -80,7 +80,12 @@ pytestmark = pytest.mark.integration
 def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake,
                  delete_old_outputs, create_deadwood_dictionary, create_litter_dictionary, test_input):
 
+    # tile_id for testing and the extent that should be tested within it
     tile_id = "00N_000E"
+    xmin = 0
+    ymin = -0.005
+    xmax = 10
+    ymax = 0
 
     ### arrange
     # Dictionary of tiles needed for test
@@ -93,14 +98,16 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
                   cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year}
 
     # Makes tiles in specified test area
-    th.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
+    # th.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
+    th.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
 
     # Dictionary of tiles previously made for this step, for comparison
     comparison_dict = {cn.deadwood_emis_year_2000_dir: cn.pattern_deadwood_emis_year_2000,
                   cn.litter_emis_year_2000_dir: cn.pattern_litter_emis_year_2000}
 
     # Makes comparison tiles in specified test area
-    th.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
+    # th.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
+    th.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
 
     # Deletes outputs of previous run if they exist.
     # Only runs before first parametrized run to avoid deleting the difference raster created from previous parametrizations
@@ -135,15 +142,12 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
 
     ### assert
     # The original and new rasters that need to be compared
-    # original_raster = f'{cn.test_data_dir}{tile_id}_{test_input}_{cn.pattern_comparison_suffix}.tif'
-    original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'
+    original_raster = f'{cn.test_data_dir}{tile_id}_{test_input}_{cn.pattern_comparison_suffix}.tif'
+    # original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'  # For forcing failure of litter test (compares litter to deadwood)
     new_raster = f'{cn.test_data_out_dir}{tile_id}_{test_input}_{cn.pattern_test_suffix}.tif'
-    # new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_test_suffix}.tif'
+    # new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_test_suffix}.tif'   # For forcing failure of deadwood test (compares deadwood to litter)
 
     # # Converts the original and new rasters into numpy arrays for comparison.
     # # Also creates a difference raster for visualization (not used in testing).
     # # original_raster is from the previous run of the model. new_raster is the developmental version.
     th.assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id, test_input)
-
-
-
