@@ -82,8 +82,6 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
 
     tile_id = "00N_000E"
 
-    th.quick_test()
-
     ### arrange
     # Dictionary of tiles needed for test
     input_dict = {cn.mangrove_biomass_2000_dir: cn.pattern_mangrove_biomass_2000,
@@ -104,7 +102,8 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     # Makes comparison tiles in specified test area
     th.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
 
-    # Deletes outputs of previous run if they exist
+    # Deletes outputs of previous run if they exist.
+    # Only runs before first parametrized run to avoid deleting the difference raster created from previous parametrizations
     print(delete_old_outputs)
 
     # Makes mangrove deadwood:AGC and litter:AGC dictionaries for different continent-ecozone combinations
@@ -136,14 +135,15 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
 
     ### assert
     # The original and new rasters that need to be compared
-    original_raster = f'{cn.test_data_dir}{tile_id}_{test_input}_{cn.pattern_comparison_suffix}.tif'
-    # original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'
-    # new_raster = f'{cn.test_data_out_dir}{tile_id}_{test_input}_{cn.pattern_test_suffix}.tif'
-    new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_test_suffix}.tif'
+    # original_raster = f'{cn.test_data_dir}{tile_id}_{test_input}_{cn.pattern_comparison_suffix}.tif'
+    original_raster = f'{cn.test_data_dir}{tile_id}_{cn.pattern_deadwood_emis_year_2000}_{cn.pattern_comparison_suffix}.tif'
+    new_raster = f'{cn.test_data_out_dir}{tile_id}_{test_input}_{cn.pattern_test_suffix}.tif'
+    # new_raster = f'{cn.test_data_out_dir}{tile_id}_{cn.pattern_litter_emis_year_2000}_{cn.pattern_test_suffix}.tif'
 
     # # Converts the original and new rasters into numpy arrays for comparison.
     # # Also creates a difference raster for visualization (not used in testing).
     # # original_raster is from the previous run of the model. new_raster is the developmental version.
     th.assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id, test_input)
+
 
 
