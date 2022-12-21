@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from ...carbon_pools.create_carbon_pools import create_deadwood_litter, deadwood_litter_equations
+from carbon_pools.create_carbon_pools import create_deadwood_litter, deadwood_litter_equations
 
 
 

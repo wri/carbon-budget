@@ -4,8 +4,8 @@ services:
     build:
       context: .
     volumes:
-      - ./:/usr/local/app
+      - ./:/usr/local/carbon-budget
       - $HOME/.aws:/root/.aws:ro
       - C:/GIS/Carbon_model/test_tiles/docker_output/:/usr/local/tiles
-    working_dir: /usr/local/app
+    working_dir: /usr/local/carbon-budget
     entrypoint: /bin/bash

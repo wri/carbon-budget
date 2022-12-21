@@ -712,7 +712,7 @@ stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon
 ### Testing materials
 ######
 
-test_data_dir = '/usr/local/app/test/test_data/'
+test_data_dir = '/usr/local/carbon-budget/test/test_data/'
 test_data_out_dir = f'{test_data_dir}tmp_out/'
 pattern_test_suffix= 'top_005deg'
 pattern_comparison_suffix = f'comparison_{pattern_test_suffix}'

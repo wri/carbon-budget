@@ -4,7 +4,8 @@ import os
 import pytest
 import rasterio
 import sys
-sys.path.append('../')
+# sys.path.append('../')
+sys.path.append('/usr/local/app')
 import constants_and_names as cn
 from carbon_pools.create_carbon_pools import prepare_gain_table, mangrove_pool_ratio_dict
 
