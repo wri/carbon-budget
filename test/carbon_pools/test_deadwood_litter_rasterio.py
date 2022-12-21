@@ -11,8 +11,6 @@ from carbon_pools.create_carbon_pools import create_deadwood_litter
 
 import test.test_helpers as th
 
-# from test import test_helpers as th
-
 pytestmark = pytest.mark.integration
 
 # run from /usr/local/carbon-budget
