@@ -9,7 +9,8 @@ import constants_and_names as cn
 from unittest.mock import patch
 from carbon_pools.create_carbon_pools import create_deadwood_litter
 
-import test.test_helpers as th
+import test.test_utilities as tu
+
 
 pytestmark = pytest.mark.integration
 
@@ -46,14 +47,12 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
                   cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year}
 
     # Makes input tiles for process being tested in specified test area
-    # th.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
-    th.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
+    tu.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
 
     test_input_pattern = list(comparison_dict.values())[0]
 
     # Makes comparison tiles for output in specified test area
-    # th.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, 0, -0.005, 10, 0)
-    th.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
+    tu.make_test_tiles(tile_id, comparison_dict, cn.pattern_comparison_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
 
     # Deletes outputs of previous run if they exist.
     # Only runs before first parametrized run to avoid deleting the difference raster created from previous parametrizations
@@ -96,4 +95,4 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     # # Converts the original and new rasters into numpy arrays for comparison.
     # # Also creates a difference raster for visualization (not used in testing).
     # # original_raster is from the previous run of the model. new_raster is the developmental version.
-    th.assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id, test_input_pattern)
+    tu.assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id, test_input_pattern)

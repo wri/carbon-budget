@@ -170,7 +170,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
     # Formats the mangrove removal factor table from Excel
-    gain_table_simplified = prepare_gain_table()
+    gain_table_simplified = create_carbon_pools.prepare_gain_table()
 
     mang_BGB_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
                                                                       cn.below_to_above_trop_dry_mang,
