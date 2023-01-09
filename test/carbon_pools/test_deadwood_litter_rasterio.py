@@ -14,7 +14,7 @@ import test.test_utilities as tu
 
 pytestmark = pytest.mark.integration
 
-# run from /usr/local/carbon-budget
+# run from /usr/local/app
 # pytest -m integration -s
 # Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
 
