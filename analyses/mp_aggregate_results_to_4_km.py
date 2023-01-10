@@ -25,11 +25,11 @@ import argparse
 import os
 import glob
 import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'analyses'))
-import aggregate_results_to_4_km
+
+from . import aggregate_results_to_4_km
 
 
 def mp_aggregate_results_to_4_km(tile_id_list, thresh, std_net_flux = None):

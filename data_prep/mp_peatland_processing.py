@@ -8,16 +8,15 @@ Between 40N and 60S, SoilGrids250m is not used.
 
 
 import multiprocessing
-import peatland_processing
 import argparse
 from functools import partial
 import datetime
 import sys
 import os
 from subprocess import Popen, PIPE, STDOUT, check_call
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+from . import peatland_processing
 
 def mp_peatland_processing(tile_id_list, run_date = None):
 

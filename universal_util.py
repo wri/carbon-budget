@@ -294,7 +294,7 @@ def get_tile_type(tile_name):
     return tile_type
 
 
-# Gets the tile id from the full tile name using a regular expression
+# Gets the tile name from the full tile name using a regular expression
 def get_tile_name(tile):
 
     tile_name = os.path.split(tile)[1]
@@ -308,6 +308,12 @@ def get_tile_dir(tile):
     tile_dir = os.path.split(tile)[0]
 
     return tile_dir
+
+
+# Makes a complete tile name out of component tile id and pattern
+def make_tile_name(tile_id, pattern):
+
+    return f'{tile_id}_{pattern}.tif'
 
 
 # Lists the tiles in a folder in s3
@@ -1268,8 +1274,6 @@ def alter_patterns(sensit_type, raw_pattern_list):
 # Creates the correct input tile name for processing based on the sensitivity analysis being done
 def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
-    # print '{0}_{1}_{2}.tif'.format(tile_id, raw_pattern, sensit_type)
-
     # Uses whatever name of the tile is found on the spot machine
     if os.path.exists(f'{tile_id}_{raw_pattern}_{sensit_type}.tif'):
         processed_name = f'{tile_id}_{raw_pattern}_{sensit_type}.tif'
@@ -1278,6 +1282,18 @@ def sensit_tile_rename(sensit_type, tile_id, raw_pattern):
 
     return processed_name
 
+# Creates the correct input biomass tile name for processing based on the sensitivity analysis being done.
+# Because there are actual different input biomass tiles, this doesn't fit well within sensit_tile_rename().
+def sensit_tile_rename_biomass(sensit_type, tile_id):
+
+    if cn.SENSIT_TYPE == 'biomass_swap':
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
+        print_log(f'Using JPL biomass tile {tile_id} for {sensit_type} sensitivity analysis')
+    else:
+        natrl_forest_biomass_2000 = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
+        print_log(f'Using WHRC biomass tile {tile_id} for {sensit_type} model run')
+
+    return natrl_forest_biomass_2000
 
 # Determines what stages should actually be run
 def analysis_stages(stage_list, stage_input, run_through, sensit_type,
@@ -1443,3 +1459,6 @@ def rewindow(tile_id, download_pattern_name):
 
     # Prints information about the tile that was just processed
     end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name))
+
+
+

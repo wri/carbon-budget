@@ -13,11 +13,9 @@ import multiprocessing
 import os
 import sys
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'data_prep'))
-import model_extent
+from . import model_extent
 
 
 def mp_model_extent(tile_id_list):

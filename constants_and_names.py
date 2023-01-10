@@ -709,6 +709,13 @@ pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
 stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200828/')
 
 
+### Testing materials
+######
+
+test_data_dir = '/usr/local/app/test/test_data/'
+test_data_out_dir = f'{test_data_dir}tmp_out/'
+pattern_test_suffix= 'top_005deg'
+pattern_comparison_suffix = f'comparison_{pattern_test_suffix}'
 
 ### Sensitivity analysis
 ######

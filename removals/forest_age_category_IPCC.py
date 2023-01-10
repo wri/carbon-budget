@@ -36,19 +36,12 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
 
     uu.print_log(f'  Tile {tile_id} in tropics: {tropics}')
 
-    # Names of the input tilRes
+    # Names of the input tiles
     gain = f'{cn.pattern_gain}_{tile_id}.tif'
     model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
     ifl_primary = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_ifl_primary)
     cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
-
-    # Biomass tile name depends on the sensitivity analysis
-    if cn.SENSIT_TYPE == 'biomass_swap':
-        biomass = f'{tile_id}_{cn.pattern_JPL_unmasked_processed}.tif'
-        uu.print_log(f'Using JPL biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
-    else:
-        biomass = f'{tile_id}_{cn.pattern_WHRC_biomass_2000_unmasked}.tif'
-        uu.print_log(f'Using WHRC biomass tile for {cn.SENSIT_TYPE} sensitivity analysis')
+    biomass = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)  # Biomass tile name depends on the sensitivity analysis
 
     if cn.SENSIT_TYPE == 'legal_Amazon_loss':
         loss = f'{tile_id}_{cn.pattern_Brazil_annual_loss_processed}.tif'
@@ -168,6 +161,8 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
             # WITHOUT pre-2000 plantations
 
             # For every model version except legal_Amazon_loss sensitivity analysis, which has its own rules about age assignment
+
+            #### Try using this in the future: https://gis.stackexchange.com/questions/419445/comparing-two-rasters-based-on-a-complex-set-of-rules
 
             if cn.SENSIT_TYPE != 'legal_Amazon_loss':
                 # No change pixels- no loss or gain

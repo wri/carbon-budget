@@ -9,7 +9,6 @@ import datetime
 from functools import partial
 import os
 from subprocess import Popen, PIPE, STDOUT, check_call
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 

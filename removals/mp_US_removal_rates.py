@@ -41,14 +41,14 @@ import multiprocessing
 from functools import partial
 import datetime
 import argparse
-import US_removal_rates
 import pandas as pd
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
+from . import US_removal_rates
 
 def mp_US_removal_rates(tile_id_list):
 

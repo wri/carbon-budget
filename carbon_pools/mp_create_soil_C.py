@@ -15,7 +15,6 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 from subprocess import Popen, PIPE, STDOUT, check_call
-import create_soil_C
 from functools import partial
 import multiprocessing
 import datetime
@@ -23,9 +22,9 @@ import glob
 import argparse
 import os
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+from . import create_soil_C
 
 def mp_create_soil_C(tile_id_list, no_upload=None):
 

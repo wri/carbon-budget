@@ -30,7 +30,7 @@ def net_calc(tile_id, pattern):
     emissions_in = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil)
 
     # Output net emissions file
-    net_flux = f'{tile_id}_{pattern}.tif'
+    net_flux = uu.make_tile_name(tile_id, pattern)
 
     try:
         removals_src = rasterio.open(removals_in)

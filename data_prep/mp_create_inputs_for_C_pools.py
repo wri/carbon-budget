@@ -7,12 +7,11 @@ from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import argparse
 import datetime
-import create_inputs_for_C_pools
 import multiprocessing
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+from . import create_inputs_for_C_pools
 
 def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None):
 

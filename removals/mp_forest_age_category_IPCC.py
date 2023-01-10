@@ -19,11 +19,9 @@ import multiprocessing
 import os
 import sys
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'removals'))
-import forest_age_category_IPCC
+from . import forest_age_category_IPCC
 
 def mp_forest_age_category_IPCC(tile_id_list):
     """

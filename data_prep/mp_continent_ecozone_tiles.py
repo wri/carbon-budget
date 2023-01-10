@@ -17,15 +17,14 @@
 
 
 import multiprocessing
-import continent_ecozone_tiles
 from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import argparse
 import os
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+from . import continent_ecozone_tiles
 
 def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 

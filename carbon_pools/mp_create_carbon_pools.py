@@ -30,11 +30,9 @@ import os
 import pandas as pd
 import sys
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
-import create_carbon_pools
+from . import create_carbon_pools
 
 def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     """
@@ -169,34 +167,23 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
-    # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
-    # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
-    uu.log_subprocess_output_full(cmd)
-
-    pd.options.mode.chained_assignment = None
-
-    # Imports the table with the ecozone-continent codes and the carbon removals rates
-    gain_table = pd.read_excel(f'{cn.gain_spreadsheet}',
-                               sheet_name="mangrove gain, for model")
-
-    # Removes rows with duplicate codes (N. and S. America for the same ecozone)
-    gain_table_simplified = gain_table.drop_duplicates(subset='gainEcoCon', keep='first')
+    # Formats the mangrove removal factor table from Excel
+    gain_table_simplified = create_carbon_pools.prepare_gain_table()
 
     mang_BGB_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
-                                                                                         cn.below_to_above_trop_dry_mang,
-                                                                                         cn.below_to_above_trop_wet_mang,
-                                                                                         cn.below_to_above_subtrop_mang)
+                                                                      cn.below_to_above_trop_dry_mang,
+                                                                      cn.below_to_above_trop_wet_mang,
+                                                                      cn.below_to_above_subtrop_mang)
 
     mang_deadwood_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
-                                                                                              cn.deadwood_to_above_trop_dry_mang,
-                                                                                              cn.deadwood_to_above_trop_wet_mang,
-                                                                                              cn.deadwood_to_above_subtrop_mang)
+                                                                           cn.deadwood_to_above_trop_dry_mang,
+                                                                           cn.deadwood_to_above_trop_wet_mang,
+                                                                           cn.deadwood_to_above_subtrop_mang)
 
     mang_litter_AGB_ratio = create_carbon_pools.mangrove_pool_ratio_dict(gain_table_simplified,
-                                                                                            cn.litter_to_above_trop_dry_mang,
-                                                                                            cn.litter_to_above_trop_wet_mang,
-                                                                                            cn.litter_to_above_subtrop_mang)
+                                                                         cn.litter_to_above_trop_dry_mang,
+                                                                         cn.litter_to_above_trop_wet_mang,
+                                                                         cn.litter_to_above_subtrop_mang)
 
     uu.print_log(f'Creating tiles of aboveground carbon in {carbon_pool_extent}')
 
