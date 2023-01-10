@@ -22,11 +22,11 @@ import argparse
 import os
 import glob
 import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'analyses'))
-import create_supplementary_outputs
+
+from . import create_supplementary_outputs
 
 def mp_create_supplementary_outputs(tile_id_list):
 

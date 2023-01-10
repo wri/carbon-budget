@@ -1,16 +1,16 @@
 ## Global forest carbon flux model
 
 ### Purpose and scope
-This model maps gross annual greenhouse gas emissions from forests, 
+This model maps gross greenhouse gas emissions from forests, 
 gross carbon removals (sequestration) by forests, and the difference between them 
 (net flux), all between 2001 and 2021. 
-Gross emissions includes CO2, NH4, and N20 and all carbon pools (abovegroung biomass, belowground biomass, 
+Gross emissions includes CO2, NH4, and N20 and all carbon pools (aboveground biomass, belowground biomass, 
 dead wood, litter, and soil), and gross removals includes removals into aboveground and belowground biomass carbon. 
-Although the model is run for all tree canopy densities (per Hansen et al. 2013), it is most relevant to
+Although the model is run for all tree canopy densities in 2000 (per Hansen et al. 2013), it is most relevant to
 pixels with canopy density >30% in 2000 or pixels which subsequently had tree cover gain (per Hansen et al. 2013).
-It covers planted forests in most of the world, mangroves, and non-mangrove natural forests, and excludes palm oil plantations that existed more than 20 years ago.
+It covers planted forests in most of the world, mangroves, and non-mangrove natural forests, and excludes palm oil plantations that existed more than 20 years ago in Indonesia.
 It essentially spatially applies IPCC national greenhouse gas inventory rules (2016 guidelines) for forests.
-It covers only forests converting to non-forests, non-forests converted to forests and forests remaining forests (no other land 
+It covers only forests converted to non-forests, non-forests converted to forests and forests remaining forests (no other land 
 use transitions). The model is described and published in Harris et al. (2021) Nature Climate Change
 "Global maps of twenty-first century forest carbon fluxes" (https://www.nature.com/articles/s41558-020-00976-6).
 Although the published model covered 2001-2019, the same methods were used to update the model to include 2021.  
@@ -23,13 +23,12 @@ sequestration) factors (e.g., mangroves, planted forests, natural forests), whic
 Spatial data include annual tree cover loss, biomass densities in 2000, drivers of tree cover loss, 
 ecozones, tree cover extent in 2000, elevation, etc. Different inputs are needed for different
 steps in the model. This repository includes scripts for processing all of the needed inputs. 
-Many inputs can be processed the same way (e.g., many rasters can be processed using the same gdal function) but some need special treatment.
-The input processing scripts are scattered among almost all the folders, unfortunately, a historical legacy of how I built this out
-which I haven't fixed. The data prep scripts are generally in the folder for which their outputs are most relevant.
+Many inputs can be processed the same way (e.g., many rasters can be processed using the same `gdal` function) but some need special treatment.
+The input processing scripts are mostly in the `data_prep` folder but a few are unfortunately in other folders. 
 
 Inputs can either be downloaded from AWS s3 storage or used if found locally in the folder `/usr/local/tiles/` in the Docker container
-(see below for more on the Docker container).
-The model looks for files locally before downloading them. 
+in which the model runs (see below for more on the Docker container).
+The model looks for files locally before downloading them in order to save time. 
 The model can still be run without AWS credentials; inputs will be downloaded from s3 but outputs will not be uploaded to s3.
 In that case, outputs will only be stored locally.
 
@@ -46,7 +45,7 @@ For example, users can examine it to see if the correct input tiles were downloa
 Output rasters and model logs are uploaded to s3 unless the `--no-upload` flag (`-nu`) is activated as a command line argument
 or no AWS s3 credentials are supplied to the Docker container.
 When either of these happens, neither raster outputs nor logs are uploaded to s3. This is good for local test runs or versions
-of the model that are independent of s3 (that is, inputs are stored locally and no on s3, and the user does not have 
+of the model that are independent of s3 (that is, inputs are stored locally and not on s3, and the user does not have 
 a connection to s3 storage or s3 credentials).
 
 #### 30-m output rasters
@@ -58,8 +57,7 @@ but removals and net flux are cumulative over the entire model run and cannot be
 This 30-m output is in megagrams (Mg) CO2e/ha 2001-2021 (i.e. densities) and includes all tree cover densities ("full extent"):
 `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`.
 However, the model is designed to be used specifically for forests, so the model creates three derivative 30-m
-outputs for each key output (gross emissions, gross removals, net flux) as well 
-(only for the standard model, not for sensitivity analyses):
+outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard model, not for sensitivity analyses):
 
 1) Per pixel values for the full model extent (all tree cover densities): 
    `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
@@ -103,23 +101,26 @@ Net flux at both scales can be positive or negative depending on the balance of 
 
 ### Running the model
 The model runs from the command line inside a Linux Docker container. 
-Once you have Docker configured on your system, have cloned this repository, 
-and have configured access to AWS (if desired, or have the input files stored in the correct local folder), 
-you will be able to run the model. 
+Once you have Docker configured on your system (download from Docker website), 
+have cloned this repository (on the command line in the folder you want to clone to, `git clone https://github.com/wri/carbon-budget`), 
+and have configured access to AWS (if desired), you will be able to run the model. 
+You can run the model anywhere that the Docker container can be launched. That includes local computers (good for 
+running test areas) and AWS ec2 instances (good for larger areas/global runs). 
 
 There are two ways to run the model: as a series of individual scripts, or from a master script, which runs the individual scripts sequentially.
 Which one to use depends on what you are trying to do. Generally, the individual scripts (which correspond to specific model stages) are
 more appropriate for development and testing, while the master script is better for running
-the main part of the model from start to finish in one go. In either case, the code must be cloned from this repository
-(on the command line in the folder you want to clone to, `git clone https://github.com/wri/carbon-budget`).
+the main part of the model from start to finish in one go. In either case, the code must be cloned from this repository.
 Run globally, both options iterate through a list of ~275 10 x 10 degree tiles. (Different model stages have different numbers of tiles.)
 Run all tiles in the model extent fully through one model stage before starting on the next stage. 
 (The master script does this automatically.) If a user wants to run the model on just one or a few tiles, 
 that can be done through a command line argument (`--tile-id-list` or `-l`). 
 If individual tiles are listed, only those will be run. This is a natural system for testing or for
-running the model for individual countries. You can see the tile boundaries in pixel_area_tile_footprints.zip.
+running the model for smaller areas. You can see the tile boundaries in pixel_area_tile_footprints.zip in this repo.
 For example, to run the model for Madagascar, only tiles 10S_040E, 10S_050E, and 20S_040E need to be run and the
 command line argument would be `-l 10S_040E,10S_050E,20S_040E`. 
+
+#### Building the Docker container
 
 You can do the following on the command line in the same folder as the repository on your system.
 This will enter the command line in the Docker container
@@ -146,7 +147,7 @@ on your computer:
 
 For runs on an AWS r5d spot machine (for full model runs), use `docker build`. 
 You need to supply AWS credentials for the model to work because otherwise you won't be able to get 
-output tiles off of the spot machine.
+output tiles off of the spot machine and you will lose your outputs when you terminate the spot machine.
 
 `docker build . -t gfw/carbon-budget`
 
@@ -172,7 +173,7 @@ Users can track memory usage in realtime using the `htop` command line utility i
 
 #### Individual scripts
 The flux model is comprised of many separate scripts (or stages), each of which can be run separately and
-has its own inputs and output(s). Combined, these comprise the flux model. There are several data preparation
+has its own inputs and output(s). There are several data preparation
 scripts, several for the removals (sequestration/gain) model, a few to generate carbon pools, one for calculating
 gross emissions, one for calculating net flux, one for aggregating key results into coarser 
 resolution rasters for mapping, and one for creating per-pixel and forest-extent outputs (supplementary outputs). 
@@ -188,6 +189,14 @@ run. Alternatively, you can look at the top of `run_full_model.py` to see the or
 The date component of the output directory on s3 generally must be changed in `constants_and_names.py`
 for each output file. 
 
+Model stages are run from the project folder as Python modules: `/usr/local/app# python -m [folder.script] [arguments]`
+
+For example: 
+
+Model extent stage: `/usr/local/app# python -m data_prep.mp_model_extent -l 00N_000E -t std -nu`
+
+Carbon pool creation stage: `/usr/local/app# python -m carbon_pools.mp_create_carbon_pools -l 00N_000E,10S_050W -t std -ce loss -d 20239999`
+
 ##### Running the emissions model
 The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.
 There are a few different versions of the emissions script: one for the standard model and a few other for
@@ -200,11 +209,13 @@ For the standard model and the sensitivity analyses that don't specifically affe
 
 `c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal`
 
+Emissions stage: `/usr/local/app# python -m emissions.mp_calculate_gross_emissions -l 30N_090W,10S_010E -t std -p biomass_soil -d 20239999`
+
 #### Master script 
 The master script runs through all of the non-preparatory scripts in the model: some removal factor creation, gross removals, carbon
 pool generation, gross emissions, net flux, aggregation, and supplementary output creation. 
-It includes all the arguments needed to run
-every script. Thus, the table below also explains the potential arguments for the individual model stages. 
+It includes all the arguments needed to run every script. 
+Thus, the table below also explains the potential arguments for the individual model stages. 
 The user can control what model components are run to some extent and set the date part of 
 the output directories. The emissions C++ code has to be be compiled before running the master script (see below).
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
@@ -229,38 +240,39 @@ they are run very infrequently.
 | `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag. |
 
 These are some sample commands for running the flux model in various configurations. You wouldn't necessarily want to use all of these;
-they simply illustrate different configurations for the command line arguments.
+they simply illustrate different configurations for the command line arguments. 
+Like the individual model stages, the full model run script is also run from the project folder with the `-m` flag.
 
 Run 00N_000E in standard model; save intermediate outputs; upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil:
 
-`python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`
+`python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`
 
 Run 00N_110E in standard model; save intermediate outputs; don't upload outputs to s3;
 start at forest_age_category_IPCC step; run all stages after that; get carbon pools at time of loss; emissions from biomass and soil:
 
-`python run_full_model.py -si -nu -t std -s forest_age_category_IPCC -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`
+`python -m run_full_model -si -nu -t std -s forest_age_category_IPCC -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`
 
 Run 00N_000E and 00N_110E in standard model; don't save intermediate outputs; do upload outputs to s3;
 run model_extent step; don't run sunsequent steps (no `-r` flag); run mangrove step beforehand:
 
-`python run_full_model.py -t std -s model_extent -d 20229999 -l 00N_000E,00N_110E -ma -ln "Two tile test"`
+`python -m run_full_model -t std -s model_extent -d 20229999 -l 00N_000E,00N_110E -ma -ln "Two tile test"`
 
 Run 00N_000E, 00N_110E, and 30N_090W in standard model; save intermediate outputs; do upload outputs to s3;
 start at gross_emissions step; run all stages after that; emissions from soil only:
 
-`python run_full_model.py -si -t std -s gross_emissions -r -d 20229999 -l 00N_000E,00N_110E,30N_090W -p soil_only -tcd 30 -ln "Three tile test"`
+`python -m run_full_model -si -t std -s gross_emissions -r -d 20229999 -l 00N_000E,00N_110E,30N_090W -p soil_only -tcd 30 -ln "Three tile test"`
 
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
 run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil:
 
-`python run_full_model.py -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Run all tiles"`
+`python -m run_full_model -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Run all tiles"`
 
 Run three tiles in biomass_swap sensitivity analysis; don't upload intermediates (forces saving of intermediate outputs);
 run model_extent stage; don't continue after that stage (no run-through); get carbon pools at time of loss; emissions from biomass and soil;
 compare aggregated outputs to specified file (although not used in this specific launch because only the first step runs):
 
-`python run_full_model.py -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
+`python -m run_full_model -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
 
 
 ### Sensitivity analysis
@@ -340,6 +352,14 @@ A standard development route is:
 
 Depending on the complexity of the changes being made, some of these steps can be ommitted. Or if only a few tiles are 
 being modeled (for a small country), only steps 1-4 need to be done.  
+
+### Running model tests
+There is an incipient testing component using `pytest`. It is currently only available for the deadwood and litter
+carbon pool creation step of the model but can be expanded to other aspects of the model. 
+Tests can be run from the project folder with the command `pytest`. 
+You can get more verbose output with `pytest -s`.
+To run tests that just have a certain flag (e.g., `rasterio`), you can do `pytest -m integration -s`.
+
 
 ### Dependencies
 Theoretically, this model should run anywhere that the correct Docker container can be started 

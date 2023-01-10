@@ -12,10 +12,10 @@ from carbon_pools.create_carbon_pools import create_deadwood_litter
 import test.test_utilities as tu
 
 
-pytestmark = pytest.mark.integration
+pytestmark = pytest.mark.rasterio
 
 # run from /usr/local/app
-# pytest -m integration -s
+# pytest -m rasterio -s
 # Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
 
 # @pytest.mark.xfail

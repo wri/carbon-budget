@@ -13,11 +13,9 @@ import pandas as pd
 from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'removals'))
-import annual_gain_rate_mangrove
+from . import annual_gain_rate_mangrove
 
 def mp_annual_gain_rate_mangrove(tile_id_list):
 

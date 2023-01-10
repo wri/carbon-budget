@@ -30,10 +30,8 @@ import os
 import pandas as pd
 import sys
 
-# sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-# sys.path.append(os.path.join(cn.docker_app,'carbon_pools'))
 from . import create_carbon_pools
 
 def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):

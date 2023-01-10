@@ -13,11 +13,11 @@ import datetime
 from functools import partial
 import sys
 import os
-import prep_other_inputs
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+
+from . import prep_other_inputs
 
 def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
 

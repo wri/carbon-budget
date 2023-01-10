@@ -11,24 +11,24 @@ docker build . -t gfw/carbon-budget
 Enter Docker container:
 docker run --rm -it -e AWS_SECRET_ACCESS_KEY=[] -e AWS_ACCESS_KEY_ID=[] gfw/carbon-budget
 
-Compile C++ emissions modulte (for standard model and sensitivity analyses that using standard emissions model)
+Compile C++ emissions module (for standard model and sensitivity analyses that using standard emissions model)
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 
 Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
-python run_full_model.py -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
 
 Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil; use multiprocessing
-python run_full_model.py -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
 
 Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil; use singelprocessing
-python run_full_model.py -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -sp -ln "00N_000E test"
+python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -sp -ln "00N_000E test"
 
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
 run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
-python run_full_model.py -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Running all tiles"
+python -m run_full_model -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Running all tiles"
 """
 
 import argparse

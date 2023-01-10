@@ -13,11 +13,9 @@ import multiprocessing
 import os
 import sys
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
-sys.path.append(os.path.join(cn.docker_app,'removals'))
-import gross_removals_all_forest_types
+from . import gross_removals_all_forest_types
 
 def mp_gross_removals_all_forest_types(tile_id_list):
     """

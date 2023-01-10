@@ -15,7 +15,6 @@ import argparse
 import os
 import glob
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
