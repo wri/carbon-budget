@@ -358,7 +358,7 @@ There is an incipient testing component using `pytest`. It is currently only ava
 carbon pool creation step of the model but can be expanded to other aspects of the model. 
 Tests can be run from the project folder with the command `pytest`. 
 You can get more verbose output with `pytest -s`.
-To run tests that just have a certain flag (e.g., `rasterio`), you can do `pytest -m integration -s`.
+To run tests that just have a certain flag (e.g., `rasterio`), you can do `pytest -m rasterio -s`.
 
 
 ### Dependencies
