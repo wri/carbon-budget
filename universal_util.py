@@ -719,12 +719,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
     # The number of tiles with the given pattern on the spot machine.
     # Special cases are below.
-    local_tile_count = len(glob.glob('*{}*.tif'.format(pattern)))
+    local_tile_count = len(glob.glob(f'*{pattern}*.tif'))
 
     # For tile types that have the tile_id after the pattern
     if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
 
-        local_tile_count = len(glob.glob('{}*.tif'.format(pattern)))
+        local_tile_count = len(glob.glob(f'{pattern}*.tif'))
 
     print_log(f'There are {local_tile_count} tiles on the spot machine with the pattern {pattern}')
 

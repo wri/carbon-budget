@@ -265,6 +265,12 @@ burn_year_warped_to_Hansen_dir = os.path.join(s3_base_dir, 'other_emissions_inpu
 pattern_burn_year = "burnyear_with_Hansen_loss"
 burn_year_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/burn_year/burn_year_with_Hansen_loss/20220308/')
 
+TCLF_raw_dir = 's3://gfw-data-lake/umd_tree_cover_loss_from_fires/v20220521/raw/'
+pattern_TCLF_raw = 'TCLF_raw'
+TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20220521/')
+pattern_TCLF_processed = 'tree_cover_loss_fire_processed'
+
+
 ######
 ### Plantation processing
 ######
