@@ -28,10 +28,9 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     if tile_id_list == 'all':
         # List of tiles to run in the model
         ### BUG: THIS SHOULD ALSO INCLUDE cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir IN ITS LIST
-        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                             cn.mangrove_biomass_2000_dir,
-                                             set3=cn.gain_dir
-                                             )
+        tile_id_list = uu.create_combined_tile_list(
+            [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir],
+            sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")

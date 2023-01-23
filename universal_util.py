@@ -420,199 +420,80 @@ def tile_list_spot_machine(source, pattern):
     return file_list
 
 
-# Creates a list of all tiles found in either two or three s3 folders and removes duplicates from the list
-def create_combined_tile_list(set1, set2, set3=None, sensit_type='std'):
+# Creates a list of all tile ids found in input s3 folders, removes duplicate tile ids from the list, and orders them
+def create_combined_tile_list(list_of_tile_dirs, sensit_type='std'):
 
-    print_log('Making a combined tile list...')
+    print_log('Making a combined tile id list...')
 
     # Changes the directory to list tiles according to the model run.
-    # Ff the model run is the biomass_swap or US_removals sensitivity analyses
+    # If the model run is the biomass_swap or US_removals sensitivity analyses
     # (JPL AGB extent and US extent, respectively), particular sets of tiles are designated.
-    # If the sensitivity analysis is biomass_swap or US_removals, there's no need to merge tile lists because the tile
-    # list is defined by the extent of the sensitivity analysis.
     # If the model run is standard, the names don't change.
-    # If the model is any other sensitivity run, those tiles are used.
+    # WARNING: Other sensitivity analyses aren't included in this and may result in unintended behaviors.
+    # WARNING: No sensitivity analyses have been tested with this function.
     if sensit_type == 'biomass_swap':
         source = cn.JPL_processed_dir
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
-    elif sensit_type == 'US_removals':
+    if sensit_type == 'US_removals':
         source = cn.annual_gain_AGC_BGC_natrl_forest_US_dir
         tile_list = tile_list_s3(source, sensit_type='std')
         return tile_list
-    elif sensit_type == 'std':
-        set1 = set1
-        set2 = set2
-    else:
-        set1 = set1.replace('standard', sensit_type)
-        set2 = set2.replace('standard', sensit_type)
 
-
-    # out = Popen(['aws', 's3', 'ls', set1, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
-    out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
-    stdout, stderr = out.communicate()
-    # Writes the output string to a text file for easier interpretation
-    set1_tiles = open("set1.txt", "wb")
-    set1_tiles.write(stdout)
-    set1_tiles.close()
-
-    # out = Popen(['aws', 's3', 'ls', set2, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
-    out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
-    stdout2, stderr2 = out.communicate()
-    # Writes the output string to a text file for easier interpretation
-    set2_tiles = open("set2.txt", "wb")
-    set2_tiles.write(stdout2)
-    set2_tiles.close()
-
-    # Empty lists for filling with biomass tile ids
-    file_list_set1 = []
-    file_list_set2 = []
-
-    # Iterates through the first text file to get the names of the tiles and appends them to list
-    with open("set1.txt", 'r') as tile:
-
-        for line in tile:
-            num = len(line.strip("\n").split(" "))
-            tile_name = line.strip("\n").split(" ")[num - 1]
-
-            # Only tifs will be in the tile list
-            if '.tif' in tile_name:
-
-                tile_id = get_tile_id(tile_name)
-                file_list_set1.append(tile_id)
-
-    # Iterates through the second text file to get the names of the tiles and appends them to list
-    with open("set2.txt", 'r') as tile:
-
-        for line in tile:
-            num = len(line.strip("\n").split(" "))
-            tile_name = line.strip("\n").split(" ")[num - 1]
-
-            # Only tifs will be in the tile list
-            if '.tif' in tile_name:
-
-                tile_id = get_tile_id(tile_name)
-                file_list_set2.append(tile_id)
-
-    if len(file_list_set1) > 1:
-        print_log(f'There are {len(file_list_set1)} tiles in {set1}. Using this tile set.')
-    else:
-        print_log(f'There are 0 tiles in {set1}. Looking for alternative tile set...')
-        set1 = set1.replace(sensit_type, 'standard')
-        print_log(f'  Looking for alternative tile set in {set1}')
+    # Iterates through the s3 locations and makes a txt file of tiles for each one
+    for i, tile_set in enumerate(list_of_tile_dirs):
 
         # out = Popen(['aws', 's3', 'ls', set1, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
-        out = Popen(['aws', 's3', 'ls', set1], stdout=PIPE, stderr=STDOUT)
+        out = Popen(['aws', 's3', 'ls', tile_set], stdout=PIPE, stderr=STDOUT)
         stdout, stderr = out.communicate()
         # Writes the output string to a text file for easier interpretation
-        set1_tiles = open("set1.txt", "wb")
+        set1_tiles = open(f'tile_set_{i}.txt', "wb")
         set1_tiles.write(stdout)
         set1_tiles.close()
 
-        # Empty lists for filling with biomass tile ids
-        file_list_set1 = []
+    # Empty lists for filling with tile ids
+    file_list_set = []
 
-        # Iterates through the first text file to get the names of the tiles and appends them to list
-        with open("set1.txt", 'r') as tile:
+    # The list of text files with tile info from s3
+    tile_set_txt_list = glob.glob('tile_set_*txt')
 
-            for line in tile:
-                num = len(line.strip("\n").split(" "))
-                tile_name = line.strip("\n").split(" ")[num - 1]
+    # Combines all tile text files into a single tile text file
+    # https://stackoverflow.com/a/13613375
+    with open('tile_set_consolidated.txt', 'w') as outfile:
+        for fname in tile_set_txt_list:
+            with open(fname) as infile:
+                outfile.write(infile.read())
 
-                # Only tifs will be in the tile list
-                if '.tif' in tile_name:
-                    tile_id = get_tile_id(tile_name)
-                    file_list_set1.append(tile_id)
+    # Iterates through the rows of the consolidated text file to get the tile ids and appends them to the list
+    with open('set_consolidated_tiles.txt', 'r') as tile:
 
-        print_log(f'There are {len(file_list_set1)} tiles in {set1}. Using this tile set.')
+        for line in tile:
 
-    if len(file_list_set2) > 1:
-        print_log(f'There are {len(file_list_set2)} tiles in {set2}. Using this tile set.')
-    else:
-        print_log(f'There are 0 tiles in {set2}. Looking for alternative tile set.')
-        set2 = set2.replace(sensit_type, 'standard')
-        print_log(f'  Looking for alternative tile set in {set2}')
+            num = len(line.strip("\n").split(" "))
+            tile_name = line.strip("\n").split(" ")[num - 1]
 
-        # out = Popen(['aws', 's3', 'ls', set2, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
-        out = Popen(['aws', 's3', 'ls', set2], stdout=PIPE, stderr=STDOUT)
-        stdout2, stderr2 = out.communicate()
-        # Writes the output string to a text file for easier interpretation
-        set2_tiles = open("set2.txt", "wb")
-        set2_tiles.write(stdout2)
-        set2_tiles.close()
+            # Only tifs will be in the tile list
+            if '.tif' in tile_name:
 
-        file_list_set2 = []
-
-        # Iterates through the second text file to get the names of the tiles and appends them to list
-        with open("set2.txt", 'r') as tile:
-
-            for line in tile:
-                num = len(line.strip("\n").split(" "))
-                tile_name = line.strip("\n").split(" ")[num - 1]
-
-                # Only tifs will be in the tile list
-                if '.tif' in tile_name:
-                    tile_id = get_tile_id(tile_name)
-                    file_list_set2.append(tile_id)
-
-        print_log(f'There are {len(file_list_set2)} tiles in {set2}. Using this tile set.')
-
-    # If there's a third folder supplied, iterates through that
-    if set3 != None:
-
-        print_log('Third set of tiles input. Adding to first two sets of tiles...')
-
-        if sensit_type == 'std':
-            set3 = set3
-        else:
-            set3 = set3.replace('standard', sensit_type)
-
-        # out = Popen(['aws', 's3', 'ls', set3, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
-        out = Popen(['aws', 's3', 'ls', set3], stdout=PIPE, stderr=STDOUT)
-        stdout3, stderr3 = out.communicate()
-        # Writes the output string to a text file for easier interpretation
-        set3_tiles = open("set3.txt", "wb")
-        set3_tiles.write(stdout3)
-        set3_tiles.close()
-
-        file_list_set3 = []
-
-        # Iterates through the text file to get the names of the tiles and appends them to list
-        with open("set3.txt", 'r') as tile:
-
-            for line in tile:
-                num = len(line.strip("\n").split(" "))
-                tile_name = line.strip("\n").split(" ")[num - 1]
-
-                # Only tifs will be in the tile list
-                if '.tif' in tile_name:
-                    tile_id = get_tile_id(tile_name)
-                    file_list_set3.append(tile_id)
-
-        print_log(f'There are {len(file_list_set3)} tiles in {set3}')
-
-    # Combines both tile lists
-    all_tiles = file_list_set1 + file_list_set2
-
-    # If a third directory is supplied, the tiles from that list are added to the list from the first two
-    if set3 != None:
-
-        all_tiles = all_tiles + file_list_set3
+                tile_id = get_tile_id(tile_name)
+                file_list_set.append(tile_id)
 
     # Tile list with tiles found in multiple lists removed, so now duplicates are gone
-    unique_tiles = list(set(all_tiles))
+    unique_tiles = list(set(file_list_set))
 
     # Converts the set to a pandas dataframe to put the tiles in the correct order
     df = pd.DataFrame(unique_tiles, columns=['tile_id'])
     df = df.sort_values(by=['tile_id'])
 
-    # Converts the pandas dataframe to a Python list
+    # Converts the pandas dataframe back to a Python list
     unique_tiles_ordered_list = df.tile_id.tolist()
 
     # Removes the text files with the lists of tiles
-    set_txt = glob.glob("set*.txt")
-    for i in set_txt:
+    tile_set_txt_list = glob.glob('tile_set_*txt')  # Adds the consolidated tile txt to the list
+    for i in tile_set_txt_list:
         os.remove(i)
+
+    print_log(f'There are {len(unique_tiles_ordered_list)} unique tiles in {len(list_of_tile_dirs)} s3 folders ({len(file_list_set)} tiles overall)')
 
     return unique_tiles_ordered_list
 
