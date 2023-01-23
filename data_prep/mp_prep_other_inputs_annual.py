@@ -99,24 +99,17 @@ def mp_prep_other_inputs(tile_id_list):
 
 
     TCLF_s3_dir = os.path.join(cn.docker_base_dir,'TCLF')
-    if os.path.exists(TCLF_s3_dir):
-        os.rmdir(TCLF_s3_dir)
-    os.mkdir(TCLF_s3_dir)
-    cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--recursive',
-           '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--no-sign-request']
-    uu.log_subprocess_output_full(cmd)
+    # if os.path.exists(TCLF_s3_dir):
+    #     os.rmdir(TCLF_s3_dir)
+    # os.mkdir(TCLF_s3_dir)
+    # cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--recursive',
+    #        '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--no-sign-request']
+    # uu.log_subprocess_output_full(cmd)
 
-    # Creates a vrt of the tree cover loss from fires (TCLF)
-    file_list = glob.glob(f'{TCLF_s3_dir}/*tif')
-
-    # Renames the downloaded TCLF files with a pattern to make them easier to put into a vrt
-    for file in file_list:
-        tif = os.path.basename(file)
-        os.rename(f'{file}', f'{TCLF_s3_dir}/{cn.pattern_TCLF_raw}_{tif}')
-
+    # Creates vrt of TCLF globally
     uu.print_log("Creating vrt of TCLF...")
     tclf_vrt = 'TCLF.vrt'
-    os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/{cn.pattern_TCLF_raw}*.tif')
+    os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/*.tif')
     uu.print_log("  TCLF vrt created")
 
     # Creates TCLF tiles
@@ -127,7 +120,7 @@ def mp_prep_other_inputs(tile_id_list):
         processes = 45  # X processors = Y GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log("Creating TCLF tiles with {} processors...".format(processes))
+    uu.print_log(f'Creating TCLF tiles with {processes} processors...')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
     pool.close()
@@ -135,27 +128,27 @@ def mp_prep_other_inputs(tile_id_list):
 
 
     for output_pattern in [
-        cn.pattern_TCLF
+        cn.pattern_TCLF_processed
         # ,cn.pattern_drivers
     ]:
 
         if cn.count == 96:
             processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
         elif cn.count <= 2: # For local tests
             processes = 1
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
         else:
             processes = int(cn.count / 2)
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
+            uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()
