@@ -7,9 +7,9 @@ namespace constants
     // per https://www.learncpp.com/cpp-tutorial/global-constants-and-inline-variables/
     constexpr int model_years {21};    // How many loss years are in the model. Must also be updated in equations.cpp!
 
-    constexpr int CH4_equiv {28};      // The CO2 equivalency (global warming potential) of CH4
+    constexpr int CH4_equiv {27};      // The CO2 equivalency (global warming potential) of CH4, AR6 WG1 Table 7.15
 
-    constexpr int N2O_equiv {265};      // The CO2 equivalency (global warming potential) of N2O
+    constexpr int N2O_equiv {273};      // The CO2 equivalency (global warming potential) of N2O, AR6 WG1 Table 7.15
 
     constexpr float C_to_CO2 {44.0/12.0};       // The conversion of carbon to CO2
 
