@@ -244,8 +244,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
 // // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 4500;
-//ysize = 3500;
+//xsize = 40000;
+//ysize = 1100;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -339,7 +339,7 @@ OUTBAND12 = OUTGDAL12->GetRasterBand(1);
 OUTBAND12->SetNoDataValue(0);
 
 // Decision tree node
-OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_UInt16, papszOptions );
 OUTGDAL20->SetGeoTransform(adfGeoTransform); OUTGDAL20->SetProjection(OUTPRJ);
 OUTBAND20 = OUTGDAL20->GetRasterBand(1);
 OUTBAND20->SetNoDataValue(0);
@@ -371,7 +371,7 @@ float out_data6[xsize];
 float out_data10[xsize];
 float out_data11[xsize];
 float out_data12[xsize];
-float out_data20[xsize];
+short int out_data20[xsize];
 
 // Loop over the y coordinates, then the x coordinates
 for (y=0; y<ysize; y++)
@@ -443,7 +443,7 @@ for(x=0; x<xsize; x++)
 		float outdata10 = 0;  // all drivers, all gases
 		float outdata11 = 0;  // all drivers, CO2 only
 		float outdata12 = 0;  // all drivers, non-CO2
-		float outdata20 = 0;  // flowchart node
+		short int outdata20 = 0;  // flowchart node
 
         // Only evaluates pixels that have loss and carbon. By definition, all pixels with carbon are in the model extent.
 		if (loss_data[x] > 0 && agc_data[x] > 0)
@@ -1263,7 +1263,7 @@ CPLErr errcodeOut6 = OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xs
 CPLErr errcodeOut10 = OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
 CPLErr errcodeOut11 = OUTBAND11->RasterIO( GF_Write, 0, y, xsize, 1, out_data11, xsize, 1, GDT_Float32, 0, 0 );
 CPLErr errcodeOut12 = OUTBAND12->RasterIO( GF_Write, 0, y, xsize, 1, out_data12, xsize, 1, GDT_Float32, 0, 0 );
-CPLErr errcodeOut20 = OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut20 = OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_UInt16, 0, 0 );
 
 // Number of output files
 int outSize = 10;
