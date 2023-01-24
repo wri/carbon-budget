@@ -122,7 +122,7 @@ def mp_prep_other_inputs(tile_id_list):
     out_pattern = cn.pattern_TCLF_processed
     dt = 'Byte'
     if cn.count == 96:
-        processes = 30  # 30 processors = Y GB peak
+        processes = 40  # 30 processors = 460 GB peak; 40 processors = XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log(f'Creating TCLF tiles with {processes} processors...')
