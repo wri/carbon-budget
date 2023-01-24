@@ -465,7 +465,7 @@ def create_combined_tile_list(list_of_tile_dirs, sensit_type='std'):
                 outfile.write(infile.read())
 
     # Iterates through the rows of the consolidated text file to get the tile ids and appends them to the list
-    with open('set_consolidated_tiles.txt', 'r') as tile:
+    with open('tile_set_consolidated.txt', 'r') as tile:
 
         for line in tile:
 
