@@ -11,7 +11,7 @@
 // Each end point of the decision tree gets its own code, so that it's easier to tell what branch of the decision tree
 // each pixel came from. That makes checking the results easier, too.
 // These codes are summarized in carbon-budget/emissions/node_codes.txt
-// Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N20), each model endpoint has a CO2-only and
+// Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N2O), each model endpoint has a CO2-only and
 // a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
 // Compile with:
 // c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_soil.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal

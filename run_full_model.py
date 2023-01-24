@@ -539,7 +539,7 @@ def main ():
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_drivers}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_climate_zone}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_bor_tem_trop_processed}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_burn_year}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_TCLF_processed}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_plant_pre_2000}*tif'))
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 

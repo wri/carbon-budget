@@ -76,6 +76,8 @@ def mp_prep_other_inputs(tile_id_list):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
+    ### Drivers of tree cover loss processing
+
     # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_base_dir, sensit_type)
 
     # # Creates tree cover loss driver tiles.
@@ -97,15 +99,19 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.join()
 
 
-    TCLF_s3_dir = os.path.join(cn.docker_base_dir,'TCLF')
-    # if os.path.exists(TCLF_s3_dir):
-    #     os.rmdir(TCLF_s3_dir)
-    # os.mkdir(TCLF_s3_dir)
-    # cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--recursive',
-    #        '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--no-sign-request']
-    # uu.log_subprocess_output_full(cmd)
+    ### Tree cover loss from fires processing
 
-    # Creates vrt of TCLF globally
+    # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
+    # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
+    TCLF_s3_dir = os.path.join(cn.docker_base_dir,'TCLF')
+    if os.path.exists(TCLF_s3_dir):
+        os.rmdir(TCLF_s3_dir)
+    os.mkdir(TCLF_s3_dir)
+    cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--recursive',
+           '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--no-sign-request']
+    uu.log_subprocess_output_full(cmd)
+
+    # Creates global vrt of TCLF
     uu.print_log("Creating vrt of TCLF...")
     tclf_vrt = 'TCLF.vrt'
     os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/*.tif')
@@ -116,7 +122,7 @@ def mp_prep_other_inputs(tile_id_list):
     out_pattern = cn.pattern_TCLF_processed
     dt = 'Byte'
     if cn.count == 96:
-        processes = 45  # X processors = Y GB peak
+        processes = 30  # 30 processors = Y GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log(f'Creating TCLF tiles with {processes} processors...')
