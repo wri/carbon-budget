@@ -34,10 +34,9 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                             cn.mangrove_biomass_2000_dir,
-                                             set3=cn.gain_dir
-                                             )
+        tile_id_list = uu.create_combined_tile_list(
+            [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir],
+            sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")

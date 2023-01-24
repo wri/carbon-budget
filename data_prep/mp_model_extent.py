@@ -5,6 +5,8 @@ The rest of the model uses this to mask its extent.
 For biomass_swap sensitivity analysis, NASA JPL AGB 2000 replaces WHRC 2000.
 For legal_Amazon_loss sensitivity analysis, PRODES 2000 forest extent replaces Hansen tree cover 2000 and Hansen gain
 pixels and mangrove pixels outside of (PRODES extent AND WHRC AGB) are not included.
+
+python -m data_prep.mp_model_extent -t std -l all
 """
 
 import argparse
@@ -34,10 +36,10 @@ def mp_model_extent(tile_id_list):
         elif cn.SENSIT_TYPE == 'legal_Amazon_loss':
             tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir, cn.SENSIT_TYPE)
         else:
-            tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                             cn.mangrove_biomass_2000_dir,
-                                             cn.gain_dir, cn.tcd_dir
-                                             )
+            tile_id_list = uu.create_combined_tile_list(
+                [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir, cn.tcd_dir,
+                 cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir],
+                sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")

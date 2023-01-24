@@ -5,13 +5,13 @@ carbon pool values that go into the equation.
 Unlike all other flux model components, this one uses C++ to quickly iterate through every pixel in each tile.
 Before running the model, the C++ script must be compiled.
 From carbon-budget/emissions/, do:
-c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
+c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 (for the standard model and some sensitivity analysis versions).
 calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
 and convert_to_grassland), do:
-c++ /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /home/dgibbs/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
-Run by typing python mp_calculate_gross_emissions.py -p [POOL_OPTION] -t [MODEL_TYPE] -l [TILE_LIST] -d [RUN_DATE]
+c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
+Run by typing python -m emissions.mp_calculate_gross_emissions -p [POOL_OPTION] -t [MODEL_TYPE] -l [TILE_LIST] -d [RUN_DATE]
 The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled separately.
 The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
@@ -20,6 +20,8 @@ Emissions from each driver (including loss that had no driver assigned) gets its
 Emissions from all drivers is also output as emissions due to CO2 only and emissions due to other GHG (CH4 and N2O).
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
+
+python -m emissions.mp_calculate_gross_emissions -t std -p biomass_soil -l all -nu
 """
 
 import argparse
@@ -71,7 +73,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
         cn.drivers_processed_dir: [cn.pattern_drivers],
         cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
         cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
-        cn.burn_year_dir: [cn.pattern_burn_year]
+        cn.TCLF_processed_dir: [cn.pattern_TCLF_processed]
     }
 
     # Special loss tiles for the Brazil and Mekong sensitivity analyses
@@ -192,7 +194,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     uu.print_log('Making blank tiles for inputs that do not currently exist')
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
     pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
-                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_burn_year, cn.pattern_climate_zone,
+                    cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_TCLF_processed, cn.pattern_climate_zone,
                     cn.pattern_soil_C_emis_year_2000]
 
 

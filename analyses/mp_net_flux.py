@@ -25,9 +25,9 @@ def mp_net_flux(tile_id_list):
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.create_combined_tile_list(cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                                                    cn.cumul_gain_AGCO2_BGCO2_all_types_dir,
-                                                    sensit_type=cn.SENSIT_TYPE)
+        tile_id_list = uu.create_combined_tile_list(
+            [cn.gross_emis_all_gases_all_drivers_biomass_soil_dir, cn.cumul_gain_AGCO2_BGCO2_all_types_dir],
+            sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")

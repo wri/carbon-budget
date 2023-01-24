@@ -17,7 +17,7 @@ import os
 import constants_and_names as cn
 import universal_util as uu
 
-from . import prep_other_inputs
+from . import prep_other_inputs_one_off
 
 def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
 
@@ -28,52 +28,36 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     if tile_id_list == 'all':
         # List of tiles to run in the model
         ### BUG: THIS SHOULD ALSO INCLUDE cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir IN ITS LIST
-        tile_id_list = uu.create_combined_tile_list(cn.WHRC_biomass_2000_unmasked_dir,
-                                             cn.mangrove_biomass_2000_dir,
-                                             set3=cn.gain_dir
-                                             )
+        tile_id_list = uu.create_combined_tile_list(
+            [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir],
+            sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
-    '''
-    Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
-    gdal_warp is producing a weird output, so I did it in ArcMap for the 2020 update, 
-    with the output cell size being 0.01 x 0.01 degree and the method being nearest.
-    
-    arcpy.ProjectRaster_management(in_raster="C:/GIS/Drivers of loss/2020_drivers__tif__from_Forrest_Follett_20210323/FinalClassification_2020_v2__from_Jimmy_MacCarthy_20210323.tif", 
-    out_raster="C:/GIS/Drivers of loss/2020_drivers__tif__from_Forrest_Follett_20210323/Final_Classification_2020__reproj_nearest_0-005_0-005_deg__20210323.tif", 
-    out_coor_system="GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", 
-    resampling_type="NEAREST", cell_size="0.005 0.005", geographic_transform="", 
-    Registration_Point="", 
-    in_coor_system="PROJCS['WGS_1984_Goode_Homolosine',GEOGCS['GCS_unknown',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Goode_Homolosine'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Option',1.0],UNIT['Meter',1.0]]", 
-    vertical="NO_VERTICAL")
-    '''
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       # cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
-                       cn.drivers_processed_dir
-                       # cn.ifl_primary_processed_dir,
-                       # cn.annual_gain_AGC_natrl_forest_young_dir,
-                       # cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
-                       # cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                       # cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                       # cn.FIA_forest_group_processed_dir,
-                       # cn.age_cat_natrl_forest_US_dir,
-                       # cn.FIA_regions_processed_dir
+                       cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
+                       cn.ifl_primary_processed_dir,
+                       cn.annual_gain_AGC_natrl_forest_young_dir,
+                       cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
+                       cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+                       cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+                       cn.FIA_forest_group_processed_dir,
+                       cn.age_cat_natrl_forest_US_dir,
+                       cn.FIA_regions_processed_dir
     ]
     output_pattern_list = [
-                           # cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
-                           cn.pattern_drivers
-                           # cn.pattern_ifl_primary,
-                           # cn.pattern_annual_gain_AGC_natrl_forest_young,
-                           # cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
-                           # cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
-                           # cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
-                           # cn.pattern_FIA_forest_group_processed,
-                           # cn.pattern_age_cat_natrl_forest_US,
-                           # cn.pattern_FIA_regions_processed
+                           cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
+                           cn.pattern_ifl_primary,
+                           cn.pattern_annual_gain_AGC_natrl_forest_young,
+                           cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
+                           cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
+                           cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
+                           cn.pattern_FIA_forest_group_processed,
+                           cn.pattern_age_cat_natrl_forest_US,
+                           cn.pattern_FIA_regions_processed
     ]
 
 
@@ -95,7 +79,6 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
     # uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), cn.docker_base_dir, sensit_type)
     # uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), cn.docker_base_dir, sensit_type)
-    uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_base_dir, sensit_type)
     # uu.s3_file_download(os.path.join(cn.annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
     # uu.s3_file_download(os.path.join(cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
     # uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, sensit_type)
@@ -116,24 +99,6 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # uu.print_log("Unzipping pre-2000 plantations...")
     # cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
     # uu.log_subprocess_output_full(cmd)
-
-    # Creates tree cover loss driver tiles.
-    # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
-    # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap. I also unprojected the global drivers
-    # map to WGS84 because running the homolosine projection that Jimmy provided was giving incorrect processed results.
-    source_raster = cn.pattern_drivers_raw
-    out_pattern = cn.pattern_drivers
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = 125 GB peak
-    else:
-        processes = int(cn.count/2)
-    uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
-             tile_id_list)
-    pool.close()
-    pool.join()
 
 
     # # Creates young natural forest removal rate tiles
@@ -294,8 +259,10 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # pool.join()
     #
     #
-    for output_pattern in [cn.pattern_drivers
-        # ,cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
+
+
+    for output_pattern in [
+        cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
     ]:
 
         # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
