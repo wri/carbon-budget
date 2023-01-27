@@ -11,9 +11,6 @@ docker build . -t gfw/carbon-budget
 Enter Docker container:
 docker run --rm -it -e AWS_SECRET_ACCESS_KEY=[] -e AWS_ACCESS_KEY_ID=[] gfw/carbon-budget
 
-Compile C++ emissions module (for standard model and sensitivity analyses that using standard emissions model)
-c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-
 Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
 starting from the beginning; get carbon pools at time of loss
 python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"
@@ -480,7 +477,7 @@ def main ():
         uu.print_log(f':::::Processing time for gross_emissions: {elapsed_time}', "\n", "\n")
 
 
-    # Creates gross emissions tiles for biomass+soil by driver, gas, and all emissions combined
+    # Creates gross emissions tiles for soil only by driver, gas, and all emissions combined
     if 'gross_emissions_soil_only' in actual_stages:
 
         if not cn.SAVE_INTERMEDIATES:

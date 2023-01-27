@@ -198,10 +198,13 @@ Model extent stage: `/usr/local/app# python -m data_prep.mp_model_extent -l 00N_
 Carbon pool creation stage: `/usr/local/app# python -m carbon_pools.mp_create_carbon_pools -l 00N_000E,10S_050W -t std -ce loss -d 20239999`
 
 ##### Running the emissions model
-The gross emissions script is the only part of the model that uses C++. Thus, it must be manually compiled before running.
-There are a few different versions of the emissions script: one for the standard model and a few other for
-sensitivity analyses.
-The command for compiling the C++ script is (subbing in the actual file name): 
+The gross emissions script is the only part of the model that uses C++. Thus, the appropriate version of the C++ 
+emissions file must be compiled for emissions to run. 
+There are a few different versions of the emissions C++ script: one for the standard model and a few other for
+sensitivity analyses. 
+`mp_calculate_gross_emissions.py` will compile the correct C++ file each time it is run, so the C++ file does not
+need to be compiled in a separate step. 
+However, for completeness, the command for compiling the C++ script is (subbing in the actual file name): 
 
 `c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].exe -lgdal`
 
@@ -209,15 +212,19 @@ For the standard model and the sensitivity analyses that don't specifically affe
 
 `c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal`
 
+`mp_calculate_gross_emissions.py` can also be used to calculate emissions from soil only. 
+This is set by the `-p` argument: `biomass_soil` or `soil_only`.  
+
 Emissions stage: `/usr/local/app# python -m emissions.mp_calculate_gross_emissions -l 30N_090W,10S_010E -t std -p biomass_soil -d 20239999`
 
 #### Master script 
 The master script runs through all of the non-preparatory scripts in the model: some removal factor creation, gross removals, carbon
-pool generation, gross emissions, net flux, aggregation, and supplementary output creation. 
+pool generation, gross emissions for biomass+soil, gross emissions for soil only, 
+net flux, aggregation, and supplementary output creation. 
 It includes all the arguments needed to run every script. 
 Thus, the table below also explains the potential arguments for the individual model stages. 
 The user can control what model components are run to some extent and set the date part of 
-the output directories. The emissions C++ code has to be be compiled before running the master script (see below).
+the output directories. 
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
 they are run very infrequently. 
 
@@ -232,7 +239,6 @@ they are run very infrequently.
 | `single-processor` | `-sp` | Optional | All | Tile processing will be done without `multiprocessing` module whenever possible, i.e. no parallel processing. Use for testing. |
 | `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 | `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
-| `pools-to-use` | `-p` | Optional | Emissions| Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil. |
 | `tcd-threshold` | `-tcd`| Optional | Aggregation | Tree cover density threshold above which pixels will be included in the aggregation. Defaults to 30. |
 | `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
 | `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local model runs. If uploading to s3 is not enabled, intermediate files are automatically saved. |
@@ -244,14 +250,14 @@ they simply illustrate different configurations for the command line arguments.
 Like the individual model stages, the full model run script is also run from the project folder with the `-m` flag.
 
 Run 00N_000E in standard model; save intermediate outputs; upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil:
+starting from the beginning; get carbon pools at time of loss:
 
-`python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`
+`python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"`
 
 Run 00N_110E in standard model; save intermediate outputs; don't upload outputs to s3;
-start at forest_age_category_IPCC step; run all stages after that; get carbon pools at time of loss; emissions from biomass and soil:
+start at forest_age_category_IPCC step; run all stages after that; get carbon pools at time of loss:
 
-`python -m run_full_model -si -nu -t std -s forest_age_category_IPCC -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"`
+`python -m run_full_model -si -nu -t std -s forest_age_category_IPCC -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"`
 
 Run 00N_000E and 00N_110E in standard model; don't save intermediate outputs; do upload outputs to s3;
 run model_extent step; don't run sunsequent steps (no `-r` flag); run mangrove step beforehand:
@@ -259,20 +265,20 @@ run model_extent step; don't run sunsequent steps (no `-r` flag); run mangrove s
 `python -m run_full_model -t std -s model_extent -d 20229999 -l 00N_000E,00N_110E -ma -ln "Two tile test"`
 
 Run 00N_000E, 00N_110E, and 30N_090W in standard model; save intermediate outputs; do upload outputs to s3;
-start at gross_emissions step; run all stages after that; emissions from soil only:
+start at gross_emissions step; run all stages after that:
 
-`python -m run_full_model -si -t std -s gross_emissions -r -d 20229999 -l 00N_000E,00N_110E,30N_090W -p soil_only -tcd 30 -ln "Three tile test"`
+`python -m run_full_model -si -t std -s gross_emissions -r -d 20229999 -l 00N_000E,00N_110E,30N_090W -tcd 30 -ln "Three tile test"`
 
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
-run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil:
+run all model stages; starting from the beginning; get carbon pools at time of loss:
 
-`python -m run_full_model -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Run all tiles"`
+`python -m run_full_model -si -t std -s all -r -l all -ce loss -tcd 30 -ln "Run all tiles"`
 
 Run three tiles in biomass_swap sensitivity analysis; don't upload intermediates (forces saving of intermediate outputs);
-run model_extent stage; don't continue after that stage (no run-through); get carbon pools at time of loss; emissions from biomass and soil;
+run model_extent stage; don't continue after that stage (no run-through); get carbon pools at time of loss;
 compare aggregated outputs to specified file (although not used in this specific launch because only the first step runs):
 
-`python -m run_full_model -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -p biomass_soil -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
+`python -m run_full_model -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
 
 
 ### Sensitivity analysis
