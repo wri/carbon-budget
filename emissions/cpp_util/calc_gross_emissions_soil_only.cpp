@@ -16,7 +16,6 @@
 // Compile with:
 // c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal
 
-
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +40,6 @@
 
 using namespace std;
 
-//to compile:  c++ calc_gross_emissions.cpp -o calc_gross_emissions.exe -lgdal
 int main(int argc, char* argv[])
 {
 // If code is run other than <program name> <tile id> , it will raise this error.
@@ -354,19 +352,44 @@ float out_data20[xsize];
 for (y=0; y<ysize; y++)
 {
 
-INBAND1->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, drivermodel_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, peat_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, ifl_primary_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
-INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0, 0);
+// The following RasterIO reads (and the RasterIO writes at the end) produced compile warnings about unused results
+// (warning: ignoring return value of 'CPLErr GDALRasterBand::RasterIO(GDALRWFlag, int, int, int, int, void*, int, int, GDALDataType, GSpacing, GSpacing, GDALRasterIOExtraArg*)', declared with attribute warn_unused_result [-Wunused-result]).
+// I asked how to handle or silence the warnings at https://stackoverflow.com/questions/72410931/how-to-handle-warn-unused-result-wunused-result/72410978#72410978.
+// The code below handles the warnings by directing them to arguments, which are then checked.
+// For cerr instead of std::err: https://www.geeksforgeeks.org/cerr-standard-error-stream-object-in-cpp/
+
+// Error code returned by each line saved as their own argument
+CPLErr errcodeIn1 = INBAND1->RasterIO(GF_Read, 0, y, xsize, 1, agc_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn2 = INBAND2->RasterIO(GF_Read, 0, y, xsize, 1, bgc_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn3 = INBAND3->RasterIO(GF_Read, 0, y, xsize, 1, drivermodel_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn4 = INBAND4->RasterIO(GF_Read, 0, y, xsize, 1, loss_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn5 = INBAND5->RasterIO(GF_Read, 0, y, xsize, 1, peat_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn6 = INBAND6->RasterIO(GF_Read, 0, y, xsize, 1, burn_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn7 = INBAND7->RasterIO(GF_Read, 0, y, xsize, 1, ifl_primary_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn8 = INBAND8->RasterIO(GF_Read, 0, y, xsize, 1, ecozone_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn9 = INBAND9->RasterIO(GF_Read, 0, y, xsize, 1, climate_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn10 = INBAND10->RasterIO(GF_Read, 0, y, xsize, 1, dead_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn11 = INBAND11->RasterIO(GF_Read, 0, y, xsize, 1, litter_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn12 = INBAND12->RasterIO(GF_Read, 0, y, xsize, 1, soil_data, xsize, 1, GDT_Float32, 0, 0);
+CPLErr errcodeIn13 = INBAND13->RasterIO(GF_Read, 0, y, xsize, 1, plant_data, xsize, 1, GDT_Float32, 0, 0);
+
+// Number of input files
+int inSize = 13;
+
+// Array of error codes returned from each input
+CPLErr errcodeInArray [inSize] = {errcodeIn1, errcodeIn2, errcodeIn3, errcodeIn4, errcodeIn5, errcodeIn6, errcodeIn7,
+errcodeIn8, errcodeIn9, errcodeIn10, errcodeIn11, errcodeIn12, errcodeIn13};
+
+// Iterates through the input error codes to make sure that the error code is acceptable
+int j;
+
+for (j=0; j<inSize; j++)
+{
+    if (errcodeInArray[j] != 0) {
+        cerr << "rasterIO failed!\n";
+        exit(1);
+    }
+}
 
 for(x=0; x<xsize; x++)
 
@@ -1169,16 +1192,41 @@ for(x=0; x<xsize; x++)
 		}
     }
 
-OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND11->RasterIO( GF_Write, 0, y, xsize, 1, out_data11, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND12->RasterIO( GF_Write, 0, y, xsize, 1, out_data12, xsize, 1, GDT_Float32, 0, 0 );
-OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
+// The following RasterIO writes (and the RasterIO reads at the start) produced compile warnings about unused results
+// (warning: ignoring return value of 'CPLErr GDALRasterBand::RasterIO(GDALRWFlag, int, int, int, int, void*, int, int, GDALDataType, GSpacing, GSpacing, GDALRasterIOExtraArg*)', declared with attribute warn_unused_result [-Wunused-result]).
+// I asked how to handle or silence the warnings at https://stackoverflow.com/questions/72410931/how-to-handle-warn-unused-result-wunused-result/72410978#72410978.
+// The code below handles the warnings by directing them to arguments, which are then checked.
+// For cerr instead of std::err: https://www.geeksforgeeks.org/cerr-standard-error-stream-object-in-cpp/
+
+// Error code returned by each line saved as their own argument
+CPLErr errcodeOut1 = OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data1, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut2 = OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data2, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut3 = OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data3, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut4 = OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data4, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut5 = OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data5, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut6 = OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut10 = OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut11 = OUTBAND11->RasterIO( GF_Write, 0, y, xsize, 1, out_data11, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut12 = OUTBAND12->RasterIO( GF_Write, 0, y, xsize, 1, out_data12, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut20 = OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
+
+// Number of output files
+int outSize = 10;
+
+// Array of error codes returned from each output
+CPLErr errcodeOutArray [outSize] = {errcodeOut1, errcodeOut2, errcodeOut3, errcodeOut4, errcodeOut5, errcodeOut6,
+errcodeOut10, errcodeOut11, errcodeOut12, errcodeOut20};
+
+// Iterates through the output error codes to make sure that the error code is acceptable
+int k;
+
+for (k=0; k<outSize; k++)
+{
+    if (errcodeOutArray[k] != 0) {
+        cerr << "rasterIO failed!\n";
+        exit(1);
+    }
+}
 }
 
 GDALClose(INGDAL1);

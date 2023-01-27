@@ -63,8 +63,8 @@ def main ():
     # List of possible model stages to run (not including mangrove and planted forest stages)
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
-                    'carbon_pools', 'gross_emissions',
-                    'net_flux', 'aggregate', 'create_supplementary_outputs']
+                    'carbon_pools', 'gross_emissions_biomass_soil',
+                    'net_flux', 'aggregate', 'create_supplementary_outputs, gross_emissions_soil_only']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -165,30 +165,30 @@ def main ():
 
     # Checks if the correct c++ script has been compiled for the pool option selected.
     # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
-    if 'gross_emissions' in actual_stages:
+    if 'gross_emissions_biomass_soil' in actual_stages:
 
-        if cn.EMITTED_POOLS == 'biomass_soil':
-            # Some sensitivity analyses have specific gross emissions scripts.
-            # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
-            if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
-                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
-                    uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
-                else:
-                    uu.exception_log(f'Must compile standard {cn.SENSIT_TYPE} model C++...')
+        # Some sensitivity analyses have specific gross emissions scripts.
+        # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
+        if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
+            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
+                uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
             else:
-                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
-                    uu.print_log('C++ for generic emissions already compiled.')
-                else:
-                    uu.exception_log('Must compile generic emissions C++...')
-
-        elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
-            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
+                uu.exception_log(f'Must compile standard {cn.SENSIT_TYPE} model C++...')
+        else:
+            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
                 uu.print_log('C++ for generic emissions already compiled.')
             else:
-                uu.exception_log('Must compile soil_only C++...')
+                uu.exception_log('Must compile generic emissions C++...')
+    else:
+        uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
 
+    if (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
+        if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
+            uu.print_log('C++ for generic emissions already compiled.')
         else:
-            uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
+            uu.exception_log('Must compile soil_only C++...')
+    else:
+        uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
 
     # Checks whether the canopy cover argument is valid up front.
     if 'aggregate' in actual_stages:

@@ -64,8 +64,8 @@ RUN cp pg_hba.conf /etc/postgresql/12/main/
 # RUN service postgresql restart
 
 
-# Install missing Python dependencies
-RUN pip3 install -r requirements.txt
+# # Install missing Python dependencies
+# RUN pip3 install -r requirements.txt
 
 # Link gdal libraries
 RUN cd /usr/include && ln -s ./ gdal

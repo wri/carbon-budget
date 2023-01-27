@@ -10,7 +10,7 @@ c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/l
 calc_gross_emissions_generic.exe should appear in the directory.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
 and convert_to_grassland), do:
-c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
+c++  /usr/local/app/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o  /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
 Run by typing python -m emissions.mp_calculate_gross_emissions -p [POOL_OPTION] -t [MODEL_TYPE] -l [TILE_LIST] -d [RUN_DATE]
 The Python script will call the compiled C++ code as needed.
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled separately.

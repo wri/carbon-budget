@@ -224,7 +224,7 @@ they are run very infrequently.
 | Argument | Short argument | Required/Optional | Relevant stage | Description | 
 | -------- | ----- | ----------- | ------- | ------ |
 | `model-type` | `-t` | Required | All | Standard model (`std`) or a sensitivity analysis. Refer to `constants_and_names.py` for valid list of sensitivity analyses. |
-| `stages` | `-s` | Required | All | The model stage at which the model should start. `all` will run the following stages in this order: model_extent, forest_age_category_IPCC, annual_removals_IPCC, annual_removals_all_forest_types, gain_year_count, gross_removals_all_forest_types, carbon_pools, gross_emissions, net_flux, aggregate, create_supplementary_outputs |
+| `stages` | `-s` | Required | All | The model stage at which the model should start. `all` will run the following stages in this order: model_extent, forest_age_category_IPCC, annual_removals_IPCC, annual_removals_all_forest_types, gain_year_count, gross_removals_all_forest_types, carbon_pools, gross_emissions_all_pools, net_flux, aggregate, create_supplementary_outputs, gross_emissions_biomass_soil |
 | `run-through` | `-r` | Optional | All | If activated, run stage provided in `stages` argument and all following stages. Otherwise, run only stage in `stages` argument. Activated with flag. |
 | `run-date` | `-d` | Required | All | Date of run. Must be format YYYYMMDD. This sets the output folder in s3. |
 | `tile-id-list` | `-l` | Required | All | List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all |
