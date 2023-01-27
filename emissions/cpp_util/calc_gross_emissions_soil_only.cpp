@@ -424,7 +424,7 @@ for(x=0; x<xsize; x++)
 		float outdata10 = 0;  // all drivers, all gases
 		float outdata11 = 0;  // all drivers, CO2 only
 		float outdata12 = 0;  // all drivers, non-CO2
-		short int  outdata20 = 0;  // flowchart node
+		short int outdata20 = 0;  // flowchart node
 
         // Only evaluates pixels that have loss and carbon. By definition, all pixels with carbon are in the model extent.
 		if (loss_data[x] > 0 && agc_data[x] > 0)
@@ -678,7 +678,7 @@ for(x=0; x<xsize; x++)
 						        outdata20 = 231;
 						    }
 						}
-
+                    }
 				}
 				if (peat_data[x] == 0)// Shifting ag, not peat
 				{
