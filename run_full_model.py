@@ -11,24 +11,21 @@ docker build . -t gfw/carbon-budget
 Enter Docker container:
 docker run --rm -it -e AWS_SECRET_ACCESS_KEY=[] -e AWS_ACCESS_KEY_ID=[] gfw/carbon-budget
 
-Compile C++ emissions module (for standard model and sensitivity analyses that using standard emissions model)
-c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-
 Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
-python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+starting from the beginning; get carbon pools at time of loss
+python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"
 
 Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil; use multiprocessing
-python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -ln "00N_000E test"
+starting from the beginning; get carbon pools at time of loss; use multiprocessing
+python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"
 
 Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil; use singelprocessing
-python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -p biomass_soil -tcd 30 -sp -ln "00N_000E test"
+starting from the beginning; get carbon pools at time of loss; use singelprocessing
+python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -tcd 30 -sp -ln "00N_000E test"
 
 FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
-run all model stages; starting from the beginning; get carbon pools at time of loss; emissions from biomass and soil
-python -m run_full_model -si -t std -s all -r -l all -ce loss -p biomass_soil -tcd 30 -ln "Running all tiles"
+run all model stages; starting from the beginning; get carbon pools at time of loss
+python -m run_full_model -si -t std -s all -r -l all -ce loss -tcd 30 -ln "Running all tiles"
 """
 
 import argparse
@@ -63,7 +60,7 @@ def main ():
     # List of possible model stages to run (not including mangrove and planted forest stages)
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
-                    'carbon_pools', 'gross_emissions',
+                    'carbon_pools', 'gross_emissions_biomass_soil', 'gross_emissions_soil_only',
                     'net_flux', 'aggregate', 'create_supplementary_outputs']
 
 
@@ -79,9 +76,7 @@ def main ():
     parser.add_argument('--tile-id-list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--carbon-pool-extent', '-ce', required=False,
-                        help='Time period for which carbon emitted_pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
-    parser.add_argument('--emitted-pools-to-use', '-p', required=False,
-                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
+                        help='Time period for which carbon pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
     parser.add_argument('--tcd-threshold', '-tcd', required=False, default=cn.canopy_threshold,
                         help='Tree cover density threshold above which pixels will be included in the aggregation. Default is 30.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
@@ -106,7 +101,6 @@ def main ():
     cn.RUN_THROUGH = args.run_through
     cn.RUN_DATE = args.run_date
     cn.CARBON_POOL_EXTENT = args.carbon_pool_extent
-    cn.EMITTED_POOLS = args.emitted_pools_to_use
     cn.THRESH = args.tcd_threshold
     cn.STD_NET_FLUX = args.std_net_flux_aggreg
     cn.INCLUDE_MANGROVES = args.mangroves
@@ -163,33 +157,6 @@ def main ():
     if ('carbon_pools' in actual_stages) & (cn.CARBON_POOL_EXTENT not in ['loss', '2000', 'loss,2000', '2000,loss']):
         uu.exception_log('Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.')
 
-    # Checks if the correct c++ script has been compiled for the pool option selected.
-    # Does this up front so that the user is prompted to compile the C++ before the script starts running, if necessary.
-    if 'gross_emissions' in actual_stages:
-
-        if cn.EMITTED_POOLS == 'biomass_soil':
-            # Some sensitivity analyses have specific gross emissions scripts.
-            # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
-            if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
-                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
-                    uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
-                else:
-                    uu.exception_log(f'Must compile standard {cn.SENSIT_TYPE} model C++...')
-            else:
-                if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
-                    uu.print_log('C++ for generic emissions already compiled.')
-                else:
-                    uu.exception_log('Must compile generic emissions C++...')
-
-        elif (cn.EMITTED_POOLS == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
-            if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
-                uu.print_log('C++ for generic emissions already compiled.')
-            else:
-                uu.exception_log('Must compile soil_only C++...')
-
-        else:
-            uu.exception_log('Pool and/or sensitivity analysis option not valid for gross emissions')
-
     # Checks whether the canopy cover argument is valid up front.
     if 'aggregate' in actual_stages:
         if cn.THRESH < 0 or cn.THRESH > 99:
@@ -232,7 +199,7 @@ def main ():
         output_dir_list = [cn.annual_gain_AGC_BGC_natrl_forest_US_dir,
                            cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir] + output_dir_list
 
-    # Adds the carbon directories depending on which carbon emitted_pools are being generated: 2000 and/or emissions year
+    # Adds the carbon directories depending on which carbon years are being generated: 2000 and/or emissions year
     if 'carbon_pools' in actual_stages:
         if 'loss' in cn.CARBON_POOL_EXTENT:
             output_dir_list = output_dir_list + [cn.AGC_emis_year_dir, cn.BGC_emis_year_dir,
@@ -244,31 +211,30 @@ def main ():
                                                  cn.deadwood_2000_dir, cn.litter_2000_dir,
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
-    # Adds the biomass_soil output directories or the soil_only output directories depending on the model run
-    if cn.EMITTED_POOLS == 'biomass_soil':
-        output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
-                           cn.gross_emis_shifting_ag_biomass_soil_dir,
-                           cn.gross_emis_forestry_biomass_soil_dir,
-                           cn.gross_emis_wildfire_biomass_soil_dir,
-                           cn.gross_emis_urban_biomass_soil_dir,
-                           cn.gross_emis_no_driver_biomass_soil_dir,
-                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
-                           cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
-                           cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
-                           cn.gross_emis_nodes_biomass_soil_dir]
+    # Adds the biomass_soil output directories and the soil_only output directories
+    output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
+                       cn.gross_emis_shifting_ag_biomass_soil_dir,
+                       cn.gross_emis_forestry_biomass_soil_dir,
+                       cn.gross_emis_wildfire_biomass_soil_dir,
+                       cn.gross_emis_urban_biomass_soil_dir,
+                       cn.gross_emis_no_driver_biomass_soil_dir,
+                       cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+                       cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+                       cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                       cn.gross_emis_nodes_biomass_soil_dir]
 
-    else:
-        output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
-                               cn.gross_emis_shifting_ag_soil_only_dir,
-                               cn.gross_emis_forestry_soil_only_dir,
-                               cn.gross_emis_wildfire_soil_only_dir,
-                               cn.gross_emis_urban_soil_only_dir,
-                               cn.gross_emis_no_driver_soil_only_dir,
-                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                               cn.gross_emis_nodes_soil_only_dir]
+    output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
+                       cn.gross_emis_shifting_ag_soil_only_dir,
+                       cn.gross_emis_forestry_soil_only_dir,
+                       cn.gross_emis_wildfire_soil_only_dir,
+                       cn.gross_emis_urban_soil_only_dir,
+                       cn.gross_emis_no_driver_soil_only_dir,
+                       cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                       cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                       cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                       cn.gross_emis_nodes_soil_only_dir]
 
+    # Adds the net flux output directory
     output_dir_list = output_dir_list + [cn.net_flux_dir]
 
     # Supplementary outputs
@@ -431,7 +397,7 @@ def main ():
         uu.print_log(f':::::Processing time for gross_removals_all_forest_types: {elapsed_time}', "\n", "\n")
 
 
-    # Creates carbon emitted_pools in loss year
+    # Creates carbon pools in loss year
     if 'carbon_pools' in actual_stages:
 
         if not cn.SAVE_INTERMEDIATES:
@@ -469,8 +435,8 @@ def main ():
         uu.print_log(f':::::Processing time for create_carbon_pools: {elapsed_time}', "\n", "\n")
 
 
-    # Creates gross emissions tiles by driver, gas, and all emissions combined
-    if 'gross_emissions' in actual_stages:
+    # Creates gross emissions tiles for biomass+soil by driver, gas, and all emissions combined
+    if 'gross_emissions_biomass_soil' in actual_stages:
 
         if not cn.SAVE_INTERMEDIATES:
 
@@ -503,7 +469,44 @@ def main ():
         uu.print_log(':::::Creating gross emissions tiles')
         start = datetime.datetime.now()
 
-        mp_calculate_gross_emissions(tile_id_list, cn.EMITTED_POOLS)
+        mp_calculate_gross_emissions(tile_id_list, 'biomass_soil')
+
+        end = datetime.datetime.now()
+        elapsed_time = end - start
+        uu.check_storage()
+        uu.print_log(f':::::Processing time for gross_emissions: {elapsed_time}', "\n", "\n")
+
+
+    # Creates gross emissions tiles for soil only by driver, gas, and all emissions combined
+    if 'gross_emissions_soil_only' in actual_stages:
+
+        if not cn.SAVE_INTERMEDIATES:
+
+            uu.print_log(':::::Freeing up memory for gross emissions creation by deleting unneeded tiles')
+            tiles_to_delete = []
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_commod_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_shifting_ag_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_forestry_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_wildfire_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_urban_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_no_driver_biomass_soil}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_biomass_soil}*tif'))
+            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
+
+            uu.print_log(tiles_to_delete)
+
+            for tile_to_delete in tiles_to_delete:
+                os.remove(tile_to_delete)
+            uu.print_log(':::::Deleted unneeded tiles')
+
+        uu.check_storage()
+
+        uu.print_log(':::::Creating gross emissions tiles')
+        start = datetime.datetime.now()
+
+        mp_calculate_gross_emissions(tile_id_list, 'soil_only')
 
         end = datetime.datetime.now()
         elapsed_time = end - start
@@ -518,29 +521,16 @@ def main ():
 
             uu.print_log(':::::Freeing up memory for net flux creation by deleting unneeded tiles')
             tiles_to_delete = []
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_commod_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_shifting_ag_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_forestry_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_wildfire_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_urban_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_no_driver_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_AGC_emis_year}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_emis_year}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_deadwood_emis_year_2000}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_litter_emis_year_2000}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_soil_C_emis_year_2000}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_total_C_emis_year}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_peat_mask}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_ifl_primary}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_planted_forest_type_unmasked}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_drivers}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_climate_zone}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_bor_tem_trop_processed}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_TCLF_processed}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_plant_pre_2000}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_all_gases_all_drivers_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_commod_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_shifting_ag_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_forestry_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_wildfire_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_urban_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_no_driver_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_soil_only}*tif'))
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:

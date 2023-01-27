@@ -2,9 +2,6 @@
 #Ubuntu 20.04.4 LTS, Python 3.8.10, GDAL 3.4.2
 FROM osgeo/gdal:ubuntu-small-3.4.2
 
-# # Use this if downloading hdf files for burn year analysis
-# FROM osgeo/gdal:ubuntu-full-3.4.2
-
 ENV DIR=/usr/local/app
 ENV TMP=/usr/local/tmp
 ENV TILES=/usr/local/tiles
@@ -82,13 +79,6 @@ RUN git config --global user.email dagibbs22@gmail.com
 #
 ## Makes sure the latest version of the current branch is downloaded
 #RUN git pull origin model_v_1.2.2
-
-## Compile C++ scripts
-RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
-#    RUN g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal && \
-#    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal && \
-#    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_no_shifting_ag.exe -lgdal && \
-#    g++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_convert_to_grassland.exe -lgdal
 
 # Opens the Docker shell
 ENTRYPOINT ["/bin/bash"]

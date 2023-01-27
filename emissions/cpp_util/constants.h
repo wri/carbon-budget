@@ -23,6 +23,10 @@ namespace constants
 
     constexpr int soil_emis_period {20};      // The number of years over which soil emissions are calculated (separate from model years)
 
+    constexpr float shiftag_flu {0.72}; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
+
+    constexpr float urb_flu {0.80}; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
+
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr
     // Inputs

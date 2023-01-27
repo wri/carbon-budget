@@ -2,11 +2,11 @@
 :: Lines must be uncommented according to the model being imported, e.g., standard, maxgain, soil_only, etc.
 :: David Gibbs, david.gibbs@wri.org
 
-FOR %%I IN (output\carbonflux_20210324_0439\iso\summary\*.csv) DO psql -d flux_model -U postgres -c "\copy standard_iso_summary_20210323 FROM %%I CSV HEADER DELIMITER e'\t'
-FOR %%I IN (output\carbonflux_20210324_0439\iso\change\*.csv) DO psql -d flux_model -U postgres -c "\copy standard_iso_change_20210323 FROM %%I CSV HEADER DELIMITER e'\t'
+FOR %%I IN (output\carbonflux_20220418_1744\iso\summary\*.csv) DO psql -d flux_model -U postgres -c "\copy standard_iso_summary_20220316 FROM %%I CSV HEADER DELIMITER e'\t'
+FOR %%I IN (output\carbonflux_20220418_1744\iso\change\*.csv) DO psql -d flux_model -U postgres -c "\copy standard_iso_change_20220316 FROM %%I CSV HEADER DELIMITER e'\t'
 
-::FOR %%I IN (output\soil_only\iso\summary\*.csv) DO psql -d flux_model -U postgres -c "\copy soil_only_iso_summary_20200904 FROM %%I CSV HEADER DELIMITER e'\t'
-::FOR %%I IN (output\soil_only\iso\change\*.csv) DO psql -d flux_model -U postgres -c "\copy soil_only_iso_change_20200904 FROM %%I CSV HEADER DELIMITER e'\t'
+::FOR %%I IN (output\carbon_sensitivity_soil_only_20210326_0003\iso\summary\*.csv) DO psql -d flux_model -U postgres -c "\copy soil_only_iso_summary_20210324 FROM %%I CSV HEADER DELIMITER e'\t'
+::FOR %%I IN (output\carbon_sensitivity_soil_only_20210326_0003\iso\change\*.csv) DO psql -d flux_model -U postgres -c "\copy soil_only_iso_change_20210324 FROM %%I CSV HEADER DELIMITER e'\t'
 
 ::FOR %%I IN (output\maxgain\iso\summary\*.csv) DO psql -d flux_model -U postgres -c "\copy maxgain_iso_summary_20200921 FROM %%I CSV HEADER DELIMITER e'\t'
 ::FOR %%I IN (output\maxgain\iso\change\*.csv) DO psql -d flux_model -U postgres -c "\copy maxgain_iso_change FROM %%I CSV HEADER DELIMITER e'\t'
