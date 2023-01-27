@@ -84,6 +84,12 @@ boreal = constants::boreal;
 int soil_emis_period;      // The number of years over which soil emissions are calculated (separate from model years)
 soil_emis_period = constants::soil_emis_period;
 
+float shiftag_flu; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
+shiftag_flu = constants::shiftag_flu;
+
+float urb_flu; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
+urb_flu = constants::urb_flu;
+
 
 // Input files
 // Carbon pools
@@ -655,8 +661,6 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
                 Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
-				float shiftag_flu;
-				shiftag_flu = 0.72;
 				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/soil_emis_period) * (model_years-loss_data[x]);
 
 				if (peat_data[x] > 0) // Shifting ag, peat
@@ -955,8 +959,6 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
 				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
-				float urb_flu;
-				urb_flu = 0.8;
 				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/soil_emis_period) * (model_years-loss_data[x]);
 
                 if (peat_data[x] > 0) // Urbanization, peat

@@ -21,7 +21,7 @@ Emissions from all drivers is also output as emissions due to CO2 only and emiss
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
 
-python -m emissions.mp_calculate_gross_emissions -t std -p biomass_soil -l all -nu
+python -m emissions.mp_calculate_gross_emissions -t std -p biomass_soil -l ooN_000E -nu
 """
 
 import argparse
@@ -123,42 +123,52 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
             if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe'):
                 uu.print_log(f'C++ for {cn.SENSIT_TYPE} already compiled.')
             else:
-                uu.exception_log(f'Must compile {cn.SENSIT_TYPE} model C++...')
+                uu.print_log(f'Compiled {cn.SENSIT_TYPE} model C++ not found. Compiling...')
+                cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_{cn.SENSIT_TYPE}.cpp',
+                       '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_{cn.SENSIT_TYPE}.exe', '-lgdal']
+                uu.log_subprocess_output_full(cmd)
         else:
             if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_generic.exe'):
                 uu.print_log('C++ for generic emissions already compiled.')
             else:
-                uu.exception_log('Must compile generic emissions C++...')
+                uu.print_log(f'Compiling generic model C++ not found. Compiling...')
+                cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp',
+                       '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe', '-lgdal']
+                uu.log_subprocess_output_full(cmd)
 
     elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
+
+        # Output file directories for soil_only. Must be in same order as output pattern directories.
+        output_dir_list = [cn.gross_emis_commod_soil_only_dir,
+                           cn.gross_emis_shifting_ag_soil_only_dir,
+                           cn.gross_emis_forestry_soil_only_dir,
+                           cn.gross_emis_wildfire_soil_only_dir,
+                           cn.gross_emis_urban_soil_only_dir,
+                           cn.gross_emis_no_driver_soil_only_dir,
+                           cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+                           cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+                           cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                           cn.gross_emis_nodes_soil_only_dir]
+
+        output_pattern_list = [cn.pattern_gross_emis_commod_soil_only,
+                               cn.pattern_gross_emis_shifting_ag_soil_only,
+                               cn.pattern_gross_emis_forestry_soil_only,
+                               cn.pattern_gross_emis_wildfire_soil_only,
+                               cn.pattern_gross_emis_urban_soil_only,
+                               cn.pattern_gross_emis_no_driver_soil_only,
+                               cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+                               cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
+                               cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
+                               cn.pattern_gross_emis_nodes_soil_only]
+
         if os.path.exists(f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe'):
             uu.print_log('C++ for soil_only already compiled.')
 
-            # Output file directories for soil_only. Must be in same order as output pattern directories.
-            output_dir_list = [cn.gross_emis_commod_soil_only_dir,
-                               cn.gross_emis_shifting_ag_soil_only_dir,
-                               cn.gross_emis_forestry_soil_only_dir,
-                               cn.gross_emis_wildfire_soil_only_dir,
-                               cn.gross_emis_urban_soil_only_dir,
-                               cn.gross_emis_no_driver_soil_only_dir,
-                               cn.gross_emis_all_gases_all_drivers_soil_only_dir,
-                               cn.gross_emis_co2_only_all_drivers_soil_only_dir,
-                               cn.gross_emis_non_co2_all_drivers_soil_only_dir,
-                               cn.gross_emis_nodes_soil_only_dir]
-
-            output_pattern_list = [cn.pattern_gross_emis_commod_soil_only,
-                                   cn.pattern_gross_emis_shifting_ag_soil_only,
-                                   cn.pattern_gross_emis_forestry_soil_only,
-                                   cn.pattern_gross_emis_wildfire_soil_only,
-                                   cn.pattern_gross_emis_urban_soil_only,
-                                   cn.pattern_gross_emis_no_driver_soil_only,
-                                   cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
-                                   cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
-                                   cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
-                                   cn.pattern_gross_emis_nodes_soil_only]
-
         else:
-            uu.exception_log('Must compile soil_only C++...')
+            uu.print_log(f'Compiled soil_only model C++ not found. Compiling...')
+            cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp',
+                   '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe', '-lgdal']
+            uu.log_subprocess_output_full(cmd)
 
     else:
         uu.exception_log('Pool and/or sensitivity analysis option not valid')
