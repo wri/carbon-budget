@@ -259,45 +259,45 @@ def aggregate_within_tile(tile_id, download_pattern_name):
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, f'{download_pattern_name}_0_04deg')
 
-def aggregate_tiles(pattern):
+def aggregate_tiles(basic_pattern, per_pixel_forest_pattern):
 
     # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-    out_vrt = f'{pattern}_0_04deg.vrt'
-    os.system('gdalbuildvrt -tr 0.04 0.04 {0} *{1}_0_04deg*.tif'.format(out_vrt, pattern))
+    out_vrt = f'{per_pixel_forest_pattern}_0_04deg.vrt'
+    os.system(f'gdalbuildvrt -tr {str(cn.agg_pixel_res)} {str(cn.agg_pixel_res)} {out_vrt} *{per_pixel_forest_pattern}_0_04deg.tif')
 
     # Creates the output name for the 10km map
-    out_pattern = uu.name_aggregated_output(pattern, cn.thresh)
-    uu.print_log(out_pattern)
+    out_aggregated_pattern = uu.name_aggregated_output(basic_pattern)
+    uu.print_log(out_aggregated_pattern)
 
     # Produces a single raster of all the 10x10 tiles (0.04 degree resolution)
     cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=DEFLATE',
-           '-tr', '0.04', '0.04',
-           out_vrt, '{}.tif'.format(out_pattern)]
+           '-tr', str(cn.agg_pixel_res), str(cn.agg_pixel_res),
+           out_vrt, f'{out_aggregated_pattern}.tif']
     uu.log_subprocess_output_full(cmd)
 
     # Adds metadata tags to output rasters
-    uu.add_universal_metadata_gdal(f'{out_pattern}.tif')
+    uu.add_universal_metadata_gdal(f'{out_aggregated_pattern}.tif')
 
     # Units are different for annual removal factor, so metadata has to reflect that
-    if 'annual_removal_factor' in out_pattern:
+    if 'annual_removal_factor' in out_aggregated_pattern:
         cmd = ['gdal_edit.py',
-               '-mo', 'units=Mg aboveground carbon/yr/pixel, where pixels are 0.04x0.04 degrees',
+               '-mo', f'units=Mg aboveground carbon/yr/pixel, where pixels are {cn.agg_pixel_res}x{cn.agg_pixel_res} degrees',
                '-mo',
                'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                '-mo', 'extent=Global',
                '-mo', 'scale=negative values are removals',
                '-mo',
-               f'treecover_density_threshold={thresh} (only model pixels with canopy cover > {thresh} are included in aggregation',
-               '{0}.tif'.format(out_pattern)]
+               f'treecover_density_threshold={cn.canopy_threshold} (only model pixels with canopy cover > {cn.canopy_threshold} are included in aggregation',
+               f'{out_aggregated_pattern}.tif']
         uu.log_subprocess_output_full(cmd)
 
     else:
         cmd = ['gdal_edit.py',
-               '-mo', 'units=Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees',
+               '-mo', f'units=Mg CO2e/yr/pixel, where pixels are {cn.agg_pixel_res}x{cn.agg_pixel_res} degrees',
                '-mo',
                'source=per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
                '-mo', 'extent=Global',
                '-mo',
-               f'treecover_density_threshold={thresh} (only model pixels with canopy cover > {thresh} are included in aggregation',
-               '{0}.tif'.format(out_pattern)]
+               f'treecover_density_threshold={cn.canopy_threshold} (only model pixels with canopy cover > {cn.canopy_threshold} are included in aggregation',
+               f'{out_aggregated_pattern}.tif']
         uu.log_subprocess_output_full(cmd)

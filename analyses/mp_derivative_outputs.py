@@ -164,7 +164,7 @@ def mp_derivative_outputs(tile_id_list_outer):
         #
         # ### Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
         # ### This will allow the 30x30 m pixels in each window to be summed into the aggregated pixels.
-        # download_pattern_name = output_patterns[2]
+        download_pattern_name = output_patterns[2]
         #
         # if cn.SINGLE_PROCESSOR:
         #     for tile_id in tile_id_list_inner:
@@ -214,7 +214,7 @@ def mp_derivative_outputs(tile_id_list_outer):
         #     pool.join()
 
 
-        derivative_outputs.aggregate_tiles(input_pattern)
+        derivative_outputs.aggregate_tiles(input_pattern, download_pattern_name)
 
 
 

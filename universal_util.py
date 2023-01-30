@@ -1060,24 +1060,22 @@ def list_and_delete_blank_tiles():
 
 
 # Reformats the patterns for the 10x10 degree model output tiles for the aggregated output names
-def name_aggregated_output(pattern, thresh):
+def name_aggregated_output(pattern):
 
+    # print(pattern)
     out_pattern = re.sub('ha_', '', pattern)
-    # print out_pattern
-    out_pattern = re.sub(f'2001_{cn.loss_years}', 'per_year', out_pattern)
-    # print out_pattern
-    out_pattern = re.sub('gross_emis_year', 'gross_emis_per_year', out_pattern)
-    # print out_pattern
+    # print(out_pattern)
+    out_pattern = re.sub(f'2001_{cn.loss_years}', '', out_pattern)
+    # print(out_pattern)
     out_pattern = re.sub('_Mg_', '_Mt_', out_pattern)
-    # print out_pattern
+    # print(out_pattern)
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
-    # print out_pattern
+    # print(out_pattern)
     date = datetime.datetime.now()
     date_formatted = date.strftime("%Y%m%d")
 
-    out_name = f'{out_pattern}_tcd{thresh}_{cn.pattern_aggreg}_{cn.SENSIT_TYPE}_{date_formatted}'
-
-    # print out_name
+    out_name = f'{out_pattern}_tcd{cn.canopy_threshold}_{cn.pattern_aggreg}_{cn.SENSIT_TYPE}_{date_formatted}'
+    # print(out_name)
 
     return out_name
 
