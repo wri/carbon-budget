@@ -1,5 +1,20 @@
 """
-This
+Final step of the flux model. This creates various derivative outputs which are used on the GFW platform and for
+some analyses. Derivative outputs for gross emissions, gross removals, and net flux include:
+1. Full extent flux per pixel at 0.00025x0.00025 deg (all pixels included in model extent)
+2. Forest extent flux per hectare at 0.00025x0.00025 deg (within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass)
+3. Forest extent flux per pixel at 0.00025x0.00025 deg (within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass)
+4. Forest extent flux at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
+For sensitivity analyses only:
+5. Percent difference between standard model and sensitivity analysis for aggregated map
+6. Pixels with sign changes between standard model and sensitivity analysis for aggregated map
+
+The forest extent outputs are for sharing with partners because they limit the model to just the relevant pixels
+(those within forests, as defined below).
+Forest extent is defined in the methods section of Harris et al. 2021 Nature Climate Change.
+Forest extent is: ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
+The WHRC AGB2000 and pre-2000 plantations conditions were set in mp_model_extent.py, so they don't show up here.
+
 """
 
 import multiprocessing
@@ -13,14 +28,12 @@ import sys
 import constants_and_names as cn
 import universal_util as uu
 
-from . import supplementary_outputs
+from . import derivative_outputs
 
-def mp_supplementary_outputs(tile_id_list_outer):
+def mp_derivative_outputs(tile_id_list_outer):
     """
-    :param tile_id_list:
-    :param thresh:
-    :param std_net_flux:
-    :return:
+    :param tile_id_list_outer: list of tile ids to process
+    :return: derivative outputs at native and aggregated resolution for emissions, removals, and net flux
     """
 
     os.chdir(cn.docker_base_dir)
@@ -33,7 +46,7 @@ def mp_supplementary_outputs(tile_id_list_outer):
     uu.print_log(tile_id_list_outer)
     uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', "\n")
 
-    # Files to be processed for this script
+    # File sets to be processed for this script
     download_dict = {
         # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
@@ -43,8 +56,8 @@ def mp_supplementary_outputs(tile_id_list_outer):
     uu.print_log(f'Model outputs to process are: {download_dict}')
 
     # List of output directories and output file name patterns.
-    # Outputs must be in the same order as the download dictionary above, and then follow the same order for all outputs.
-    # Currently, it's: per pixel full extent, per hectare forest extent, per pixel forest extent.
+    # Outputs must be in the same order as the download dictionary above, and then follow the following order for all outputs:
+    # per pixel full extent, per hectare forest extent, per pixel forest extent.
     # Aggregated output comes at the end and has no corresponding pattern.
     output_dir_list = [
                         cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
@@ -79,13 +92,6 @@ def mp_supplementary_outputs(tile_id_list_outer):
     if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
-    # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_rewindow_dir, cn.pattern_pixel_area_rewindow, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
-    # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for filtering sums to model extent
-    uu.s3_flexible_download(cn.tcd_rewindow_dir, cn.pattern_tcd_rewindow, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
-    uu.s3_flexible_download(cn.gain_rewindow_dir, cn.pattern_gain_rewindow, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
-    uu.s3_flexible_download(cn.mangrove_biomass_2000_rewindow_dir, cn.pattern_mangrove_biomass_2000_rewindow, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
-
     # Pixel area tiles-- necessary for calculating per pixel values
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for masking to forest extent
@@ -96,6 +102,7 @@ def mp_supplementary_outputs(tile_id_list_outer):
     # Iterates through the types of tiles to be processed
     for input_dir, download_pattern_name in download_dict.items():
 
+        # Pattern name for tiles being processed
         input_pattern = download_pattern_name[0]
 
         # If a full model run is specified, the correct set of tiles for the particular script is listed.
@@ -133,10 +140,10 @@ def mp_supplementary_outputs(tile_id_list_outer):
         uu.print_log(f'Output patterns: {output_patterns}')
 
 
-        # # Creates the per-pixel and forest extent supplementary outputs
+        # ### Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
         # if cn.SINGLE_PROCESSOR:
         #     for tile_id in tile_id_list_inner:
-        #         supplementary_outputs.supplementary_outputs(tile_id, input_pattern, output_patterns)
+        #         derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
         #
         # else:
         #     # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
@@ -147,17 +154,17 @@ def mp_supplementary_outputs(tile_id_list_outer):
         #         processes = 2
         #     uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
         #     pool = multiprocessing.Pool(processes)
-        #     pool.map(partial(supplementary_outputs.supplementary_outputs, input_pattern=input_pattern,
+        #     pool.map(partial(derivative_outputs.forest_extent_per_pixel_outputs, input_pattern=input_pattern,
         #                      output_patterns=output_patterns),
         #              tile_id_list_inner)
         #     pool.close()
         #     pool.join()
-
-
-
-        # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
-        # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-        download_pattern_name = output_patterns[2]
+        #
+        #
+        #
+        # ### Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
+        # ### This will allow the 30x30 m pixels in each window to be summed into the aggregated pixels.
+        # download_pattern_name = output_patterns[2]
         #
         # if cn.SINGLE_PROCESSOR:
         #     for tile_id in tile_id_list_inner:
@@ -177,36 +184,37 @@ def mp_supplementary_outputs(tile_id_list_outer):
         #              tile_id_list_inner)
         #     pool.close()
         #     pool.join()
+        #
+        #
+        #
+        # ### Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # ### and sums those values in each 160x160 pixel window.
+        # ### The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # ### 0.04x0.04 degree resolution (approximately 10m in the tropics).
+        # ### Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # ### The 0.04x0.04 degree tile is output.
+        # ### For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        # if cn.SINGLE_PROCESSOR:
+        #     for tile_id in tile_id_list_inner:
+        #         derivative_outputs.aggregate_within_tile(tile_id, download_pattern_name)
+        #
+        # else:
+        #     if cn.count == 96:
+        #         if cn.SENSIT_TYPE == 'biomass_swap':
+        #             processes = 10  # 10 processors = XXX GB peak
+        #         else:
+        #             processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+        #     else:
+        #         processes = 8
+        #     uu.print_log(f'Conversion to per pixel and aggregate max processors={processes}')
+        #     pool = multiprocessing.Pool(processes)
+        #     pool.map(partial(derivative_outputs.aggregate_within_tile, download_pattern_name=download_pattern_name),
+        #              tile_id_list_inner)
+        #     pool.close()
+        #     pool.join()
 
 
-
-        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # and sums those values in each 160x160 pixel window.
-        # The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # 0.04x0.04 degree resolution (approximately 10m in the tropics).
-        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # The 0.04x0.04 degree tile is output.
-        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        if cn.SINGLE_PROCESSOR:
-            for tile_id in tile_id_list_inner:
-                supplementary_outputs.aggregate(tile_id, download_pattern_name)
-
-        else:
-            if cn.count == 96:
-                if cn.SENSIT_TYPE == 'biomass_swap':
-                    processes = 10  # 10 processors = XXX GB peak
-                else:
-                    processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
-            else:
-                processes = 8
-            uu.print_log(f'Conversion to per pixel and aggregate max processors={processes}')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(supplementary_outputs.aggregate, download_pattern_name=download_pattern_name),
-                     tile_id_list_inner)
-            pool.close()
-            pool.join()
-
-
+        derivative_outputs.aggregate_tiles(input_pattern)
 
 
 
@@ -252,4 +260,4 @@ if __name__ == '__main__':
     uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_supplementary_outputs(tile_id_list)
+    mp_derivative_outputs(tile_id_list)

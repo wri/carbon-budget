@@ -47,7 +47,7 @@ from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
 from analyses.mp_aggregate_results_to_4_km import mp_aggregate_results_to_4_km
-from analyses.mp_create_supplementary_outputs import mp_create_supplementary_outputs
+from analyses.mp_derivative_outputs import mp_derivative_outputs
 
 def main ():
     """
@@ -61,7 +61,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions_biomass_soil', 'gross_emissions_soil_only',
-                    'net_flux', 'aggregate', 'create_supplementary_outputs']
+                    'net_flux', 'aggregate', 'create_derivative_outputs']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -552,7 +552,7 @@ def main ():
 
     # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
     # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
-    if 'aggregate' in actual_stages:
+    if 'create_derivative_outputs' in actual_stages:
 
         # aux.xml files need to be deleted because otherwise they'll be included in the aggregation iteration.
         # They are created by using check_and_delete_if_empty_light()
@@ -568,39 +568,12 @@ def main ():
         uu.print_log(':::::Creating 4x4 km aggregate maps')
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_4_km(tile_id_list, cn.THRESH, std_net_flux=cn.STD_NET_FLUX)
+        mp_derivative_outputs(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
         uu.print_log(f':::::Processing time for aggregate: {elapsed_time}', "\n", "\n")
-
-
-    # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
-    if 'create_supplementary_outputs' in actual_stages:
-
-        if not cn.SAVE_INTERMEDIATES:
-
-            uu.print_log(':::::Deleting rewindowed tiles')
-            tiles_to_delete = []
-            tiles_to_delete.extend(glob.glob('*rewindow*tif'))
-            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
-
-            for tile_to_delete in tiles_to_delete:
-                os.remove(tile_to_delete)
-            uu.print_log(':::::Deleted unneeded tiles')
-
-        uu.check_storage()
-
-        uu.print_log(':::::Creating supplementary versions of main model outputs (forest extent, per pixel)')
-        start = datetime.datetime.now()
-
-        mp_create_supplementary_outputs(tile_id_list)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.check_storage()
-        uu.print_log(f':::::Processing time for supplementary output raster creation: {elapsed_time}', "\n", "\n")
 
 
     # If no_upload flag is activated, tiles on s3 aren't counted
