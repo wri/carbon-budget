@@ -1324,7 +1324,7 @@ def rewindow(tile_id, download_pattern_name):
 
     # Only rewindows if the tile exists
     if os.path.exists(in_tile):
-        print_log(f'{in_tile} exists. Rewindowing to {out_tile} at {cn.agg_pixel_window}x{cn.agg_pixel_window} pixel windows...')
+        print_log(f'{in_tile} exists. Rewindowing to {out_tile} with {cn.agg_pixel_window}x{cn.agg_pixel_window} pixel windows...')
 
         # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
         # Solution was to use gdal_translate instead, although, for unclear reasons, this still inflates the size

@@ -25,10 +25,6 @@ def mp_supplementary_outputs(tile_id_list_outer):
 
     os.chdir(cn.docker_base_dir)
 
-    # Checks whether the canopy cover argument is valid
-    if cn.THRESH < 0 or cn.THRESH > 99:
-        uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
-
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list_outer == 'all':
         # List of tiles to run in the model
@@ -37,19 +33,11 @@ def mp_supplementary_outputs(tile_id_list_outer):
     uu.print_log(tile_id_list_outer)
     uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', "\n")
 
-    # Files to download for this script
+    # Files to be processed for this script
     download_dict = {
         # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
         # cn.net_flux_dir: [cn.pattern_net_flux]
-        # cn.pixel_area_rewindow_dir: [cn.pattern_pixel_area_rewindow],
-        # cn.tcd_rewindow_dir: [cn.pattern_tcd_rewindow],
-        # cn.gain_rewindow_dir: [cn.pattern_gain_rewindow],
-        # cn.mangrove_biomass_2000_rewindow_dir: [cn.pattern_mangrove_biomass_2000_rewindow],
-        # cn.pixel_area_dir: [cn.pattern_pixel_area],
-        # cn.tcd_dir: [cn.pattern_tcd],
-        # cn.gain_dir: [cn.pattern_gain],
-        # cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000]
         }
 
     uu.print_log(f'Model outputs to process are: {download_dict}')
@@ -145,79 +133,78 @@ def mp_supplementary_outputs(tile_id_list_outer):
         uu.print_log(f'Output patterns: {output_patterns}')
 
 
-        # Creates the per-pixel and forest extent supplementary outputs
-        if cn.SINGLE_PROCESSOR:
-            for tile_id in tile_id_list_inner:
-                supplementary_outputs.supplementary_outputs(tile_id, input_pattern, output_patterns)
-
-        else:
-            # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
-            # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
-            if cn.count == 96:
-                processes = 18
-            else:
-                processes = 2
-            uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(supplementary_outputs.supplementary_outputs, input_pattern=input_pattern,
-                             output_patterns=output_patterns),
-                     tile_id_list_inner)
-            pool.close()
-            pool.join()
-
-
-
-        # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
-        # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
-        print(output_patterns[2])
-        download_pattern_name = output_patterns[2]
-
-        if cn.SINGLE_PROCESSOR:
-            for tile_id in tile_id_list_inner:
-                uu.rewindow(tile_id, download_pattern_name)
-
-        else:
-            if cn.count == 96:
-                if cn.SENSIT_TYPE == 'biomass_swap':
-                    processes = 12  # 12 processors = XXX GB peak
-                else:
-                    processes = 16  # 16 processors = XXX GB peak
-            else:
-                processes = 8
-            uu.print_log(f'Rewindow max processors= {processes}')
-            pool = multiprocessing.Pool(processes)
-            pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
-                     tile_id_list_inner)
-            pool.close()
-            pool.join()
-
-
-
-        # # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # # and sums those values in each 160x160 pixel window.
-        # # The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # # 0.04x0.04 degree resolution (approximately 10m in the tropics).
-        # # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # # The 0.04x0.04 degree tile is output.
-        # # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        # # Creates the per-pixel and forest extent supplementary outputs
         # if cn.SINGLE_PROCESSOR:
-        #     for tile in tile_list:
-        #         supplementary_outputs.aggregate(tile)
+        #     for tile_id in tile_id_list_inner:
+        #         supplementary_outputs.supplementary_outputs(tile_id, input_pattern, output_patterns)
+        #
+        # else:
+        #     # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
+        #     # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
+        #     if cn.count == 96:
+        #         processes = 18
+        #     else:
+        #         processes = 2
+        #     uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
+        #     pool = multiprocessing.Pool(processes)
+        #     pool.map(partial(supplementary_outputs.supplementary_outputs, input_pattern=input_pattern,
+        #                      output_patterns=output_patterns),
+        #              tile_id_list_inner)
+        #     pool.close()
+        #     pool.join()
+
+
+
+        # # Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
+        # # which is the resolution of the output tiles. This will allow the 30x30 m pixels in each window to be summed.
+        download_pattern_name = output_patterns[2]
+        #
+        # if cn.SINGLE_PROCESSOR:
+        #     for tile_id in tile_id_list_inner:
+        #         uu.rewindow(tile_id, download_pattern_name)
         #
         # else:
         #     if cn.count == 96:
         #         if cn.SENSIT_TYPE == 'biomass_swap':
-        #             processes = 10  # 10 processors = XXX GB peak
+        #             processes = 12  # 12 processors = XXX GB peak
         #         else:
-        #             processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+        #             processes = 16  # 16 processors = XXX GB peak
         #     else:
         #         processes = 8
-        #     uu.print_log(f'Conversion to per pixel and aggregate max processors={processes}')
+        #     uu.print_log(f'Rewindow max processors= {processes}')
         #     pool = multiprocessing.Pool(processes)
-        #     pool.map(partial(supplementary_outputs.aggregate),
-        #              tile_list)
+        #     pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
+        #              tile_id_list_inner)
         #     pool.close()
         #     pool.join()
+
+
+
+        # Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
+        # and sums those values in each 160x160 pixel window.
+        # The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
+        # 0.04x0.04 degree resolution (approximately 10m in the tropics).
+        # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
+        # The 0.04x0.04 degree tile is output.
+        # For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
+        if cn.SINGLE_PROCESSOR:
+            for tile_id in tile_id_list_inner:
+                supplementary_outputs.aggregate(tile_id, download_pattern_name)
+
+        else:
+            if cn.count == 96:
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 10  # 10 processors = XXX GB peak
+                else:
+                    processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+            else:
+                processes = 8
+            uu.print_log(f'Conversion to per pixel and aggregate max processors={processes}')
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(supplementary_outputs.aggregate, download_pattern_name=download_pattern_name),
+                     tile_id_list_inner)
+            pool.close()
+            pool.join()
 
 
 
@@ -237,12 +224,12 @@ if __name__ == '__main__':
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
-    parser.add_argument('--tcd-threshold', '-tcd', required=False, default=cn.canopy_threshold,
-                        help='Tree cover density threshold above which pixels will be included in the aggregation. Default is 30.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments
@@ -250,7 +237,7 @@ if __name__ == '__main__':
     cn.RUN_DATE = args.run_date
     cn.NO_UPLOAD = args.no_upload
     cn.STD_NET_FLUX = args.std_net_flux_aggreg
-    cn.THRESH = int(args.tcd_threshold)
+    cn.SINGLE_PROCESSOR = args.single_processor
 
     tile_id_list = args.tile_id_list
 

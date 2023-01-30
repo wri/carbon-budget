@@ -144,44 +144,28 @@ def supplementary_outputs(tile_id, input_pattern, output_patterns):
 # 0.1x0.1 degree resolution (approximately 10m in the tropics).
 # Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
 # The 0.1x0.1 degree tile is output.
-def aggregate(tile):
+def aggregate(tile_id, download_pattern_name):
 
     # start time
     start = datetime.datetime.now()
 
-    # Extracts the tile id, tile type, and bounding box for the tile
-    tile_id = uu.get_tile_id(tile)
-    tile_type = uu.get_tile_type(tile)
-    xmin, ymin, xmax, ymax = uu.coords(tile_id)
+    print(download_pattern_name)
 
     # Name of inputs
-    focal_tile_rewindow = f'{tile_id}_{tile_type}_rewindow.tif'
-    pixel_area_rewindow = f'{cn.pattern_pixel_area_rewindow}_{tile_id}.tif'
-    tcd_rewindow = f'{cn.pattern_tcd_rewindow}_{tile_id}.tif'
-    gain_rewindow = f'{cn.pattern_gain_rewindow}_{tile_id}.tif'
-    mangrove_rewindow = f'{tile_id}_{cn.pattern_mangrove_biomass_2000_rewindow}.tif'
+    focal_tile_rewindowed = f'{tile_id}_{download_pattern_name}_rewindow.tif'
 
-    # Opens input tiles for rasterio
-    in_src = rasterio.open(focal_tile_rewindow)
-    pixel_area_src = rasterio.open(pixel_area_rewindow)
-    tcd_src = rasterio.open(tcd_rewindow)
-    gain_src = rasterio.open(gain_rewindow)
+    xmin, ymin, xmax, ymax = uu.coords(focal_tile_rewindowed)
 
-    try:
-        mangrove_src = rasterio.open(mangrove_rewindow)
-        uu.print_log(f'    Mangrove tile found for {tile_id}')
-    except:
-        uu.print_log(f'    No mangrove tile found for {tile_id}')
-
-    uu.print_log(f'  Converting {tile} to per-pixel values...')
+    in_src = rasterio.open(focal_tile_rewindowed)
 
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)
 
-    #2D array in which the 0.04x0.04 deg aggregated sums will be stored
-    sum_array = np.zeros([250,250], 'float32')
+    # 2D array (250x250 cells) in which the 0.04x0.04 deg aggregated sums will be stored.
+    # sum_array = np.zeros([int(cn.tile_width/cn.agg_pixel_window),int(cn.tile_width/cn.agg_pixel_window)], 'float32')
+    sum_array = np.zeros([250, 250], 'float32')
 
-    out_raster = f'{tile_id}_{tile_type}_0_04deg.tif'
+    out_raster = f'{tile_id}_{download_pattern_name}_0_04deg.tif'
 
     uu.check_memory()
 
@@ -190,56 +174,39 @@ def aggregate(tile):
 
         # Creates windows for each input tile
         in_window = in_src.read(1, window=window)
-        pixel_area_window = pixel_area_src.read(1, window=window)
-        tcd_window = tcd_src.read(1, window=window)
-        gain_window = gain_src.read(1, window=window)
-
-        try:
-            mangrove_window = mangrove_src.read(1, window=window)
-        except:
-            mangrove_window = np.zeros((window.height, window.width), dtype='uint8')
-
-        # Applies the tree cover density threshold to the 30x30m pixels
-        if cn.THRESH > 0:
-
-            # QCed this line before publication and then again afterwards in response to question from Lena Schulte-Uebbing at Wageningen Uni.
-            in_window = np.where((tcd_window > cn.THRESH) | (gain_window == 1) | (mangrove_window != 0), in_window, 0)
-
-        # Calculates the per-pixel value from the input tile value (/ha to /pixel)
-        per_pixel_value = in_window * pixel_area_window / cn.m2_per_ha
 
         # Sums the pixels to create a total value for the 0.04x0.04 deg pixel
-        non_zero_pixel_sum = np.sum(per_pixel_value)
+        non_zero_pixel_sum = np.sum(in_window)
 
         # Stores the resulting value in the array
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
 
     # Converts the annual carbon removals values annual removals in megatonnes and makes negative (because removals are negative)
-    if cn.pattern_annual_gain_AGC_all_types in tile_type:
+    if cn.pattern_annual_gain_AGC_all_types in download_pattern_name:
         sum_array = sum_array / cn.tonnes_to_megatonnes * -1
 
     # Converts the cumulative CO2 removals values to annualized CO2 in megatonnes and makes negative (because removals are negative)
-    if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in tile_type:
+    if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
     # # Converts the cumulative gross emissions CO2 only values to annualized gross emissions CO2e in megatonnes
-    # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+    # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in download_pattern_name:
     #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
     #
     # # Converts the cumulative gross emissions non-CO2 values to annualized gross emissions CO2e in megatonnes
-    # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+    # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in download_pattern_name:
     #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
+    if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
-    if cn.pattern_net_flux in tile_type:
+    if cn.pattern_net_flux in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
-    uu.print_log(f'  Creating aggregated tile for {tile}...')
+    uu.print_log(f'  Creating aggregated tile for {tile_id}...')
 
     # Converts array to the same output type as the raster that is created below
     sum_array = np.float32(sum_array)
@@ -260,7 +227,7 @@ def aggregate(tile):
         # print(aggregated.tags())
         # uu.add_rasterio_tags(aggregated)
         # print(aggregated.tags())
-        # if cn.pattern_annual_gain_AGC_all_types in tile_type:
+        # if cn.pattern_annual_gain_AGC_all_types in download_pattern_name:
         #     aggregated.update_tags(units='Mg aboveground carbon/pixel, where pixels are 0.04x0.04 degrees)',
         #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
         #                     extent='Global',
@@ -270,22 +237,22 @@ def aggregate(tile):
         #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
         #                     extent='Global',
         #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in tile_type:
+        # # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in download_pattern_name:
         # #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
         # #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
         # #                     extent='Global', gases_included='CO2 only',
         # #                     treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in tile_type:
+        # # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in download_pattern_name:
         # #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
         # #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
         # #                     extent='Global', gases_included='CH4, N20',
         # #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in tile_type:
+        # if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in download_pattern_name:
         #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
         #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
         #                     extent='Global',
         #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_net_flux in tile_type:
+        # if cn.pattern_net_flux in download_pattern_name:
         #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
         #                     scale='Negative values are net sinks. Positive values are net sources.',
         #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
@@ -295,4 +262,4 @@ def aggregate(tile):
         # aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, f'{tile_type}_0_04deg')
+    uu.end_of_fx_summary(start, tile_id, f'{download_pattern_name}_0_04deg')
