@@ -211,8 +211,10 @@ def aggregate(tile_id, download_pattern_name):
     # https://gis.stackexchange.com/questions/279953/numpy-array-to-gtiff-using-rasterio-without-source-raster
     with rasterio.open(out_raster, 'w',
                                 driver='GTiff', compress='DEFLATE', nodata='0', dtype='float32', count=1,
-                                height=250, width=250,
-                                crs='EPSG:4326', transform=from_origin(xmin,ymax,0.04,0.04)) as aggregated:
+                                height=int(cn.tile_width/cn.agg_pixel_window),
+                                width=int(cn.tile_width/cn.agg_pixel_window),
+                                crs='EPSG:4326',
+                                transform=from_origin(xmin,ymax,cn.agg_pixel_res,cn.agg_pixel_res)) as aggregated:
         aggregated.write(sum_array, 1)
         ### I don't know why, but update_tags() is adding the tags to the raster but not saving them.
         ### That is, the tags are printed but not showing up when I do gdalinfo on the raster.

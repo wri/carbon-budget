@@ -95,6 +95,9 @@ Hansen_res = 0.00025
 tile_width = 10 / Hansen_res
 tile_height = 10 / Hansen_res
 
+# Resolution of aggregated output rasters in decimal degrees
+agg_pixel_res = 0.04
+
 # Pixel window sizes for rewindowed input rasters
 agg_pixel_window = int(tile_width * 0.004)
 
