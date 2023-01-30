@@ -162,8 +162,7 @@ def aggregate(tile_id, download_pattern_name):
     windows = in_src.block_windows(1)
 
     # 2D array (250x250 cells) in which the 0.04x0.04 deg aggregated sums will be stored.
-    # sum_array = np.zeros([int(cn.tile_width/cn.agg_pixel_window),int(cn.tile_width/cn.agg_pixel_window)], 'float32')
-    sum_array = np.zeros([250, 250], 'float32')
+    sum_array = np.zeros([int(cn.tile_width/cn.agg_pixel_window),int(cn.tile_width/cn.agg_pixel_window)], 'float32')
 
     out_raster = f'{tile_id}_{download_pattern_name}_0_04deg.tif'
 
@@ -182,12 +181,8 @@ def aggregate(tile_id, download_pattern_name):
         sum_array[idx[0], idx[1]] = non_zero_pixel_sum
 
 
-    # Converts the annual carbon removals values annual removals in megatonnes and makes negative (because removals are negative)
-    if cn.pattern_annual_gain_AGC_all_types in download_pattern_name:
-        sum_array = sum_array / cn.tonnes_to_megatonnes * -1
-
     # Converts the cumulative CO2 removals values to annualized CO2 in megatonnes and makes negative (because removals are negative)
-    if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types in download_pattern_name:
+    if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
     # # Converts the cumulative gross emissions CO2 only values to annualized gross emissions CO2e in megatonnes
@@ -199,11 +194,11 @@ def aggregate(tile_id, download_pattern_name):
     #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
-    if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in download_pattern_name:
+    if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
-    if cn.pattern_net_flux in download_pattern_name:
+    if cn.pattern_net_flux[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     uu.print_log(f'  Creating aggregated tile for {tile_id}...')
