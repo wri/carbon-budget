@@ -1,9 +1,10 @@
 """
 Final step of the flux model. This creates various derivative outputs which are used on the GFW platform and for
-some analyses. Derivative outputs for gross emissions, gross removals, and net flux include:
-1. Full extent flux per pixel at 0.00025x0.00025 deg (all pixels included in model extent)
-2. Forest extent flux per hectare at 0.00025x0.00025 deg (within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass)
-3. Forest extent flux per pixel at 0.00025x0.00025 deg (within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass)
+supplemental analyses. Derivative outputs for gross emissions, gross removals, and net flux at 0.00025x0.000025 deg
+resolution for full model extent (all pixels included in mp_model_extent.py):
+1. Full extent flux per pixel at 0.00025x0.00025 deg (all pixels included in mp_model_extent.py)
+2. Forest extent flux per hectare at 0.00025x0.00025 deg (forest extent defined below)
+3. Forest extent flux per pixel at 0.00025x0.00025 deg (forest extent defined below)
 4. Forest extent flux at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
 For sensitivity analyses only:
 5. Percent difference between standard model and sensitivity analysis for aggregated map
@@ -11,10 +12,11 @@ For sensitivity analyses only:
 
 The forest extent outputs are for sharing with partners because they limit the model to just the relevant pixels
 (those within forests, as defined below).
-Forest extent is defined in the methods section of Harris et al. 2021 Nature Climate Change.
-Forest extent is: ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
+Forest extent is defined in the methods section of Harris et al. 2021 Nature Climate Change:
+within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass.
+More formally, forest extent is:
+((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
 The WHRC AGB2000 and pre-2000 plantations conditions were set in mp_model_extent.py, so they don't show up here.
-
 """
 
 import multiprocessing
@@ -46,11 +48,11 @@ def mp_derivative_outputs(tile_id_list_outer):
     uu.print_log(tile_id_list_outer)
     uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', "\n")
 
-    # File sets to be processed for this script
+    # Tile sets to be processed for this script
     download_dict = {
-        # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
-        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil]
-        # cn.net_flux_dir: [cn.pattern_net_flux]
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+        cn.net_flux_dir: [cn.pattern_net_flux]
         }
 
     uu.print_log(f'Model outputs to process are: {download_dict}')
@@ -58,7 +60,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     # List of output directories and output file name patterns.
     # Outputs must be in the same order as the download dictionary above, and then follow the following order for all outputs:
     # per pixel full extent, per hectare forest extent, per pixel forest extent.
-    # Aggregated output comes at the end and has no corresponding pattern.
+    # Aggregated output comes at the end and has no corresponding pattern (hence '').
     output_dir_list = [
                         cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
                         cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
@@ -79,7 +81,8 @@ def mp_derivative_outputs(tile_id_list_outer):
                             cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent,
                             cn.pattern_net_flux_per_pixel_full_extent,
                             cn.pattern_net_flux_forest_extent,
-                            cn.pattern_net_flux_per_pixel_forest_extent]
+                            cn.pattern_net_flux_per_pixel_forest_extent,
+                            '']
 
     # If the model run isn't the standard one, the output directory is changed
     if cn.SENSIT_TYPE != 'std':
@@ -102,7 +105,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     # Iterates through the types of tiles to be processed
     for input_dir, download_pattern_name in download_dict.items():
 
-        # Pattern name for tiles being processed
+        # Pattern for tile set being processed
         input_pattern = download_pattern_name[0]
 
         # If a full model run is specified, the correct set of tiles for the particular script is listed.
@@ -140,82 +143,102 @@ def mp_derivative_outputs(tile_id_list_outer):
         uu.print_log(f'Output patterns: {output_patterns}')
 
 
-        # ### Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
-        # if cn.SINGLE_PROCESSOR:
-        #     for tile_id in tile_id_list_inner:
-        #         derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
-        #
-        # else:
-        #     # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
-        #     # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
-        #     if cn.count == 96:
-        #         processes = 18
-        #     else:
-        #         processes = 2
-        #     uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
-        #     pool = multiprocessing.Pool(processes)
-        #     pool.map(partial(derivative_outputs.forest_extent_per_pixel_outputs, input_pattern=input_pattern,
-        #                      output_patterns=output_patterns),
-        #              tile_id_list_inner)
-        #     pool.close()
-        #     pool.join()
-        #
-        #
-        #
-        # ### Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
-        # ### This will allow the 30x30 m pixels in each window to be summed into the aggregated pixels.
+
+        ### STEP 1: Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
+        if cn.SINGLE_PROCESSOR:
+            for tile_id in tile_id_list_inner:
+                derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
+
+        else:
+            # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
+            # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
+            if cn.count == 96:
+                processes = 18
+            else:
+                processes = 2
+            uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(derivative_outputs.forest_extent_per_pixel_outputs, input_pattern=input_pattern,
+                             output_patterns=output_patterns),
+                     tile_id_list_inner)
+            pool.close()
+            pool.join()
+
+
+
+        ### STEP 2: Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
+        ### This will allow the 0.00025x0.00025 deg pixels in each window to be summed into the aggregated pixels.
+
+        # The forest extent per-pixel pattern for that model output. This derivative output is used for aggregation
+        # because aggregation is just for forest extent and sums the per-pixel values within each aggregated pixel.
         download_pattern_name = output_patterns[2]
-        #
-        # if cn.SINGLE_PROCESSOR:
-        #     for tile_id in tile_id_list_inner:
-        #         uu.rewindow(tile_id, download_pattern_name)
-        #
-        # else:
-        #     if cn.count == 96:
-        #         if cn.SENSIT_TYPE == 'biomass_swap':
-        #             processes = 12  # 12 processors = XXX GB peak
-        #         else:
-        #             processes = 16  # 16 processors = XXX GB peak
-        #     else:
-        #         processes = 8
-        #     uu.print_log(f'Rewindow max processors= {processes}')
-        #     pool = multiprocessing.Pool(processes)
-        #     pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
-        #              tile_id_list_inner)
-        #     pool.close()
-        #     pool.join()
-        #
-        #
-        #
-        # ### Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-        # ### and sums those values in each 160x160 pixel window.
-        # ### The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
-        # ### 0.04x0.04 degree resolution (approximately 10m in the tropics).
-        # ### Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-        # ### The 0.04x0.04 degree tile is output.
-        # ### For multiprocessor use. This used about 450 GB of memory with count/2, it's okay on an r4.16xlarge
-        # if cn.SINGLE_PROCESSOR:
-        #     for tile_id in tile_id_list_inner:
-        #         derivative_outputs.aggregate_within_tile(tile_id, download_pattern_name)
-        #
-        # else:
-        #     if cn.count == 96:
-        #         if cn.SENSIT_TYPE == 'biomass_swap':
-        #             processes = 10  # 10 processors = XXX GB peak
-        #         else:
-        #             processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
-        #     else:
-        #         processes = 8
-        #     uu.print_log(f'Conversion to per pixel and aggregate max processors={processes}')
-        #     pool = multiprocessing.Pool(processes)
-        #     pool.map(partial(derivative_outputs.aggregate_within_tile, download_pattern_name=download_pattern_name),
-        #              tile_id_list_inner)
-        #     pool.close()
-        #     pool.join()
+
+        if cn.SINGLE_PROCESSOR:
+            for tile_id in tile_id_list_inner:
+                uu.rewindow(tile_id, download_pattern_name)
+
+        else:
+            if cn.count == 96:
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 12  # 12 processors = XXX GB peak
+                else:
+                    processes = 16  # 16 processors = XXX GB peak
+            else:
+                processes = 8
+            uu.print_log(f'Rewindow max processors= {processes}')
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.rewindow, download_pattern_name=download_pattern_name),
+                     tile_id_list_inner)
+            pool.close()
+            pool.join()
 
 
+
+        ### STEP 3: Aggregates the rewindowed per-pixel values in each 160x160 window.
+        ### The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
+        ### 0.04x0.04 degree resolution .
+        ### Each aggregated pixel in this raster is the sum of the forest extent 0.00025x0.00025 deg per-pixel maps.
+        ### 10x10 deg tiles at 0.04x0.04 deg resolution are output.
+        if cn.SINGLE_PROCESSOR:
+            for tile_id in tile_id_list_inner:
+                derivative_outputs.aggregate_within_tile(tile_id, download_pattern_name)
+
+        else:
+            if cn.count == 96:
+                if cn.SENSIT_TYPE == 'biomass_swap':
+                    processes = 10  # 10 processors = XXX GB peak
+                else:
+                    processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+            else:
+                processes = 8
+            uu.print_log(f'Aggregate max processors={processes}')
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(derivative_outputs.aggregate_within_tile, download_pattern_name=download_pattern_name),
+                     tile_id_list_inner)
+            pool.close()
+            pool.join()
+
+
+
+        ### STEP 4: Combines 10x10 deg aggregated tiles into a global aggregated map
         derivative_outputs.aggregate_tiles(input_pattern, download_pattern_name)
 
+
+
+        ### STEP 5: Upload outputs and clean up folder
+        vrtList = glob.glob('*vrt')
+        for vrt in vrtList:
+            os.remove(vrt)
+
+        for tile_name in tile_id_list_inner:
+            tile_id = uu.get_tile_id(tile_name)
+            os.remove(f'{tile_id}_{pattern}_rewindow.tif')
+            os.remove(f'{tile_id}_{pattern}_0_04deg.tif')
+
+        # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+        if not cn.NO_UPLOAD:
+            for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+                uu.upload_final_set(output_dir, output_pattern)
 
 
 

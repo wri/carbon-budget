@@ -1,5 +1,22 @@
 """
+Final step of the flux model. This creates various derivative outputs which are used on the GFW platform and for
+supplemental analyses. Derivative outputs for gross emissions, gross removals, and net flux at 0.00025x0.000025 deg
+resolution for full model extent (all pixels included in mp_model_extent.py):
+1. Full extent flux per pixel at 0.00025x0.00025 deg (all pixels included in mp_model_extent.py)
+2. Forest extent flux per hectare at 0.00025x0.00025 deg (forest extent defined below)
+3. Forest extent flux per pixel at 0.00025x0.00025 deg (forest extent defined below)
+4. Forest extent flux at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
+For sensitivity analyses only:
+5. Percent difference between standard model and sensitivity analysis for aggregated map
+6. Pixels with sign changes between standard model and sensitivity analysis for aggregated map
 
+The forest extent outputs are for sharing with partners because they limit the model to just the relevant pixels
+(those within forests, as defined below).
+Forest extent is defined in the methods section of Harris et al. 2021 Nature Climate Change:
+within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass.
+More formally, forest extent is:
+((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
+The WHRC AGB2000 and pre-2000 plantations conditions were set in mp_model_extent.py, so they don't show up here.
 """
 
 import numpy as np
@@ -14,12 +31,16 @@ import universal_util as uu
 
 
 def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
+    """
+    Creates derivative outputs at 0.00025x0.00025 deg resolution
+    :param tile_id: tile to be processed, identified by its tile id
+    :param input_pattern: pattern for input tile
+    :param output_patterns: patterns for output tile names (list of patterns because three derivative outputs)
+    :return:
+    """
 
     # start time
     start = datetime.datetime.now()
-
-    # Extracts the tile id, tile type, and bounding box for the tile
-    tile_id = uu.get_tile_id(tile_id)
 
     # Names of inputs
     focal_tile = f'{tile_id}_{input_pattern}.tif'
@@ -68,7 +89,6 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     per_pixel_forest_extent_dst = rasterio.open(per_pixel_forest_extent, 'w', **kwargs)
 
     # Adds metadata tags to the output rasters
-
     uu.add_universal_metadata_rasterio(per_pixel_full_extent_dst)
     per_pixel_full_extent_dst.update_tags(
         units=f'Mg CO2e/pixel over model duration (2001-20{cn.loss_years})')
@@ -138,13 +158,13 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     uu.end_of_fx_summary(start, tile_id, output_patterns[0])
 
 
-# Converts the existing (per ha) values to per pixel values (e.g., emissions/ha to emissions/pixel)
-# and sums those values in each 160x160 pixel window.
-# The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
-# 0.1x0.1 degree resolution (approximately 10m in the tropics).
-# Each pixel in that raster is the sum of the 30m pixels converted to value/pixel (instead of value/ha).
-# The 0.1x0.1 degree tile is output.
 def aggregate_within_tile(tile_id, download_pattern_name):
+    """
+    Aggregates 0.00025x0.00025 deg per pixel forest extent raster to 0.04x0.04 deg raster
+    :param tile_id: tile to be processed, identified by its tile id
+    :param download_pattern_name: pattern for input tile
+    :return: Raster with values aggregated to 0.04x0.04 deg
+    """
 
     # start time
     start = datetime.datetime.now()
@@ -162,7 +182,7 @@ def aggregate_within_tile(tile_id, download_pattern_name):
     # 2D array (250x250 cells) in which the 0.04x0.04 deg aggregated sums will be stored.
     sum_array = np.zeros([int(cn.tile_width/cn.agg_pixel_window),int(cn.tile_width/cn.agg_pixel_window)], 'float32')
 
-    out_raster = f'{tile_id}_{download_pattern_name}_0_04deg.tif'
+    out_raster = f'{tile_id}_{download_pattern_name}_{cn.agg_pixel_res_filename}deg.tif'
 
     uu.check_memory()
 
@@ -182,14 +202,6 @@ def aggregate_within_tile(tile_id, download_pattern_name):
     # Converts the cumulative CO2 removals values to annualized CO2 in megatonnes and makes negative (because removals are negative)
     if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
-
-    # # Converts the cumulative gross emissions CO2 only values to annualized gross emissions CO2e in megatonnes
-    # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in download_pattern_name:
-    #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
-    #
-    # # Converts the cumulative gross emissions non-CO2 values to annualized gross emissions CO2e in megatonnes
-    # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in download_pattern_name:
-    #     sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
     # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
     if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil[0:15] in download_pattern_name:
@@ -214,56 +226,22 @@ def aggregate_within_tile(tile_id, download_pattern_name):
                                 crs='EPSG:4326',
                                 transform=from_origin(xmin,ymax,cn.agg_pixel_res,cn.agg_pixel_res)) as aggregated:
         aggregated.write(sum_array, 1)
-        ### I don't know why, but update_tags() is adding the tags to the raster but not saving them.
-        ### That is, the tags are printed but not showing up when I do gdalinfo on the raster.
-        ### Instead, I'm using gdal_edit
-        # print(aggregated)
-        # aggregated.update_tags(a="1")
-        # print(aggregated.tags())
-        # uu.add_rasterio_tags(aggregated)
-        # print(aggregated.tags())
-        # if cn.pattern_annual_gain_AGC_all_types in download_pattern_name:
-        #     aggregated.update_tags(units='Mg aboveground carbon/pixel, where pixels are 0.04x0.04 degrees)',
-        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        #                     extent='Global',
-        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types:
-        #     aggregated.update_tags(units='Mg CO2/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        #                     extent='Global',
-        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # # if cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil in download_pattern_name:
-        # #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        # #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        # #                     extent='Global', gases_included='CO2 only',
-        # #                     treecover_density_threshold = '{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # # if cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil in download_pattern_name:
-        # #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        # #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        # #                     extent='Global', gases_included='CH4, N20',
-        # #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil in download_pattern_name:
-        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        #                     extent='Global',
-        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # if cn.pattern_net_flux in download_pattern_name:
-        #     aggregated.update_tags(units='Mg CO2e/yr/pixel, where pixels are 0.04x0.04 degrees)',
-        #                     scale='Negative values are net sinks. Positive values are net sources.',
-        #                     source='per hectare version of the same model output, aggregated from 0.00025x0.00025 degree pixels',
-        #                     extent='Global',
-        #                     treecover_density_threshold='{0} (only model pixels with canopy cover > {0} are included in aggregation'.format(thresh))
-        # print(aggregated.tags())
-        # aggregated.close()
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, f'{download_pattern_name}_0_04deg')
+    uu.end_of_fx_summary(start, tile_id, f'{download_pattern_name}_{cn.agg_pixel_res_filename}deg')
+
 
 def aggregate_tiles(basic_pattern, per_pixel_forest_pattern):
+    """
+    Aggregates all 0.04x0.04 deg resolution 10x10 deg tiles into a global 0.04x0.04 deg map
+    :param basic_pattern: pattern for per hectare full extent tiles (used as basis for aggregated output file name)
+    :param per_pixel_forest_pattern: pattern for per pixel forest extent tiles
+    :return: global aggregated 0.04x0.04 deg map
+    """
 
     # Makes a vrt of all the output 10x10 tiles (10 km resolution)
-    out_vrt = f'{per_pixel_forest_pattern}_0_04deg.vrt'
-    os.system(f'gdalbuildvrt -tr {str(cn.agg_pixel_res)} {str(cn.agg_pixel_res)} {out_vrt} *{per_pixel_forest_pattern}_0_04deg.tif')
+    out_vrt = f'{per_pixel_forest_pattern}_{cn.agg_pixel_res_filename}deg.vrt'
+    os.system(f'gdalbuildvrt -tr {str(cn.agg_pixel_res)} {str(cn.agg_pixel_res)} {out_vrt} *{per_pixel_forest_pattern}_{cn.agg_pixel_res_filename}deg.tif')
 
     # Creates the output name for the 10km map
     out_aggregated_pattern = uu.name_aggregated_output(basic_pattern)
