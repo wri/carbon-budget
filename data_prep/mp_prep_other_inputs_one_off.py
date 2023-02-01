@@ -4,6 +4,9 @@ At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000
 combining IFL2000 (extratropics) and primary forests (tropics) into a single layer,
 Hansenizing some removal factor standard deviation inputs, Hansenizing the European removal factors,
 and Hansenizing three US-specific removal factor inputs.
+
+python -m data_prep.mp_prep_other_inputs_one_off -l 00N_000E -nu
+python -m data_prep.mp_prep_other_inputs_one_off -l all
 '''
 
 from subprocess import Popen, PIPE, STDOUT, check_call
@@ -11,15 +14,17 @@ import argparse
 import multiprocessing
 import datetime
 from functools import partial
-import sys
+import rioxarray as rio
 import os
+import sys
+import xarray as xr
 
 import constants_and_names as cn
 import universal_util as uu
 
 from . import prep_other_inputs_one_off
 
-def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
+def mp_prep_other_inputs(tile_id_list):
 
     os.chdir(cn.docker_base_dir)
     sensit_type='std'
@@ -27,10 +32,10 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        ### BUG: THIS SHOULD ALSO INCLUDE cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir IN ITS LIST
         tile_id_list = uu.create_combined_tile_list(
-            [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir],
-            sensit_type=cn.SENSIT_TYPE)
+            [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir, cn.tcd_dir,
+             cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir]
+        )
 
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
@@ -46,7 +51,8 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
                        cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
                        cn.FIA_forest_group_processed_dir,
                        cn.age_cat_natrl_forest_US_dir,
-                       cn.FIA_regions_processed_dir
+                       cn.FIA_regions_processed_dir,
+                       cn.BGB_AGB_ratio_dir
     ]
     output_pattern_list = [
                            cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
@@ -57,7 +63,8 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
                            cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
                            cn.pattern_FIA_forest_group_processed,
                            cn.pattern_age_cat_natrl_forest_US,
-                           cn.pattern_FIA_regions_processed
+                           cn.pattern_FIA_regions_processed,
+                           cn.pattern_BGB_AGB_ratio
     ]
 
 
@@ -72,8 +79,8 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # A date can optionally be provided by the full model script or a run of this script.
     # This replaces the date in constants_and_names.
     # Only done if output upload is enabled.
-    if run_date is not None and no_upload is not None:
-        output_dir_list = uu.replace_output_dir_date(output_dir_list, run_date)
+    if cn.RUN_DATE is not None and no_upload is not None:
+        output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
     # # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
@@ -87,9 +94,7 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # # For some reason, using uu.s3_file_download or otherwise using AWSCLI as a subprocess doesn't work for this raster.
     # # Thus, using wget instead.
     # cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_base_dir)]
-    # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    # with process.stdout:
-    #     uu.log_subprocess_output(process.stdout)
+    # uu.log_subprocess_output_full(cmd)
     # uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
     # cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--recursive']
     # uu.log_subprocess_output_full(cmd)
@@ -257,8 +262,73 @@ def mp_prep_other_inputs(tile_id_list, run_date, no_upload = None):
     # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
     # pool.close()
     # pool.join()
+
+
+    ### Creates Hansen tiles of AGB:BGB based on Huang et al. 2021: https://essd.copernicus.org/articles/13/4263/2021/
+
+    # # Converts the AGB and BGB NetCDF files to global geotifs.
+    # # Note that, for some reason, this isn't working in Docker locally; when it gets to the to_raster step, it keeps
+    # # saying "Killed", perhaps because it's running out of memory (1.87/1.95 GB used).
+    # # So I did this in Python shell outside Docker and it worked fine.
+    # # Methods for converting NetCDF4 to geotif are from approach 1 at
+    # # https://help.marine.copernicus.eu/en/articles/5029956-how-to-convert-netcdf-to-geotiff
+    # agb = xr.open_dataset(cn.name_raw_AGB_Huang_global)
+    # # uu.print_log(agb)
+    # agb_den = agb['ASHOOT']
+    # # uu.print_log(agb_den)
+    # agb_den = agb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
+    # uu.print_log(agb_den)
+    # agb_den.rio.write_crs("epsg:4326", inplace=True)
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
+    # agb_den.rio.to_raster(r"AGB_from_Huang_2021_Mg_ha__20230201.tif")
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # But I think this error isn't a problem; the resulting geotif seems fine.
     #
-    #
+    # bgb = xr.open_dataset(cn.name_raw_BGB_Huang_global)
+    # # uu.print_log(bgb)
+    # bgb_den = bgb['AROOT']
+    # # uu.print_log(bgb_den)
+    # bgb_den = bgb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
+    # uu.print_log(bgb_den)
+    # bgb_den.rio.write_crs("epsg:4326", inplace=True)
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
+    # bgb_den.rio.to_raster(r"BGB_from_Huang_2021_Mg_ha__20230201.tif")
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # But I think this error isn't a problem; the resulting geotif seems fine.
+
+    uu.print_log("Generating global BGB:AGB map")
+
+    out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
+    calc = '--calc=A/B'
+    datatype = f'--type=Float32'
+
+    cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
+           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
+    uu.log_subprocess_output_full(cmd)
+
+    # Creates primary forest tiles
+    source_raster = cn.name_rasterized_BGB_AGB_Huang_global
+    out_pattern = cn.pattern_BGB_AGB_ratio
+    dt = 'Float32'
+    if cn.count == 96:
+        processes = 15 # 15=XXX GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.close()
+    pool.join()
+
+    os.quit()
 
 
     for output_pattern in [
@@ -316,14 +386,20 @@ if __name__ == '__main__':
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
     args = parser.parse_args()
+
+    # Sets global variables to the command line arguments
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
-    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
-        no_upload = True
+        cn.NO_UPLOAD = True
 
     # Create the output log
     uu.initiate_log(tile_id_list)
@@ -331,4 +407,4 @@ if __name__ == '__main__':
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_prep_other_inputs(tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    mp_prep_other_inputs(tile_id_list=tile_id_list)

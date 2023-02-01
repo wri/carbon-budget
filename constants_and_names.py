@@ -174,6 +174,20 @@ mangrove_biomass_2000_dir = os.path.join(s3_base_dir, 'mangrove_biomass/processe
 pattern_mangrove_biomass_2000_rewindow = 'mangrove_agb_t_ha_2000_rewindow'
 mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrove_biomass/20210621/')
 
+name_raw_AGB_Huang_global = 'pergridarea_agb.nc'
+name_raw_BGB_Huang_global = 'pergridarea_bgb.nc'
+AGB_BGB_Huang_raw_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/raw_AGB_BGB_Huang_et_al_2021/')
+
+name_rasterized_AGB_Huang_global = 'AGB_from_Huang_2021_Mg_ha__20230201.tif'
+name_rasterized_BGB_Huang_global = 'BGB_from_Huang_2021_Mg_ha__20230201.tif'
+name_rasterized_BGB_AGB_Huang_global = 'BGB_AGB_ratio_global_Huang_2021__20230201.tif'
+AGB_BGB_Huang_rasterized_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/rasterized_AGB_BGB_and_ratio_Huang_et_al_2021/')
+
+pattern_BGB_AGB_ratio = 'BGB_AGB_ratio'
+BGB_AGB_ratio_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/processed/20230201/')
+
+
+
 
 ######
 ### Miscellaneous inputs
