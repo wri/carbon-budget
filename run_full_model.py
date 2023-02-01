@@ -575,7 +575,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(f':::::Processing time for aggregate: {elapsed_time}', "\n", "\n")
+        uu.print_log(f':::::Processing time for creating derivative outputs: {elapsed_time}', "\n", "\n")
 
 
     # If no_upload flag is activated, tiles on s3 aren't counted

@@ -113,7 +113,7 @@ def mp_derivative_outputs(tile_id_list_outer):
 
         # If a full model run is specified, the correct set of tiles for the particular script is listed.
         # A new list is named so that tile_id_list stays as the command line argument.
-        if tile_id_list == 'all':
+        if tile_id_list_outer == 'all':
             # List of tiles to run in the model
             tile_id_list_inner = uu.tile_list_s3(input_dir, cn.SENSIT_TYPE)
         else:
@@ -226,8 +226,8 @@ def mp_derivative_outputs(tile_id_list_outer):
         derivative_outputs.aggregate_tiles(input_pattern, download_pattern_name)
 
 
-        ### STEP 5: Upload outputs and clean up folder
-        uu.print_log("STEP 5: Upload outputs and clean up folder")
+        ### STEP 5: Clean up folder
+        uu.print_log("STEP 5: Clean up folder")
         vrt_list = glob.glob('*vrt')
         for vrt in vrt_list:
             os.remove(vrt)
@@ -241,13 +241,32 @@ def mp_derivative_outputs(tile_id_list_outer):
             os.remove(aggreg)
 
 
+        ### STEP 6: Checks the two forest extent output tiles created from each input tile for whether there is data in them.
+        ### Because the extent is restricted in the forest extent pixels, some tiles with pixels in the full extent
+        ### version may not have pixels in the forest extent version.
+        uu.print_log("STEP 6: Checking forest extent outputs for data")
+        for output_pattern in output_patterns[1:3]:
+            if cn.SINGLE_PROCESSOR or cn.count < 4:
+                for tile_id in tile_id_list_inner:
+                    uu.check_and_delete_if_empty_light(tile_id, output_pattern)
+            else:
+                processes = 55  # 50 processors = 560 GB peak for gross removals; 55 = XXX GB peak
+                uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
+                pool = multiprocessing.Pool(processes)
+                pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list_inner)
+                pool.close()
+                pool.join()
+
+
+    ### OPTIONAL STEP 7: Upload 0.00025x0.00025 deg and aggregated outputs to s3
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
+        uu.print_log("STEP 7: Uploading outputs to s3")
         for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
             uu.upload_final_set(output_dir, output_pattern)
 
 
-    # ### OPTIONAL STEP 6: Compares sensitivity analysis aggregated net flux map to standard model aggregated net flux map in two ways.
+    # ### OPTIONAL STEP 8: Compares sensitivity analysis aggregated net flux map to standard model aggregated net flux map in two ways.
     # ### This does not work for comparing the raw outputs of the biomass_swap and US_removals sensitivity models because their
     # ### extents are different from the standard model's extent (tropics and US tiles vs. global).
     # ### Thus, in order to do this comparison, you need to clip the standard model net flux and US_removals net flux to

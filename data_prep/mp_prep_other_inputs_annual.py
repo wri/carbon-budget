@@ -52,12 +52,12 @@ def mp_prep_other_inputs(tile_id_list):
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       # cn.drivers_processed_dir,
-                         cn.TCLF_processed_dir
+                       cn.drivers_processed_dir,
+                       cn.TCLF_processed_dir
     ]
     output_pattern_list = [
-                           # cn.pattern_drivers,
-                             cn.pattern_TCLF_processed
+                           cn.pattern_drivers,
+                           cn.pattern_TCLF_processed
     ]
 
 
@@ -77,6 +77,7 @@ def mp_prep_other_inputs(tile_id_list):
 
 
     ### Drivers of tree cover loss processing
+    uu.print_log("STEP 1: Preprocess drivers of tree cover loss")
 
     uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_base_dir, sensit_type)
 
@@ -100,6 +101,7 @@ def mp_prep_other_inputs(tile_id_list):
 
 
     ### Tree cover loss from fires processing
+    uu.print_log("STEP 2: Preprocess tree cover loss from fires")
 
     # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
     # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
