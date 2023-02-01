@@ -11,6 +11,9 @@ The extent of these removal rates is greater than what is ultimately used in the
 everywhere there's a forest age category, continent, and ecozone.
 You can think of this as the IPCC default rate that would be applied if no other data were available for that pixel.
 The belowground removal rates are purely the aboveground removal rates with the above:below ratio applied to them.
+
+python -m removals.mp_annual_gain_rate_IPCC_default -t std -l 00N_000E -nu
+python -m removals.mp_annual_gain_rate_IPCC_default -t std -l all
 """
 
 import multiprocessing

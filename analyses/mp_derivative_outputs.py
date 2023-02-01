@@ -2,10 +2,10 @@
 Final step of the flux model. This creates various derivative outputs which are used on the GFW platform and for
 supplemental analyses. Derivative outputs for gross emissions, gross removals, and net flux at 0.00025x0.000025 deg
 resolution for full model extent (all pixels included in mp_model_extent.py):
-1. Full extent flux per pixel at 0.00025x0.00025 deg (all pixels included in mp_model_extent.py)
-2. Forest extent flux per hectare at 0.00025x0.00025 deg (forest extent defined below)
-3. Forest extent flux per pixel at 0.00025x0.00025 deg (forest extent defined below)
-4. Forest extent flux at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
+1. Full extent flux Mg per pixel at 0.00025x0.00025 deg (all pixels included in mp_model_extent.py)
+2. Forest extent flux Mg per hectare at 0.00025x0.00025 deg (forest extent defined below)
+3. Forest extent flux Mg per pixel at 0.00025x0.00025 deg (forest extent defined below)
+4. Forest extent flux Mt at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
 For sensitivity analyses only:
 5. Percent difference between standard model and sensitivity analysis for aggregated map
 6. Pixels with sign changes between standard model and sensitivity analysis for aggregated map
@@ -17,6 +17,9 @@ within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biom
 More formally, forest extent is:
 ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
 The WHRC AGB2000 and pre-2000 plantations conditions were set in mp_model_extent.py, so they don't show up here.
+
+python -m analyses.mp_derivative_outputs -t std -l 00N_000E -nu
+python -m analyses.mp_derivative_outputs -t std -l all
 """
 
 import multiprocessing
@@ -48,7 +51,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     uu.print_log(tile_id_list_outer)
     uu.print_log(f'There are {str(len(tile_id_list_outer))} tiles to process', "\n")
 
-    # Tile sets to be processed for this script
+    # Tile sets to be processed for this script. The three main outputs from the model.
     download_dict = {
         cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
         cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
@@ -60,7 +63,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     # List of output directories and output file name patterns.
     # Outputs must be in the same order as the download dictionary above, and then follow the following order for all outputs:
     # per pixel full extent, per hectare forest extent, per pixel forest extent.
-    # Aggregated output comes at the end and has no corresponding pattern (hence '').
+    # Aggregated output comes at the end.
     output_dir_list = [
                         cn.cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir,
                         cn.cumul_gain_AGCO2_BGCO2_all_types_forest_extent_dir,
@@ -82,7 +85,7 @@ def mp_derivative_outputs(tile_id_list_outer):
                             cn.pattern_net_flux_per_pixel_full_extent,
                             cn.pattern_net_flux_forest_extent,
                             cn.pattern_net_flux_per_pixel_forest_extent,
-                            '']
+                            f'tcd{cn.canopy_threshold}_{cn.pattern_aggreg}']
 
     # If the model run isn't the standard one, the output directory is changed
     if cn.SENSIT_TYPE != 'std':
@@ -139,16 +142,15 @@ def mp_derivative_outputs(tile_id_list_outer):
         else:
             uu.exception_log('No output patterns found for input pattern. Please check.')
 
+
+        ### STEP 1: Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
+        uu.print_log("STEP 1: Creating derivative per-pixel and forest extent outputs")
         uu.print_log(f'Input pattern: {input_pattern}')
         uu.print_log(f'Output patterns: {output_patterns}')
 
-
-
-        ### STEP 1: Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
         if cn.SINGLE_PROCESSOR:
             for tile_id in tile_id_list_inner:
                 derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
-
         else:
             # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
             # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
@@ -165,9 +167,10 @@ def mp_derivative_outputs(tile_id_list_outer):
             pool.join()
 
 
-
         ### STEP 2: Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
-        ### This will allow the 0.00025x0.00025 deg pixels in each window to be summed into the aggregated pixels.
+        ### This will allow the 0.00025x0.00025 deg pixels in each window to be summed into the aggregated pixels
+        ### in the next step.
+        uu.print_log("STEP 2: Rewindow tiles")
 
         # The forest extent per-pixel pattern for that model output. This derivative output is used for aggregation
         # because aggregation is just for forest extent and sums the per-pixel values within each aggregated pixel.
@@ -176,7 +179,6 @@ def mp_derivative_outputs(tile_id_list_outer):
         if cn.SINGLE_PROCESSOR:
             for tile_id in tile_id_list_inner:
                 uu.rewindow(tile_id, download_pattern_name)
-
         else:
             if cn.count == 96:
                 if cn.SENSIT_TYPE == 'biomass_swap':
@@ -193,16 +195,16 @@ def mp_derivative_outputs(tile_id_list_outer):
             pool.join()
 
 
-
         ### STEP 3: Aggregates the rewindowed per-pixel values in each 160x160 window.
         ### The sum for each 160x160 pixel window is stored in a 2D array, which is then converted back into a raster at
         ### 0.04x0.04 degree resolution .
         ### Each aggregated pixel in this raster is the sum of the forest extent 0.00025x0.00025 deg per-pixel maps.
         ### 10x10 deg tiles at 0.04x0.04 deg resolution are output.
+        uu.print_log("STEP 3: Aggregate pixels within tiles")
+
         if cn.SINGLE_PROCESSOR:
             for tile_id in tile_id_list_inner:
                 derivative_outputs.aggregate_within_tile(tile_id, download_pattern_name)
-
         else:
             if cn.count == 96:
                 if cn.SENSIT_TYPE == 'biomass_swap':
@@ -219,29 +221,79 @@ def mp_derivative_outputs(tile_id_list_outer):
             pool.join()
 
 
-
         ### STEP 4: Combines 10x10 deg aggregated tiles into a global aggregated map
+        uu.print_log("STEP 4: Combine tiles into global raster")
         derivative_outputs.aggregate_tiles(input_pattern, download_pattern_name)
 
 
-
         ### STEP 5: Upload outputs and clean up folder
-        vrtList = glob.glob('*vrt')
-        for vrt in vrtList:
+        uu.print_log("STEP 5: Upload outputs and clean up folder")
+        vrt_list = glob.glob('*vrt')
+        for vrt in vrt_list:
             os.remove(vrt)
 
-        for tile_name in tile_id_list_inner:
-            tile_id = uu.get_tile_id(tile_name)
-            os.remove(f'{tile_id}_{pattern}_rewindow.tif')
-            os.remove(f'{tile_id}_{pattern}_0_04deg.tif')
+        rewindow_list =glob.glob(f'{download_pattern_name}_rewindow.tif')
+        for rewindow in rewindow_list:
+            os.remove(rewindow)
 
-        # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
-        if not cn.NO_UPLOAD:
-            for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
-                uu.upload_final_set(output_dir, output_pattern)
+        aggreg_list =glob.glob(f'{download_pattern_name}_0_04deg.tif')
+        for aggreg in aggreg_list:
+            os.remove(aggreg)
 
 
+    # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+    if not cn.NO_UPLOAD:
+        for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+            uu.upload_final_set(output_dir, output_pattern)
 
+
+    # ### OPTIONAL STEP 6: Compares sensitivity analysis aggregated net flux map to standard model aggregated net flux map in two ways.
+    # ### This does not work for comparing the raw outputs of the biomass_swap and US_removals sensitivity models because their
+    # ### extents are different from the standard model's extent (tropics and US tiles vs. global).
+    # ### Thus, in order to do this comparison, you need to clip the standard model net flux and US_removals net flux to
+    # ### the outline of the US and clip the standard model net flux to the extent of JPL AGB2000.
+    # ### Then, manually upload the clipped US_removals and biomass_swap net flux rasters to the spot machine and the
+    # ### code below should work.
+    # ### WARNING: THIS HAS NOT BEEN TESTED SINCE MODEL V1.2.0 AND IS NOT LIKELY TO WORK WITHOUT SIGNIFICANT REVISIONS
+    # ### AND REFACTORING. THUS, IT IS COMMENTED OUT.
+    # if cn.SENSIT_TYPE not in ['std', 'biomass_swap', 'US_removals', 'legal_Amazon_loss']:
+    #
+    #     if std_net_flux:
+    #
+    #         uu.print_log('Standard aggregated flux results provided. Creating comparison maps.')
+    #
+    #         # Copies the standard model aggregation outputs to s3. Only net flux is used, though.
+    #         uu.s3_file_download(std_net_flux, cn.docker_base_dir, cn.SENSIT_TYPE)
+    #
+    #         # Identifies the standard model net flux map
+    #         std_aggreg_flux = os.path.split(std_net_flux)[1]
+    #
+    #         try:
+    #             # Identifies the sensitivity model net flux map
+    #             sensit_aggreg_flux = glob.glob('net_flux_Mt_CO2e_*{}*'.format(cn.SENSIT_TYPE))[0]
+    #
+    #             uu.print_log(f'Standard model net flux: {std_aggreg_flux}')
+    #             uu.print_log(f'Sensitivity model net flux: {sensit_aggreg_flux}')
+    #
+    #         except:
+    #             uu.print_log(
+    #                 'Cannot do comparison. One of the input flux tiles is not valid. Verify that both net flux rasters are on the spot machine.')
+    #
+    #         uu.print_log(f'Creating map of percent difference between standard and {cn.SENSIT_TYPE} net flux')
+    #         aggregate_results_to_4_km.percent_diff(std_aggreg_flux, sensit_aggreg_flux)
+    #
+    #         uu.print_log(
+    #             f'Creating map of which pixels change sign and which stay the same between standard and {cn.SENSIT_TYPE}')
+    #         aggregate_results_to_4_km.sign_change(std_aggreg_flux, sensit_aggreg_flux)
+    #
+    #         # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+    #         if not cn.NO_UPLOAD:
+    #             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_perc_diff)
+    #             uu.upload_final_set(output_dir_list[0], cn.pattern_aggreg_sensit_sign_change)
+    #
+    #     else:
+    #
+    #         uu.print_log('No standard aggregated flux results provided. Not creating comparison maps.')
 
 
 if __name__ == '__main__':

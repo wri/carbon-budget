@@ -19,7 +19,8 @@ Which carbon emitted_pools are being generated (2000 and/or loss pixels) is cont
 This extent argument determines which AGC function is used and how the outputs of the other emitted_pools' scripts are named.
 Carbon emitted_pools in both 2000 and in the year of loss can be created in a single run by using '2000,loss' or 'loss,2000'.
 
-python mp_create_carbon_pools.py -t std -l 00N_000E -d 20229999 -si -nu -ce loss
+python -m carbon_pools.mp_create_carbon_pools -t std -l 00N_000E -si -nu -ce loss
+python -m carbon_pools.mp_create_carbon_pools -t std -l all -si -ce loss
 """
 
 import argparse

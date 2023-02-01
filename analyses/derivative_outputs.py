@@ -2,10 +2,10 @@
 Final step of the flux model. This creates various derivative outputs which are used on the GFW platform and for
 supplemental analyses. Derivative outputs for gross emissions, gross removals, and net flux at 0.00025x0.000025 deg
 resolution for full model extent (all pixels included in mp_model_extent.py):
-1. Full extent flux per pixel at 0.00025x0.00025 deg (all pixels included in mp_model_extent.py)
-2. Forest extent flux per hectare at 0.00025x0.00025 deg (forest extent defined below)
-3. Forest extent flux per pixel at 0.00025x0.00025 deg (forest extent defined below)
-4. Forest extent flux at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
+1. Full extent flux Mg per pixel at 0.00025x0.00025 deg (all pixels included in mp_model_extent.py)
+2. Forest extent flux Mg per hectare at 0.00025x0.00025 deg (forest extent defined below)
+3. Forest extent flux Mg per pixel at 0.00025x0.00025 deg (forest extent defined below)
+4. Forest extent flux Mt at 0.04x0.04 deg (aggregated output, ~ 4x4 km at equator)
 For sensitivity analyses only:
 5. Percent difference between standard model and sensitivity analysis for aggregated map
 6. Pixels with sign changes between standard model and sensitivity analysis for aggregated map
@@ -36,7 +36,7 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     :param tile_id: tile to be processed, identified by its tile id
     :param input_pattern: pattern for input tile
     :param output_patterns: patterns for output tile names (list of patterns because three derivative outputs)
-    :return:
+    :return: Three tiles: full extent Mg per pixel, forest extent Mg per hectare, forest extent Mg per pixel
     """
 
     # start time
@@ -162,8 +162,8 @@ def aggregate_within_tile(tile_id, download_pattern_name):
     """
     Aggregates 0.00025x0.00025 deg per pixel forest extent raster to 0.04x0.04 deg raster
     :param tile_id: tile to be processed, identified by its tile id
-    :param download_pattern_name: pattern for input tile
-    :return: Raster with values aggregated to 0.04x0.04 deg
+    :param download_pattern_name: pattern for input tile, in this case the forest extent per-pixel version
+    :return: Raster with values aggregated to Mt per 0.04x0.04 deg cells
     """
 
     # start time
@@ -200,14 +200,20 @@ def aggregate_within_tile(tile_id, download_pattern_name):
 
 
     # Converts the cumulative CO2 removals values to annualized CO2 in megatonnes and makes negative (because removals are negative)
+    # [0:15] limits the pattern to the part of the download_pattern_name shared by the full extent per-hectare version
+    # and the forest extent per-pixel version. It's hacky.
     if cn.pattern_cumul_gain_AGCO2_BGCO2_all_types[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes * -1
 
-    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes
+    # Converts the cumulative gross emissions all gases CO2e values to annualized gross emissions CO2e in megatonnes.
+    # [0:15] limits the pattern to the part of the download_pattern_name shared by the full extent per-hectare version
+    # and the forest extent per-pixel version. It's hacky.
     if cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
-    # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes
+    # Converts the cumulative net flux CO2 values to annualized net flux CO2 in megatonnes.
+    # [0:15] limits the pattern to the part of the download_pattern_name shared by the full extent per-hectare version
+    # and the forest extent per-pixel version. It's hacky.
     if cn.pattern_net_flux[0:15] in download_pattern_name:
         sum_array = sum_array / cn.loss_years / cn.tonnes_to_megatonnes
 
@@ -236,18 +242,18 @@ def aggregate_tiles(basic_pattern, per_pixel_forest_pattern):
     Aggregates all 0.04x0.04 deg resolution 10x10 deg tiles into a global 0.04x0.04 deg map
     :param basic_pattern: pattern for per hectare full extent tiles (used as basis for aggregated output file name)
     :param per_pixel_forest_pattern: pattern for per pixel forest extent tiles
-    :return: global aggregated 0.04x0.04 deg map
+    :return: global aggregated 0.04x0.04 deg map with fluxes of Mt/year/pixel
     """
 
-    # Makes a vrt of all the output 10x10 tiles (10 km resolution)
+    # Makes a vrt of all the output 10x10 tiles (0.04 degree resolution)
     out_vrt = f'{per_pixel_forest_pattern}_{cn.agg_pixel_res_filename}deg.vrt'
     os.system(f'gdalbuildvrt -tr {str(cn.agg_pixel_res)} {str(cn.agg_pixel_res)} {out_vrt} *{per_pixel_forest_pattern}_{cn.agg_pixel_res_filename}deg.tif')
 
-    # Creates the output name for the 10km map
+    # Creates the output name for the aggregated map
     out_aggregated_pattern = uu.name_aggregated_output(basic_pattern)
-    uu.print_log(out_aggregated_pattern)
+    uu.print_log(f'Aggregated raster pattern is {out_aggregated_pattern}')
 
-    # Produces a single raster of all the 10x10 tiles (0.04 degree resolution)
+    # Produces a single raster of all the 10x10 tiles
     cmd = ['gdalwarp', '-t_srs', "EPSG:4326", '-overwrite', '-dstnodata', '0', '-co', 'COMPRESS=DEFLATE',
            '-tr', str(cn.agg_pixel_res), str(cn.agg_pixel_res),
            out_vrt, f'{out_aggregated_pattern}.tif']

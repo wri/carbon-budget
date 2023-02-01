@@ -3,6 +3,9 @@ Creates tiles of annual aboveground and belowground biomass removal rates for ma
 Its inputs are the continent-ecozone tiles, mangrove biomass tiles (for locations of mangroves), and the IPCC mangrove
 removals rate table.
 Also creates tiles of standard deviation in mangrove aboveground biomass removal rates based on the 95% CI in IPCC Wetlands Supplement Table 4.4.
+
+python -m removals.mp_annual_gain_rate_mangrove -t std -l 00N_000E -nu
+python -m removals.mp_annual_gain_rate_mangrove -t std -l all
 '''
 
 import multiprocessing

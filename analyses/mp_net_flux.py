@@ -1,6 +1,9 @@
 """
 Calculates the net GHG flux over the study period, with units of Mg CO2e/ha on a pixel-by-pixel basis.
 This only uses gross emissions from biomass+soil (doesn't run with gross emissions from soil_only).
+
+python -m analyses.mp_net_flux -t std -l 00N_000E -nu
+python -m analyses.mp_net_flux -t std -l all
 """
 
 import argparse

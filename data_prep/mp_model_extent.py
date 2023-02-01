@@ -6,6 +6,7 @@ For biomass_swap sensitivity analysis, NASA JPL AGB 2000 replaces WHRC 2000.
 For legal_Amazon_loss sensitivity analysis, PRODES 2000 forest extent replaces Hansen tree cover 2000 and Hansen gain
 pixels and mangrove pixels outside of (PRODES extent AND WHRC AGB) are not included.
 
+python -m data_prep.mp_model_extent -t std -l 00N_000E -nu
 python -m data_prep.mp_model_extent -t std -l all
 """
 
