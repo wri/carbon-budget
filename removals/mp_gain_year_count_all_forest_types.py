@@ -8,6 +8,9 @@ The same gain year count rules are applied to all types of forest (mangrove, pla
 Then it combines those four rasters into a single gain year raster for each tile using rasterio because
 summing the arrays using rasterio is faster and uses less memory than combining them with gdalmerge.
 If different input rasters for loss (e.g., 2001-2017) and gain (e.g., 2000-2018) are used, the year count constants in constants_and_names.py must be changed.
+
+python -m removals.mp_gain_year_count_all_forest_types -t std -l 00N_000E -nu
+python -m removals.mp_gain_year_count_all_forest_types -t std -l all
 """
 
 import argparse

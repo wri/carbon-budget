@@ -1,3 +1,4 @@
+import cProfile
 import glob
 import numpy as np
 import os
@@ -28,6 +29,10 @@ pytestmark = pytest.mark.rasterio
                          ])
 def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake,
                  delete_old_outputs, create_deadwood_dictionary, create_litter_dictionary, comparison_dict):
+
+    # cProfile profiler
+    pr=cProfile.Profile()
+    pr.enable()
 
     ### arrange
     # tile_id for testing and the extent that should be tested within it
@@ -96,3 +101,6 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     # # Also creates a difference raster for visualization (not used in testing).
     # # original_raster is from the previous run of the model. new_raster is the developmental version.
     tu.assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id, test_input_pattern)
+
+    pr.disable()
+    pr.print_stats()

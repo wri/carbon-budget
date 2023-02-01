@@ -5,6 +5,9 @@ It multiplies the annual aboveground and belowground carbon removal factors by t
 It then sums the aboveground and belowground gross removals to get gross removals for all forest types in both emitted_pools.
 That is the final gross removals for the entire model.
 Note that gross removals from this script are reported as positive values.
+
+python -m removals.gross_removals_all_forest_types -t std -l 00N_000E -nu
+python -m removals.gross_removals_all_forest_types -t std -l all
 """
 
 import argparse

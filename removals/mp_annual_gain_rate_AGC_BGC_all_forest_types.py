@@ -7,6 +7,9 @@ The current hierarchy where pixels overlap is: mangrove > Europe > planted fores
 rates for young secondary forests > IPCC defaults for old secondary and primary forests.
 This hierarchy is reflected in the removal rates and the forest type rasters.
 The different removal rate inputs are in different units but all are standardized to AGC/ha/yr and BGC/ha/yr.
+
+python -m removals.mp_annual_gain_rate_AGC_BGC_all_forest_types -t std -l 00N_000E -nu
+python -m removals.mp_annual_gain_rate_AGC_BGC_all_forest_types -t std -l all
 """
 
 

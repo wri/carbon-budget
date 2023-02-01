@@ -6,7 +6,8 @@ Unlike all other flux model components, this one uses C++ to quickly iterate thr
 The relevant version of emissions C++ is compiled each time this file is run, so the C++ doesn't need to be compiled
 as an extra initial step.
 
-However, to compile the standard emissions model C++, do the following inside the Docker container:
+However, if you want to compile the standard emissions model C++ outside of a run,
+do the following inside the Docker container:
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 calc_gross_emissions_generic.exe should appear in the directory if it wasn't already there.
 For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
@@ -23,7 +24,8 @@ Emissions from all drivers is also output as emissions due to CO2 only and emiss
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
 
-python -m emissions.mp_calculate_gross_emissions -t std -p biomass_soil -l 00N_000E -nu
+python -m emissions.mp_calculate_gross_emissions -t std -l 00N_000E -nu
+python -m emissions.mp_calculate_gross_emissions -t std -l all
 """
 
 import argparse

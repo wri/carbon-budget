@@ -59,11 +59,11 @@ This 30-m output is in megagrams (Mg) CO2e/ha 2001-2021 (i.e. densities) and inc
 However, the model is designed to be used specifically for forests, so the model creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard model, not for sensitivity analyses):
 
-1) Per pixel values for the full model extent (all tree cover densities): 
+1) Mg CO2e per pixel values for the full model extent (all tree cover densities): 
    `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
-2) Per hectare values for forest pixels only (colloquially, TCD>30 or Hansen gain pixels): 
+2) Mg CO2e per hectare values for forest pixels only (colloquially, TCD>30 or Hansen gain pixels): 
    `(((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
-3) Per pixel values for forest pixels only (colloquially, TCD>30 or Hansen gain pixels):  
+3) Mg CO2e per pixel values for forest pixels only (colloquially, TCD>30 or Hansen gain pixels):  
    `(((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
 
 The per hectare outputs are used for making pixel-level maps (essentially showing emission and removal factors), 
@@ -224,7 +224,7 @@ net flux, aggregation, and supplementary output creation.
 It includes all the arguments needed to run every script. 
 Thus, the table below also explains the potential arguments for the individual model stages. 
 The user can control what model components are run to some extent and set the date part of 
-the output directories. 
+the output directories. The order in which the arguments are used does not matter (does not need to match the table below).
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
 they are run very infrequently. 
 
@@ -239,7 +239,6 @@ they are run very infrequently.
 | `single-processor` | `-sp` | Optional | All | Tile processing will be done without `multiprocessing` module whenever possible, i.e. no parallel processing. Use for testing. |
 | `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
 | `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
-| `tcd-threshold` | `-tcd`| Optional | Aggregation | Tree cover density threshold above which pixels will be included in the aggregation. Defaults to 30. |
 | `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map. |
 | `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local model runs. If uploading to s3 is not enabled, intermediate files are automatically saved. |
 | `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag. |
@@ -249,37 +248,43 @@ These are some sample commands for running the flux model in various configurati
 they simply illustrate different configurations for the command line arguments. 
 Like the individual model stages, the full model run script is also run from the project folder with the `-m` flag.
 
-Run 00N_000E in standard model; save intermediate outputs; upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss:
+Run: standard model; save intermediate outputs; run model from annual_removals_IPCC;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+do not upload outputs to s3; use multiprocessing (implicit because no -sp flag);
+only run listed stage (implicit because no -r flag)
 
-`python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s annual_removals_IPCC -nu -l 00N_000E -ce loss -ln "00N_000E test"`
 
-Run 00N_110E in standard model; save intermediate outputs; don't upload outputs to s3;
-start at forest_age_category_IPCC step; run all stages after that; get carbon pools at time of loss:
+Run: standard model; save intermediate outputs; run model from annual_removals_IPCC; run all subsequent model stages;
+do not upload outputs to s3; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload outputs to s3 (implicit because no -nu flag); use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -si -nu -t std -s forest_age_category_IPCC -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s annual_removals_IPCC -r -nu -l 00N_000E -ce loss -ln "00N_000E test"`
 
-Run 00N_000E and 00N_110E in standard model; don't save intermediate outputs; do upload outputs to s3;
-run model_extent step; don't run sunsequent steps (no `-r` flag); run mangrove step beforehand:
+Run: standard model; save intermediate outputs; run model from the beginning; run all model stages;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload outputs to s3 (implicit because no -nu flag); use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -t std -s model_extent -d 20229999 -l 00N_000E,00N_110E -ma -ln "Two tile test"`
+`python -m run_full_model -t std -si -s all -r -d 20239999 -l 00N_000E -ce loss -ln "00N_000E test"`
 
-Run 00N_000E, 00N_110E, and 30N_090W in standard model; save intermediate outputs; do upload outputs to s3;
-start at gross_emissions step; run all stages after that:
+Run: standard model; save intermediate outputs; run model from the beginning; run all model stages;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+do not upload outputs to s3; use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -si -t std -s gross_emissions -r -d 20229999 -l 00N_000E,00N_110E,30N_090W -tcd 30 -ln "Three tile test"`
+`python -m run_full_model -t std -si -s all -r -d 20239999 -l 00N_000E -ce loss -ln "00N_000E test" -nu`
 
-FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
-run all model stages; starting from the beginning; get carbon pools at time of loss:
+Run: standard model; run model from the beginning; run all model stages;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+do not upload outputs to s3; use singleprocessing;
+do not save intermediate outputs (implicit because no -si flag)
 
-`python -m run_full_model -si -t std -s all -r -l all -ce loss -tcd 30 -ln "Run all tiles"`
+`python -m run_full_model -t std -s all -r -nu -d 20239999 -l 00N_000E,00N_010E -ce loss -sp -ln "Two tile test"`
 
-Run three tiles in biomass_swap sensitivity analysis; don't upload intermediates (forces saving of intermediate outputs);
-run model_extent stage; don't continue after that stage (no run-through); get carbon pools at time of loss;
-compare aggregated outputs to specified file (although not used in this specific launch because only the first step runs):
+FULL STANDARD MODEL RUN: standard model; save intermediate outputs; run model from the beginning; run all model stages;
+run all tiles; get carbon pools at time of loss; add a log note;
+upload outputs to s3 (implicit because no -nu flag); use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -nu -t biomass_swap -s model_extent -r false -d 20229999 -l 00N_000E,00N_110E,40N_90W -ce loss -tcd 30 -sagg s3://gfw2-data/climate/carbon_model/0_04deg_output_aggregation/biomass_soil/standard/20200914/net_flux_Mt_CO2e_biomass_soil_per_year_tcd30_0_4deg_modelv1_2_0_std_20200914.tif -ln "Multi-tile test"`
-
+`python -m run_full_model -t std -si -s all -r -l all -ce loss -ln "Running all tiles"`
 
 ### Sensitivity analysis
 Several variations of the model are included; these are the sensitivity variants, as they use different inputs or parameters. 
@@ -312,24 +317,22 @@ Change the tree cover loss tile pattern in `constants_and_names.py`.
 
 3) Change the number of loss years variable `loss_years` in `constants_and_names.py`.
 
-4) In `constants.h` (emissions/cpp_util/), change the number of model years (`int model_years`) and the loss tile pattern (`char lossyear[]`).
+4) In `constants.h` (emissions/cpp_util/), change the number of model years (`int model_years`) 
+   and the loss tile pattern (`char lossyear[]`).
 
 5) In `equations.cpp` (emissions/cpp_util/), change the number of model years (`int model_years`). 
 
-6) Make sure that changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
+6) Obtain and pre-process the updated drivers of tree cover loss model and tree cover loss from fires 
+   using `mp_prep_other_inputs_annual.py`. Note that the drivers map probably needs to be reprojected to WGS84 
+   and resampled (0.005x0.005 deg) in ArcMap or similar 
+   before processing into 0.00025x0.00025 deg 10x10 tiles using this script. 
+   `mp_prep_other_inputs_annual.py` has some additional notes about that.
+
+7) Make sure that changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
    and the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still make sense.
 
-7) Obtain and pre-process the updated drivers of tree cover loss model in `mp_prep_other_inputs.py` 
-   (comment out everything except the drivers lines). Note that the drivers map probably needs to be reprojected to WGS84 
-   and resampled (0.005x0.005 deg) in ArcMap or similar before processing into 0.00025x0.00025 deg 10x10 tiles using this script.
-
-8) Create a new year of burned area data using `mp_burn_year.py` (multiple changes to script needed, and potentially 
-   some reworking if the burned area ftp site has changed its structure or download protocol). 
-   Further instructions are at the top of `burn_date/mp_burn_year.py`.
-
-Strictly speaking, if only the drivers, burn year, and tree cover loss are being updated, the model only needs to be 
-run from forest_age_category_IPCC onwards (loss affects IPCC age category but model extent isn't affected by
-any of these inputs).
+Strictly speaking, if only the drivers, tree cover loss from fires, and tree cover loss are being updated, 
+the model only needs to be run from forest_age_category_IPCC onwards (loss affects IPCC age category).
 However, for completeness, I suggest running all stages of the model from model_extent onwards for an update so that
 model outputs from all stages have the same version in their metadata and the same dates of output as the model stages
 that are actually being changed. A full model run (all tiles, all stages) takes about 18 hours on an r5d.24xlarge 

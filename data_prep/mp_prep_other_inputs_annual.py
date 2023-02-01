@@ -5,8 +5,8 @@ combining IFL2000 (extratropics) and primary forests (tropics) into a single lay
 Hansenizing some removal factor standard deviation inputs, Hansenizing the European removal factors,
 and Hansenizing three US-specific removal factor inputs.
 
+python -m data_prep.mp_prep_other_inputs_annual -l 00N_000E -nu
 python -m data_prep.mp_prep_other_inputs_annual -l all
-
 '''
 
 import argparse
@@ -52,12 +52,12 @@ def mp_prep_other_inputs(tile_id_list):
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       # cn.drivers_processed_dir,
-                         cn.TCLF_processed_dir
+                       cn.drivers_processed_dir,
+                       cn.TCLF_processed_dir
     ]
     output_pattern_list = [
-                           # cn.pattern_drivers,
-                             cn.pattern_TCLF_processed
+                           cn.pattern_drivers,
+                           cn.pattern_TCLF_processed
     ]
 
 
@@ -77,29 +77,31 @@ def mp_prep_other_inputs(tile_id_list):
 
 
     ### Drivers of tree cover loss processing
+    uu.print_log("STEP 1: Preprocess drivers of tree cover loss")
 
-    # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_base_dir, sensit_type)
+    uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_base_dir, sensit_type)
 
-    # # Creates tree cover loss driver tiles.
-    # # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
-    # # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap. I also unprojected the global drivers
-    # # map to WGS84 because running the homolosine projection that Jimmy provided was giving incorrect processed results.
-    # source_raster = cn.pattern_drivers_raw
-    # out_pattern = cn.pattern_drivers
-    # dt = 'Byte'
-    # if cn.count == 96:
-    #     processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = 125 GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
-    #          tile_id_list)
-    # pool.close()
-    # pool.join()
+    # Creates tree cover loss driver tiles.
+    # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
+    # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap. I also unprojected the global drivers
+    # map to WGS84 because running the homolosine projection that Jimmy provided was giving incorrect processed results.
+    source_raster = cn.pattern_drivers_raw
+    out_pattern = cn.pattern_drivers
+    dt = 'Byte'
+    if cn.count == 96:
+        processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = 125 GB peak
+    else:
+        processes = int(cn.count/2)
+    uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
+    pool = multiprocessing.Pool(processes)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
+    pool.close()
+    pool.join()
 
 
     ### Tree cover loss from fires processing
+    uu.print_log("STEP 2: Preprocess tree cover loss from fires")
 
     # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
     # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
@@ -134,7 +136,7 @@ def mp_prep_other_inputs(tile_id_list):
 
     for output_pattern in [
         cn.pattern_TCLF_processed
-        # ,cn.pattern_drivers
+        ,cn.pattern_drivers
     ]:
 
         if cn.count == 96:

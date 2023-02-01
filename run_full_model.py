@@ -11,21 +11,37 @@ docker build . -t gfw/carbon-budget
 Enter Docker container:
 docker run --rm -it -e AWS_SECRET_ACCESS_KEY=[] -e AWS_ACCESS_KEY_ID=[] gfw/carbon-budget
 
-Run 00N_000E in standard model; save intermediate outputs; do upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss
-python -m run_full_model -si -t std -s all -r -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"
+Run: standard model; save intermediate outputs; run model from annual_removals_IPCC;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+do not upload outputs to s3; use multiprocessing (implicit because no -sp flag);
+only run listed stage (implicit because no -r flag)
+python -m run_full_model -t std -si -s annual_removals_IPCC -nu -l 00N_000E -ce loss -ln "00N_000E test"
 
-Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; use multiprocessing
-python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -tcd 30 -ln "00N_000E test"
+Run: standard model; save intermediate outputs; run model from annual_removals_IPCC; run all subsequent model stages;
+do not upload outputs to s3; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload outputs to s3 (implicit because no -nu flag); use multiprocessing (implicit because no -sp flag)
+python -m run_full_model -t std -si -s annual_removals_IPCC -r -nu -l 00N_000E -ce loss -ln "00N_000E test"
 
-Run 00N_000E in standard model; save intermediate outputs; do not upload outputs to s3; run all model stages;
-starting from the beginning; get carbon pools at time of loss; use singelprocessing
-python -m run_full_model -si -t std -s all -r -nu -d 20229999 -l 00N_000E -ce loss -tcd 30 -sp -ln "00N_000E test"
+Run: standard model; save intermediate outputs; run model from the beginning; run all model stages;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload outputs to s3 (implicit because no -nu flag); use multiprocessing (implicit because no -sp flag)
+python -m run_full_model -t std -si -s all -r -d 20239999 -l 00N_000E -ce loss -ln "00N_000E test"
 
-FULL STANDARD MODEL RUN: Run all tiles in standard model; save intermediate outputs; do upload outputs to s3;
-run all model stages; starting from the beginning; get carbon pools at time of loss
-python -m run_full_model -si -t std -s all -r -l all -ce loss -tcd 30 -ln "Running all tiles"
+Run: standard model; save intermediate outputs; run model from the beginning; run all model stages;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+do not upload outputs to s3; use multiprocessing (implicit because no -sp flag)
+python -m run_full_model -t std -si -s all -r -d 20239999 -l 00N_000E -ce loss -ln "00N_000E test" -nu
+
+Run: standard model; run model from the beginning; run all model stages;
+upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+do not upload outputs to s3; use singleprocessing;
+do not save intermediate outputs (implicit because no -si flag)
+python -m run_full_model -t std -s all -r -nu -d 20239999 -l 00N_000E,00N_010E -ce loss -sp -ln "Two tile test"
+
+FULL STANDARD MODEL RUN: standard model; save intermediate outputs; run model from the beginning; run all model stages;
+run all tiles; get carbon pools at time of loss; add a log note;
+upload outputs to s3 (implicit because no -nu flag); use multiprocessing (implicit because no -sp flag)
+python -m run_full_model -t std -si -s all -r -l all -ce loss -ln "Running all tiles"
 """
 
 import argparse
@@ -46,8 +62,7 @@ from removals.mp_gross_removals_all_forest_types import mp_gross_removals_all_fo
 from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
 from analyses.mp_net_flux import mp_net_flux
-from analyses.mp_aggregate_results_to_4_km import mp_aggregate_results_to_4_km
-from analyses.mp_create_supplementary_outputs import mp_create_supplementary_outputs
+from analyses.mp_derivative_outputs import mp_derivative_outputs
 
 def main ():
     """
@@ -61,7 +76,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions_biomass_soil', 'gross_emissions_soil_only',
-                    'net_flux', 'aggregate', 'create_supplementary_outputs']
+                    'net_flux', 'aggregate', 'create_derivative_outputs']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -77,8 +92,6 @@ def main ():
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--carbon-pool-extent', '-ce', required=False,
                         help='Time period for which carbon pools should be calculated: loss, 2000, loss,2000, or 2000,loss')
-    parser.add_argument('--tcd-threshold', '-tcd', required=False, default=cn.canopy_threshold,
-                        help='Tree cover density threshold above which pixels will be included in the aggregation. Default is 30.')
     parser.add_argument('--std-net-flux-aggreg', '-sagg', required=False,
                         help='The s3 standard model net flux aggregated tif, for comparison with the sensitivity analysis map')
     parser.add_argument('--mangroves', '-ma', action='store_true',
@@ -101,7 +114,6 @@ def main ():
     cn.RUN_THROUGH = args.run_through
     cn.RUN_DATE = args.run_date
     cn.CARBON_POOL_EXTENT = args.carbon_pool_extent
-    cn.THRESH = args.tcd_threshold
     cn.STD_NET_FLUX = args.std_net_flux_aggreg
     cn.INCLUDE_MANGROVES = args.mangroves
     cn.INCLUDE_US = args.us_rates
@@ -122,9 +134,6 @@ def main ():
     # run and therefore must exist locally.
     if cn.NO_UPLOAD:
         cn.SAVE_INTERMEDIATES = True
-
-    if cn.THRESH is not None:
-        cn.THRESH = int(cn.THRESH)
 
     # Create the output log
     uu.initiate_log(tile_id_list)
@@ -156,13 +165,6 @@ def main ():
     # Does this up front so the user knows before the run begins that information is missing.
     if ('carbon_pools' in actual_stages) & (cn.CARBON_POOL_EXTENT not in ['loss', '2000', 'loss,2000', '2000,loss']):
         uu.exception_log('Invalid carbon_pool_extent input. Please choose loss, 2000, loss,2000 or 2000,loss.')
-
-    # Checks whether the canopy cover argument is valid up front.
-    if 'aggregate' in actual_stages:
-        if cn.THRESH < 0 or cn.THRESH > 99:
-            uu.exception_log('Invalid tcd. Please provide an integer between 0 and 99.')
-        else:
-            pass
 
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
     if 's3://' in tile_id_list:
@@ -550,9 +552,11 @@ def main ():
         uu.print_log(f':::::Processing time for net_flux: {elapsed_time}', "\n", "\n")
 
 
-    # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
-    # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
-    if 'aggregate' in actual_stages:
+    # Creates derivative outputs for gross emissions, gross removals, and net flux.
+    # Creates forest extent and per-pixel tiles at original (0.00025x0.00025 deg) resolution and
+    # creates aggregated global maps at 0.04x0.04 deg resolution.
+    # For sensitivity analyses, also creates percent difference and sign change maps compared to standard model net flux.
+    if 'create_derivative_outputs' in actual_stages:
 
         # aux.xml files need to be deleted because otherwise they'll be included in the aggregation iteration.
         # They are created by using check_and_delete_if_empty_light()
@@ -565,42 +569,15 @@ def main ():
         uu.print_log(f':::::Deleted {len(tiles_to_delete)} aux.xml files: {tiles_to_delete}', "\n")
 
 
-        uu.print_log(':::::Creating 4x4 km aggregate maps')
+        uu.print_log(':::::Creating derivative outputs: forest extent/per-pixel tiles and aggregate maps')
         start = datetime.datetime.now()
 
-        mp_aggregate_results_to_4_km(tile_id_list, cn.THRESH, std_net_flux=cn.STD_NET_FLUX)
+        mp_derivative_outputs(tile_id_list)
 
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(f':::::Processing time for aggregate: {elapsed_time}', "\n", "\n")
-
-
-    # Converts gross emissions, gross removals and net flux from per hectare rasters to per pixel rasters
-    if 'create_supplementary_outputs' in actual_stages:
-
-        if not cn.SAVE_INTERMEDIATES:
-
-            uu.print_log(':::::Deleting rewindowed tiles')
-            tiles_to_delete = []
-            tiles_to_delete.extend(glob.glob('*rewindow*tif'))
-            uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
-
-            for tile_to_delete in tiles_to_delete:
-                os.remove(tile_to_delete)
-            uu.print_log(':::::Deleted unneeded tiles')
-
-        uu.check_storage()
-
-        uu.print_log(':::::Creating supplementary versions of main model outputs (forest extent, per pixel)')
-        start = datetime.datetime.now()
-
-        mp_create_supplementary_outputs(tile_id_list)
-
-        end = datetime.datetime.now()
-        elapsed_time = end - start
-        uu.check_storage()
-        uu.print_log(f':::::Processing time for supplementary output raster creation: {elapsed_time}', "\n", "\n")
+        uu.print_log(f':::::Processing time for creating derivative outputs: {elapsed_time}', "\n", "\n")
 
 
     # If no_upload flag is activated, tiles on s3 aren't counted
