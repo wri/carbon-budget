@@ -552,8 +552,10 @@ def main ():
         uu.print_log(f':::::Processing time for net_flux: {elapsed_time}', "\n", "\n")
 
 
-    # Aggregates gross emissions, gross removals, and net flux to coarser resolution.
-    # For sensitivity analyses, creates percent difference and sign change maps compared to standard model net flux.
+    # Creates derivative outputs for gross emissions, gross removals, and net flux.
+    # Creates forest extent and per-pixel tiles at original (0.00025x0.00025 deg) resolution and
+    # creates aggregated global maps at 0.04x0.04 deg resolution.
+    # For sensitivity analyses, also creates percent difference and sign change maps compared to standard model net flux.
     if 'create_derivative_outputs' in actual_stages:
 
         # aux.xml files need to be deleted because otherwise they'll be included in the aggregation iteration.
@@ -567,7 +569,7 @@ def main ():
         uu.print_log(f':::::Deleted {len(tiles_to_delete)} aux.xml files: {tiles_to_delete}', "\n")
 
 
-        uu.print_log(':::::Creating 4x4 km aggregate maps')
+        uu.print_log(':::::Creating derivative outputs: forest extent/per-pixel tiles and aggregate maps')
         start = datetime.datetime.now()
 
         mp_derivative_outputs(tile_id_list)
