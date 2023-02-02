@@ -328,7 +328,7 @@ def mp_prep_other_inputs(tile_id_list):
     out_pattern = cn.pattern_BGB_AGB_ratio
     dt = 'Float32'
     if cn.count == 96:
-        processes = 15 # 15=XXX GB peak
+        processes = 45 # 15=95 GB peak; 45=XXX GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log(f'Creating BGB:AGB {processes} processors...')
