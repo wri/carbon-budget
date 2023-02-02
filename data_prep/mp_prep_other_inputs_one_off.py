@@ -43,27 +43,27 @@ def mp_prep_other_inputs(tile_id_list):
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
-                       cn.ifl_primary_processed_dir,
-                       cn.annual_gain_AGC_natrl_forest_young_dir,
-                       cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
-                       cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                       cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                       cn.FIA_forest_group_processed_dir,
-                       cn.age_cat_natrl_forest_US_dir,
-                       cn.FIA_regions_processed_dir,
+                       # cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
+                       # cn.ifl_primary_processed_dir,
+                       # cn.annual_gain_AGC_natrl_forest_young_dir,
+                       # cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
+                       # cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+                       # cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+                       # cn.FIA_forest_group_processed_dir,
+                       # cn.age_cat_natrl_forest_US_dir,
+                       # cn.FIA_regions_processed_dir,
                        cn.BGB_AGB_ratio_dir
     ]
     output_pattern_list = [
-                           cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
-                           cn.pattern_ifl_primary,
-                           cn.pattern_annual_gain_AGC_natrl_forest_young,
-                           cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
-                           cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
-                           cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
-                           cn.pattern_FIA_forest_group_processed,
-                           cn.pattern_age_cat_natrl_forest_US,
-                           cn.pattern_FIA_regions_processed,
+                           # cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
+                           # cn.pattern_ifl_primary,
+                           # cn.pattern_annual_gain_AGC_natrl_forest_young,
+                           # cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
+                           # cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
+                           # cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
+                           # cn.pattern_FIA_forest_group_processed,
+                           # cn.pattern_age_cat_natrl_forest_US,
+                           # cn.pattern_FIA_regions_processed,
                            cn.pattern_BGB_AGB_ratio
     ]
 
@@ -270,53 +270,58 @@ def mp_prep_other_inputs(tile_id_list):
     # cmd = ['aws', 's3', 'cp', cn.AGB_BGB_Huang_raw_dir, '.', '--recursive']
     # uu.log_subprocess_output_full(cmd)
 
-    # Converts the AGB and BGB NetCDF files to global geotifs.
-    # Methods for converting NetCDF4 to geotif are from approach 1 at
-    # https://help.marine.copernicus.eu/en/articles/5029956-how-to-convert-netcdf-to-geotiff
-    # Compression argument from: https://github.com/corteva/rioxarray/issues/112
-    agb = xr.open_dataset(cn.name_raw_AGB_Huang_global)
-    # uu.print_log(agb)
-    agb_den = agb['ASHOOT']
+    # # Converts the AGB and BGB NetCDF files to global geotifs.
+    # # Note that, for some reason, this isn't working in Docker locally; when it gets to the to_raster step, it keeps
+    # # saying "Killed", perhaps because it's running out of memory (1.87/1.95 GB used).
+    # # So I did this in Python shell locally outside Docker and it worked fine.
+    # # Methods for converting NetCDF4 to geotif are from approach 1 at
+    # # https://help.marine.copernicus.eu/en/articles/5029956-how-to-convert-netcdf-to-geotiff
+    # # Compression argument from: https://github.com/corteva/rioxarray/issues/112
+    # agb = xr.open_dataset(cn.name_raw_AGB_Huang_global)
+    # # uu.print_log(agb)
+    # agb_den = agb['ASHOOT']
+    # # uu.print_log(agb_den)
+    # agb_den = agb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
     # uu.print_log(agb_den)
-    agb_den = agb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
-    uu.print_log(agb_den)
-    agb_den.rio.write_crs("epsg:4326", inplace=True)
-    # Produces:
-    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
-    agb_den.rio.to_raster(cn.name_rasterized_AGB_Huang_global, compress='DEFLATE')
-    # Produces:
-    # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # But I think this error isn't a problem; the resulting geotif seems fine.
-
-    bgb = xr.open_dataset(cn.name_raw_BGB_Huang_global)
-    # uu.print_log(bgb)
-    bgb_den = bgb['AROOT']
+    # agb_den.rio.write_crs("epsg:4326", inplace=True)
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
+    # agb_den.rio.to_raster(cn.name_rasterized_AGB_Huang_global, compress='DEFLATE')
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # But I think this error isn't a problem; the resulting geotif seems fine.
+    #
+    # bgb = xr.open_dataset(cn.name_raw_BGB_Huang_global)
+    # # uu.print_log(bgb)
+    # bgb_den = bgb['AROOT']
+    # # uu.print_log(bgb_den)
+    # bgb_den = bgb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
     # uu.print_log(bgb_den)
-    bgb_den = bgb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
-    uu.print_log(bgb_den)
-    bgb_den.rio.write_crs("epsg:4326", inplace=True)
-    # Produces:
-    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
-    bgb_den.rio.to_raster(cn.name_rasterized_BGB_Huang_global, compress='DEFLATE')
-    # Produces:
-    # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # But I think this error isn't a problem; the resulting geotif seems fine.
+    # bgb_den.rio.write_crs("epsg:4326", inplace=True)
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
+    # bgb_den.rio.to_raster(cn.name_rasterized_BGB_Huang_global, compress='DEFLATE')
+    # # Produces:
+    # # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # # But I think this error isn't a problem; the resulting geotif seems fine.
 
-    uu.print_log("Generating global BGB:AGB map")
+    # uu.print_log("Generating global BGB:AGB map...")
+    #
+    # out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
+    # calc = '--calc=A/B'
+    # datatype = f'--type=Float32'
+    #
+    # cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
+    #        calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
+    # uu.log_subprocess_output_full(cmd)
 
-    out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
-    calc = '--calc=A/B'
-    datatype = f'--type=Float32'
-
-    cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
-           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
-    uu.log_subprocess_output_full(cmd)
-
-    uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
+    # # This isn't working for some reason. It just doesn't show anything in the console.
+    # # But I'm not going to try to debug it since it's not an important part of the workflow.
+    # uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
 
     # Creates BGB:AGB tiles
     source_raster = cn.name_rasterized_BGB_AGB_Huang_global
@@ -326,7 +331,7 @@ def mp_prep_other_inputs(tile_id_list):
         processes = 15 # 15=XXX GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
+    uu.print_log(f'Creating BGB:AGB {processes} processors...')
     pool = multiprocessing.Pool(processes)
     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
     pool.close()

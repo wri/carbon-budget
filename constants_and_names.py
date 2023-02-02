@@ -184,7 +184,7 @@ name_rasterized_BGB_AGB_Huang_global = 'BGB_AGB_ratio_global_from_Huang_2021__20
 AGB_BGB_Huang_rasterized_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/rasterized_AGB_BGB_and_ratio_Huang_et_al_2021/')
 
 pattern_BGB_AGB_ratio = 'BGB_AGB_ratio'
-BGB_AGB_ratio_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/processed/20230201/')
+BGB_AGB_ratio_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/processed/20230202/')
 
 
 
