@@ -309,26 +309,26 @@ def mp_prep_other_inputs(tile_id_list):
     # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
     # # But I think this error isn't a problem; the resulting geotif seems fine.
 
-    # uu.print_log("Generating global BGB:AGB map...")
-    #
-    # out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
-    # calc = '--calc=A/B'
-    # datatype = f'--type=Float32'
-    #
-    # cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
-    #        calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
-    # uu.log_subprocess_output_full(cmd)
+    uu.print_log("Generating global BGB:AGB map...")
 
-    # # This isn't working for some reason. It just doesn't show anything in the console.
-    # # But I'm not going to try to debug it since it's not an important part of the workflow.
-    # uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
+    out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
+    calc = '--calc=A/B'
+    datatype = f'--type=Float32'
+
+    cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
+           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
+    uu.log_subprocess_output_full(cmd)
+
+    # This isn't working for some reason. It just doesn't show anything in the console.
+    # But I'm not going to try to debug it since it's not an important part of the workflow.
+    uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
 
     # Creates BGB:AGB tiles
     source_raster = cn.name_rasterized_BGB_AGB_Huang_global
     out_pattern = cn.pattern_BGB_AGB_ratio
     dt = 'Float32'
     if cn.count == 96:
-        processes = 75 # 15=95 GB peak; 45=280 GB peak; 75=XXX GB peak
+        processes = 75 # 15=95 GB peak; 45=280 GB peak; 75=460 GB peak
     else:
         processes = int(cn.count/2)
     uu.print_log(f'Creating BGB:AGB {processes} processors...')
@@ -356,7 +356,7 @@ def mp_prep_other_inputs(tile_id_list):
             pool.join()
 
         if cn.count == 96:
-            processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
+            processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = 600 GB peak
             uu.print_log("Checking for empty tiles of {0} pattern with {1} processors...".format(output_pattern, processes))
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
