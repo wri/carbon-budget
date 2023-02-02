@@ -266,43 +266,45 @@ def mp_prep_other_inputs(tile_id_list):
 
     ### Creates Hansen tiles of AGB:BGB based on Huang et al. 2021: https://essd.copernicus.org/articles/13/4263/2021/
 
-    # # Converts the AGB and BGB NetCDF files to global geotifs.
-    # # Note that, for some reason, this isn't working in Docker locally; when it gets to the to_raster step, it keeps
-    # # saying "Killed", perhaps because it's running out of memory (1.87/1.95 GB used).
-    # # So I did this in Python shell outside Docker and it worked fine.
-    # # Methods for converting NetCDF4 to geotif are from approach 1 at
-    # # https://help.marine.copernicus.eu/en/articles/5029956-how-to-convert-netcdf-to-geotiff
-    # agb = xr.open_dataset(cn.name_raw_AGB_Huang_global)
-    # # uu.print_log(agb)
-    # agb_den = agb['ASHOOT']
-    # # uu.print_log(agb_den)
-    # agb_den = agb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
+    # uu.print_log("Downloading raw NetCDF files...")
+    # cmd = ['aws', 's3', 'cp', cn.AGB_BGB_Huang_raw_dir, '.', '--recursive']
+    # uu.log_subprocess_output_full(cmd)
+
+    # Converts the AGB and BGB NetCDF files to global geotifs.
+    # Methods for converting NetCDF4 to geotif are from approach 1 at
+    # https://help.marine.copernicus.eu/en/articles/5029956-how-to-convert-netcdf-to-geotiff
+    # Compression argument from: https://github.com/corteva/rioxarray/issues/112
+    agb = xr.open_dataset(cn.name_raw_AGB_Huang_global)
+    # uu.print_log(agb)
+    agb_den = agb['ASHOOT']
     # uu.print_log(agb_den)
-    # agb_den.rio.write_crs("epsg:4326", inplace=True)
-    # # Produces:
-    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
-    # agb_den.rio.to_raster(r"AGB_from_Huang_2021_Mg_ha__20230201.tif")
-    # # Produces:
-    # # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # # But I think this error isn't a problem; the resulting geotif seems fine.
-    #
-    # bgb = xr.open_dataset(cn.name_raw_BGB_Huang_global)
-    # # uu.print_log(bgb)
-    # bgb_den = bgb['AROOT']
-    # # uu.print_log(bgb_den)
-    # bgb_den = bgb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
+    agb_den = agb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
+    uu.print_log(agb_den)
+    agb_den.rio.write_crs("epsg:4326", inplace=True)
+    # Produces:
+    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
+    agb_den.rio.to_raster(cn.name_rasterized_AGB_Huang_global, compress='DEFLATE')
+    # Produces:
+    # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # But I think this error isn't a problem; the resulting geotif seems fine.
+
+    bgb = xr.open_dataset(cn.name_raw_BGB_Huang_global)
+    # uu.print_log(bgb)
+    bgb_den = bgb['AROOT']
     # uu.print_log(bgb_den)
-    # bgb_den.rio.write_crs("epsg:4326", inplace=True)
-    # # Produces:
-    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
-    # bgb_den.rio.to_raster(r"BGB_from_Huang_2021_Mg_ha__20230201.tif")
-    # # Produces:
-    # # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
-    # # But I think this error isn't a problem; the resulting geotif seems fine.
+    bgb_den = bgb_den.rio.set_spatial_dims(x_dim='LON', y_dim='LAT')
+    uu.print_log(bgb_den)
+    bgb_den.rio.write_crs("epsg:4326", inplace=True)
+    # Produces:
+    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # followed by NetCDF properties. But I think this error isn't a problem; the resulting geotif seems fine.
+    bgb_den.rio.to_raster(cn.name_rasterized_BGB_Huang_global, compress='DEFLATE')
+    # Produces:
+    # ERROR 1: PROJ: proj_create_from_name: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
+    # But I think this error isn't a problem; the resulting geotif seems fine.
 
     uu.print_log("Generating global BGB:AGB map")
 
@@ -314,7 +316,9 @@ def mp_prep_other_inputs(tile_id_list):
            calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
     uu.log_subprocess_output_full(cmd)
 
-    # Creates primary forest tiles
+    uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
+
+    # Creates BGB:AGB tiles
     source_raster = cn.name_rasterized_BGB_AGB_Huang_global
     out_pattern = cn.pattern_BGB_AGB_ratio
     dt = 'Float32'
@@ -328,11 +332,10 @@ def mp_prep_other_inputs(tile_id_list):
     pool.close()
     pool.join()
 
-    os.quit()
-
 
     for output_pattern in [
-        cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
+        # cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
+        cn.pattern_BGB_AGB_ratio
     ]:
 
         # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
