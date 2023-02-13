@@ -36,6 +36,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     young_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
     age_category = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_age_cat_IPCC)
     ipcc_AGB_default = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
+    BGB_AGB_ratio = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGB_AGB_ratio)
 
     # Removal factor standard deviations
     mangrove_AGB_stdev = f'{tile_id}_{cn.pattern_stdev_annual_gain_AGB_mangrove}.tif'
@@ -117,7 +118,13 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             ipcc_AGB_default_stdev_src = rasterio.open(ipcc_AGB_default_stdev)
             uu.print_log(f'    IPCC default removal rate tile for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'"    No IPCC default removal rate tile for {tile_id}')
+            uu.print_log(f'    No IPCC default removal rate tile for {tile_id}')
+
+        try:
+            BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
+            uu.print_log(f'    BGB:AGB tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    No BGB:AGB tile found for {tile_id}')
 
         # Opens the output tile, giving it the arguments of the input tiles
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)
@@ -195,6 +202,11 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             except UnboundLocalError:
                 age_category_window = np.zeros((window.height, window.width), dtype='uint8')
 
+            try:
+                BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
+            except UnboundLocalError:
+                BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+
             # Lowest priority
             try:
                 ipcc_AGB_default_rate_window = ipcc_AGB_default_src.read(1, window=window)
@@ -217,7 +229,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
                                                                    ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove,
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')
                 annual_gain_BGC_all_forest_types_window = np.where(ipcc_AGB_default_rate_window != 0,
-                                                                   ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove * cn.below_to_above_non_mang,
+                                                                   ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove * BGB_AGB_ratio_window,
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(ipcc_AGB_default_stdev_window != 0,
                                                                    ipcc_AGB_default_stdev_window * cn.biomass_to_c_non_mangrove,
@@ -238,7 +250,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
                                                                        young_AGC_rate_window,
                                                                        annual_gain_AGC_all_forest_types_window).astype('float32')
                     annual_gain_BGC_all_forest_types_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
-                                                                       young_AGC_rate_window * cn.below_to_above_non_mang,
+                                                                       young_AGC_rate_window * BGB_AGB_ratio_window,
                                                                        annual_gain_BGC_all_forest_types_window).astype('float32')
                     stdev_annual_gain_AGC_all_forest_types_window = np.where((young_AGC_stdev_window > 0) & (age_category_window == 1),
                                                                        young_AGC_stdev_window,
@@ -253,14 +265,14 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
                     us_AGC_BGC_stdev_window = us_AGC_BGC_stdev_src.read(1, window=window)
                     removal_forest_type_window = np.where(us_AGC_BGC_rate_window != 0, cn.US_rank, removal_forest_type_window).astype('uint8')
                     annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
-                                                                       us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                       us_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window),
                                                                        annual_gain_AGC_all_forest_types_window).astype('float32')
                     annual_gain_BGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
                                                                        (us_AGC_BGC_rate_window) -
-                                                                       (us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                       (us_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window)),
                                                                        annual_gain_BGC_all_forest_types_window).astype('float32')
                     stdev_annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_stdev_window != 0,
-                                                                       us_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
+                                                                       us_AGC_BGC_stdev_window / (1 + BGB_AGB_ratio_window),
                                                                        stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
                 except UnboundLocalError:
                     pass
@@ -270,14 +282,14 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
                 plantations_AGC_BGC_stdev_window = plantations_AGC_BGC_stdev_src.read(1, window=window)
                 removal_forest_type_window = np.where(plantations_AGC_BGC_rate_window != 0, cn.planted_forest_rank, removal_forest_type_window).astype('uint8')
                 annual_gain_AGC_all_forest_types_window = np.where(plantations_AGC_BGC_rate_window != 0,
-                                                                   plantations_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                   plantations_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window),
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')
                 annual_gain_BGC_all_forest_types_window = np.where(plantations_AGC_BGC_rate_window != 0,
                                                                    (plantations_AGC_BGC_rate_window ) -
-                                                                   (plantations_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                   (plantations_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window)),
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(plantations_AGC_BGC_stdev_window != 0,
-                                                                   plantations_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
+                                                                   plantations_AGC_BGC_stdev_window / (1 + BGB_AGB_ratio_window),
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
             except UnboundLocalError:
                 pass
@@ -287,17 +299,17 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
                 europe_AGC_BGC_stdev_window = europe_AGC_BGC_stdev_src.read(1, window=window)
                 removal_forest_type_window = np.where(europe_AGC_BGC_rate_window != 0, cn.europe_rank, removal_forest_type_window).astype('uint8')
                 annual_gain_AGC_all_forest_types_window = np.where(europe_AGC_BGC_rate_window != 0,
-                                                                   europe_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                   europe_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window),
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')
                 annual_gain_BGC_all_forest_types_window = np.where(europe_AGC_BGC_rate_window != 0,
                                                                    (europe_AGC_BGC_rate_window) -
-                                                                   (europe_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                   (europe_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window)),
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
                 # NOTE: Nancy Harris thought that the European removal standard deviations were 2x too large,
                 # per email on 8/30/2020. Thus, simplest fix is to leave original tiles 2x too large and
                 # correct them only where composited with other stdev sources.
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(europe_AGC_BGC_stdev_window != 0,
-                                                                   (europe_AGC_BGC_stdev_window/2) / (1 + cn.below_to_above_non_mang),
+                                                                   (europe_AGC_BGC_stdev_window/2) / (1 + BGB_AGB_ratio_window),
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
             except UnboundLocalError:
                 pass

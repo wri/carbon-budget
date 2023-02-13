@@ -70,8 +70,7 @@ canopy_threshold = 30
 tonnes_to_megatonnes = 1000000
 
 # Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
-# Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
-below_to_above_non_mang = 0.26
+# Non-mangrove ratio is map from Huang et al. 2021.
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96

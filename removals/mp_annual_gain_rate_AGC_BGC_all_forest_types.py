@@ -54,6 +54,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
         cn.annual_gain_AGC_natrl_forest_young_dir: [cn.pattern_annual_gain_AGC_natrl_forest_young],
         cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
         cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
+        cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio],
 
         cn.stdev_annual_gain_AGB_mangrove_dir: [cn.pattern_stdev_annual_gain_AGB_mangrove],
         cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe],

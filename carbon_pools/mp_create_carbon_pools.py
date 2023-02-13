@@ -265,8 +265,6 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             pool.close()
             pool.join()
 
-    os.quit()
-
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
 

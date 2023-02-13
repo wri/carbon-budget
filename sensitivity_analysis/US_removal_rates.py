@@ -58,6 +58,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
     US_age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_US_forest_age_cat_processed)
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)
+    BGB_AGB_ratio = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGB_AGB_ratio)
 
     # Opens standard model removals rate tile
     with rasterio.open(annual_gain_standard) as annual_gain_standard_src:
@@ -73,6 +74,12 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
         US_age_cat_src = rasterio.open(US_age_cat)
         US_forest_group_src = rasterio.open(US_forest_group)
         US_region_src = rasterio.open(US_region)
+
+        try:
+            BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
+            uu.print_log(f'    BGB:AGB tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    No BGB:AGB tile found for {tile_id}')
 
         # Updates kwargs for the output dataset
         kwargs.update(
@@ -95,6 +102,11 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             US_age_cat_window = US_age_cat_src.read(1, window=window)
             US_forest_group_window = US_forest_group_src.read(1, window=window)
             US_region_window = US_region_src.read(1, window=window)
+
+            try:
+                BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
+            except UnboundLocalError:
+                BGB_AGB_ratio_window = np.zeros((window.height, window.width))
 
             # Masks the three input tiles (age category, forest group, FIA region) to the pixels to the standard removals model extent
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')
@@ -138,7 +150,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             agb_dst_corrected_window = np.where(agb_dst_window > (max_rate*1.2), annual_gain_standard_window, agb_dst_window)
 
             # Calculates BGB removal rate from AGB removal rate
-            bgb_dst_window = agb_dst_corrected_window * cn.below_to_above_non_mang
+            bgb_dst_window = agb_dst_corrected_window * BGB_AGB_ratio_window
 
             # Writes the output windows to the outputs
             agb_dst.write_band(1, agb_dst_corrected_window, window=window)
