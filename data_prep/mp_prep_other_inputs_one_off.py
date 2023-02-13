@@ -43,27 +43,27 @@ def mp_prep_other_inputs(tile_id_list):
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       # cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
-                       # cn.ifl_primary_processed_dir,
-                       # cn.annual_gain_AGC_natrl_forest_young_dir,
-                       # cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
-                       # cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                       # cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                       # cn.FIA_forest_group_processed_dir,
-                       # cn.age_cat_natrl_forest_US_dir,
-                       # cn.FIA_regions_processed_dir,
+                       cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
+                       cn.ifl_primary_processed_dir,
+                       cn.annual_gain_AGC_natrl_forest_young_dir,
+                       cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
+                       cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+                       cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+                       cn.FIA_forest_group_processed_dir,
+                       cn.age_cat_natrl_forest_US_dir,
+                       cn.FIA_regions_processed_dir,
                        cn.BGB_AGB_ratio_dir
     ]
     output_pattern_list = [
-                           # cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
-                           # cn.pattern_ifl_primary,
-                           # cn.pattern_annual_gain_AGC_natrl_forest_young,
-                           # cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
-                           # cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
-                           # cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
-                           # cn.pattern_FIA_forest_group_processed,
-                           # cn.pattern_age_cat_natrl_forest_US,
-                           # cn.pattern_FIA_regions_processed,
+                           cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
+                           cn.pattern_ifl_primary,
+                           cn.pattern_annual_gain_AGC_natrl_forest_young,
+                           cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
+                           cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
+                           cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
+                           cn.pattern_FIA_forest_group_processed,
+                           cn.pattern_age_cat_natrl_forest_US,
+                           cn.pattern_FIA_regions_processed,
                            cn.pattern_BGB_AGB_ratio
     ]
 
@@ -106,7 +106,7 @@ def mp_prep_other_inputs(tile_id_list):
     # uu.log_subprocess_output_full(cmd)
 
 
-    # # Creates young natural forest removal rate tiles
+    # ### Creates young natural forest removal rate tiles
     # source_raster = cn.name_annual_gain_AGC_natrl_forest_young_raw
     # out_pattern = cn.pattern_annual_gain_AGC_natrl_forest_young
     # dt = 'float32'
@@ -120,7 +120,8 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.close()
     # pool.join()
     #
-    # # Creates young natural forest removal rate standard deviation tiles
+    #
+    # ### Creates young natural forest removal rate standard deviation tiles
     # source_raster = cn.name_stdev_annual_gain_AGC_natrl_forest_young_raw
     # out_pattern = cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
     # dt = 'float32'
@@ -135,7 +136,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.join()
     #
     #
-    # # Creates pre-2000 oil palm plantation tiles
+    # ### Creates pre-2000 oil palm plantation tiles
     # if cn.count == 96:
     #     processes = 80  # 45 processors = 100 GB peak; 80 = XXX GB peak
     # else:
@@ -147,7 +148,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.join()
     #
     #
-    # # Creates climate zone tiles
+    # ### Creates climate zone tiles
     # if cn.count == 96:
     #     processes = 80  # 45 processors = 230 GB peak (on second step); 80 = XXX GB peak
     # else:
@@ -158,7 +159,8 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.close()
     # pool.join()
     #
-    # # Creates European natural forest removal rate tiles
+    #
+    # ### Creates European natural forest removal rate tiles
     # source_raster = cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw
     # out_pattern = cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe
     # dt = 'float32'
@@ -172,7 +174,8 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.close()
     # pool.join()
     #
-    # # Creates European natural forest standard deviation of removal rate tiles
+    #
+    # ### Creates European natural forest standard deviation of removal rate tiles
     # source_raster = cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw
     # out_pattern = cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe
     # dt = 'float32'
@@ -187,6 +190,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.join()
     #
     #
+    # ### Creates humid tropical primary forest tiles
     # # Creates a vrt of the primary forests with nodata=0 from the continental primary forest rasters
     # uu.print_log("Creating vrt of humid tropial primary forest...")
     # primary_vrt = 'primary_2001.vrt'
@@ -208,7 +212,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.join()
     #
     #
-    # # Creates a combined IFL/primary forest raster
+    # ### Creates a combined IFL/primary forest raster
     # # Uses very little memory since it's just file renaming
     # if cn.count == 96:
     #     processes = 60  # 60 processors = 10 GB peak
@@ -221,7 +225,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.join()
     #
     #
-    # # Creates forest age category tiles for US forests
+    # ### Creates forest age category tiles for US forests
     # source_raster = cn.name_age_cat_natrl_forest_US_raw
     # out_pattern = cn.pattern_age_cat_natrl_forest_US
     # dt = 'Byte'
@@ -235,7 +239,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.close()
     # pool.join()
     #
-    # # Creates forest groups for US forests
+    # ### Creates forest groups for US forests
     # source_raster = cn.name_FIA_forest_group_raw
     # out_pattern = cn.pattern_FIA_forest_group_processed
     # dt = 'Byte'
@@ -249,7 +253,7 @@ def mp_prep_other_inputs(tile_id_list):
     # pool.close()
     # pool.join()
     #
-    # # Creates FIA regions for US forests
+    # ### Creates FIA regions for US forests
     # source_raster = cn.name_FIA_regions_raw
     # out_pattern = cn.pattern_FIA_regions_processed
     # dt = 'Byte'

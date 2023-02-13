@@ -92,6 +92,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
             cn.gain_dir: [cn.pattern_gain],
+            cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
         }
 
         # Adds the correct AGB tiles to the download dictionary depending on the model run
@@ -128,6 +129,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
             cn.gain_dir: [cn.pattern_gain],
+            cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio],
             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
             cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]
        }
@@ -263,6 +265,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             pool.close()
             pool.join()
 
+    os.quit()
 
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:

@@ -8,32 +8,26 @@ import sys
 import universal_util as uu
 import constants_and_names as cn
 from unittest.mock import patch
-from carbon_pools.create_carbon_pools import create_deadwood_litter
+from carbon_pools.create_carbon_pools import create_BGC
 
 import test.test_utilities as tu
 
 
 # run from /usr/local/app
-# pytest -m rasterio -s
+# pytest -m BGC -s
 # Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
 
-@pytest.mark.xfail
+# @pytest.mark.xfail
 @patch("universal_util.sensit_tile_rename")
 @patch("universal_util.sensit_tile_rename_biomass")
 @patch("universal_util.make_tile_name")
 @patch("universal_util.upload_log")
 @pytest.mark.rasterio
-@pytest.mark.deadwood_litter
-@pytest.mark.parametrize("comparison_dict", [{cn.deadwood_emis_year_2000_dir: cn.pattern_deadwood_emis_year_2000}
-                                            ,{cn.litter_emis_year_2000_dir: cn.pattern_litter_emis_year_2000}
-                         ])
+@pytest.mark.BGC
+@pytest.mark.parametrize("comparison_dict", [{cn.BGC_emis_year_dir: cn.pattern_BGC_emis_year}])
 
 def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename_biomass_fake, sensit_tile_rename_fake,
-                 delete_old_outputs, create_deadwood_dictionary, create_litter_dictionary, comparison_dict):
-
-    # # cProfile profiler
-    # pr=cProfile.Profile()
-    # pr.enable()
+                 delete_old_outputs, create_BGC_dictionary, comparison_dict):
 
     ### arrange
     # tile_id for testing and the extent that should be tested within it
@@ -44,13 +38,10 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     ymax = 0
 
     # Dictionary of tiles needed for test
-    input_dict = {cn.mangrove_biomass_2000_dir: cn.pattern_mangrove_biomass_2000,
-                  cn.cont_eco_dir: cn.pattern_cont_eco_processed,
-                  cn.precip_processed_dir: cn.pattern_precip,
-                  cn.elevation_processed_dir: cn.pattern_elevation,
-                  cn.bor_tem_trop_processed_dir: cn.pattern_bor_tem_trop_processed,
-                  cn.WHRC_biomass_2000_unmasked_dir: cn.pattern_WHRC_biomass_2000_unmasked,
-                  cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year}
+    input_dict = {cn.cont_eco_dir: cn.pattern_cont_eco_processed,
+                  cn.AGC_emis_year_dir: cn.pattern_AGC_emis_year,
+                  cn.BGB_AGB_ratio_dir: cn.pattern_BGB_AGB_ratio,
+                  cn.removal_forest_type_dir: cn.pattern_removal_forest_type}
 
     # Makes input tiles for process being tested in specified test area
     tu.make_test_tiles(tile_id, input_dict, cn.pattern_test_suffix, cn.test_data_dir, xmin, ymin, xmax, ymax)
@@ -64,9 +55,8 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     # Only runs before first parametrized run to avoid deleting the difference raster created from previous parametrizations
     print(delete_old_outputs)
 
-    # Makes mangrove deadwood:AGC and litter:AGC dictionaries for different continent-ecozone combinations
-    deadwood_dict = create_deadwood_dictionary
-    litter_dict = create_litter_dictionary
+    # Makes mangrove BGC:AGC dictionary for different continent-ecozone combinations
+    BGC_dict = create_BGC_dictionary
 
     # Renames the input test tiles with the test suffix (except for biomass, which has its own rule)
     def fake_impl_sensit_tile_rename(sensit_type, tile_id, raw_pattern):
@@ -85,10 +75,9 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
 
     ### act
     # Creates the fragment output tiles
-    create_deadwood_litter(tile_id=tile_id,
-                            mang_deadwood_AGB_ratio=deadwood_dict,
-                            mang_litter_AGB_ratio=litter_dict,
-                            carbon_pool_extent=['loss'])
+    create_BGC(tile_id=tile_id,
+                mang_BGB_AGB_ratio=BGC_dict,
+                carbon_pool_extent=['loss'])
 
 
     ### assert
@@ -103,5 +92,5 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
     # # original_raster is from the previous run of the model. new_raster is the developmental version.
     tu.assert_make_test_arrays_and_difference(original_raster, new_raster, tile_id, test_input_pattern)
 
-    # pr.disable()
-    # pr.print_stats()
+    pr.disable()
+    pr.print_stats()
