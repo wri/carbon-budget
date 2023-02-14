@@ -15,6 +15,7 @@ import test.test_utilities as tu
 
 # run from /usr/local/app
 # pytest -m rasterio -s
+# pytest -m deadwood_litter -s
 # Good test coordinates in GIS are -0.0002 S, 9.549 E (has two mangrove loss pixels adjacent to a few non-mangrove loss pixels)
 
 @pytest.mark.xfail

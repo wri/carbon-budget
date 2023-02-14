@@ -28,8 +28,8 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     # Names of the input tiles
     # Removal factors
     model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
-    mangrove_AGB = f'{tile_id}_{cn.pattern_annual_gain_AGB_mangrove}.tif'
-    mangrove_BGB = f'{tile_id}_{cn.pattern_annual_gain_BGB_mangrove}.tif'
+    mangrove_AGB = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_mangrove)
+    mangrove_BGB = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_BGB_mangrove)
     europe_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
     plantations_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
     us_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
@@ -39,7 +39,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     BGB_AGB_ratio = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGB_AGB_ratio)
 
     # Removal factor standard deviations
-    mangrove_AGB_stdev = f'{tile_id}_{cn.pattern_stdev_annual_gain_AGB_mangrove}.tif'
+    mangrove_AGB_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_mangrove)
     europe_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
     plantations_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
     us_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
@@ -47,11 +47,11 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     ipcc_AGB_default_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
 
     # Names of the output tiles
-    removal_forest_type = f'{tile_id}_{output_pattern_list[0]}.tif'
-    annual_gain_AGC_all_forest_types = f'{tile_id}_{output_pattern_list[1]}.tif'
-    annual_gain_BGC_all_forest_types = f'{tile_id}_{output_pattern_list[2]}.tif'
-    annual_gain_AGC_BGC_all_forest_types = f'{tile_id}_{output_pattern_list[3]}.tif' # Not used further in the model. Created just for reference.
-    stdev_annual_gain_AGC_all_forest_types = f'{tile_id}_{output_pattern_list[4]}.tif'
+    removal_forest_type = uu.make_tile_name(tile_id, output_pattern_list[0])
+    annual_gain_AGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[1])
+    annual_gain_BGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[2])
+    annual_gain_AGC_BGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[3]) # Not used further in the model. Created just for reference.
+    stdev_annual_gain_AGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[4])
 
     # Opens biomass tile
     with rasterio.open(model_extent) as model_extent_src:
