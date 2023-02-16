@@ -313,22 +313,65 @@ def mp_prep_other_inputs(tile_id_list):
     # # ERROR 1: PROJ: proj_create_from_database: C:\Program Files\GDAL\projlib\proj.db lacks DATABASE.LAYOUT.VERSION.MAJOR / DATABASE.LAYOUT.VERSION.MINOR metadata. It comes from another PROJ installation.
     # # But I think this error isn't a problem; the resulting geotif seems fine.
 
-    uu.print_log("Generating global BGB:AGB map...")
+    # uu.print_log("Generating global BGB:AGB map...")
+    #
+    # out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
+    # calc = '--calc=A/B'
+    # datatype = f'--type=Float32'
+    #
+    # # Divides BGB by AGB to get BGB:AGB (root:shoot ratio)
+    # cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
+    #        calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
+    # uu.log_subprocess_output_full(cmd)
 
-    out = f'--outfile={cn.name_rasterized_BGB_AGB_Huang_global}'
-    calc = '--calc=A/B'
-    datatype = f'--type=Float32'
+    # The resulting global BGB:AGB map has many gaps, as Huang et al. didn't map AGB and BGB on all land.
+    # Presumably, most of the places without BGB:AGB don't have much forest, but for completeness it seems good to
+    # fill the BGB:AGB map gaps, both internally and make sure that continental margins aren't left without BGB:AGB.
+    # I used gdal_fillnodata.py to do this (https://gdal.org/programs/gdal_fillnodata.html). I tried different
+    # --max_distance parameters, extending it until the interior of the Sahara was covered. Obviously, there's not much
+    # carbon flux in the interior of the Sahara but I wanted to have full land coverage, which meant using
+    # --max_distance=1400 (pixels). Times for different --max_distance values are below.
+    # I didn't experiment with the --smooth_iterations parameter.
+    # I confirmed that gdal_fillnodata wasn't changing the original BGB:AGB raster and was just filling the gaps.
+    # The pixels it assigned to the gaps looked plausible.
 
-    cmd = ['gdal_calc.py', '-A', cn.name_rasterized_BGB_Huang_global, '-B', cn.name_rasterized_AGB_Huang_global,
-           calc, out, '--NoDataValue=0', '--co', 'COMPRESS=DEFLATE', '--overwrite', datatype, '--quiet']
-    uu.log_subprocess_output_full(cmd)
+    # # time gdal_fillnodata.py BGB_AGB_ratio_global_from_Huang_2021__20230201.tif BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_10.tif -co COMPRESS=DEFLATE -md 10
+    # # real 5m7.600s; 6m17.684s
+    # # user 5m7.600s; 5m38.180s
+    # # sys  0m5.560s; 0m6.710s
+    # #
+    # # time gdal_fillnodata.py BGB_AGB_ratio_global_from_Huang_2021__20230201.tif BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_100.tif -co COMPRESS=DEFLATE -md 100
+    # # real 7m44.302s
+    # # user 7m24.310s
+    # # sys  0m4.160s
+    # #
+    # # time gdal_fillnodata.py BGB_AGB_ratio_global_from_Huang_2021__20230201.tif BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_1000.tif -co COMPRESS=DEFLATE -md 1000
+    # # real 51m55.893s
+    # # user 51m25.800s
+    # # sys  0m6.510s
+    # #
+    # # time gdal_fillnodata.py BGB_AGB_ratio_global_from_Huang_2021__20230201.tif BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_1200.tif -co COMPRESS=DEFLATE -md 1200
+    # # real 74m41.544s
+    # # user 74m5.130s
+    # # sys  0m7.070s
+    # #
+    # # time gdal_fillnodata.py BGB_AGB_ratio_global_from_Huang_2021__20230201.tif BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_1400.tif -co COMPRESS=DEFLATE -md 1400
+    # # real
+    # # user
+    # # sys
 
-    # This isn't working for some reason. It just doesn't show anything in the console.
-    # But I'm not going to try to debug it since it's not an important part of the workflow.
-    uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
+    # cmd = ['gdal_fillnodata.py',
+    #        cn.name_rasterized_BGB_AGB_Huang_global, 'BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_10.tif',
+    #        '-co', 'COMPRESS=DEFLATE', '-md', '10']
+    # uu.log_subprocess_output_full(cmd)
+
+    # # upload_final_set isn't uploading the global BGB:AGB map for some reason.
+    # # It just doesn't show anything in the console and nothing gets uploaded.
+    # # But I'm not going to try to debug it since it's not an important part of the workflow.
+    # uu.upload_final_set(cn.AGB_BGB_Huang_rasterized_dir, '_global_from_Huang_2021')
 
     # Creates BGB:AGB tiles
-    source_raster = cn.name_rasterized_BGB_AGB_Huang_global
+    source_raster = cn.name_rasterized_BGB_AGB_Huang_global_extended
     out_pattern = cn.pattern_BGB_AGB_ratio
     dt = 'Float32'
     if cn.count == 96:

@@ -179,10 +179,11 @@ AGB_BGB_Huang_raw_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/raw_AGB_BGB_Hua
 name_rasterized_AGB_Huang_global = 'AGB_global_from_Huang_2021_Mg_ha__20230201.tif'
 name_rasterized_BGB_Huang_global = 'BGB_global_from_Huang_2021_Mg_ha__20230201.tif'
 name_rasterized_BGB_AGB_Huang_global = 'BGB_AGB_ratio_global_from_Huang_2021__20230201.tif'
+name_rasterized_BGB_AGB_Huang_global_extended = 'BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_1400.tif'
 AGB_BGB_Huang_rasterized_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/rasterized_AGB_BGB_and_ratio_Huang_et_al_2021/')
 
 pattern_BGB_AGB_ratio = 'BGB_AGB_ratio'
-BGB_AGB_ratio_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/processed/20230202/')
+BGB_AGB_ratio_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/processed/20230216/')
 
 
 
