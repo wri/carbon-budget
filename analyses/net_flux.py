@@ -6,11 +6,13 @@ import datetime
 import numpy as np
 import rasterio
 import sys
+from memory_profiler import profile
 
 sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
+@profile
 def net_calc(tile_id, pattern):
     """
     Creates net GHG flux tile set

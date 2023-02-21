@@ -21,7 +21,8 @@ import test.test_utilities as tu
 @patch("universal_util.upload_log")
 @pytest.mark.rasterio
 @pytest.mark.all_removals
-@pytest.mark.parametrize("comparison_dict", [{cn.removal_forest_type_dir: cn.pattern_removal_forest_type},
+@pytest.mark.parametrize("comparison_dict", [{cn.removal_forest_type_dir: cn.pattern_removal_forest_type}
+    ,
                                              {cn.annual_gain_AGC_all_types_dir: cn.pattern_annual_gain_AGC_all_types},
                                              {cn.annual_gain_BGC_all_types_dir: cn.pattern_annual_gain_BGC_all_types},
                                              {cn.annual_gain_AGC_BGC_all_types_dir: cn.pattern_annual_gain_AGC_BGC_all_types},
@@ -33,17 +34,18 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
 
     ### arrange
     # tile_id for testing and the extent that should be tested within it
-    # tile_id = "40N_090W"
-    # xmin = -90
-    # ymax = 40
-    # xmax = xmin + 10
-    # ymin = ymax - 0.005
+    tile_id = "40N_090W"
+    xmin = -90
+    ymax = 40
+    xmax = xmin + 10
+    ymin = ymax - 0.005
 
-    tile_id = "00N_000E"
-    xmin = 0
-    ymin = -0.005
-    xmax = 10
-    ymax = 0
+    # tile_id = "00N_000E"
+    # xmin = 0
+    # ymax = 0
+    # xmax = 10
+    # ymin = -0.005
+
 
     # Dictionary of tiles needed for test
     input_dict = {

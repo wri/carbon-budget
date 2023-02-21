@@ -6,6 +6,7 @@ import rasterio
 import sys
 import numpy as np
 import pandas as pd
+from memory_profiler import profile
 
 sys.path.append('../')
 import constants_and_names as cn
@@ -69,7 +70,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
     return mang_x_pool_AGB_ratio
 
-
+@profile
 def create_AGC(tile_id, carbon_pool_extent):
     """
     Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
