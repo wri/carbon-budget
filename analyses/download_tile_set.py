@@ -33,6 +33,7 @@ def download_tile_set(sensit_type, tile_id_list):
         cn.annual_gain_BGB_IPCC_defaults_dir: [cn.pattern_annual_gain_BGB_IPCC_defaults],
         cn.stdev_annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_stdev_annual_gain_AGB_IPCC_defaults],
         cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
+        cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio],
         cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
         cn.annual_gain_BGC_all_types_dir: [cn.pattern_annual_gain_BGC_all_types],
         cn.annual_gain_AGC_BGC_all_types_dir: [cn.pattern_annual_gain_AGC_BGC_all_types],

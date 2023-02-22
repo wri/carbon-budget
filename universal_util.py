@@ -523,8 +523,7 @@ def count_tiles_s3(source, pattern=None):
 
             # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss,
-                           cn.pattern_gain_rewindow, cn.pattern_tcd_rewindow, cn.pattern_pixel_area_rewindow]:
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -579,8 +578,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss,
-                           cn.pattern_gain_rewindow, cn.pattern_tcd_rewindow, cn.pattern_pixel_area_rewindow]:   # For tiles that do not have the tile_id first
+            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = f'{source_dir}{pattern}_{tile_id}.tif'
             else:  # For every other type of tile
                 source = f'{source_dir}{tile_id}_{pattern}.tif'

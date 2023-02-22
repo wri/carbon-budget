@@ -70,8 +70,7 @@ canopy_threshold = 30
 tonnes_to_megatonnes = 1000000
 
 # Belowground to aboveground biomass ratios. Mangrove values are from Table 4.5 of IPCC wetland supplement.
-# Non-mangrove value is the average slope of the AGB:BGB relationship in Figure 3 of Mokany et al. 2006.
-below_to_above_non_mang = 0.26
+# Non-mangrove ratio is map from Huang et al. 2021.
 below_to_above_trop_wet_mang = 0.49
 below_to_above_trop_dry_mang = 0.29
 below_to_above_subtrop_mang = 0.96
@@ -171,8 +170,21 @@ mangrove_biomass_raw_file = 'MaskedSRTMCountriesAGB_V2_Tiff.zip'
 # Processed mangrove aboveground biomass in the year 2000
 pattern_mangrove_biomass_2000 = 'mangrove_agb_t_ha_2000'
 mangrove_biomass_2000_dir = os.path.join(s3_base_dir, 'mangrove_biomass/processed/standard/20190220/')
-pattern_mangrove_biomass_2000_rewindow = 'mangrove_agb_t_ha_2000_rewindow'
-mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrove_biomass/20210621/')
+
+# Belowground biomass:aboveground biomass ratio tiles
+name_raw_AGB_Huang_global = 'pergridarea_agb.nc'
+name_raw_BGB_Huang_global = 'pergridarea_bgb.nc'
+AGB_BGB_Huang_raw_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/raw_AGB_BGB_Huang_et_al_2021/')
+
+name_rasterized_AGB_Huang_global = 'AGB_global_from_Huang_2021_Mg_ha__20230201.tif'
+name_rasterized_BGB_Huang_global = 'BGB_global_from_Huang_2021_Mg_ha__20230201.tif'
+name_rasterized_BGB_AGB_Huang_global = 'BGB_AGB_ratio_global_from_Huang_2021__20230201.tif'
+name_rasterized_BGB_AGB_Huang_global_extended = 'BGB_AGB_ratio_global_from_Huang_2021__20230201_extended_1400.tif'
+AGB_BGB_Huang_rasterized_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/rasterized_AGB_BGB_and_ratio_Huang_et_al_2021/')
+
+pattern_BGB_AGB_ratio = 'BGB_AGB_ratio'
+BGB_AGB_ratio_dir = os.path.join(s3_base_dir, 'BGB_AGB_ratio/processed/20230216/')
+
 
 
 ######
@@ -182,8 +194,6 @@ mangrove_biomass_2000_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/mangrov
 # The area of each pixel in m^2
 pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
-pattern_pixel_area_rewindow = 'hanson_2013_area_rewindow'
-pixel_area_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/pixel_area/20210621/')
 
 # Spreadsheet with annual removals rates
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20220914.xlsx'
@@ -196,14 +206,10 @@ loss_dir = 's3://gfw2-data/forest_change/hansen_2021/'
 # Hansen removals tiles (2001-2012)
 pattern_gain = 'Hansen_GFC2015_gain'
 gain_dir = 's3://gfw2-data/forest_change/tree_cover_gain/gaindata_2012/'
-pattern_gain_rewindow = 'Hansen_GFC2015_gain_rewindow'
-gain_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/tree_cover_gain_2001_2012/20210621/')
 
 # Tree cover density 2000 tiles
 pattern_tcd = 'Hansen_GFC2014_treecover2000'
 tcd_dir = 's3://gfw2-data/forest_cover/2000_treecover/'
-pattern_tcd_rewindow = 'Hansen_GFC2014_treecover2000_rewindow'
-tcd_rewindow_dir = os.path.join(s3_base_dir, 'rewindow/2000_treecover_density/20210621/')
 
 # Intact forest landscape 2000 tiles
 pattern_ifl = 'res_ifl_2000'

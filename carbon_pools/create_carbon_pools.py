@@ -6,6 +6,7 @@ import rasterio
 import sys
 import numpy as np
 import pandas as pd
+from memory_profiler import profile
 
 sys.path.append('../')
 import constants_and_names as cn
@@ -69,7 +70,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
     return mang_x_pool_AGB_ratio
 
-
+@profile
 def create_AGC(tile_id, carbon_pool_extent):
     """
     Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
@@ -303,6 +304,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
     # Names of the input tiles
     removal_forest_type = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_removal_forest_type)
     cont_ecozone = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
+    BGB_AGB_ratio = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGB_AGB_ratio)
 
     # For BGC 2000, opens AGC, names the output tile, creates the output tile
     if '2000' in carbon_pool_extent:
@@ -327,6 +329,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
 
     # For BGC in emissions year, opens AGC, names the output tile, creates the output tile
     if 'loss' in carbon_pool_extent:
+
         AGC_emis_year = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_AGC_emis_year)
         AGC_emis_year_src = rasterio.open(AGC_emis_year)
         kwargs = AGC_emis_year_src.meta
@@ -335,7 +338,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         output_pattern_list = [cn.pattern_BGC_emis_year]
         if cn.SENSIT_TYPE != 'std':
             output_pattern_list = uu.alter_patterns(cn.SENSIT_TYPE, output_pattern_list)
-        BGC_emis_year = f'{tile_id}_{output_pattern_list[0]}.tif'
+        BGC_emis_year = uu.make_tile_name(tile_id, output_pattern_list[0])
         dst_BGC_emis_year = rasterio.open(BGC_emis_year, 'w', **kwargs)
         # Adds metadata tags to the output raster
         uu.add_universal_metadata_rasterio(dst_BGC_emis_year)
@@ -345,7 +348,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
             source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:BGC for mangrove and non-mangrove forests applied.')
         dst_BGC_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
-
+        print(BGC_emis_year)
 
     uu.print_log(f'  Reading input files for {tile_id}')
 
@@ -361,6 +364,12 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         uu.print_log(f'    Removal forest type tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
         uu.print_log(f'    No Removal forest type tile found for {tile_id}')
+
+    try:
+        BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
+        uu.print_log(f'    BGB:AGB tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No BGB:AGB tile found for {tile_id}')
 
     uu.print_log(f'  Creating belowground carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 
@@ -380,6 +389,11 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         except UnboundLocalError:
             removal_forest_type_window = np.zeros((window.height, window.width))
 
+        try:
+            BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
+        except UnboundLocalError:
+            BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+
         # Applies the mangrove BGB:AGB ratios (3 different ratios) to the ecozone raster to create a raster of BGB:AGB ratios
         for key, value in mang_BGB_AGB_ratio.items():
             cont_ecozone_window[cont_ecozone_window == key] = value
@@ -391,7 +405,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
             # Applies mangrove-specific AGB:BGB ratios by ecozone (ratio applies to AGC:BGC as well)
             mangrove_BGC_2000 = np.where(removal_forest_type_window == cn.mangrove_rank, AGC_2000_window * cont_ecozone_window, 0)
             # Applies non-mangrove AGB:BGB ratio to all non-mangrove pixels
-            non_mangrove_BGC_2000 = np.where(removal_forest_type_window != cn.mangrove_rank, AGC_2000_window * cn.below_to_above_non_mang, 0)
+            non_mangrove_BGC_2000 = np.where(removal_forest_type_window != cn.mangrove_rank, AGC_2000_window * BGB_AGB_ratio_window, 0)
             # Combines mangrove and non-mangrove pixels
             BGC_2000_window = mangrove_BGC_2000 + non_mangrove_BGC_2000
 
@@ -402,7 +416,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
             AGC_emis_year_window = AGC_emis_year_src.read(1, window=window)
 
             mangrove_BGC_emis_year = np.where(removal_forest_type_window == cn.mangrove_rank, AGC_emis_year_window * cont_ecozone_window, 0)
-            non_mangrove_BGC_emis_year = np.where(removal_forest_type_window != cn.mangrove_rank, AGC_emis_year_window * cn.below_to_above_non_mang, 0)
+            non_mangrove_BGC_emis_year = np.where(removal_forest_type_window != cn.mangrove_rank, AGC_emis_year_window * BGB_AGB_ratio_window, 0)
             BGC_emis_year_window = mangrove_BGC_emis_year + non_mangrove_BGC_emis_year
 
             dst_BGC_emis_year.write_band(1, BGC_emis_year_window, window=window)

@@ -5,15 +5,15 @@ The standard deviation tiles are used in the uncertainty analysis.
 It requires IPCC Table 4.9, formatted for easy ingestion by pandas.
 Essentially, this does some processing of the IPCC removals rate table, then uses it as a dictionary that it applies
 to every pixel in every tile.
-Each continent-ecozone-forest age category combination gets its own code, which matches the codes in the
+Each continent-ecozo0ne-forest age category combination gets its own code, which matches the codes in the
 processed IPCC table.
 The extent of these removal rates is greater than what is ultimately used in the model because it assigns IPCC defaults
 everywhere there's a forest age category, continent, and ecozone.
 You can think of this as the IPCC default rate that would be applied if no other data were available for that pixel.
 The belowground removal rates are purely the aboveground removal rates with the above:below ratio applied to them.
 
-python -m removals.mp_annual_gain_rate_IPCC_default -t std -l 00N_000E -nu
-python -m removals.mp_annual_gain_rate_IPCC_default -t std -l all
+python -m removals.mp_annual_gain_rate_IPCC_defaults -t std -l 00N_000E -nu
+python -m removals.mp_annual_gain_rate_IPCC_defaults -t std -l all
 """
 
 import multiprocessing
@@ -53,7 +53,8 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
     # Files to download for this script.
     download_dict = {
         cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
-        cn.cont_eco_dir: [cn.pattern_cont_eco_processed]
+        cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
+        cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
     }
 
 

@@ -49,7 +49,8 @@ def main ():
 
     # Files to download for this script.
     download_dict = {cn.gain_dir: [cn.pattern_gain],
-                     cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults]
+                     cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
+                     cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
     }
 
     # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.

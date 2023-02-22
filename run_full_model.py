@@ -442,7 +442,7 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(':::::Freeing up memory for gross emissions creation by deleting unneeded tiles')
+            uu.print_log(':::::Freeing up memory for biomass_soil gross emissions creation by deleting unneeded tiles')
             tiles_to_delete = []
             # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_removal_forest_type}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_AGC_2000}*tif'))
@@ -468,7 +468,7 @@ def main ():
 
         uu.check_storage()
 
-        uu.print_log(':::::Creating gross emissions tiles')
+        uu.print_log(':::::Creating gross biomass_soil emissions tiles')
         start = datetime.datetime.now()
 
         mp_calculate_gross_emissions(tile_id_list, 'biomass_soil')
@@ -476,7 +476,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(f':::::Processing time for gross_emissions: {elapsed_time}', "\n", "\n")
+        uu.print_log(f':::::Processing time for biomass_soil gross_emissions: {elapsed_time}', "\n", "\n")
 
 
     # Creates gross emissions tiles for soil only by driver, gas, and all emissions combined
@@ -484,7 +484,7 @@ def main ():
 
         if not cn.SAVE_INTERMEDIATES:
 
-            uu.print_log(':::::Freeing up memory for gross emissions creation by deleting unneeded tiles')
+            uu.print_log(':::::Freeing up memory for soil_only gross emissions creation by deleting unneeded tiles')
             tiles_to_delete = []
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil}*tif'))
@@ -505,7 +505,7 @@ def main ():
 
         uu.check_storage()
 
-        uu.print_log(':::::Creating gross emissions tiles')
+        uu.print_log(':::::Creating soil_only gross emissions tiles')
         start = datetime.datetime.now()
 
         mp_calculate_gross_emissions(tile_id_list, 'soil_only')
@@ -513,7 +513,7 @@ def main ():
         end = datetime.datetime.now()
         elapsed_time = end - start
         uu.check_storage()
-        uu.print_log(f':::::Processing time for gross_emissions: {elapsed_time}', "\n", "\n")
+        uu.print_log(f':::::Processing time for soil_only gross_emissions: {elapsed_time}', "\n", "\n")
 
 
     # Creates net flux tiles (gross emissions - gross removals)

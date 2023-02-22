@@ -39,6 +39,7 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
     # Names of the forest age category and continent-ecozone tiles
     age_cat = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_age_cat_IPCC)
     cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)
+    BGB_AGB_ratio = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGB_AGB_ratio)
 
     # Names of the output natural forest removals rate tiles (above and belowground)
     AGB_IPCC_default_gain_rate = f'{tile_id}_{output_pattern_list[0]}.tif'
@@ -57,6 +58,12 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
         uu.print_log(f'  Continent-ecozone tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
         return uu.print_log(f'  No continent-ecozone tile found for {tile_id}. Skipping tile.')
+
+    try:
+        BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
+        uu.print_log(f'  BGB:AGB tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'  No BGB:AGB tile found for {tile_id}')
 
     # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
     kwargs = cont_eco_src.meta
@@ -121,6 +128,11 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
         except UnboundLocalError:
             age_cat_window = np.zeros((window.height, window.width), dtype='uint8')
 
+        try:
+            BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
+        except UnboundLocalError:
+            BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+
         # Recodes the input forest age category array with 10 different decision tree end values into the 3 actual age categories
         age_recode = np.vectorize(age_dict.get)(age_cat_window)
 
@@ -141,7 +153,7 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
 
         ## Belowground removal factors
         # Calculates belowground annual removal rates
-        gain_rate_BGB = gain_rate_AGB * cn.below_to_above_non_mang
+        gain_rate_BGB = gain_rate_AGB * BGB_AGB_ratio_window
 
         # Writes the output window to the output file
         dst_below.write_band(1, gain_rate_BGB, window=window)
