@@ -396,7 +396,7 @@ annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_fa
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
-removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20229999/')
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20220309/')
 
 # Removal model forest type codes
 mangrove_rank = 6
