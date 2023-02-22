@@ -33,7 +33,18 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
                        delete_old_outputs, comparison_dict):
 
     ### arrange
-    # tile_id for testing and the extent that should be tested within it
+    # # tile_id for testing and the extent that should be tested within it
+
+    # # For 40N_020E, AGC changes with using BGB:AGB map because European removal factor tiles are AGC+BGC,
+    # # so making the composite AGC tiles from that depends on the BGC ratio. 40N_020E seems to work fine.
+    # tile_id = "40N_020E"
+    # xmin = 20
+    # ymax = 40
+    # xmax = xmin + 10
+    # ymin = ymax - 0.005
+
+    # For 40N_090W, AGC changes with using BGB:AGB map because US removal factor tiles are AGC+BGC,
+    # so making the composite AGC tiles from that depends on the BGC ratio. 40N_090W seems to work fine.
     tile_id = "40N_090W"
     xmin = -90
     ymax = 40
