@@ -89,6 +89,7 @@ def create_AGC(tile_id, carbon_pool_extent):
     annual_gain_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
     cumul_gain_AGCO2 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
     natrl_forest_biomass_2000 = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)
+    model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
 
     uu.print_log(f'  Reading input files for {tile_id}...')
 
@@ -102,6 +103,9 @@ def create_AGC(tile_id, carbon_pool_extent):
     else:
         uu.print_log(f'    Hansen loss tile found for {tile_id}')
         loss_year = f'{cn.pattern_loss}_{tile_id}.tif'
+
+    # Not actually used in the AGC creation but this tile should exist, so it can reliably be opened for metadata
+    model_extent_src = rasterio.open(model_extent)
 
     # Opens the input tiles if they exist
     try:
@@ -147,10 +151,10 @@ def create_AGC(tile_id, carbon_pool_extent):
 
 
     # Grabs the windows of a tile to iterate over the entire tif without running out of memory
-    windows = natrl_forest_biomass_2000_src.block_windows(1)
+    windows = model_extent_src.block_windows(1)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = natrl_forest_biomass_2000_src.meta
+    kwargs = model_extent_src.meta
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional carbon

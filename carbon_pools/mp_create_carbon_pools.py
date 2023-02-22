@@ -84,6 +84,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
 
         # Files to download for this script
         download_dict = {
+            cn.model_extent_dir: [cn.pattern_model_extent],
             cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
@@ -121,6 +122,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         # Files to download for this script. This has the same items as the download_dict for 2000 pools plus
         # other tiles.
         download_dict = {
+            cn.model_extent_dir: [cn.pattern_model_extent],
             cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
