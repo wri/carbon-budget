@@ -494,23 +494,23 @@ total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/loss_p
 
 ## Carbon emitted_pools in 2000
 
-pool_2000_run_date = '20200826'
+pool_2000_run_date = '20230222'
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "Mg_AGC_ha_2000"
-AGC_2000_dir = os.path.join(base_carbon_pool_dir, f'aboveground_carbon/extent_2000/standard/{emis_pool_run_date}/')
+AGC_2000_dir = os.path.join(base_carbon_pool_dir, f'aboveground_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Belowground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_BGC_2000 = "Mg_BGC_ha_2000"
-BGC_2000_dir = os.path.join(base_carbon_pool_dir, f'belowground_carbon/extent_2000/standard/{emis_pool_run_date}/')
+BGC_2000_dir = os.path.join(base_carbon_pool_dir, f'belowground_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Deadwood carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_deadwood_2000 = "Mg_deadwood_C_ha_2000"
-deadwood_2000_dir = os.path.join(base_carbon_pool_dir, f'deadwood_carbon/extent_2000/standard/{emis_pool_run_date}/')
+deadwood_2000_dir = os.path.join(base_carbon_pool_dir, f'deadwood_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Litter carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_litter_2000 = "Mg_litter_C_ha_2000"
-litter_2000_dir = os.path.join(base_carbon_pool_dir, f'litter_carbon/extent_2000/standard/{emis_pool_run_date}/')
+litter_2000_dir = os.path.join(base_carbon_pool_dir, f'litter_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = os.path.join(s3_base_dir, 'carbon_pools/soil_carbon/raw/')
