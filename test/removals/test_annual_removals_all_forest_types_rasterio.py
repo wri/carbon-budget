@@ -21,8 +21,8 @@ import test.test_utilities as tu
 @patch("universal_util.upload_log")
 @pytest.mark.rasterio
 @pytest.mark.all_removals
-@pytest.mark.parametrize("comparison_dict", [{cn.removal_forest_type_dir: cn.pattern_removal_forest_type}
-    ,
+@pytest.mark.parametrize("comparison_dict", [
+                                             {cn.removal_forest_type_dir: cn.pattern_removal_forest_type},
                                              {cn.annual_gain_AGC_all_types_dir: cn.pattern_annual_gain_AGC_all_types},
                                              {cn.annual_gain_BGC_all_types_dir: cn.pattern_annual_gain_BGC_all_types},
                                              {cn.annual_gain_AGC_BGC_all_types_dir: cn.pattern_annual_gain_AGC_BGC_all_types},
