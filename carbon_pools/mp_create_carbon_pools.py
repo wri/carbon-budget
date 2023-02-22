@@ -204,7 +204,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
                     # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 690 GB peak (stops at 600, then increases slowly); 21 > 750 GB peak
             else: # For 2000, or loss & 2000
-                processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
+                processes = 25  # 25=XXX GB peak
         else:
             processes = 2
         uu.print_log(f'AGC loss year max processors={processes}')
@@ -254,7 +254,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 else:
                     processes = 39  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 690 GB peak; 39 = XXX GB peak
             else: # For 2000, or loss & 2000
-                processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
+                processes = 40  # 20 processors = 370 GB peak; 25 = 460 GB peak; 40 = XXX GB peak
         else:
             processes = 2
         uu.print_log(f'BGC max processors={processes}')
@@ -385,7 +385,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     if cn.SENSIT_TYPE == 'biomass_swap':
                         processes = 36  # 36 processors = XXX GB peak
                     else:
-                        processes = 44  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 44 = XXX GB peak
+                        processes = 50  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 50 = XXX GB peak
                 else: # For 2000, or loss & 2000
                     processes = 12  # 12 processors = XXX GB peak
             else:
