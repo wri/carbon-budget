@@ -147,10 +147,10 @@ def create_AGC(tile_id, carbon_pool_extent):
 
 
     # Grabs the windows of a tile to iterate over the entire tif without running out of memory
-    windows = loss_year_src.block_windows(1)
+    windows = natrl_forest_biomass_2000_src.block_windows(1)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = loss_year_src.meta
+    kwargs = natrl_forest_biomass_2000_src.meta
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional carbon
