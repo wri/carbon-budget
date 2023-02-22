@@ -103,10 +103,12 @@ def create_AGC(tile_id, carbon_pool_extent):
         uu.print_log(f'    Hansen loss tile found for {tile_id}')
         loss_year = f'{cn.pattern_loss}_{tile_id}.tif'
 
-    # This input is required to exist
-    loss_year_src = rasterio.open(loss_year)
-
     # Opens the input tiles if they exist
+    try:
+        loss_year_src = rasterio.open(loss_year)
+        uu.print_log(f'    Loss year tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No loss year tile for {tile_id}')
     try:
         annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
         uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
@@ -199,7 +201,10 @@ def create_AGC(tile_id, carbon_pool_extent):
     for idx, window in windows:
 
         # Reads the input tiles' windows. For windows from tiles that may not exist, an array of all 0s is created.
-        loss_year_window = loss_year_src.read(1, window=window)
+        try:
+            loss_year_window = loss_year_src.read(1, window=window)
+        except UnboundLocalError:
+            loss_year_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
         except UnboundLocalError:
