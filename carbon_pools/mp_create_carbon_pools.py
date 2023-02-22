@@ -283,7 +283,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     if '2000' in carbon_pool_extent:
         uu.print_log(':::::Freeing up memory for deadwood and litter carbon 2000 creation; deleting unneeded tiles')
         tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_2000}*tif'))
+        # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_2000}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_removal_forest_type}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gain}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_soil_C_full_extent_2000}*tif'))
