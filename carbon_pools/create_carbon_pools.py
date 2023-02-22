@@ -70,7 +70,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
     return mang_x_pool_AGB_ratio
 
-@profile
+# @profile
 def create_AGC(tile_id, carbon_pool_extent):
     """
     Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
