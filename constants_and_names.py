@@ -396,7 +396,7 @@ annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_fa
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
-removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20229999/')
+removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20220309/')
 
 # Removal model forest type codes
 mangrove_rank = 6
@@ -418,15 +418,15 @@ gain_year_count_dir = os.path.join(s3_base_dir, 'gain_year_count_all_forest_type
 
 # Gross aboveground removals for all forest types
 pattern_cumul_gain_AGCO2_all_types = f'gross_removals_AGCO2_Mg_ha_all_forest_types_2001_{loss_years}'
-cumul_gain_AGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_all_forest_types/standard/per_hectare/20229999/')
+cumul_gain_AGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_all_forest_types/standard/per_hectare/20220309/')
 
 # Gross belowground removals for all forest types
 pattern_cumul_gain_BGCO2_all_types = f'gross_removals_BGCO2_Mg_ha_all_forest_types_2001_{loss_years}'
-cumul_gain_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals_BGCO2_all_forest_types/standard/per_hectare/20229999/')
+cumul_gain_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals_BGCO2_all_forest_types/standard/per_hectare/20220309/')
 
 # Gross aboveground and belowground removals for all forest types in all pixels
 pattern_cumul_gain_AGCO2_BGCO2_all_types = f'gross_removals_AGCO2_BGCO2_Mg_ha_all_forest_types_2001_{loss_years}'
-cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/full_extent/per_hectare/20229999/')
+cumul_gain_AGCO2_BGCO2_all_types_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/full_extent/per_hectare/20220309/')
 
 # Gross aboveground and belowground removals for all forest types in pixels within forest extent
 pattern_cumul_gain_AGCO2_BGCO2_all_types_forest_extent = f'gross_removals_AGCO2_BGCO2_Mg_ha_all_forest_types_forest_extent_2001_{loss_years}'
@@ -494,23 +494,23 @@ total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/loss_p
 
 ## Carbon emitted_pools in 2000
 
-pool_2000_run_date = '20200826'
+pool_2000_run_date = '20230222'
 
 # Aboveground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_AGC_2000 = "Mg_AGC_ha_2000"
-AGC_2000_dir = os.path.join(base_carbon_pool_dir, f'aboveground_carbon/extent_2000/standard/{emis_pool_run_date}/')
+AGC_2000_dir = os.path.join(base_carbon_pool_dir, f'aboveground_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Belowground carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_BGC_2000 = "Mg_BGC_ha_2000"
-BGC_2000_dir = os.path.join(base_carbon_pool_dir, f'belowground_carbon/extent_2000/standard/{emis_pool_run_date}/')
+BGC_2000_dir = os.path.join(base_carbon_pool_dir, f'belowground_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Deadwood carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_deadwood_2000 = "Mg_deadwood_C_ha_2000"
-deadwood_2000_dir = os.path.join(base_carbon_pool_dir, f'deadwood_carbon/extent_2000/standard/{emis_pool_run_date}/')
+deadwood_2000_dir = os.path.join(base_carbon_pool_dir, f'deadwood_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Litter carbon for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_litter_2000 = "Mg_litter_C_ha_2000"
-litter_2000_dir = os.path.join(base_carbon_pool_dir, f'litter_carbon/extent_2000/standard/{emis_pool_run_date}/')
+litter_2000_dir = os.path.join(base_carbon_pool_dir, f'litter_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 # Raw mangrove soil C
 mangrove_soil_C_dir = os.path.join(s3_base_dir, 'carbon_pools/soil_carbon/raw/')
@@ -532,7 +532,7 @@ soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/in
 
 # Total carbon (all carbon emitted_pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "Mg_total_C_ha_2000"
-total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000/standard/{emis_pool_run_date}/')
+total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000/standard/{pool_2000_run_date}/')
 
 
 ######

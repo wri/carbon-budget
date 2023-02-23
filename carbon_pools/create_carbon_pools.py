@@ -70,7 +70,7 @@ def mangrove_pool_ratio_dict(gain_table_simplified, tropical_dry, tropical_wet, 
 
     return mang_x_pool_AGB_ratio
 
-@profile
+# @profile
 def create_AGC(tile_id, carbon_pool_extent):
     """
     Creates aboveground carbon emitted_pools in 2000 and/or the year of loss (loss pixels only)
@@ -89,6 +89,7 @@ def create_AGC(tile_id, carbon_pool_extent):
     annual_gain_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
     cumul_gain_AGCO2 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
     natrl_forest_biomass_2000 = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)
+    model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
 
     uu.print_log(f'  Reading input files for {tile_id}...')
 
@@ -103,10 +104,15 @@ def create_AGC(tile_id, carbon_pool_extent):
         uu.print_log(f'    Hansen loss tile found for {tile_id}')
         loss_year = f'{cn.pattern_loss}_{tile_id}.tif'
 
-    # This input is required to exist
-    loss_year_src = rasterio.open(loss_year)
+    # Not actually used in the AGC creation but this tile should exist, so it can reliably be opened for metadata
+    model_extent_src = rasterio.open(model_extent)
 
     # Opens the input tiles if they exist
+    try:
+        loss_year_src = rasterio.open(loss_year)
+        uu.print_log(f'    Loss year tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'    No loss year tile for {tile_id}')
     try:
         annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
         uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
@@ -145,10 +151,10 @@ def create_AGC(tile_id, carbon_pool_extent):
 
 
     # Grabs the windows of a tile to iterate over the entire tif without running out of memory
-    windows = loss_year_src.block_windows(1)
+    windows = model_extent_src.block_windows(1)
 
     # Grabs metadata for one of the input tiles, like its location/projection/cellsize
-    kwargs = loss_year_src.meta
+    kwargs = model_extent_src.meta
 
     # Updates kwargs for the output dataset.
     # Need to update data type to float 32 so that it can handle fractional carbon
@@ -199,7 +205,10 @@ def create_AGC(tile_id, carbon_pool_extent):
     for idx, window in windows:
 
         # Reads the input tiles' windows. For windows from tiles that may not exist, an array of all 0s is created.
-        loss_year_window = loss_year_src.read(1, window=window)
+        try:
+            loss_year_window = loss_year_src.read(1, window=window)
+        except UnboundLocalError:
+            loss_year_window = np.zeros((window.height, window.width), dtype='uint8')
         try:
             annual_gain_AGC_window = annual_gain_AGC_src.read(1, window=window)
         except UnboundLocalError:

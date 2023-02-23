@@ -84,6 +84,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
 
         # Files to download for this script
         download_dict = {
+            cn.model_extent_dir: [cn.pattern_model_extent],
             cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
@@ -121,6 +122,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         # Files to download for this script. This has the same items as the download_dict for 2000 pools plus
         # other tiles.
         download_dict = {
+            cn.model_extent_dir: [cn.pattern_model_extent],
             cn.removal_forest_type_dir: [cn.pattern_removal_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.cont_eco_dir: [cn.pattern_cont_eco_processed],
@@ -204,7 +206,8 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     processes = 20  # 25 processors > 750 GB peak; 16 = 560 GB peak;
                     # 18 = 570 GB peak; 19 = 620 GB peak; 20 = 690 GB peak (stops at 600, then increases slowly); 21 > 750 GB peak
             else: # For 2000, or loss & 2000
-                processes = 15  # 12 processors = 490 GB peak (stops around 455, then increases slowly); 15 = XXX GB peak
+                processes = 32  # 25=540 GB peak; 32=690 GB peak; 34=sometimes 700, sometimes 760 GB peak (too high);
+                # 36=760 GB peak (too high)
         else:
             processes = 2
         uu.print_log(f'AGC loss year max processors={processes}')
@@ -254,7 +257,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 else:
                     processes = 39  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 690 GB peak; 39 = XXX GB peak
             else: # For 2000, or loss & 2000
-                processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30 = XXX GB peak
+                processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30=725 GB peak; 40 = 760 GB peak (too high)
         else:
             processes = 2
         uu.print_log(f'BGC max processors={processes}')
@@ -283,7 +286,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     if '2000' in carbon_pool_extent:
         uu.print_log(':::::Freeing up memory for deadwood and litter carbon 2000 creation; deleting unneeded tiles')
         tiles_to_delete = []
-        tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_2000}*tif'))
+        # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_2000}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_removal_forest_type}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gain}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_soil_C_full_extent_2000}*tif'))
@@ -318,7 +321,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 ### There wouldn't have been enough room for all deadwood and litter otherwise.
                 ### For example, when deadwood and litter generation started getting up to around 50N, I deleted
                 ### 00N precip, elevation, and WHRC AGB. I deleted all of those from 30N to 20S.
-                processes = 16  # 7 processors = 320 GB peak; 14 = 620 GB peak; 16 = XXX GB peak
+                processes = 16  # 7 processors = 320 GB peak; 14 = 620 GB peak; 16 = 710 GB peak
         else:
             processes = 2
         uu.print_log(f'Deadwood and litter max processors={processes}')
@@ -385,7 +388,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     if cn.SENSIT_TYPE == 'biomass_swap':
                         processes = 36  # 36 processors = XXX GB peak
                     else:
-                        processes = 44  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 44 = XXX GB peak
+                        processes = 50  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 50 = XXX GB peak
                 else: # For 2000, or loss & 2000
                     processes = 12  # 12 processors = XXX GB peak
             else:
@@ -419,7 +422,6 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
 
         # Files to download for total C 2000. Previously deleted to save space
         download_dict = {
-            cn.BGC_2000_dir: [cn.pattern_BGC_2000],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000]
         }
 
