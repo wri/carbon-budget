@@ -12,7 +12,7 @@ sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
-@profile
+# @profile
 def net_calc(tile_id, pattern):
     """
     Creates net GHG flux tile set
