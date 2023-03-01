@@ -9,7 +9,6 @@ import rasterio
 import sys
 from memory_profiler import profile
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 

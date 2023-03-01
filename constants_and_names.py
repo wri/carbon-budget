@@ -239,15 +239,19 @@ planted_forest_type_unmasked_dir = os.path.join(s3_base_dir, 'other_emissions_in
 
 # Peat mask inputs
 peat_unprocessed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/raw/')
-cifor_peat_file = 'cifor_peat_mask.tif'
-jukka_peat_zip = 'Jukka_peatland.zip'
-jukka_peat_shp = 'peatland_drainage_proj.shp'
-soilgrids250_peat_url = 'https://files.isric.org/soilgrids/latest/data/wrb/MostProbable/'   #Value 14 is histosol according to https://files.isric.org/soilgrids/latest/data/wrb/MostProbable.qml
-pattern_soilgrids_most_likely_class = 'geotiff'
+Gumbricht_peat_name = 'Gumbricht_2017_CIFOR__TROP_SUBTROP_PeatV21_2016.tif'
+Dargie_name = 'Dargie_et_al_2017__SimplifiedPeatMap_50m.tif'
+Dargie_peat_name = 'Dargie_et_al_2017__SimplifiedPeatMap_50m_peat_only.tif'
+Miettinen_peat_zip = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.zip'
+Miettinen_peat_shp = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.shp'
+Miettinen_peat_tif = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.tif'
+Xu_peat_zip = 'Xu_et_al_north_of_40N__20230228.zip'
+Xu_peat_shp = 'Xu_et_al_north_of_40N__20230228.shp'
+Xu_peat_tif = 'Xu_et_al_north_of_40N__20230228.tif'
 
 # Peat mask
 pattern_peat_mask = 'peat_mask_processed'
-peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20200807/')
+peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20230301/')
 
 # Climate zone
 climate_zone_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/raw/')
