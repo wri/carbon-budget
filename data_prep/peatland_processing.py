@@ -62,16 +62,15 @@ def create_peat_mask_tiles(tile_id):
         uu.log_subprocess_output_full(cmd)
         uu.print_log(f'{tile_id} created.')
 
+
+    os.quit()
+
     # All of the below is to add metadata tags to the output peat masks.
     # For some reason, just doing what's at https://rasterio.readthedocs.io/en/latest/topics/tags.html
     # results in the data getting removed.
     # I found it necessary to copy the peat mask and read its windows into a new copy of the file, to which the
     # metadata tags are added. I'm sure there's an easier way to do this but I couldn't figure out how.
     # I know it's very convoluted but I really couldn't figure out how to add the tags without erasing the data.
-    # To make it even stranger, adding the tags before the gdal processing seemed to work fine for the non-tropical
-    # (SoilGrids) tiles but not for the tropical (Gumbricht/Miettinen) tiles (i.e. data didn't disappear in the non-tropical
-    # tiles if I added the tags before the GDAL steps but the tropical data did disappear).
-
     copyfile(out_tile_no_tag, out_tile)
 
     uu.print_log("Adding metadata tags to", tile_id)
@@ -100,7 +99,7 @@ def create_peat_mask_tiles(tile_id):
         out_tile_tagged.update_tags(
             key='1 = peat. 0 = not peat.')
         out_tile_tagged.update_tags(
-            source='Gumbricht et al. 2017 for <40N>; Miettinen et al. and Dargie et al. where they occur; Xu et al. for >40N')
+            source='Gumbricht et al. 2017 for <40N; Miettinen et al. and Dargie et al. where they occur; Xu et al. 2018 for >=40N')
         out_tile_tagged.update_tags(
             extent='Full extent of input datasets')
 
@@ -117,7 +116,3 @@ def create_peat_mask_tiles(tile_id):
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, cn.pattern_peat_mask)
-
-
-
-

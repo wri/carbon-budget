@@ -245,9 +245,9 @@ Dargie_peat_name = 'Dargie_et_al_2017__SimplifiedPeatMap_50m_peat_only.tif'
 Miettinen_peat_zip = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.zip'
 Miettinen_peat_shp = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.shp'
 Miettinen_peat_tif = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.tif'
-Xu_peat_zip = 'Xu_et_al_north_of_40N__20230228.zip'
-Xu_peat_shp = 'Xu_et_al_north_of_40N__20230228.shp'
-Xu_peat_tif = 'Xu_et_al_north_of_40N__20230228.tif'
+Xu_peat_zip = 'Xu_et_al_north_of_40N_reproj__20230228.zip'
+Xu_peat_shp = 'Xu_et_al_north_of_40N_reproj__20230228.shp'
+Xu_peat_tif = 'Xu_et_al_north_of_40N_reproj__20230228.tif'
 
 # Peat mask
 pattern_peat_mask = 'peat_mask_processed'
