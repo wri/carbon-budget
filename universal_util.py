@@ -578,12 +578,14 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
 
         # Creates a full download name (path and file)
         for tile_id in tile_id_list:
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
+            if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = f'{source_dir}{pattern}_{tile_id}.tif'
+            elif pattern in [cn.pattern_gain_data_lake]:
+                source = f'{tile_id}.tif'
             else:  # For every other type of tile
                 source = f'{source_dir}{tile_id}_{pattern}.tif'
 
-            s3_file_download(source, dest, sensit_type)
+            s3_file_download(source, dest, pattern, sensit_type)
 
     # For downloading full sets of tiles
     else:
@@ -697,7 +699,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 # Source=source file on s3
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
-def s3_file_download(source, dest, sensit_type):
+def s3_file_download(source, dest, pattern, sensit_type):
 
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
