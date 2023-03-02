@@ -15,7 +15,7 @@ from . import create_inputs_for_C_pools
 
 def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
     sensit_type = 'std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
@@ -40,10 +40,10 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None
     input_files = [cn.fao_ecozone_raw_dir, cn.precip_raw_dir]
 
     for input in input_files:
-        uu.s3_file_download('{}'.format(input), cn.docker_base_dir, sensit_type)
+        uu.s3_file_download('{}'.format(input), cn.docker_tile_dir, sensit_type)
 
     uu.print_log("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
-    cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
+    cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Copying elevation (srtm) files")

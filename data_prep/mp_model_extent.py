@@ -27,7 +27,7 @@ def mp_model_extent(tile_id_list):
     :return: 1 set of tiles where pixels = 1 are included in the model and pixels = 0 are not included in the model
     """
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -72,8 +72,9 @@ def mp_model_extent(tile_id_list):
     for key, values in download_dict.items():
         directory = key
         pattern = values[0]
-        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
+    os.quit()
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':

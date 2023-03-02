@@ -22,7 +22,7 @@ def download_tile_set(sensit_type, tile_id_list):
 
     uu.print_log("Downloading all tiles for: ", tile_id_list)
 
-    wd = os.path.join(cn.docker_base_dir,"spot_download")
+    wd = os.path.join(cn.docker_tile_dir, "spot_download")
 
     os.chdir(wd)
 

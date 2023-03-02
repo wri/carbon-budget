@@ -14,7 +14,7 @@ import universal_util as uu
 
 def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -26,7 +26,7 @@ def mp_mangrove_processing(tile_id_list, run_date = None, no_upload = None):
 
 
     # Downloads zipped raw mangrove files
-    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), cn.docker_base_dir, 'std')
+    uu.s3_file_download(os.path.join(cn.mangrove_biomass_raw_dir, cn.mangrove_biomass_raw_file), cn.docker_tile_dir, 'std')
 
     # Unzips mangrove images into a flat structure (all tifs into main folder using -j argument)
     # NOTE: Unzipping some tifs (e.g., Australia, Indonesia) takes a very long time, so don't worry if the script appears to stop on that.

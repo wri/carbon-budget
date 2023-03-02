@@ -20,13 +20,13 @@ def prepare_gain_table():
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None
 
     # Imports the table with the ecozone-continent codes and the carbon removals rates
-    gain_table = pd.read_excel(f'{cn.docker_base_dir}{cn.gain_spreadsheet}',
+    gain_table = pd.read_excel(f'{cn.docker_tile_dir}{cn.gain_spreadsheet}',
                                sheet_name="mangrove gain, for model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)

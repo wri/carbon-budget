@@ -47,7 +47,7 @@ LOG_NOTE = ''
 loss_years = 21
 
 # Number of years in tree cover gain. If input cover gain raster is changed, this must be changed, too.
-gain_years = 12
+gain_years = 20
 
 # Biomass to carbon ratio for aboveground, belowground, and deadwood in non-mangrove forests (planted and non-planted)
 biomass_to_c_non_mangrove = 0.47
@@ -117,7 +117,7 @@ count = multiprocessing.cpu_count()
 s3_base_dir = 's3://gfw2-data/climate/carbon_model/'
 
 # Directory for all tiles in the Docker container
-docker_base_dir = '/usr/local/tiles/'
+docker_tile_dir = '/usr/local/tiles/'
 
 docker_tmp = '/usr/local/tmp'
 

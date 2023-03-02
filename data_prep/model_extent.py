@@ -22,7 +22,7 @@ def model_extent(tile_id, pattern):
     """
 
     # I don't know why, but this needs to be here and not just in mp_model_extent
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     uu.print_log(f'Delineating model extent: {tile_id}')
 

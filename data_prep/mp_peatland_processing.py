@@ -23,7 +23,7 @@ from . import peatland_processing
 
 def mp_peatland_processing(tile_id_list):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -50,10 +50,10 @@ def mp_peatland_processing(tile_id_list):
     # below that latitude, the model uses Gumbricht (CIFOR) 2017.
 
     # Downloads peat layers
-    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Gumbricht_peat_name), cn.docker_base_dir, cn.SENSIT_TYPE)
-    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Miettinen_peat_zip), cn.docker_base_dir, cn.SENSIT_TYPE)
-    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Xu_peat_zip), cn.docker_base_dir, cn.SENSIT_TYPE)
-    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Dargie_name), cn.docker_base_dir, cn.SENSIT_TYPE)
+    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Gumbricht_peat_name), cn.docker_tile_dir, cn.SENSIT_TYPE)
+    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Miettinen_peat_zip), cn.docker_tile_dir, cn.SENSIT_TYPE)
+    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Xu_peat_zip), cn.docker_tile_dir, cn.SENSIT_TYPE)
+    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Dargie_name), cn.docker_tile_dir, cn.SENSIT_TYPE)
 
     # Unzips the Miettinen et al. peat shapefile (IDN and MYS)
     cmd = ['unzip', '-o', '-j', cn.Miettinen_peat_zip]

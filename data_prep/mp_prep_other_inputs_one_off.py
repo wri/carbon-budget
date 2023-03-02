@@ -26,7 +26,7 @@ from . import prep_other_inputs_one_off
 
 def mp_prep_other_inputs(tile_id_list):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
     sensit_type='std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed

@@ -22,7 +22,7 @@ import universal_util as uu
 
 def mp_prep_other_inputs(tile_id_list):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
     sensit_type='std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
@@ -79,7 +79,7 @@ def mp_prep_other_inputs(tile_id_list):
     ### Drivers of tree cover loss processing
     uu.print_log("STEP 1: Preprocess drivers of tree cover loss")
 
-    uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_base_dir, sensit_type)
+    uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_tile_dir, sensit_type)
 
     # Creates tree cover loss driver tiles.
     # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
@@ -105,7 +105,7 @@ def mp_prep_other_inputs(tile_id_list):
 
     # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
     # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
-    TCLF_s3_dir = os.path.join(cn.docker_base_dir,'TCLF')
+    TCLF_s3_dir = os.path.join(cn.docker_tile_dir, 'TCLF')
     if os.path.exists(TCLF_s3_dir):
         os.rmdir(TCLF_s3_dir)
     os.mkdir(TCLF_s3_dir)

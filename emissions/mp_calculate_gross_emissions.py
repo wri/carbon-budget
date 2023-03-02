@@ -50,9 +50,9 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
         Units: Mg CO2e/ha over entire model period.
     """
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
-    folder = cn.docker_base_dir
+    folder = cn.docker_tile_dir
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     # If the tile_list argument is an s3 folder, the list of tiles in it is created
@@ -171,7 +171,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     for key, values in download_dict.items():
         directory = key
         output_pattern = values[0]
-        uu.s3_flexible_download(directory, output_pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, output_pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed

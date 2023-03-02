@@ -42,7 +42,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     :return: set of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
     """
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     if (cn.SENSIT_TYPE != 'std') & (carbon_pool_extent != 'loss'):
         uu.exception_log("Sensitivity analysis run must use loss extent")
@@ -155,7 +155,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     for key, values in download_dict.items():
         directory = key
         pattern = values[0]
-        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -428,7 +428,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         for key, values in download_dict.items():
             directory = key
             pattern = values[0]
-            uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+            uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     uu.print_log('Creating tiles of total carbon')

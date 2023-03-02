@@ -70,7 +70,7 @@ def main ():
     :return: Sets of output tiles for the selected stages
     """
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # List of possible model stages to run (not including mangrove and planted forest stages)
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',

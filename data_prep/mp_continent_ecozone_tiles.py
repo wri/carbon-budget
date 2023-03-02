@@ -28,7 +28,7 @@ from . import continent_ecozone_tiles
 
 def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -42,7 +42,7 @@ def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
 
     # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
-    uu.s3_file_download(cn.cont_eco_s3_zip, cn.docker_base_dir, 'std')
+    uu.s3_file_download(cn.cont_eco_s3_zip, cn.docker_tile_dir, 'std')
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]
