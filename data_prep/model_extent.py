@@ -9,12 +9,11 @@ import rasterio
 import sys
 from memory_profiler import profile
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
 # @uu.counter
-@profile
+# @profile
 def model_extent(tile_id, pattern):
     """
     :param tile_id: tile to be processed, identified by its tile id

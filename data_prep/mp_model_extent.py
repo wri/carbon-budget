@@ -49,7 +49,7 @@ def mp_model_extent(tile_id_list):
     # Files to download for this script.
     download_dict = {
                     cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-                    cn.gain_dir: [cn.pattern_gain],
+                    cn.gain_dir: [cn.pattern_gain_data_lake],
                     cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
     }
 
@@ -110,6 +110,7 @@ def mp_model_extent(tile_id_list):
             pool.close()
             pool.join()
 
+
     # No single-processor versions of these check-if-empty functions
     output_pattern = output_pattern_list[0]
     if cn.count <= 2:  # For local tests
@@ -121,7 +122,7 @@ def mp_model_extent(tile_id_list):
             pool.join()
     else:
         processes = 58  # 50 processors = 620 GB peak; 55 = 640 GB; 58 = 650 GB (continues to increase very slowly several hundred tiles in)
-        uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {output_pattern} processors using light function...')
+        uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {output_pattern} processors...')
         with multiprocessing.Pool(processes) as pool:
             pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
             pool.close()
