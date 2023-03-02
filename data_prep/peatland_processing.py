@@ -63,8 +63,6 @@ def create_peat_mask_tiles(tile_id):
         uu.print_log(f'{tile_id} created.')
 
 
-    os.quit()
-
     # All of the below is to add metadata tags to the output peat masks.
     # For some reason, just doing what's at https://rasterio.readthedocs.io/en/latest/topics/tags.html
     # results in the data getting removed.

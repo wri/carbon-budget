@@ -75,25 +75,17 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 docker-compose --version
 
 #############################
-# Copy latest flux model repo to the home folder
+# Clone latest flux model repo to the home folder
+# clone command suggested by Logan Byers. It resolves the problem of not being able to pull the repo after it was cloned, which was conflicting with not being able to SSH into the machine more than ~1 minute after it was created.
+# This formulation of git clone makes ec2-user the cloner, rather than root. It's no longer necessary to change ownership (chown) of the repo because carbon-budget will already be owned by ec2-user, not root.
 #############################
 cd /home/ec2-user
-git clone https://github.com/wri/carbon-budget
-cd carbon-budget
-
-cd /home/ec2-user/carbon-budget/
+su ec2-user -c "git clone https://github.com/wri/carbon-budget"
 
 #######################################
 # Starts the docker service
 #######################################
 sudo service docker start
-
-######################################
-# Gives the user (ec2-user) various permissions, such as ability to git pull and enter the docker container.
-#Based on https://techoverflow.net/2019/05/07/how-to-fix-git-error-cannot-open-git-fetch_head-permission-denied/
-######################################
-cd /
-sudo chown -R ec2-user: .
 
 # Replaces htop config file with my preferred configuration
 mkdir -p /home/ec2-user/.config/htop/

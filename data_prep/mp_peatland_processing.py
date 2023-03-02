@@ -63,20 +63,20 @@ def mp_peatland_processing(tile_id_list):
     cmd = ['unzip', '-o', '-j', cn.Xu_peat_zip]
     uu.log_subprocess_output_full(cmd)
 
-    # # Converts the Miettinen IDN/MYS peat shapefile to a raster
-    # uu.print_log('Rasterizing Miettinen peat...')
-    # cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=DEFLATE', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
-    #       '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.Miettinen_peat_shp, cn.Miettinen_peat_tif]
-    # uu.log_subprocess_output_full(cmd)
-    # uu.print_log('   Miettinen IDN/MYS peat rasterized')
+    # Converts the Miettinen IDN/MYS peat shapefile to a raster
+    uu.print_log('Rasterizing Miettinen map...')
+    cmd= ['gdal_rasterize', '-burn', '1', '-co', 'COMPRESS=DEFLATE', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res),
+          '-tap', '-ot', 'Byte', '-a_nodata', '0', cn.Miettinen_peat_shp, cn.Miettinen_peat_tif]
+    uu.log_subprocess_output_full(cmd)
+    uu.print_log('   Miettinen IDN/MYS peat rasterized')
 
-    # # Masks the Dargie raster to just the peat class (code 4).
-    # uu.print_log('Masking Dargie map to just peat class...')
-    # Dargie_calc = f'--calc=(A==4)'
-    # Dargie_outfilearg = f'--outfile={cn.Dargie_peat_name}'
-    # cmd = ['gdal_calc.py', '-A', cn.Dargie_name, Dargie_calc, Dargie_outfilearg,
-    #        '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte']
-    # uu.log_subprocess_output_full(cmd)
+    # Masks the Dargie raster to just the peat class (code 4).
+    uu.print_log('Masking Dargie map to just peat class...')
+    Dargie_calc = f'--calc=(A==4)'
+    Dargie_outfilearg = f'--outfile={cn.Dargie_peat_name}'
+    cmd = ['gdal_calc.py', '-A', cn.Dargie_name, Dargie_calc, Dargie_outfilearg,
+           '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte']
+    uu.log_subprocess_output_full(cmd)
 
     if cn.SINGLE_PROCESSOR:
         for tile_id in tile_id_list:

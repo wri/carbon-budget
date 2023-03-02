@@ -239,19 +239,29 @@ planted_forest_type_unmasked_dir = os.path.join(s3_base_dir, 'other_emissions_in
 
 # Peat mask inputs
 peat_unprocessed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/raw/')
+# Gumbricht et al. 2017 (CIFOR) used for 40N to 60S
+# https://data.cifor.org/dataset.xhtml?persistentId=doi:10.17528/CIFOR/DATA.00058
+# https://data.cifor.org/file.xhtml?fileId=1727&version=7.0
 Gumbricht_peat_name = 'Gumbricht_2017_CIFOR__TROP_SUBTROP_PeatV21_2016.tif'
+# Dargie et al. 2017 for the Congo basin
+# https://congopeat.net/maps/
+# Probability layers of the 5 landcover types (GIS files) as published: https://drive.google.com/file/d/1zsUyFeO9TqRs5oxys3Ld4Ikgk8OYgHgc/
 Dargie_name = 'Dargie_et_al_2017__SimplifiedPeatMap_50m.tif'
 Dargie_peat_name = 'Dargie_et_al_2017__SimplifiedPeatMap_50m_peat_only.tif'
+# Miettinen et al. 2016 for Indonesia and Malaysia
+# https://www.sciencedirect.com/science/article/pii/S2351989415300470
 Miettinen_peat_zip = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.zip'
 Miettinen_peat_shp = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.shp'
 Miettinen_peat_tif = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.tif'
+# Xu et al. 2018 for >40N (and <60S, though there's no land down there)
+# https://www.sciencedirect.com/science/article/abs/pii/S0341816217303004#ec0005
 Xu_peat_zip = 'Xu_et_al_north_of_40N_reproj__20230228.zip'
 Xu_peat_shp = 'Xu_et_al_north_of_40N_reproj__20230228.shp'
 Xu_peat_tif = 'Xu_et_al_north_of_40N_reproj__20230228.tif'
 
 # Peat mask
 pattern_peat_mask = 'peat_mask_processed'
-peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20230301/')
+peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20230302/')
 
 # Climate zone
 climate_zone_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/raw/')
