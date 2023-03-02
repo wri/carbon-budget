@@ -699,7 +699,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 # Source=source file on s3
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
-def s3_file_download(source, dest, sensit_type, pattern = none):
+def s3_file_download(source, dest, sensit_type, pattern = None):
 
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
