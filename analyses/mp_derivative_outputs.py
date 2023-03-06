@@ -102,7 +102,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for masking to forest extent
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
-    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
+    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain_data_lake, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
 
     # Iterates through the types of tiles to be processed

@@ -92,7 +92,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain],
+            cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
         }
 
@@ -130,7 +130,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain],
+            cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio],
             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
             cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]
@@ -288,7 +288,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
         tiles_to_delete = []
         # tiles_to_delete.extend(glob.glob(f'*{cn.pattern_BGC_2000}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_removal_forest_type}*tif'))
-        tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gain}*tif'))
+        tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gain_ec2}*tif'))
         tiles_to_delete.extend(glob.glob(f'*{cn.pattern_soil_C_full_extent_2000}*tif'))
 
         uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')

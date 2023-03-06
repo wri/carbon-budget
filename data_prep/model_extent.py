@@ -31,7 +31,7 @@ def model_extent(tile_id, pattern):
 
     # Names of the input tiles
     mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     pre_2000_plantations = f'{tile_id}_{cn.pattern_plant_pre_2000}.tif'
 
     # Tree cover tile name depends on the sensitivity analysis.

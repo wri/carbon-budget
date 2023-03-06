@@ -37,7 +37,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
     uu.print_log(f'  Tile {tile_id} in tropics: {tropics}')
 
     # Names of the input tiles
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
     ifl_primary = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_ifl_primary)
     cont_eco = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cont_eco_processed)

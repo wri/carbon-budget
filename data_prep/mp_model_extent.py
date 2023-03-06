@@ -74,8 +74,6 @@ def mp_model_extent(tile_id_list):
         pattern = values[0]
         uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
-    os.quit()
-
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':
         uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')

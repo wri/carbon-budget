@@ -18,7 +18,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
     start = datetime.datetime.now()
 
     # Names of the input tiles
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     US_age_cat = '{0}_{1}.tif'.format(tile_id, cn.pattern_age_cat_natrl_forest_US)
     US_forest_group = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_forest_group_processed)
     US_region = '{0}_{1}.tif'.format(tile_id, cn.pattern_FIA_regions_processed)

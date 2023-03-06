@@ -523,7 +523,7 @@ def count_tiles_s3(source, pattern=None):
 
             # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            if pattern in [cn.pattern_gain_data_lake, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -603,7 +603,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     local_tile_count = len(glob.glob(f'*{pattern}*.tif'))
 
     # For tile types that have the tile_id after the pattern
-    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+    if pattern in [cn.pattern_gain_data_lake, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
 
         local_tile_count = len(glob.glob(f'{pattern}*.tif'))
 
@@ -1340,7 +1340,7 @@ def rewindow(tile_id, download_pattern_name):
     start = datetime.datetime.now()
 
     # These tiles have the tile_id after the pattern
-    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
+    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_loss]:
         in_tile = f'{download_pattern_name}_{tile_id}.tif'
         out_tile = f'{download_pattern_name}_rewindow_{tile_id}.tif'
 

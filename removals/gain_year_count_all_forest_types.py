@@ -24,7 +24,7 @@ def tile_names(tile_id):
         loss = f'{tile_id}_{cn.pattern_Brazil_annual_loss_processed}.tif'
     else:
         loss = f'{cn.pattern_loss}_{tile_id}.tif'
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
 
     return loss, gain, model_extent

@@ -46,7 +46,7 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     focal_tile = f'{tile_id}_{input_pattern}.tif'
     pixel_area = f'{cn.pattern_pixel_area}_{tile_id}.tif'
     tcd = f'{cn.pattern_tcd}_{tile_id}.tif'
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
 
     # Names of outputs.
