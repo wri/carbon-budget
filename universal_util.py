@@ -697,7 +697,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             os.mkdir(os.path.join(dest, 'data-lake-downloads'))
 
             cmd = ['aws', 's3', 'sync', source, os.path.join(dest, 'data-lake-downloads'),
-                   '--request-payer', 'requester', '--recursive', '--exclude', '*xml',
+                   '--request-payer', 'requester', '--exclude', '*xml',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             log_subprocess_output_full(cmd)
 
@@ -716,7 +716,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # Downloads non-data-lake inputs
         else:
 
-            cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
             #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
