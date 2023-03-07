@@ -696,7 +696,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             # Special folder for the tile set that doesn't have a pattern when downloaded
             os.mkdir(os.path.join(dest, 'data-lake-downloads'))
 
-            cmd = ['aws', 's3', 'cp', source, os.path.join(dest, 'data-lake-downloads'),
+            cmd = ['aws', 's3', 'sync', source, os.path.join(dest, 'data-lake-downloads'),
                    '--request-payer', 'requester', '--recursive', '--exclude', '*xml',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             log_subprocess_output_full(cmd)
