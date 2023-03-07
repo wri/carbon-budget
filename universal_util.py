@@ -684,7 +684,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
             print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
-            return
+            # return
 
         print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
 
