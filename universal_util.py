@@ -686,7 +686,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
             # return
 
-        print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
+        # print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
 
         # Downloads tile sets from the gfw-data-lake.
         # They need a special process because they don't have a tile pattern on the data-lake,
