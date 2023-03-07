@@ -693,6 +693,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # so I have to download them into their own folder and then give them a pattern while moving them to the main folder
         if 'gfw-data-lake' in source:
 
+            # Deletes special folder for downloads from data-lake
+            os.rmdir(os.path.join(dest, 'data-lake-downloads'))
+
             # Special folder for the tile set that doesn't have a pattern when downloaded
             os.mkdir(os.path.join(dest, 'data-lake-downloads'))
 
