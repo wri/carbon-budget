@@ -5,8 +5,7 @@ Function to create forest age category tiles
 import datetime
 import numpy as np
 import rasterio
-import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
 
@@ -181,16 +180,14 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
                 dst_data[np.where((model_extent_window > 0) & (gain_window == 0) & (loss_window > 0) & (ifl_primary_window ==1))] = 3
 
                 # Gain-only pixels
-                # If there is gain, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
+                # If there is gain, the pixel doesn't need biomass or canopy cover.
                 # The role of model_extent_window here is to exclude the pre-2000 plantations.
                 dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window == 0))] = 1
 
                 # Pixels with loss and gain
-                # If there is gain with loss, the pixel doesn't need biomass or canopy cover. It just needs to be outside of plantations and mangroves.
+                # If there is gain with loss, the pixel doesn't need biomass or canopy cover.
                 # The role of model_extent_window here is to exclude the pre-2000 plantations.
-                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > (cn.gain_years)))] = 1
-                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > 0) & (loss_window <= (cn.gain_years/2)))] = 1
-                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > (cn.gain_years/2)) & (loss_window <= cn.gain_years))] = 1
+                dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > 0))] = 1
 
             # For legal_Amazon_loss sensitivity analysis
             else:

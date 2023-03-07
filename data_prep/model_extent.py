@@ -6,7 +6,6 @@ import datetime
 import numpy as np
 import os
 import rasterio
-import sys
 from memory_profiler import profile
 
 import constants_and_names as cn

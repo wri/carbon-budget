@@ -3,12 +3,10 @@
 import datetime
 import os
 import rasterio
-import sys
 import numpy as np
 import pandas as pd
 from memory_profiler import profile
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 

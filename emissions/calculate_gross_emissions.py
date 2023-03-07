@@ -3,9 +3,7 @@ Function to call C++ executable that calculates gross emissions
 """
 
 import datetime
-import sys
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 

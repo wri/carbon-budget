@@ -5,9 +5,7 @@ Function to create removal factor tiles with all removal factor sources combined
 import datetime
 import numpy as np
 import rasterio
-import sys
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 

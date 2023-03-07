@@ -5,8 +5,6 @@ Function to create gross removals tiles
 import datetime
 import rasterio
 
-import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
