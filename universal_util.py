@@ -703,7 +703,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             # Copies pattern-less tiles from their special folder to main tile folder and renames them with
             # pattern along the way
-            uu.print_log("Copying tiles to main tile folder")
+            print_log("Copying tiles to main tile folder")
 
             for filename in os.listdir(os.path.join(dest, 'data-lake-downloads')):
 
