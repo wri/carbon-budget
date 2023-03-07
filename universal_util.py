@@ -8,7 +8,7 @@ import rasterio
 import logging
 import csv
 import psutil
-from shutil import copyfile
+from shutil import copyfile, move
 import os
 import multiprocessing
 from multiprocessing.pool import Pool
@@ -602,9 +602,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     # Special cases are below.
     local_tile_count = len(glob.glob(f'*{pattern}*.tif'))
 
-    # For tile types that have the tile_id after the pattern
-    if pattern in [cn.pattern_gain_data_lake, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+    # For gain tiles, which have a different pattern on the ec2 instance from s3
+    if source == cn.gain_dir:
+        local_tile_count = len(glob.glob(f'*{cn.pattern_gain_ec2}*.tif'))
 
+    # For tile types that have the tile_id after the pattern
+    if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
         local_tile_count = len(glob.glob(f'{pattern}*.tif'))
 
     print_log(f'There are {local_tile_count} tiles on the spot machine with the pattern {pattern}')
@@ -685,14 +688,44 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
 
-        cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-        #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+        # Downloads tile sets from the gfw-data-lake.
+        # They need a special process because they don't have a tile pattern on the data-lake,
+        # so I have to download them into their own folder and then give them a pattern while moving them to the main folder
+        if 'gfw-data-lake' in source:
 
-        log_subprocess_output_full(cmd)
+            # Special folder for the tile set that doesn't have a pattern when downloaded
+            os.mkdir(os.path.join(dest, 'data-lake-downloads'))
+
+            cmd = ['aws', 's3', 'cp', source, os.path.join(dest, 'data-lake-downloads'),
+                   '--request-payer', 'requester', '--recursive', '--exclude', '*xml',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            log_subprocess_output_full(cmd)
+
+            # Copies pattern-less tiles from their special folder to main tile folder and renames them with
+            # pattern along the way
+            uu.print_log("Copying tiles to main tile folder")
+
+            for filename in os.listdir(os.path.join(dest, 'data-lake-downloads')):
+
+                move(os.path.join(dest, f'data-lake-downloads/{filename}'),
+                            os.path.join(cn.docker_tile_dir, f'{filename[:-4]}_{cn.pattern_gain_ec2}.tif'))
+
+            # Deletes special folder for downloads from data-lake
+            os.rmdir(os.path.join(dest, 'data-lake-downloads'))
+
+        # Downloads non-data-lake inputs
+        else:
+
+            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+
+            log_subprocess_output_full(cmd)
 
         print_log("\n")
+
+        os.quit()
 
 
 # Downloads individual tiles from s3
