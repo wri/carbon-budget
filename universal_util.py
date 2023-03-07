@@ -725,8 +725,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         print_log("\n")
 
-        os.quit()
-
 
 # Downloads individual tiles from s3
 # Source=source file on s3
