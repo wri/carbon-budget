@@ -109,7 +109,7 @@ def mp_prep_other_inputs(tile_id_list):
     if os.path.exists(TCLF_s3_dir):
         os.rmdir(TCLF_s3_dir)
     os.mkdir(TCLF_s3_dir)
-    cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--recursive','--request-payer', 'requester',
+    cmd = ['aws', 's3', 'sync', cn.TCLF_raw_dir, TCLF_s3_dir, '--request-payer', 'requester',
            '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store']
     uu.log_subprocess_output_full(cmd)
 

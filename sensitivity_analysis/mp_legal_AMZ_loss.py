@@ -129,7 +129,7 @@ def main ():
         uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
-        cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
+        cmd = ['aws', 's3', 'sync', cn.Brazil_annual_loss_raw_dir, '.']
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("Input loss rasters downloaded. Getting resolution of recent raster...")
