@@ -51,7 +51,8 @@ def create_gain_year_count_loss_only(tile_id):
         loss_outfilename = f'{tile_id}_gain_year_count_loss_only.tif'
         loss_outfilearg = f'--outfile={loss_outfilename}'
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, loss_calc, loss_outfilearg,
-               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
+               '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet',
+               '--hideNoData'] # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
     else:
         uu.print_log(f'No loss tile found for {tile_id}. Skipping loss only pixel gain year count.')
@@ -161,7 +162,8 @@ def create_gain_year_count_no_change_standard(tile_id):
         no_change_outfilename = f'{tile_id}_gain_year_count_no_change.tif'
         no_change_outfilearg = f'--outfile={no_change_outfilename}'
         cmd = ['gdal_calc.py', '-A', loss, '-B', gain, '-C', model_extent, no_change_calc,
-               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
+               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet',
+               '--hideNoData'] # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
     else:
         uu.print_log(f'  No loss tile found for {tile_id}. Not using it for no change pixel gain year count.')
@@ -169,7 +171,8 @@ def create_gain_year_count_no_change_standard(tile_id):
         no_change_outfilename = f'{tile_id}_gain_year_count_no_change.tif'
         no_change_outfilearg = f'--outfile={no_change_outfilename}'
         cmd = ['gdal_calc.py', '-A', gain, '-B', model_extent, no_change_calc,
-               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
+               no_change_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet',
+               '--hideNoData'] # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
 
     # Prints information about the tile that was just processed
