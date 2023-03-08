@@ -6,12 +6,10 @@ Outside that band (>40N, since there are no tiles at >60S), Xu et al. 2018 is us
 Between 40N and 60S, Xu et al. 2018 is not used.
 '''
 
-from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import rasterio
 from shutil import copyfile
 import datetime
-import sys
 
 import constants_and_names as cn
 import universal_util as uu

@@ -28,7 +28,7 @@ def main ():
     # Create the output log
     uu.initiate_log()
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     Brazil_stages = ['all', 'create_forest_extent', 'create_loss']
 
@@ -81,7 +81,7 @@ def main ():
         uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
-        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_base_dir, sensit_type)
+        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_tile_dir, sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
         # Gets the resolution of a more recent PRODES raster, which has a higher resolution. The merged output matches that.
@@ -129,7 +129,7 @@ def main ():
         uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
-        cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
+        cmd = ['aws', 's3', 'sync', cn.Brazil_annual_loss_raw_dir, '.']
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("Input loss rasters downloaded. Getting resolution of recent raster...")
@@ -182,7 +182,7 @@ def main ():
 
         # Files to download for this script.
         download_dict = {cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
-                         cn.gain_dir: [cn.pattern_gain],
+                         cn.gain_dir: [cn.pattern_gain_data_lake],
                          cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
                          cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
                          cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
@@ -200,7 +200,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # If the model run isn't the standard one, the output directory and file names are changed
@@ -239,7 +239,7 @@ def main ():
         # Files to download for this script.
         download_dict = {
             cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
-            cn.gain_dir: [cn.pattern_gain],
+            cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
             cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
@@ -257,7 +257,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # If the model run isn't the standard one, the output directory and file names are changed
@@ -337,11 +337,11 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # Table with IPCC Table 4.9 default removals rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -453,7 +453,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # Calculates cumulative aboveground carbon removals in non-mangrove planted forests
@@ -525,7 +525,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # For multiprocessing
@@ -563,7 +563,7 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain],
+            cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
             cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
@@ -593,7 +593,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
@@ -603,7 +603,7 @@ def main ():
 
 
         # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)

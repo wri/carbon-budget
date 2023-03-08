@@ -6,7 +6,6 @@ import datetime
 import numpy as np
 import os
 import rasterio
-import sys
 from memory_profiler import profile
 
 import constants_and_names as cn
@@ -22,7 +21,7 @@ def model_extent(tile_id, pattern):
     """
 
     # I don't know why, but this needs to be here and not just in mp_model_extent
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     uu.print_log(f'Delineating model extent: {tile_id}')
 
@@ -31,7 +30,7 @@ def model_extent(tile_id, pattern):
 
     # Names of the input tiles
     mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     pre_2000_plantations = f'{tile_id}_{cn.pattern_plant_pre_2000}.tif'
 
     # Tree cover tile name depends on the sensitivity analysis.

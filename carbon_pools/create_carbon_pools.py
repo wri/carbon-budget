@@ -3,12 +3,10 @@
 import datetime
 import os
 import rasterio
-import sys
 import numpy as np
 import pandas as pd
 from memory_profiler import profile
 
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
 
@@ -20,13 +18,13 @@ def prepare_gain_table():
 
     # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
     pd.options.mode.chained_assignment = None
 
     # Imports the table with the ecozone-continent codes and the carbon removals rates
-    gain_table = pd.read_excel(f'{cn.docker_base_dir}{cn.gain_spreadsheet}',
+    gain_table = pd.read_excel(f'{cn.docker_tile_dir}{cn.gain_spreadsheet}',
                                sheet_name="mangrove gain, for model")
 
     # Removes rows with duplicate codes (N. and S. America for the same ecozone)
@@ -85,7 +83,7 @@ def create_AGC(tile_id, carbon_pool_extent):
     # Names of the input tiles. Creates the names even if the files don't exist.
     removal_forest_type = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_removal_forest_type)
     mangrove_biomass_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_mangrove_biomass_2000)
-    gain = uu.sensit_tile_rename(cn.SENSIT_TYPE, cn.pattern_gain, tile_id)
+    gain = uu.sensit_tile_rename(cn.SENSIT_TYPE, cn.pattern_gain_ec2, tile_id)
     annual_gain_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
     cumul_gain_AGCO2 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
     natrl_forest_biomass_2000 = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)
@@ -357,7 +355,6 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
             source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:BGC for mangrove and non-mangrove forests applied.')
         dst_BGC_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
-        print(BGC_emis_year)
 
     uu.print_log(f'  Reading input files for {tile_id}')
 

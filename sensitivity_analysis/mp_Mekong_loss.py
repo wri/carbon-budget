@@ -20,7 +20,7 @@ def main ():
     # Create the output log
     uu.initiate_log()
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
     tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
@@ -30,7 +30,7 @@ def main ():
 
 
     # Downloads the Mekong loss folder. Each year of loss has its own raster
-    uu.s3_folder_download(cn.Mekong_loss_raw_dir, cn.docker_base_dir, sensit_type)
+    uu.s3_folder_download(cn.Mekong_loss_raw_dir, cn.docker_tile_dir, sensit_type)
 
     # The list of all annual loss rasters
     annual_loss_list = glob.glob('Loss_20*tif')

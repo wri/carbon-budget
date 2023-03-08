@@ -32,7 +32,7 @@ def mp_forest_age_category_IPCC(tile_id_list):
     :return: set of tiles denoting three broad forest age categories: 1- young (<20), 2- middle, 3- old/primary
     """
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -46,7 +46,7 @@ def mp_forest_age_category_IPCC(tile_id_list):
     # Files to download for this script.
     download_dict = {
                      cn.model_extent_dir: [cn.pattern_model_extent],
-                     cn.gain_dir: [cn.pattern_gain],
+                     cn.gain_dir: [cn.pattern_gain_data_lake],
                      cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
                      cn.cont_eco_dir: [cn.pattern_cont_eco_processed]
     }
@@ -75,7 +75,7 @@ def mp_forest_age_category_IPCC(tile_id_list):
     for key, values in download_dict.items():
         directory = key
         pattern = values[0]
-        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -93,7 +93,7 @@ def mp_forest_age_category_IPCC(tile_id_list):
 
     # Table with IPCC Table 4.9 default removals rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir, '--no-sign-request']
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
 

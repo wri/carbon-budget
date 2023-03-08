@@ -16,7 +16,7 @@ import universal_util as uu
 
 def mp_tile_statistics(sensit_type, tile_id_list):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # The column names for the tile summary statistics.
     # If the statistics calculations are changed in tile_statistics.py, the list here needs to be changed, too.
@@ -34,7 +34,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
     uu.print_log(tile_id_list)
 
     # Pixel area tiles-- necessary for calculating sum of pixels for any set of tiles
-    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_base_dir, 'std', tile_id_list)
+    uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_tile_dir, 'std', tile_id_list)
 
     # For downloading all tiles in selected folders
     download_dict = {
@@ -150,7 +150,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
         # List of all the tiles on the spot machine to be summarized (excludes pixel area tiles and tiles created by gdal_calc
         # (in case this script was already run on this spot machine and created output from gdal_calc)

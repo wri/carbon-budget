@@ -45,10 +45,10 @@ def main ():
     # Create the output log
     uu.initiate_log()
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # Files to download for this script.
-    download_dict = {cn.gain_dir: [cn.pattern_gain],
+    download_dict = {cn.gain_dir: [cn.pattern_gain_data_lake],
                      cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
                      cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
     }
@@ -73,11 +73,11 @@ def main ():
     # Only creates FIA region tiles if they don't already exist on s3.
     if FIA_regions_tile_count == 16:
         uu.print_log("FIA region tiles already created. Copying to s3 now...")
-        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, cn.docker_base_dir, 'std', 'all')
+        uu.s3_flexible_download(cn.FIA_regions_processed_dir, cn.pattern_FIA_regions_processed, cn.docker_tile_dir, 'std', 'all')
 
     else:
         uu.print_log("FIA region tiles do not exist. Creating tiles, then copying to s3 for future use...")
-        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, 'std')
+        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_tile_dir, 'std')
 
         cmd = ['unzip', '-o', '-j', cn.name_FIA_regions_raw]
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
@@ -91,7 +91,7 @@ def main ():
 
 
     # List of FIA region tiles on the spot machine. Only this list is used for the rest of the script.
-    US_tile_list = uu.tile_list_spot_machine(cn.docker_base_dir, '{}.tif'.format(cn.pattern_FIA_regions_processed))
+    US_tile_list = uu.tile_list_spot_machine(cn.docker_tile_dir, '{}.tif'.format(cn.pattern_FIA_regions_processed))
     US_tile_id_list = [i[0:8] for i in US_tile_list]
     # US_tile_id_list = ['50N_130W']    # For testing
     uu.print_log(US_tile_id_list)
@@ -109,7 +109,7 @@ def main ():
 
     else:
         uu.print_log("Southern forest age category tiles do not exist. Creating tiles, then copying to s3 for future use...")
-        uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), cn.docker_base_dir, 'std')
+        uu.s3_file_download(os.path.join(cn.US_forest_age_cat_raw_dir, cn.name_US_forest_age_cat_raw), cn.docker_tile_dir, 'std')
 
         # Converts the national forest age category raster to Hansen tiles
         source_raster = cn.name_US_forest_age_cat_raw
@@ -132,7 +132,7 @@ def main ():
 
     else:
         uu.print_log("FIA forest group tiles do not exist. Creating tiles, then copying to s3 for future use...")
-        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_base_dir, 'std')
+        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_tile_dir, 'std')
 
         # Converts the national forest group raster to Hansen forest group tiles
         source_raster = cn.name_FIA_forest_group_raw
@@ -149,13 +149,13 @@ def main ():
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, US_tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, US_tile_id_list)
 
 
 
     # Table with US-specific removal rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir, '--no-sign-request']
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_tile_dir]
 
     # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)

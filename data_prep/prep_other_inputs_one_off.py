@@ -4,14 +4,12 @@ At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000
 '''
 
 import datetime
-from subprocess import Popen, PIPE, STDOUT, check_call
 import rasterio
 import os
 import numpy as np
 from scipy import stats
 import os
-import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
 

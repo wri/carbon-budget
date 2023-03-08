@@ -22,7 +22,7 @@ def download_tile_set(sensit_type, tile_id_list):
 
     uu.print_log("Downloading all tiles for: ", tile_id_list)
 
-    wd = os.path.join(cn.docker_base_dir,"spot_download")
+    wd = os.path.join(cn.docker_tile_dir, "spot_download")
 
     os.chdir(wd)
 
@@ -78,7 +78,7 @@ def download_tile_set(sensit_type, tile_id_list):
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, wd, sensit_type, tile_id_list)
 
-    cmd = ['aws', 's3', 'cp', cn.output_aggreg_dir, wd, '--recursive']
+    cmd = ['aws', 's3', 'sync', cn.output_aggreg_dir, wd]
     uu.log_subprocess_output_full(cmd)
 
     tile_list = glob.glob('*tif')

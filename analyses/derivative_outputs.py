@@ -46,7 +46,7 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     focal_tile = f'{tile_id}_{input_pattern}.tif'
     pixel_area = f'{cn.pattern_pixel_area}_{tile_id}.tif'
     tcd = f'{cn.pattern_tcd}_{tile_id}.tif'
-    gain = f'{cn.pattern_gain}_{tile_id}.tif'
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
 
     # Names of outputs.
@@ -65,7 +65,12 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
 
     pixel_area_src = rasterio.open(pixel_area)
     tcd_src = rasterio.open(tcd)
-    gain_src = rasterio.open(gain)
+
+    try:
+        gain_src = rasterio.open(gain)
+        uu.print_log(f'    Gain tile found for {tile_id}')
+    except:
+        uu.print_log(f'    No gain tile found for {tile_id}')
 
     try:
         mangrove_src = rasterio.open(mangrove)
@@ -130,7 +135,11 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
         in_window = in_src.read(1, window=window)
         pixel_area_window = pixel_area_src.read(1, window=window)
         tcd_window = tcd_src.read(1, window=window)
-        gain_window = gain_src.read(1, window=window)
+
+        try:
+            gain_window = gain_src.read(1, window=window)
+        except:
+            gain_window = np.zeros((window.height, window.width), dtype='uint8')
 
         try:
             mangrove_window = mangrove_src.read(1, window=window)

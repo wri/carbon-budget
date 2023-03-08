@@ -28,7 +28,7 @@ from . import create_soil_C
 
 def mp_create_soil_C(tile_id_list, no_upload=None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
     sensit_type = 'std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
@@ -52,13 +52,13 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     ### Soil carbon density
 
     uu.print_log("Downloading mangrove soil C rasters")
-    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_base_dir, sensit_type)
+    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_tile_dir, sensit_type)
 
     # For downloading all tiles in the input folders.
     input_files = [cn.mangrove_biomass_2000_dir]
 
     for input in input_files:
-        uu.s3_folder_download(input, cn.docker_base_dir, sensit_type)
+        uu.s3_folder_download(input, cn.docker_tile_dir, sensit_type)
 
     # Download raw mineral soil C density tiles.
     # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
@@ -69,7 +69,7 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Unzipping mangrove soil C rasters...")
-    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_base_dir]
+    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
     # Mangrove soil receives precedence over mineral soil
@@ -173,8 +173,8 @@ def mp_create_soil_C(tile_id_list, no_upload=None):
     ### Soil carbon density uncertainty
 
     # Separate directories for the 5% CI and 95% CI
-    dir_CI05 = '{0}{1}'.format(cn.docker_base_dir, 'CI05/')
-    dir_CI95 = '{0}{1}'.format(cn.docker_base_dir, 'CI95/')
+    dir_CI05 = '{0}{1}'.format(cn.docker_tile_dir, 'CI05/')
+    dir_CI95 = '{0}{1}'.format(cn.docker_tile_dir, 'CI95/')
     vrt_CI05 = 'mineral_soil_C_CI05.vrt'
     vrt_CI95 = 'mineral_soil_C_CI95.vrt'
     soil_C_stdev_global = 'soil_C_stdev.tif'

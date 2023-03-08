@@ -52,7 +52,7 @@ from . import US_removal_rates
 
 def mp_US_removal_rates(tile_id_list):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -62,7 +62,7 @@ def mp_US_removal_rates(tile_id_list):
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
     # Files to download for this script
-    download_dict = {cn.gain_dir: [cn.pattern_gain],
+    download_dict = {cn.gain_dir: [cn.pattern_gain_data_lake],
                      cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed],
                      cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
                      cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US]
@@ -77,7 +77,7 @@ def mp_US_removal_rates(tile_id_list):
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
@@ -94,7 +94,7 @@ def mp_US_removal_rates(tile_id_list):
 
     # Table with US-specific removal rates
     # cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir, '--no-sign-request']
-    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_base_dir]
+    cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.table_US_removal_rate), cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
 

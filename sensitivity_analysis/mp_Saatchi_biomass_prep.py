@@ -20,7 +20,7 @@ def main ():
     # Create the output log
     uu.initiate_log()
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # The list of tiles to iterate through
     tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)

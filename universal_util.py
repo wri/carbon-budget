@@ -8,7 +8,7 @@ import rasterio
 import logging
 import csv
 import psutil
-from shutil import copyfile
+from shutil import copyfile, move
 import os
 import multiprocessing
 from multiprocessing.pool import Pool
@@ -523,7 +523,7 @@ def count_tiles_s3(source, pattern=None):
 
             # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
-            if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            if pattern in [cn.pattern_gain_data_lake, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -581,11 +581,11 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
             if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = f'{source_dir}{pattern}_{tile_id}.tif'
             elif pattern in [cn.pattern_gain_data_lake]:
-                source = f'{tile_id}.tif'
+                source = f'{source_dir}{tile_id}.tif'
             else:  # For every other type of tile
                 source = f'{source_dir}{tile_id}_{pattern}.tif'
 
-            s3_file_download(source, dest, pattern, sensit_type)
+            s3_file_download(source, dest, sensit_type)
 
     # For downloading full sets of tiles
     else:
@@ -602,9 +602,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     # Special cases are below.
     local_tile_count = len(glob.glob(f'*{pattern}*.tif'))
 
-    # For tile types that have the tile_id after the pattern
-    if pattern in [cn.pattern_gain, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+    # For gain tiles, which have a different pattern on the ec2 instance from s3
+    if source == cn.gain_dir:
+        local_tile_count = len(glob.glob(f'*{cn.pattern_gain_ec2}*.tif'))
 
+    # For tile types that have the tile_id after the pattern
+    if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
         local_tile_count = len(glob.glob(f'{pattern}*.tif'))
 
     print_log(f'There are {local_tile_count} tiles on the spot machine with the pattern {pattern}')
@@ -647,9 +650,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log(f'Source directory used: {source_final}')
 
-            cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'sync', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-            # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            # cmd = ['aws', 's3', 'sync', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
             #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
@@ -663,9 +666,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log(f'Source directory used: {source}')
 
-            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
+            # cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
             #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
@@ -680,17 +683,45 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
-            print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
-            return
+            print_log(f'Tiles with pattern {pattern} are already on spot machine.', "\n")
 
-        print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
+        # Downloads tile sets from the gfw-data-lake.
+        # They need a special process because they don't have a tile pattern on the data-lake,
+        # so I have to download them into their own folder and then give them a pattern while moving them to the main folder
+        if 'gfw-data-lake' in source:
 
-        cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-               '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
-        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--recursive', '--exclude', '*tiled/*',
-        #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            # Deletes special folder for downloads from data-lake (if it already exists)
+            if os.path.exists(os.path.join(dest, 'data-lake-downloads')):
+                os.rmdir(os.path.join(dest, 'data-lake-downloads'))
 
-        log_subprocess_output_full(cmd)
+            # Special folder for the tile set that doesn't have a pattern when downloaded
+            os.mkdir(os.path.join(dest, 'data-lake-downloads'))
+
+            cmd = ['aws', 's3', 'sync', source, os.path.join(dest, 'data-lake-downloads'),
+                   '--request-payer', 'requester', '--exclude', '*xml',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            log_subprocess_output_full(cmd)
+
+            # Copies pattern-less tiles from their special folder to main tile folder and renames them with
+            # pattern along the way
+            print_log("Copying tiles to main tile folder...")
+            for filename in os.listdir(os.path.join(dest, 'data-lake-downloads')):
+                move(os.path.join(dest, f'data-lake-downloads/{filename}'),
+                            os.path.join(cn.docker_tile_dir, f'{filename[:-4]}_{cn.pattern_gain_ec2}.tif'))
+
+            # Deletes special folder for downloads from data-lake
+            os.rmdir(os.path.join(dest, 'data-lake-downloads'))
+            print_log("Tree cover gain tiles copied to main tile folder...")
+
+        # Downloads non-data-lake inputs
+        else:
+
+            cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+
+            log_subprocess_output_full(cmd)
 
         print_log("\n")
 
@@ -699,11 +730,12 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 # Source=source file on s3
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run
-def s3_file_download(source, dest, sensit_type, pattern = None):
+def s3_file_download(source, dest, sensit_type):
 
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
     file_name = get_tile_name(source)
+    tile_id = get_tile_id(file_name)
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3.
@@ -764,34 +796,63 @@ def s3_file_download(source, dest, sensit_type, pattern = None):
                 print_log(f'  Option 4 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
 
     # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
+
+    # Special download procedures for tree cover gain because the tiles have no pattern, just an ID.
+    # Tree cover gain tiles are renamed as their downloaded to get a pattern added to them.
     else:
-        print_log(f'Option 1: Checking if {file_name} is already on spot machine...')
-        if os.path.exists(os.path.join(dest, file_name)):
-            print_log(f'  Option 1 success: {os.path.join(dest, file_name)} already downloaded', "\n")
-            return
-        else:
-            print_log(f'  Option 1 failure: {file_name} is not already on spot machine.')
-            print_log(f'Option 2: Checking for tile {source} on s3...')
-
-
-            # If the tile isn't already downloaded, download is attempted
-            source = os.path.join(dir, file_name)
-
-            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
-            cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
-            log_subprocess_output_full(cmd)
-            if os.path.exists(os.path.join(dest, file_name)):
-                print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
+        if dir == cn.gain_dir[:-1]: # Delete last character of gain_dir because it has the terminal / while dir does not have terminal /
+            ec2_file_name = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
+            print_log(f'Option 1: Checking if {ec2_file_name} is already on spot machine...')
+            if os.path.exists(os.path.join(dest, ec2_file_name)):
+                print_log(f'  Option 1 success: {os.path.join(dest, ec2_file_name)} already downloaded', "\n")
                 return
             else:
-                print_log(f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
+                print_log(f'  Option 1 failure: {ec2_file_name} is not already on spot machine.')
+                print_log(f'Option 2: Checking for tile {source} on s3...')
+
+                # If the tile isn't already downloaded, download is attempted
+                source = os.path.join(dir, file_name)
+
+                # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
+                cmd = ['aws', 's3', 'cp', source, f'{dest}{ec2_file_name}',
+                       '--request-payer', 'requester', '--only-show-errors']
+                log_subprocess_output_full(cmd)
+                if os.path.exists(os.path.join(dest, ec2_file_name)):
+                    print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
+                    return
+                else:
+                    print_log(
+                        f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
+
+        # All other tiles besides tree cover gain
+        else:
+            print_log(f'Option 1: Checking if {file_name} is already on spot machine...')
+            if os.path.exists(os.path.join(dest, file_name)):
+                print_log(f'  Option 1 success: {os.path.join(dest, file_name)} already downloaded', "\n")
+                return
+            else:
+                print_log(f'  Option 1 failure: {file_name} is not already on spot machine.')
+                print_log(f'Option 2: Checking for tile {source} on s3...')
+
+
+                # If the tile isn't already downloaded, download is attempted
+                source = os.path.join(dir, file_name)
+
+                # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
+                cmd = ['aws', 's3', 'cp', source, dest, '--only-show-errors']
+                log_subprocess_output_full(cmd)
+                if os.path.exists(os.path.join(dest, file_name)):
+                    print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
+                    return
+                else:
+                    print_log(f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
 
     print_log(f'Uploading tiles with pattern {pattern} to {upload_dir}')
 
-    cmd = ['aws', 's3', 'cp', cn.docker_base_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
+    cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
            '--recursive', '--no-progress']
     try:
         log_subprocess_output_full(cmd)
@@ -896,7 +957,7 @@ def check_and_upload(tile_id, upload_dir, pattern):
 # Prints the number of tiles that have been processed so far
 def count_completed_tiles(pattern):
 
-    completed = len(glob.glob1(cn.docker_base_dir, '*{}*'.format(pattern)))
+    completed = len(glob.glob1(cn.docker_tile_dir, '*{}*'.format(pattern)))
 
     print_log(f'Number of completed or in-progress tiles: {completed}')
 
@@ -1310,7 +1371,7 @@ def rewindow(tile_id, download_pattern_name):
     start = datetime.datetime.now()
 
     # These tiles have the tile_id after the pattern
-    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_gain, cn.pattern_loss]:
+    if download_pattern_name in [cn.pattern_pixel_area, cn.pattern_tcd, cn.pattern_loss]:
         in_tile = f'{download_pattern_name}_{tile_id}.tif'
         out_tile = f'{download_pattern_name}_rewindow_{tile_id}.tif'
 

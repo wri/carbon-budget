@@ -47,7 +47,7 @@ LOG_NOTE = ''
 loss_years = 21
 
 # Number of years in tree cover gain. If input cover gain raster is changed, this must be changed, too.
-gain_years = 12
+gain_years = 20
 
 # Biomass to carbon ratio for aboveground, belowground, and deadwood in non-mangrove forests (planted and non-planted)
 biomass_to_c_non_mangrove = 0.47
@@ -117,7 +117,7 @@ count = multiprocessing.cpu_count()
 s3_base_dir = 's3://gfw2-data/climate/carbon_model/'
 
 # Directory for all tiles in the Docker container
-docker_base_dir = '/usr/local/tiles/'
+docker_tile_dir = '/usr/local/tiles/'
 
 docker_tmp = '/usr/local/tmp'
 
@@ -203,7 +203,8 @@ gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 pattern_loss = 'GFW2021'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2021/'
 
-# Hansen removals tiles based on canopy height (2001-2020)
+# Hansen removals tiles based on canopy height (2000-2020)
+# From https://www.frontiersin.org/articles/10.3389/frsen.2022.856903/full
 pattern_gain_data_lake = ''
 pattern_gain_ec2 = 'tree_cover_gain_2000_2020'
 gain_dir = 's3://gfw-data-lake/umd_tree_cover_gain_from_height/v202206/raster/epsg-4326/10/40000/gain/geotiff/'

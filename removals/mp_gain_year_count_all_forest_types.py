@@ -18,6 +18,7 @@ from functools import partial
 import multiprocessing
 import os
 import sys
+
 import constants_and_names as cn
 import universal_util as uu
 from . import gain_year_count_all_forest_types
@@ -30,7 +31,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
         Units: years.
     """
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -44,7 +45,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
     # changed for a sensitivity analysis. This does not need to change based on what run is being done;
     # this assignment should be true for all sensitivity analyses and the standard model.
     download_dict = {
-        cn.gain_dir: [cn.pattern_gain],
+        cn.gain_dir: [cn.pattern_gain_data_lake],
         cn.model_extent_dir: [cn.pattern_model_extent]
     }
 
@@ -65,7 +66,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
     for key, values in download_dict.items():
         directory = key
         pattern = values[0]
-        uu.s3_flexible_download(directory, pattern, cn.docker_base_dir, cn.SENSIT_TYPE, tile_id_list)
+        uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
 
 
     # If the model run isn't the standard one, the output directory and file names are changed
