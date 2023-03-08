@@ -355,7 +355,6 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
             source='WHRC (if standard model) or JPL (if biomass_swap sensitivity analysis) and mangrove AGB (Simard et al. 2018). Gross removals added to AGC2000 to get AGC in loss year. AGC:BGC for mangrove and non-mangrove forests applied.')
         dst_BGC_emis_year.update_tags(
             extent='tree cover loss pixels within model extent')
-        print(BGC_emis_year)
 
     uu.print_log(f'  Reading input files for {tile_id}')
 
