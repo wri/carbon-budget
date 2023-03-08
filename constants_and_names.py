@@ -203,7 +203,8 @@ gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 pattern_loss = 'GFW2021'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2021/'
 
-# Hansen removals tiles based on canopy height (2001-2020)
+# Hansen removals tiles based on canopy height (2000-2020)
+# From https://www.frontiersin.org/articles/10.3389/frsen.2022.856903/full
 pattern_gain_data_lake = ''
 pattern_gain_ec2 = 'tree_cover_gain_2000_2020'
 gain_dir = 's3://gfw-data-lake/umd_tree_cover_gain_from_height/v202206/raster/epsg-4326/10/40000/gain/geotiff/'
