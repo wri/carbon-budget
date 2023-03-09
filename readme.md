@@ -55,12 +55,15 @@ and mapping on the Global Forest Watch web platform or at small scales (where 30
 Individual emissions can be assigned years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire model run and cannot be assigned specific years. 
 This 30-m output is in megagrams (Mg) CO2e/ha 2001-2021 (i.e. densities) and includes all tree cover densities ("full extent"):
-`(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`.
+`((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)`.
 However, the model is designed to be used specifically for forests, so the model creates three derivative 30-m
-outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard model, not for sensitivity analyses):
+outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard model, not for sensitivity analyses).
+To that end, the "forest extent" rasters also have pre-2000 oil palm plantations in Indonesia and Malaysia removed
+from them because carbon emissions and removals in those pixels would represent agricultural/tree crop emissions,
+not forest/forest loss. 
 
 1) Mg CO2e per pixel values for the full model extent (all tree cover densities): 
-   `(((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
+   `((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)`
 2) Mg CO2e per hectare values for forest pixels only (colloquially, TCD>30 or Hansen gain pixels): 
    `(((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations)`
 3) Mg CO2e per pixel values for forest pixels only (colloquially, TCD>30 or Hansen gain pixels):  

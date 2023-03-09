@@ -157,7 +157,6 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
             # Logic tree for assigning age categories begins here
             # Code 1 = young (<20 years) secondary forest, code 2 = old (>20 year) secondary forest, code 3 = primary forest
             # model_extent_window ensures that there is both biomass and tree cover in 2000 OR mangroves OR tree cover gain
-            # WITHOUT pre-2000 plantations
 
             # For every model version except legal_Amazon_loss sensitivity analysis, which has its own rules about age assignment
 
@@ -181,12 +180,10 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
 
                 # Gain-only pixels
                 # If there is gain, the pixel doesn't need biomass or canopy cover.
-                # The role of model_extent_window here is to exclude the pre-2000 plantations.
                 dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window == 0))] = 1
 
                 # Pixels with loss and gain
                 # If there is gain with loss, the pixel doesn't need biomass or canopy cover.
-                # The role of model_extent_window here is to exclude the pre-2000 plantations.
                 dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > 0))] = 1
 
             # For legal_Amazon_loss sensitivity analysis

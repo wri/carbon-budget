@@ -31,7 +31,6 @@ def model_extent(tile_id, pattern):
     # Names of the input tiles
     mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
     gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
-    pre_2000_plantations = f'{tile_id}_{cn.pattern_plant_pre_2000}.tif'
 
     # Tree cover tile name depends on the sensitivity analysis.
     # PRODES extent 2000 stands in for Hansen TCD
@@ -83,12 +82,6 @@ def model_extent(tile_id, pattern):
         except rasterio.errors.RasterioIOError:
             uu.print_log(f'  No biomass tile found for {tile_id}')
 
-        try:
-            pre_2000_plantations_src = rasterio.open(pre_2000_plantations)
-            uu.print_log(f'  Pre-2000 plantation tile found for {tile_id}')
-        except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No pre-2000 plantation tile found for {tile_id}')
-
 
         # Opens the output tile, giving it the metadata of the input tiles
         dst = rasterio.open(out_tile, 'w', **kwargs)
@@ -99,10 +92,10 @@ def model_extent(tile_id, pattern):
             units='unitless. 1 = in model extent. 0 = not in model extent')
         if cn.SENSIT_TYPE == 'biomass_swap':
             dst.update_tags(
-                source='Pixels with ((Hansen 2000 tree cover AND NASA JPL AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+                source='Pixels with ((Hansen 2000 tree cover AND NASA JPL AGB2000) OR Hansen gain OR mangrove biomass 2000)')
         else:
             dst.update_tags(
-                source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000) NOT pre-2000 plantations')
+                source='Pixels with ((Hansen 2000 tree cover AND WHRC AGB2000) OR Hansen gain OR mangrove biomass 2000)')
         dst.update_tags(
             extent='Full model extent. This defines which pixels are included in the model.')
 
@@ -133,10 +126,6 @@ def model_extent(tile_id, pattern):
                 tcd_window = tcd_src.read(1, window=window)
             except UnboundLocalError:
                 tcd_window = np.zeros((window.height, window.width), dtype=int)
-            try:
-                pre_2000_plantations_window = pre_2000_plantations_src.read(1, window=window)
-            except UnboundLocalError:
-                pre_2000_plantations_window = np.zeros((window.height, window.width), dtype=int)
 
             # Array of pixels that have both biomass and tree cover density
             tcd_with_biomass_window = np.where((biomass_window > 0) & (tcd_window > 0), 1, 0)
@@ -145,10 +134,7 @@ def model_extent(tile_id, pattern):
             if cn.SENSIT_TYPE != 'legal_Amazon_loss':
 
                 # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain
-                forest_extent = np.where((tcd_with_biomass_window == 1) | (mangrove_window > 1) | (gain_window == 1), 1, 0)
-
-                # extent now WITHOUT pre-2000 plantations
-                forest_extent = np.where((forest_extent == 1) & (pre_2000_plantations_window == 0), 1, 0).astype('uint8')
+                forest_extent = np.where((tcd_with_biomass_window == 1) | (mangrove_window > 1) | (gain_window == 1), 1, 0).astype('uint8')
 
             # For legal_Amazon_loss sensitivity analysis
             else:
