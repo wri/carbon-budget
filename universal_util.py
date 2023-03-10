@@ -513,6 +513,8 @@ def count_tiles_s3(source, pattern=None):
     tile_file.write(stdout)
     tile_file.close()
 
+    print(tile_file)
+
     file_list = []
 
     # Iterates through the text file to get the names of the tiles and appends them to list
