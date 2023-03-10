@@ -110,7 +110,7 @@ def mp_prep_other_inputs(tile_id_list):
         os.rmdir(TCLF_s3_dir)
     os.mkdir(TCLF_s3_dir)
     cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--request-payer', 'requester',
-           '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store']
+           '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--recursive']
     uu.log_subprocess_output_full(cmd)
 
     # Creates global vrt of TCLF

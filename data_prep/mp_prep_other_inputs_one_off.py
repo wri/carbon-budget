@@ -96,7 +96,7 @@ def mp_prep_other_inputs(tile_id_list):
     # cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_base_dir)]
     # uu.log_subprocess_output_full(cmd)
     # uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
-    # cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir]
+    # cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--recursive']
     # uu.log_subprocess_output_full(cmd)
     #
     # uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_base_dir, sensit_type, tile_id_list)
