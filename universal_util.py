@@ -655,9 +655,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print_log(f'Source directory used: {source_final}')
 
             cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
             # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--recursive']
             log_subprocess_output_full(cmd)
 
             print_log("\n")
@@ -671,9 +671,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print_log(f'Source directory used: {source}')
 
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
             # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--recursive']
             log_subprocess_output_full(cmd)
 
             print_log("\n")
@@ -706,7 +706,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             cmd = ['aws', 's3', 'cp', source, os.path.join(dest, 'data-lake-downloads'),
                    '--request-payer', 'requester', '--exclude', '*xml',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
             log_subprocess_output_full(cmd)
 
             # Copies pattern-less tiles from their special folder to main tile folder and renames them with
@@ -724,9 +724,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         else:
 
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
             # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--recursive']
 
             log_subprocess_output_full(cmd)
 
