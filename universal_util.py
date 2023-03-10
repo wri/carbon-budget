@@ -524,7 +524,7 @@ def count_tiles_s3(source, pattern=None):
             # For gain, which has no pattern
             if pattern == "":
                 print("in gain")
-                print(tile_name)
+                print(line)
                 tile_id = get_tile_id(tile_name)
                 file_list.append(tile_id)
 
