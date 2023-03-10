@@ -83,7 +83,7 @@ def create_AGC(tile_id, carbon_pool_extent):
     # Names of the input tiles. Creates the names even if the files don't exist.
     removal_forest_type = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_removal_forest_type)
     mangrove_biomass_2000 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_mangrove_biomass_2000)
-    gain = uu.sensit_tile_rename(cn.SENSIT_TYPE, cn.pattern_gain_ec2, tile_id)
+    gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     annual_gain_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_all_types)
     cumul_gain_AGCO2 = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_cumul_gain_AGCO2_all_types)
     natrl_forest_biomass_2000 = uu.sensit_tile_rename_biomass(cn.SENSIT_TYPE, tile_id)

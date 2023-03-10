@@ -16,7 +16,7 @@ Forest extent is defined in the methods section of Harris et al. 2021 Nature Cli
 within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass.
 More formally, forest extent is:
 ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
-The WHRC AGB2000 and pre-2000 plantations conditions were set in mp_model_extent.py, so they don't show up here.
+The WHRC AGB2000 condition was set in mp_model_extent.py, so it doesn't show up here.
 """
 
 import numpy as np
@@ -48,6 +48,7 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     tcd = f'{cn.pattern_tcd}_{tile_id}.tif'
     gain = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
     mangrove = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
+    pre_2000_plantations = f'{tile_id}_{cn.pattern_plant_pre_2000}.tif'
 
     # Names of outputs.
     # Requires that output patterns be listed in main script in the correct order for here
@@ -78,6 +79,12 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     except:
         uu.print_log(f'    No mangrove tile found for {tile_id}')
 
+    try:
+        pre_2000_plantations_src = rasterio.open(pre_2000_plantations)
+        uu.print_log(f'  Pre-2000 plantation tile found for {tile_id}')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'  No pre-2000 plantation tile found for {tile_id}')
+
     uu.print_log(f'  Creating outputs for {focal_tile}...')
 
     kwargs.update(
@@ -100,7 +107,7 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
     per_pixel_full_extent_dst.update_tags(
         source='per hectare full model extent tile')
     per_pixel_full_extent_dst.update_tags(
-        extent='Full model extent: ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations')
+        extent='Full model extent: ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)')
 
     uu.add_universal_metadata_rasterio(per_hectare_forest_extent_dst)
     per_hectare_forest_extent_dst.update_tags(
@@ -146,12 +153,18 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
         except:
             mangrove_window = np.zeros((window.height, window.width), dtype='uint8')
 
+        try:
+            pre_2000_plantations_window = pre_2000_plantations_src.read(1, window=window)
+        except UnboundLocalError:
+            pre_2000_plantations_window = np.zeros((window.height, window.width), dtype=int)
+
         # Output window for per pixel full extent raster
         dst_window_per_pixel_full_extent = in_window * pixel_area_window / cn.m2_per_ha
 
         # Output window for per hectare forest extent raster
         # QCed this line before publication and then again afterwards in response to question from Lena Schulte-Uebbing at Wageningen Uni.
-        dst_window_per_hectare_forest_extent = np.where((tcd_window > cn.canopy_threshold) | (gain_window == 1) | (mangrove_window != 0), in_window, 0)
+        dst_window_per_hectare_forest_extent = \
+            np.where(((tcd_window > cn.canopy_threshold) | (gain_window == 1) | (mangrove_window != 0)) & (pre_2000_plantations_window == 0), in_window, 0)
 
         # Output window for per pixel forest extent raster
         dst_window_per_pixel_forest_extent = dst_window_per_hectare_forest_extent * pixel_area_window / cn.m2_per_ha

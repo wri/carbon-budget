@@ -16,7 +16,7 @@ Forest extent is defined in the methods section of Harris et al. 2021 Nature Cli
 within the model extent, pixels that have TCD>30 OR Hansen gain OR mangrove biomass.
 More formally, forest extent is:
 ((TCD2000>30 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations.
-The WHRC AGB2000 and pre-2000 plantations conditions were set in mp_model_extent.py, so they don't show up here.
+The WHRC AGB2000 condition was set in mp_model_extent.py, so it doesn't show up here.
 
 python -m analyses.mp_derivative_outputs -t std -l 00N_000E -nu
 python -m analyses.mp_derivative_outputs -t std -l all
@@ -104,6 +104,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain_data_lake, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
+    uu.s3_flexible_download(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
 
     # Iterates through the types of tiles to be processed
     for input_dir, download_pattern_name in download_dict.items():
@@ -143,7 +144,8 @@ def mp_derivative_outputs(tile_id_list_outer):
             uu.exception_log('No output patterns found for input pattern. Please check.')
 
 
-        ### STEP 1: Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
+        ### STEP 1: Creates the full extent per-pixel, forest extent per hectare
+        ### and forest extent per pixel 0.00025x0.00025 deg derivative outputs
         uu.print_log("STEP 1: Creating derivative per-pixel and forest extent outputs")
         uu.print_log(f'Input pattern: {input_pattern}')
         uu.print_log(f'Output patterns: {output_patterns}')
@@ -167,7 +169,8 @@ def mp_derivative_outputs(tile_id_list_outer):
             pool.join()
 
 
-        ### STEP 2: Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
+        ### STEP 2: Converts the forest extent 10x10 degree Hansen tiles that
+        ### are in windows of 40000x1 pixels to windows of 160x160 pixels.
         ### This will allow the 0.00025x0.00025 deg pixels in each window to be summed into the aggregated pixels
         ### in the next step.
         uu.print_log("STEP 2: Rewindow tiles")

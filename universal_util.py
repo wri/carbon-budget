@@ -1141,44 +1141,6 @@ def name_aggregated_output(pattern):
     return out_name
 
 
-# Removes plantations that existed before 2000 from loss tile
-def mask_pre_2000_plantation(pre_2000_plant, tile_to_mask, out_name, tile_id):
-
-    if os.path.exists(pre_2000_plant):
-
-        print_log(f'Pre-2000 plantation exists for {tile_id}. Cutting out pixels in those plantations...')
-
-        # In order to mask out the pre-2000 plantation pixels from the loss raster, the pre-2000 plantations need to
-        # become a vrt. I couldn't get gdal_calc to work while keeping pre-2000 plantations as a raster; it wasn't
-        # recognizing the 0s (nodata).
-        # Based on https://gis.stackexchange.com/questions/238397/how-to-indicate-nodata-into-gdal-calc-formula
-        # Only the pre-2000 plantation raster needed to be converted to a vrt; the loss raster did not.
-        cmd = ['gdal_translate', '-of', 'VRT', pre_2000_plant,
-               '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000), '-a_nodata', 'none']
-        check_call(cmd)
-
-        # Removes the pre-2000 plantation pixels from the loss tile
-        pre_2000_vrt = '{0}_{1}.vrt'.format(tile_id, cn.pattern_plant_pre_2000)
-        calc = '--calc=A*(B==0)'
-        loss_outfilearg = '--outfile={}'.format(out_name)
-        cmd = ['gdal_calc.py', '-A', tile_to_mask, '-B', pre_2000_vrt,
-               calc, loss_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--quiet']
-        check_call(cmd)
-
-    # Basically, does nothing if there is no pre-2000 plantation and the output name is the same as the
-    # input name
-    elif tile_to_mask == out_name:
-        return
-
-    else:
-        print_log(f'No pre-2000 plantation exists for {tile_id}. Tile done.')
-        # print tile_to_mask
-        # print out_name
-        copyfile(tile_to_mask, out_name)
-
-    print_log(f'  Pre-2000 plantations for {tile_id} complete')
-
-
 # Checks whether the provided sensitivity analysis type is valid
 def check_sensit_type(sensit_type):
 

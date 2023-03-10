@@ -1,6 +1,6 @@
 """
 This script creates a binary raster of the model extent at the pixel level.
-The model extent is ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0) NOT IN pre-2000 plantations
+The model extent is ((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0).
 The rest of the model uses this to mask its extent.
 For biomass_swap sensitivity analysis, NASA JPL AGB 2000 replaces WHRC 2000.
 For legal_Amazon_loss sensitivity analysis, PRODES 2000 forest extent replaces Hansen tree cover 2000 and Hansen gain
@@ -49,8 +49,7 @@ def mp_model_extent(tile_id_list):
     # Files to download for this script.
     download_dict = {
                     cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-                    cn.gain_dir: [cn.pattern_gain_data_lake],
-                    cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000]
+                    cn.gain_dir: [cn.pattern_gain_data_lake]
     }
 
     if cn.SENSIT_TYPE == 'legal_Amazon_loss':
