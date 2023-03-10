@@ -521,9 +521,15 @@ def count_tiles_s3(source, pattern=None):
             num = len(line.strip("\n").split(" "))
             tile_name = line.strip("\n").split(" ")[num - 1]
 
-            # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
+            # For gain, which has no pattern
+            if pattern == "":
+                print("in gain")
+                tile_id = get_tile_id(tile_name)
+                file_list.append(tile_id)
+
+            # For tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
-            if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            elif pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
@@ -536,7 +542,6 @@ def count_tiles_s3(source, pattern=None):
 
             # If the counted tiles just have to be tifs
             else:
-                print("down here")
                 if tile_name.endswith('.tif'):
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
