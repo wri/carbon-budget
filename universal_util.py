@@ -668,8 +668,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # for this date.
         else:
 
-            print(dest)
-
             print_log(f'Source directory used: {source}')
 
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
@@ -724,6 +722,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
         # Downloads non-data-lake inputs
         else:
+
+            print(source)
+            print(dest)
 
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
                    '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
