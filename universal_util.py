@@ -523,7 +523,7 @@ def count_tiles_s3(source, pattern=None):
 
             # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
-            if pattern in [cn.pattern_gain_data_lake, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+            if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
                 print("In outer")
                 if tile_name.endswith('.tif'):
                     print("In inner")
