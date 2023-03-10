@@ -654,10 +654,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log(f'Source directory used: {source_final}')
 
-            cmd = ['aws', 's3', 'sync', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--size-only']
-            # cmd = ['aws', 's3', 'sync', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--size-only']
+            cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source_final, dest, '--no-sign-request', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
             print_log("\n")
@@ -670,10 +670,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             print_log(f'Source directory used: {source}')
 
-            cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--size-only']
-            # cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--size-only']
+            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
             log_subprocess_output_full(cmd)
 
             print_log("\n")
@@ -684,6 +684,13 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source, pattern=pattern)
         print_log(f'There are {s3_count} tiles at {source} with the pattern {pattern}')
+
+        # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
+        if local_tile_count == s3_count:
+            print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
+            return
+
+        print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
 
         # Downloads tile sets from the gfw-data-lake.
         # They need a special process because they don't have a tile pattern on the data-lake,
@@ -697,9 +704,9 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             # Special folder for the tile set that doesn't have a pattern when downloaded
             os.mkdir(os.path.join(dest, 'data-lake-downloads'))
 
-            cmd = ['aws', 's3', 'sync', source, os.path.join(dest, 'data-lake-downloads'),
+            cmd = ['aws', 's3', 'cp', source, os.path.join(dest, 'data-lake-downloads'),
                    '--request-payer', 'requester', '--exclude', '*xml',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--size-only']
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
             log_subprocess_output_full(cmd)
 
             # Copies pattern-less tiles from their special folder to main tile folder and renames them with
@@ -716,10 +723,10 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # Downloads non-data-lake inputs
         else:
 
-            cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--size-only']
-            # cmd = ['aws', 's3', 'sync', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--size-only']
+            cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
+                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress']
+            # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
+            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv']
 
             log_subprocess_output_full(cmd)
 
