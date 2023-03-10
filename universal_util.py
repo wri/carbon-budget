@@ -513,8 +513,6 @@ def count_tiles_s3(source, pattern=None):
     tile_file.write(stdout)
     tile_file.close()
 
-    print(tile_file)
-
     file_list = []
 
     if source == cn.gain_dir:
