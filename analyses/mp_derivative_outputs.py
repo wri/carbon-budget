@@ -144,7 +144,8 @@ def mp_derivative_outputs(tile_id_list_outer):
             uu.exception_log('No output patterns found for input pattern. Please check.')
 
 
-        ### STEP 1: Creates the per-pixel and forest extent 0.00025x0.00025 deg derivative outputs
+        ### STEP 1: Creates the full extent per-pixel, forest extent per hectare
+        ### and forest extent per pixel 0.00025x0.00025 deg derivative outputs
         uu.print_log("STEP 1: Creating derivative per-pixel and forest extent outputs")
         uu.print_log(f'Input pattern: {input_pattern}')
         uu.print_log(f'Output patterns: {output_patterns}')
@@ -168,7 +169,8 @@ def mp_derivative_outputs(tile_id_list_outer):
             pool.join()
 
 
-        ### STEP 2: Converts the 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels.
+        ### STEP 2: Converts the forest extent 10x10 degree Hansen tiles that
+        ### are in windows of 40000x1 pixels to windows of 160x160 pixels.
         ### This will allow the 0.00025x0.00025 deg pixels in each window to be summed into the aggregated pixels
         ### in the next step.
         uu.print_log("STEP 2: Rewindow tiles")
