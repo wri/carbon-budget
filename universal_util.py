@@ -501,57 +501,67 @@ def create_combined_tile_list(list_of_tile_dirs, sensit_type='std'):
 # Counts the number of tiles in a folder in s3
 def count_tiles_s3(source, pattern=None):
 
-    ## For an s3 folder in a bucket using AWSCLI
-    # Captures the list of the files in the folder
-    # out = Popen(['aws', 's3', 'ls', source, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
-    out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
-    stdout, stderr = out.communicate()
+    count = 0
+    client = boto3.client('s3')
+    paginator = client.get_paginator('list_objects')
+    for result in paginator.paginate(Bucket='gfw-data-lake',
+                                     Prefix='md_tree_cover_gain_from_height/v202206/raster/epsg-4326/10/40000/gain/geotiff/', Delimiter='/'):
+        count += len(result.get('CommonPrefixes'))
+        print(count)
 
-    # Writes the output string to a text file for easier interpretation
-    tile_list_name = "tiles.txt"
-    tile_file = open(os.path.join(cn.docker_tmp, tile_list_name), "wb")
-    tile_file.write(stdout)
-    tile_file.close()
+    print(count)
 
-    print(tile_file)
 
-    file_list = []
-
-    # Iterates through the text file to get the names of the tiles and appends them to list
-    with open(os.path.join(cn.docker_tmp, tile_list_name), 'r') as tile:
-        for line in tile:
-            num = len(line.strip("\n").split(" "))
-            tile_name = line.strip("\n").split(" ")[num - 1]
-
-            # For gain, which has no pattern
-            if pattern == "":
-                print(source)
-                print("in gain")
-                print(line)
-                tile_id = get_tile_id(tile_name)
-                file_list.append(tile_id)
-
-            # For tcd, pixel area, and loss tiles (and their rewindowed versions),
-            # which have the tile_id after the the pattern
-            elif pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
-                if tile_name.endswith('.tif'):
-                    tile_id = get_tile_id(tile_name)
-                    file_list.append(tile_id)
-
-            # If the counted tiles have to have a specific pattern
-            elif pattern != None:
-                if tile_name.endswith('{}.tif'.format(pattern)):
-                    tile_id = get_tile_id(tile_name)
-                    file_list.append(tile_id)
-
-            # If the counted tiles just have to be tifs
-            else:
-                if tile_name.endswith('.tif'):
-                    tile_id = get_tile_id(tile_name)
-                    file_list.append(tile_id)
-
-    # Count of tiles (ends in *tif)
-    return len(file_list)
+    # ## For an s3 folder in a bucket using AWSCLI
+    # # Captures the list of the files in the folder
+    # # out = Popen(['aws', 's3', 'ls', source, '--no-sign-request'], stdout=PIPE, stderr=STDOUT)
+    # out = Popen(['aws', 's3', 'ls', source], stdout=PIPE, stderr=STDOUT)
+    # stdout, stderr = out.communicate()
+    #
+    # # Writes the output string to a text file for easier interpretation
+    # tile_list_name = "tiles.txt"
+    # tile_file = open(os.path.join(cn.docker_tmp, tile_list_name), "wb")
+    # tile_file.write(stdout)
+    # tile_file.close()
+    #
+    # print(tile_file)
+    #
+    # file_list = []
+    #
+    # # Iterates through the text file to get the names of the tiles and appends them to list
+    # with open(os.path.join(cn.docker_tmp, tile_list_name), 'r') as tile:
+    #     for line in tile:
+    #         num = len(line.strip("\n").split(" "))
+    #         tile_name = line.strip("\n").split(" ")[num - 1]
+    #
+    #         # For gain, which has no pattern
+    #         if pattern == "":
+    #             print("in gain")
+    #             print(line)
+    #             tile_id = get_tile_id(tile_name)
+    #             file_list.append(tile_id)
+    #
+    #         # For tcd, pixel area, and loss tiles (and their rewindowed versions),
+    #         # which have the tile_id after the the pattern
+    #         elif pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+    #             if tile_name.endswith('.tif'):
+    #                 tile_id = get_tile_id(tile_name)
+    #                 file_list.append(tile_id)
+    #
+    #         # If the counted tiles have to have a specific pattern
+    #         elif pattern != None:
+    #             if tile_name.endswith('{}.tif'.format(pattern)):
+    #                 tile_id = get_tile_id(tile_name)
+    #                 file_list.append(tile_id)
+    #
+    #         # If the counted tiles just have to be tifs
+    #         else:
+    #             if tile_name.endswith('.tif'):
+    #                 tile_id = get_tile_id(tile_name)
+    #                 file_list.append(tile_id)
+    #
+    # # Count of tiles (ends in *tif)
+    # return len(file_list)
 
 
 # Gets the bounding coordinates of a tile
