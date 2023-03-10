@@ -61,8 +61,8 @@ from removals.mp_gain_year_count_all_forest_types import mp_gain_year_count_all_
 from removals.mp_gross_removals_all_forest_types import mp_gross_removals_all_forest_types
 # from carbon_pools.mp_create_carbon_pools import mp_create_carbon_pools
 # from emissions.mp_calculate_gross_emissions import mp_calculate_gross_emissions
-from analyses.mp_net_flux import mp_net_flux
-from analyses.mp_derivative_outputs import mp_derivative_outputs
+# from analyses.mp_net_flux import mp_net_flux
+# from analyses.mp_derivative_outputs import mp_derivative_outputs
 
 def main ():
     """
