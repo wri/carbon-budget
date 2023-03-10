@@ -524,7 +524,9 @@ def count_tiles_s3(source, pattern=None):
             # For gain, tcd, pixel area, and loss tiles (and their rewindowed versions),
             # which have the tile_id after the the pattern
             if pattern in [cn.pattern_gain_data_lake, cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
+                print("In outer")
                 if tile_name.endswith('.tif'):
+                    print("In inner")
                     tile_id = get_tile_id(tile_name)
                     file_list.append(tile_id)
 
@@ -680,10 +682,6 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
         # Counts how many tiles are in the source s3 folder
         s3_count = count_tiles_s3(source, pattern=pattern)
         print_log(f'There are {s3_count} tiles at {source} with the pattern {pattern}')
-
-        # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
-        if local_tile_count == s3_count:
-            print_log(f'Tiles with pattern {pattern} are already on spot machine.', "\n")
 
         # Downloads tile sets from the gfw-data-lake.
         # They need a special process because they don't have a tile pattern on the data-lake,
