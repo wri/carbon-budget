@@ -96,7 +96,7 @@ def mp_prep_other_inputs(tile_id_list):
     # cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_base_dir)]
     # uu.log_subprocess_output_full(cmd)
     # uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
-    # cmd = ['aws', 's3', 'sync', cn.primary_raw_dir, cn.docker_base_dir]
+    # cmd = ['aws', 's3', 'sync', cn.primary_raw_dir, cn.docker_base_dir, '--size-only']
     # uu.log_subprocess_output_full(cmd)
     #
     # uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_base_dir, sensit_type, tile_id_list)
@@ -271,7 +271,7 @@ def mp_prep_other_inputs(tile_id_list):
     ### Creates Hansen tiles of AGB:BGB based on Huang et al. 2021: https://essd.copernicus.org/articles/13/4263/2021/
 
     # uu.print_log("Downloading raw NetCDF files...")
-    # cmd = ['aws', 's3', 'sync', cn.AGB_BGB_Huang_raw_dir, '.']
+    # cmd = ['aws', 's3', 'sync', cn.AGB_BGB_Huang_raw_dir, '.', '--size-only']
     # uu.log_subprocess_output_full(cmd)
 
     # # Converts the AGB and BGB NetCDF files to global geotifs.

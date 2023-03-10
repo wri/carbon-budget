@@ -78,7 +78,7 @@ def download_tile_set(sensit_type, tile_id_list):
         pattern = values[0]
         uu.s3_flexible_download(dir, pattern, wd, sensit_type, tile_id_list)
 
-    cmd = ['aws', 's3', 'sync', cn.output_aggreg_dir, wd]
+    cmd = ['aws', 's3', 'sync', cn.output_aggreg_dir, wd, '--size-only']
     uu.log_subprocess_output_full(cmd)
 
     tile_list = glob.glob('*tif')
