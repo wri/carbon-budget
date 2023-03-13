@@ -128,7 +128,7 @@ def mp_annual_gain_rate_AGC_BGC_all_forest_types(tile_id_list):
                 pool.close()
                 pool.join()
         else:
-            processes = 55  # 50 processors = XXX GB peak
+            processes = 55  # 55 processors = XXX GB peak
             uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
             with multiprocessing.Pool(processes) as pool:
                 pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)

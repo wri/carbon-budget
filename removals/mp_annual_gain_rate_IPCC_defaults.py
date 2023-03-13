@@ -205,7 +205,7 @@ def mp_annual_gain_rate_IPCC_defaults(tile_id_list):
         if cn.SENSIT_TYPE == 'biomass_swap':
             processes = 24 # 24 processors = 590 GB peak
         else:
-            processes = 30  # 30 processors = 725 GB peak
+            processes = 25  # 30 processors = >740 GB peak; 25=XXX GB peak
     else:
         processes = 2
     uu.print_log(f'Annual removals rate natural forest max processors={processes}')
