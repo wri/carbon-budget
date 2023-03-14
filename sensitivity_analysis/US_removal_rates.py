@@ -79,7 +79,7 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
             uu.print_log(f'    BGB:AGB tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'    No BGB:AGB tile found for {tile_id}')
+            uu.print_log(f'    No BGB:AGB tile found for {tile_id}. Using default BGB:AGB from Mokany instead.')
 
         # Updates kwargs for the output dataset
         kwargs.update(

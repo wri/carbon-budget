@@ -375,7 +375,7 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
         uu.print_log(f'    BGB:AGB tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No BGB:AGB tile found for {tile_id}')
+        uu.print_log(f'    No BGB:AGB tile found for {tile_id}. Using default BGB:AGB from Mokany instead.')
 
     uu.print_log(f'  Creating belowground carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 

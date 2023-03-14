@@ -122,7 +122,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
             uu.print_log(f'    BGB:AGB tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'    No BGB:AGB tile found for {tile_id}')
+            uu.print_log(f'    No BGB:AGB tile found for {tile_id}. Using default BGB:AGB from Mokany instead.')
 
         # Opens the output tile, giving it the arguments of the input tiles
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)
