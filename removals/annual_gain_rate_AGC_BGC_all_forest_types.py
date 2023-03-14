@@ -203,7 +203,8 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
             try:
                 BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
             except UnboundLocalError:
-                BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+                BGB_AGB_ratio_window = np.empty((window.height, window.width), dtype='float32')
+                BGB_AGB_ratio_window[:] = cn.below_to_above_non_mang
 
             # Lowest priority
             try:

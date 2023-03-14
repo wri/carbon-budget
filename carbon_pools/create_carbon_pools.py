@@ -398,7 +398,8 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         try:
             BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
         except UnboundLocalError:
-            BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+            BGB_AGB_ratio_window = np.empty((window.height, window.width), dtype='float32')
+            BGB_AGB_ratio_window[:] = cn.below_to_above_non_mang
 
         # Applies the mangrove BGB:AGB ratios (3 different ratios) to the ecozone raster to create a raster of BGB:AGB ratios
         for key, value in mang_BGB_AGB_ratio.items():

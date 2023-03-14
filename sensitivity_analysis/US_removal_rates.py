@@ -106,7 +106,8 @@ def US_removal_rate_calc(tile_id, gain_table_group_region_age_dict, gain_table_g
             try:
                 BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
             except UnboundLocalError:
-                BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+                BGB_AGB_ratio_window = np.empty((window.height, window.width), dtype='float32')
+                BGB_AGB_ratio_window[:] = cn.below_to_above_non_mang
 
             # Masks the three input tiles (age category, forest group, FIA region) to the pixels to the standard removals model extent
             age_cat_masked_window = np.ma.masked_where(annual_gain_standard_window == 0, US_age_cat_window).filled(0).astype('uint16')

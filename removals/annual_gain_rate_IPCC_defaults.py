@@ -130,7 +130,8 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
         try:
             BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
         except UnboundLocalError:
-            BGB_AGB_ratio_window = np.zeros((window.height, window.width))
+            BGB_AGB_ratio_window = np.empty((window.height, window.width), dtype='float32')
+            BGB_AGB_ratio_window[:] = cn.below_to_above_non_mang
 
         # Recodes the input forest age category array with 10 different decision tree end values into the 3 actual age categories
         age_recode = np.vectorize(age_dict.get)(age_cat_window)
