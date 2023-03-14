@@ -182,7 +182,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
                 # If there is gain, the pixel doesn't need biomass or canopy cover.
                 dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window == 0))] = 1
 
-                # Pixels with loss and gain
+                # Pixels with loss-and-gain
                 # If there is gain with loss, the pixel doesn't need biomass or canopy cover.
                 dst_data[np.where((model_extent_window > 0) & (gain_window == 1) & (loss_window > 0))] = 1
 
@@ -190,7 +190,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
             else:
 
                 # Non-loss pixels (could have gain or not. Assuming that if within PRODES extent in 2000, there can't be
-                # gain, so it's a faulty detection. Thus, gain-only pixels are ignored and become part of no change.)
+                # gain, so it's a faulty detection. Thus, gain-only pixels are ignored and become part of no-change.)
                 dst_data[np.where((model_extent_window == 1) & (loss_window == 0))] = 3  # primary forest
 
                 # Loss-only pixels

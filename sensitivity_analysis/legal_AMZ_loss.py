@@ -108,7 +108,7 @@ def tile_names(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that only had loss
 def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 
-    uu.print_log("Gain year count for loss only pixels:", tile_id)
+    uu.print_log("Gain year count for loss-only pixels:", tile_id)
 
     # Names of the input tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
@@ -116,7 +116,7 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
     # start time
     start = datetime.datetime.now()
 
-    # Pixels with loss only, in PRODES forest 2000
+    # Pixels with loss-only, in PRODES forest 2000
     loss_calc = '--calc=(A>0)*(B==0)*(C==1)*(A-1)'
     loss_outfilename = '{}_gain_year_count_loss_only.tif'.format(tile_id)
     loss_outfilearg = '--outfile={}'.format(loss_outfilename)
@@ -134,7 +134,7 @@ def legal_Amazon_create_gain_year_count_loss_only(tile_id, sensit_type):
 # Creates gain year count tiles for pixels that had no loss. It doesn't matter if there was gain in these pixels because
 # gain without loss in PRODES extent is being ignored for this analysis (as in, there can't be canopy gain in PRODES
 # extent without loss because it's already dense primary forest).
-# Making the condition for "no change" be "no loss" covers the rest of the loss-gain space, since loss-only and
+# Making the condition for "no-change" be "no loss" covers the rest of the loss-gain space, since loss-only and
 # loss-and-gain covers the loss pixel side of things.
 def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
 
@@ -166,10 +166,10 @@ def legal_Amazon_create_gain_year_count_no_change(tile_id, sensit_type):
     uu.end_of_fx_summary(start, tile_id, 'gain_year_count_no_change')
 
 
-# Creates gain year count tiles for pixels that had both loss and gain
+# Creates gain year count tiles for pixels that had both loss-and-gain
 def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_type):
 
-    uu.print_log("Gain year count for loss and gain pixels:", tile_id)
+    uu.print_log("Gain year count for loss-and-gain pixels:", tile_id)
 
     # start time
     start = datetime.datetime.now()
@@ -177,7 +177,7 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
     # Names of the loss, gain and tree cover density tiles
     loss, gain, extent, biomass = tile_names(tile_id, sensit_type)
 
-    # Pixels with both loss and gain, and in PRODES forest 2000
+    # Pixels with both loss-and-gain, and in PRODES forest 2000
     loss_and_gain_calc = '--calc=((A>0)*(B==1)*(C==1)*((A-1)+({}+1-A)/2))'.format(cn.loss_years)
     loss_and_gain_outfilename = f'{tile_id}_gain_year_count_loss_and_gain.tif'
     loss_and_gain_outfilearg = '--outfile={}'.format(loss_and_gain_outfilename)
@@ -195,7 +195,7 @@ def legal_Amazon_create_gain_year_count_loss_and_gain_standard(tile_id, sensit_t
 # Merges the four gain year count tiles above to create a single gain year count tile
 def legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern):
 
-    uu.print_log("Merging loss, gain, no change, and loss/gain pixels into single raster for {}".format(tile_id))
+    uu.print_log("Merging loss, gain, no-change, and loss/gain pixels into single raster for {}".format(tile_id))
 
     # start time
     start = datetime.datetime.now()

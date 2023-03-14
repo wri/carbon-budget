@@ -252,7 +252,7 @@ def create_AGC(tile_id, carbon_pool_extent):
             agc_2000_model_extent_window = np.where(removal_forest_type_window > 0, agc_2000_window, 0)
             # print(agc_2000_model_extent_window[0][0:5])
 
-            # Creates a mask based on whether the pixels had loss and gain in them. Loss&gain pixels are 1, all else are 0.
+            # Creates a mask based on whether the pixels had loss-and-gain in them. Loss&gain pixels are 1, all else are 0.
             # This is used to determine how much post-2000 carbon removals to add to AGC2000 pixels.
             loss_gain_mask = np.ma.masked_where(loss_year_window == 0, gain_window).filled(0)
 
