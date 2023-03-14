@@ -42,7 +42,7 @@ def net_calc(tile_id, pattern):
         windows = removals_src.block_windows(1)
         uu.print_log(f'   Gross removals tile found for {removals_in}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'   No gross removals tile found for {removals_in}')
+        uu.print_log(f'   Gross removals tile not found for {removals_in}')
 
     try:
         emissions_src = rasterio.open(emissions_in)
@@ -52,7 +52,7 @@ def net_calc(tile_id, pattern):
         windows = emissions_src.block_windows(1)
         uu.print_log(f'   Gross emissions tile found for {emissions_in}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'   No gross emissions tile found for {emissions_in}')
+        uu.print_log(f'   Gross emissions tile not found for {emissions_in}')
 
     # Skips the tile if there is neither a gross emissions nor a gross removals tile.
     # This should only occur for biomass_swap sensitivity analysis, which gets its net flux tile list from
@@ -67,7 +67,7 @@ def net_calc(tile_id, pattern):
             dtype='float32'
         )
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'No gross emissions or gross removals for {tile_id}. Skipping tile.')
+        uu.print_log(f'Gross emissions or gross removals not found for {tile_id}. Skipping tile.')
         return
 
     # Opens the output tile, giving it the arguments of the input tiles

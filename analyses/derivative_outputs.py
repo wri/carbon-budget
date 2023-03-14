@@ -71,19 +71,19 @@ def forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns):
         gain_src = rasterio.open(gain)
         uu.print_log(f'    Gain tile found for {tile_id}')
     except:
-        uu.print_log(f'    No gain tile found for {tile_id}')
+        uu.print_log(f'    Gain tile not found for {tile_id}')
 
     try:
         mangrove_src = rasterio.open(mangrove)
         uu.print_log(f'    Mangrove tile found for {tile_id}')
     except:
-        uu.print_log(f'    No mangrove tile found for {tile_id}')
+        uu.print_log(f'    Mangrove tile not found for {tile_id}')
 
     try:
         pre_2000_plantations_src = rasterio.open(pre_2000_plantations)
         uu.print_log(f'  Pre-2000 plantation tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'  No pre-2000 plantation tile found for {tile_id}')
+        uu.print_log(f'  Pre-2000 plantation tile not found for {tile_id}')
 
     uu.print_log(f'  Creating outputs for {focal_tile}...')
 

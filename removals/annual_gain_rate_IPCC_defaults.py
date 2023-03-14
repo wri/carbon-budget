@@ -50,19 +50,19 @@ def annual_gain_rate(tile_id, gain_table_dict, stdev_table_dict, output_pattern_
         age_cat_src = rasterio.open(age_cat)
         uu.print_log(f'  Age category tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        return uu.print_log(f'  No age category tile found for {tile_id}. Skipping tile.')
+        return uu.print_log(f'  Age category tile not found for {tile_id}. Skipping tile.')
 
     try:
         cont_eco_src = rasterio.open(cont_eco)
         uu.print_log(f'  Continent-ecozone tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        return uu.print_log(f'  No continent-ecozone tile found for {tile_id}. Skipping tile.')
+        return uu.print_log(f'  Continent-ecozone tile not found for {tile_id}. Skipping tile.')
 
     try:
         BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
         uu.print_log(f'  BGB:AGB tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'  No BGB:AGB tile found for {tile_id}. Using default BGB:AGB from Mokany instead.')
+        uu.print_log(f'  BGB:AGB tile not found for {tile_id}. Using default BGB:AGB from Mokany instead.')
 
     # Grabs metadata about the continent ecozone tile, like its location/projection/cellsize
     kwargs = cont_eco_src.meta

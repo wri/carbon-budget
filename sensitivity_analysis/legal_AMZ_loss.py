@@ -39,13 +39,13 @@ def legal_Amazon_forest_age_category(tile_id, sensit_type, output_pattern):
             plantations_src = rasterio.open(plantations)
             uu.print_log("    Planted forest tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No planted forest tile for {}".format(tile_id))
+            uu.print_log("    Planted forest tile not found for {}".format(tile_id))
 
         try:
             mangroves_src = rasterio.open(mangroves)
             uu.print_log("    Mangrove tile found for {}".format(tile_id))
         except:
-            uu.print_log("    No mangrove tile for {}".format(tile_id))
+            uu.print_log("    Mangrove tile not found for {}".format(tile_id))
 
         # Updates kwargs for the output dataset
         kwargs.update(

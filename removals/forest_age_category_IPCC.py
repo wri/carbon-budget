@@ -65,31 +65,31 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
             cont_eco_src = rasterio.open(cont_eco)
             uu.print_log(f'   Continent-ecozone tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'   No continent-ecozone tile found for {tile_id}')
+            uu.print_log(f'   Continent-ecozone tile not found for {tile_id}')
 
         try:
             gain_src = rasterio.open(gain)
             uu.print_log(f'   Gain tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'   No gain tile found for {tile_id}')
+            uu.print_log(f'   Gain tile not found for {tile_id}')
 
         try:
             biomass_src = rasterio.open(biomass)
             uu.print_log(f'   Biomass tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'   No biomass tile found for {tile_id}')
+            uu.print_log(f'   Ciomass tile not found for {tile_id}')
 
         try:
             loss_src = rasterio.open(loss)
             uu.print_log(f'   Loss tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'   No loss tile found for {tile_id}')
+            uu.print_log(f'   Loss tile not found for {tile_id}')
 
         try:
             ifl_primary_src = rasterio.open(ifl_primary)
             uu.print_log(f'   IFL-primary forest tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'   No IFL-primary forest tile found for {tile_id}')
+            uu.print_log(f'   IFL-primary forest tile not found for {tile_id}')
 
         # Updates kwargs for the output dataset
         kwargs.update(

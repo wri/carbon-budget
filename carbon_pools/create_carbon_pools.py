@@ -110,42 +110,42 @@ def create_AGC(tile_id, carbon_pool_extent):
         loss_year_src = rasterio.open(loss_year)
         uu.print_log(f'    Loss year tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No loss year tile for {tile_id}')
+        uu.print_log(f'    Loss year tile not found for {tile_id}')
     try:
         annual_gain_AGC_src = rasterio.open(annual_gain_AGC)
         uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No aboveground removal factor tile for {tile_id}')
+        uu.print_log(f'    Aboveground removal factor tile not found for {tile_id}')
 
     try:
         cumul_gain_AGCO2_src = rasterio.open(cumul_gain_AGCO2)
         uu.print_log(f'    Gross aboveground removal tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No gross aboveground removal tile for {tile_id}')
+        uu.print_log(f'    Gross aboveground removal tile not found for {tile_id}')
 
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
         uu.print_log(f'    Mangrove tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No mangrove tile for {tile_id}')
+        uu.print_log(f'    Mangrove tile not found for {tile_id}')
 
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log(f'    Biomass found for {tile_id}')
+        uu.print_log(f'    Biomass tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No biomass found for {tile_id}')
+        uu.print_log(f'    Biomass tile not found for {tile_id}')
 
     try:
         gain_src = rasterio.open(gain)
         uu.print_log(f'    Gain tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No gain tile found for {tile_id}')
+        uu.print_log(f'    Gain tile not found for {tile_id}')
 
     try:
         removal_forest_type_src = rasterio.open(removal_forest_type)
         uu.print_log(f'    Removal type tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No removal type tile found for {tile_id}')
+        uu.print_log(f'    Removal type tile not found for {tile_id}')
 
 
     # Grabs the windows of a tile to iterate over the entire tif without running out of memory
@@ -363,19 +363,19 @@ def create_BGC(tile_id, mang_BGB_AGB_ratio, carbon_pool_extent):
         cont_ecozone_src = rasterio.open(cont_ecozone)
         uu.print_log(f'    Continent-ecozone tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No Continent-ecozone tile found for {tile_id}')
+        uu.print_log(f'    Continent-ecozone tile not found for {tile_id}')
 
     try:
         removal_forest_type_src = rasterio.open(removal_forest_type)
         uu.print_log(f'    Removal forest type tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No Removal forest type tile found for {tile_id}')
+        uu.print_log(f'    Removal forest type tile not found for {tile_id}')
 
     try:
         BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
         uu.print_log(f'    BGB:AGB tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No BGB:AGB tile found for {tile_id}. Using default BGB:AGB from Mokany instead.')
+        uu.print_log(f'    BGB:AGB tile not found for {tile_id}. Using default BGB:AGB from Mokany instead.')
 
     uu.print_log(f'  Creating belowground carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 
@@ -525,41 +525,41 @@ def create_deadwood_litter(tile_id, mang_deadwood_AGB_ratio, mang_litter_AGB_rat
         precip_src = rasterio.open(precip)
         uu.print_log(f'    Precipitation tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No precipitation tile biomass for {tile_id}')
+        uu.print_log(f'    Precipitation tile not found for {tile_id}')
 
     try:
         elevation_src = rasterio.open(elevation)
         uu.print_log(f'    Elevation tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No elevation tile biomass for {tile_id}')
+        uu.print_log(f'    Elevation tile not found for {tile_id}')
 
     # Opens the mangrove biomass tile if it exists
     try:
         bor_tem_trop_src = rasterio.open(bor_tem_trop)
         uu.print_log(f'    Boreal/temperate/tropical tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No boreal/temperate/tropical tile biomass for {tile_id}')
+        uu.print_log(f'    Boreal/temperate/tropical tile not found for {tile_id}')
 
     # Opens the mangrove biomass tile if it exists
     try:
         mangrove_biomass_2000_src = rasterio.open(mangrove_biomass_2000)
-        uu.print_log(f'    Mangrove biomass found for {tile_id}')
+        uu.print_log(f'    Mangrove biomass tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No mangrove biomass for {tile_id}')
+        uu.print_log(f'    Mangrove biomass tile not found for {tile_id}')
 
     # Opens the WHRC/JPL biomass tile if it exists
     try:
         natrl_forest_biomass_2000_src = rasterio.open(natrl_forest_biomass_2000)
-        uu.print_log(f'    Biomass found for {tile_id}')
+        uu.print_log(f'    Biomass tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No biomass for {tile_id}')
+        uu.print_log(f'    Biomass tile not found for {tile_id}')
 
     # Opens the continent-ecozone tile if it exists
     try:
         cont_ecozone_src = rasterio.open(cont_eco)
         uu.print_log(f'    Continent-ecozone tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No Continent-ecozone tile found for {tile_id}')
+        uu.print_log(f'    Continent-ecozone tile not found for {tile_id}')
 
     uu.print_log(f'  Creating deadwood and litter carbon density for {tile_id} using carbon_pool_extent {carbon_pool_extent}')
 
@@ -871,7 +871,7 @@ def create_total_C(tile_id, carbon_pool_extent):
             soil_2000_src = rasterio.open(soil_2000)
             uu.print_log(f'   Soil C 2000 tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'    No soil C 2000 tile found for {tile_id}')
+            uu.print_log(f'    Soil C 2000 tile not found for {tile_id}')
 
         kwargs = AGC_2000_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
@@ -905,7 +905,7 @@ def create_total_C(tile_id, carbon_pool_extent):
             soil_emis_year_src = rasterio.open(soil_emis_year)
             uu.print_log(f'   Soil C emission year tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'    No soil C emission year tile found for {tile_id}')
+            uu.print_log(f'    Soil C emission year tile not found for {tile_id}')
 
         kwargs = AGC_emis_year_src.meta
         kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)

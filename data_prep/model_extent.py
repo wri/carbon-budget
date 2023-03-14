@@ -68,19 +68,19 @@ def model_extent(tile_id, pattern):
             mangroves_src = rasterio.open(mangrove)
             uu.print_log(f'  Mangrove tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No mangrove tile found for {tile_id}')
+            uu.print_log(f'  Mangrove tile not found for {tile_id}')
 
         try:
             gain_src = rasterio.open(gain)
             uu.print_log(f'  Gain tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No gain tile found for {tile_id}')
+            uu.print_log(f'  Gain tile not found for {tile_id}')
 
         try:
             biomass_src = rasterio.open(biomass)
             uu.print_log(f'  Biomass tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No biomass tile found for {tile_id}')
+            uu.print_log(f'  Biomass tile not found for {tile_id}')
 
 
         # Opens the output tile, giving it the metadata of the input tiles

@@ -37,17 +37,17 @@ def gross_removals_all_forest_types(tile_id, output_pattern_list):
         gain_rate_AGC_src = rasterio.open(gain_rate_AGC)
         uu.print_log(f'    Aboveground removal factor tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No aboveground removal factor tile found for {tile_id}. Not creating gross removals.')
+        uu.print_log(f'    Aboveground removal factor tile not found for {tile_id}. Not creating gross removals.')
     try:
         gain_rate_BGC_src = rasterio.open(gain_rate_BGC)
         uu.print_log(f'    Belowground removal factor tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No belowground removal factor tile found for {tile_id}. Not creating gross removals.')
+        uu.print_log(f'    Belowground removal factor tile not found for {tile_id}. Not creating gross removals.')
     try:
         gain_year_count_src = rasterio.open(gain_year_count)
         uu.print_log(f'    Gain year count tile found for {tile_id}')
     except rasterio.errors.RasterioIOError:
-        uu.print_log(f'    No gain year count tile found for {tile_id}. Not creating gross removals.')
+        uu.print_log(f'    Gain year count tile not found for {tile_id}. Not creating gross removals.')
 
 
     # Grabs metadata for an input tile

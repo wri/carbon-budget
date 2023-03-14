@@ -55,7 +55,7 @@ def create_gain_year_count_loss_only(tile_id):
                '--hideNoData'] # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
     else:
-        uu.print_log(f'  No loss tile found for {tile_id}. Skipping loss-only pixel gain year count.')
+        uu.print_log(f'  Loss tile not found for {tile_id}. Skipping loss-only pixel gain year count.')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'gain_year_count_loss_only')
@@ -80,7 +80,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
 
     # Need to check if gain tile exists.
     if not os.path.exists(gain):
-        uu.print_log(f'  No gain tile found for {tile_id}. Skipping gain-only pixel gain year count.')
+        uu.print_log(f'  Gain tile not found for {tile_id}. Skipping gain-only pixel gain year count.')
 
     # Need to check if loss tile exists because the calc string is depends on the presence/absence of the loss tile
     elif os.path.exists(loss):
@@ -92,7 +92,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
     else:
-        uu.print_log(f'  No loss tile found for {tile_id}. Not using it for gain-only pixel gain year count.')
+        uu.print_log(f'  Loss tile not found for {tile_id}. Not using it for gain-only pixel gain year count.')
         gain_calc = f'--calc=(A==1)*(B>0)*({cn.gain_years}/2)'
         gain_outfilename = f'{tile_id}_gain_year_count_gain_only.tif'
         gain_outfilearg = f'--outfile={gain_outfilename}'
@@ -130,7 +130,7 @@ def create_gain_year_count_gain_only_maxgain(tile_id):
                '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
     else:
-        uu.print_log(f'  No loss tile found for {tile_id}. Not using loss for gain-only pixel gain year count.')
+        uu.print_log(f'  Loss tile not found for {tile_id}. Not using loss for gain-only pixel gain year count.')
         gain_calc = f'--calc=(A==1)*(B>0)*({cn.loss_years})'
         gain_outfilename = f'{tile_id}_gain_year_count_gain_only.tif'
         gain_outfilearg = f'--outfile={gain_outfilename}'
@@ -170,7 +170,7 @@ def create_gain_year_count_no_change_standard(tile_id):
                '--hideNoData'] # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
     elif os.path.exists(loss):
-        uu.print_log(f'  No gain tile found for {tile_id}. Not using it for no-change pixel gain year count.')
+        uu.print_log(f'  Gain tile not found for {tile_id}. Not using it for no-change pixel gain year count.')
         no_change_calc = f'--calc=(A>0)*{cn.loss_years}'
         no_change_outfilename = f'{tile_id}_gain_year_count_no_change.tif'
         no_change_outfilearg = f'--outfile={no_change_outfilename}'
@@ -180,7 +180,7 @@ def create_gain_year_count_no_change_standard(tile_id):
                '--hideNoData']  # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
     elif os.path.exists(gain):
-        uu.print_log(f'  No loss tile found for {tile_id}. Not using it for no-change pixel gain year count.')
+        uu.print_log(f'  Loss tile not found for {tile_id}. Not using it for no-change pixel gain year count.')
         no_change_calc = f'--calc=(A==0)*(B>0)*{cn.loss_years}'
         no_change_outfilename = f'{tile_id}_gain_year_count_no_change.tif'
         no_change_outfilearg = f'--outfile={no_change_outfilename}'
@@ -189,7 +189,7 @@ def create_gain_year_count_no_change_standard(tile_id):
                '--hideNoData'] # Need --hideNoData because the non-gain pixels are NoData, not 0.
         uu.log_subprocess_output_full(cmd)
     else:
-        uu.print_log(f'  No loss or gain tile found for {tile_id}. Not using them for no-change pixel gain year count.')
+        uu.print_log(f'  Loss and gain tiles not found for {tile_id}. Not using them for no-change pixel gain year count.')
         no_change_calc = f'--calc=(A>0)*{cn.loss_years}'
         no_change_outfilename = f'{tile_id}_gain_year_count_no_change.tif'
         no_change_outfilearg = f'--outfile={no_change_outfilename}'
@@ -297,7 +297,7 @@ def create_gain_year_count_loss_and_gain_maxgain(tile_id):
                loss_and_gain_outfilearg, '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte', '--quiet']
         uu.log_subprocess_output_full(cmd)
     else:
-        uu.print_log(f'  No loss tile found for {tile_id}. Skipping loss-and-gain pixel gain year count.')
+        uu.print_log(f'  Loss tile not found for {tile_id}. Skipping loss-and-gain pixel gain year count.')
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'gain_year_count_loss_and_gain')
@@ -342,26 +342,26 @@ def create_gain_year_count_merge(tile_id, pattern):
             nodata=0
         )
 
-        uu.print_log(f'  No change tile exists for {tile_id} by default')
+        uu.print_log(f'  No-change tile exists for {tile_id} by default')
 
         # Opens the other gain year count tiles. They may not exist for all other tiles.
         try:
             loss_only_gain_years_src = rasterio.open(loss_only_gain_years)
-            uu.print_log(f'  Loss only tile found for {tile_id}')
+            uu.print_log(f'  Loss-only tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No loss-only tile found for {tile_id}')
+            uu.print_log(f'  Loss-only tile not found for {tile_id}')
 
         try:
             gain_only_gain_years_src = rasterio.open(gain_only_gain_years)
-            uu.print_log(f'  Gain only tile found for {tile_id}')
+            uu.print_log(f'  Gain-only tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No gain-only tile found for {tile_id}')
+            uu.print_log(f'  Gain-only tile not found for {tile_id}')
 
         try:
             loss_and_gain_gain_years_src = rasterio.open(loss_and_gain_gain_years)
-            uu.print_log(f'  Loss and gain tile found for {tile_id}')
+            uu.print_log(f'  Loss-and-gain tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'  No loss-and-gain tile found for {tile_id}')
+            uu.print_log(f'  Loss-and-gain tile not found for {tile_id}')
 
         # Opens the output tile, giving it the arguments of the input tiles
         gain_year_count_merged_dst = rasterio.open(gain_year_count_merged, 'w', **kwargs)
