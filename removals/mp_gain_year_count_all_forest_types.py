@@ -112,7 +112,7 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
 
         # Creates gain year count tiles using only pixels that had only loss
         if cn.count == 96:
-            processes = 90   # 66 = 310 GB peak; 75 = 380 GB peak; 90 = 480 GB peak
+            processes = 70   # 90>=740 GB peak; 70=XXX GB peak
         else:
             processes = int(cn.count/2)
         uu.print_log(f'Gain year count loss-only pixels max processors={processes}')
