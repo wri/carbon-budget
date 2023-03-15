@@ -742,7 +742,11 @@ def s3_file_download(source, dest, sensit_type):
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
     file_name = get_tile_name(source)
-    tile_id = get_tile_id(file_name)
+
+    try:
+        tile_id = get_tile_id(file_name)
+    except:
+        pass
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3.
