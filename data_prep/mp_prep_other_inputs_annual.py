@@ -52,12 +52,12 @@ def mp_prep_other_inputs(tile_id_list):
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       # cn.drivers_processed_dir,
-                       cn.TCLF_processed_dir
+                       cn.drivers_processed_dir
+                       # ,cn.TCLF_processed_dir
     ]
     output_pattern_list = [
-                           # cn.pattern_drivers,
-                           cn.pattern_TCLF_processed
+                           cn.pattern_drivers
+                           # ,cn.pattern_TCLF_processed
     ]
 
 
@@ -76,67 +76,67 @@ def mp_prep_other_inputs(tile_id_list):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
-    # ### Drivers of tree cover loss processing
-    # uu.print_log("STEP 1: Preprocess drivers of tree cover loss")
-    #
-    # uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_tile_dir, sensit_type)
-    #
-    # # Creates tree cover loss driver tiles.
-    # # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
-    # # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap. I also unprojected the global drivers
-    # # map to WGS84 because running the homolosine projection that Jimmy provided was giving incorrect processed results.
-    # source_raster = cn.pattern_drivers_raw
-    # out_pattern = cn.pattern_drivers
-    # dt = 'Byte'
-    # if cn.count == 96:
-    #     processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = 125 GB peak
-    # else:
-    #     processes = int(cn.count/2)
-    # uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
-    # pool = multiprocessing.Pool(processes)
-    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
-    #          tile_id_list)
-    # pool.close()
-    # pool.join()
+    ### Drivers of tree cover loss processing
+    uu.print_log("STEP 1: Preprocess drivers of tree cover loss")
 
+    uu.s3_file_download(os.path.join(cn.drivers_raw_dir, cn.pattern_drivers_raw), cn.docker_tile_dir, sensit_type)
 
-    ### Tree cover loss from fires processing
-    uu.print_log("STEP 2: Preprocess tree cover loss from fires")
-
-    # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
-    # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
-    TCLF_s3_dir = os.path.join(cn.docker_tile_dir, 'TCLF')
-    if os.path.exists(TCLF_s3_dir):
-        os.rmdir(TCLF_s3_dir)
-    os.mkdir(TCLF_s3_dir)
-    cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--request-payer', 'requester',
-           '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--recursive']
-    uu.log_subprocess_output_full(cmd)
-
-    # Creates global vrt of TCLF
-    uu.print_log("Creating vrt of TCLF...")
-    tclf_vrt = 'TCLF.vrt'
-    os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/*.tif')
-    uu.print_log("  TCLF vrt created")
-
-    # Creates TCLF tiles
-    source_raster = tclf_vrt
-    out_pattern = cn.pattern_TCLF_processed
+    # Creates tree cover loss driver tiles.
+    # The raw driver tile should have NoData for unassigned drivers as opposed to 0 for unassigned drivers.
+    # For the 2020 driver update, I reclassified the 0 values as NoData in ArcMap. I also unprojected the global drivers
+    # map to WGS84 because running the homolosine projection that Jimmy provided was giving incorrect processed results.
+    source_raster = cn.pattern_drivers_raw
+    out_pattern = cn.pattern_drivers
     dt = 'Byte'
     if cn.count == 96:
-        processes = 34  # 30 = 510 GB initial peak; 34=XXX GB peak
+        processes = 87  # 45 processors = 70 GB peak; 70 = 90 GB peak; 80 = 100 GB peak; 87 = 125 GB peak
     else:
         processes = int(cn.count/2)
-    uu.print_log(f'Creating TCLF tiles with {processes} processors...')
+    uu.print_log("Creating tree cover loss driver tiles with {} processors...".format(processes))
     pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
     pool.close()
     pool.join()
 
 
+    # ### Tree cover loss from fires processing
+    # uu.print_log("STEP 2: Preprocess tree cover loss from fires")
+    #
+    # # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
+    # # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
+    # TCLF_s3_dir = os.path.join(cn.docker_tile_dir, 'TCLF')
+    # if os.path.exists(TCLF_s3_dir):
+    #     os.rmdir(TCLF_s3_dir)
+    # os.mkdir(TCLF_s3_dir)
+    # cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--request-payer', 'requester',
+    #        '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--recursive']
+    # uu.log_subprocess_output_full(cmd)
+    #
+    # # Creates global vrt of TCLF
+    # uu.print_log("Creating vrt of TCLF...")
+    # tclf_vrt = 'TCLF.vrt'
+    # os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/*.tif')
+    # uu.print_log("  TCLF vrt created")
+    #
+    # # Creates TCLF tiles
+    # source_raster = tclf_vrt
+    # out_pattern = cn.pattern_TCLF_processed
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 34  # 30 = 510 GB initial peak; 34=600 GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log(f'Creating TCLF tiles with {processes} processors...')
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
+
+
     for output_pattern in [
-        # cn.pattern_drivers,
-        cn.pattern_TCLF_processed
+        cn.pattern_drivers
+        # ,cn.pattern_TCLF_processed
     ]:
 
         if cn.count == 96:
