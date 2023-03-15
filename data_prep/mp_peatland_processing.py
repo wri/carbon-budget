@@ -1,11 +1,18 @@
 '''
 This script makes mask tiles of where peat pixels are. Peat is represented by 1s; non-peat is no-data.
 Between 40N and 60S, Gumbricht et al. 2017 (CIFOR) peat is used.
-Miettinen et al. 2016 and Dargie et al. 2017 supplement it in IDN/MYS and the Congo basin, respectively.
+Miettinen et al. 2016 (IDN/MYS), Hastie et al. 2022 (Peru), and Crezee et al. 2022 (Congo basin) supplement it.
 Outside that band (>40N, since there are no tiles at >60S), Xu et al. 2018 is used to mask peat.
 Between 40N and 60S, Xu et al. 2018 is not used.
 
-python -m data_prep.mp_peatland_processing -l 00N_000E -nu
+It's important to run a test tile on each peat source. That means running several test tiles. Possible tiles include:
+00N_000E: just Gumbricht et al.
+00N_010E: Gumbricht et al. and Crezee et al.
+00N_110E: Gumbricht et al. and Miettinen et al.
+00N_080W: Gumbricht et al. and Hastie et al.
+50N_080W: Xu et al.
+
+python -m data_prep.mp_peatland_processing -l 00N_000E,00N_010E,00N_110E,00N_080W,50N_080W -nu
 python -m data_prep.mp_peatland_processing -l all
 '''
 
@@ -53,13 +60,14 @@ def mp_peatland_processing(tile_id_list):
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Gumbricht_peat_name), cn.docker_tile_dir, cn.SENSIT_TYPE)
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Miettinen_peat_zip), cn.docker_tile_dir, cn.SENSIT_TYPE)
     uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Xu_peat_zip), cn.docker_tile_dir, cn.SENSIT_TYPE)
-    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Dargie_name), cn.docker_tile_dir, cn.SENSIT_TYPE)
+    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Crezee_name), cn.docker_tile_dir, cn.SENSIT_TYPE)
+    uu.s3_file_download(os.path.join(cn.peat_unprocessed_dir, cn.Hastie_name), cn.docker_tile_dir, cn.SENSIT_TYPE)
 
     # Unzips the Miettinen et al. peat shapefile (IDN and MYS)
     cmd = ['unzip', '-o', '-j', cn.Miettinen_peat_zip]
     uu.log_subprocess_output_full(cmd)
 
-    # Unzips the Dargie et al. peat shapefile (Congo basin)
+    # Unzips the Xu et al. peat shapefile (>40 deg N)
     cmd = ['unzip', '-o', '-j', cn.Xu_peat_zip]
     uu.log_subprocess_output_full(cmd)
 
@@ -70,11 +78,11 @@ def mp_peatland_processing(tile_id_list):
     uu.log_subprocess_output_full(cmd)
     uu.print_log('   Miettinen IDN/MYS peat rasterized')
 
-    # Masks the Dargie raster to just the peat class (code 4).
-    uu.print_log('Masking Dargie map to just peat class...')
-    Dargie_calc = f'--calc=(A==4)'
-    Dargie_outfilearg = f'--outfile={cn.Dargie_peat_name}'
-    cmd = ['gdal_calc.py', '-A', cn.Dargie_name, Dargie_calc, Dargie_outfilearg,
+    # Masks the Crezee raster to just the peat classes (codes 4 and 5).
+    uu.print_log('Masking Crezee map to just peat class...')
+    Crezee_calc = f'--calc=(A>=4)'
+    Crezee_outfilearg = f'--outfile={cn.Crezee_peat_name}'
+    cmd = ['gdal_calc.py', '-A', cn.Crezee_name, Crezee_calc, Crezee_outfilearg,
            '--NoDataValue=0', '--overwrite', '--co', 'COMPRESS=DEFLATE', '--type', 'Byte']
     uu.log_subprocess_output_full(cmd)
 

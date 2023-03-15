@@ -1,7 +1,7 @@
 '''
 This script makes mask tiles of where peat pixels are. Peat is represented by 1s; non-peat is no-data.
 Between 40N and 60S, Gumbricht et al. 2017 (CIFOR) peat is used.
-Miettinen et al. 2016 and Dargie et al. 2017 supplement it in IDN/MYS and the Congo basin, respectively.
+Miettinen et al. 2016 (IDN/MYS), Hastie et al. 2022 (Peru), and Crezee et al. 2022 (Congo basin) supplement it.
 Outside that band (>40N, since there are no tiles at >60S), Xu et al. 2018 is used to mask peat.
 Between 40N and 60S, Xu et al. 2018 is not used.
 '''
@@ -44,19 +44,19 @@ def create_peat_mask_tiles(tile_id):
         uu.print_log(f'{tile_id} created.')
 
     # If the tile is inside the band covered by Gumbricht 2017/CIFOR, Gumbricht is used.
-    # Miettinen is added in IDN and MYS and Dargie is added in the Congo basin.
+    # Miettinen is added in IDN and MYS, Hastie is added in Peri, and Crezee is added in the Congo basin.
     # For some reason, the Gumbricht raster has a color scheme that makes it symbolized from 0 to 255. This carries
     # over to the output file but that seems like a problem with the output symbology, not the values.
     # gdalinfo shows that the min and max values are 1, as they should be, and it visualizes correctly in ArcMap.
     else:
 
-        uu.print_log(f"{tile_id} is inside Gumbricht band. Using Gumbricht/Miettinen/Dargie combination...")
+        uu.print_log(f"{tile_id} is inside Gumbricht band. Using Gumbricht/Miettinen/Crezee/Hastie combination...")
 
-        # Combines Gumbricht/CIFOR with Miettinen and Dargie (where they occur)
+        # Combines Gumbricht/CIFOR with Miettinen, Hastie, and Crezee (where they occur)
         cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
                '-dstnodata', '0', '-overwrite',
-               cn.Gumbricht_peat_name, cn.Miettinen_peat_tif, cn.Dargie_peat_name, out_tile_no_tag]
+               cn.Gumbricht_peat_name, cn.Miettinen_peat_tif, cn.Crezee_peat_name, cn.Hastie_name, out_tile_no_tag]
         uu.log_subprocess_output_full(cmd)
         uu.print_log(f'{tile_id} created.')
 
@@ -95,7 +95,7 @@ def create_peat_mask_tiles(tile_id):
         out_tile_tagged.update_tags(
             key='1 = peat. 0 = not peat.')
         out_tile_tagged.update_tags(
-            source='Gumbricht et al. 2017 for <40N; Miettinen et al. and Dargie et al. where they occur; Xu et al. 2018 for >=40N')
+            source='Gumbricht et al. 2017 for <40N; Miettinen et al., Hastie et al. 2022, and Crezee et al. 2022 where they occur; Xu et al. 2018 for >=40N')
         out_tile_tagged.update_tags(
             extent='Full extent of input datasets')
 
