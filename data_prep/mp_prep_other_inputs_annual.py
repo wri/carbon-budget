@@ -135,7 +135,7 @@ def mp_prep_other_inputs(tile_id_list):
 
 
     for output_pattern in [
-        cn.pattern_drivers,
+        # cn.pattern_drivers,
         cn.pattern_TCLF_processed
     ]:
 
