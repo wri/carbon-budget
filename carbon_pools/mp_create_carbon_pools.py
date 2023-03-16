@@ -203,7 +203,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 if cn.SENSIT_TYPE == 'biomass_swap':
                     processes = 16  # 16 processors = XXX GB peak
                 else:
-                    processes = 17  # 19=around 650 but increases slowly and maxes out
+                    processes = 17  # 19=around 650 but increases slowly and maxes out; 17=600 GB peak
             else: # For 2000, or loss & 2000
                 processes = 32  # 25=540 GB peak; 32=690 GB peak; 34=sometimes 700, sometimes 760 GB peak (too high);
                 # 36=760 GB peak (too high)
@@ -254,7 +254,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 if cn.SENSIT_TYPE == 'biomass_swap':
                     processes = 30  # 30 processors = XXX GB peak
                 else:
-                    processes = 35  # 20 processors = 370 GB peak; 32 = 590 GB peak; 36 = 670 GB peak; 38 = 690 GB peak; 39 = XXX GB peak
+                    processes = 33  # 20 processors = 370 GB peak; 32 = 590 GB peak; 35=760 BG peak (too high)
             else: # For 2000, or loss & 2000
                 processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30=725 GB peak; 40 = 760 GB peak (too high)
         else:
@@ -313,8 +313,8 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     processes = 10  # 10 processors = XXX GB peak
                 else:
                     # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly);
-                    # 15 = 700 GB peak once but also too much memory another time, so back to 14
-                    processes = 14
+                    # 15 = 700 GB peak once but also too much memory another time, so back to 13
+                    processes = 13
             else: # For 2000, or loss & 2000
                 ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
                 ### There wouldn't have been enough room for all deadwood and litter otherwise.
@@ -387,7 +387,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     if cn.SENSIT_TYPE == 'biomass_swap':
                         processes = 36  # 36 processors = XXX GB peak
                     else:
-                        processes = 50  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 50 = XXX GB peak
+                        processes = 46  # 24 processors = 360 GB peak; 32 = 490 GB peak; 38 = 580 GB peak; 42 = 640 GB peak; 46 = XXX GB peak
                 else: # For 2000, or loss & 2000
                     processes = 12  # 12 processors = XXX GB peak
             else:
@@ -443,7 +443,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 if cn.SENSIT_TYPE == 'biomass_swap':
                     processes = 14  # 14 processors = XXX GB peak
                 else:
-                    processes = 19  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = 660 GB peak; 19 = XXX GB peak
+                    processes = 18  # 20 processors > 750 GB peak (by just a bit, I think); 15 = 550 GB peak; 18 = XXX GB peak
             else: # For 2000, or loss & 2000
                 processes = 12  # 12 processors = XXX GB peak
         else:
