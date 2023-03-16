@@ -254,7 +254,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                 if cn.SENSIT_TYPE == 'biomass_swap':
                     processes = 30  # 30 processors = XXX GB peak
                 else:
-                    processes = 33  # 20 processors = 370 GB peak; 32 = 590 GB peak; 35=760 BG peak (too high)
+                    processes = 30  # 20 processors = 370 GB peak; 32 = 590 GB peak; 33=760 BG peak (too high)
             else: # For 2000, or loss & 2000
                 processes = 30  # 20 processors = 370 GB peak; 25 = 460 GB peak; 30=725 GB peak; 40 = 760 GB peak (too high)
         else:
