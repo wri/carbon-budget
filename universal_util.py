@@ -68,7 +68,6 @@ def initiate_log(tile_id_list):
     logging.info(f'Tile ID list: {tile_id_list}')
     logging.info(f'Carbon emitted_pools to generate (optional): {cn.CARBON_POOL_EXTENT}')
     logging.info(f'Emissions emitted_pools (optional): {cn.EMITTED_POOLS}')
-    logging.info(f'TCD threshold for aggregated map (optional): {cn.THRESH}')
     logging.info(f'Standard net flux for comparison with sensitivity analysis net flux (optional): {cn.STD_NET_FLUX}')
     logging.info(f'Include mangrove removal scripts in model run (optional): {cn.INCLUDE_MANGROVES}')
     logging.info(f'Include US removal scripts in model run (optional): {cn.INCLUDE_US}')
@@ -907,7 +906,7 @@ def check_and_delete_if_empty_light(tile_id, output_pattern):
     if stats[0] != 0:
         print_log(f'  Data found in {tile_name}. Keeping file...')
     else:
-        print_log(f'  No data found. Deleting {tile_name}...')
+        print_log(f'  Data not found in {tile_name}. Deleting...')
         os.remove(tile_name)
 
     # Using this gdal data check method creates a tif.aux.xml file that is unnecessary.
@@ -940,7 +939,7 @@ def check_and_delete_if_empty(tile_id, output_pattern):
     no_data = check_for_data(tile_name)
 
     if no_data:
-        print_log(f'  No data found in {tile_name}. Deleting tile...')
+        print_log(f'  Data not found in {tile_name}. Deleting...')
         os.remove(tile_name)
     else:
         print_log(f'  Data found in {tile_name}. Keeping tile to copy to s3...')
@@ -956,7 +955,7 @@ def check_and_upload(tile_id, upload_dir, pattern):
 
     if no_data:
 
-        print_log(f'  No data found. Not copying {tile_id}.')
+        print_log(f'  Data not found in {tile_id}. Not copying to s3...')
 
     else:
 
