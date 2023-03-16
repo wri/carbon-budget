@@ -90,7 +90,7 @@ def mp_peatland_processing(tile_id_list):
         for tile_id in tile_id_list:
             peatland_processing.create_peat_mask_tiles(tile_id)
     else:
-        processes = 60 #30=160 GB peak; 60=280 GB peak
+        processes = 70 #30=160 GB peak; 60=280 GB peak; 70=XXX GB peak
         uu.print_log('Peat map processors=', processes)
         with multiprocessing.Pool(processes) as pool:
             pool.map(peatland_processing.create_peat_mask_tiles, tile_id_list)
