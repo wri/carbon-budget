@@ -265,6 +265,7 @@ Miettinen_peat_shp = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.s
 Miettinen_peat_tif = 'Miettinen_2016__IDN_MYS_peat__aka_peatland_drainage_proj.tif'
 
 # Xu et al. 2018 for >40N (and <60S, though there's no land down there)
+# Xu et al. 2018 for >40N (and <60S, though there's no land down there)
 # https://www.sciencedirect.com/science/article/abs/pii/S0341816217303004#ec0005
 Xu_peat_zip = 'Xu_et_al_north_of_40N_reproj__20230302.zip'
 Xu_peat_shp = 'Xu_et_al_north_of_40N_reproj__20230302.shp'
@@ -294,7 +295,7 @@ drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_c
 
 # Tree cover loss from fires
 TCLF_raw_dir = 's3://gfw-data-lake/umd_tree_cover_loss_from_fires/v20230315/raw/'
-TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20230315/processed/')
+TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20220316/processed/')
 pattern_TCLF_processed = 'tree_cover_loss_fire_processed'
 
 
