@@ -291,11 +291,11 @@ plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs
 drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
 pattern_drivers_raw = 'Final_Classification_2021__reproj_nearest_0-005_0-005_deg__20220316.tif'
 pattern_drivers = 'tree_cover_loss_driver_processed'
-drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2021/20239999/')
+drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2021/20220316/')
 
 # Tree cover loss from fires
 TCLF_raw_dir = 's3://gfw-data-lake/umd_tree_cover_loss_from_fires/v20230315/raw/'
-TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20220316/processed/')
+TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20220315/processed/')
 pattern_TCLF_processed = 'tree_cover_loss_fire_processed'
 
 

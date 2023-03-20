@@ -313,7 +313,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
                     processes = 10  # 10 processors = XXX GB peak
                 else:
                     # 32 processors = >750 GB peak; 24 > 750 GB peak; 14 = 685 GB peak (stops around 600, then increases very very slowly);
-                    # 15 = 700 GB peak once but also too much memory another time, so back to 13
+                    # 15 = 700 GB peak once but also too much memory another time, so back to 13 (580 GB peak that I observed)
                     processes = 13
             else: # For 2000, or loss & 2000
                 ### Note: deleted precip, elevation, and WHRC AGB tiles at equatorial latitudes as deadwood and litter were produced.
