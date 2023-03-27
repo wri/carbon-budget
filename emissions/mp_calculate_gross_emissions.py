@@ -232,7 +232,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
             if cn.SENSIT_TYPE == 'biomass_swap':
                 processes = 15 # 15 processors = XXX GB peak
             else:
-                processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 716 GB peak
+                processes = 19   # 17 = 650 GB peak; 18 = 677 GB peak; 19 = 720 GB peak
         else:
             processes = 9
         uu.print_log(f'Gross emissions max processors={processes}')
