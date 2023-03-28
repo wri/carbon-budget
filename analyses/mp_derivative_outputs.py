@@ -116,6 +116,8 @@ def mp_derivative_outputs(tile_id_list_outer):
         # A new list is named so that tile_id_list stays as the command line argument.
         if tile_id_list_outer == 'all':
             # List of tiles to run in the model
+            print("here")
+            print(input_dir)
             tile_id_list_inner = uu.tile_list_s3(input_dir, cn.SENSIT_TYPE)
         else:
             tile_id_list_inner = tile_id_list_outer
