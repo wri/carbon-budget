@@ -35,13 +35,16 @@ import universal_util as uu
 
 from . import derivative_outputs
 
-def mp_derivative_outputs(tile_id_list_outer):
+def mp_derivative_outputs(tile_id_list):
     """
-    :param tile_id_list_outer: list of tile ids to process
+    :param tile_id_list: list of tile ids to process
     :return: derivative outputs at native and aggregated resolution for emissions, removals, and net flux
     """
 
     os.chdir(cn.docker_tile_dir)
+
+    # Keeps tile_id_list as its own variable for referencing in the tile set for loop
+    tile_id_list_outer = tile_id_list
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list_outer == 'all':
@@ -102,7 +105,7 @@ def mp_derivative_outputs(tile_id_list_outer):
     uu.s3_flexible_download(cn.pixel_area_dir, cn.pattern_pixel_area, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     # Tree cover density, Hansen gain, and mangrove biomass tiles-- necessary for masking to forest extent
     uu.s3_flexible_download(cn.tcd_dir, cn.pattern_tcd, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
-    # uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain_data_lake, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
+    uu.s3_flexible_download(cn.gain_dir, cn.pattern_gain_data_lake, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     uu.s3_flexible_download(cn.mangrove_biomass_2000_dir, cn.pattern_mangrove_biomass_2000, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
     uu.s3_flexible_download(cn.plant_pre_2000_processed_dir, cn.pattern_plant_pre_2000, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list_outer)
 
@@ -114,10 +117,8 @@ def mp_derivative_outputs(tile_id_list_outer):
 
         # If a full model run is specified, the correct set of tiles for the particular script is listed.
         # A new list is named so that tile_id_list stays as the command line argument.
-        if tile_id_list_outer == 'all':
+        if tile_id_list == 'all':
             # List of tiles to run in the model
-            print("here")
-            print("extra dir: ", input_dir)
             tile_id_list_inner = uu.tile_list_s3(input_dir, cn.SENSIT_TYPE)
         else:
             tile_id_list_inner = tile_id_list_outer
