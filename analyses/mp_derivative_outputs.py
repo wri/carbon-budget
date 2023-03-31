@@ -56,8 +56,8 @@ def mp_derivative_outputs(tile_id_list):
 
     # Tile sets to be processed for this script. The three main outputs from the model.
     download_dict = {
-        # cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types]
-        # cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
+        cn.cumul_gain_AGCO2_BGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_BGCO2_all_types],
+        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir: [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil],
         cn.net_flux_dir: [cn.pattern_net_flux]
         }
 
@@ -237,11 +237,11 @@ def mp_derivative_outputs(tile_id_list):
         for vrt in vrt_list:
             os.remove(vrt)
 
-        rewindow_list =glob.glob(f'rewindow.tif')
+        rewindow_list = glob.glob(f'*rewindow*')
         for rewindow in rewindow_list:
             os.remove(rewindow)
 
-        aggreg_list =glob.glob(f'_0_04deg.tif')
+        aggreg_list = glob.glob(f'*_0_04deg*')
         for aggreg in aggreg_list:
             os.remove(aggreg)
 
