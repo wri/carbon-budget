@@ -49,18 +49,13 @@ def mp_prep_other_inputs(tile_id_list):
     in_coor_system="PROJCS['WGS_1984_Goode_Homolosine',GEOGCS['GCS_unknown',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Goode_Homolosine'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Option',1.0],UNIT['Meter',1.0]]", 
     vertical="NO_VERTICAL")
     
-    
+    The 2022 drivers had 0 instead of NoData, so I used Copy Raster to turn the 0 into NoData:
     arcpy.CopyRaster_management(in_raster="TCL_DD_20230330__reproj_nearest_0-005_0-005_deg__20230330.tif", 
     out_rasterdataset="C:/GIS/Drivers of loss/2022_drivers__tif__from_Jimmy_MacCarthy_via_Asana_20230330/TCL_DD_20230330__reproj_nearest_0-005_0-005_deg__SetNoData__20230330.tif", 
     config_keyword="", background_value="", nodata_value="0", onebit_to_eightbit="NONE", 
     colormap_to_RGB="NONE", pixel_type="", scale_pixel_value="NONE", RGB_to_Colormap="NONE", format="TIFF", 
     transform="NONE")
     
-       
-    The 2022 drivers had 0 instead of NoData, so I used Copy Raster to turn the 0 into NoData:
-    arcpy.management.CopyRaster("FinalClassification_20230327__reproj_nearest_0-005_0-005_deg__20230327.tif", 
-    r"C:\GIS\Drivers of loss\2022_drivers__tif__from_Jimmy_MacCarthy_via_Slack_20230327\FinalClassification_20230327__reproj_nearest_0-005_0-005_deg__SetNoData__20230327.tif", 
-    '', None, "0", "NONE", "NONE", '', "NONE", "NONE", "TIFF", "NONE", "CURRENT_SLICE", "NO_TRANSPOSE")
     '''
 
     # List of output directories and output file name patterns

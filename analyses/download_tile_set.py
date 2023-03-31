@@ -2,6 +2,9 @@
 This script downloads the listed tiles and creates overviews for them for easy viewing in ArcMap.
 It must be run in the Docker container, and so tiles are downloaded to and overviewed in the folder of the Docker container where
 all other tiles are downloaded.
+
+python -m analyses.download_tile_set -t std -l 00N_000E
+python -m analyses.download_tile_set -t std -l 00N_000E,00N_110E
 '''
 
 import multiprocessing
@@ -11,14 +14,13 @@ import pandas as pd
 import datetime
 import argparse
 import glob
-from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
 
-def download_tile_set(sensit_type, tile_id_list):
+def download_tile_set(tile_id_list):
 
     uu.print_log("Downloading all tiles for: ", tile_id_list)
 
@@ -27,6 +29,12 @@ def download_tile_set(sensit_type, tile_id_list):
     os.chdir(wd)
 
     download_dict = {
+        cn.gain_dir: [cn.pattern_gain_data_lake],
+        cn.loss_dir: [cn.pattern_loss],
+        cn.tcd_dir: [cn.pattern_tcd],
+        cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked],
+        cn.plant_pre_2000_processed_dir: [cn.pattern_plant_pre_2000],
+
         cn.model_extent_dir: [cn.pattern_model_extent],
         cn.age_cat_IPCC_dir: [cn.pattern_age_cat_IPCC],
         cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
@@ -76,7 +84,7 @@ def download_tile_set(sensit_type, tile_id_list):
     for key, values in download_dict.items():
         dir = key
         pattern = values[0]
-        uu.s3_flexible_download(dir, pattern, wd, sensit_type, tile_id_list)
+        uu.s3_flexible_download(dir, pattern, wd, cn.SENSIT_TYPE, tile_id_list)
 
     cmd = ['aws', 's3', 'cp', cn.output_aggreg_dir, wd]
     uu.log_subprocess_output_full(cmd)
@@ -107,18 +115,18 @@ if __name__ == '__main__':
                         help=f'{cn.model_type_arg_help}')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
-    parser.add_argument('--run-date', '-d', required=False,
-                        help='Date of run. Must be format YYYYMMDD.')
     args = parser.parse_args()
-    sensit_type = args.model_type
+
+    # Sets global variables to the command line arguments
+    cn.SENSIT_TYPE = args.model_type
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
 
     # Create the output log
     uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
+    uu.check_sensit_type(cn.SENSIT_TYPE)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    download_tile_set(sensit_type=sensit_type, tile_id_list=tile_id_list)
+    download_tile_set(tile_id_list)
