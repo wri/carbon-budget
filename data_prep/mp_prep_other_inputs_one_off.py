@@ -9,7 +9,6 @@ python -m data_prep.mp_prep_other_inputs_one_off -l 00N_000E -nu
 python -m data_prep.mp_prep_other_inputs_one_off -l all
 '''
 
-from subprocess import Popen, PIPE, STDOUT, check_call
 import argparse
 import multiprocessing
 import datetime

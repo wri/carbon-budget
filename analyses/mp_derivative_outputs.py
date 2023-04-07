@@ -147,28 +147,28 @@ def mp_derivative_outputs(tile_id_list):
             uu.exception_log('No output patterns found for input pattern. Please check.')
 
 
-        # ### STEP 1: Creates the full extent per-pixel, forest extent per hectare
-        # ### and forest extent per pixel 0.00025x0.00025 deg derivative outputs
-        # uu.print_log("STEP 1: Creating derivative per-pixel and forest extent outputs")
-        # uu.print_log(f'Input pattern: {input_pattern}')
-        # uu.print_log(f'Output patterns: {output_patterns}')
-        #
-        # if cn.SINGLE_PROCESSOR:
-        #     for tile_id in tile_id_list_inner:
-        #         derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
-        # else:
-        #     # 18 = >740 GB peak; 15=XXX GB peak
-        #     if cn.count == 96:
-        #         processes = 15
-        #     else:
-        #         processes = 2
-        #     uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
-        #     pool = multiprocessing.Pool(processes)
-        #     pool.map(partial(derivative_outputs.forest_extent_per_pixel_outputs, input_pattern=input_pattern,
-        #                      output_patterns=output_patterns),
-        #              tile_id_list_inner)
-        #     pool.close()
-        #     pool.join()
+        ### STEP 1: Creates the full extent per-pixel, forest extent per hectare
+        ### and forest extent per pixel 0.00025x0.00025 deg derivative outputs
+        uu.print_log("STEP 1: Creating derivative per-pixel and forest extent outputs")
+        uu.print_log(f'Input pattern: {input_pattern}')
+        uu.print_log(f'Output patterns: {output_patterns}')
+
+        if cn.SINGLE_PROCESSOR:
+            for tile_id in tile_id_list_inner:
+                derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
+        else:
+            # 18 = >740 GB peak; 15=XXX GB peak
+            if cn.count == 96:
+                processes = 15
+            else:
+                processes = 2
+            uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(derivative_outputs.forest_extent_per_pixel_outputs, input_pattern=input_pattern,
+                             output_patterns=output_patterns),
+                     tile_id_list_inner)
+            pool.close()
+            pool.join()
 
 
         ### STEP 2: Converts the forest extent 10x10 degree Hansen tiles that

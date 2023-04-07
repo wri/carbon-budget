@@ -177,9 +177,6 @@ def log_subprocess_output(pipe):
             logging.info(line.decode("utf-8")) #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
             print(line.decode("utf-8"))
 
-        # logging.info("\n")
-        # print("\n")
-
     # # After the subprocess finishes, the log is uploaded to s3.
     # # Having too many tiles finish running subprocesses at once can cause the upload to get overwhelmed and cause
     # # an error. So, I've commented out the log upload because it's not really necessary here.
@@ -212,8 +209,6 @@ def log_subprocess_output_full(cmd):
                 print(line.decode(
                     "utf-8"))  # https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
 
-            # logging.info("\n")
-            # print("\n")
 
         # # After the subprocess finishes, the log is uploaded to s3
         # upload_log()
@@ -1138,7 +1133,7 @@ def name_aggregated_output(pattern):
     # print(out_pattern)
     out_pattern = re.sub(f'2001_{cn.loss_years}', '', out_pattern)
     # print(out_pattern)
-    out_pattern = re.sub('_Mg_', '_Mt_', out_pattern)
+    out_pattern = re.sub('_Mg_', '_Mt_per_year', out_pattern)
     # print(out_pattern)
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print(out_pattern)

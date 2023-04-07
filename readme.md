@@ -3,7 +3,7 @@
 ### Purpose and scope
 This model maps gross greenhouse gas emissions from forests, 
 gross carbon removals (sequestration) by forests, and the difference between them 
-(net flux), all between 2001 and 2021. 
+(net flux), all between 2001 and 2022. 
 Gross emissions includes CO2, NH4, and N20 and all carbon pools (aboveground biomass, belowground biomass, 
 dead wood, litter, and soil), and gross removals includes removals into aboveground and belowground biomass carbon. 
 Although the model is run for all tree canopy densities in 2000 (per Hansen et al. 2013), it is most relevant to
@@ -11,9 +11,11 @@ pixels with canopy density >30% in 2000 or pixels which subsequently had tree co
 It covers planted forests in most of the world, mangroves, and non-mangrove natural forests, and excludes palm oil plantations that existed more than 20 years ago in Indonesia.
 It essentially spatially applies IPCC national greenhouse gas inventory rules (2016 guidelines) for forests.
 It covers only forests converted to non-forests, non-forests converted to forests and forests remaining forests (no other land 
-use transitions). The model is described and published in Harris et al. (2021) Nature Climate Change
-"Global maps of twenty-first century forest carbon fluxes" (https://www.nature.com/articles/s41558-020-00976-6).
-Although the published model covered 2001-2019, the same methods were used to update the model to include 2021.  
+use transitions). The model is described and published in [Harris et al. (2021) Nature Climate Change
+"Global maps of twenty-first century forest carbon fluxes"](https://www.nature.com/articles/s41558-020-00976-6).
+Although the published model covered 2001-2019, the same methods were used to update the model to include 2022, 
+with a few changes to some input layers and constants. You can read about the changes to the TCL 2022 update 
+[here](https://www.globalforestwatch.org/blog/data-and-research/whats-new-carbon-flux-monitoring).
 
 ### Inputs
 Well over twenty inputs are needed to run this model. Most are spatial, but some are tabular.
@@ -32,8 +34,11 @@ The model looks for files locally before downloading them in order to save time.
 The model can still be run without AWS credentials; inputs will be downloaded from s3 but outputs will not be uploaded to s3.
 In that case, outputs will only be stored locally.
 
+A complete list of inputs, including  changes made to the TCL 2022 model, can be found 
+[here](http://gfw2-data.s3.amazonaws.com/climate/carbon_model/Table_S3_data_sources__updated_20230406.pdf).
+
 ### Outputs
-There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all totaled for 2001-2021. 
+There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all totaled for 2001-2022. 
 These are produced at two resolutions: 0.00025x0.00025 degrees 
 (approximately 30x30 m at the equator) in 10x10 degree rasters (to make outputs a 
 manageable size), and 0.04x0.04 degrees (approximately 4x4km at the equator) as global rasters for static maps.
@@ -54,7 +59,7 @@ The 30-m outputs are used for zonal statistics analyses (i.e. emissions, removal
 and mapping on the Global Forest Watch web platform or at small scales (where 30-m pixels can be distinguished). 
 Individual emissions can be assigned years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire model run and cannot be assigned specific years. 
-This 30-m output is in megagrams (Mg) CO2e/ha 2001-2021 (i.e. densities) and includes all tree cover densities ("full extent"):
+This 30-m output is in megagrams (Mg) CO2e/ha 2001-2022 (i.e. densities) and includes all tree cover densities ("full extent"):
 `((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)`.
 However, the model is designed to be used specifically for forests, so the model creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard model, not for sensitivity analyses).
