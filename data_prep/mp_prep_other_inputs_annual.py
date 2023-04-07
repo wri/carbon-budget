@@ -41,20 +41,18 @@ def mp_prep_other_inputs(tile_id_list):
     gdal_warp is producing a weird output, so I did it in ArcMap for the 2022 update, 
     with the output cell size being 0.005 x 0.005 degree and the method being nearest.
     
-    arcpy.ProjectRaster_management(in_raster="TCL_DD_20230330.tif", 
-    out_raster="C:/GIS/Drivers of loss/2022_drivers__tif__from_Jimmy_MacCarthy_via_Asana_20230330/TCL_DD_20230330__reproj_nearest_0-005_0-005_deg__202303230.tif", 
-    out_coor_system="GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", 
-    resampling_type="NEAREST", cell_size="0.005 0.005", geographic_transform="", 
-    Registration_Point="", 
-    in_coor_system="PROJCS['WGS_1984_Goode_Homolosine',GEOGCS['GCS_unknown',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Goode_Homolosine'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Option',1.0],UNIT['Meter',1.0]]", 
-    vertical="NO_VERTICAL")
+    arcpy.management.ProjectRaster("TCL_DD_2022_20230407.tif", r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84.tif", 
+    'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
+    UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
+    GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
+    UNIT["Degree",0.0174532925199433]],PROJECTION["Goode_Homolosine"],PARAMETER["False_Easting",0.0],
+    PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Option",1.0],UNIT["Meter",1.0]]', "NO_VERTICAL")
+
     
     The 2022 drivers had 0 instead of NoData, so I used Copy Raster to turn the 0 into NoData:
-    arcpy.CopyRaster_management(in_raster="TCL_DD_20230330__reproj_nearest_0-005_0-005_deg__20230330.tif", 
-    out_rasterdataset="C:/GIS/Drivers of loss/2022_drivers__tif__from_Jimmy_MacCarthy_via_Asana_20230330/TCL_DD_20230330__reproj_nearest_0-005_0-005_deg__SetNoData__20230330.tif", 
-    config_keyword="", background_value="", nodata_value="0", onebit_to_eightbit="NONE", 
-    colormap_to_RGB="NONE", pixel_type="", scale_pixel_value="NONE", RGB_to_Colormap="NONE", format="TIFF", 
-    transform="NONE")
+    arcpy.management.CopyRaster("TCL_DD_2022_20230407_wgs84.tif", 
+    r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84_setnodata.tif", '', None, "0", "NONE", "NONE", '', "NONE", "NONE", "TIFF", "NONE", 
+    "CURRENT_SLICE", "NO_TRANSPOSE")
     
     '''
 
