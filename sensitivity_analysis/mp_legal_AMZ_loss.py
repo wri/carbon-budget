@@ -28,7 +28,7 @@ def main ():
     # Create the output log
     uu.initiate_log()
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     Brazil_stages = ['all', 'create_forest_extent', 'create_loss']
 
@@ -46,11 +46,11 @@ def main ():
 
     # Checks the validity of the two arguments. If either one is invalid, the script ends.
     if (stage_input not in Brazil_stages):
-        uu.exception_log(no_upload, 'Invalid stage selection. Please provide a stage from', Brazil_stages)
+        uu.exception_log('Invalid stage selection. Please provide a stage from', Brazil_stages)
     else:
         pass
     if (run_through not in ['true', 'false']):
-        uu.exception_log(no_upload, 'Invalid run through option. Please enter true or false.')
+        uu.exception_log('Invalid run through option. Please enter true or false.')
     else:
         pass
 
@@ -78,10 +78,10 @@ def main ():
         # tile_id_list = ["00N_000E", "00N_050W", "00N_060W", "00N_010E", "00N_020E", "00N_030E", "00N_040E", "10N_000E", "10N_010E", "10N_010W", "10N_020E", "10N_020W"] # test tiles
         # tile_id_list = ['50N_130W'] # test tiles
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
-        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_base_dir, sensit_type)
+        uu.s3_folder_download(cn.Brazil_forest_extent_2000_raw_dir, cn.docker_tile_dir, sensit_type)
         raw_forest_extent_inputs = glob.glob('*_AMZ_warped_*tif')   # The list of tiles to merge
 
         # Gets the resolution of a more recent PRODES raster, which has a higher resolution. The merged output matches that.
@@ -109,8 +109,8 @@ def main ():
         out_pattern = cn.pattern_Brazil_forest_extent_2000_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                         no_upload=no_upload), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
         upload_dir = master_output_dir_list[0]
@@ -126,10 +126,10 @@ def main ():
 
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         # Downloads input rasters and lists them
-        cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.', '--recursive']
+        cmd = ['aws', 's3', 'cp', cn.Brazil_annual_loss_raw_dir, '.']
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log("Input loss rasters downloaded. Getting resolution of recent raster...")
@@ -163,8 +163,8 @@ def main ():
         out_pattern = cn.pattern_Brazil_annual_loss_processed
         dt = 'Byte'
         pool = multiprocessing.Pool(int(cn.count/2))
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt,
-                         no_upload=no_upload), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
         uu.print_log("  PRODES composite loss raster warped to Hansen tiles")
 
         # Checks if each tile has data in it. Only tiles with data are uploaded.
@@ -182,7 +182,7 @@ def main ():
 
         # Files to download for this script.
         download_dict = {cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
-                         cn.gain_dir: [cn.pattern_gain],
+                         cn.gain_dir: [cn.pattern_gain_data_lake],
                          cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
                          cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
                          cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
@@ -193,19 +193,19 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
@@ -239,7 +239,7 @@ def main ():
         # Files to download for this script.
         download_dict = {
             cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
-            cn.gain_dir: [cn.pattern_gain],
+            cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
             cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
@@ -250,19 +250,19 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list)
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list)
 
@@ -296,10 +296,10 @@ def main ():
             # legal_AMZ_loss.legal_Amazon_create_gain_year_count_merge(tile_id, output_pattern)
 
         # Intermediate output tiles for checking outputs
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_loss_only")
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_gain_only")
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_no_change")
-        uu.upload_final_set(stage_output_dir_list[3], "growth_years_loss_and_gain")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_loss_only")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_gain_only")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_no_change")
+        uu.upload_final_set(stage_output_dir_list[3], "gain_year_count_loss_and_gain")
 
         # Uploads output from this stage
         uu.upload_final_set(stage_output_dir_list[3], stage_output_pattern_list[3])
@@ -322,13 +322,13 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (annual removals).
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[4:6])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[4:6])
 
@@ -337,11 +337,11 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # Table with IPCC Table 4.9 default removals rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -438,13 +438,13 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[6:8])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[6:8])
 
@@ -453,7 +453,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # Calculates cumulative aboveground carbon removals in non-mangrove planted forests
@@ -510,13 +510,13 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
         # If the model run isn't the standard one, the output directory and file names are changed.
         # This adapts just the relevant items in the output directory and pattern lists (cumulative removals).
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[8:10])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[8:10])
 
@@ -525,7 +525,7 @@ def main ():
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
 
         # For multiprocessing
@@ -563,7 +563,7 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain],
+            cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
             cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],
@@ -588,22 +588,22 @@ def main ():
         tile_id_list = uu.tile_list_s3(cn.Brazil_forest_extent_2000_processed_dir)
         # tile_id_list = ['00N_050W']
         uu.print_log(tile_id_list)
-        uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
         for key, values in download_dict.items():
             dir = key
             pattern = values[0]
-            uu.s3_flexible_download(dir, pattern, cn.docker_base_dir, sensit_type, tile_id_list)
+            uu.s3_flexible_download(dir, pattern, cn.docker_tile_dir, sensit_type, tile_id_list)
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
-            uu.print_log("Changing output directory and file name pattern based on sensitivity analysis")
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
             stage_output_dir_list = uu.alter_dirs(sensit_type, master_output_dir_list[10:16])
             stage_output_pattern_list = uu.alter_patterns(sensit_type, master_output_pattern_list[10:16])
 
 
         # Table with IPCC Wetland Supplement Table 4.4 default mangrove removals rates
-        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_base_dir]
+        cmd = ['aws', 's3', 'cp', os.path.join(cn.gain_spreadsheet_dir, cn.gain_spreadsheet), cn.docker_tile_dir]
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -675,7 +675,7 @@ def main ():
             uu.upload_final_set(stage_output_dir_list[0], stage_output_pattern_list[0])
 
         else:
-            uu.exception_log(no_upload, "Extent argument not valid")
+            uu.exception_log("Extent argument not valid")
 
         uu.print_log("Creating tiles of belowground carbon")
         # 18 processors used between 300 and 400 GB memory, so it was okay on a r4.16xlarge spot machine
@@ -749,7 +749,7 @@ def main ():
             uu.print_log("Skipping soil for 2000 carbon pool calculation")
 
         else:
-            uu.exception_log(no_upload, "Extent argument not valid")
+            uu.exception_log("Extent argument not valid")
 
         uu.print_log("Creating tiles of total carbon")
         # I tried several different processor numbers for this. Ended up using 14 processors, which used about 380 GB memory

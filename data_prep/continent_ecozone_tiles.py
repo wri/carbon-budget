@@ -19,8 +19,7 @@ import rasterio
 import numpy as np
 import datetime
 from scipy import stats
-import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
 

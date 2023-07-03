@@ -20,17 +20,17 @@ def main ():
     # Create the output log
     uu.initiate_log()
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # List of tiles that could be run. This list is only used to create the FIA region tiles if they don't already exist.
     tile_id_list = uu.tile_list_s3(cn.WHRC_biomass_2000_unmasked_dir)
     # tile_id_list = ['50N_130W'] # test tiles
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # Downloads the Mekong loss folder. Each year of loss has its own raster
-    uu.s3_folder_download(cn.Mekong_loss_raw_dir, cn.docker_base_dir, sensit_type)
+    uu.s3_folder_download(cn.Mekong_loss_raw_dir, cn.docker_tile_dir, sensit_type)
 
     # The list of all annual loss rasters
     annual_loss_list = glob.glob('Loss_20*tif')
@@ -60,7 +60,8 @@ def main ():
     source_raster = loss_composite
     out_pattern = cn.pattern_Mekong_loss_processed
     dt = 'Byte'
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt, no_upload=no_upload), tile_id_list)
+    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+             tile_id_list)
 
     # This is necessary for changing NoData values to 0s (so they are recognized as 0s)
     pool.map(Mekong_loss.recode_tiles, tile_id_list)

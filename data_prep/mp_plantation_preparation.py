@@ -142,7 +142,7 @@ import universal_util as uu
 
 def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, run_date = None, no_upload = None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # ## Not actually using this but leaving it here in case I want to add this functionality eventually. This
     # # was to allow users to run plantations for a select (contiguous) area rather than for the whole planet.
@@ -197,7 +197,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
             uu.print_log("No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch...")
 
             # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-            uu.s3_file_download(cn.gadm_path, cn.docker_base_dir)
+            uu.s3_file_download(cn.gadm_path, cn.docker_tile_dir)
             cmd = ['unzip', cn.gadm_zip]
             # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
             process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -230,7 +230,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
 
             # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
             os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_time_today))
-            cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
+            cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
 
             # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
             process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -268,7 +268,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
             uu.print_log('{}/'.format(gadm_index_path))
 
             # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
-            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), cn.docker_base_dir, '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
+            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), cn.docker_tile_dir, '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
 
             # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
             process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -315,7 +315,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
         # Creates a shapefile in which each feature is the extent of a plantation extent tile.
         # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
         os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_time_today))
-        cmd = ['aws', 's3', 'cp', cn.docker_base_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
+        cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
         process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
@@ -331,7 +331,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
         uu.print_log("Planted forest 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest growth rate and forest type tiles...")
 
         # Copies the shapefile of 1x1 tiles of extent of planted forests
-        cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), cn.docker_base_dir, '--recursive', '--exclude', '*', '--include',
+        cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), cn.docker_tile_dir, '--recursive', '--exclude', '*', '--include',
                '{}*'.format(planted_index_shp), '--recursive']
 
         # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
@@ -477,7 +477,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
     gadm_index = os.path.split(args.gadm_tile_index)
@@ -494,7 +494,7 @@ if __name__ == '__main__':
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, sensit_type=sensit_type, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
     uu.check_sensit_type(sensit_type)

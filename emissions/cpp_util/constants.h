@@ -5,11 +5,11 @@ namespace constants
 {
     // Emissions constants
     // per https://www.learncpp.com/cpp-tutorial/global-constants-and-inline-variables/
-    constexpr int model_years {21};    // How many loss years are in the model. Must also be updated in equations.cpp!
+    constexpr int model_years {22};    // How many loss years are in the model. Must also be updated in equations.cpp!
 
-    constexpr int CH4_equiv {28};      // The CO2 equivalency (global warming potential) of CH4
+    constexpr int CH4_equiv {27};      // The CO2 equivalency (global warming potential) of CH4, AR6 WG1 Table 7.15
 
-    constexpr int N2O_equiv {265};      // The CO2 equivalency (global warming potential) of N2O
+    constexpr int N2O_equiv {273};      // The CO2 equivalency (global warming potential) of N2O, AR6 WG1 Table 7.15
 
     constexpr float C_to_CO2 {44.0/12.0};       // The conversion of carbon to CO2
 
@@ -23,6 +23,10 @@ namespace constants
 
     constexpr int soil_emis_period {20};      // The number of years over which soil emissions are calculated (separate from model years)
 
+    constexpr float shiftag_flu {0.72}; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
+
+    constexpr float urb_flu {0.80}; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
+
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr
     // Inputs
@@ -34,8 +38,8 @@ namespace constants
 
     constexpr char legal_Amazon_loss[] = "_legal_Amazon_annual_loss_2001_2019.tif";
 
-    constexpr char lossyear[] = "GFW2021_";
-    constexpr char burnyear[] = "_burnyear_with_Hansen_loss.tif";
+    constexpr char lossyear[] = "GFW2022_";
+    constexpr char burnyear[] = "_tree_cover_loss_fire_processed.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";
     constexpr char tcl_drivers[] = "_tree_cover_loss_driver_processed.tif";

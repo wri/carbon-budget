@@ -1,46 +1,55 @@
+"""
+Function to create removal factor tiles with all removal factor sources combined
+"""
+
 import datetime
 import numpy as np
-import os
 import rasterio
-import logging
-import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
 
-def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sensit_type, no_upload):
+def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
+    """
+    :param tile_id: tile to be processed, identified by its tile id
+    :param output_pattern_list: patterns for output tile names
+    :return: 5 tiles: removal factor source, aboveground rate, belowground rate, aboveground+belowground rate,
+        standard deviation for aboveground rate (all removal factor sources combined)
+        Units: Mg carbon/ha/yr (including for standard deviation tiles)
+    """
 
-    uu.print_log("Mapping removal rate source and AGB and BGB removal rates:", tile_id)
+    uu.print_log(f'Mapping removal rate source and AGB and BGB removal rates: {tile_id}')
 
     # Start time
     start = datetime.datetime.now()
 
     # Names of the input tiles
     # Removal factors
-    model_extent = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_model_extent)
-    mangrove_AGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGB_mangrove)
-    mangrove_BGB = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_BGB_mangrove)
-    europe_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
-    plantations_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
-    us_AGC_BGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
-    young_AGC = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
-    age_category = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_age_cat_IPCC)
-    ipcc_AGB_default = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
+    model_extent = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_model_extent)
+    mangrove_AGB = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_mangrove)
+    mangrove_BGB = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_BGB_mangrove)
+    europe_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
+    plantations_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
+    us_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
+    young_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
+    age_category = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_age_cat_IPCC)
+    ipcc_AGB_default = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_IPCC_defaults)
+    BGB_AGB_ratio = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_BGB_AGB_ratio)
 
     # Removal factor standard deviations
-    mangrove_AGB_stdev = '{0}_{1}.tif'.format(tile_id, cn.pattern_stdev_annual_gain_AGB_mangrove)
-    europe_AGC_BGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
-    plantations_AGC_BGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
-    us_AGC_BGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
-    young_AGC_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)
-    ipcc_AGB_default_stdev = uu.sensit_tile_rename(sensit_type, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
+    mangrove_AGB_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_mangrove)
+    europe_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
+    plantations_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
+    us_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
+    young_AGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)
+    ipcc_AGB_default_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)
 
     # Names of the output tiles
-    removal_forest_type = '{0}_{1}.tif'.format(tile_id, output_pattern_list[0])
-    annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[1])
-    annual_gain_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[2])
-    annual_gain_AGC_BGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[3]) # Not used further in the model. Created just for reference.
-    stdev_annual_gain_AGC_all_forest_types = '{0}_{1}.tif'.format(tile_id, output_pattern_list[4])
+    removal_forest_type = uu.make_tile_name(tile_id, output_pattern_list[0])
+    annual_gain_AGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[1])
+    annual_gain_BGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[2])
+    annual_gain_AGC_BGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[3]) # Not used further in the model. Created just for reference.
+    stdev_annual_gain_AGC_all_forest_types = uu.make_tile_name(tile_id, output_pattern_list[4])
 
     # Opens biomass tile
     with rasterio.open(model_extent) as model_extent_src:
@@ -64,56 +73,62 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             mangrove_AGB_src = rasterio.open(mangrove_AGB)
             mangrove_BGB_src = rasterio.open(mangrove_BGB)
             mangrove_AGB_stdev_src = rasterio.open(mangrove_AGB_stdev)
-            uu.print_log("    Mangrove tiles (AGB and BGB) for {}".format(tile_id))
-        except:
-            uu.print_log("    No mangrove tile for {}".format(tile_id))
+            uu.print_log(f'    Mangrove tiles (AGB and BGB) found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    Mangrove tiles (AGB and BGB) not found for {tile_id}')
 
         try:
             europe_AGC_BGC_src = rasterio.open(europe_AGC_BGC)
             europe_AGC_BGC_stdev_src = rasterio.open(europe_AGC_BGC_stdev)
-            uu.print_log("    Europe removal factor tile for {}".format(tile_id))
-        except:
-            uu.print_log("    No Europe removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    Europe removal factor tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    Europe removal factor tile not found for {tile_id}')
 
         try:
             plantations_AGC_BGC_src = rasterio.open(plantations_AGC_BGC)
             plantations_AGC_BGC_stdev_src = rasterio.open(plantations_AGC_BGC_stdev)
-            uu.print_log("    Planted forest tile for {}".format(tile_id))
-        except:
-            uu.print_log("    No planted forest tile for {}".format(tile_id))
+            uu.print_log(f'    Planted forest tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    Planted forest tile not found for {tile_id}')
 
         try:
             us_AGC_BGC_src = rasterio.open(us_AGC_BGC)
             us_AGC_BGC_stdev_src = rasterio.open(us_AGC_BGC_stdev)
-            uu.print_log("    US removal factor tile for {}".format(tile_id))
-        except:
-            uu.print_log("    No US removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    US removal factor tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    US removal factor tile not found for {tile_id}')
 
         try:
             young_AGC_src = rasterio.open(young_AGC)
             young_AGC_stdev_src = rasterio.open(young_AGC_stdev)
-            uu.print_log("    Young forest removal factor tile for {}".format(tile_id))
-        except:
-            uu.print_log("    No young forest removal factor tile for {}".format(tile_id))
+            uu.print_log(f'    Young forest removal factor tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    Young forest removal factor tile not found for {tile_id}')
 
         try:
             age_category_src = rasterio.open(age_category)
-            uu.print_log("    Age category tile for {}".format(tile_id))
-        except:
-            uu.print_log("    No age category tile for {}".format(tile_id))
+            uu.print_log(f'    Age category tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    Age category tile not found for {tile_id}')
 
         try:
             ipcc_AGB_default_src = rasterio.open(ipcc_AGB_default)
             ipcc_AGB_default_stdev_src = rasterio.open(ipcc_AGB_default_stdev)
-            uu.print_log("    IPCC default removal rate tile for {}".format(tile_id))
-        except:
-            uu.print_log("    No IPCC default removal rate tile for {}".format(tile_id))
+            uu.print_log(f'    IPCC default removal rate tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    IPCC default removal rate tile not found for {tile_id}')
+
+        try:
+            BGB_AGB_ratio_src = rasterio.open(BGB_AGB_ratio)
+            uu.print_log(f'    BGB:AGB tile found for {tile_id}')
+        except rasterio.errors.RasterioIOError:
+            uu.print_log(f'    BGB:AGB tile not found for {tile_id}. Using default BGB:AGB from Mokany instead.')
 
         # Opens the output tile, giving it the arguments of the input tiles
         removal_forest_type_dst = rasterio.open(removal_forest_type, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(removal_forest_type_dst, sensit_type)
+        uu.add_universal_metadata_rasterio(removal_forest_type_dst)
         removal_forest_type_dst.update_tags(
             key='6: mangroves. 5: European-specific rates. 4: planted forests. 3: US-specific rates. 2: young (<20 year) secondary forests. 1: old (>20 year) secondary forests and primary forests. Priority goes to the highest number.')
         removal_forest_type_dst.update_tags(
@@ -130,7 +145,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
         stdev_annual_gain_AGC_all_forest_types_dst = rasterio.open(stdev_annual_gain_AGC_all_forest_types, 'w', **kwargs)
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_AGC_all_forest_types_dst, sensit_type)
+        uu.add_universal_metadata_rasterio(annual_gain_AGC_all_forest_types_dst)
         annual_gain_AGC_all_forest_types_dst.update_tags(
             units='megagrams aboveground carbon/ha/yr')
         annual_gain_AGC_all_forest_types_dst.update_tags(
@@ -139,7 +154,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_BGC_all_forest_types_dst, sensit_type)
+        uu.add_universal_metadata_rasterio(annual_gain_BGC_all_forest_types_dst)
         annual_gain_BGC_all_forest_types_dst.update_tags(
             units='megagrams belowground carbon/ha/yr')
         annual_gain_BGC_all_forest_types_dst.update_tags(
@@ -148,7 +163,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(annual_gain_AGC_BGC_all_forest_types_dst, sensit_type)
+        uu.add_universal_metadata_rasterio(annual_gain_AGC_BGC_all_forest_types_dst)
         annual_gain_AGC_BGC_all_forest_types_dst.update_tags(
             units='megagrams aboveground + belowground carbon/ha/yr')
         annual_gain_AGC_BGC_all_forest_types_dst.update_tags(
@@ -157,7 +172,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             extent='Full model extent')
 
         # Adds metadata tags to the output raster
-        uu.add_rasterio_tags(stdev_annual_gain_AGC_all_forest_types_dst, sensit_type)
+        uu.add_universal_metadata_rasterio(stdev_annual_gain_AGC_all_forest_types_dst)
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
             units='standard deviation for removal factor, in terms of megagrams aboveground carbon/ha/yr')
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
@@ -165,7 +180,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
         stdev_annual_gain_AGC_all_forest_types_dst.update_tags(
             extent='Full model extent')
 
-        uu.print_log("  Creating removal model forest type tile, AGC removal factor tile, BGC removal factor tile, and AGC removal factor standard deviation tile for {}".format(tile_id))
+        uu.print_log(f'  Creating removal model forest type tile, AGC removal factor tile, BGC removal factor tile, and AGC removal factor standard deviation tile for {tile_id}')
 
         uu.check_memory()
 
@@ -182,8 +197,14 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
 
             try:
                 age_category_window = age_category_src.read(1, window=window)
-            except:
+            except UnboundLocalError:
                 age_category_window = np.zeros((window.height, window.width), dtype='uint8')
+
+            try:
+                BGB_AGB_ratio_window = BGB_AGB_ratio_src.read(1, window=window)
+            except UnboundLocalError:
+                BGB_AGB_ratio_window = np.empty((window.height, window.width), dtype='float32')
+                BGB_AGB_ratio_window[:] = cn.below_to_above_non_mang
 
             # Lowest priority
             try:
@@ -195,7 +216,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                 # that don't have rates under this sensitivity analysis to still be included in the model.
                 # Unfortunately, model_extent is slightly different from the IPCC rate extent (no IPCC rates where
                 # there is no ecozone information), but this is a very small difference and not worth worrying about.
-                if sensit_type == 'no_primary_gain':
+                if cn.SENSIT_TYPE == 'no_primary_gain':
                     removal_forest_type_window = np.where(model_extent_window != 0,
                                                           cn.old_natural_rank,
                                                           removal_forest_type_window).astype('uint8')
@@ -207,12 +228,12 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                                                                    ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove,
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')
                 annual_gain_BGC_all_forest_types_window = np.where(ipcc_AGB_default_rate_window != 0,
-                                                                   ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove * cn.below_to_above_non_mang,
+                                                                   ipcc_AGB_default_rate_window * cn.biomass_to_c_non_mangrove * BGB_AGB_ratio_window,
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(ipcc_AGB_default_stdev_window != 0,
                                                                    ipcc_AGB_default_stdev_window * cn.biomass_to_c_non_mangrove,
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
-            except:
+            except UnboundLocalError:
                 pass
 
             try: # young_AGC_rate_window uses > because of the weird NaN in the tiles. If != is used, the young rate NaN overwrites the IPCC arrays
@@ -228,31 +249,31 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                                                                        young_AGC_rate_window,
                                                                        annual_gain_AGC_all_forest_types_window).astype('float32')
                     annual_gain_BGC_all_forest_types_window = np.where((young_AGC_rate_window > 0) & (age_category_window == 1),
-                                                                       young_AGC_rate_window * cn.below_to_above_non_mang,
+                                                                       young_AGC_rate_window * BGB_AGB_ratio_window,
                                                                        annual_gain_BGC_all_forest_types_window).astype('float32')
                     stdev_annual_gain_AGC_all_forest_types_window = np.where((young_AGC_stdev_window > 0) & (age_category_window == 1),
                                                                        young_AGC_stdev_window,
                                                                        stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
 
-            except:
+            except UnboundLocalError:
                 pass
 
-            if sensit_type != 'US_removals':
+            if cn.SENSIT_TYPE != 'US_removals':
                 try:
                     us_AGC_BGC_rate_window = us_AGC_BGC_src.read(1, window=window)
                     us_AGC_BGC_stdev_window = us_AGC_BGC_stdev_src.read(1, window=window)
                     removal_forest_type_window = np.where(us_AGC_BGC_rate_window != 0, cn.US_rank, removal_forest_type_window).astype('uint8')
                     annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
-                                                                       us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                       us_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window),
                                                                        annual_gain_AGC_all_forest_types_window).astype('float32')
                     annual_gain_BGC_all_forest_types_window = np.where(us_AGC_BGC_rate_window != 0,
                                                                        (us_AGC_BGC_rate_window) -
-                                                                       (us_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                       (us_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window)),
                                                                        annual_gain_BGC_all_forest_types_window).astype('float32')
                     stdev_annual_gain_AGC_all_forest_types_window = np.where(us_AGC_BGC_stdev_window != 0,
-                                                                       us_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
+                                                                       us_AGC_BGC_stdev_window / (1 + BGB_AGB_ratio_window),
                                                                        stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
-                except:
+                except UnboundLocalError:
                     pass
 
             try:
@@ -260,16 +281,16 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                 plantations_AGC_BGC_stdev_window = plantations_AGC_BGC_stdev_src.read(1, window=window)
                 removal_forest_type_window = np.where(plantations_AGC_BGC_rate_window != 0, cn.planted_forest_rank, removal_forest_type_window).astype('uint8')
                 annual_gain_AGC_all_forest_types_window = np.where(plantations_AGC_BGC_rate_window != 0,
-                                                                   plantations_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                   plantations_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window),
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')
                 annual_gain_BGC_all_forest_types_window = np.where(plantations_AGC_BGC_rate_window != 0,
                                                                    (plantations_AGC_BGC_rate_window ) -
-                                                                   (plantations_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                   (plantations_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window)),
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(plantations_AGC_BGC_stdev_window != 0,
-                                                                   plantations_AGC_BGC_stdev_window / (1 + cn.below_to_above_non_mang),
+                                                                   plantations_AGC_BGC_stdev_window / (1 + BGB_AGB_ratio_window),
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
-            except:
+            except UnboundLocalError:
                 pass
 
             try:
@@ -277,19 +298,19 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                 europe_AGC_BGC_stdev_window = europe_AGC_BGC_stdev_src.read(1, window=window)
                 removal_forest_type_window = np.where(europe_AGC_BGC_rate_window != 0, cn.europe_rank, removal_forest_type_window).astype('uint8')
                 annual_gain_AGC_all_forest_types_window = np.where(europe_AGC_BGC_rate_window != 0,
-                                                                   europe_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang),
+                                                                   europe_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window),
                                                                    annual_gain_AGC_all_forest_types_window).astype('float32')
                 annual_gain_BGC_all_forest_types_window = np.where(europe_AGC_BGC_rate_window != 0,
                                                                    (europe_AGC_BGC_rate_window) -
-                                                                   (europe_AGC_BGC_rate_window / (1 + cn.below_to_above_non_mang)),
+                                                                   (europe_AGC_BGC_rate_window / (1 + BGB_AGB_ratio_window)),
                                                                    annual_gain_BGC_all_forest_types_window).astype('float32')
                 # NOTE: Nancy Harris thought that the European removal standard deviations were 2x too large,
                 # per email on 8/30/2020. Thus, simplest fix is to leave original tiles 2x too large and
                 # correct them only where composited with other stdev sources.
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(europe_AGC_BGC_stdev_window != 0,
-                                                                   (europe_AGC_BGC_stdev_window/2) / (1 + cn.below_to_above_non_mang),
+                                                                   (europe_AGC_BGC_stdev_window/2) / (1 + BGB_AGB_ratio_window),
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
-            except:
+            except UnboundLocalError:
                 pass
 
             # Highest priority
@@ -307,7 +328,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
                 stdev_annual_gain_AGC_all_forest_types_window = np.where(mangroves_AGB_stdev_window != 0,
                                                                    mangroves_AGB_stdev_window * cn.biomass_to_c_mangrove,
                                                                    stdev_annual_gain_AGC_all_forest_types_window).astype('float32')
-            except:
+            except UnboundLocalError:
                 pass
 
             # Masks outputs to model output extent
@@ -325,4 +346,4 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list, sens
             stdev_annual_gain_AGC_all_forest_types_dst.write_band(1, stdev_annual_gain_AGC_all_forest_types_window, window=window)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_removal_forest_type, no_upload)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_removal_forest_type)

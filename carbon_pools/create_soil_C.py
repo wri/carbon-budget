@@ -14,12 +14,10 @@ So, I switched to this somewhat more convoluted method that uses both gdal and r
 '''
 
 import datetime
-from subprocess import Popen, PIPE, STDOUT, check_call
 import numpy as np
 import rasterio
 import os
-import sys
-sys.path.append('../')
+
 import universal_util as uu
 import constants_and_names as cn
 
@@ -54,7 +52,7 @@ def create_mangrove_soil_C(tile_id, no_upload):
 
     else:
 
-        uu.print_log("No mangrove aboveground biomass tile for", tile_id)
+        uu.print_log("Mangrove aboveground biomass tile not found for", tile_id)
 
     # Prints information about the tile that was just processed
     uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove', no_upload)
@@ -112,7 +110,7 @@ def create_combined_soil_C(tile_id, no_upload):
 
     else:
 
-        uu.print_log("No mangrove aboveground biomass tile for", tile_id)
+        uu.print_log("Mangrove aboveground biomass tile not found for", tile_id)
 
         # If there is no mangrove soil C tile, the final output of the mineral soil function needs to receive the
         # correct final name.

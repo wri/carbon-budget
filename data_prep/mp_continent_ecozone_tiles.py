@@ -17,31 +17,32 @@
 
 
 import multiprocessing
-import continent_ecozone_tiles
 from subprocess import Popen, PIPE, STDOUT, check_call
 import datetime
 import argparse
 import os
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+from . import continent_ecozone_tiles
 
 def mp_continent_ecozone_tiles(tile_id_list, run_date = None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of tiles to run in the model
-        tile_id_list = uu.create_combined_tile_list(cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir)
+        tile_id_list = uu.create_combined_tile_list(
+            [cn.pattern_WHRC_biomass_2000_non_mang_non_planted, cn.mangrove_biomass_2000_dir],
+            sensit_type = cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
-    uu.print_log("There are {} tiles to process".format(str(len(tile_id_list))) + "\n")
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # if the continent-ecozone shapefile hasn't already been downloaded, it will be downloaded and unzipped
-    uu.s3_file_download(cn.cont_eco_s3_zip, cn.docker_base_dir, 'std')
+    uu.s3_file_download(cn.cont_eco_s3_zip, cn.docker_tile_dir, 'std')
 
     # Unzips ecozone shapefile
     cmd = ['unzip', cn.cont_eco_zip]
@@ -88,6 +89,6 @@ if __name__ == '__main__':
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list=tile_id_list, run_date=run_date)
+    uu.initiate_log(tile_id_list)
 
     mp_continent_ecozone_tiles(tile_id_list=tile_id_list, run_date=run_date)

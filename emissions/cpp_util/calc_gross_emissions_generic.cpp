@@ -11,10 +11,10 @@
 // Each end point of the decision tree gets its own code, so that it's easier to tell what branch of the decision tree
 // each pixel came from. That makes checking the results easier, too.
 // These codes are summarized in carbon-budget/emissions/node_codes.txt
-// Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N20), each model endpoint has a CO2-only and
+// Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N2O), each model endpoint has a CO2-only and
 // a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
 // Compile with:
-// c++ ../carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_soil.cpp -o ../carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_soil.exe -lgdal
+// c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 
 
 #include <iostream>
@@ -83,6 +83,12 @@ boreal = constants::boreal;
 
 int soil_emis_period;      // The number of years over which soil emissions are calculated (separate from model years)
 soil_emis_period = constants::soil_emis_period;
+
+float shiftag_flu; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
+shiftag_flu = constants::shiftag_flu;
+
+float urb_flu; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
+urb_flu = constants::urb_flu;
 
 
 // Input files
@@ -244,8 +250,8 @@ uly=GeoTransform[3];
 pixelsize=GeoTransform[1];
 
 // // Manually change this to test the script on a small part of the raster. This starts at top left of the tile.
-//xsize = 4500;
-//ysize = 3500;
+//xsize = 40000;
+//ysize = 1100;
 
 // Print the raster size and resolution. Should be 40,000 x 40,000 and pixel size 0.00025.
 cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
@@ -339,7 +345,7 @@ OUTBAND12 = OUTGDAL12->GetRasterBand(1);
 OUTBAND12->SetNoDataValue(0);
 
 // Decision tree node
-OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL20 = OUTDRIVER->Create( out_name20.c_str(), xsize, ysize, 1, GDT_UInt16, papszOptions );
 OUTGDAL20->SetGeoTransform(adfGeoTransform); OUTGDAL20->SetProjection(OUTPRJ);
 OUTBAND20 = OUTGDAL20->GetRasterBand(1);
 OUTBAND20->SetNoDataValue(0);
@@ -371,7 +377,7 @@ float out_data6[xsize];
 float out_data10[xsize];
 float out_data11[xsize];
 float out_data12[xsize];
-float out_data20[xsize];
+short int out_data20[xsize];
 
 // Loop over the y coordinates, then the x coordinates
 for (y=0; y<ysize; y++)
@@ -443,7 +449,7 @@ for(x=0; x<xsize; x++)
 		float outdata10 = 0;  // all drivers, all gases
 		float outdata11 = 0;  // all drivers, CO2 only
 		float outdata12 = 0;  // all drivers, non-CO2
-		float outdata20 = 0;  // flowchart node
+		short int outdata20 = 0;  // flowchart node
 
         // Only evaluates pixels that have loss and carbon. By definition, all pixels with carbon are in the model extent.
 		if (loss_data[x] > 0 && agc_data[x] > 0)
@@ -655,8 +661,6 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
                 Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
-				float shiftag_flu;
-				shiftag_flu = 0.72;
 				minsoil = ((soil_data[x]-(soil_data[x] * shiftag_flu))/soil_emis_period) * (model_years-loss_data[x]);
 
 				if (peat_data[x] > 0) // Shifting ag, peat
@@ -955,8 +959,6 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_nofire_CO2_only = non_soil_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = (non_soil_c * C_to_CO2);
 				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv) + ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
-				float urb_flu;
-				urb_flu = 0.8;
 				minsoil = ((soil_data[x]-(soil_data[x] * urb_flu))/soil_emis_period) * (model_years-loss_data[x]);
 
                 if (peat_data[x] > 0) // Urbanization, peat
@@ -1263,7 +1265,7 @@ CPLErr errcodeOut6 = OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data6, xs
 CPLErr errcodeOut10 = OUTBAND10->RasterIO( GF_Write, 0, y, xsize, 1, out_data10, xsize, 1, GDT_Float32, 0, 0 );
 CPLErr errcodeOut11 = OUTBAND11->RasterIO( GF_Write, 0, y, xsize, 1, out_data11, xsize, 1, GDT_Float32, 0, 0 );
 CPLErr errcodeOut12 = OUTBAND12->RasterIO( GF_Write, 0, y, xsize, 1, out_data12, xsize, 1, GDT_Float32, 0, 0 );
-CPLErr errcodeOut20 = OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_Float32, 0, 0 );
+CPLErr errcodeOut20 = OUTBAND20->RasterIO( GF_Write, 0, y, xsize, 1, out_data20, xsize, 1, GDT_UInt16, 0, 0 );
 
 // Number of output files
 int outSize = 10;

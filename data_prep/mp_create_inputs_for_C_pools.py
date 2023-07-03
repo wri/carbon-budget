@@ -7,16 +7,15 @@ from subprocess import Popen, PIPE, STDOUT, check_call
 import os
 import argparse
 import datetime
-import create_inputs_for_C_pools
 import multiprocessing
 import sys
-sys.path.append('../')
 import constants_and_names as cn
 import universal_util as uu
+from . import create_inputs_for_C_pools
 
 def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None):
 
-    os.chdir(cn.docker_base_dir)
+    os.chdir(cn.docker_tile_dir)
     sensit_type = 'std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
@@ -41,10 +40,10 @@ def mp_create_inputs_for_C_pools(tile_id_list, run_date = None, no_upload = None
     input_files = [cn.fao_ecozone_raw_dir, cn.precip_raw_dir]
 
     for input in input_files:
-        uu.s3_file_download('{}'.format(input), cn.docker_base_dir, sensit_type)
+        uu.s3_file_download('{}'.format(input), cn.docker_tile_dir, sensit_type)
 
     uu.print_log("Unzipping boreal/temperate/tropical file (from FAO ecozones)")
-    cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_base_dir]
+    cmd = ['unzip', '{}'.format(cn.pattern_fao_ecozone_raw), '-d', cn.docker_tile_dir]
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Copying elevation (srtm) files")
@@ -86,13 +85,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
     tile_id_list = args.tile_id_list
     run_date = args.run_date
-    no_upload = args.no_upload
+    no_upload = args.NO_UPLOAD
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
         no_upload = True
 
     # Create the output log
-    uu.initiate_log(tile_id_list, run_date=run_date, no_upload=no_upload)
+    uu.initiate_log(tile_id_list)
 
     mp_create_inputs_for_C_pools(tile_id_list, run_date=run_date, no_upload=no_upload)
