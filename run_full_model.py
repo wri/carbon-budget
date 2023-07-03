@@ -76,7 +76,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions_biomass_soil', 'gross_emissions_soil_only',
-                    'net_flux', 'aggregate', 'create_derivative_outputs']
+                    'net_flux', 'create_derivative_outputs']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
