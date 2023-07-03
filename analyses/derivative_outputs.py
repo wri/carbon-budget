@@ -196,7 +196,12 @@ def aggregate_within_tile(tile_id, download_pattern_name):
 
     xmin, ymin, xmax, ymax = uu.coords(focal_tile_rewindowed)
 
-    in_src = rasterio.open(focal_tile_rewindowed)
+    try:
+        in_src = rasterio.open(focal_tile_rewindowed)
+        uu.print_log(f'   Tile found for {tile_id}. Rewindowing.')
+    except rasterio.errors.RasterioIOError:
+        uu.print_log(f'   Tile not found for {tile_id}. Skipping tile.')
+        return
 
     # Grabs the windows of the tile (stripes) in order to iterate over the entire tif without running out of memory
     windows = in_src.block_windows(1)

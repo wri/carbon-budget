@@ -68,7 +68,6 @@ def initiate_log(tile_id_list):
     logging.info(f'Tile ID list: {tile_id_list}')
     logging.info(f'Carbon emitted_pools to generate (optional): {cn.CARBON_POOL_EXTENT}')
     logging.info(f'Emissions emitted_pools (optional): {cn.EMITTED_POOLS}')
-    logging.info(f'TCD threshold for aggregated map (optional): {cn.THRESH}')
     logging.info(f'Standard net flux for comparison with sensitivity analysis net flux (optional): {cn.STD_NET_FLUX}')
     logging.info(f'Include mangrove removal scripts in model run (optional): {cn.INCLUDE_MANGROVES}')
     logging.info(f'Include US removal scripts in model run (optional): {cn.INCLUDE_US}')
@@ -178,9 +177,6 @@ def log_subprocess_output(pipe):
             logging.info(line.decode("utf-8")) #https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
             print(line.decode("utf-8"))
 
-        # logging.info("\n")
-        # print("\n")
-
     # # After the subprocess finishes, the log is uploaded to s3.
     # # Having too many tiles finish running subprocesses at once can cause the upload to get overwhelmed and cause
     # # an error. So, I've commented out the log upload because it's not really necessary here.
@@ -213,8 +209,6 @@ def log_subprocess_output_full(cmd):
                 print(line.decode(
                     "utf-8"))  # https://stackoverflow.com/questions/37016946/remove-b-character-do-in-front-of-a-string-literal-in-python-3, answer by krock
 
-            # logging.info("\n")
-            # print("\n")
 
         # # After the subprocess finishes, the log is uploaded to s3
         # upload_log()
@@ -742,7 +736,11 @@ def s3_file_download(source, dest, sensit_type):
     # Retrieves the s3 directory and name of the tile from the full path name
     dir = get_tile_dir(source)
     file_name = get_tile_name(source)
-    tile_id = get_tile_id(file_name)
+
+    try:
+        tile_id = get_tile_id(file_name)
+    except:
+        pass
 
     # Changes the file to download based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3.
@@ -903,7 +901,7 @@ def check_and_delete_if_empty_light(tile_id, output_pattern):
     if stats[0] != 0:
         print_log(f'  Data found in {tile_name}. Keeping file...')
     else:
-        print_log(f'  No data found. Deleting {tile_name}...')
+        print_log(f'  Data not found in {tile_name}. Deleting...')
         os.remove(tile_name)
 
     # Using this gdal data check method creates a tif.aux.xml file that is unnecessary.
@@ -936,7 +934,7 @@ def check_and_delete_if_empty(tile_id, output_pattern):
     no_data = check_for_data(tile_name)
 
     if no_data:
-        print_log(f'  No data found in {tile_name}. Deleting tile...')
+        print_log(f'  Data not found in {tile_name}. Deleting...')
         os.remove(tile_name)
     else:
         print_log(f'  Data found in {tile_name}. Keeping tile to copy to s3...')
@@ -952,7 +950,7 @@ def check_and_upload(tile_id, upload_dir, pattern):
 
     if no_data:
 
-        print_log(f'  No data found. Not copying {tile_id}.')
+        print_log(f'  Data not found in {tile_id}. Not copying to s3...')
 
     else:
 
@@ -1135,7 +1133,7 @@ def name_aggregated_output(pattern):
     # print(out_pattern)
     out_pattern = re.sub(f'2001_{cn.loss_years}', '', out_pattern)
     # print(out_pattern)
-    out_pattern = re.sub('_Mg_', '_Mt_', out_pattern)
+    out_pattern = re.sub('_Mg_', '_Mt_per_year', out_pattern)
     # print(out_pattern)
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print(out_pattern)

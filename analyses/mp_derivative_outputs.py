@@ -35,13 +35,16 @@ import universal_util as uu
 
 from . import derivative_outputs
 
-def mp_derivative_outputs(tile_id_list_outer):
+def mp_derivative_outputs(tile_id_list):
     """
-    :param tile_id_list_outer: list of tile ids to process
+    :param tile_id_list: list of tile ids to process
     :return: derivative outputs at native and aggregated resolution for emissions, removals, and net flux
     """
 
     os.chdir(cn.docker_tile_dir)
+
+    # Keeps tile_id_list as its own variable for referencing in the tile set for loop
+    tile_id_list_outer = tile_id_list
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list_outer == 'all':
@@ -114,7 +117,7 @@ def mp_derivative_outputs(tile_id_list_outer):
 
         # If a full model run is specified, the correct set of tiles for the particular script is listed.
         # A new list is named so that tile_id_list stays as the command line argument.
-        if tile_id_list_outer == 'all':
+        if tile_id_list == 'all':
             # List of tiles to run in the model
             tile_id_list_inner = uu.tile_list_s3(input_dir, cn.SENSIT_TYPE)
         else:
@@ -154,10 +157,9 @@ def mp_derivative_outputs(tile_id_list_outer):
             for tile_id in tile_id_list_inner:
                 derivative_outputs.forest_extent_per_pixel_outputs(tile_id, input_pattern, output_patterns)
         else:
-            # Gross removals: 20 processors = >740 GB peak; 15 = 570 GB peak; 17 = 660 GB peak; 18 = 670 GB peak
-            # Gross emissions: 17 processors = 660 GB peak; 18 = 710 GB peak
+            # 18 = >740 GB peak; 15=XXX GB peak
             if cn.count == 96:
-                processes = 18
+                processes = 15
             else:
                 processes = 2
             uu.print_log(f'Creating derivative outputs for {input_pattern} with {processes} processors...')
@@ -187,7 +189,7 @@ def mp_derivative_outputs(tile_id_list_outer):
                 if cn.SENSIT_TYPE == 'biomass_swap':
                     processes = 12  # 12 processors = XXX GB peak
                 else:
-                    processes = 16  # 16 processors = XXX GB peak
+                    processes = 14  # 14 processors = XXX GB peak
             else:
                 processes = 8
             uu.print_log(f'Rewindow max processors= {processes}')
@@ -213,7 +215,7 @@ def mp_derivative_outputs(tile_id_list_outer):
                 if cn.SENSIT_TYPE == 'biomass_swap':
                     processes = 10  # 10 processors = XXX GB peak
                 else:
-                    processes = 12  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
+                    processes = 11  # 16 processors = 180 GB peak; 16 = XXX GB peak; 20 = >750 GB (maxed out)
             else:
                 processes = 8
             uu.print_log(f'Aggregate max processors={processes}')
@@ -235,11 +237,11 @@ def mp_derivative_outputs(tile_id_list_outer):
         for vrt in vrt_list:
             os.remove(vrt)
 
-        rewindow_list =glob.glob(f'{download_pattern_name}_rewindow.tif')
+        rewindow_list = glob.glob(f'*rewindow.tif')
         for rewindow in rewindow_list:
             os.remove(rewindow)
 
-        aggreg_list =glob.glob(f'{download_pattern_name}_0_04deg.tif')
+        aggreg_list = glob.glob(f'*_0_04deg.tif')
         for aggreg in aggreg_list:
             os.remove(aggreg)
 

@@ -38,26 +38,32 @@ def mp_prep_other_inputs(tile_id_list):
 
     '''
     Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
-    gdal_warp is producing a weird output, so I did it in ArcMap for the 2020 update, 
-    with the output cell size being 0.01 x 0.01 degree and the method being nearest.
+    gdal_warp is producing a weird output, so I did it in ArcMap for the 2022 update, 
+    with the output cell size being 0.005 x 0.005 degree and the method being nearest.
     
-    arcpy.ProjectRaster_management(in_raster="C:/GIS/Drivers of loss/2020_drivers__tif__from_Forrest_Follett_20210323/FinalClassification_2020_v2__from_Jimmy_MacCarthy_20210323.tif", 
-    out_raster="C:/GIS/Drivers of loss/2020_drivers__tif__from_Forrest_Follett_20210323/Final_Classification_2020__reproj_nearest_0-005_0-005_deg__20210323.tif", 
-    out_coor_system="GEOGCS['GCS_WGS_1984',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]]", 
-    resampling_type="NEAREST", cell_size="0.005 0.005", geographic_transform="", 
-    Registration_Point="", 
-    in_coor_system="PROJCS['WGS_1984_Goode_Homolosine',GEOGCS['GCS_unknown',DATUM['D_WGS_1984',SPHEROID['WGS_1984',6378137.0,298.257223563]],PRIMEM['Greenwich',0.0],UNIT['Degree',0.0174532925199433]],PROJECTION['Goode_Homolosine'],PARAMETER['False_Easting',0.0],PARAMETER['False_Northing',0.0],PARAMETER['Central_Meridian',0.0],PARAMETER['Option',1.0],UNIT['Meter',1.0]]", 
-    vertical="NO_VERTICAL")
+    arcpy.management.ProjectRaster("TCL_DD_2022_20230407.tif", r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84.tif", 
+    'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
+    UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
+    GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
+    UNIT["Degree",0.0174532925199433]],PROJECTION["Goode_Homolosine"],PARAMETER["False_Easting",0.0],
+    PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Option",1.0],UNIT["Meter",1.0]]', "NO_VERTICAL")
+
+    
+    The 2022 drivers had 0 instead of NoData, so I used Copy Raster to turn the 0 into NoData:
+    arcpy.management.CopyRaster("TCL_DD_2022_20230407_wgs84.tif", 
+    r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84_setnodata.tif", '', None, "0", "NONE", "NONE", '', "NONE", "NONE", "TIFF", "NONE", 
+    "CURRENT_SLICE", "NO_TRANSPOSE")
+    
     '''
 
     # List of output directories and output file name patterns
     output_dir_list = [
-                       cn.drivers_processed_dir,
-                       cn.TCLF_processed_dir
+                       cn.drivers_processed_dir
+                       # ,cn.TCLF_processed_dir
     ]
     output_pattern_list = [
-                           cn.pattern_drivers,
-                           cn.pattern_TCLF_processed
+                           cn.pattern_drivers
+                           # ,cn.pattern_TCLF_processed
     ]
 
 
@@ -100,43 +106,43 @@ def mp_prep_other_inputs(tile_id_list):
     pool.join()
 
 
-    ### Tree cover loss from fires processing
-    uu.print_log("STEP 2: Preprocess tree cover loss from fires")
-
-    # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
-    # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
-    TCLF_s3_dir = os.path.join(cn.docker_tile_dir, 'TCLF')
-    if os.path.exists(TCLF_s3_dir):
-        os.rmdir(TCLF_s3_dir)
-    os.mkdir(TCLF_s3_dir)
-    cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--request-payer', 'requester',
-           '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--recursive']
-    uu.log_subprocess_output_full(cmd)
-
-    # Creates global vrt of TCLF
-    uu.print_log("Creating vrt of TCLF...")
-    tclf_vrt = 'TCLF.vrt'
-    os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/*.tif')
-    uu.print_log("  TCLF vrt created")
-
-    # Creates TCLF tiles
-    source_raster = tclf_vrt
-    out_pattern = cn.pattern_TCLF_processed
-    dt = 'Byte'
-    if cn.count == 96:
-        processes = 30  # 30 = 460 GB initial peak; 33 = 510 GB initial peak; 40 = >750 GB peak but later on (40 is too many)
-    else:
-        processes = int(cn.count/2)
-    uu.print_log(f'Creating TCLF tiles with {processes} processors...')
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-    pool.close()
-    pool.join()
+    # ### Tree cover loss from fires processing
+    # uu.print_log("STEP 2: Preprocess tree cover loss from fires")
+    #
+    # # TCLF is downloaded to its own folder because it doesn't have a standardized file name pattern.
+    # # This way, the entire contents of the TCLF folder can be worked on without mixing with other files.
+    # TCLF_s3_dir = os.path.join(cn.docker_tile_dir, 'TCLF')
+    # if os.path.exists(TCLF_s3_dir):
+    #     os.rmdir(TCLF_s3_dir)
+    # os.mkdir(TCLF_s3_dir)
+    # cmd = ['aws', 's3', 'cp', cn.TCLF_raw_dir, TCLF_s3_dir, '--request-payer', 'requester',
+    #        '--include', '*', '--exclude', 'tiles*', '--exclude', '*geojason', '--exclude', '*Store', '--recursive']
+    # uu.log_subprocess_output_full(cmd)
+    #
+    # # Creates global vrt of TCLF
+    # uu.print_log("Creating vrt of TCLF...")
+    # tclf_vrt = 'TCLF.vrt'
+    # os.system(f'gdalbuildvrt -srcnodata 0 {tclf_vrt} {TCLF_s3_dir}/*.tif')
+    # uu.print_log("  TCLF vrt created")
+    #
+    # # Creates TCLF tiles
+    # source_raster = tclf_vrt
+    # out_pattern = cn.pattern_TCLF_processed
+    # dt = 'Byte'
+    # if cn.count == 96:
+    #     processes = 34  # 30 = 510 GB initial peak; 34=600 GB peak
+    # else:
+    #     processes = int(cn.count/2)
+    # uu.print_log(f'Creating TCLF tiles with {processes} processors...')
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+    # pool.close()
+    # pool.join()
 
 
     for output_pattern in [
-        cn.pattern_TCLF_processed
-        ,cn.pattern_drivers
+        cn.pattern_drivers
+        # ,cn.pattern_TCLF_processed
     ]:
 
         if cn.count == 96:

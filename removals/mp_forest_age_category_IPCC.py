@@ -126,7 +126,7 @@ def mp_forest_age_category_IPCC(tile_id_list):
             if cn.SENSIT_TYPE == 'biomass_swap':
                 processes = 32 # 32 processors = 610 GB peak
             else:
-                processes = 44 # 30 processors=460 GB peak; 36 = 550 GB peak; 42 = 700 GB peak (slow increase later on); 44=700 GB peak
+                processes = 44 # 30 processors=460 GB peak; 36 = 550 GB peak; 42 = 700 GB peak (slow increase later on); 44=725 GB peak
         else:
             processes = 2
         uu.print_log(f'Natural forest age category max processors={processes}')

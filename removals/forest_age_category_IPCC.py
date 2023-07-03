@@ -77,7 +77,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
             biomass_src = rasterio.open(biomass)
             uu.print_log(f'   Biomass tile found for {tile_id}')
         except rasterio.errors.RasterioIOError:
-            uu.print_log(f'   Ciomass tile not found for {tile_id}')
+            uu.print_log(f'   Biomass tile not found for {tile_id}')
 
         try:
             loss_src = rasterio.open(loss)
@@ -111,7 +111,7 @@ def forest_age_category(tile_id, gain_table_dict, pattern):
         dst.update_tags(
             extent='Full model extent, even though these age categories will not be used over the full model extent. They apply to just the rates from IPCC defaults.')
 
-        uu.print_log(f'    Assigning IPCC age categories for {tile_id}')
+        uu.print_log(f'     Assigning IPCC age categories for {tile_id}')
 
         uu.check_memory()
 

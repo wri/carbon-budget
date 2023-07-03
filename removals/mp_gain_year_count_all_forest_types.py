@@ -190,8 +190,6 @@ def mp_gain_year_count_all_forest_types(tile_id_list):
     # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
 
-        print("in upload area")
-
         # Intermediate output tiles for checking outputs
         uu.upload_final_set(output_dir_list[0], "gain_year_count_loss_only")
         uu.upload_final_set(output_dir_list[0], "gain_year_count_gain_only")
