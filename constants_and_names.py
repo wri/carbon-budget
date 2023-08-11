@@ -312,17 +312,17 @@ gadm_plant_1x1_index_dir = os.path.join(s3_base_dir, 'gadm_plantation_1x1_tile_i
 pattern_gadm_1x1_index = 'gadm_index_1x1'
 pattern_plant_1x1_index = 'plantation_index_1x1'
 
-# Countries with planted forests in them according to the planted forest geodatabase
+# Countries with planted forests in them according to the Spatial Database of Planted Trees v2
 plantation_countries = [
-                        'ARG', 'VNM', 'VEN', 'THA', 'RWA', 'PNG', 'PHL', 'PAN', 'NIC', 'IND', 'HND', 'CRI', 'COD', 'COL',
-                        'GAB', 'GHA', 'GTM', 'IDN', 'KEN', 'KHM', 'PRK', 'KOR', 'LBR', 'LKA', 'MEX', 'MMR', 'MWI', 'MGA',
-                        'NPL', 'NZL', 'PAK', 'PER', 'SLB', 'URY', 'USA', 'ZAF', 'AUS', 'BRA', 'CHL', 'CHN', 'CIV', 'CMR',
-                        'JPN', 'MYS', 'ECU',
-                        'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL',
-                        'ITA', 'LVA', 'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE', 'GBR',
-                        'ALA', 'ALB', 'ARM', 'AZE', 'BIH', 'BLR', 'CHE', 'GEO', 'IRQ', 'ISL', 'MDA', 'MKD', 'MNE',
-                        'NGA', 'NOR', 'SRB', 'SYR', 'TUR', 'UKR', 'XKO'
-                        ]
+'AGO', 'ARG', 'ARM', 'AUS', 'AZE', 'BDI', 'BEN', 'BFA', 'BGD', 'BLZ', 'BOL', 'BRA', 'BRN', 'BTN', 'CAF', 'CAN',
+'CHL', 'CHN', 'CIV', 'CMR', 'COD', 'COG', 'COL', 'CPV', 'CRI', 'CUB', 'CYP', 'DOM', 'DZA', 'ECU', 'EGY', 'ERI',
+'ETH', 'EU', 'FJI', 'GAB', 'GHA', 'GIN', 'GLP', 'GMB', 'GNB', 'GNQ', 'GTM', 'GUF', 'HND', 'HTI', 'IDN', 'IND',
+'IRN', 'IRQ', 'ISR', 'JAM', 'JOR', 'JPN', 'KAZ', 'KEN', 'KGZ', 'KHM', 'KOR', 'LAO', 'LBN', 'LBR', 'LBY', 'LKA',
+'LSO', 'MAR', 'MDG', 'MEX', 'MLI', 'MMR', 'MNG', 'MOZ', 'MRT', 'MWI', 'MYS', 'NCL', 'NGA', 'NIC', 'NPL', 'NZL',
+'OMN', 'PAK', 'PAN', 'PER', 'PHL', 'PNG', 'PRK', 'PRY', 'RUS', 'RWA', 'SEN', 'SLB', 'SLE', 'SLV', 'SOM', 'SSD',
+'STP', 'SUR', 'SWZ', 'SYR', 'TGO', 'THA', 'TJK', 'TTO', 'TUN', 'TUR', 'TZA', 'UGA', 'URY', 'USA', 'UZB', 'VEN',
+'VNM', 'VUT', 'ZAF', 'ZMB', 'ZWE',
+]
 
 ######
 ### Removals

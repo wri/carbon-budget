@@ -30,6 +30,7 @@ RUN apt-get update -y && apt-get install -y \
     tmux \
     git \
     vim \
+    zip \
     && apt-get clean all
 
 

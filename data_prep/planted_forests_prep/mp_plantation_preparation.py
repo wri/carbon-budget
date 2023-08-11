@@ -54,27 +54,32 @@ each country's feature class's attribute table has a growth rate column named "g
 # Start a r5d.24xlarge spot machine
 spotutil new r5d.24xlarge dgibbs_wri
 
-# Change directory to where the data are kept in the docker
+# Only on r5d instances: Change directory to where the data are kept in the docker
 cd /usr/local/tiles/
 
 # Copy zipped plantation gdb with growth rate field in tables
-aws s3 cp s3://gfw-files/plantations/final/global/plantations_v3_1.gdb.zip .
+aws s3 cp s3://gfw-files/plantations/SDPT_2.0/sdpt_v2.0_v07102023.gdb.zip .
 
-# Unzip the zipped plantation gdb. This can take several minutes.
-unzip plantations_v3_1.gdb.zip
+# I tried unzipping the gdb with sdpt_v2.0_v07102023.gdb.zip but got an error about extra bytes at the beginning.
+# I followed the solution at https://unix.stackexchange.com/a/115831 to fix the zipped gdb before unzipping.
+zip -FFv  sdpt_v2.0_v07102023.gdb.zip --out sdpt_v2.0_v07102023.gdb.fixed.zip
 
-# Start the postgres service and check that it has actually started
+# Unzip the gdb (1.5 minutes)
+unzip sdpt_v2.0_v07102023.gdb.fixed.zip
+
+# Only on r5d instances: Start the postgres service and check that it has actually started
 service postgresql restart
 pg_lsclusters
 
-# Create a postgres database called ubuntu. I tried adding RUN createdb ubuntu to the Dockerfile after RUN service postgresql restart
+# Only on r5d instances: Create a postgres database called ubuntu. 
+# I tried adding RUN createdb ubuntu to the Dockerfile after RUN service postgresql restart
 # but got the error: 
 # createdb: could not connect to database template1: could not connect to server: No such file or directory.
 #         Is the server running locally and accepting
 # So I'm adding that step here.
 createdb ubuntu
 
-# Enter the postgres database called ubuntu and add the postgis exension to it
+# Only on r5d instances: Enter the postgres database called ubuntu and add the postgis exension to it
 psql
 CREATE EXTENSION postgis;
 \q
@@ -86,13 +91,13 @@ CREATE EXTENSION postgis;
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
-ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -progress -nln all_plant -sql "SELECT growth, species_simp, SD_error FROM cmr_plant"
+ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v07102023.gdb -progress -nln all_plant -sql "SELECT growth, simpleName, growSDerror FROM cmr_plant_v2"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
 \d+ all_plant;
 SELECT * FROM all_plant LIMIT 2;   # To see what the first two rows look like
-SELECT COUNT (*) FROM all_plant;   # Should be 697 for CMR in plantations v3.1
+SELECT COUNT (*) FROM all_plant;   # Should be 7777 for CMR in plantations v2.0
 
 # Delete all rows from the table so that it is now empty
 DELETE FROM all_plant;
@@ -101,16 +106,19 @@ DELETE FROM all_plant;
 \q
 
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
-ogrinfo plantations_v3_1.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
+ogrinfo sdpt_v2.0_v07102023.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
 # Make sure all the country tables are listed in the txt, then exit it
 more out.txt
 q
 
+# Enter a tmux sessions
+tmux
+
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table.
 # I think it's okay that there's a message "Warning 1: organizePolygons() received a polygon with more than 100 parts. The processing may be really slow.  You can skip the processing by setting METHOD=SKIP, or only make it analyze counter-clock wise parts by setting METHOD=ONLY_CCW if you can assume that the outline of holes is counter-clock wise defined"
 # It just seems to mean that the processing is slow, but the processing methods haven't changed. 
-while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" plantations_v3_1.gdb -nln all_plant -progress -append -sql "SELECT growth, species_simp, SD_error FROM $p"; done < out.txt
+time while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v07102023.gdb -nln all_plant -progress -append -sql "SELECT growth, simpleName, growSDerror FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 psql
