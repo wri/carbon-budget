@@ -1,14 +1,16 @@
-'''
-Code for creating 10x10 degree tiles of aboveground+belowground carbon accumulation rate
-and plantation category out of the plantation geodatabase.
-Its outputs are two sets of tiles at the full extent of planted forest features (not masked by mangrove or
-non-mangrove natural forest): above+belowground carbon accumulation rate, and plantation type (1: oil palm, 2: wood fiber,
-3: other).
-Unlike other carbon model scripts, this one requires prep work done outside of the script (the large, commented chunk
-below this).
+#TODO Add year planted from Du et al. update as another output column. Change readme accordingly. 
+
+"""
+Code for rasterizing three properties of the Spatial Database of Planted Trees v2 (SDPT v2) geodatabase
+into 10x10 degree tiles:
+1) aboveground carbon removal factors (AGC RF),
+2)AGC RF standard deviations,
+3) and general plantation type (1: oil palm, 2: wood fiber, 3: other).
+Unlike other carbon model scripts, this one requires prep work done outside of the script
+(the large, commented chunk below this).
 Once that prep work of converting the gdb to a PostGIS table has been done, there are a few entry points to this script,
-unlike other carbon model scripts.
-Which entry point is chosen depends on what has changed in the plantation data since it was last processed.
+also unlike other carbon model scripts.
+Which entry point is chosen depends on what has changed in the SDPT since it was last rasterized here.
 ## NOTE: The entry point for the script is indicated by supplying two arguments following the python call.
 The entry points rely on two shapefiles of the indexes (outlines) of 1x1 tiles created during plantation processing:
 1. Shapefile of 1x1 tiles of the countries with planted forests (basically, countries with planted forests rasterized to 1x1 deg),
@@ -37,19 +39,18 @@ planted forest extent tiles,
 e.g., python mp_plantation_preparation.py -gi None -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
 e.g., python mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
 
-All entry points conclude with creating 10x10 degree tiles of planted forest carbon accumulation rates and
-planted forest type from 1x1 tiles of planted forest extent.
+All entry points conclude with creating 10x10 degree tiles of the three outputs from 1x1 tiles for SDPT v2 extent.
 
 To run this for just a part of the world, create a new shapefile of 1x1 GADM or plantation tile boundaries (making sure that they
 extend to 10x10 degree tiles (that is, the area being processed must match 10x10 degree tiles) and use that as a
 command line argument. Supply the rest of the global tiles (the unchanged tiles) from the previous model run.
-'''
+"""
 
 """
-Before running this script, the plantation gdb must be converted into a PostGIS table. That's more easily done as a series
+Before running this script, the SDPT gdb must be converted into a PostGIS table. That's more easily done as a series
 of commands than as a script. Below are the instructions for creating a single PostGIS table of all plantations.
-This assumes that the plantation gdb has one feature class for each country with plantations and that
-each country's feature class's attribute table has a growth rate column named "growth".
+This assumes that the plantation gdb has one feature class for each country with plantations.
+Some commands will need to be changed if the gdb column names related to removal factors change.
 
 # Start a r5d.24xlarge spot machine
 spotutil new r5d.24xlarge dgibbs_wri
@@ -65,7 +66,7 @@ aws s3 cp s3://gfw-files/plantations/SDPT_2.0/sdpt_v2.0_v07102023.gdb.zip .
 zip -FFv  sdpt_v2.0_v07102023.gdb.zip --out sdpt_v2.0_v07102023.gdb.fixed.zip
 
 # Unzip the gdb (1.5 minutes)
-unzip sdpt_v2.0_v07102023.gdb.fixed.zip
+time unzip sdpt_v2.0_v07102023.gdb.fixed.zip
 
 # Only on r5d instances: Start the postgres service and check that it has actually started
 service postgresql restart
@@ -118,16 +119,24 @@ tmux
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table.
 # I think it's okay that there's a message "Warning 1: organizePolygons() received a polygon with more than 100 parts. The processing may be really slow.  You can skip the processing by setting METHOD=SKIP, or only make it analyze counter-clock wise parts by setting METHOD=ONLY_CCW if you can assume that the outline of holes is counter-clock wise defined"
 # It just seems to mean that the processing is slow, but the processing methods haven't changed. 
+# KOR is very slowly; it paused at the last increment for about 30 minutes but did actually finish. 
 time while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v07102023.gdb -nln all_plant -progress -append -sql "SELECT growth, simpleName, growSDerror FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
+# This doesn't work for v2.0 in the postgres/postgis in Docker but it does work for v2.0 in r4 instances outside Docker.
+# When I try to do this in Docker, I get "column 'shape' does not exist", even though it clearly shows up in the table.
+# When I do this on v2.0 in an r4 instance, swapping wkb_geometry for shape, it works fine and adds another index.
+# However, I'm not sure that adding this index is necessary;
+# tables in both r4 and Docker already have an index "all_plant_Shape_geom_idx" gist ("Shape") according to \d+.  
+# And when I do what is described at https://gis.stackexchange.com/questions/241599/finding-postgis-tables-that-are-missing-indexes,
+# no tables are shown as missing indexes. 
 psql
 CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(shape);
 
 # Adds a new column to the table and stores the plantation type reclassified as 1 (palm), 2 (wood fiber), or 3 (other)
 ALTER TABLE all_plant ADD COLUMN type_reclass SMALLINT;
 # Based on https://stackoverflow.com/questions/15766102/i-want-to-use-case-statement-to-update-some-records-in-sql-server-2005
-UPDATE all_plant SET type_reclass = ( CASE WHEN species_simp = 'Oil Palm ' then '1' when species_simp = 'Oil Palm Mix ' then '1' when species_simp = 'Oil Palm ' then '1' when species_simp = 'Oil Palm Mix' then 1 when species_simp = 'Wood fiber / timber' then 2 when species_simp = 'Wood fiber / timber ' then 2 ELSE '3' END );
+UPDATE all_plant SET type_reclass = ( CASE WHEN simpleName = 'Oil Palm ' then '1' when simpleName = 'Oil Palm Mix ' then '1' when simpleName = 'Oil Palm ' then '1' when simpleName = 'Oil Palm Mix' then 1 when simpleName = 'Wood fiber / timber' then 2 when simpleName = 'Wood fiber / timber ' then 2 ELSE '3' END );
 
 # Exit Postgres shell
 \q
@@ -205,7 +214,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
             uu.print_log("No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch...")
 
             # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-            uu.s3_file_download(cn.gadm_path, cn.docker_tile_dir)
+            uu.s3_file_download(cn.gadm_path, cn.docker_tile_dir, 'std')
             cmd = ['unzip', cn.gadm_zip]
             # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
             process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
