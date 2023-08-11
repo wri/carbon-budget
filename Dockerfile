@@ -57,7 +57,7 @@ ENV PGDATABASE=ubuntu
 # Commented out the start/restart commands because even with running them, postgres isn't running when the container is created.
 # So there's no point in starting posgres here if it's not active when the instance opens.
 #######################################
-RUN cp pg_hba.conf /etc/postgresql/12/main/
+# RUN cp pg_hba.conf /etc/postgresql/12/main/
 # RUN pg_ctlcluster 10 main start
 # RUN service postgresql restart
 
