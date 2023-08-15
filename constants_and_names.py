@@ -8,7 +8,7 @@ import datetime
 ########     ########
 
 # Model version
-version = '1.2.3'
+version = '1.2.4'
 version_filename = version.replace('.', '_')
 
 
@@ -196,7 +196,7 @@ pattern_pixel_area = 'hanson_2013_area'
 pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 
 # Spreadsheet with annual removals rates
-gain_spreadsheet = 'gain_rate_continent_ecozone_age_20220914.xlsx'
+gain_spreadsheet = 'gain_rate_continent_ecozone_age_20230815.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2022)
