@@ -29,7 +29,7 @@ since the last processing, e.g., newly added planted forests in countries alread
 of existing features have been altered. This entry point will use the supplied index shapefile of the 1x1 tiles of
 countries with planted forests to create new 1x1 planted forest growth rate tiles. This entry point is accessed by
 providing the s3 location of the index shapefile of the 1x1 country tiles,
-e.g., python planted_forests_prep.mp_plantation_preparation -l 10N_010E -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
+e.g., python -m planted_forests_prep.mp_plantation_preparation -l 10N_010E -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
 
 Third entry point: Script uses existing index shapefile of 1x1 tiles of planted forest extent to create new 1x1 tiles
 of planted forest growth rates. Use this entry point if the spatial properties of the database haven't changed but
@@ -84,6 +84,7 @@ createdb ubuntu
 # Only on r5d instances: Enter the postgres database called ubuntu and add the postgis exension to it
 psql
 CREATE EXTENSION postgis;
+ALTER USER postgres PASSWORD 'password';
 \q
 
 
@@ -267,7 +268,7 @@ def mp_plantation_preparation(tile_id_list, gadm_tile_index, planted_tile_index)
             df = dbf.to_dataframe()
 
             # To select one cell to test methods on
-            df = df.iloc[[7500]]
+            df = df.iloc[[4031]]
             print(df)
 
             # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list

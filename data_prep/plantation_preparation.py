@@ -2,6 +2,7 @@
 import os
 import psycopg2
 import sys
+import rasterio
 
 import constants_and_names as cn
 import universal_util as uu
@@ -16,18 +17,12 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
     uu.print_log(coords)
-    xmin_1x1 = coords[1]
-    xmax_1x1 = float(xmin_1x1) + 1
     ymax_1x1 = coords[0]
     ymin_1x1 = float(ymax_1x1) - 1
+    xmin_1x1 = coords[1]
+    xmax_1x1 = float(xmin_1x1) + 1
 
     uu.print_log("For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1)
-
-    # Connects Python to PostGIS using psycopg2. The credentials work on spot machines as they are currently configured
-    # and are based on this: https://github.com/wri/gfw-annual-loss-processing/blob/master/1b_Summary-AOIs-to-TSV/utilities/postgis_util.py
-    creds = {'host': 'localhost', 'user': 'ubuntu', 'dbname': 'ubuntu'}
-    conn = psycopg2.connect(**creds)
-    cursor = conn.cursor()
 
     # Intersects the plantations PostGIS table with the 1x1 tile, then saves any growth rates in that tile as a 1x1 tile
     # https://gis.stackexchange.com/questions/30267/how-to-create-a-valid-global-polygon-grid-in-postgis
@@ -35,34 +30,61 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     # https://postgis.net/docs/ST_Intersects.html
     uu.print_log(f'Checking if {tile_1x1} has plantations in it')
 
-    # Does the intersect of the PostGIS table and the 1x1 GADM tile
-    cursor.execute("SELECT growth FROM all_plant WHERE ST_Intersects(all_plant.wkb_geometry, ST_GeogFromText('POLYGON(({0} {1},{2} {1},{2} {3},{0} {3},{0} {1}))'))".format(
-            xmin_1x1, ymax_1x1, xmax_1x1, ymin_1x1))
+    cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
+           'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
+           str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+    uu.log_subprocess_output_full(cmd)
 
-    # A Python list of the output of the intersection, which in this case is a list of features that were successfully intersected.
-    # This is what I use to determine if any PostGIS features were intersected.
-    features = cursor.fetchall()
-    cursor.close()
 
-    # If any features in the PostGIS table were intersected with the 1x1 GADM tile, then the features in this 1x1 tile
-    # are converted to a planted forest gain rate tile and a plantation type tile
-    if len(features) > 0:
+    with rasterio.open('plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1)) as src:
+        data = src.read(1)  # Read the pixel values from the first band
+        if data.min() == data.max():
+            uu.print_log("No SDPT in 1x1 cell. Deleting raster.")
+            os.remove('plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1))
+        else:
+            uu.print_log("SDPT in 1x1 cell. Rasterizing other parameters...")
 
-        uu.print_log("There are plantations in {}. Converting to gain rate and plantation type rasters...".format(tile_1x1))
+            cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co',
+                   'COMPRESS=DEFLATE',
+                   'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_SD_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
+                   str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growSDError', '-a_nodata', '0']
+            uu.log_subprocess_output_full(cmd)
 
-        # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
-        # For plantation gain rate
-        cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
-        uu.log_subprocess_output_full(cmd)
+            cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co',
+                   'COMPRESS=DEFLATE',
+                   'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_class_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
+                   str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'type_reclass', '-a_nodata', '0']
+            uu.log_subprocess_output_full(cmd)
 
-        # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
-        # For plantation type
-        cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_type_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'type_reclass', '-a_nodata', '0']
-        uu.log_subprocess_output_full(cmd)
+            #TODO: add the plantation year rasterization
 
-    # If no features in the PostGIS table were intersected with the 1x1 GADM tile, nothing happens.
-    else:
-        uu.print_log("There are no plantations in {}. Not converting to raster.".format(tile_1x1))
+            # cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co',
+            #        'COMPRESS=DEFLATE',
+            #        'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
+            #        str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'plant_year', '-a_nodata', '0']
+            # uu.log_subprocess_output_full(cmd)
+
+    os.quit()
+
+    # # If any features in the PostGIS table were intersected with the 1x1 GADM tile, then the features in this 1x1 tile
+    # # are converted to a planted forest gain rate tile and a plantation type tile
+    # if len(features) > 0:
+    #
+    #     uu.print_log("There are plantations in {}. Converting to gain rate and plantation type rasters...".format(tile_1x1))
+    #
+    #     # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
+    #     # For plantation gain rate
+    #     cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    #     # https://gis.stackexchange.com/questions/187224/how-to-use-gdal-rasterize-with-postgis-vector
+    #     # For plantation type
+    #     cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE', 'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_type_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'type_reclass', '-a_nodata', '0']
+    #     uu.log_subprocess_output_full(cmd)
+    #
+    # # If no features in the PostGIS table were intersected with the 1x1 GADM tile, nothing happens.
+    # else:
+    #     uu.print_log("There are no plantations in {}. Not converting to raster.".format(tile_1x1))
 
 
 # Creates 1x1 degree tiles for the entire extent of planted forest using the supplied growth rates
