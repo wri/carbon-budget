@@ -20,7 +20,8 @@ These shapefiles should have been created during the previous run of the process
 First entry point: Script runs from the beginning. Do this if the planted forest database now includes countries
 that were not in it during the previous planted forest growth rate processing. It will take several days to run.
 ## NOTE: This also requires updating the list of countries with planted forests in constants_and_names.plantation_countries.
-This entry point is accessed by supplying None to both arguments, i.e. mp_plantation_preparation.py None None
+This entry point is accessed by supplying None to both argument:
+python -m planted_forests_prep.mp_plantation_preparation -l 10N_010E -gi None -pi None
 
 Second entry point: Script uses existing index shapefile of 1x1 tiles of countries with planted forests. Use this entry point
 if no countries have been added to the planted forest database but some other spatial aspect of the data has changed
@@ -28,7 +29,7 @@ since the last processing, e.g., newly added planted forests in countries alread
 of existing features have been altered. This entry point will use the supplied index shapefile of the 1x1 tiles of
 countries with planted forests to create new 1x1 planted forest growth rate tiles. This entry point is accessed by
 providing the s3 location of the index shapefile of the 1x1 country tiles,
-e.g., python mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
+e.g., python planted_forests_prep.mp_plantation_preparation -l 10N_010E -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi None
 
 Third entry point: Script uses existing index shapefile of 1x1 tiles of planted forest extent to create new 1x1 tiles
 of planted forest growth rates. Use this entry point if the spatial properties of the database haven't changed but
@@ -36,8 +37,8 @@ the growth rates or forest type have. This route will iterate through only the 1
 create new planted forest growth rate tiles for them.
 This entry point is accessed by providing the s3 location of the index shapefile of the 1x1
 planted forest extent tiles,
-e.g., python mp_plantation_preparation.py -gi None -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
-e.g., python mp_plantation_preparation.py -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
+e.g., python -m planted_forests_prep.mp_plantation_preparation -l 10N_010E -gi None -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
+e.g., python -m planted_forests_prep.mp_plantation_preparation -l 10N_010E -gi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/gadm_index_1x1_20190108.shp -pi s3://gfw2-data/climate/carbon_model/gadm_plantation_1x1_tile_index/plantation_index_1x1_20190813.shp
 
 All entry points conclude with creating 10x10 degree tiles of the three outputs from 1x1 tiles for SDPT v2 extent.
 
@@ -59,14 +60,14 @@ spotutil new r5d.24xlarge dgibbs_wri
 cd /usr/local/tiles/
 
 # Copy zipped plantation gdb with growth rate field in tables
-aws s3 cp s3://gfw-files/plantations/SDPT_2.0/sdpt_v2.0_v07102023.gdb.zip .
+aws s3 cp s3://gfw-files/plantations/SDPT_2.0/sdpt_v2.0_v08182023.gdb.zip .
 
 # I tried unzipping the gdb with sdpt_v2.0_v07102023.gdb.zip but got an error about extra bytes at the beginning.
 # I followed the solution at https://unix.stackexchange.com/a/115831 to fix the zipped gdb before unzipping.
-zip -FFv  sdpt_v2.0_v07102023.gdb.zip --out sdpt_v2.0_v07102023.gdb.fixed.zip
+zip -FFv  sdpt_v2.0_v08182023.gdb.zip --out sdpt_v2.0_v08182023.gdb.fixed.zip
 
 # Unzip the gdb (1.5 minutes)
-time unzip sdpt_v2.0_v07102023.gdb.fixed.zip
+time unzip sdpt_v2.0_v08182023.gdb.fixed.zip
 
 # Only on r5d instances: Start the postgres service and check that it has actually started
 service postgresql restart
@@ -92,7 +93,7 @@ CREATE EXTENSION postgis;
 
 # Add the feature class of one country's plantations to PostGIS. This creates the "all_plant" table for other countries to be appended to.
 # Using ogr2ogr requires the PG connection info but entering the PostGIS shell (psql) doesn't.
-ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v07102023.gdb -progress -nln all_plant -sql "SELECT growth, simpleName, growSDerror FROM cmr_plant_v2"
+ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v08182023.gdb -progress -nln all_plant --config PG_USE_COPY YES -sql "SELECT growth, simpleName, growSDerror FROM cmr_plant_v2"
 
 # Enter PostGIS and check that the table is there and that it has only the growth field.
 psql
@@ -107,20 +108,18 @@ DELETE FROM all_plant;
 \q
 
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
-ogrinfo sdpt_v2.0_v07102023.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
+ogrinfo sdpt_v2.0_v08182023.gdb | cut -d: -f2 | cut -d'(' -f1 | grep plant | grep -v Open | sed -e 's/ //g' > out.txt
 
 # Make sure all the country tables are listed in the txt, then exit it
 more out.txt
 q
 
-# Enter a tmux sessions
-tmux
-
 # Run a loop in bash that iterates through all the gdb feature classes and imports them to the all_plant PostGIS table.
 # I think it's okay that there's a message "Warning 1: organizePolygons() received a polygon with more than 100 parts. The processing may be really slow.  You can skip the processing by setting METHOD=SKIP, or only make it analyze counter-clock wise parts by setting METHOD=ONLY_CCW if you can assume that the outline of holes is counter-clock wise defined"
 # It just seems to mean that the processing is slow, but the processing methods haven't changed. 
 # KOR is very slowly; it paused at the last increment for about 30 minutes but did actually finish. 
-time while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v07102023.gdb -nln all_plant -progress -append -sql "SELECT growth, simpleName, growSDerror FROM $p"; done < out.txt
+# Overall, this took about 75 minutes. 
+time while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v08182023.gdb -nln all_plant --config PG_USE_COPY YES -progress -append -sql "SELECT growth, simpleName, growSDerror FROM $p"; done < out.txt
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 # This doesn't work for v2.0 in the postgres/postgis in Docker but it does work for v2.0 in r4 instances outside Docker.
@@ -140,40 +139,27 @@ UPDATE all_plant SET type_reclass = ( CASE WHEN simpleName = 'Oil Palm ' then '1
 
 # Exit Postgres shell
 \q
+
 """
 
-import plantation_preparation
+
 from multiprocessing.pool import Pool
 from functools import partial
+from simpledbf import Dbf5
 import glob
 import datetime
-from subprocess import Popen, PIPE, STDOUT, check_call
 import argparse
 import os
-from simpledbf import Dbf5
 import sys
-sys.path.append('../')
+
 import constants_and_names as cn
 import universal_util as uu
+from data_prep import plantation_preparation
 
 
-def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, run_date = None, no_upload = None):
+def mp_plantation_preparation(tile_id_list, gadm_tile_index, planted_tile_index):
 
     os.chdir(cn.docker_tile_dir)
-
-    # ## Not actually using this but leaving it here in case I want to add this functionality eventually. This
-    # # was to allow users to run plantations for a select (contiguous) area rather than for the whole planet.
-    # # List of bounding box coordinates
-    # bound_list = args.bounding_box
-    # # Checks if bounding box coordinates are in multiples of 10 (10 degree tiles). If they're not, the script stops.
-    # for bound in bound_list:
-    #     if bound%10:
-    #         uu.exception_log(bound, 'not a multiple of 10. Please make bounding box coordinates are multiples of 10.')
-
-    # Checks the validity of the two arguments. If either one is invalid, the script ends.
-    if (gadm_index_path not in cn.gadm_plant_1x1_index_dir or planted_index_path not in cn.gadm_plant_1x1_index_dir):
-        uu.exception_log('Invalid inputs. Please provide None or s3 shapefile locations for both arguments.')
-
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -191,10 +177,11 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
         planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '70S' not in tile]
         planted_lat_tile_list = [tile for tile in planted_lat_tile_list if '80S' not in tile]
         uu.print_log(planted_lat_tile_list)
-        uu.print_log("There are {} tiles to process after extreme latitudes have been removed".format(str(len(planted_lat_tile_list))) + "\n")
     else:
         planted_lat_tile_list = tile_id_list
-        uu.print_log("There are {} tiles to process".format(str(len(planted_lat_tile_list))) + "\n")
+
+    uu.print_log(planted_lat_tile_list)
+    uu.print_log(f'There are {str(len(planted_lat_tile_list))} tiles to process', "\n")
 
 
     ################# Stopped updating plantation processing script to use tile_id_list argument here.
@@ -202,142 +189,123 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
 
 
 
-
     # If a planted forest extent 1x1 tile index shapefile isn't supplied
-    if 'None' in args.planted_tile_index:
+    if 'None' in planted_tile_index:
 
         ### Entry point 1:
-        # If no shapefile of 1x1 tiles for countries with planted forests is supplied, 1x1 tiles of country extents will be created.
-        # This runs the process from the very beginning and will take a few days.
-        if 'None' in args.gadm_tile_index:
+        # If no shapefile of 1x1 tiles for countries with planted forests is supplied, a shapefile of 1x1 tiles of country extents with SDPT must be created.
+        if 'None' in gadm_tile_index:
 
-            uu.print_log("No GADM 1x1 tile index shapefile provided. Creating 1x1 planted forest country tiles from scratch...")
+            uu.exception_log("No GADM 1x1 tile index shapefile provided. You must create 1x1 planted forest country tiles before proceeding!")
 
-            # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-            uu.s3_file_download(cn.gadm_path, cn.docker_tile_dir, 'std')
-            cmd = ['unzip', cn.gadm_zip]
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                uu.log_subprocess_output(process.stdout)
+            """
+            Did these steps locally 8/18/23:
+            # Made 1x1 deg global fishnet: 
+            arcpy.CreateFishnet_management(out_feature_class="C:/GIS/Carbon_model/test_tiles/docker_output/1x1_deg_fishnet_global__20230818.shp", origin_coord="-180 -90", y_axis_coord="-180 -80", cell_width="1", cell_height="1", number_rows="", number_columns="", corner_coord="180 90", labels="NO_LABELS", template="-180 -90 180 90", geometry_type="POLYGON")
 
-            # Creates a new GADM shapefile with just the countries that have planted forests in them.
-            # This limits creation of 1x1 rasters of land area on the countries that have planted forests rather than on all countries.
-            # NOTE: If the planted forest gdb is updated and has new countries added to it, the planted forest country list
-            # in constants_and_names.py must be updated, too.
-            uu.print_log("Creating shapefile of countries with planted forests...")
-            os.system('''ogr2ogr -sql "SELECT * FROM gadm_3_6_adm2_final WHERE iso IN ({0})" {1} gadm_3_6_adm2_final.shp'''.format(str(cn.plantation_countries)[1:-1], cn.gadm_iso))
+            # Imported GADM iso to postgres
+            ogr2ogr -f Postgresql PG:"dbname=ubuntu" gadm_3_6_by_iso.shp -progress -nln gadm_3_6_iso_final -nlt PROMOTE_TO_MULTI;
 
-            # Creates 1x1 degree tiles of countries that have planted forests in them.
-            # I think this can handle using 50 processors because it's not trying to upload files to s3 and the tiles are small.
-            # This takes several days to run because it iterates through at least 250 10x10 tiles.
-            # For multiprocessor use.
-            processes = 50
-            uu.print_log('Rasterize GADM 1x1 max processors=', processes)
-            pool = Pool(processes)
-            pool.map(plantation_preparation.rasterize_gadm_1x1, planted_lat_tile_list)
-            pool.close()
-            pool.join()
+            # Imported 1x1 fishnet to postgres
+            ogr2ogr -f Postgresql PG:"dbname=ubuntu" 1x1_deg_fishnet_global__20230818.shp -progress -nln fishnet_1x1_deg -s_srs EPSG:4326 -t_srs EPSG:4326;
 
-            # # Creates 1x1 degree tiles of countries that have planted forests in them.
-            # # For single processor use.
-            # for tile in planted_lat_tile_list:
-            #
-            #     plantation_preparation.rasterize_gadm_1x1(tile)
+            psql
 
-            # Creates a shapefile of the boundaries of the 1x1 GADM tiles in countries with planted forests
-            os.system('''gdaltindex {0}_{1}.shp GADM_*.tif'''.format(cn.pattern_gadm_1x1_index, uu.date_time_today))
-            cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_gadm_1x1_index), '--recursive']
+            # Select all the GADM features that have plantations in them according to cn.SDPT_v2_iso_codes and make a new table
+            CREATE TABLE gadm_sdpt_v2 AS (SELECT * FROM gadm_3_6_iso_final WHERE iso IN (cn.SDPT_v2_iso_codes));
+            \q
+            # 157 countries selected
 
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                uu.log_subprocess_output(process.stdout)
+            # Export the countries that have SDPT v2 to a shapefile (just for QC/reference). Takes a few minutes, pauses at a few places. 
+            ogr2ogr -f "ESRI Shapefile" gadm_3_6_by_iso__with_SDPT_v2__20230821.shp PG:"dbname=ubuntu" gadm_sdpt_v2 -progress
+            
+            # Select all the 1x1 degree cells that intersect GADM with SDPT v2 and make a new table
+            # The PostGIS command took hours to run, so it's not worth doing, but copied here for reference:
+            # CREATE TABLE fishnet_1x1_deg__intersect_iso_with_SDPTv2 AS (SELECT fishnet_1x1_deg.id FROM gadm_sdpt_v2, fishnet_1x1_deg WHERE ST_Intersects(gadm_sdpt_v2.wkb_geometry, fishnet_1x1_deg.wkb_geometry));
+            arcpy.SelectLayerByLocation_management(in_layer="1x1_deg_fishnet_global__20230818", overlap_type="INTERSECT", select_features="gadm_3_6_by_iso__with_SDPT_v2__20230821", search_distance="", selection_type="NEW_SELECTION", invert_spatial_relationship="NOT_INVERT")
+            # Then saved the selection to fishnet_1x1_deg_SDPTv2_extent__20230821.shp (17,127 features)
 
-
-            # # Saves the 1x1 country extent tiles to s3
-            # # Only use if the entire process can't run in one go on the spot machine
-            # cmd = ['aws', 's3', 'cp', cn.docker_base_dir, 's3://gfw2-data/climate/carbon_model/temp_spotmachine_output/', '--exclude', '*', '--include', 'GADM_*.tif', '--recursive']
-
-            # # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            # process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            # with process.stdout:
-            #     uu.log_subprocess_output(process.stdout)
-
-
-            # Delete the aux.xml files
-            os.system('''rm GADM*.tif.*''')
-
-            # List of all 1x1 degree countey extent tiles created
-            gadm_list_1x1 = uu.tile_list_spot_machine(".", "GADM_")
-            uu.print_log("List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1)
-            uu.print_log(len(gadm_list_1x1))
+            # This only created a dbf, not a full shapefile. Leaving here for reference. 
+            # ogr2ogr -f "ESRI Shapefile" fishnet_1x1_deg__intersect_iso_with_SDPTv2.shp PG:"dbname=ubuntu" fishnet_1x1_deg__intersect_iso_with_SDPTv2 -progress
+            
+            # Add bounding coordinate attributes to shapefile of 1x1 boxes that are within SDPT v2 countries
+            arcpy.AddGeometryAttributes_management(Input_Features="1x1_deg_fishnet_SDPTv2_extent__20230821", Geometry_Properties="EXTENT", Length_Unit="", Area_Unit="", Coordinate_System="")
+           
+            # Add field that will store NW corner of each feature
+            arcpy.AddField_management(in_table="fishnet_1x1_deg_SDPTv2_extent__20230821", field_name="NW_corner", field_type="TEXT", field_precision="", field_scale="", field_length="", field_alias="", field_is_nullable="NULLABLE", field_is_required="NON_REQUIRED", field_domain="")
+           
+            # Add field with coordinate of NW corner of 1x1 cells that overlap with SDPT v2 countries
+            arcpy.CalculateField_management(in_table="fishnet_1x1_deg_SDPTv2_extent__20230821", field="NW_corner", expression="str(!EXT_MAX_Y!) + '_' + str(!EXT_MIN_X!)", expression_type="PYTHON_9.3", code_block="")
+            """
 
         ### Entry point 2:
         # If a shapefile of the boundaries of 1x1 degree tiles of countries with planted forests is supplied,
         # a list of the 1x1 tiles is created from the shapefile.
         # This avoids creating the 1x1 country extent tiles all over again because the relevant tile extent are supplied
         # in the shapefile.
-        elif cn.gadm_plant_1x1_index_dir in args.gadm_tile_index:
+        elif gadm_tile_index:
+
+            gadm_tile_index_path = gadm_tile_index[0]
+            gadm_tile_index_shp = gadm_tile_index[1]
+            gadm_index_shp = gadm_tile_index_shp[:-4]
+            planted_tile_index_path = planted_tile_index[0]
+            planted_tile_index_shp = planted_tile_index[1]
+            planted_tile_index_shp = planted_tile_index_shp[:-4]
 
             uu.print_log("Country extent 1x1 tile index shapefile supplied. Using that to create 1x1 planted forest tiles...")
 
-            uu.print_log('{}/'.format(gadm_index_path))
-
-            # Copies the shapefile of 1x1 tiles of extent of countries with planted forests
-            cmd = ['aws', 's3', 'cp', '{}/'.format(gadm_index_path), cn.docker_tile_dir, '--recursive', '--exclude', '*', '--include', '{}*'.format(gadm_index_shp)]
-
-            # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-            process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-            with process.stdout:
-                uu.log_subprocess_output(process.stdout)
+            # # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
+            # uu.s3_file_download(os.path.join(cn.plantations_dir, f'{cn.pattern_gadm_1x1_index}.zip'), cn.docker_tile_dir, 'std')
+            # cmd = ['unzip', f'{cn.pattern_gadm_1x1_index}.shp']
+            # uu.log_subprocess_output_full(cmd)
 
             # Gets the attribute table of the country extent 1x1 tile shapefile
-            gadm = glob.glob('{}*.dbf'.format(cn.pattern_gadm_1x1_index))[0]
+            gadm = glob.glob(f'{cn.pattern_gadm_1x1_index}*.dbf')[0]
 
             # Converts the attribute table to a dataframe
             dbf = Dbf5(gadm)
             df = dbf.to_dataframe()
 
+            # To select one cell to test methods on
+            df = df.iloc[[7500]]
+            print(df)
+
             # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
-            gadm_list_1x1 = df['location'].tolist()
+            gadm_list_1x1 = df['NW_corner'].tolist()
             gadm_list_1x1 = [str(y) for y in gadm_list_1x1]
             uu.print_log("List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1)
             uu.print_log("There are", len(gadm_list_1x1), "1x1 country extent tiles to iterate through.")
+
+            # os.quit()
+
+            # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
+            # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks
+            # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
+            # 1x1 country extent tile.
+            if cn.SINGLE_PROCESSOR:
+                for tile in gadm_list_1x1:
+                    plantation_preparation.create_1x1_plantation_from_1x1_gadm(tile)
+            else:
+                # 55 processors seems to use about 350 GB of memory, which seems fine. But there was some error about "PQconnectdb failed-- sorry, too many clients already".
+                # So, moved the number of processors down to 48.
+                processes = 48
+                uu.print_log('Create 1x1 plantation from 1x1 gadm max processors=', processes)
+                pool = Pool(processes)
+                pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
+                pool.close()
+                pool.join()
+
+            # Creates a shapefile in which each feature is the extent of a plantation extent tile.
+            # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
+            os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_time_today))
+            cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include',
+                   '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
+            uu.log_subprocess_output_full(cmd)
 
         # In case some other arguments are provided
         else:
             uu.exception_log('Invalid GADM tile index shapefile provided. Please provide a valid shapefile.')
 
-        # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
-        # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks
-        # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
-        # 1x1 country extent tile.
-        # 55 processors seems to use about 350 GB of memory, which seems fine. But there was some error about "PQconnectdb failed-- sorry, too many clients already".
-        # So, moved the number of processors down to 48.
-        # For multiprocessor use
-        processes = 48
-        uu.print_log('Create 1x1 plantation from 1x1 gadm max processors=', processes)
-        pool = Pool(processes)
-        pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
-        pool.close()
-        pool.join()
-
-        # # Creates 1x1 degree tiles of plantation growth wherever there are plantations
-        # # For single processor use
-        # for tile in gadm_list_1x1:
-        #
-        #     plantation_preparation.create_1x1_plantation(tile)
-
-        # Creates a shapefile in which each feature is the extent of a plantation extent tile.
-        # This index shapefile can be used the next time this process is run if starting with Entry Point 3.
-        os.system('''gdaltindex {0}_{1}.shp plant_gain_*.tif'''.format(cn.pattern_plant_1x1_index, uu.date_time_today))
-        cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, cn.gadm_plant_1x1_index_dir, '--exclude', '*', '--include', '{}*'.format(cn.pattern_plant_1x1_index), '--recursive']
-
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
 
     ### Entry point 3
     # If a shapefile of the extents of 1x1 planted forest tiles is provided.
@@ -350,11 +318,7 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
         # Copies the shapefile of 1x1 tiles of extent of planted forests
         cmd = ['aws', 's3', 'cp', '{}/'.format(planted_index_path), cn.docker_tile_dir, '--recursive', '--exclude', '*', '--include',
                '{}*'.format(planted_index_shp), '--recursive']
-
-        # Solution for adding subprocess output to log is from https://stackoverflow.com/questions/21953835/run-subprocess-and-print-output-to-logging
-        process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        with process.stdout:
-            uu.log_subprocess_output(process.stdout)
+        uu.log_subprocess_output_full(cmd)
 
 
         # Gets the attribute table of the planted forest extent 1x1 tile shapefile
@@ -480,31 +444,30 @@ def mp_plantation_preparation(gadm_index_shp, planted_index_shp, tile_id_list, r
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Create planted forest carbon removals rate tiles')
-    parser.add_argument('--gadm-tile-index', '-gi', required=True,
-                        help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
-    parser.add_argument('--planted-tile-index', '-pi', required=True,
-                        help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
     parser.add_argument('--tile_id_list', '-l', required=True,
                         help='List of tile ids to use in the model. Should be of form 00N_110E or 00N_110E,00N_120E or all.')
     parser.add_argument('--run-date', '-d', required=False,
                         help='Date of run. Must be format YYYYMMDD.')
     parser.add_argument('--no-upload', '-nu', action='store_true',
                        help='Disables uploading of outputs to s3')
-
+    parser.add_argument('--single-processor', '-sp', action='store_true',
+                       help='Uses single processing rather than multiprocessing')
+    parser.add_argument('--gadm-tile-index', '-gi', required=False,
+                        help='Shapefile of 1x1 degree tiles of countries that contain planted forests (i.e. countries with planted forests rasterized to 1x1 deg). If no shapefile, write None.')
+    parser.add_argument('--planted-tile-index', '-pi', required=False,
+                        help='Shapefile of 1x1 degree tiles of that contain planted forests (i.e. planted forest extent rasterized to 1x1 deg). If no shapefile, write None.')
     args = parser.parse_args()
+
+    # Sets global variables to the command line arguments
+    cn.RUN_DATE = args.run_date
+    cn.NO_UPLOAD = args.no_upload
+    cn.SINGLE_PROCESSOR = args.single_processor
+
     tile_id_list = args.tile_id_list
-    run_date = args.run_date
-    no_upload = args.NO_UPLOAD
 
     # Creates the directory and shapefile names for the two possible arguments (index shapefiles)
-    gadm_index = os.path.split(args.gadm_tile_index)
-    gadm_index_path = gadm_index[0]
-    gadm_index_shp = gadm_index[1]
-    gadm_index_shp = gadm_index_shp[:-4]
-    planted_index = os.path.split(args.planted_tile_index)
-    planted_index_path = planted_index[0]
-    planted_index_shp = planted_index[1]
-    planted_index_shp = planted_index_shp[:-4]
+    gadm_tile_index = os.path.split(args.gadm_tile_index)
+    planted_tile_index = os.path.split(args.planted_tile_index)
 
     # Disables upload to s3 if no AWS credentials are found in environment
     if not uu.check_aws_creds():
@@ -514,8 +477,6 @@ if __name__ == '__main__':
     uu.initiate_log(tile_id_list)
 
     # Checks whether the sensitivity analysis and tile_id_list arguments are valid
-    uu.check_sensit_type(sensit_type)
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_plantation_preparation(gadm_index_shp=gadm_index_shp, planted_index_shp=planted_index_shp,
-                              tile_id_list=tile_id_list, run_date=run_date, no_upload=no_upload)
+    mp_plantation_preparation(tile_id_list, gadm_tile_index, planted_tile_index)

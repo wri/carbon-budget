@@ -309,19 +309,38 @@ gadm_shp = 'gadm_3_6_adm2_final.shp'
 gadm_iso = 'gadm_3_6_with_planted_forest_iso.shp'
 gadm_path = os.path.join(gadm_dir, gadm_zip)
 gadm_plant_1x1_index_dir = os.path.join(s3_base_dir, 'gadm_plantation_1x1_tile_index/')
-pattern_gadm_1x1_index = 'gadm_index_1x1'
+# pattern_gadm_1x1_index = 'gadm_index_1x1'
 pattern_plant_1x1_index = 'plantation_index_1x1'
 
+plantations_dir = os.path.join(s3_base_dir, 'plantations/')
+pattern_gadm_1x1_index = 'fishnet_1x1_deg_SDPTv2_extent__20230821'
+
 # Countries with planted forests in them according to the Spatial Database of Planted Trees v2
-plantation_countries = [
+SDPT_v2_feature_classes = [
 'AGO', 'ARG', 'ARM', 'AUS', 'AZE', 'BDI', 'BEN', 'BFA', 'BGD', 'BLZ', 'BOL', 'BRA', 'BRN', 'BTN', 'CAF', 'CAN',
 'CHL', 'CHN', 'CIV', 'CMR', 'COD', 'COG', 'COL', 'CPV', 'CRI', 'CUB', 'CYP', 'DOM', 'DZA', 'ECU', 'EGY', 'ERI',
-'ETH', 'EU', 'FJI', 'GAB', 'GHA', 'GIN', 'GLP', 'GMB', 'GNB', 'GNQ', 'GTM', 'GUF', 'HND', 'HTI', 'IDN', 'IND',
+'ETH', 'FJI', 'GAB', 'GHA', 'GIN', 'GLP', 'GMB', 'GNB', 'GNQ', 'GTM', 'GUF', 'HND', 'HTI', 'IDN', 'IND',
+'IRN', 'IRQ', 'ISR', 'JAM', 'JOR', 'JPN', 'KAZ', 'KEN', 'KGZ', 'KHM', 'KOR', 'LAO', 'LBN', 'LBR', 'LBY', 'LKA',
+'LSO', 'MAR', 'MDG', 'MEX', 'MLI', 'MMR', 'MNG', 'MOZ', 'MRT', 'MWI', 'MYS', 'NCL', 'NGA', 'NIC', 'NPL', 'NZL',
+'OMN', 'PAK', 'PAN', 'PER', 'PHL', 'PNG', 'PRK', 'PRY', 'RUS', 'RWA', 'SEN', 'SLB', 'SLE', 'SLV', 'SOM', 'SSD',
+'STP', 'SUR', 'SWZ', 'SYR', 'TGO', 'THA', 'TJK', 'TTO', 'TUN', 'TUR', 'TZA', 'UGA', 'URY', 'USA', 'UZB', 'VEN',
+'VNM', 'VUT', 'ZAF', 'ZMB', 'ZWE', 'EU'
+]
+
+SDPT_v2_iso_codes = [
+'AGO', 'ARG', 'ARM', 'AUS', 'AZE', 'BDI', 'BEN', 'BFA', 'BGD', 'BLZ', 'BOL', 'BRA', 'BRN', 'BTN', 'CAF', 'CAN',
+'CHL', 'CHN', 'CIV', 'CMR', 'COD', 'COG', 'COL', 'CPV', 'CRI', 'CUB', 'CYP', 'DOM', 'DZA', 'ECU', 'EGY', 'ERI',
+'ETH', 'FJI', 'GAB', 'GHA', 'GIN', 'GLP', 'GMB', 'GNB', 'GNQ', 'GTM', 'GUF', 'HND', 'HTI', 'IDN', 'IND',
 'IRN', 'IRQ', 'ISR', 'JAM', 'JOR', 'JPN', 'KAZ', 'KEN', 'KGZ', 'KHM', 'KOR', 'LAO', 'LBN', 'LBR', 'LBY', 'LKA',
 'LSO', 'MAR', 'MDG', 'MEX', 'MLI', 'MMR', 'MNG', 'MOZ', 'MRT', 'MWI', 'MYS', 'NCL', 'NGA', 'NIC', 'NPL', 'NZL',
 'OMN', 'PAK', 'PAN', 'PER', 'PHL', 'PNG', 'PRK', 'PRY', 'RUS', 'RWA', 'SEN', 'SLB', 'SLE', 'SLV', 'SOM', 'SSD',
 'STP', 'SUR', 'SWZ', 'SYR', 'TGO', 'THA', 'TJK', 'TTO', 'TUN', 'TUR', 'TZA', 'UGA', 'URY', 'USA', 'UZB', 'VEN',
 'VNM', 'VUT', 'ZAF', 'ZMB', 'ZWE',
+# EU countries
+'AUT', 'BEL', 'BGR', 'HRV', 'CYP', 'CZE', 'DNK', 'EST', 'FIN', 'FRA', 'DEU', 'GRC', 'HUN', 'IRL', 'ITA', 'LVA',
+'LTU', 'LUX', 'MLT', 'NLD', 'POL', 'PRT', 'ROU', 'SVK', 'SVN', 'ESP', 'SWE',
+# Countries that had SDPT in v1 but aren't in v2 ISO list
+'NOR', 'GBR', 'MNE', 'XKO', 'SRB', 'ALB', 'BIH', 'MKD', 'MDA', 'UKR', 'BLR', 'ISL', 'GEO', 'ALA', 'CHE'
 ]
 
 ######
