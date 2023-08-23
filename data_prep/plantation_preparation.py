@@ -1,3 +1,12 @@
+"""
+This script rasterizes four attributes of the Spatial Database of Planted Trees v2 (SDPT v2) geodatabase
+into 10x10 degree tiles:
+1) aboveground carbon removal factors (AGC RF),
+2) AGC RF standard deviations,
+3) general plantation type (1: oil palm, 2: wood fiber, 3: other),
+4) planted forest establishment year.
+"""
+
 import os
 import psycopg2
 import sys
@@ -6,8 +15,12 @@ import rasterio
 import constants_and_names as cn
 import universal_util as uu
 
-# Creates 1x1 degree tiles of planted forest properties
+# Creates 1x1 degree tiles of planted forest attributes
 def create_1x1_plantation_from_1x1_gadm(tile_1x1):
+    """
+    :param tile_1x1: Top left (northwest) coordinates of 1x1 degree grid cell
+    :return: SDPT attributes as 1x1 degree geotifs (if SDPT occurs inside the 1x1 degree cell)
+    """
 
     # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
@@ -68,9 +81,17 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
 
 
-# Combines the 1x1 planted forest property tiles into 10x10 planted forest property tiles
+# Combines the 1x1 planted forest attribute tiles into 10x10 planted forest attribute tiles
 def create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt,
                                   plant_type_1x1_vrt, plant_estab_year_1x1_vrt):
+    """
+    :param tile_id: tile to be processed, identified by its tile id
+    :param plant_RF_1x1_vrt: VRT of all planted forest removal factor 1x1 geotifs
+    :param plant_stdev_1x1_vrt: VRT of all planted forest removal factor standard deviation 1x1 geotifs
+    :param plant_type_1x1_vrt: VRT of all planted forest type 1x1 geotifs
+    :param plant_estab_year_1x1_vrt: VRT of all planted forest establishment year 1x1 geotifs
+    :return: SDPT attributes as 10x10 degree geotifs (if SDPT occurs inside the tile)
+    """
 
     uu.print_log("Getting bounding coordinates for tile", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
