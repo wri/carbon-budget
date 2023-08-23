@@ -242,11 +242,11 @@ def mp_plantation_preparation(tile_id_list):
 
     # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
     uu.s3_file_download(os.path.join(cn.plantations_dir, f'{cn.pattern_gadm_1x1_index}.zip'), cn.docker_tile_dir, 'std')
-    cmd = ['unzip', f'{cn.docker_tile_dir}{cn.pattern_gadm_1x1_index}.shp']
+    cmd = ['unzip', f'{cn.pattern_gadm_1x1_index}.zip']
     uu.log_subprocess_output_full(cmd)
 
     # Gets the attribute table of the country extent 1x1 tile shapefile
-    gadm = glob.glob(f'{cn.docker_tile_dir}{cn.pattern_gadm_1x1_index}*.dbf')[0]
+    gadm = glob.glob(f'{cn.pattern_gadm_1x1_index}*.dbf')[0]
 
     # Converts the attribute table to a dataframe
     dbf = Dbf5(gadm)
