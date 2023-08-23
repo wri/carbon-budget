@@ -252,9 +252,9 @@ def mp_plantation_preparation(tile_id_list):
     dbf = Dbf5(gadm)
     df = dbf.to_dataframe()
 
-    # To select one cell to test methods on
-    df = df.iloc[[4031]]
-    uu.print_log('Testing on ', df)
+    # # To select one cell to test methods on
+    # df = df.iloc[[4031]]
+    # uu.print_log('Testing on ', df)
 
     # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
     gadm_list_1x1 = df['NW_corner'].tolist()
@@ -268,7 +268,7 @@ def mp_plantation_preparation(tile_id_list):
         for tile in gadm_list_1x1:
             plantation_preparation.create_1x1_plantation_from_1x1_gadm(tile)
     else:
-        processes = 60
+        processes = 40
         uu.print_log('Create 1x1 plantation attributes from 1x1 gadm max processors=', processes)
         pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
