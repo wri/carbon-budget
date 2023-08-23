@@ -253,9 +253,9 @@ def mp_plantation_preparation(tile_id_list):
     dbf = Dbf5(gadm)
     df = dbf.to_dataframe()
 
-    # To select one cell to test methods on
-    df = df.iloc[[4031]]
-    uu.print_log('Testing on ', df)
+    # # To select one cell to test methods on
+    # df = df.iloc[[4031]]
+    # uu.print_log('Testing on ', df)
 
     # Converts the column of the dataframe with the names of the tiles (which contain their coordinates) to a list
     gadm_list_1x1 = df['NW_corner'].tolist()
