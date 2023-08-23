@@ -242,8 +242,9 @@ def mp_plantation_preparation(tile_id_list):
 
     # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
     uu.s3_file_download(os.path.join(cn.plantations_dir, f'{cn.pattern_gadm_1x1_index}.zip'), cn.docker_tile_dir, 'std')
-    cmd = ['unzip', f'{cn.pattern_gadm_1x1_index}.zip']
-    uu.log_subprocess_output_full(cmd)
+    if not os.path.exists(f'{cn.pattern_gadm_1x1_index}.zip'):
+        cmd = ['unzip', f'{cn.pattern_gadm_1x1_index}.zip']
+        uu.log_subprocess_output_full(cmd)
 
     # Gets the attribute table of the country extent 1x1 tile shapefile
     gadm = glob.glob(f'{cn.pattern_gadm_1x1_index}*.dbf')[0]
@@ -268,7 +269,7 @@ def mp_plantation_preparation(tile_id_list):
         for tile in gadm_list_1x1:
             plantation_preparation.create_1x1_plantation_from_1x1_gadm(tile)
     else:
-        processes = 40
+        processes = 40 #40 processors=730 GB peak
         uu.print_log('Create 1x1 plantation attributes from 1x1 gadm max processors=', processes)
         pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)

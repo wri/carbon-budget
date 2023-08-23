@@ -22,6 +22,9 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     :return: SDPT attributes as 1x1 degree geotifs (if SDPT occurs inside the 1x1 degree cell)
     """
 
+    # Start time
+    start = datetime.datetime.now()
+
     # Gets the bounding coordinates for the 1x1 degree tile
     coords = tile_1x1.split("_")
     uu.print_log(coords)
@@ -79,6 +82,9 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
         uu.print_log('No SDPT in 1x1 cell. Deleting raster.')
         os.remove(RF_1x1)
 
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, pattern)
+
 
 
 # Combines the 1x1 planted forest attribute tiles into 10x10 planted forest attribute tiles
@@ -92,6 +98,9 @@ def create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt
     :param plant_estab_year_1x1_vrt: VRT of all planted forest establishment year 1x1 geotifs
     :return: SDPT attributes as 10x10 degree geotifs (if SDPT occurs inside the tile)
     """
+
+    # Start time
+    start = datetime.datetime.now()
 
     uu.print_log("Getting bounding coordinates for tile", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
@@ -140,3 +149,6 @@ def create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt
 
         uu.print_log(f'  No data found in {RF_10x10}. Deleting and not rasterizing other SDPT outputs...')
         os.remove(RF_10x10)
+
+    # Prints information about the tile that was just processed
+    uu.end_of_fx_summary(start, tile_id, pattern)
