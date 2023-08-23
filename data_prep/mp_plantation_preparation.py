@@ -204,21 +204,10 @@ def mp_plantation_preparation(tile_id_list):
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
         # List of all possible 10x10 Hansen tiles except for those at very extreme latitudes (not just WHRC biomass tiles)
-        total_tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
+        tile_id_list = uu.tile_list_s3(cn.pixel_area_dir)
 
-        # Removes the latitude bands that don't have any planted forests in them according to Liz Goldman.
-        # i.e., Liz Goldman said by Slack on 1/2/19 that the nothernmost planted forest is 69.5146 and the southernmost is -46.938968.
-        # This creates a more focused list of 10x10 tiles to iterate through (removes ones that definitely don't have planted forest).
-        # NOTE: If the planted forest gdb is updated, the list of latitudes to exclude below may need to be changed to not exclude certain latitude bands.
-        planted_lat_tile_id_list = [tile for tile in total_tile_id_list if '90N' not in tile]
-        planted_lat_tile_id_list = [tile for tile in planted_lat_tile_id_list if '80N' not in tile]
-        planted_lat_tile_id_list = [tile for tile in planted_lat_tile_id_list if '50S' not in tile]
-        planted_lat_tile_id_list = [tile for tile in planted_lat_tile_id_list if '60S' not in tile]
-        planted_lat_tile_id_list = [tile for tile in planted_lat_tile_id_list if '70S' not in tile]
-        planted_lat_tile_id_list = [tile for tile in planted_lat_tile_id_list if '80S' not in tile]
-        uu.print_log(planted_lat_tile_id_list)
-    else:
-        planted_lat_tile_id_list = tile_id_list
+    uu.print_log(tile_id_list)
+    uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
 
     # List of output directories and output file name patterns
@@ -245,8 +234,7 @@ def mp_plantation_preparation(tile_id_list):
         output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
 
-    uu.print_log(planted_lat_tile_id_list)
-    uu.print_log(f'There are {str(len(planted_lat_tile_id_list))} tiles to process', "\n")
+    ### Step 1: Creation of 1x1 degree planted forest property tiles
 
     # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
     uu.s3_file_download(os.path.join(cn.plantations_dir, f'{cn.pattern_gadm_1x1_index}.zip'), cn.docker_tile_dir, 'std')
@@ -276,7 +264,7 @@ def mp_plantation_preparation(tile_id_list):
         for tile in gadm_list_1x1:
             plantation_preparation.create_1x1_plantation_from_1x1_gadm(tile)
     else:
-        processes = 48
+        processes = 60
         uu.print_log('Create 1x1 plantation properties from 1x1 gadm max processors=', processes)
         pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
@@ -284,54 +272,52 @@ def mp_plantation_preparation(tile_id_list):
         pool.join()
 
 
-    os.quit()
+    ### Step 2: Creation of 10x10 degree planted forest property tiles
+    ### from 1x1 degree planted forest property tiles
 
-    ### Creation of 10x10 degree planted forest removals rate and rtpe tiles
-    ### from 1x1 degree planted forest removals rate and type tiles
-
-    # Creates a mosaic of all the 1x1 plantation removals rate tiles
+    # Creates a mosaic of all the 1x1 plantation removal factor tiles
     plant_RF_1x1_vrt = 'plant_RF_1x1.vrt'
-    uu.print_log("Creating vrt of 1x1 plantation removals factor tiles")
-    os.system(f'gdalbuildvrt {plant_RF_1x1_vrt} plant_gain_*.tif')
+    uu.print_log('Creating vrt of 1x1 planted forest removal factor tiles')
+    os.system(f'gdalbuildvrt {plant_RF_1x1_vrt} *{cn.pattern_annual_gain_AGC_planted_forest}.tif')
 
-    # Creates a mosaic of all the 1x1 plantation removals rate standard deviation tiles
+    # Creates a mosaic of all the 1x1 plantation removals factor standard deviation tiles
     plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
-    uu.print_log("Creating vrt of 1x1 plantation removals rate standard deviation tiles")
-    os.system(f'gdalbuildvrt {plant_stdev_1x1_vrt} plant_stdev_*.tif')
+    uu.print_log('Creating vrt of 1x1 planted forest removal factor standard deviation tiles')
+    os.system(f'gdalbuildvrt {plant_stdev_1x1_vrt} *{cn.pattern_stdev_annual_gain_AGC_planted_forest}.tif')
 
-    # Creates a mosaic of all the 1x1 plantation type tiles
+    # Creates a mosaic of all the 1x1 planted forest type tiles
     plant_type_1x1_vrt = 'plant_type_1x1.vrt'
-    uu.print_log("Creating vrt of 1x1 plantation type tiles")
-    os.system(f'gdalbuildvrt {plant_type_1x1_vrt} plant_type_*.tif')
+    uu.print_log('Creating vrt of 1x1 planted forest type tiles')
+    os.system(f'gdalbuildvrt {plant_type_1x1_vrt} *{cn.pattern_planted_forest_type}.tif')
 
-
-    # Creates a mosaic of all the 1x1 plantation removals rate standard deviation tiles
+    # Creates a mosaic of all the 1x1 planted forest establishment year tiles
     plant_estab_year_1x1_vrt = 'plant_estab_year_1x1.vrt'
-    uu.print_log("Creating vrt of 1x1 plantation removals rate standard deviation tiles")
-    os.system(f'gdalbuildvrt {plant_estab_year_1x1_vrt} plant_estab_year_*.tif')
+    uu.print_log('Creating vrt of 1x1 planted forest establishment year tiles')
+    os.system(f'gdalbuildvrt {plant_estab_year_1x1_vrt} *{cn.pattern_planted_forest_estab_year}.tif')
 
     # Creates 10x10 degree tiles of plantation properties iterating over the set of tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     if cn.SINGLE_PROCESSOR:
-        for tile_id in planted_lat_tile_id_list:
+        for tile_id in tile_id_list:
             plantation_preparation.create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt,
                                                                  plant_type_1x1_vrt, plant_estab_year_1x1_vrt)
     else:
-        processes = 20
+        processes = 40
         uu.print_log('Create 10x10 plantation properties max processors=', processes)
         pool = Pool(processes)
         pool.map(partial(plantation_preparation.create_10x10_plantation_tiles,
-                         plant_gain_1x1_vrt=plant_RF_1x1_vrt,
+                         plant_RF_1x1_vrt=plant_RF_1x1_vrt,
                          plant_stdev_1x1_vrt=plant_stdev_1x1_vrt,
                          plant_type_1x1_vrt=plant_type_1x1_vrt,
                          plant_estab_year_1x1_vrt_1x1_vrt=plant_estab_year_1x1_vrt),
-                 planted_lat_tile_id_list)
+                 tile_id_list)
         pool.close()
         pool.join()
 
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded
+    # If cn.NO_UPLOAD flag is not activated (by choice or by lack of AWS credentials), output is uploaded
     if not cn.NO_UPLOAD:
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+        for output_dir, output_pattern in zip(output_dir_list, output_pattern_list):
+            uu.upload_final_set(output_dir, output_pattern)
 
 
 if __name__ == '__main__':

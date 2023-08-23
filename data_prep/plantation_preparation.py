@@ -22,6 +22,7 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
     RF_1x1 = f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_annual_gain_AGC_planted_forest}.tif'
 
+    uu.print_log('Rasterizing planted forest removal factor...')
     cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
            'PG:dbname=ubuntu', '-l', cn.planted_forest_postgis_db, RF_1x1,
            '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
@@ -30,7 +31,6 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
     uu.print_log(f'Checking if {RF_1x1} contains any data...')
     no_data = uu.check_for_data(RF_1x1)
-    print(no_data)
 
     if not no_data:
 
@@ -68,8 +68,8 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
 
 
-# Combines the 1x1 planted forest output tiles into 10x10 planted forest output tiles
-def create_10x10_plantation_tiles(tile_id, plant_gain_1x1_vrt, plant_stdev_1x1_vrt,
+# Combines the 1x1 planted forest property tiles into 10x10 planted forest property tiles
+def create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt,
                                   plant_type_1x1_vrt, plant_estab_year_1x1_vrt):
 
     uu.print_log("Getting bounding coordinates for tile", tile_id)
@@ -80,12 +80,12 @@ def create_10x10_plantation_tiles(tile_id, plant_gain_1x1_vrt, plant_stdev_1x1_v
     uu.print_log("Rasterizing", RF_10x10)
     cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_gain_1x1_vrt, RF_10x10]
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_RF_1x1_vrt, RF_10x10]
     uu.log_subprocess_output_full(cmd)
 
 
     uu.print_log(f'Checking if {RF_10x10} contains any data...')
-    no_data = uu.check_for_data(RF_1x1)
+    no_data = uu.check_for_data(RF_10x10)
 
     if not no_data:
 
