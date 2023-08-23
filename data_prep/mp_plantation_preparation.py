@@ -269,7 +269,7 @@ def mp_plantation_preparation(tile_id_list):
         for tile in gadm_list_1x1:
             plantation_preparation.create_1x1_plantation_from_1x1_gadm(tile)
     else:
-        processes = 40 #40 processors=730 GB peak
+        processes = 35 #40 processors=730 GB peak
         uu.print_log('Create 1x1 plantation attributes from 1x1 gadm max processors=', processes)
         pool = Pool(processes)
         pool.map(plantation_preparation.create_1x1_plantation_from_1x1_gadm, gadm_list_1x1)
