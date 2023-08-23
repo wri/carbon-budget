@@ -7,8 +7,8 @@ into 10x10 degree tiles:
 4) planted forest establishment year.
 """
 
+import datetime
 import os
-import psycopg2
 import sys
 import rasterio
 
