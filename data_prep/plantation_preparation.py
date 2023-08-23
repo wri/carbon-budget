@@ -42,7 +42,7 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
            'PG:dbname=ubuntu',
            '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
-           '-a', 'growth', '-a_nodata', '0', '-ot', 'Float32','-l', cn.planted_forest_postgis_db, RF_1x1]
+           '-a', 'growth', '-a_nodata', '0', '-ot', 'Float32', cn.planted_forest_postgis_db, RF_1x1]
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log(f'Checking if {RF_1x1} contains any data...')
