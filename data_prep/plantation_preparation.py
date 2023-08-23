@@ -6,11 +6,7 @@ import rasterio
 import constants_and_names as cn
 import universal_util as uu
 
-# Creates 1x1 degree tiles for the entire extent of planted forest using the supplied growth rates
-# (defining coordinate in the northwest corner of the tile).
-# Because this iterates through all 1x1 tiles in countries with planted forests, it first checks
-# whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
-# 1x1 country extent tile.
+# Creates 1x1 degree tiles of planted forest properties
 def create_1x1_plantation_from_1x1_gadm(tile_1x1):
 
     # Gets the bounding coordinates for the 1x1 degree tile
@@ -21,83 +17,105 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     xmin_1x1 = coords[1]
     xmax_1x1 = float(xmin_1x1) + 1
 
-    uu.print_log("For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1, "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1)
+    uu.print_log("For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1,
+                 "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1)
 
-    cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
-           'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
-           str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growth', '-a_nodata', '0']
+    RF_1x1 = f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_annual_gain_AGC_planted_forest}.tif'
+
+    cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
+           'PG:dbname=ubuntu', '-l', cn.planted_forest_postgis_db, RF_1x1,
+           '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
+           '-a', 'growth', '-a_nodata', '0', '-ot', 'Float32']
     uu.log_subprocess_output_full(cmd)
 
+    uu.print_log(f'Checking if {RF_1x1} contains any data...')
+    no_data = uu.check_for_data(RF_1x1)
+    print(no_data)
 
-    with rasterio.open('plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1)) as src:
-        data = src.read(1)  # Read the pixel values from the first band
-        if data.min() == data.max():
-            uu.print_log("No SDPT in 1x1 cell. Deleting raster.")
-            os.remove('plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1))
-        else:
-            uu.print_log("SDPT in 1x1 cell. Rasterizing other parameters...")
+    if not no_data:
 
-            cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co',
-                   'COMPRESS=DEFLATE',
-                   'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_SD_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
-                   str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'growSDError', '-a_nodata', '0']
-            uu.log_subprocess_output_full(cmd)
+        uu.print_log(f'  Data found in {RF_1x1}. Rasterizing other SDPT outputs...')
 
-            cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co',
-                   'COMPRESS=DEFLATE',
-                   'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_class_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
-                   str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'type_reclass', '-a_nodata', '0']
-            uu.log_subprocess_output_full(cmd)
+        uu.print_log('Rasterizing planted forest removal factor standard deviation...')
+        cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
+               'PG:dbname=ubuntu', '-l', cn.planted_forest_postgis_db,
+               f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_stdev_annual_gain_AGC_planted_forest}.tif',
+               '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
+               '-a', 'growSDError', '-a_nodata', '0', '-ot', 'Float32']
+        uu.log_subprocess_output_full(cmd)
 
-            #TODO: add the plantation year rasterization
+        uu.print_log('Rasterizing planted forest type...')
+        cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
+               'PG:dbname=ubuntu', '-l', cn.planted_forest_postgis_db,
+               f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_planted_forest_type}.tif',
+               '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
+               '-a', 'type_reclass', '-a_nodata', '0', '-ot', 'Byte']
+        uu.log_subprocess_output_full(cmd)
 
-            # cmd = ['gdal_rasterize', '-tr', '{}'.format(cn.Hansen_res), '{}'.format(cn.Hansen_res), '-co',
-            #        'COMPRESS=DEFLATE',
-            #        'PG:dbname=ubuntu', '-l', 'all_plant', 'plant_gain_{0}_{1}.tif'.format(ymax_1x1, xmin_1x1), '-te',
-            #        str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1), '-a', 'plant_year', '-a_nodata', '0']
-            # uu.log_subprocess_output_full(cmd)
+        # TODO: add the plantation year rasterization
+
+        # uu.print_log('Rasterizing planted forest establishment year...')
+        # cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
+        #        'PG:dbname=ubuntu', '-l', cn.planted_forest_postgis_db, f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_planted_forest_estab_year}.tif',
+        #        '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
+        #        '-a', 'plant_year', '-a_nodata', '0', '-ot', 'UInt8']
+        # uu.log_subprocess_output_full(cmd)
+
+    else:
+
+        uu.print_log('No SDPT in 1x1 cell. Deleting raster.')
+        os.remove(RF_1x1)
 
 
 
-
-# Combines the 1x1 plantation tiles into 10x10 plantation carbon gain rate tiles, the final output of this process
-def create_10x10_plantation_tile(tile_id, plant_gain_1x1_vrt):
+# Combines the 1x1 planted forest output tiles into 10x10 planted forest output tiles
+def create_10x10_plantation_tiles(tile_id, plant_gain_1x1_vrt, plant_stdev_1x1_vrt,
+                                  plant_type_1x1_vrt, plant_estab_year_1x1_vrt):
 
     uu.print_log("Getting bounding coordinates for tile", tile_id)
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     uu.print_log("  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax)
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
-    uu.print_log("Rasterizing", tile_10x10)
-    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
+    RF_10x10 = f'{tile_id}_{cn.pattern_annual_gain_AGC_planted_forest}.tif'
+    uu.print_log("Rasterizing", RF_10x10)
+    cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_gain_1x1_vrt, tile_10x10]
+           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_gain_1x1_vrt, RF_10x10]
     uu.log_subprocess_output_full(cmd)
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_planted_forest_type_unmasked)
-    uu.print_log("Rasterizing", tile_10x10)
-    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
-           '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Byte', plant_type_1x1_vrt, tile_10x10]
-    uu.log_subprocess_output_full(cmd)
 
-    tile_10x10 = '{0}_{1}.tif'.format(tile_id, cn.pattern_planted_forest_stdev_unmasked)
-    print("Rasterizing", tile_10x10)
-    cmd = ['gdalwarp', '-tr', '{}'.format(str(cn.Hansen_res)), '{}'.format(str(cn.Hansen_res)),
-           '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
-           '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_stdev_1x1_vrt, tile_10x10]
-    subprocess.check_call(cmd)
+    uu.print_log(f'Checking if {RF_10x10} contains any data...')
+    no_data = uu.check_for_data(RF_1x1)
 
-    uu.print_log("Checking if {} contains any data...".format(tile_id))
-    stats = uu.check_for_data(tile_10x10)
+    if not no_data:
 
-    if stats[0] > 0:
+        uu.print_log(f'  Data found in {RF_10x10}. Rasterizing other SDPT outputs...')
 
-        uu.print_log("  Data found in {}. Copying tile to s3...".format(tile_id))
-        uu.upload_final(cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
-        uu.print_log("    Tile converted and copied to s3")
+        RF_stdev_10x10 = f'{tile_id}_{cn.pattern_stdev_annual_gain_AGC_planted_forest}.tif'
+        print("Rasterizing", RF_stdev_10x10)
+        cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+               '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Float32', plant_stdev_1x1_vrt,
+               RF_stdev_10x10]
+        subprocess.check_call(cmd)
+
+        type_10x10 = f'{tile_id}_{cn.pattern_planted_forest_type}.tif'
+        uu.print_log("Rasterizing", type_10x10)
+        cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+               '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'Byte', plant_type_1x1_vrt,
+               type_10x10]
+        uu.log_subprocess_output_full(cmd)
+
+        estab_year_10x10 = f'{tile_id}_{cn.pattern_planted_forest_estab_year}.tif'
+        uu.print_log("Rasterizing", estab_year_10x10)
+        cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
+               '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
+               '-dstnodata', '0', '-t_srs', 'EPSG:4326', '-overwrite', '-ot', 'UInt8', plant_estab_year_1x1_vrt,
+               estab_year_10x10]
+        uu.log_subprocess_output_full(cmd)
 
     else:
 
-        uu.print_log("  No data found. Not copying {}.".format(tile_id))
-
+        uu.print_log(f'  No data found in {RF_10x10}. Deleting and not rasterizing other SDPT outputs...')
+        os.remove(RF_10x10)

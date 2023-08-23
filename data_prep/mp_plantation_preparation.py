@@ -222,12 +222,15 @@ def mp_plantation_preparation(tile_id_list):
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir,
-                       cn.planted_forest_type_unmasked_dir,
-                       cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir]
-    output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked,
-                           cn.pattern_planted_forest_type_unmasked,
-                           cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked]
+    output_dir_list = [cn.annual_gain_AGC_planted_forest_dir,
+                       cn.stdev_annual_gain_AGC_planted_forest_dir,
+                       cn.planted_forest_type_dir,
+                       cn.planted_forest_estab_year_dir]
+
+    output_pattern_list = [cn.pattern_annual_gain_AGC_planted_forest,
+                           cn.pattern_stdev_annual_gain_AGC_planted_forest,
+                           cn.pattern_planted_forest_type,
+                           cn.pattern_planted_forest_estab_year]
 
     # If the model run isn't the standard one, the output directory and file names are changed
     if cn.SENSIT_TYPE != 'std':
@@ -267,10 +270,8 @@ def mp_plantation_preparation(tile_id_list):
     uu.print_log("List of 1x1 degree tiles in countries that have planted forests, with defining coordinate in the northwest corner:", gadm_list_1x1)
     uu.print_log("There are", len(gadm_list_1x1), "1x1 country extent tiles to iterate through.")
 
-    # Creates 1x1 degree tiles of plantation growth wherever there are plantations.
-    # Because this is iterating through all 1x1 tiles in countries with planted forests, it first checks
-    # whether each 1x1 tile intersects planted forests before creating a 1x1 planted forest tile for that
-    # 1x1 country extent tile.
+    # Creates 1x1 degree tiles of plantation properties wherever there are plantations
+    # by iterating through all 1x1 tiles that intersect with countries that have planted forests
     if cn.SINGLE_PROCESSOR:
         for tile in gadm_list_1x1:
             plantation_preparation.create_1x1_plantation_from_1x1_gadm(tile)
@@ -289,34 +290,41 @@ def mp_plantation_preparation(tile_id_list):
     ### from 1x1 degree planted forest removals rate and type tiles
 
     # Creates a mosaic of all the 1x1 plantation removals rate tiles
-    plant_gain_1x1_vrt = 'plant_gain_1x1.vrt'
-    uu.print_log("Creating vrt of 1x1 plantation removals rate tiles")
-    os.system('gdalbuildvrt {} plant_gain_*.tif'.format(plant_gain_1x1_vrt))
-
-    # Creates a mosaic of all the 1x1 plantation type tiles
-    plant_type_1x1_vrt = 'plant_type_1x1.vrt'
-    uu.print_log("Creating vrt of 1x1 plantation type tiles")
-    os.system('gdalbuildvrt {} plant_type_*.tif'.format(plant_type_1x1_vrt))
+    plant_RF_1x1_vrt = 'plant_RF_1x1.vrt'
+    uu.print_log("Creating vrt of 1x1 plantation removals factor tiles")
+    os.system(f'gdalbuildvrt {plant_RF_1x1_vrt} plant_gain_*.tif')
 
     # Creates a mosaic of all the 1x1 plantation removals rate standard deviation tiles
     plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
     uu.print_log("Creating vrt of 1x1 plantation removals rate standard deviation tiles")
-    os.system('gdalbuildvrt {} plant_stdev_*.tif'.format(plant_stdev_1x1_vrt))
+    os.system(f'gdalbuildvrt {plant_stdev_1x1_vrt} plant_stdev_*.tif')
+
+    # Creates a mosaic of all the 1x1 plantation type tiles
+    plant_type_1x1_vrt = 'plant_type_1x1.vrt'
+    uu.print_log("Creating vrt of 1x1 plantation type tiles")
+    os.system(f'gdalbuildvrt {plant_type_1x1_vrt} plant_type_*.tif')
+
+
+    # Creates a mosaic of all the 1x1 plantation removals rate standard deviation tiles
+    plant_estab_year_1x1_vrt = 'plant_estab_year_1x1.vrt'
+    uu.print_log("Creating vrt of 1x1 plantation removals rate standard deviation tiles")
+    os.system(f'gdalbuildvrt {plant_estab_year_1x1_vrt} plant_estab_year_*.tif')
 
     # Creates 10x10 degree tiles of plantation properties iterating over the set of tiles supplied
     # at the start of the script that are in latitudes with planted forests.
     if cn.SINGLE_PROCESSOR:
         for tile_id in planted_lat_tile_id_list:
-            plantation_preparation.create_10x10_plantation_tile(tile_id, plant_gain_1x1_vrt,
-                                                                plant_type_1x1_vrt,plant_stdev_1x1_vrt)
+            plantation_preparation.create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt,
+                                                                 plant_type_1x1_vrt, plant_estab_year_1x1_vrt)
     else:
         processes = 20
         uu.print_log('Create 10x10 plantation properties max processors=', processes)
         pool = Pool(processes)
-        pool.map(partial(plantation_preparation.create_10x10_plantation_tile,
-                         plant_gain_1x1_vrt=plant_gain_1x1_vrt,
+        pool.map(partial(plantation_preparation.create_10x10_plantation_tiles,
+                         plant_gain_1x1_vrt=plant_RF_1x1_vrt,
+                         plant_stdev_1x1_vrt=plant_stdev_1x1_vrt,
                          plant_type_1x1_vrt=plant_type_1x1_vrt,
-                         plant_stdev_1x1_vrt=plant_stdev_1x1_vrt),
+                         plant_estab_year_1x1_vrt_1x1_vrt=plant_estab_year_1x1_vrt),
                  planted_lat_tile_id_list)
         pool.close()
         pool.join()

@@ -184,7 +184,7 @@ def main ():
         download_dict = {cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
                          cn.gain_dir: [cn.pattern_gain_data_lake],
                          cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
-                         cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+                         cn.planted_forest_type_dir: [cn.pattern_planted_forest_type],
                          cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
                          cn.Brazil_forest_extent_2000_processed_dir: [cn.pattern_Brazil_forest_extent_2000_processed]
                          }
@@ -241,7 +241,7 @@ def main ():
             cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
             cn.gain_dir: [cn.pattern_gain_data_lake],
             cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
-            cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+            cn.planted_forest_type_dir: [cn.pattern_planted_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.Brazil_forest_extent_2000_processed_dir: [cn.pattern_Brazil_forest_extent_2000_processed]
         }

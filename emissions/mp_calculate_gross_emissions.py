@@ -73,7 +73,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
         cn.soil_C_emis_year_2000_dir: [cn.pattern_soil_C_emis_year_2000],
         cn.peat_mask_dir: [cn.pattern_peat_mask],
         cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
-        cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+        cn.planted_forest_type_dir: [cn.pattern_planted_forest_type],
         cn.drivers_processed_dir: [cn.pattern_drivers],
         cn.climate_zone_processed_dir: [cn.pattern_climate_zone],
         cn.bor_tem_trop_processed_dir: [cn.pattern_bor_tem_trop_processed],
@@ -196,7 +196,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     # If it doesn't get the necessary inputs, it skips that tile.
     uu.print_log('Making blank tiles for inputs that do not currently exist')
     # All of the inputs that need to have dummy tiles made in order to match the tile list of the carbon emitted_pools
-    pattern_list = [cn.pattern_planted_forest_type_unmasked, cn.pattern_peat_mask, cn.pattern_ifl_primary,
+    pattern_list = [cn.pattern_planted_forest_type, cn.pattern_peat_mask, cn.pattern_ifl_primary,
                     cn.pattern_drivers, cn.pattern_bor_tem_trop_processed, cn.pattern_TCLF_processed, cn.pattern_climate_zone,
                     cn.pattern_soil_C_emis_year_2000]
 

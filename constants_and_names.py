@@ -8,7 +8,7 @@ import datetime
 ########     ########
 
 # Model version
-version = '1.2.3'
+version = '1.2.4'
 version_filename = version.replace('.', '_')
 
 
@@ -40,6 +40,8 @@ SINGLE_PROCESSOR = False
 global LOG_NOTE
 LOG_NOTE = ''
 
+
+### Constants
 
 # Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.
 loss_years = 22
@@ -107,6 +109,10 @@ m2_per_ha = 100 * 100
 
 # Number of processors on the machine being used
 count = multiprocessing.cpu_count()
+
+planted_forest_postgis_db = 'all_plant'
+planted_forest_output_date = '20239999'
+planted_forest_version = 'SDPTv2'
 
 
 ##########                  ##########
@@ -235,9 +241,19 @@ cont_eco_zip = 'fao_ecozones_fra_2000_continents_assigned_dissolved_FINAL_201809
 cont_eco_raw_dir = os.path.join(s3_base_dir, 'fao_ecozones/ecozone_continent/20190116/raw/')
 cont_eco_dir = os.path.join(s3_base_dir, 'fao_ecozones/ecozone_continent/20190116/processed/')
 
-# Plantation type: palm oil (code=1), wood fiber (code=2), and other (code=3)
-pattern_planted_forest_type_unmasked = 'plantation_type_oilpalm_woodfiber_other_unmasked'
-planted_forest_type_unmasked_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/plantation_type/standard/20200730/')
+
+### Planted forests
+
+# Planted forest type: palm oil (code=1), wood fiber (code=2), and other (code=3)
+pattern_planted_forest_type = 'plantation_type_oilpalm_woodfiber_other'
+planted_forest_type_dir = os.path.join(s3_base_dir, f'other_emissions_inputs/plantation_type/{planted_forest_version}/{planted_forest_output_date}/')
+
+# Planted forest establishment year
+pattern_planted_forest_estab_year = 'planted_forest_establishment_year'
+planted_forest_estab_year_dir = os.path.join(s3_base_dir, f'planted_forest_estab_year/{planted_forest_version}/{planted_forest_output_date}/')
+
+
+### Peatland delineation
 
 # Peat mask inputs
 peat_unprocessed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/raw/')
@@ -274,6 +290,9 @@ Xu_peat_tif = 'Xu_et_al_north_of_40N_reproj__20230302.tif'
 # Combined peat mask tiles
 pattern_peat_mask = 'peat_mask_processed'
 peat_mask_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/peatlands/processed/20230315/')
+
+
+### Other emissions inputs
 
 # Climate zone
 climate_zone_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/climate_zone/raw/')
@@ -383,8 +402,8 @@ US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 ### Annual carbon and biomass removals rates for specific forest types that are precursors for composite annual removal factor
 
 # Annual aboveground and belowground carbon removals rate for planted forests, with removals rates everywhere inside the plantation boundaries (includes mangrove pixels)
-pattern_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_AGC_BGC_t_ha_planted_forest_unmasked'
-annual_gain_AGC_BGC_planted_forest_unmasked_dir = os.path.join(s3_base_dir, 'annual_gain_rate_AGC_BGC_planted_forest_unmasked/standard/20200730/')
+pattern_annual_gain_AGC_planted_forest = 'annual_removal_factor_AGC_Mg_ha_planted_forest'
+annual_gain_AGC_planted_forest_dir = os.path.join(s3_base_dir, f'gfw2-data/climate/carbon_model/annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
 
 # Annual aboveground carbon removals rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
 name_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__mean__aboveground__full_extent__Mg_C_ha_yr.tif'
@@ -727,8 +746,8 @@ pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for planted forests
-pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked = 'annual_gain_rate_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
-stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir = 's3://gfw2-data/climate/carbon_model/stdev_annual_removal_factor_AGC_BGC_planted_forest_unmasked/standard/20200801/'
+pattern_stdev_annual_gain_AGC_planted_forest = 'annual_removal_factor_stdev_AGC_Mg_ha_planted_forest'
+stdev_annual_gain_AGC_planted_forest_dir =os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
 
 # Standard deviation for annual aboveground+belowground carbon removals rate for natural US forests
 pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_natural_forest_US'
