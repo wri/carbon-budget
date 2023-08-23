@@ -85,7 +85,7 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
         os.remove(RF_1x1)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, pattern)
+    uu.end_of_fx_summary(start, tile_1x1, pattern)
 
 
 
