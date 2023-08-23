@@ -48,6 +48,8 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     uu.print_log(f'Checking if {RF_1x1} contains any data...')
     no_data = uu.check_for_data(RF_1x1)
 
+    uu.upload_log()
+
     if not no_data:
 
         uu.print_log(f'  Data found in {RF_1x1}. Rasterizing other SDPT outputs...')
