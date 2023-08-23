@@ -31,8 +31,8 @@ testing the first step (1x1 rasterization) is best done by commenting the code c
 NOTE: If the column names in the SDPT gdb related to the properties attributes rasterized here change,
 they must be modified in Chunk 1 below and in plantation_preparation.create_1x1_plantation_from_1x1_gadm.
 
-python -m planted_forests_prep.mp_plantation_preparation -l 10N_010E -nu
-python -m planted_forests_prep.mp_plantation_preparation -l all
+python -m data_prep.mp_plantation_preparation -l 10N_010E -nu
+python -m data_prep.mp_plantation_preparation -l all
 """
 
 """
@@ -43,8 +43,11 @@ This assumes that the plantation gdb has one feature class for each country with
 PostGIS column names below need to match the corresponding SDPT gdb attributes.
 This can be done in a flux model Docker container locally (for testing) or in ec2 (for a full run). 
 
-# Start a r5d.24xlarge spot machine (or some other size r5d machine for ec2 testing)
-spotutil new r5d.24xlarge dgibbs_wri
+# Start a r5d.24xlarge ec2 instance (or some other size r5d machine for ec2 testing)
+# Because this is a long process where there aren't really good checkpoints, it's best to use an on-demand ec2 
+# instance instead of a spot instance. This would be set up in the AWS console using template
+# https://us-east-1.console.aws.amazon.com/ec2/home?region=us-east-1#LaunchTemplateDetails:launchTemplateId=lt-00205de607ab6d4d9,
+# version 30 (on-demand instance). 
 
 # Change directory to where data are kept in the docker
 cd /usr/local/tiles/
@@ -64,11 +67,6 @@ service postgresql restart
 pg_lsclusters
 
 # Create a postgres database called ubuntu. 
-# I tried adding RUN createdb ubuntu to the Dockerfile after RUN service postgresql restart
-# but got the error: 
-# createdb: could not connect to database template1: could not connect to server: No such file or directory.
-#         Is the server running locally and accepting
-# So I'm adding that step here.
 createdb ubuntu
 
 # Enter the postgres database called ubuntu and add the postgis exension to it
@@ -89,8 +87,6 @@ SELECT COUNT (*) FROM all_plant;   # Should be 7777 for CMR in plantations v2.0
 
 # Delete all rows from the table so that it is now empty
 DELETE FROM all_plant;
-
-# Exit the PostGIS shell
 \q
 
 # Get a list of all feature classes (countries) in the geodatabase and save it as a txt
@@ -104,8 +100,15 @@ q
 # I think it's okay that there's a message "Warning 1: organizePolygons() received a polygon with more than 100 parts. The processing may be really slow.  You can skip the processing by setting METHOD=SKIP, or only make it analyze counter-clock wise parts by setting METHOD=ONLY_CCW if you can assume that the outline of holes is counter-clock wise defined"
 # It just seems to mean that the processing is slow, but the processing methods haven't changed. 
 # KOR is very slowly; it paused at the last increment for about 30 minutes but did actually finish. 
-# Overall, this took about 75 minutes on SDPT v2. 
+# Overall, this took about 75 minutes on SDPT v2. IDN is the last feature class to be imported and it hung at
+# the very last progress marker for a long time. 
+# However, I knew importing was continuing because htop showed an ogr2ogr process running. 
 time while read p; do echo $p; ogr2ogr -f Postgresql PG:"dbname=ubuntu" sdpt_v2.0_v08182023.gdb -nln all_plant --config PG_USE_COPY YES -progress -append -sql "SELECT growth, simpleName, growSDerror FROM $p"; done < out.txt
+
+psql
+SELECT COUNT (*) FROM all_plant;
+\q
+# 25,917,174 features in SDPT v2 gdb
 
 # Create a spatial index of the plantation table to speed up the intersections with 1x1 degree tiles
 # This doesn't work for v2.0 in the postgres/postgis in Docker but it does work for v2.0 in r4 instances outside Docker.
@@ -123,9 +126,8 @@ CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(shape);
 ALTER TABLE all_plant ADD COLUMN type_reclass SMALLINT;
 # Based on https://stackoverflow.com/questions/15766102/i-want-to-use-case-statement-to-update-some-records-in-sql-server-2005
 UPDATE all_plant SET type_reclass = ( CASE WHEN simpleName = 'Oil Palm ' then '1' when simpleName = 'Oil Palm Mix ' then '1' when simpleName = 'Oil Palm ' then '1' when simpleName = 'Oil Palm Mix' then 1 when simpleName = 'Wood fiber / timber' then 2 when simpleName = 'Wood fiber / timber ' then 2 ELSE '3' END );
-
-# Exit Postgres shell
 \q
+# Takes about 10 minutes to reclassify type_reclass
 
 """
 
@@ -239,7 +241,7 @@ def mp_plantation_preparation(tile_id_list):
     ### Step 1: Creation of 1x1 degree planted forest property tiles
 
     # Downloads and unzips the GADM shapefile, which will be used to create 1x1 tiles of land areas
-    uu.s3_file_download(os.path.join(cn.plantations_dir, f'{cn.pattern_gadm_1x1_index}.zip'), cn.docker_tile_dir, 'std')
+    uu.s3_file_download(os.path.join(cn.plantations_dir, f'{cn.pattern_gadm_1x1_index}.zip'), '.', 'std')
     cmd = ['unzip', f'{cn.pattern_gadm_1x1_index}.shp']
     uu.log_subprocess_output_full(cmd)
 
