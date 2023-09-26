@@ -1,6 +1,24 @@
 #TODO Add establishment year from Du et al. update as another output column. Change readme accordingly.
 
 """
+I updated the plantation rasterization scripts to use SDPT v2.0 in August 2023.
+I tested them locally and they worked fine.
+I was even able to ingest the entire gdb into postgres on an r5d spot machine eventually.
+However, when I tried running rasterizing on the full postgres database on the spot machine, I ran into issues.
+First, rasterizing 1x1 tiles was really slow, like 20 minutes per tile.
+Second, a lot of tiles were throwing errors about not existing or something (I really don't remember what it was).
+I couldn't figure out why rasterization was so slow and why some tiles were failing.
+So I gave up on using this script and switched to rasterizing SDPT v2 using the gfw-data-api,
+which also had issues but ended up seeming to work fine.
+I am wondering if rasterizing with this script was very slow because I could never get PostGIS to make a spatial
+index for the database after ingestion, unlike when I rasterized SDPT v1.
+Also, I realized that the 1x1 tile fishnet shapefile I was using to rasterize didn't have projection information in it for
+some reason, so maybe it was very hard to match with the database features.
+Anyhow, those are both things to investigate in case I do try to get this script working in the future once again.
+"""
+
+
+"""
 This script rasterizes four attributes of the Spatial Database of Planted Trees v2 (SDPT v2) geodatabase
 into 10x10 degree tiles:
 1) aboveground carbon removal factors (AGC RF),
@@ -125,7 +143,7 @@ CREATE INDEX IF NOT EXISTS all_plant_index ON all_plant using gist(shape);
 # The SDPT planted forest category field name must be changed below to match the gdb. 
 ALTER TABLE all_plant ADD COLUMN type_reclass SMALLINT;
 # Based on https://stackoverflow.com/questions/15766102/i-want-to-use-case-statement-to-update-some-records-in-sql-server-2005
-UPDATE all_plant SET type_reclass = ( CASE WHEN simpleName = 'Oil Palm ' then '1' when simpleName = 'Oil Palm Mix ' then '1' when simpleName = 'Oil Palm ' then '1' when simpleName = 'Oil Palm Mix' then 1 when simpleName = 'Wood fiber / timber' then 2 when simpleName = 'Wood fiber / timber ' then 2 ELSE '3' END );
+UPDATE all_plant SET type_reclass = (CASE WHEN simpleName = 'Oil palm' THEN 1 WHEN simpleName = 'Oil palm mix' THEN 1 WHEN simpleName = 'Wood fiber or timber' THEN 2 WHEN simpleName = 'Wood fiber or timber mix' THEN 2 ELSE 3 END);
 \q
 # Takes about 10 minutes to reclassify type_reclass
 
@@ -198,7 +216,7 @@ import sys
 
 import constants_and_names as cn
 import universal_util as uu
-from data_prep import plantation_preparation
+from data_prep.planted_forests_prep import plantation_preparation
 
 
 def mp_plantation_preparation(tile_id_list):
@@ -215,13 +233,13 @@ def mp_plantation_preparation(tile_id_list):
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.annual_gain_AGC_planted_forest_dir,
-                       cn.stdev_annual_gain_AGC_planted_forest_dir,
+    output_dir_list = [cn.annual_gain_AGC_BGC_planted_forest_dir,
+                       cn.stdev_annual_gain_AGC_BGC_planted_forest_dir,
                        cn.planted_forest_type_dir,
                        cn.planted_forest_estab_year_dir]
 
-    output_pattern_list = [cn.pattern_annual_gain_AGC_planted_forest,
-                           cn.pattern_stdev_annual_gain_AGC_planted_forest,
+    output_pattern_list = [cn.pattern_annual_gain_AGC_BGC_planted_forest,
+                           cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest,
                            cn.pattern_planted_forest_type,
                            cn.pattern_planted_forest_estab_year]
 
@@ -283,12 +301,12 @@ def mp_plantation_preparation(tile_id_list):
     # Creates a mosaic of all the 1x1 plantation removal factor tiles
     plant_RF_1x1_vrt = 'plant_RF_1x1.vrt'
     uu.print_log('Creating vrt of 1x1 planted forest removal factor tiles')
-    os.system(f'gdalbuildvrt {plant_RF_1x1_vrt} *{cn.pattern_annual_gain_AGC_planted_forest}.tif')
+    os.system(f'gdalbuildvrt {plant_RF_1x1_vrt} *{cn.pattern_annual_gain_AGC_BGC_planted_forest}.tif')
 
     # Creates a mosaic of all the 1x1 plantation removals factor standard deviation tiles
     plant_stdev_1x1_vrt = 'plant_stdev_1x1.vrt'
     uu.print_log('Creating vrt of 1x1 planted forest removal factor standard deviation tiles')
-    os.system(f'gdalbuildvrt {plant_stdev_1x1_vrt} *{cn.pattern_stdev_annual_gain_AGC_planted_forest}.tif')
+    os.system(f'gdalbuildvrt {plant_stdev_1x1_vrt} *{cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest}.tif')
 
     # Creates a mosaic of all the 1x1 planted forest type tiles
     plant_type_1x1_vrt = 'plant_type_1x1.vrt'

@@ -111,7 +111,7 @@ m2_per_ha = 100 * 100
 count = multiprocessing.cpu_count()
 
 planted_forest_postgis_db = 'all_plant'
-planted_forest_output_date = '20239999'
+planted_forest_output_date = '20230911'
 planted_forest_version = 'SDPTv2'
 
 
@@ -243,6 +243,10 @@ cont_eco_dir = os.path.join(s3_base_dir, 'fao_ecozones/ecozone_continent/2019011
 
 
 ### Planted forests
+
+# Note that planted forest data was rasterized using the gfw-data-api and the original copies live in
+# s3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/.
+# I then copied them into gfw2-data and renamed them to use my preferred patterns.
 
 # Planted forest type: palm oil (code=1), wood fiber (code=2), and other (code=3)
 pattern_planted_forest_type = 'plantation_type_oilpalm_woodfiber_other'
@@ -402,8 +406,11 @@ US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 ### Annual carbon and biomass removals rates for specific forest types that are precursors for composite annual removal factor
 
 # Annual aboveground and belowground carbon removals rate for planted forests, with removals rates everywhere inside the plantation boundaries (includes mangrove pixels)
-pattern_annual_gain_AGC_planted_forest = 'annual_removal_factor_AGC_Mg_ha_planted_forest'
-annual_gain_AGC_planted_forest_dir = os.path.join(s3_base_dir, f'gfw2-data/climate/carbon_model/annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
+# Note that planted forest data was rasterized using the gfw-data-api and the original copies live in
+# s3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/.
+# I then copied them into gfw2-data and renamed them to use my preferred patterns.
+pattern_annual_gain_AGC_BGC_planted_forest = 'annual_removal_factor_AGC_BGC_Mg_ha_planted_forest'
+annual_gain_AGC_BGC_planted_forest_dir = os.path.join(s3_base_dir, f'gfw2-data/climate/carbon_model/annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
 
 # Annual aboveground carbon removals rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
 name_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__mean__aboveground__full_extent__Mg_C_ha_yr.tif'
@@ -746,8 +753,11 @@ pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe = 'annual_gain_rate_stdev_
 stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_BGC_natural_forest_Europe/processed/standard/20200724/')
 
 # Standard deviation for annual aboveground+belowground carbon removal factors for planted forests
-pattern_stdev_annual_gain_AGC_planted_forest = 'annual_removal_factor_stdev_AGC_Mg_ha_planted_forest'
-stdev_annual_gain_AGC_planted_forest_dir =os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
+# Note that planted forest data was rasterized using the gfw-data-api and the original copies live in
+# s3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/.
+# I then copied them into gfw2-data and renamed them to use my preferred patterns.
+pattern_stdev_annual_gain_AGC_BGC_planted_forest = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_planted_forest'
+stdev_annual_gain_AGC_BGC_planted_forest_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
 
 # Standard deviation for annual aboveground+belowground carbon removals rate for natural US forests
 pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US = 'annual_removal_factor_stdev_AGC_BGC_Mg_ha_natural_forest_US'

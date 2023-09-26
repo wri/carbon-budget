@@ -36,13 +36,13 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
     uu.print_log("For", tile_1x1, "-- xmin_1x1:", xmin_1x1, "; xmax_1x1:", xmax_1x1,
                  "; ymin_1x1", ymin_1x1, "; ymax_1x1:", ymax_1x1)
 
-    RF_1x1 = f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_annual_gain_AGC_planted_forest}.tif'
+    RF_1x1 = f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_annual_gain_AGC_BGC_planted_forest}.tif'
 
     uu.print_log('Rasterizing planted forest removal factor...')
     cmd = ['gdal_rasterize', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-co', 'COMPRESS=DEFLATE',
            'PG:dbname=ubuntu',
            '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
-           '-a', 'growth', '-a_nodata', '0', '-ot', 'Float32', cn.planted_forest_postgis_db, RF_1x1]
+           '-a', 'growth', '-a_nodata', '0', '-ot', 'Float32','-l', cn.planted_forest_postgis_db, RF_1x1]
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log(f'Checking if {RF_1x1} contains any data...')
@@ -59,7 +59,7 @@ def create_1x1_plantation_from_1x1_gadm(tile_1x1):
                'PG:dbname=ubuntu',
                '-te', str(xmin_1x1), str(ymin_1x1), str(xmax_1x1), str(ymax_1x1),
                '-a', 'growSDError', '-a_nodata', '0', '-ot', 'Float32',  '-l', cn.planted_forest_postgis_db,
-               f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_stdev_annual_gain_AGC_planted_forest}.tif']
+               f'{ymax_1x1}_{xmin_1x1}_{cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest}.tif']
         uu.log_subprocess_output_full(cmd)
 
         uu.print_log('Rasterizing planted forest type...')
@@ -109,7 +109,7 @@ def create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt
     xmin, ymin, xmax, ymax = uu.coords(tile_id)
     uu.print_log("  xmin:", xmin, "; xmax:", xmax, "; ymin", ymin, "; ymax:", ymax)
 
-    RF_10x10 = f'{tile_id}_{cn.pattern_annual_gain_AGC_planted_forest}.tif'
+    RF_10x10 = f'{tile_id}_{cn.pattern_annual_gain_AGC_BGC_planted_forest}.tif'
     uu.print_log("Rasterizing", RF_10x10)
     cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
            '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),
@@ -124,7 +124,7 @@ def create_10x10_plantation_tiles(tile_id, plant_RF_1x1_vrt, plant_stdev_1x1_vrt
 
         uu.print_log(f'  Data found in {RF_10x10}. Rasterizing other SDPT outputs...')
 
-        RF_stdev_10x10 = f'{tile_id}_{cn.pattern_stdev_annual_gain_AGC_planted_forest}.tif'
+        RF_stdev_10x10 = f'{tile_id}_{cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest}.tif'
         print("Rasterizing", RF_stdev_10x10)
         cmd = ['gdalwarp', '-tr', str(cn.Hansen_res), str(cn.Hansen_res),
                '-co', 'COMPRESS=DEFLATE', '-tap', '-te', str(xmin), str(ymin), str(xmax), str(ymax),

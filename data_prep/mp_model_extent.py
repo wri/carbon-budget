@@ -39,7 +39,7 @@ def mp_model_extent(tile_id_list):
         else:
             tile_id_list = uu.create_combined_tile_list(
                 [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir, cn.tcd_dir,
-                 cn.annual_gain_AGC_planted_forest_dir],
+                 cn.annual_gain_AGC_BGC_planted_forest_dir],
                 sensit_type=cn.SENSIT_TYPE)
 
     uu.print_log(tile_id_list)
