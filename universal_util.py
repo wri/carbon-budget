@@ -580,6 +580,8 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
                 source = f'{source_dir}{pattern}_{tile_id}.tif'
             elif pattern in [cn.pattern_gain_data_lake]:
                 source = f'{source_dir}{tile_id}.tif'
+            elif pattern in [cn.pattern_pf_data_lake]:
+                source = f'{source_dir}{tile_id}.tif'
             else:  # For every other type of tile
                 source = f'{source_dir}{tile_id}_{pattern}.tif'
 
@@ -802,34 +804,33 @@ def s3_file_download(source, dest, sensit_type):
 
     # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
 
-    # Special download procedures for tree cover gain because the tiles have no pattern, just an ID.
-    # Tree cover gain tiles are renamed as their downloaded to get a pattern added to them.
+    # Special download procedures for gfw-data-lake datasets (tree cover gain, planted forests) because the tiles have no pattern, just an ID.
+    # These tiles are renamed as they are downloaded to get a pattern added to them.
     else:
-        if dir == cn.gain_dir[:-1]: # Delete last character of gain_dir because it has the terminal / while dir does not have terminal /
-            ec2_file_name = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
-            print_log(f'Option 1: Checking if {ec2_file_name} is already on spot machine...')
-            if os.path.exists(os.path.join(dest, ec2_file_name)):
-                print_log(f'  Option 1 success: {os.path.join(dest, ec2_file_name)} already downloaded', "\n")
-                return
+        if 'gfw-data-lake' in source:
+            if dir == cn.gain_dir[:-1]: # Delete last character of gain_dir because it has the terminal / while dir does not have terminal /
+                ec2_file_name = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
+            elif dir == cn.datalake_pf_agc_rf_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_pf_rf_agc_ec2}.tif'
+            elif dir == cn.datalake_pf_agcbgc_rf_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_pf_rf_agcbgc_ec2}.tif'
+            #elif dir == cn.datalake_pf_agc_sd_dir[:-1]:
+                #ec2_file_name = f'{tile_id}_{cn.pattern_pf_sd_agc_ec2}.tif'
+            #elif dir == cn.datalake_pf_agcbgc_sd_dir[:-1]:
+                #ec2_file_name = f'{tile_id}_{cn.pattern_pf_sd_agcbgc_ec2}.tif'
+            elif dir == cn.datalake_pf_simplename_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_planted_forest_type}.tif'
+            #elif dir == cn.datalake_pf_estab_year_dir[:-1]:
+                #ec2_file_name = f'{tile_id}_{cn.pattern_planted_forest_estab_year}.tif'
             else:
-                print_log(f'  Option 1 failure: {ec2_file_name} is not already on spot machine.')
-                print_log(f'Option 2: Checking for tile {source} on s3...')
+                print_log(f'  Warning: {source} is located in the gfw-data-lake bucket but has not been assigned a file name pattern for download. Please update the constants_and_names.py file and the s3_file_download function in the universal_util.py file to include this dataset for download.')
+                return
+            print_log(f'Checking 123')
+            gfw_data_lake_download(source, dest, dir, file_name, ec2_file_name)
+            return
 
-                # If the tile isn't already downloaded, download is attempted
-                source = os.path.join(dir, file_name)
 
-                # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
-                cmd = ['aws', 's3', 'cp', source, f'{dest}{ec2_file_name}',
-                       '--request-payer', 'requester', '--only-show-errors']
-                log_subprocess_output_full(cmd)
-                if os.path.exists(os.path.join(dest, ec2_file_name)):
-                    print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
-                    return
-                else:
-                    print_log(
-                        f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
-
-        # All other tiles besides tree cover gain
+        # All other tiles besides gfw-data-lake datasets
         else:
             print_log(f'Option 1: Checking if {file_name} is already on spot machine...')
             if os.path.exists(os.path.join(dest, file_name)):
@@ -851,6 +852,34 @@ def s3_file_download(source, dest, sensit_type):
                     return
                 else:
                     print_log(f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
+
+def gfw_data_lake_download(source, dest, dir, file_name, ec2_file_name):
+
+    print_log(f'Option 1: Checking if {ec2_file_name} is already on spot machine...')
+
+    if os.path.exists(os.path.join(dest, ec2_file_name)):
+        print_log(f'  Option 1 success: {os.path.join(dest, ec2_file_name)} already downloaded', "\n")
+        return
+    else:
+        print_log(f'  Option 1 failure: {ec2_file_name} is not already on spot machine.')
+        print_log(f'Option 2: Checking for tile {source} on s3...')
+
+        # If the tile isn't already downloaded, download is attempted
+        source = os.path.join(dir, file_name)
+
+        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
+        cmd = ['aws', 's3', 'cp', source, f'{dest}{ec2_file_name}',
+               '--request-payer', 'requester', '--only-show-errors']
+
+        log_subprocess_output_full(cmd)
+
+        if os.path.exists(os.path.join(dest, ec2_file_name)):
+            print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
+            return
+        else:
+            print_log(
+                f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.',
+                "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):

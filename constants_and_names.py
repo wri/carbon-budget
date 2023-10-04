@@ -111,7 +111,8 @@ m2_per_ha = 100 * 100
 count = multiprocessing.cpu_count()
 
 planted_forest_postgis_db = 'all_plant'
-planted_forest_output_date = '20230911'
+#planted_forest_output_date = '20230911'
+planted_forest_output_date = '20239999' #CHANGE BACK
 planted_forest_version = 'SDPTv2'
 
 
@@ -248,14 +249,38 @@ cont_eco_dir = os.path.join(s3_base_dir, 'fao_ecozones/ecozone_continent/2019011
 # s3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/.
 # I then copied them into gfw2-data and renamed them to use my preferred patterns.
 
-# Planted forest type: palm oil (code=1), wood fiber (code=2), and other (code=3)
+# Planted forest s3 download from gfw-data-lake
+pattern_pf_data_lake = ''
+
+# Planted forest aboveground only removal factors
+datalake_pf_agc_rf_dir = 's3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/removalFactorAGCMgHaYr/geotiff/'
+pattern_pf_rf_agc_ec2 = 'annual_gain_rate_AGC_Mg_ha_planted_forest'
+planted_forest_aboveground_removalfactor_dir = os.path.join(s3_base_dir, f'annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
+
+# Planted forest aboveground + belowground removal factors
+datalake_pf_agcbgc_rf_dir = 's3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/removalFactorAGCBGCMgHaYr/geotiff/'
+pattern_pf_rf_agcbgc_ec2 = 'annual_gain_rate_AGC_BGC_Mg_ha_planted_forest'
+planted_forest_aboveground_belowground_removalfactor_dir = os.path.join(s3_base_dir, f'annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
+
+# Planted forest aboveground only standard deviations
+#datalake_pf_agc_sd_dir =
+pattern_pf_sd_agc_ec2 = 'annual_gain_rate_stdev_AGC_t_ha_planted_forest_unmasked'
+planted_forest_aboveground_standard_deviation_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
+
+# Planted forest aboveground + belowground removal factors
+#datalake_pf_agcbgc_sd_dir =
+pattern_pf_sd_agcbgc_ec2 = 'annual_gain_rate_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
+planted_forest_aboveground_belowground_standard_deviation_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
+
+# Planted forest type (simpleName): palm oil (code=1), wood fiber (code=2), and other (code=3)
+datalake_pf_simplename_dir = 's3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/simpleName/geotiff/'
 pattern_planted_forest_type = 'plantation_type_oilpalm_woodfiber_other'
 planted_forest_type_dir = os.path.join(s3_base_dir, f'other_emissions_inputs/plantation_type/{planted_forest_version}/{planted_forest_output_date}/')
 
 # Planted forest establishment year
+#datalake_pf_estab_year_dir =
 pattern_planted_forest_estab_year = 'planted_forest_establishment_year'
 planted_forest_estab_year_dir = os.path.join(s3_base_dir, f'planted_forest_estab_year/{planted_forest_version}/{planted_forest_output_date}/')
-
 
 ### Peatland delineation
 
