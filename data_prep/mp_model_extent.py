@@ -49,7 +49,7 @@ def mp_model_extent(tile_id_list):
     # Files to download for this script.
     download_dict = {
                     cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
-                    cn.gain_dir: [cn.pattern_gain_data_lake]
+                    cn.gain_dir: [cn.pattern_data_lake]
     }
 
     if cn.SENSIT_TYPE == 'legal_Amazon_loss':

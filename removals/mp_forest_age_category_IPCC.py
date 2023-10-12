@@ -46,7 +46,7 @@ def mp_forest_age_category_IPCC(tile_id_list):
     # Files to download for this script.
     download_dict = {
                      cn.model_extent_dir: [cn.pattern_model_extent],
-                     cn.gain_dir: [cn.pattern_gain_data_lake],
+                     cn.gain_dir: [cn.pattern_data_lake],
                      cn.ifl_primary_processed_dir: [cn.pattern_ifl_primary],
                      cn.cont_eco_dir: [cn.pattern_cont_eco_processed]
     }

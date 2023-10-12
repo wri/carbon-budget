@@ -29,7 +29,7 @@ def download_tile_set(tile_id_list):
     os.chdir(wd)
 
     download_dict = {
-        cn.gain_dir: [cn.pattern_gain_data_lake],
+        cn.gain_dir: [cn.pattern_data_lake],
         cn.loss_dir: [cn.pattern_loss],
         cn.tcd_dir: [cn.pattern_tcd],
         cn.WHRC_biomass_2000_unmasked_dir: [cn.pattern_WHRC_biomass_2000_unmasked],

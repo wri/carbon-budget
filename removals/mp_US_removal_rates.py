@@ -62,7 +62,7 @@ def mp_US_removal_rates(tile_id_list):
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
     # Files to download for this script
-    download_dict = {cn.gain_dir: [cn.pattern_gain_data_lake],
+    download_dict = {cn.gain_dir: [cn.pattern_data_lake],
                      cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed],
                      cn.FIA_forest_group_processed_dir: [cn.pattern_FIA_forest_group_processed],
                      cn.age_cat_natrl_forest_US_dir: [cn.pattern_age_cat_natrl_forest_US]

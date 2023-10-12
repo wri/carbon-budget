@@ -212,7 +212,7 @@ loss_dir = 's3://gfw2-data/forest_change/hansen_2022/'
 
 # Hansen removals tiles based on canopy height (2000-2020)
 # From https://www.frontiersin.org/articles/10.3389/frsen.2022.856903/full
-pattern_gain_data_lake = ''
+pattern_data_lake = ''
 pattern_gain_ec2 = 'tree_cover_gain_2000_2020'
 gain_dir = 's3://gfw-data-lake/umd_tree_cover_gain_from_height/v202206/raster/epsg-4326/10/40000/gain/geotiff/'
 
@@ -249,9 +249,6 @@ cont_eco_dir = os.path.join(s3_base_dir, 'fao_ecozones/ecozone_continent/2019011
 # s3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/.
 # I then copied them into gfw2-data and renamed them to use my preferred patterns.
 
-# Planted forest s3 download from gfw-data-lake
-pattern_pf_data_lake = ''
-
 # Planted forest aboveground only removal factors
 datalake_pf_agc_rf_dir = 's3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/removalFactorAGCMgHaYr/geotiff/'
 pattern_pf_rf_agc_ec2 = 'annual_gain_rate_AGC_Mg_ha_planted_forest'
@@ -264,12 +261,12 @@ planted_forest_aboveground_belowground_removalfactor_dir = os.path.join(s3_base_
 
 # Planted forest aboveground only standard deviations
 #datalake_pf_agc_sd_dir =
-pattern_pf_sd_agc_ec2 = 'annual_gain_rate_stdev_AGC_t_ha_planted_forest_unmasked'
+pattern_pf_sd_agc_ec2 = 'annual_gain_rate_stdev_AGC_Mg_ha_planted_forest_unmasked'
 planted_forest_aboveground_standard_deviation_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
 
-# Planted forest aboveground + belowground removal factors
+# Planted forest aboveground + belowground standard deviations
 #datalake_pf_agcbgc_sd_dir =
-pattern_pf_sd_agcbgc_ec2 = 'annual_gain_rate_stdev_AGC_BGC_t_ha_planted_forest_unmasked'
+pattern_pf_sd_agcbgc_ec2 = 'annual_gain_rate_stdev_AGC_BGC_Mg_ha_planted_forest_unmasked'
 planted_forest_aboveground_belowground_standard_deviation_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
 
 # Planted forest type (simpleName): palm oil (code=1), wood fiber (code=2), and other (code=3)
