@@ -1055,10 +1055,15 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = coords(tile_id)
 
+    #Uses rewindowed tiles from docker container with same tile_id and same out_pattern if no source raster is given
+    if source_raster == None:
+        source_raster = f'{tile_id}_{out_pattern}_rewindow.tif'
+
     out_tile = f'{tile_id}_{out_pattern}.tif'
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_tile]
+
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
         log_subprocess_output(process.stdout)
@@ -1379,7 +1384,7 @@ def add_emissions_metadata(tile_id, output_pattern):
 # Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
 # which is the resolution of the output tiles. This allows the 30x30 m pixels in each window to be summed
 # into 0.04x0.04 degree rasters.
-def rewindow(tile_id, download_pattern_name):
+def rewindow(tile_id, download_pattern_name, striped = False):
 
     # start time
     start = datetime.datetime.now()
@@ -1395,17 +1400,29 @@ def rewindow(tile_id, download_pattern_name):
 
     check_memory()
 
+    # Only rewindows if the rewindowed tile does not already exist in the docker container
+    #if os.path.exists(out_tile):
+    #    print_log(f'{out_tile} exists. No need to rewindow')
+    #    return
+
     # Only rewindows if the tile exists
     if os.path.exists(in_tile):
-        print_log(f'{in_tile} exists. Rewindowing to {out_tile} with {cn.agg_pixel_window}x{cn.agg_pixel_window} pixel windows...')
 
         # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
         # Solution was to use gdal_translate instead, although, for unclear reasons, this still inflates the size
         # of the pixel area tiles but not other tiles using LZW. DEFLATE makes all outputs smaller.
-        cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE',
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(cn.agg_pixel_window), '-co', 'BLOCKYSIZE={}'.format(cn.agg_pixel_window),
-               in_tile, out_tile]
-        log_subprocess_output_full(cmd)
+        if striped == False:
+            cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE', '-co', 'TILED=YES',
+                   '-co', 'BLOCKXSIZE={}'.format(cn.agg_pixel_window), '-co', 'BLOCKYSIZE={}'.format(cn.agg_pixel_window),
+                   in_tile, out_tile]
+            log_subprocess_output_full(cmd)
+            print_log(f'{in_tile} exists. Rewindowing to {out_tile} with {cn.agg_pixel_window}x{cn.agg_pixel_window} pixel windows...')
+
+        elif striped == True:
+            cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE', '-co', 'TILED=NO',
+                   in_tile, out_tile]
+            log_subprocess_output_full(cmd)
+            print_log(f'{in_tile} exists. Rewindowing to {out_tile} with 40000x1 pixel windows...')
 
 
     else:
@@ -1413,6 +1430,5 @@ def rewindow(tile_id, download_pattern_name):
 
     # Prints information about the tile that was just processed
     end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name))
-
 
 

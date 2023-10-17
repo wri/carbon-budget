@@ -111,8 +111,7 @@ m2_per_ha = 100 * 100
 count = multiprocessing.cpu_count()
 
 planted_forest_postgis_db = 'all_plant'
-#planted_forest_output_date = '20230911'
-planted_forest_output_date = '20239999' #CHANGE BACK
+planted_forest_output_date = '20230911'
 planted_forest_version = 'SDPTv2'
 
 
@@ -260,12 +259,12 @@ pattern_pf_rf_agcbgc_ec2 = 'annual_gain_rate_AGC_BGC_Mg_ha_planted_forest'
 planted_forest_aboveground_belowground_removalfactor_dir = os.path.join(s3_base_dir, f'annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
 
 # Planted forest aboveground only standard deviations
-#datalake_pf_agc_sd_dir =
+datalake_pf_agc_sd_dir = 's3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/removalFactorAGCstdevMgHaYr/geotiff/'
 pattern_pf_sd_agc_ec2 = 'annual_gain_rate_stdev_AGC_Mg_ha_planted_forest_unmasked'
 planted_forest_aboveground_standard_deviation_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC/{planted_forest_output_date}/')
 
 # Planted forest aboveground + belowground standard deviations
-#datalake_pf_agcbgc_sd_dir =
+datalake_pf_agcbgc_sd_dir = 's3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/removalFactorAGCBGCstdevMgHaYr/geotiff/'
 pattern_pf_sd_agcbgc_ec2 = 'annual_gain_rate_stdev_AGC_BGC_Mg_ha_planted_forest_unmasked'
 planted_forest_aboveground_belowground_standard_deviation_dir = os.path.join(s3_base_dir, f'stdev_annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
 
