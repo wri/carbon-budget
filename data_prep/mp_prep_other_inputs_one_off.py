@@ -7,6 +7,9 @@ and Hansenizing three US-specific removal factor inputs.
 
 python -m data_prep.mp_prep_other_inputs_one_off -l 00N_000E -nu
 python -m data_prep.mp_prep_other_inputs_one_off -l all
+
+#TODO make each preprocessing step have its own if statement
+#TODO make the process command line argument text rather than numeric and ability to launch all of the pre-processing steps individually
 '''
 import argparse
 import multiprocessing
@@ -463,7 +466,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             cn.datalake_pf_agc_sd_dir: [cn.pattern_data_lake],
             cn.datalake_pf_agcbgc_sd_dir: [cn.pattern_data_lake],
             cn.datalake_pf_simplename_dir: [cn.pattern_data_lake],
-            #cn.datalake_pf_estab_year_dir: [cn.pattern_data_lake],
+            cn.datalake_pf_estab_year_dir: [cn.pattern_data_lake],
         }
 
         # List of output directories for SDPTv2 update upload
@@ -473,7 +476,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             cn.planted_forest_aboveground_standard_deviation_dir,
             cn.planted_forest_aboveground_belowground_standard_deviation_dir,
             cn.planted_forest_type_dir,
-            #cn.planted_forest_estab_year_dir,
+            cn.planted_forest_estab_year_dir,
         ]
 
         # List of output file name patterns for SDPTv2 to upload to EC2
@@ -483,7 +486,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             cn.pattern_pf_sd_agc_ec2,
             cn.pattern_pf_sd_agcbgc_ec2,
             cn.pattern_planted_forest_type,
-            #cn.pattern_planted_forest_estab_year,
+            cn.pattern_planted_forest_estab_year,
         ]
 
         # List of data types for each dataset to use in the gdal_warp_to_hansen
@@ -493,7 +496,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             'Float32',
             'Float32',
             'Byte',
-            #'Byte',
+            'Byte',
         ]
 
 
@@ -517,7 +520,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             output_pattern_list_sdptv2[2]: [output_dir_list_sdptv2[2], output_dt_list_sdptv2[2]],
             output_pattern_list_sdptv2[3]: [output_dir_list_sdptv2[3], output_dt_list_sdptv2[3]],
             output_pattern_list_sdptv2[4]: [output_dir_list_sdptv2[4], output_dt_list_sdptv2[4]],
-            #output_pattern_list_sdptv2[5]: [output_dir_list_sdptv2[5], output_dt_list_sdptv2[5]],
+            output_pattern_list_sdptv2[5]: [output_dir_list_sdptv2[5], output_dt_list_sdptv2[5]],
         }
 
 
