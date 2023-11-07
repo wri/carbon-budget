@@ -554,7 +554,7 @@ soil_C_full_extent_2000_non_mang_dir = os.path.join(base_carbon_pool_dir, 'soil_
 # Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
 # Non-mangrove C is 0-30 cm, mangrove C is 0-100 cm
 pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
-soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/standard/20230222/')
+soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/standard/20231107/')
 
 # Total carbon (all carbon emitted_pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "Mg_total_C_ha_2000"
@@ -740,7 +740,7 @@ CI95_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs
 
 # Standard deviation in soil C stocks (0-30 cm)
 pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
-stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20200828/')
+stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20231107/')
 
 
 ### Testing materials

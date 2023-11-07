@@ -12,6 +12,9 @@ However, for reasons I couldn't figure out, the gdalbuildvrt step in which I com
 and the mineral soil raster never actually combined the mangrove tiles with the mineral soil raster; I just kept
 getting mineral soil C values out.
 So, I switched to this somewhat more convoluted method that uses both gdal and rasterio/numpy.
+
+python -m carbon_pools.mp_create_soil_C -l 00N_000E -nu
+python -m carbon_pools.mp_create_soil_C -l all
 '''
 
 from subprocess import check_call
@@ -65,7 +68,7 @@ def mp_create_soil_C(tile_id_list):
     # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
     # There are 12951 tiles and it takes about 3 hours to download them!
     cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.tif', '{}'.format(cn.mineral_soil_C_url)]
+                   '--accept', '*.tif', f'{cn.mineral_soil_C_url}']
     uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Unzipping mangrove soil C rasters...")
