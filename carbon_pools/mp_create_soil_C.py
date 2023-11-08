@@ -47,7 +47,7 @@ def mp_create_soil_C(tile_id_list):
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.soil_C_mangrove_dir, cn.soil_C_full_extent_2000_non_mang_dir,
+    output_dir_list = [cn.soil_C_mangrove_processed_dir, cn.soil_C_full_extent_2000_non_mang_dir,
                        cn.soil_C_full_extent_2000_dir, cn.stdev_soil_C_full_extent_2000_dir]
     output_pattern_list = [cn.pattern_soil_C_mangrove, cn.pattern_soil_C_full_extent_2000_non_mang,
                            cn.pattern_soil_C_full_extent_2000, cn.pattern_stdev_soil_C_full_extent]
@@ -153,7 +153,7 @@ def mp_create_soil_C(tile_id_list):
     if len(tile_id_list) > 10:
         # List of tiles to run in the model
         tile_id_list = uu.create_combined_tile_list(
-            [cn.mangrove_soil_C_dir, cn.soil_C_full_extent_2000_dir],
+            [cn.soil_C_mangrove_processed_dir, cn.soil_C_full_extent_2000_non_mang_dir],
             sensit_type=cn.SENSIT_TYPE)
 
         uu.print_log(tile_id_list)

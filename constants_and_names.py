@@ -548,7 +548,7 @@ mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30
 
 # Soil C for mangroves only, maskes to mangrove AGB extent
 pattern_soil_C_mangrove = 'mangrove_soil_C_masked_to_mangrove_AGB_Mg_C_ha'
-soil_C_mangrove_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/mangrove_only/20231108/')
+soil_C_mangrove_processed_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/mangrove_only/20231108/')
 
 # Soil C full extent but just from SoilGrids250 (mangrove soil C layer not added in)
 # Not used in model.
