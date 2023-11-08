@@ -547,17 +547,17 @@ pattern_mineral_soil_C_raw = 'tileSG'
 mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_mean/'
 
 # Soil C for mangroves only, maskes to mangrove AGB extent
-pattern_soil_C_mangrove = 'mangrove_soil_C_masked_to_mangrove_AGB_Mg_ha'
+pattern_soil_C_mangrove = 'mangrove_soil_C_masked_to_mangrove_AGB_Mg_C_ha'
 soil_C_mangrove_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/mangrove_only/20231108/')
 
 # Soil C full extent but just from SoilGrids250 (mangrove soil C layer not added in)
 # Not used in model.
-pattern_soil_C_full_extent_2000_non_mang = 'soil_C_ha_full_extent_2000_non_mangrove_Mg_ha'
+pattern_soil_C_full_extent_2000_non_mang = 'soil_C_full_extent_2000_non_mangrove_Mg_C_ha'
 soil_C_full_extent_2000_non_mang_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/no_mangrove/20231108/')
 
 # Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
 # Non-mangrove C is 0-30 cm, mangrove C is 0-100 cm
-pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
+pattern_soil_C_full_extent_2000 = 'soil_C_full_extent_2000_Mg_C_ha'
 soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/standard/20231108/')
 
 # Total carbon (all carbon emitted_pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks

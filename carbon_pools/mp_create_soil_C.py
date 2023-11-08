@@ -79,34 +79,34 @@ def mp_create_soil_C(tile_id_list):
     # uu.print_log("Making mangrove soil C vrt...")
     # check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
     # uu.print_log("Done making mangrove soil C vrt")
-
-    uu.print_log("Making mangrove soil C tiles...")
-
-    if cn.SINGLE_PROCESSOR:
-        for tile_id in tile_id_list:
-            create_soil_C.create_mangrove_soil_C(tile_id)
-    else:
-        if cn.count == 96:
-            processes = 32   # 32 processors = 570 GB peak
-        else:
-            processes = int(cn.count/3)
-        uu.print_log('Mangrove soil C max processors=', processes)
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(create_soil_C.create_mangrove_soil_C), tile_id_list)
-        pool.close()
-        pool.join()
-
-    uu.print_log('Done making mangrove soil C tiles', "\n")
-
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
-    if not cn.NO_UPLOAD:
-
-        uu.print_log("Uploading non-mangrove soil C density tiles")
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-
-    uu.print_log("Making mineral soil C vrt...")
-    check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
-    uu.print_log("Done making mineral soil C vrt")
+    #
+    # uu.print_log("Making mangrove soil C tiles...")
+    #
+    # if cn.SINGLE_PROCESSOR:
+    #     for tile_id in tile_id_list:
+    #         create_soil_C.create_mangrove_soil_C(tile_id)
+    # else:
+    #     if cn.count == 96:
+    #         processes = 36   # 32 processors = 570 GB peak; 36 = XXX GB peak
+    #     else:
+    #         processes = int(cn.count/3)
+    #     uu.print_log('Mangrove soil C max processors=', processes)
+    #     pool = multiprocessing.Pool(processes)
+    #     pool.map(partial(create_soil_C.create_mangrove_soil_C), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    # uu.print_log('Done making mangrove soil C tiles', "\n")
+    #
+    # # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
+    # if not cn.NO_UPLOAD:
+    #
+    #     uu.print_log("Uploading non-mangrove soil C density tiles")
+    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #
+    # uu.print_log("Making mineral soil C vrt...")
+    # check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    # uu.print_log("Done making mineral soil C vrt")
 
     # Creates mineral soil C density tiles
     if cn.SINGLE_PROCESSOR:
