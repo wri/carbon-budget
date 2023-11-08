@@ -63,13 +63,13 @@ def mp_create_soil_C(tile_id_list):
     for input in input_files:
         uu.s3_folder_download(input, cn.docker_tile_dir, sensit_type)
 
-    # Download raw mineral soil C density tiles.
-    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # There are 12951 tiles and it takes about 3 hours to download them!
-    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.tif', f'{cn.mineral_soil_C_url}']
-    uu.log_subprocess_output_full(cmd)
+    # # Download raw mineral soil C density tiles.
+    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # # There are 12951 tiles and it takes about 3 hours to download them!
+    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+    #                '--accept', '*.tif', f'{cn.mineral_soil_C_url}']
+    # uu.log_subprocess_output_full(cmd)
 
     uu.print_log("Unzipping mangrove soil C rasters...")
     cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_tile_dir]
