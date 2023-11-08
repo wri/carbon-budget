@@ -153,6 +153,9 @@ def mp_create_soil_C(tile_id_list):
             [cn.mangrove_soil_C_dir, cn.soil_C_full_extent_2000_dir],
             sensit_type=cn.SENSIT_TYPE)
 
+        uu.print_log(tile_id_list)
+        uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
+
     if cn.SINGLE_PROCESSOR:
         for tile_id in tile_id_list:
             create_soil_C.create_combined_soil_C(tile_id)
