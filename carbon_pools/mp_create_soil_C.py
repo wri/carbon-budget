@@ -147,7 +147,8 @@ def mp_create_soil_C(tile_id_list):
 
     uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
 
-    if tile_id_list == 'all':
+    # Tile list specifically for soil carbon tile sets
+    if len(tile_id_list) > 10:
         # List of tiles to run in the model
         tile_id_list = uu.create_combined_tile_list(
             [cn.mangrove_soil_C_dir, cn.soil_C_full_extent_2000_dir],
