@@ -40,7 +40,7 @@ def create_mangrove_soil_C(tile_id):
 
         mangrove_soil = f'{tile_id}_mangrove_full_extent.tif'
         mangrove_biomass = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
-        outname = f'{tile_id}_mangrove_masked_to_mangrove.tif'
+        outname = f'{tile_id}_{cn.pattern_soil_C_mangrove}.tif'
         out = '--outfile={}'.format(outname)
         calc = '--calc=A*(B>0)'
         datatype = '--type={}'.format('Int16')
@@ -55,7 +55,7 @@ def create_mangrove_soil_C(tile_id):
         uu.print_log("Mangrove aboveground biomass tile not found for", tile_id)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove')
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_mangrove)
 
 
 # Overlays the mangrove soil C tiles with the mineral soil C tiles, giving precedence to the mangrove soil C

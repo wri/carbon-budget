@@ -46,39 +46,39 @@ def mp_create_soil_C(tile_id_list):
 
 
     # List of output directories and output file name patterns
-    output_dir_list = [cn.soil_C_full_extent_2000_non_mang_dir, cn.soil_C_full_extent_2000_dir,
-                       cn.stdev_soil_C_full_extent_2000_dir]
-    output_pattern_list = [cn.pattern_soil_C_full_extent_2000_non_mang, cn.pattern_soil_C_full_extent_2000,
-                           cn.pattern_stdev_soil_C_full_extent]
+    output_dir_list = [cn.soil_C_mangrove_dir, cn.soil_C_full_extent_2000_non_mang_dir,
+                       cn.soil_C_full_extent_2000_dir, cn.stdev_soil_C_full_extent_2000_dir]
+    output_pattern_list = [cn.pattern_soil_C_mangrove, cn.pattern_soil_C_full_extent_2000_non_mang,
+                           cn.pattern_soil_C_full_extent_2000, cn.pattern_stdev_soil_C_full_extent]
 
 
     ### Soil carbon density
 
-    uu.print_log("Downloading mangrove soil C rasters")
-    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_tile_dir, sensit_type)
-
-    # For downloading all tiles in the input folders.
-    input_files = [cn.mangrove_biomass_2000_dir]
-
-    for input in input_files:
-        uu.s3_folder_download(input, cn.docker_tile_dir, sensit_type)
-
-    # Download raw mineral soil C density tiles.
-    # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
-    # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # There are 12951 tiles and it takes about 3 hours to download them!
-    cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
-                   '--accept', '*.tif', f'{cn.mineral_soil_C_url}']
-    uu.log_subprocess_output_full(cmd)
-
-    uu.print_log("Unzipping mangrove soil C rasters...")
-    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_tile_dir]
-    uu.log_subprocess_output_full(cmd)
-
-    # Mangrove soil receives precedence over mineral soil
-    uu.print_log("Making mangrove soil C vrt...")
-    check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
-    uu.print_log("Done making mangrove soil C vrt")
+    # uu.print_log("Downloading mangrove soil C rasters")
+    # uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_tile_dir, sensit_type)
+    #
+    # # For downloading all tiles in the input folders.
+    # input_files = [cn.mangrove_biomass_2000_dir]
+    #
+    # for input in input_files:
+    #     uu.s3_folder_download(input, cn.docker_tile_dir, sensit_type)
+    #
+    # # Download raw mineral soil C density tiles.
+    # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
+    # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+    # # There are 12951 tiles and it takes about 3 hours to download them!
+    # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
+    #                '--accept', '*.tif', f'{cn.mineral_soil_C_url}']
+    # uu.log_subprocess_output_full(cmd)
+    #
+    # uu.print_log("Unzipping mangrove soil C rasters...")
+    # cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_tile_dir]
+    # uu.log_subprocess_output_full(cmd)
+    #
+    # # Mangrove soil receives precedence over mineral soil
+    # uu.print_log("Making mangrove soil C vrt...")
+    # check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    # uu.print_log("Done making mangrove soil C vrt")
 
     uu.print_log("Making mangrove soil C tiles...")
 
@@ -97,6 +97,12 @@ def mp_create_soil_C(tile_id_list):
         pool.join()
 
     uu.print_log('Done making mangrove soil C tiles', "\n")
+
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
+    if not cn.NO_UPLOAD:
+
+        uu.print_log("Uploading non-mangrove soil C density tiles")
+        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
 
     uu.print_log("Making mineral soil C vrt...")
     check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
@@ -131,11 +137,11 @@ def mp_create_soil_C(tile_id_list):
     pool.close()
     pool.join()
 
-    # # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
-    # if not cn.NO_UPLOAD:
-    #
-    #     uu.print_log("Uploading non-mangrove soil C density tiles")
-    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
+    if not cn.NO_UPLOAD:
+
+        uu.print_log("Uploading non-mangrove soil C density tiles")
+        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
 
     uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
@@ -160,7 +166,7 @@ def mp_create_soil_C(tile_id_list):
     if not cn.NO_UPLOAD:
 
         uu.print_log("Uploading combined soil C density tiles")
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+        uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
 
 
     # # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
@@ -272,7 +278,7 @@ def mp_create_soil_C(tile_id_list):
     # if not cn.NO_UPLOAD:
     #
     #     uu.print_log("Uploading soil C density standard deviation tiles")
-    #     uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
+    #     uu.upload_final_set(output_dir_list[3], output_pattern_list[3])
 
 
 if __name__ == '__main__':
