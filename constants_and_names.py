@@ -489,7 +489,7 @@ elevation_processed_dir = os.path.join(s3_base_dir, 'inputs_for_carbon_pools/pro
 # Base directory for all carbon emitted_pools
 base_carbon_pool_dir = os.path.join(s3_base_dir, 'carbon_pools/')
 
-## Carbon emitted_pools in loss year
+## Carbon pools in loss year
 
 # Date to include in the output directory for all emissions year carbon emitted_pools
 emis_pool_run_date = '20230315'
@@ -518,7 +518,7 @@ soil_C_emis_year_2000_dir = os.path.join(base_carbon_pool_dir, f'soil_carbon/los
 pattern_total_C_emis_year = 'Mg_total_C_ha_emis_year'
 total_C_emis_year_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/loss_pixels/standard/{emis_pool_run_date}/')
 
-## Carbon emitted_pools in 2000
+## Carbon pools in 2000
 
 pool_2000_run_date = '20230222'
 

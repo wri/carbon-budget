@@ -65,7 +65,7 @@ def create_combined_soil_C(tile_id):
     start = datetime.datetime.now()
 
     # Input files
-    mangrove_soil = f'{tile_id}_mangrove_masked_to_mangrove.tif'
+    mangrove_soil = f'{tile_id}_{cn.pattern_soil_C_mangrove}.tif'
     mineral_soil = f'{tile_id}_{cn.pattern_soil_C_full_extent_2000_non_mang}.tif'
 
     # Output file

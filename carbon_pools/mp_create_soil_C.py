@@ -12,6 +12,7 @@ However, for reasons I couldn't figure out, the gdalbuildvrt step in which I com
 and the mineral soil raster never actually combined the mangrove tiles with the mineral soil raster; I just kept
 getting mineral soil C values out.
 So, I switched to this somewhat more convoluted method that uses both gdal and rasterio/numpy.
+SoilGrids250 last modified date for these files is 2023-02-01.
 
 python -m carbon_pools.mp_create_soil_C -l 00N_000E -nu
 python -m carbon_pools.mp_create_soil_C -l all
@@ -54,94 +55,94 @@ def mp_create_soil_C(tile_id_list):
 
     ### Soil carbon density
 
-    uu.print_log("Downloading mangrove soil C rasters")
-    uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_tile_dir, sensit_type)
+    # uu.print_log("Downloading mangrove soil C rasters")
+    # uu.s3_file_download(os.path.join(cn.mangrove_soil_C_dir, cn.name_mangrove_soil_C), cn.docker_tile_dir, sensit_type)
+    #
+    # # For downloading all tiles in the input folders.
+    # input_files = [cn.mangrove_biomass_2000_dir]
 
-    # For downloading all tiles in the input folders.
-    input_files = [cn.mangrove_biomass_2000_dir]
-
-    for input in input_files:
-        uu.s3_folder_download(input, cn.docker_tile_dir, sensit_type)
-
+    # for input in input_files:
+    #     uu.s3_folder_download(input, cn.docker_tile_dir, sensit_type)
+    #
     # # Download raw mineral soil C density tiles.
     # # First tries to download index.html.tmp from every folder, then goes back and downloads all the tifs in each folder
     # # Based on https://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
-    # # There are 12951 tiles and it takes about 3 hours to download them!
+    # # There are 12951 tiles and it takes about 2 hours to download them!
     # cmd = ['wget', '--recursive', '-nH', '--cut-dirs=6', '--no-parent', '--reject', 'index.html*',
     #                '--accept', '*.tif', f'{cn.mineral_soil_C_url}']
     # uu.log_subprocess_output_full(cmd)
 
-    uu.print_log("Unzipping mangrove soil C rasters...")
-    cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_tile_dir]
-    uu.log_subprocess_output_full(cmd)
-
-    # Mangrove soil receives precedence over mineral soil
-    uu.print_log("Making mangrove soil C vrt...")
-    check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
-    uu.print_log("Done making mangrove soil C vrt")
-
-    uu.print_log("Making mangrove soil C tiles...")
-
-    if cn.SINGLE_PROCESSOR:
-        for tile_id in tile_id_list:
-            create_soil_C.create_mangrove_soil_C(tile_id)
-    else:
-        if cn.count == 96:
-            processes = 36   # 32 processors = 570 GB peak; 36 = XXX GB peak
-        else:
-            processes = int(cn.count/3)
-        uu.print_log('Mangrove soil C max processors=', processes)
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(create_soil_C.create_mangrove_soil_C), tile_id_list)
-        pool.close()
-        pool.join()
-
-    uu.print_log('Done making mangrove soil C tiles', "\n")
-
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
-    if not cn.NO_UPLOAD:
-
-        uu.print_log("Uploading non-mangrove soil C density tiles")
-        uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
-
-    uu.print_log("Making mineral soil C vrt...")
-    check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
-    uu.print_log("Done making mineral soil C vrt")
-
-    # Creates mineral soil C density tiles
-    if cn.SINGLE_PROCESSOR:
-        for tile_id in tile_id_list:
-            create_soil_C.create_mineral_soil_C(tile_id)
-    else:
-        source_raster = 'mineral_soil_C.vrt'
-        out_pattern = cn.pattern_soil_C_full_extent_2000_non_mang
-        dt = 'Int16'
-        if cn.count == 96:
-            processes = 80  # 32 processors = 100 GB peak; 50 = 160 GB peak; 80 = XXX GB peak
-        else:
-            processes = int(cn.count/2)
-        uu.print_log(f"Creating mineral soil C density tiles with {processes} processors...")
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
-                 tile_id_list)
-        pool.close()
-        pool.join()
-
-    uu.print_log("Done making non-mangrove soil C tiles", "\n")
-
-    output_pattern = cn.pattern_soil_C_full_extent_2000_non_mang
-    processes = 60 # 50 processors = ~450 GB peak; 60 = XXX GB peak
-    uu.print_log(f"Checking for empty tiles of {output_pattern} pattern with {processes} processors...")
-    pool = multiprocessing.Pool(processes)
-    pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
-    pool.close()
-    pool.join()
-
-    # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
-    if not cn.NO_UPLOAD:
-
-        uu.print_log("Uploading non-mangrove soil C density tiles")
-        uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
+    # uu.print_log("Unzipping mangrove soil C rasters...")
+    # cmd = ['unzip', '-j', cn.name_mangrove_soil_C, '-d', cn.docker_tile_dir]
+    # uu.log_subprocess_output_full(cmd)
+    #
+    # # Mangrove soil receives precedence over mineral soil
+    # uu.print_log("Making mangrove soil C vrt...")
+    # check_call('gdalbuildvrt mangrove_soil_C.vrt *{}*.tif'.format(cn.pattern_mangrove_soil_C_raw), shell=True)
+    # uu.print_log("Done making mangrove soil C vrt")
+    #
+    # uu.print_log("Making mangrove soil C tiles...")
+    #
+    # if cn.SINGLE_PROCESSOR:
+    #     for tile_id in tile_id_list:
+    #         create_soil_C.create_mangrove_soil_C(tile_id)
+    # else:
+    #     if cn.count == 96:
+    #         processes = 36   # 32 processors = 570 GB peak; 36 = 590 GB peak
+    #     else:
+    #         processes = int(cn.count/3)
+    #     uu.print_log('Mangrove soil C max processors=', processes)
+    #     pool = multiprocessing.Pool(processes)
+    #     pool.map(partial(create_soil_C.create_mangrove_soil_C), tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    # uu.print_log('Done making mangrove soil C tiles', "\n")
+    #
+    # # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
+    # if not cn.NO_UPLOAD:
+    #
+    #     uu.print_log("Uploading non-mangrove soil C density tiles")
+    #     uu.upload_final_set(output_dir_list[0], output_pattern_list[0])
+    #
+    # uu.print_log("Making mineral soil C vrt...")
+    # check_call('gdalbuildvrt mineral_soil_C.vrt *{}*'.format(cn.pattern_mineral_soil_C_raw), shell=True)
+    # uu.print_log("Done making mineral soil C vrt")
+    #
+    # # Creates mineral soil C density tiles
+    # if cn.SINGLE_PROCESSOR:
+    #     for tile_id in tile_id_list:
+    #         create_soil_C.create_mineral_soil_C(tile_id)
+    # else:
+    #     source_raster = 'mineral_soil_C.vrt'
+    #     out_pattern = cn.pattern_soil_C_full_extent_2000_non_mang
+    #     dt = 'Int16'
+    #     if cn.count == 96:
+    #         processes = 90  # 32 processors = 100 GB peak; 50 = 160 GB peak; 80 = >190 GB peak; 90 = XXX GB peak
+    #     else:
+    #         processes = int(cn.count/2)
+    #     uu.print_log(f"Creating mineral soil C density tiles with {processes} processors...")
+    #     pool = multiprocessing.Pool(processes)
+    #     pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+    #              tile_id_list)
+    #     pool.close()
+    #     pool.join()
+    #
+    # uu.print_log("Done making non-mangrove soil C tiles", "\n")
+    #
+    # output_pattern = cn.pattern_soil_C_full_extent_2000_non_mang
+    # processes = 60 # 50 processors = ~450 GB peak; 60 = XXX GB peak
+    # uu.print_log(f"Checking for empty tiles of {output_pattern} pattern with {processes} processors...")
+    # pool = multiprocessing.Pool(processes)
+    # pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
+    # pool.close()
+    # pool.join()
+    #
+    # # If no_upload flag is not activated (by choice or by lack of AWS credentials), output is uploaded to s3
+    # if not cn.NO_UPLOAD:
+    #
+    #     uu.print_log("Uploading non-mangrove soil C density tiles")
+    #     uu.upload_final_set(output_dir_list[1], output_pattern_list[1])
 
 
     uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
