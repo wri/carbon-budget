@@ -1185,7 +1185,7 @@ def name_aggregated_output(pattern):
     # print(out_pattern)
     out_pattern = re.sub(f'2001_{cn.loss_years}', '', out_pattern)
     # print(out_pattern)
-    out_pattern = re.sub('_Mg_', '_Mt_per_year', out_pattern)
+    out_pattern = re.sub('_Mg_', '_Mt_per_year_', out_pattern)
     # print(out_pattern)
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print(out_pattern)

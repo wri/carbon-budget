@@ -98,7 +98,7 @@ def mp_gross_removals_all_forest_types(tile_id_list):
 
     # Checks the gross removals outputs for tiles with no data
     for output_pattern in output_pattern_list:
-        if cn.count <= 2:  # For local tests
+        if cn.count <= 12:  # For local tests
             processes = 1
             uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors using light function...')
             with multiprocessing.Pool(processes) as pool:
