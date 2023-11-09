@@ -542,7 +542,8 @@ litter_2000_dir = os.path.join(base_carbon_pool_dir, f'litter_carbon/extent_2000
 mangrove_soil_C_dir = os.path.join(s3_base_dir, 'carbon_pools/soil_carbon/raw/')
 name_mangrove_soil_C = 'Mangroves_SOCS_0_100cm_30m.zip'
 pattern_mangrove_soil_C_raw = 'dSOCS_0_100cm'
-# Raw mineral soil C file site, SoilGrids250, updated summer 2020
+# Raw mineral soil C file site, SoilGrids250, updated November 2023.
+# SoilGrids250 last modified date for these files is 2023-02-01.
 pattern_mineral_soil_C_raw = 'tileSG'
 mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_mean/'
 
@@ -562,7 +563,8 @@ soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/in
 
 # Total carbon (all carbon emitted_pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
 pattern_total_C_2000 = "Mg_total_C_ha_2000"
-total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000/standard/{pool_2000_run_date}/')
+# total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000/standard/{pool_2000_run_date}/')
+total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000/standard/20231108/')
 
 
 ######
