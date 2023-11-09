@@ -147,9 +147,7 @@ def mp_create_soil_C(tile_id_list):
 
     uu.print_log("Making combined (mangrove & non-mangrove) soil C tiles...")
 
-    print(len(tile_id_list))
-
-    # Tile list specifically for soil carbon tile sets
+    # New tile list specifically for soil carbon tile sets
     if len(tile_id_list) > 10:
         # List of tiles to run in the model
         tile_id_list = uu.create_combined_tile_list(
@@ -164,7 +162,7 @@ def mp_create_soil_C(tile_id_list):
             create_soil_C.create_combined_soil_C(tile_id)
     else:
         if cn.count == 96:
-            processes = 45   # 45 processors = XXX GB peak
+            processes = 55   # 45 processors = 420 GB peak; 55 = XXX GB peak
         else:
             processes = int(cn.count/2)
         uu.print_log('Combined soil C max processors=', processes)
@@ -182,7 +180,7 @@ def mp_create_soil_C(tile_id_list):
         uu.upload_final_set(output_dir_list[2], output_pattern_list[2])
 
 
-    # # Need to delete soil c density rasters because they have the same pattern as the standard deviation rasters
+    # # Need to delete raw soil c density rasters because they have the same pattern as the standard deviation rasters
     # uu.print_log("Deleting raw soil C density rasters")
     # c_stocks = glob.glob(f'*{cn.pattern_soil_C_full_extent_2000}*')
     # for c_stock in c_stocks:
