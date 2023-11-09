@@ -874,7 +874,7 @@ def create_total_C(tile_id, carbon_pool_extent):
             uu.print_log(f'    Soil C 2000 tile not found for {tile_id}')
 
         kwargs = AGC_2000_src.meta
-        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0)
+        kwargs.update(driver='GTiff', count=1, compress='DEFLATE', nodata=0, bigtiff='YES')
         windows = AGC_2000_src.block_windows(1)
         output_pattern_list = [cn.pattern_total_C_2000]
         if cn.SENSIT_TYPE != 'std':
