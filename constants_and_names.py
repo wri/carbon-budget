@@ -431,7 +431,7 @@ US_removal_rate_table_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 # s3://gfw-data-lake/gfw_planted_forests/v20230911/raster/epsg-4326/10/40000/.
 # I then copied them into gfw2-data and renamed them to use my preferred patterns.
 pattern_annual_gain_AGC_BGC_planted_forest = 'annual_gain_rate_AGC_BGC_Mg_ha_planted_forest'
-annual_gain_AGC_BGC_planted_forest_dir = os.path.join(s3_base_dir, f'gfw2-data/climate/carbon_model/annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
+annual_gain_AGC_BGC_planted_forest_dir = os.path.join(s3_base_dir, f'annual_removal_factor_planted_forest/{planted_forest_version}_AGC_BGC/{planted_forest_output_date}/')
 
 # Annual aboveground carbon removals rate for <20 year secondary, non-mangrove, non-planted natural forests (raw)
 name_annual_gain_AGC_natrl_forest_young_raw = 'sequestration_rate__mean__aboveground__full_extent__Mg_C_ha_yr.tif'
@@ -614,12 +614,12 @@ mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30
 
 # Soil C full extent but just from SoilGrids250 (mangrove soil C layer not added in)
 # Not used in model.
-pattern_soil_C_full_extent_2000_non_mang = 'soil_C_ha_full_extent_2000_non_mangrove_Mg_ha'
-soil_C_full_extent_2000_non_mang_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/no_mangrove/20210414/')
+pattern_soil_C_full_extent_2000_non_mang = 'soil_C_full_extent_2000_non_mangrove_Mg_C_ha'
+soil_C_full_extent_2000_non_mang_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/no_mangrove/20231108/')
 
 # Soil C full extent (all soil pixels, with mangrove soil C in Giri mangrove extent getting priority over mineral soil C)
 # Non-mangrove C is 0-30 cm, mangrove C is 0-100 cm
-pattern_soil_C_full_extent_2000 = 't_soil_C_ha_full_extent_2000'
+pattern_soil_C_full_extent_2000 = 'soil_C_full_extent_2000_Mg_C_ha'
 soil_C_full_extent_2000_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/standard/20231108/')
 
 # Total carbon (all carbon emitted_pools combined) for the full biomass 2000 (mangrove and non-mangrove) extent based on 2000 stocks
