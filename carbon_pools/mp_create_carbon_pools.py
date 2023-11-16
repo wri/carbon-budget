@@ -39,7 +39,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     """
     :param tile_id_list: list of tile ids to process
     :param carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
-    :return: set of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
+    :return: sets of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
     """
 
     os.chdir(cn.docker_tile_dir)

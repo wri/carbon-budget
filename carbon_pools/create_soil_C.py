@@ -22,13 +22,13 @@ import universal_util as uu
 import constants_and_names as cn
 
 # Creates 10x10 mangrove soil C tiles
-def create_mangrove_soil_C(tile_id, no_upload):
+def create_mangrove_soil_C(tile_id):
 
     # Start time
     start = datetime.datetime.now()
 
     # Checks if mangrove biomass exists. If not, it won't create a mangrove soil C tile.
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
+    if os.path.exists(f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'):
 
         uu.print_log("Mangrove aboveground biomass tile found for", tile_id)
 
@@ -36,11 +36,11 @@ def create_mangrove_soil_C(tile_id, no_upload):
         xmin, ymin, xmax, ymax = uu.coords(tile_id)
 
         uu.print_log("Clipping mangrove soil C from mangrove soil vrt for", tile_id)
-        uu.warp_to_Hansen('mangrove_soil_C.vrt', '{0}_mangrove_full_extent.tif'.format(tile_id), xmin, ymin, xmax, ymax, 'Int16')
+        uu.warp_to_Hansen('mangrove_soil_C.vrt', f'{tile_id}_mangrove_full_extent.tif', xmin, ymin, xmax, ymax, 'Int16')
 
-        mangrove_soil = '{0}_mangrove_full_extent.tif'.format(tile_id)
-        mangrove_biomass = '{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)
-        outname = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
+        mangrove_soil = f'{tile_id}_mangrove_full_extent.tif'
+        mangrove_biomass = f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'
+        outname = f'{tile_id}_{cn.pattern_soil_C_mangrove}.tif'
         out = '--outfile={}'.format(outname)
         calc = '--calc=A*(B>0)'
         datatype = '--type={}'.format('Int16')
@@ -55,24 +55,24 @@ def create_mangrove_soil_C(tile_id, no_upload):
         uu.print_log("Mangrove aboveground biomass tile not found for", tile_id)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, 'mangrove_masked_to_mangrove', no_upload)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_mangrove)
 
 
 # Overlays the mangrove soil C tiles with the mineral soil C tiles, giving precedence to the mangrove soil C
-def create_combined_soil_C(tile_id, no_upload):
+def create_combined_soil_C(tile_id):
 
     # Start time
     start = datetime.datetime.now()
 
     # Input files
-    mangrove_soil = '{0}_mangrove_masked_to_mangrove.tif'.format(tile_id)
-    mineral_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000_non_mang)
+    mangrove_soil = f'{tile_id}_{cn.pattern_soil_C_mangrove}.tif'
+    mineral_soil = f'{tile_id}_{cn.pattern_soil_C_full_extent_2000_non_mang}.tif'
 
     # Output file
-    combined_soil = '{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000)
+    combined_soil = f'{tile_id}_{cn.pattern_soil_C_full_extent_2000}.tif'
 
     # Checks if mangrove AGB tile exists. If not, mangrove soil C is not combined with mineral soil C.
-    if os.path.exists('{0}_{1}.tif'.format(tile_id, cn.pattern_mangrove_biomass_2000)):
+    if os.path.exists(f'{tile_id}_{cn.pattern_mangrove_biomass_2000}.tif'):
 
         uu.print_log("Mangrove aboveground biomass tile found for", tile_id)
 
@@ -114,7 +114,7 @@ def create_combined_soil_C(tile_id, no_upload):
 
         # If there is no mangrove soil C tile, the final output of the mineral soil function needs to receive the
         # correct final name.
-        os.rename('{0}_{1}.tif'.format(tile_id, cn.pattern_soil_C_full_extent_2000_non_mang), combined_soil)
+        os.rename(f'{tile_id}_{cn.pattern_soil_C_full_extent_2000_non_mang}.tif', combined_soil)
 
     # Prints information about the tile that was just processed
-    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000, no_upload)
+    uu.end_of_fx_summary(start, tile_id, cn.pattern_soil_C_full_extent_2000)
