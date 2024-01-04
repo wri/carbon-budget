@@ -130,7 +130,7 @@ def model_extent(tile_id, pattern):
             # Array of pixels that have both biomass and tree cover density
             tcd_with_biomass_window = np.where((biomass_window > 0) & (tcd_window > 0), 1, 0)
 
-            # For all moel types except legal_Amazon_loss sensitivity analysis
+            # For all model types except legal_Amazon_loss sensitivity analysis
             if cn.SENSIT_TYPE != 'legal_Amazon_loss':
 
                 # Array of pixels with (biomass AND tcd) OR mangrove biomass OR Hansen gain
