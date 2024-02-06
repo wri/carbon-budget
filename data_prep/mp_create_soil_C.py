@@ -28,7 +28,8 @@ import os
 import sys
 import constants_and_names as cn
 import universal_util as uu
-from . import create_soil_C
+from data_prep import create_soil_C
+
 
 def mp_create_soil_C(tile_id_list):
     """

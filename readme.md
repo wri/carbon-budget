@@ -23,7 +23,8 @@ All spatial data are converted to 10x10 degree raster tiles at 0.00025x0.00025 d
 Spatial data include annual tree cover loss, biomass densities in 2000, drivers of tree cover loss, 
 ecozones, tree cover extent in 2000, elevation, etc. 
 Many inputs can be processed the same way (e.g., many rasters can be processed using the same `gdal` function) but some need special treatment.
-The input processing scripts are mostly in the `data_prep` folder but a few are unfortunately in other folders. 
+The input processing scripts are in the `data_prep` folder and are mostly run in `mp_prep_other_inputs_annual.py` or
+`mp_prep_other_inputs_one_off.py`. 
 The tabular data are generally annual biomass removal (i.e. 
 sequestration) factors (e.g., mangroves, planted forests, natural forests), which are then applied to spatial data. 
 Different inputs are needed for different steps in the framework. 
@@ -34,7 +35,7 @@ The framework looks for files locally before downloading them in order to reduce
 The framework can still be run without AWS credentials; inputs will be downloaded from s3 but outputs will not be uploaded to s3.
 In that case, outputs will only be stored locally.
 
-A complete list of inputs, including changes made to the framework, can be found 
+A complete list of inputs, including changes made to the framework since the original publication, can be found 
 [here](http://gfw2-data.s3.amazonaws.com/climate/carbon_model/Table_S3_data_sources__updated_20230406.pdf).
 
 ### Outputs
@@ -212,8 +213,8 @@ The gross emissions script is the only part of the framework that uses C++. Thus
 emissions file must be compiled for emissions to run. 
 There are a few different versions of the emissions C++ script: one for the standard version and a few other for
 sensitivity analyses. 
-`mp_calculate_gross_emissions.py` will compile the correct C++ file each time it is run, so the C++ file does not
-need to be compiled manually. 
+`mp_calculate_gross_emissions.py` will compile the correct C++ files (for all carbon pools and for soil only) 
+each time it is run, so the C++ files do not need to be compiled manually. 
 However, for completeness, the command for compiling the C++ script is (subbing in the actual file name): 
 
 `c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_[VERSION].exe -lgdal`
@@ -392,6 +393,8 @@ Otherwise, I do not know the limitations and constraints on running this framewo
 
 ### Contact information
 David Gibbs: david.gibbs@wri.org
+
+Melissa Rose: melissa.rose@wri.org
 
 Nancy Harris: nancy.harris@wri.org
 
