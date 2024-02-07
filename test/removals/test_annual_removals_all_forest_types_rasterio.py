@@ -64,7 +64,7 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
         cn.annual_gain_AGB_mangrove_dir: cn.pattern_annual_gain_AGB_mangrove,
         cn.annual_gain_BGB_mangrove_dir: cn.pattern_annual_gain_BGB_mangrove,
         cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir: cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
-        cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked,
+        cn.annual_gain_AGC_BGC_planted_forest_dir: cn.pattern_annual_gain_AGC_BGC_planted_forest,
         cn.annual_gain_AGC_BGC_natrl_forest_US_dir: cn.pattern_annual_gain_AGC_BGC_natrl_forest_US,
         cn.annual_gain_AGC_natrl_forest_young_dir: cn.pattern_annual_gain_AGC_natrl_forest_young,
         cn.age_cat_IPCC_dir: cn.pattern_age_cat_IPCC,
@@ -73,7 +73,7 @@ def test_rasterio_runs(upload_log_dummy, make_tile_name_fake, sensit_tile_rename
 
         cn.stdev_annual_gain_AGB_mangrove_dir: cn.pattern_stdev_annual_gain_AGB_mangrove,
         cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir: cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
-        cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked,
+        cn.stdev_annual_gain_AGC_BGC_planted_forest_dir: cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest,
         cn.stdev_annual_gain_AGC_BGC_natrl_forest_US_dir: cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US,
         cn.stdev_annual_gain_AGC_natrl_forest_young_dir: cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
         cn.stdev_annual_gain_AGB_IPCC_defaults_dir: cn.pattern_stdev_annual_gain_AGB_IPCC_defaults

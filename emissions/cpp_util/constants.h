@@ -45,7 +45,7 @@ namespace constants
     constexpr char tcl_drivers[] = "_tree_cover_loss_driver_processed.tif";
     constexpr char peat_mask[] = "_peat_mask_processed.tif";
     constexpr char ifl_primary[] = "_ifl_2000_primary_2001_merged.tif";
-    constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other_unmasked.tif";
+    constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other.tif";
 
     // Outputs
     constexpr char commod_emis[] = "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_";

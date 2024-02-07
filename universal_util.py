@@ -509,8 +509,9 @@ def count_tiles_s3(source, pattern=None):
 
     file_list = []
 
-    if source == cn.gain_dir:
-        print_log("Not counting gain tiles... No good mechanism for it, sadly.")
+    if 'gfw-data-lake' in source:
+        #TODO: Change this function to count tiles in gfw-data-lake
+        print_log("Not counting gfw-data-lake tiles... No good mechanism for it, sadly.")
         return
 
     # Iterates through the text file to get the names of the tiles and appends them to list
@@ -578,7 +579,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
         for tile_id in tile_id_list:
             if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:   # For tiles that do not have the tile_id first
                 source = f'{source_dir}{pattern}_{tile_id}.tif'
-            elif pattern in [cn.pattern_gain_data_lake]:
+            elif pattern in [cn.pattern_data_lake]:
                 source = f'{source_dir}{tile_id}.tif'
             else:  # For every other type of tile
                 source = f'{source_dir}{tile_id}_{pattern}.tif'
@@ -600,15 +601,30 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     # Special cases are below.
     local_tile_count = len(glob.glob(f'*{pattern}*.tif'))
 
-    # For gain tiles, which have a different pattern on the ec2 instance from s3
-    if source == cn.gain_dir:
-        local_tile_count = len(glob.glob(f'*{cn.pattern_gain_ec2}*.tif'))
+    # For data-lake tiles, which have a different pattern on the ec2 instance from s3
+    if pattern == cn.pattern_data_lake:
+        if source == cn.gain_dir:
+            ec2_pattern = cn.pattern_gain_ec2
+        elif source == cn.datalake_pf_agc_rf_dir:
+            ec2_pattern = cn.pattern_pf_rf_agc_ec2
+        elif source == cn.datalake_pf_agcbgc_rf_dir:
+            ec2_pattern = cn.pattern_pf_rf_agcbgc_ec2
+        elif source == cn.datalake_pf_agc_sd_dir:
+            ec2_pattern = cn.pattern_pf_sd_agc_ec2
+        elif source == cn.datalake_pf_agcbgc_sd_dir:
+            ec2_pattern = cn.pattern_pf_sd_agcbgc_ec2
+        elif source == cn.datalake_pf_simplename_dir:
+            ec2_pattern = cn.pattern_planted_forest_type
+        elif source == cn.datalake_pf_estab_year_dir:
+            ec2_pattern = cn.pattern_planted_forest_estab_year
+
+        local_tile_count = len(glob.glob(f'*{ec2_pattern}*.tif'))
+        print_log(f'There are {local_tile_count} tiles on the spot machine with the pattern {ec2_pattern}')
 
     # For tile types that have the tile_id after the pattern
     if pattern in [cn.pattern_tcd, cn.pattern_pixel_area, cn.pattern_loss]:
         local_tile_count = len(glob.glob(f'{pattern}*.tif'))
-
-    print_log(f'There are {local_tile_count} tiles on the spot machine with the pattern {pattern}')
+        print_log(f'There are {local_tile_count} tiles on the spot machine with the pattern {pattern}')
 
     # Changes the path to download from based on the sensitivity analysis being run and whether that particular input
     # has a sensitivity analysis path on s3
@@ -676,20 +692,24 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
     else:
 
         # Counts how many tiles are in the source s3 folder
-        s3_count = count_tiles_s3(source, pattern=pattern)
-        print_log(f'There are {s3_count} tiles at {source} with the pattern {pattern}')
+        if pattern == cn.pattern_data_lake:
+            s3_count = count_tiles_s3(source, pattern=ec2_pattern)
+            #print_log(f'There are {s3_count} tiles at {source} with the pattern {ec2_pattern}')
+        else:
+            s3_count = count_tiles_s3(source, pattern=pattern)
+            print_log(f'There are {s3_count} tiles at {source} with the pattern {pattern}')
 
         # If there are as many tiles on the spot machine with the relevant pattern as there are on s3, no tiles are downloaded
         if local_tile_count == s3_count:
             print_log(f'Tiles with pattern {pattern} are already on spot machine. Not downloading.', "\n")
             return
 
-        print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
-
         # Downloads tile sets from the gfw-data-lake.
         # They need a special process because they don't have a tile pattern on the data-lake,
         # so I have to download them into their own folder and then give them a pattern while moving them to the main folder
         if 'gfw-data-lake' in source:
+
+            print_log(f'Downloading tiles with pattern {ec2_pattern}...')
 
             # Deletes special folder for downloads from data-lake (if it already exists)
             if os.path.exists(os.path.join(dest, 'data-lake-downloads')):
@@ -700,7 +720,7 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
 
             cmd = ['aws', 's3', 'cp', source, os.path.join(dest, 'data-lake-downloads'),
                    '--request-payer', 'requester', '--exclude', '*xml',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
+                   '--exclude', '*geojson', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
             log_subprocess_output_full(cmd)
 
             # Copies pattern-less tiles from their special folder to main tile folder and renames them with
@@ -708,19 +728,20 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             print_log("Copying tiles to main tile folder...")
             for filename in os.listdir(os.path.join(dest, 'data-lake-downloads')):
                 move(os.path.join(dest, f'data-lake-downloads/{filename}'),
-                            os.path.join(cn.docker_tile_dir, f'{filename[:-4]}_{cn.pattern_gain_ec2}.tif'))
+                     os.path.join(cn.docker_tile_dir, f'{filename[:-4]}_{ec2_pattern}.tif'))
 
             # Deletes special folder for downloads from data-lake
             os.rmdir(os.path.join(dest, 'data-lake-downloads'))
-            print_log("Tree cover gain tiles copied to main tile folder...")
+            print_log(f'data-lake tiles with pattern {ec2_pattern} copied to main tile folder...')
 
         # Downloads non-data-lake inputs
         else:
+            print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
 
             cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-                   '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
+                   '--exclude', '*geojson', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
             # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--exclude', '*tiled/*',
-            #        '--exclude', '*geojason', '--exclude', '*vrt', '--exclude', '*csv', '--recursive']
+            #        '--exclude', '*geojson', '--exclude', '*vrt', '--exclude', '*csv', '--recursive']
 
             log_subprocess_output_full(cmd)
 
@@ -802,34 +823,32 @@ def s3_file_download(source, dest, sensit_type):
 
     # If not a sensitivity run or a tile type without sensitivity analysis variants, the standard file is downloaded
 
-    # Special download procedures for tree cover gain because the tiles have no pattern, just an ID.
-    # Tree cover gain tiles are renamed as their downloaded to get a pattern added to them.
+    # Special download procedures for gfw-data-lake datasets (tree cover gain, planted forests) because the tiles have no pattern, just an ID.
+    # These tiles are renamed as they are downloaded to get a pattern added to them.
     else:
-        if dir == cn.gain_dir[:-1]: # Delete last character of gain_dir because it has the terminal / while dir does not have terminal /
-            ec2_file_name = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
-            print_log(f'Option 1: Checking if {ec2_file_name} is already on spot machine...')
-            if os.path.exists(os.path.join(dest, ec2_file_name)):
-                print_log(f'  Option 1 success: {os.path.join(dest, ec2_file_name)} already downloaded', "\n")
-                return
+        if 'gfw-data-lake' in source:
+            if dir == cn.gain_dir[:-1]: # Delete last character of gain_dir because it has the terminal / while dir does not have terminal /
+                ec2_file_name = f'{tile_id}_{cn.pattern_gain_ec2}.tif'
+            elif dir == cn.datalake_pf_agc_rf_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_pf_rf_agc_ec2}.tif'
+            elif dir == cn.datalake_pf_agcbgc_rf_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_pf_rf_agcbgc_ec2}.tif'
+            elif dir == cn.datalake_pf_agc_sd_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_pf_sd_agc_ec2}.tif'
+            elif dir == cn.datalake_pf_agcbgc_sd_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_pf_sd_agcbgc_ec2}.tif'
+            elif dir == cn.datalake_pf_simplename_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_planted_forest_type}.tif'
+            elif dir == cn.datalake_pf_estab_year_dir[:-1]:
+                ec2_file_name = f'{tile_id}_{cn.pattern_planted_forest_estab_year}.tif'
             else:
-                print_log(f'  Option 1 failure: {ec2_file_name} is not already on spot machine.')
-                print_log(f'Option 2: Checking for tile {source} on s3...')
+                print_log(f'  Warning: {source} is located in the gfw-data-lake bucket but has not been assigned a file name pattern for download. Please update the constants_and_names.py file and the s3_file_download function in the universal_util.py file to include this dataset for download.')
+                return
+            gfw_data_lake_download(source, dest, dir, file_name, ec2_file_name)
+            return
 
-                # If the tile isn't already downloaded, download is attempted
-                source = os.path.join(dir, file_name)
 
-                # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
-                cmd = ['aws', 's3', 'cp', source, f'{dest}{ec2_file_name}',
-                       '--request-payer', 'requester', '--only-show-errors']
-                log_subprocess_output_full(cmd)
-                if os.path.exists(os.path.join(dest, ec2_file_name)):
-                    print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
-                    return
-                else:
-                    print_log(
-                        f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
-
-        # All other tiles besides tree cover gain
+        # All other tiles besides gfw-data-lake datasets
         else:
             print_log(f'Option 1: Checking if {file_name} is already on spot machine...')
             if os.path.exists(os.path.join(dest, file_name)):
@@ -851,6 +870,34 @@ def s3_file_download(source, dest, sensit_type):
                     return
                 else:
                     print_log(f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.', "\n")
+
+def gfw_data_lake_download(source, dest, dir, file_name, ec2_file_name):
+
+    print_log(f'Option 1: Checking if {ec2_file_name} is already on spot machine...')
+
+    if os.path.exists(os.path.join(dest, ec2_file_name)):
+        print_log(f'  Option 1 success: {os.path.join(dest, ec2_file_name)} already downloaded', "\n")
+        return
+    else:
+        print_log(f'  Option 1 failure: {ec2_file_name} is not already on spot machine.')
+        print_log(f'Option 2: Checking for tile {source} on s3...')
+
+        # If the tile isn't already downloaded, download is attempted
+        source = os.path.join(dir, file_name)
+
+        # cmd = ['aws', 's3', 'cp', source, dest, '--no-sign-request', '--only-show-errors']
+        cmd = ['aws', 's3', 'cp', source, f'{dest}{ec2_file_name}',
+               '--request-payer', 'requester', '--only-show-errors']
+
+        log_subprocess_output_full(cmd)
+
+        if os.path.exists(os.path.join(dest, ec2_file_name)):
+            print_log(f'  Option 2 success: Tile {source} found on s3 and downloaded', "\n")
+            return
+        else:
+            print_log(
+                f'  Option 2 failure: Tile {source} not found on s3. Tile not found but it seems it should be. Check file paths and names.',
+                "\n")
 
 # Uploads all tiles of a pattern to specified location
 def upload_final_set(upload_dir, pattern):
@@ -1008,10 +1055,15 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = coords(tile_id)
 
+    #Uses rewindowed tiles from docker container with same tile_id and same out_pattern if no source raster is given
+    if source_raster == None:
+        source_raster = f'{tile_id}_{out_pattern}_rewindow.tif'
+
     out_tile = f'{tile_id}_{out_pattern}.tif'
 
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_tile]
+
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
         log_subprocess_output(process.stdout)
@@ -1133,7 +1185,7 @@ def name_aggregated_output(pattern):
     # print(out_pattern)
     out_pattern = re.sub(f'2001_{cn.loss_years}', '', out_pattern)
     # print(out_pattern)
-    out_pattern = re.sub('_Mg_', '_Mt_per_year', out_pattern)
+    out_pattern = re.sub('_Mg_', '_Mt_per_year_', out_pattern)
     # print(out_pattern)
     out_pattern = re.sub('all_drivers_Mt_CO2e', 'all_drivers_Mt_CO2e_per_year', out_pattern)
     # print(out_pattern)
@@ -1332,7 +1384,7 @@ def add_emissions_metadata(tile_id, output_pattern):
 # Converts 10x10 degree Hansen tiles that are in windows of 40000x1 pixels to windows of 160x160 pixels,
 # which is the resolution of the output tiles. This allows the 30x30 m pixels in each window to be summed
 # into 0.04x0.04 degree rasters.
-def rewindow(tile_id, download_pattern_name):
+def rewindow(tile_id, download_pattern_name, striped = False):
 
     # start time
     start = datetime.datetime.now()
@@ -1348,17 +1400,29 @@ def rewindow(tile_id, download_pattern_name):
 
     check_memory()
 
+    # Only rewindows if the rewindowed tile does not already exist in the docker container
+    #if os.path.exists(out_tile):
+    #    print_log(f'{out_tile} exists. No need to rewindow')
+    #    return
+
     # Only rewindows if the tile exists
     if os.path.exists(in_tile):
-        print_log(f'{in_tile} exists. Rewindowing to {out_tile} with {cn.agg_pixel_window}x{cn.agg_pixel_window} pixel windows...')
 
         # Just using gdalwarp inflated the output rasters about 10x, even with COMPRESS=LZW.
         # Solution was to use gdal_translate instead, although, for unclear reasons, this still inflates the size
         # of the pixel area tiles but not other tiles using LZW. DEFLATE makes all outputs smaller.
-        cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE',
-               '-co', 'TILED=YES', '-co', 'BLOCKXSIZE={}'.format(cn.agg_pixel_window), '-co', 'BLOCKYSIZE={}'.format(cn.agg_pixel_window),
-               in_tile, out_tile]
-        log_subprocess_output_full(cmd)
+        if striped == False:
+            cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE', '-co', 'TILED=YES',
+                   '-co', 'BLOCKXSIZE={}'.format(cn.agg_pixel_window), '-co', 'BLOCKYSIZE={}'.format(cn.agg_pixel_window),
+                   in_tile, out_tile]
+            log_subprocess_output_full(cmd)
+            print_log(f'{in_tile} exists. Rewindowing to {out_tile} with {cn.agg_pixel_window}x{cn.agg_pixel_window} pixel windows...')
+
+        elif striped == True:
+            cmd = ['gdal_translate', '-co', 'COMPRESS=DEFLATE', '-co', 'TILED=NO',
+                   in_tile, out_tile]
+            log_subprocess_output_full(cmd)
+            print_log(f'{in_tile} exists. Rewindowing to {out_tile} with 40000x1 pixel windows...')
 
 
     else:
@@ -1366,6 +1430,5 @@ def rewindow(tile_id, download_pattern_name):
 
     # Prints information about the tile that was just processed
     end_of_fx_summary(start, tile_id, "{}_rewindow".format(download_pattern_name))
-
 
 

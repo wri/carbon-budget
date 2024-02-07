@@ -57,7 +57,7 @@ def mp_tile_statistics(sensit_type, tile_id_list):
                     # # Planted forest removals
                     # cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked], # 15 = 600 GB peak
                     # cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked], # 15 = 360 GB peak
-                    # cn.stdev_annual_gain_AGC_BGC_planted_forest_unmasked_dir: [cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked], # 15 = 600 GB peak
+                    # cn.stdev_annual_gain_AGC_planted_forest_dir: [cn.pattern_stdev_annual_gain_AGC_planted_forest], # 15 = 600 GB peak
                     #
                     # # US forest removals
                     # cn.FIA_regions_processed_dir: [cn.pattern_FIA_regions_processed], # 15 = 350 GB peak

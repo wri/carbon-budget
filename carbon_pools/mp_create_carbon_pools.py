@@ -39,7 +39,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
     """
     :param tile_id_list: list of tile ids to process
     :param carbon_pool_extent: the pixels and years for which carbon pools are caculated: loss or 2000
-    :return: set of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
+    :return: sets of tiles with each carbon pool density (Mg/ha): aboveground, belowground, dead wood, litter, soil, total
     """
 
     os.chdir(cn.docker_tile_dir)
@@ -92,7 +92,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain_data_lake],
+            cn.gain_dir: [cn.pattern_data_lake],
             cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
         }
 
@@ -130,7 +130,7 @@ def mp_create_carbon_pools(tile_id_list, carbon_pool_extent):
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain_data_lake],
+            cn.gain_dir: [cn.pattern_data_lake],
             cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio],
             cn.annual_gain_AGC_all_types_dir: [cn.pattern_annual_gain_AGC_all_types],
             cn.cumul_gain_AGCO2_all_types_dir: [cn.pattern_cumul_gain_AGCO2_all_types]

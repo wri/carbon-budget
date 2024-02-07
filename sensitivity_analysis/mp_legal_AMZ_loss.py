@@ -182,9 +182,9 @@ def main ():
 
         # Files to download for this script.
         download_dict = {cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
-                         cn.gain_dir: [cn.pattern_gain_data_lake],
+                         cn.gain_dir: [cn.pattern_data_lake],
                          cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
-                         cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+                         cn.planted_forest_type_dir: [cn.pattern_planted_forest_type],
                          cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
                          cn.Brazil_forest_extent_2000_processed_dir: [cn.pattern_Brazil_forest_extent_2000_processed]
                          }
@@ -239,9 +239,9 @@ def main ():
         # Files to download for this script.
         download_dict = {
             cn.Brazil_annual_loss_processed_dir: [cn.pattern_Brazil_annual_loss_processed],
-            cn.gain_dir: [cn.pattern_gain_data_lake],
+            cn.gain_dir: [cn.pattern_data_lake],
             cn.WHRC_biomass_2000_non_mang_non_planted_dir: [cn.pattern_WHRC_biomass_2000_non_mang_non_planted],
-            cn.planted_forest_type_unmasked_dir: [cn.pattern_planted_forest_type_unmasked],
+            cn.planted_forest_type_dir: [cn.pattern_planted_forest_type],
             cn.mangrove_biomass_2000_dir: [cn.pattern_mangrove_biomass_2000],
             cn.Brazil_forest_extent_2000_processed_dir: [cn.pattern_Brazil_forest_extent_2000_processed]
         }
@@ -563,7 +563,7 @@ def main ():
             cn.precip_processed_dir: [cn.pattern_precip],
             cn.elevation_processed_dir: [cn.pattern_elevation],
             cn.soil_C_full_extent_2000_dir: [cn.pattern_soil_C_full_extent_2000],
-            cn.gain_dir: [cn.pattern_gain_data_lake],
+            cn.gain_dir: [cn.pattern_data_lake],
             cn.cumul_gain_AGCO2_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_mangrove],
             cn.cumul_gain_AGCO2_planted_forest_non_mangrove_dir: [cn.pattern_cumul_gain_AGCO2_planted_forest_non_mangrove],
             cn.cumul_gain_AGCO2_natrl_forest_dir: [cn.pattern_cumul_gain_AGCO2_natrl_forest],

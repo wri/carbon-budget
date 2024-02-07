@@ -48,7 +48,7 @@ def main ():
     os.chdir(cn.docker_tile_dir)
 
     # Files to download for this script.
-    download_dict = {cn.gain_dir: [cn.pattern_gain_data_lake],
+    download_dict = {cn.gain_dir: [cn.pattern_data_lake],
                      cn.annual_gain_AGB_IPCC_defaults_dir: [cn.pattern_annual_gain_AGB_IPCC_defaults],
                      cn.BGB_AGB_ratio_dir: [cn.pattern_BGB_AGB_ratio]
     }

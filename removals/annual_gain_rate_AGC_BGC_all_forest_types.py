@@ -29,7 +29,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     mangrove_AGB = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGB_mangrove)
     mangrove_BGB = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_BGB_mangrove)
     europe_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe)
-    plantations_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest_unmasked)
+    plantations_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_planted_forest)
     us_AGC_BGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_BGC_natrl_forest_US)
     young_AGC = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_annual_gain_AGC_natrl_forest_young)
     age_category = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_age_cat_IPCC)
@@ -39,7 +39,7 @@ def annual_gain_rate_AGC_BGC_all_forest_types(tile_id, output_pattern_list):
     # Removal factor standard deviations
     mangrove_AGB_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_mangrove)
     europe_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe)
-    plantations_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest_unmasked)
+    plantations_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_planted_forest)
     us_AGC_BGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_US)
     young_AGC_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young)
     ipcc_AGB_default_stdev = uu.sensit_tile_rename(cn.SENSIT_TYPE, tile_id, cn.pattern_stdev_annual_gain_AGB_IPCC_defaults)

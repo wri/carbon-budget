@@ -30,7 +30,7 @@ def mp_prep_other_inputs(tile_id_list):
         # List of tiles to run in the model
         tile_id_list = uu.create_combined_tile_list(
             [cn.WHRC_biomass_2000_unmasked_dir, cn.mangrove_biomass_2000_dir, cn.gain_dir, cn.tcd_dir,
-             cn.annual_gain_AGC_BGC_planted_forest_unmasked_dir]
+             cn.annual_gain_AGC_BGC_planted_forest_dir]
         )
 
     uu.print_log(tile_id_list)
