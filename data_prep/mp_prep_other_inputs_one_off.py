@@ -18,9 +18,9 @@ Options for process argument (-p):
 7) agb_bgb: Creates Hansen tiles of AGB:BGB based on Huang et al. 2021
 8) sdptv2: Creates 6 SDPTv2 tile sets from gfw-data-lake bucket to gfw2-data: AGC removal factors, AGC standard deviations, AGC+BGC removal factors, AGC+BGC standard deviations, planted forest type, and planted forest established year
 
-#TODO make the process command line to launch all of the pre-processing steps individually parallelized
+#TODO: Make the process command line to individually launch all of the pre-processing steps parallelized
 #TODO: Update constants_and_names.py with datalake_pf_estab_year_dir and uncomment 4 lines in sdptv2 section
-#TODO: Process gets stuck during the unzip process (line 172)
+#TODO: Plantations gets stuck during the unzip process (line 172)
 #TODO: AGB_BGB netcdf download process fails (line 527)
 '''
 import argparse
