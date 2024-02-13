@@ -5,11 +5,23 @@ combining IFL2000 (extratropics) and primary forests (tropics) into a single lay
 Hansenizing some removal factor standard deviation inputs, Hansenizing the European removal factors,
 and Hansenizing three US-specific removal factor inputs.
 
-python -m data_prep.mp_prep_other_inputs_one_off -l 00N_000E -nu
-python -m data_prep.mp_prep_other_inputs_one_off -l all
+python -m data_prep.mp_prep_other_inputs_one_off -l 00N_000E -nu -p young_forest
+python -m data_prep.mp_prep_other_inputs_one_off -l all -p sdptv2
 
-#TODO make each preprocessing step have its own if statement
-#TODO make the process command line argument text rather than numeric and ability to launch all of the pre-processing steps individually
+Options for process argument (-p):
+1) young_forest: Creates young natural forest removal rate and standard deviation tiles
+2) plantations: Creates pre-2000 oil palm plantation tiles
+3) climate: Creates climate zone tiles
+4) europe_forest: Creates European natural forest removal rate and standard deviation tiles
+5) us_forest: Creates US forest age, group, and region category tiles
+6) ifl_primary: Creates intact forest landscape/ primary forest tiles
+7) agb_bgb: Creates Hansen tiles of AGB:BGB based on Huang et al. 2021
+8) sdptv2: Creates 6 SDPTv2 tile sets from gfw-data-lake bucket to gfw2-data: AGC removal factors, AGC standard deviations, AGC+BGC removal factors, AGC+BGC standard deviations, planted forest type, and planted forest established year
+
+#TODO make the process command line to launch all of the pre-processing steps individually parallelized
+#TODO: Update constants_and_names.py with datalake_pf_estab_year_dir and uncomment 4 lines in sdptv2 section
+#TODO: Process gets stuck during the unzip process (line 172)
+#TODO: AGB_BGB netcdf download process fails (line 527)
 '''
 import argparse
 import multiprocessing
@@ -23,12 +35,12 @@ import xarray as xr
 import constants_and_names as cn
 import universal_util as uu
 
-from . import prep_other_inputs_one_off
+from . import prep_other_inputs_one_off as prep_other_inputs
 
 def mp_prep_other_inputs(tile_id_list, process):
 
     os.chdir(cn.docker_tile_dir)
-    sensit_type='std'
+    sensit_type = 'std'
 
     # If a full model run is specified, the correct set of tiles for the particular script is listed
     if tile_id_list == 'all':
@@ -41,33 +53,22 @@ def mp_prep_other_inputs(tile_id_list, process):
     uu.print_log(tile_id_list)
     uu.print_log(f'There are {str(len(tile_id_list))} tiles to process', "\n")
 
-    if process == 1:
+    ##################################################################################################
+
+    if process == 'young_forest' or process == 'all':
+
+        uu.print_log('Pre-processing young natural forest removal rate and standard deviation tiles')
 
         #List of output directories and output file name patterns
         output_dir_list = [
-                           cn.climate_zone_processed_dir, cn.plant_pre_2000_processed_dir,
-                           cn.ifl_primary_processed_dir,
                            cn.annual_gain_AGC_natrl_forest_young_dir,
-                           cn.stdev_annual_gain_AGC_natrl_forest_young_dir,
-                           cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                           cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-                           cn.FIA_forest_group_processed_dir,
-                           cn.age_cat_natrl_forest_US_dir,
-                           cn.FIA_regions_processed_dir,
+                           cn.stdev_annual_gain_AGC_natrl_forest_young_dir
         ]
 
         output_pattern_list = [
-                               cn.pattern_climate_zone, cn.pattern_plant_pre_2000,
-                               cn.pattern_ifl_primary,
                                cn.pattern_annual_gain_AGC_natrl_forest_young,
-                               cn.pattern_stdev_annual_gain_AGC_natrl_forest_young,
-                               cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
-                               cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe,
-                               cn.pattern_FIA_forest_group_processed,
-                               cn.pattern_age_cat_natrl_forest_US,
-                               cn.pattern_FIA_regions_processed,
+                               cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
         ]
-
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
@@ -76,37 +77,18 @@ def mp_prep_other_inputs(tile_id_list, process):
             output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
             output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
 
-
         # A date can optionally be provided by the full model script or a run of this script.
         # This replaces the date in constants_and_names.
         # Only done if output upload is enabled.
         if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
             output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
-
-        # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
-        uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), cn.docker_base_dir, sensit_type)
-        uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), cn.docker_base_dir, sensit_type)
-        uu.s3_file_download(os.path.join(cn.annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
-        uu.s3_file_download(os.path.join(cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_base_dir, sensit_type)
-        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_base_dir, sensit_type)
-        uu.s3_file_download(os.path.join(cn.age_cat_natrl_forest_US_raw_dir, cn.name_age_cat_natrl_forest_US_raw), cn.docker_base_dir, sensit_type)
-        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_base_dir, sensit_type)
         # For some reason, using uu.s3_file_download or otherwise using AWSCLI as a subprocess doesn't work for this raster.
-
         # Thus, using wget instead.
-        cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_base_dir)]
-        uu.log_subprocess_output_full(cmd)
-        uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_base_dir, sensit_type)
-        cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_base_dir, '--recursive']
+        cmd = ['wget', '{}'.format(cn.annual_gain_AGC_natrl_forest_young_raw_URL), '-P', '{}'.format(cn.docker_tile_dir)]
         uu.log_subprocess_output_full(cmd)
 
-        uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_base_dir, sensit_type, tile_id_list)
-
-        uu.print_log("Unzipping pre-2000 plantations...")
-        cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
-        uu.log_subprocess_output_full(cmd)
-
+        uu.s3_file_download(cn.stdev_annual_gain_AGC_natrl_forest_young_raw_URL, cn.docker_tile_dir, sensit_type)
 
         ### Creates young natural forest removal rate tiles
         source_raster = cn.name_annual_gain_AGC_natrl_forest_young_raw
@@ -122,7 +104,6 @@ def mp_prep_other_inputs(tile_id_list, process):
         pool.close()
         pool.join()
 
-
         ### Creates young natural forest removal rate standard deviation tiles
         source_raster = cn.name_stdev_annual_gain_AGC_natrl_forest_young_raw
         out_pattern = cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
@@ -137,6 +118,60 @@ def mp_prep_other_inputs(tile_id_list, process):
         pool.close()
         pool.join()
 
+        for output_pattern in [
+        cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
+        ]:
+        # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
+        # should be. These NaN values show up as values when the check_and_delete_if_empty function runs, making the tiles not
+        # deleted even if they have no data. However, the light version (which uses gdalinfo rather than rasterio masks) doesn't
+        # have this problem. So I'm forcing the young forest rates to and stdev to have their emptiness checked by the gdalinfo version.
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
+        # Uploads output tiles to s3
+        if cn.NO_UPLOAD == False:
+            for i in range(0, len(output_dir_list)):
+                uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    ##################################################################################################
+
+    if process == 'plantations' or process == 'all':
+
+        uu.print_log('Pre-processing pre-2000 oil palm plantation tiles')
+
+        #List of output directories and output file name patterns
+        output_dir_list = [
+                           cn.plant_pre_2000_processed_dir
+        ]
+
+        output_pattern_list = [
+                               cn.pattern_plant_pre_2000
+        ]
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+        # A date can optionally be provided by the full model script or a run of this script.
+        # This replaces the date in constants_and_names.
+        # Only done if output upload is enabled.
+        if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+            output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
+
+        # Files to process: IDN/MYS plantations before 2000
+        uu.s3_file_download(os.path.join(cn.plant_pre_2000_raw_dir, '{}.zip'.format(cn.pattern_plant_pre_2000_raw)), cn.docker_tile_dir, sensit_type)
+        # For some reason, using uu.s3_file_download or otherwise using AWSCLI as a subprocess doesn't work for this raster.
+
+        uu.print_log("Unzipping pre-2000 plantations...")
+        cmd = ['unzip', '-j', '{}.zip'.format(cn.pattern_plant_pre_2000_raw)]
+        uu.log_subprocess_output_full(cmd)
 
         ### Creates pre-2000 oil palm plantation tiles
         if cn.count == 96:
@@ -149,6 +184,49 @@ def mp_prep_other_inputs(tile_id_list, process):
         pool.close()
         pool.join()
 
+        for output_pattern in output_pattern_list:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
+        # Uploads output tiles to s3
+        if cn.NO_UPLOAD == False:
+            for i in range(0, len(output_dir_list)):
+                uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    ##################################################################################################
+
+    if process == 'climate' or process == 'all':
+
+        uu.print_log('Pre-processing climate zone tiles')
+
+        #List of output directories and output file name patterns
+        output_dir_list = [
+                           cn.climate_zone_processed_dir
+        ]
+
+        output_pattern_list = [
+                               cn.pattern_climate_zone
+        ]
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+        # A date can optionally be provided by the full model script or a run of this script.
+        # This replaces the date in constants_and_names.
+        # Only done if output upload is enabled.
+        if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+            output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
+
+        # Files to process: climate zone
+        uu.s3_file_download(os.path.join(cn.climate_zone_raw_dir, cn.climate_zone_raw), cn.docker_tile_dir, sensit_type)
 
         ### Creates climate zone tiles
         if cn.count == 96:
@@ -161,6 +239,51 @@ def mp_prep_other_inputs(tile_id_list, process):
         pool.close()
         pool.join()
 
+        for output_pattern in output_pattern_list:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
+
+        # Uploads output tiles to s3
+        if cn.NO_UPLOAD == False:
+            for i in range(0, len(output_dir_list)):
+                uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    ##################################################################################################
+
+    if process == 'europe_forest' or process == 'all':
+
+        uu.print_log('Pre-processing European natural forest removal rate and standard deviation tiles')
+
+        # List of output directories and output file name patterns
+        output_dir_list = [
+            cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
+            #cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir   # raw files deleted
+        ]
+
+        output_pattern_list = [
+            cn.pattern_annual_gain_AGC_BGC_natrl_forest_Europe,
+            #cn.pattern_stdev_annual_gain_AGC_BGC_natrl_forest_Europe
+        ]
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+        # A date can optionally be provided by the full model script or a run of this script.
+        # This replaces the date in constants_and_names.
+        # Only done if output upload is enabled.
+        if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+            output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
+
+        # Files to process: Europe natural forest
+        uu.s3_file_download(os.path.join(cn.annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_tile_dir, sensit_type)
+        uu.s3_file_download(os.path.join(cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw_dir, cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw), cn.docker_tile_dir, sensit_type)
 
         ### Creates European natural forest removal rate tiles
         source_raster = cn.name_annual_gain_AGC_BGC_natrl_forest_Europe_raw
@@ -169,13 +292,13 @@ def mp_prep_other_inputs(tile_id_list, process):
         if cn.count == 96:
             processes = 60  # 32 processors = 60 GB peak; 60 = XXX GB peak
         else:
-            processes = int(cn.count/2)
+            processes = int(cn.count / 2)
         uu.print_log("Creating European natural forest removals rate tiles with {} processors...".format(processes))
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
         pool.close()
         pool.join()
-
 
         ### Creates European natural forest standard deviation of removal rate tiles
         source_raster = cn.name_stdev_annual_gain_AGC_BGC_natrl_forest_Europe_raw
@@ -184,48 +307,64 @@ def mp_prep_other_inputs(tile_id_list, process):
         if cn.count == 96:
             processes = 32  # 32 processors = 60 GB peak; 60 = XXX GB peak
         else:
-            processes = int(cn.count/2)
-        uu.print_log("Creating standard deviation for European natural forest removals rate tiles with {} processors...".format(processes))
+            processes = int(cn.count / 2)
+        uu.print_log(
+            "Creating standard deviation for European natural forest removals rate tiles with {} processors...".format(
+                processes))
         pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt),
+                 tile_id_list)
         pool.close()
         pool.join()
 
+        for output_pattern in output_pattern_list:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
 
-        ### Creates humid tropical primary forest tiles
-        # Creates a vrt of the primary forests with nodata=0 from the continental primary forest rasters
-        uu.print_log("Creating vrt of humid tropial primary forest...")
-        primary_vrt = 'primary_2001.vrt'
-        os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
-        uu.print_log("  Humid tropical primary forest vrt created")
+        # Uploads output tiles to s3
+        if cn.NO_UPLOAD == False:
+            for i in range(0, len(output_dir_list)):
+                uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
-        # Creates primary forest tiles
-        source_raster = primary_vrt
-        out_pattern = 'primary_2001'
-        dt = 'Byte'
-        if cn.count == 96:
-            processes = 45  # 45 processors = 650 GB peak
-        else:
-            processes = int(cn.count/2)
-        uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
-        pool = multiprocessing.Pool(processes)
-        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
-        pool.close()
-        pool.join()
+    ##################################################################################################
 
+    if process == 'us_forest' or process == 'all':
 
-        ### Creates a combined IFL/primary forest raster
-        # Uses very little memory since it's just file renaming
-        if cn.count == 96:
-            processes = 60  # 60 processors = 10 GB peak
-        else:
-            processes = int(cn.count/2)
-        uu.print_log("Assigning each tile to ifl2000 or primary forest with {} processors...".format(processes))
-        pool = multiprocessing.Pool(processes)
-        pool.map(prep_other_inputs.create_combined_ifl_primary, tile_id_list)
-        pool.close()
-        pool.join()
+        uu.print_log('Pre-processing US forest age, group, and region category tiles')
 
+        #List of output directories and output file name patterns
+        output_dir_list = [
+                           cn.FIA_forest_group_processed_dir,
+                           cn.age_cat_natrl_forest_US_dir,
+                           cn.FIA_regions_processed_dir,
+        ]
+
+        output_pattern_list = [
+                               cn.pattern_FIA_forest_group_processed,
+                               cn.pattern_age_cat_natrl_forest_US,
+                               cn.pattern_FIA_regions_processed,
+        ]
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+        # A date can optionally be provided by the full model script or a run of this script.
+        # This replaces the date in constants_and_names.
+        # Only done if output upload is enabled.
+        if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+            output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
+
+        # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
+        uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_tile_dir, sensit_type)
+        uu.s3_file_download(os.path.join(cn.age_cat_natrl_forest_US_raw_dir, cn.name_age_cat_natrl_forest_US_raw), cn.docker_tile_dir, sensit_type)
+        uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_tile_dir, sensit_type)
 
         ### Creates forest age category tiles for US forests
         source_raster = cn.name_age_cat_natrl_forest_US_raw
@@ -269,28 +408,106 @@ def mp_prep_other_inputs(tile_id_list, process):
         pool.close()
         pool.join()
 
-
-        for output_pattern in [
-        cn.pattern_annual_gain_AGC_natrl_forest_young, cn.pattern_stdev_annual_gain_AGC_natrl_forest_young
-        ]:
-        # For some reason I can't figure out, the young forest rasters (rate and stdev) have NaN values in some places where 0 (NoData)
-        # should be. These NaN values show up as values when the check_and_delete_if_empty function runs, making the tiles not
-        # deleted even if they have no data. However, the light version (which uses gdalinfo rather than rasterio masks) doesn't
-        # have this problem. So I'm forcing the young forest rates to and stdev to have their emptiness checked by the gdalinfo version.
+        for output_pattern in output_pattern_list:
             processes = int(cn.count / 2)
-            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
+                output_pattern, processes))
             pool = multiprocessing.Pool(processes)
             pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
             pool.close()
             pool.join()
 
+        # Uploads output tiles to s3
+        if cn.NO_UPLOAD == False:
+            for i in range(0, len(output_dir_list)):
+                uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+
+    ##################################################################################################
+
+    if process == 'ifl_primary' or process == 'all':
+
+        uu.print_log('Pre-processing intact forest landscape/ primary forest tiles')
+
+        #List of output directories and output file name patterns
+        output_dir_list = [
+                           cn.ifl_primary_processed_dir
+        ]
+
+        output_pattern_list = [
+                               cn.pattern_ifl_primary
+        ]
+
+        # If the model run isn't the standard one, the output directory and file names are changed
+        if sensit_type != 'std':
+
+            uu.print_log('Changing output directory and file name pattern based on sensitivity analysis')
+            output_dir_list = uu.alter_dirs(sensit_type, output_dir_list)
+            output_pattern_list = uu.alter_patterns(sensit_type, output_pattern_list)
+
+        # A date can optionally be provided by the full model script or a run of this script.
+        # This replaces the date in constants_and_names.
+        # Only done if output upload is enabled.
+        if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
+            output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
+
+        # Files to process: combine IFL and primary forest
+        uu.s3_flexible_download(cn.ifl_dir, cn.pattern_ifl, cn.docker_tile_dir, sensit_type, tile_id_list)
+
+        # For some reason, using uu.s3_file_download or otherwise using AWSCLI as a subprocess doesn't work for this raster.
+        # Thus, using wget instead.
+        cmd = ['aws', 's3', 'cp', cn.primary_raw_dir, cn.docker_tile_dir, '--recursive']
+        uu.log_subprocess_output_full(cmd)
+
+        ### Creates humid tropical primary forest tiles
+        # Creates a vrt of the primary forests with nodata=0 from the continental primary forest rasters
+        uu.print_log("Creating vrt of humid tropial primary forest...")
+        primary_vrt = 'primary_2001.vrt'
+        os.system('gdalbuildvrt -srcnodata 0 {} *2001_primary.tif'.format(primary_vrt))
+        uu.print_log("  Humid tropical primary forest vrt created")
+
+        # Creates primary forest tiles
+        source_raster = primary_vrt
+        out_pattern = 'primary_2001'
+        dt = 'Byte'
+        if cn.count == 96:
+            processes = 45  # 45 processors = 650 GB peak
+        else:
+            processes = int(cn.count/2)
+        uu.print_log("Creating primary forest tiles with {} processors...".format(processes))
+        pool = multiprocessing.Pool(processes)
+        pool.map(partial(uu.mp_warp_to_Hansen, source_raster=source_raster, out_pattern=out_pattern, dt=dt), tile_id_list)
+        pool.close()
+        pool.join()
+
+        ### Creates a combined IFL/primary forest raster
+        # Uses very little memory since it's just file renaming
+        if cn.count == 96:
+            processes = 60  # 60 processors = 10 GB peak
+        else:
+            processes = int(cn.count/2)
+        uu.print_log("Assigning each tile to ifl2000 or primary forest with {} processors...".format(processes))
+        pool = multiprocessing.Pool(processes)
+        pool.map(prep_other_inputs.create_combined_ifl_primary, tile_id_list)
+        pool.close()
+        pool.join()
+
+        for output_pattern in output_pattern_list:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(
+                output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
 
         # Uploads output tiles to s3
-        for i in range(0, len(output_dir_list)):
-            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
+        if cn.NO_UPLOAD == False:
+            for i in range(0, len(output_dir_list)):
+                uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
+    ##################################################################################################
 
-    if process == 2:
+    if process == 'agb_bgb' or process == 'all':
         ### Creates Hansen tiles of AGB:BGB based on Huang et al. 2021: https://essd.copernicus.org/articles/13/4263/2021/
         output_dir_list = [cn.BGB_AGB_ratio_dir]
         output_pattern_list = [cn.pattern_BGB_AGB_ratio]
@@ -421,7 +638,6 @@ def mp_prep_other_inputs(tile_id_list, process):
         pool.close()
         pool.join()
 
-
         for output_pattern in [
             cn.pattern_BGB_AGB_ratio
         ]:
@@ -454,10 +670,13 @@ def mp_prep_other_inputs(tile_id_list, process):
         for i in range(0, len(output_dir_list)):
            uu.upload_final_set(output_dir_list[i], output_pattern_list[i])
 
+    ##################################################################################################
 
-    if process == 3:
-    # Preprocess 6 SDPTv2 tile sets from gfw-data-lake bucket to gfw2-data:
-    # AGC removal factors, AGC+BGC removal factors, AGC standard deviations, AGC+BGC standard deviations, planted forest type, and planted forest established year
+    if process == 'sdptv2' or process == 'all':
+        # Preprocess 6 SDPTv2 tile sets from gfw-data-lake bucket to gfw2-data:
+        # AGC removal factors, AGC standard deviations
+        # AGC+BGC removal factors, AGC+BGC standard deviations
+        # planted forest type, and planted forest established year
 
         # Files to download for the SDPTv2 update
         download_dict_sdptv2 = {
@@ -466,7 +685,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             cn.datalake_pf_agc_sd_dir: [cn.pattern_data_lake],
             cn.datalake_pf_agcbgc_sd_dir: [cn.pattern_data_lake],
             cn.datalake_pf_simplename_dir: [cn.pattern_data_lake],
-            cn.datalake_pf_estab_year_dir: [cn.pattern_data_lake],
+            #cn.datalake_pf_estab_year_dir: [cn.pattern_data_lake],
         }
 
         # List of output directories for SDPTv2 update upload
@@ -476,7 +695,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             cn.planted_forest_aboveground_standard_deviation_dir,
             cn.planted_forest_aboveground_belowground_standard_deviation_dir,
             cn.planted_forest_type_dir,
-            cn.planted_forest_estab_year_dir,
+            #cn.planted_forest_estab_year_dir,
         ]
 
         # List of output file name patterns for SDPTv2 to upload to EC2
@@ -486,7 +705,7 @@ def mp_prep_other_inputs(tile_id_list, process):
             cn.pattern_pf_sd_agc_ec2,
             cn.pattern_pf_sd_agcbgc_ec2,
             cn.pattern_planted_forest_type,
-            cn.pattern_planted_forest_estab_year,
+            #cn.pattern_planted_forest_estab_year,
         ]
 
         # List of data types for each dataset to use in the gdal_warp_to_hansen
@@ -498,7 +717,6 @@ def mp_prep_other_inputs(tile_id_list, process):
             'Byte',
             'Byte',
         ]
-
 
         # If the model run isn't the standard one, the output directory and file names are changed
         if sensit_type != 'std':
@@ -520,9 +738,8 @@ def mp_prep_other_inputs(tile_id_list, process):
             output_pattern_list_sdptv2[2]: [output_dir_list_sdptv2[2], output_dt_list_sdptv2[2]],
             output_pattern_list_sdptv2[3]: [output_dir_list_sdptv2[3], output_dt_list_sdptv2[3]],
             output_pattern_list_sdptv2[4]: [output_dir_list_sdptv2[4], output_dt_list_sdptv2[4]],
-            output_pattern_list_sdptv2[5]: [output_dir_list_sdptv2[5], output_dt_list_sdptv2[5]],
+            #output_pattern_list_sdptv2[5]: [output_dir_list_sdptv2[5], output_dt_list_sdptv2[5]],
         }
-
 
         # Downloads input files or entire directories, depending on how many tiles are in the tile_id_list
         uu.print_log("STEP 1: Downloading datasets from gfw-data-lake")
@@ -530,7 +747,6 @@ def mp_prep_other_inputs(tile_id_list, process):
             directory = key
             pattern = values[0]
             uu.s3_flexible_download(directory, pattern, cn.docker_tile_dir, cn.SENSIT_TYPE, tile_id_list)
-
 
         uu.print_log("STEP 2: Rewindowing tiles to 40,000 x 1 pixel windows")
 
@@ -552,7 +768,6 @@ def mp_prep_other_inputs(tile_id_list, process):
                 pool.close()
                 pool.join()
 
-
         uu.print_log("STEP 3: Warping SDPT datasets to Hansen dataset")
 
         for key, values in upload_dict_sdptv2.items():
@@ -573,8 +788,16 @@ def mp_prep_other_inputs(tile_id_list, process):
                 pool.close()
                 pool.join()
 
+        uu.print_log("STEP 4: Checking that tile contains data")
+        for output_pattern in output_pattern_list_sdptv2:
+            processes = int(cn.count / 2)
+            uu.print_log("Checking for empty tiles of {0} pattern with {1} processors using light function...".format(output_pattern, processes))
+            pool = multiprocessing.Pool(processes)
+            pool.map(partial(uu.check_and_delete_if_empty_light, output_pattern=output_pattern), tile_id_list)
+            pool.close()
+            pool.join()
 
-        uu.print_log("STEP 4: Uploading datasets to their output directories")
+        uu.print_log("STEP 5: Uploading datasets to their output directories")
 
         if cn.NO_UPLOAD == False:
             for key, values in upload_dict_sdptv2.items():
@@ -617,4 +840,4 @@ if __name__ == '__main__':
     # Checks whether the tile_id_list argument is valid
     tile_id_list = uu.tile_id_list_check(tile_id_list)
 
-    mp_prep_other_inputs(tile_id_list=tile_id_list, process=int(process))
+    mp_prep_other_inputs(tile_id_list=tile_id_list, process=str(process))
