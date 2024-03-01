@@ -205,7 +205,7 @@ pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20230821.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
-# Annual Hansen loss tiles (2001-2022)
+# Annual Hansen loss tiles (2001-2023)
 pattern_loss = 'GFW2023'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2023/'
 
@@ -338,8 +338,8 @@ pattern_drivers = 'tree_cover_loss_driver_processed'
 drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2022/20230407/')
 
 # Tree cover loss from fires
-TCLF_raw_dir = 's3://gfw-data-lake/umd_tree_cover_loss_from_fires/v20230315/raw/'
-TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20230315/processed/')
+TCLF_raw_dir = 's3://gfw2-data/forest_change/hansen_2023_fire/'
+TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20240301/processed/')
 pattern_TCLF_processed = 'tree_cover_loss_fire_processed'
 
 
