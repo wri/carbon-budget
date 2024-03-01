@@ -8,7 +8,7 @@ import datetime
 ########     ########
 
 # Model version
-version = '1.3.1'
+version = '1.3.2'
 version_filename = version.replace('.', '_')
 
 
@@ -44,7 +44,7 @@ LOG_NOTE = ''
 ### Constants
 
 # Number of years of tree cover loss. If input loss raster is changed, this must be changed, too.
-loss_years = 22
+loss_years = 23
 
 # Number of years in tree cover gain. If input cover gain raster is changed, this must be changed, too.
 gain_years = 20
@@ -206,8 +206,8 @@ gain_spreadsheet = 'gain_rate_continent_ecozone_age_20230821.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
 # Annual Hansen loss tiles (2001-2022)
-pattern_loss = 'GFW2022'
-loss_dir = 's3://gfw2-data/forest_change/hansen_2022/'
+pattern_loss = 'GFW2023'
+loss_dir = 's3://gfw2-data/forest_change/hansen_2023/'
 
 # Hansen removals tiles based on canopy height (2000-2020)
 # From https://www.frontiersin.org/articles/10.3389/frsen.2022.856903/full
