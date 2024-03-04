@@ -9,7 +9,7 @@ python -m data_prep.mp_prep_other_inputs_annual -l 00N_000E -nu -p tcl
 python -m data_prep.mp_prep_other_inputs_annual -l all -p tclf
 
 Options for process argument (-p):
-1) tcl: Creates tree cover loss driver tiles
+1) tcld: Creates tree cover loss driver tiles
 2) tclf: Creates tree cover loss due to fires tiles
 '''
 
