@@ -5,11 +5,11 @@ combining IFL2000 (extratropics) and primary forests (tropics) into a single lay
 Hansenizing some removal factor standard deviation inputs, Hansenizing the European removal factors,
 and Hansenizing three US-specific removal factor inputs.
 
-python -m data_prep.mp_prep_other_inputs_annual -l 00N_000E -nu -p tcl
+python -m data_prep.mp_prep_other_inputs_annual -l 00N_000E -nu -p tcld
 python -m data_prep.mp_prep_other_inputs_annual -l all -p tclf
 
 Options for process argument (-p):
-1) tcl: Creates tree cover loss driver tiles
+1) tcld: Creates tree cover loss driver tiles
 2) tclf: Creates tree cover loss due to fires tiles
 '''
 
@@ -59,7 +59,7 @@ def mp_prep_other_inputs(tile_id_list, process):
     "CURRENT_SLICE", "NO_TRANSPOSE")
     
     '''
-    if process == 'tcl' or process == 'all':
+    if process == 'tcld' or process == 'all':
 
         # List of output directories and output file name patterns
         output_dir_list = [

@@ -339,7 +339,7 @@ drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_c
 
 # Tree cover loss from fires
 TCLF_raw_dir = 's3://gfw2-data/forest_change/hansen_2023_fire/'
-TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20240301/processed/')
+TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20240304/processed/')
 pattern_TCLF_processed = 'tree_cover_loss_fire_processed'
 
 
