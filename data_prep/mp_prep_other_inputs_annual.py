@@ -42,16 +42,24 @@ def mp_prep_other_inputs(tile_id_list, process):
 
     '''
     Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
-    gdal_warp is producing a weird output, so I did it in ArcMap for the 2022 update, 
+    gdal_warp is producing a weird output, so I did it in ArcMap for the 2022 and 2023 update, 
     with the output cell size being 0.005 x 0.005 degree and the method being nearest.
     
+    2022 TCL Update:
     arcpy.management.ProjectRaster("TCL_DD_2022_20230407.tif", r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84.tif", 
     'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
     UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
     GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
     UNIT["Degree",0.0174532925199433]],PROJECTION["Goode_Homolosine"],PARAMETER["False_Easting",0.0],
     PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Option",1.0],UNIT["Meter",1.0]]', "NO_VERTICAL")
-
+    
+    2023 TCL Update: 
+    arcpy.management.ProjectRaster("Goode_FinalClassification_2023_v20240307.tif", r"C:\GIS\carbon_model\Goode_FinalClassification_2023_wgs84_v20240307.tif", 
+    'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
+    UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
+    GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
+    UNIT["Degree",0.0174532925199433]],PROJECTION["Goode_Homolosine"],PARAMETER["False_Easting",0.0],
+    PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Option",1.0],UNIT["Meter",1.0]]', "NO_VERTICAL")
     
     The 2022 drivers had 0 instead of NoData, so I used Copy Raster to turn the 0 into NoData:
     arcpy.management.CopyRaster("TCL_DD_2022_20230407_wgs84.tif", 
