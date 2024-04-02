@@ -591,7 +591,7 @@ def s3_flexible_download(source_dir, pattern, dest, sensit_type, tile_id_list):
         s3_folder_download(source_dir, dest, sensit_type, pattern)
 
 
-# Downloads all tiles in an s3 folder, adpating to sensitivity analysis type
+# Downloads all tiles in an s3 folder, adapating to sensitivity analysis type
 # Source=source file on s3
 # dest=where to download onto spot machine
 # sensit_type = whether the model is standard or a sensitivity analysis model run

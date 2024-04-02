@@ -54,7 +54,7 @@ def mp_prep_other_inputs(tile_id_list, process):
     PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Option",1.0],UNIT["Meter",1.0]]', "NO_VERTICAL")
     
     2023 TCL Update: 
-    arcpy.management.ProjectRaster("Goode_FinalClassification_2023_v20240307.tif", r"C:\GIS\carbon_model\Goode_FinalClassification_2023_wgs84_v20240307.tif", 
+    arcpy.management.ProjectRaster("Goode_FinalClassification_2024_v20240402.tif", r"C:\GIS\carbon_model\Goode_FinalClassification_2023_wgs84_v20240402.tif", 
     'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
     UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
     GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
