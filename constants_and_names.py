@@ -640,7 +640,7 @@ total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000
 ### Emissions from biomass and soil (all carbon emitted_pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20240308'
+emis_run_date_biomass_soil = '20240402'
 
 # pattern_gross_emis_commod_biomass_soil = f'gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
 pattern_gross_emis_commod_biomass_soil = f'gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
@@ -679,7 +679,7 @@ gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree
 ### Emissions from soil only
 
 # Date to include in the output directory
-emis_run_date_soil_only = '20240308'
+emis_run_date_soil_only = '20240402'
 
 pattern_gross_emis_commod_soil_only = f'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{loss_years}'
 gross_emis_commod_soil_only_dir = f'{s3_base_dir}gross_emissions/commodities/soil_only/standard/{emis_run_date_soil_only}/'
@@ -717,11 +717,11 @@ gross_emis_nodes_soil_only_dir = f'{s3_base_dir}gross_emissions/decision_tree_no
 
 # Net emissions for all forest types and all carbon emitted_pools in all pixels
 pattern_net_flux = f'net_flux_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
-net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20240308/')
+net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20240402/')
 
 # Net emissions for all forest types and all carbon emitted_pools in forest extent
 pattern_net_flux_forest_extent = f'net_flux_Mg_CO2e_ha_biomass_soil_forest_extent_2001_{loss_years}'
-net_flux_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_hectare/20240308/')
+net_flux_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_hectare/20240402/')
 
 
 ### Per pixel model outputs
@@ -737,19 +737,19 @@ cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir = os.path.join(s3_b
 
 # Gross emissions per pixel in all pixels
 pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent = f'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil_full_extent_2001_{loss_years}'
-gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_pixel/20240308/')
+gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_pixel/20240402/')
 
 # Gross emissions per pixel in forest extent
 pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent = f'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil_forest_extent_2001_{loss_years}'
-gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/forest_extent/per_pixel/20240308/')
+gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/forest_extent/per_pixel/20240402/')
 
 # Net flux per pixel in all pixels
 pattern_net_flux_per_pixel_full_extent = f'net_flux_Mg_CO2e_pixel_biomass_soil_full_extent_2001_{loss_years}'
-net_flux_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_pixel/20240308/')
+net_flux_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_pixel/20240402/')
 
 # Net flux per pixel in forest extent
 pattern_net_flux_per_pixel_forest_extent = f'net_flux_Mg_CO2e_pixel_biomass_soil_forest_extent_2001_{loss_years}'
-net_flux_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_pixel/20240308/')
+net_flux_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_pixel/20240402/')
 
 
 ### 4x4 km aggregation tiles for mapping
@@ -759,7 +759,7 @@ pattern_aggreg = f'0_04deg_modelv{version_filename}'
 pattern_aggreg_sensit_perc_diff = f'net_flux_0_04deg_modelv{version_filename}_perc_diff_std'
 pattern_aggreg_sensit_sign_change = f'net_flux_0_04deg_modelv{version_filename}_sign_change_std'
 
-output_aggreg_dir = os.path.join(s3_base_dir, '0_04deg_output_aggregation/biomass_soil/standard/20240308/')
+output_aggreg_dir = os.path.join(s3_base_dir, '0_04deg_output_aggregation/biomass_soil/standard/20240402/')
 
 
 
