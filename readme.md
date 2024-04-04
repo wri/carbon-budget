@@ -2,7 +2,7 @@
 
 ### Purpose and scope
 This framework maps gross greenhouse gas emissions from forests, 
-gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2022. 
+gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2023. 
 Gross emissions includes CO2, NH4, and N20 and all carbon pools (aboveground biomass, belowground biomass, 
 dead wood, litter, and soil), and gross removals includes removals into aboveground and belowground biomass carbon. 
 Although the framework is run for all tree canopy densities in 2000 (per Hansen et al. 2013), it is most relevant to
@@ -12,7 +12,7 @@ The framework essentially spatially applies IPCC national greenhouse gas invento
 It covers only forests converted to non-forests, non-forests converted to forests and forests remaining forests (no other land 
 use transitions). The framework is described and published in [Harris et al. (2021) Nature Climate Change
 "Global maps of twenty-first century forest carbon fluxes"](https://www.nature.com/articles/s41558-020-00976-6).
-Although the original manuscript covered 2001-2019, the same methods were used to update the framework to include 2022, 
+Although the original manuscript covered 2001-2019, the same methods were used to update the framework to include 2023, 
 with a few changes to some input layers and constants. You can read about the changes since publication 
 [here](https://www.globalforestwatch.org/blog/data-and-research/whats-new-carbon-flux-monitoring).
 
@@ -39,7 +39,7 @@ A complete list of inputs, including changes made to the framework since the ori
 [here](http://gfw2-data.s3.amazonaws.com/climate/carbon_model/Table_S3_data_sources__updated_20230406.pdf).
 
 ### Outputs
-There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2022. 
+There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2023. 
 These are produced at two resolutions: 0.00025x0.00025 degrees 
 (approximately 30x30 m at the equator) in 10x10 degree rasters (to make outputs a 
 manageable size), and 0.04x0.04 degrees (approximately 4x4km at the equator) as global rasters for static maps.
@@ -60,7 +60,7 @@ The 30-m outputs are used for zonal statistics (i.e. emissions, removals, or net
 and mapping on the Global Forest Watch web platform or at small scales (where 30-m pixels can be distinguished). 
 Individual emissions pixels can be assigned specific years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire framework run and cannot be assigned specific years. 
-This 30-m output is in megagrams (Mg) CO2e/ha 2001-2022 (i.e. densities) and includes all tree cover densities ("full extent"):
+This 30-m output is in megagrams (Mg) CO2e/ha 2001-2023 (i.e. densities) and includes all tree cover densities ("full extent"):
 `((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)`.
 However, the framework is designed to be used specifically for forests, so the framework creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard version, not for sensitivity analyses).
@@ -336,9 +336,12 @@ Change the tree cover loss tile pattern in `constants_and_names.py`.
 
 6) Obtain and pre-process the updated drivers of tree cover loss framework and tree cover loss from fires 
    using `mp_prep_other_inputs_annual.py`. Note that the drivers map probably needs to be reprojected to WGS84 
-   and resampled (0.005x0.005 deg) in ArcMap or similar 
-   before processing into 0.00025x0.00025 deg 10x10 tiles using this script. 
-   `mp_prep_other_inputs_annual.py` has some additional notes about that.
+   and resampled (0.005x0.005 deg) in ArcMap or similar before processing into 0.00025x0.00025 deg 10x10 tiles using this script. 
+   `mp_prep_other_inputs_annual.py` has some additional notes about that. You can choose which set of tiles to pre-process 
+   by providing the following options for the process argument (-p):
+   - tcld: Pre-processes drivers of tree cover loss tiles 
+   - tclf: Pre-processes tree cover loss due to fires tiles 
+   - all: Pre-processes both drivers of tree cover loss and tree cover loss due to fires tiles
 
 7) Make sure that changes in forest age category produced by `mp_forest_age_category_IPCC.py` 
    and the number of gain years produced by `mp_gain_year_count_all_forest_types.py` still make sense.

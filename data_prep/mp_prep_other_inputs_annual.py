@@ -9,8 +9,9 @@ python -m data_prep.mp_prep_other_inputs_annual -l 00N_000E -nu -p tcld
 python -m data_prep.mp_prep_other_inputs_annual -l all -p tclf
 
 Options for process argument (-p):
-1) tcld: Creates tree cover loss driver tiles
-2) tclf: Creates tree cover loss due to fires tiles
+   - tcld: Pre-processes drivers of tree cover loss tiles
+   - tclf: Pre-processes tree cover loss due to fires tiles
+   - all: Pre-processes both drivers of tree cover loss and tree cover loss due to fires tiles
 '''
 
 import argparse
