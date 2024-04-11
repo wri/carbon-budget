@@ -1,9 +1,7 @@
 '''
-This script processes the inputs for the emissions script that haven't been processed by another script.
-At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000, tree cover loss drivers (TSC drivers),
-combining IFL2000 (extratropics) and primary forests (tropics) into a single layer,
-Hansenizing some removal factor standard deviation inputs, Hansenizing the European removal factors,
-and Hansenizing three US-specific removal factor inputs.
+This script processes the tree cover loss inputs for the emissions script that haven't been processed by another script. 
+At this point, that is: tree cover loss drivers (TCLD) and tree cover loss due to fires (TCLF). 
+These need to be processed each year after we recieve the updated TCL data from UMD and before running the full model.
 
 python -m data_prep.mp_prep_other_inputs_annual -l 00N_000E -nu -p tcld
 python -m data_prep.mp_prep_other_inputs_annual -l all -p tclf
@@ -45,17 +43,17 @@ def mp_prep_other_inputs(tile_id_list, process):
     Before processing the driver, it needs to be reprojected from Goode Homolosine to WGS84. 
     gdal_warp is producing a weird output, so I did it in ArcMap for the 2022 and 2023 update, 
     with the output cell size being 0.005 x 0.005 degree and the method being nearest.
-    
-    2022 TCL Update:
-    arcpy.management.ProjectRaster("TCL_DD_2022_20230407.tif", r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84.tif", 
+
+    2023 TCL Update: 
+    arcpy.management.ProjectRaster("Goode_FinalClassification_2024_v20240402.tif", r"C:\GIS\carbon_model\Goode_FinalClassification_2023_wgs84_v20240402.tif", 
     'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
     UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
     GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
     UNIT["Degree",0.0174532925199433]],PROJECTION["Goode_Homolosine"],PARAMETER["False_Easting",0.0],
     PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",0.0],PARAMETER["Option",1.0],UNIT["Meter",1.0]]', "NO_VERTICAL")
     
-    2023 TCL Update: 
-    arcpy.management.ProjectRaster("Goode_FinalClassification_2024_v20240402.tif", r"C:\GIS\carbon_model\Goode_FinalClassification_2023_wgs84_v20240402.tif", 
+    2022 TCL Update:
+    arcpy.management.ProjectRaster("TCL_DD_2022_20230407.tif", r"C:\GIS\raw_data\TCL_DD_2022_20230407_wgs84.tif", 
     'GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
     UNIT["Degree",0.0174532925199433]]', "NEAREST", "0.005 0.005", None, None, 'PROJCS["WGS_1984_Goode_Homolosine",
     GEOGCS["GCS_unknown",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],
@@ -118,7 +116,7 @@ def mp_prep_other_inputs(tile_id_list, process):
         ]:
 
             if cn.count == 96:
-                processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
+                processes = 50  # 50 = XXX GB peak
                 uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
                 pool = multiprocessing.Pool(processes)
                 pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
@@ -205,7 +203,7 @@ def mp_prep_other_inputs(tile_id_list, process):
         ]:
 
             if cn.count == 96:
-                processes = 50  # 60 processors = >730 GB peak (for European natural forest forest removal rates); 50 = XXX GB peak
+                processes = 50  # 50 = XXX GB peak
                 uu.print_log(f'Checking for empty tiles of {output_pattern} pattern with {processes} processors...')
                 pool = multiprocessing.Pool(processes)
                 pool.map(partial(uu.check_and_delete_if_empty, output_pattern=output_pattern), tile_id_list)
