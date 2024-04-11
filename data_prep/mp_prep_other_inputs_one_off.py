@@ -1,6 +1,6 @@
 '''
 This script processes the inputs for the emissions script that haven't been processed by another script.
-At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000, tree cover loss drivers (TSC drivers),
+At this point, that is: climate zone, Indonesia/Malaysia plantations before 2000, 
 combining IFL2000 (extratropics) and primary forests (tropics) into a single layer,
 Hansenizing some removal factor standard deviation inputs, Hansenizing the European removal factors,
 and Hansenizing three US-specific removal factor inputs.
@@ -10,7 +10,7 @@ python -m data_prep.mp_prep_other_inputs_one_off -l all -p sdptv2
 
 Options for process argument (-p):
 1) young_forest: Creates young natural forest removal rate and standard deviation tiles
-2) plantations: Creates pre-2000 oil palm plantation tiles
+2) pre_2000_plantations: Creates pre-2000 oil palm plantation tiles
 3) climate: Creates climate zone tiles
 4) europe_forest: Creates European natural forest removal rate and standard deviation tiles
 5) us_forest: Creates US forest age, group, and region category tiles
@@ -139,7 +139,7 @@ def mp_prep_other_inputs(tile_id_list, process):
 
     ##################################################################################################
 
-    if process == 'plantations' or process == 'all':
+    if process == 'pre_2000_plantations' or process == 'all':
 
         uu.print_log('Pre-processing pre-2000 oil palm plantation tiles')
 
@@ -261,7 +261,7 @@ def mp_prep_other_inputs(tile_id_list, process):
         # List of output directories and output file name patterns
         output_dir_list = [
             cn.annual_gain_AGC_BGC_natrl_forest_Europe_dir,
-            #cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir   # raw files deleted
+            cn.stdev_annual_gain_AGC_BGC_natrl_forest_Europe_dir   # raw files deleted
         ]
 
         output_pattern_list = [
@@ -361,7 +361,7 @@ def mp_prep_other_inputs(tile_id_list, process):
         if cn.RUN_DATE is not None and cn.NO_UPLOAD is not None:
             output_dir_list = uu.replace_output_dir_date(output_dir_list, cn.RUN_DATE)
 
-        # Files to process: climate zone, IDN/MYS plantations before 2000, tree cover loss drivers, combine IFL and primary forest
+        # Files to process: US forest region, age, and group categories
         uu.s3_file_download(os.path.join(cn.FIA_regions_raw_dir, cn.name_FIA_regions_raw), cn.docker_tile_dir, sensit_type)
         uu.s3_file_download(os.path.join(cn.age_cat_natrl_forest_US_raw_dir, cn.name_age_cat_natrl_forest_US_raw), cn.docker_tile_dir, sensit_type)
         uu.s3_file_download(os.path.join(cn.FIA_forest_group_raw_dir, cn.name_FIA_forest_group_raw), cn.docker_tile_dir, sensit_type)
