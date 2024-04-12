@@ -17,7 +17,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 {
 
 	int model_years;    // How many loss years are in the model
-    model_years = 22;
+    model_years = 23;
 
 	int tropical;       // The ecozone code for the tropics
     tropical = 1;
@@ -59,7 +59,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -72,7 +72,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -84,7 +84,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn_CO2_only = 264;
-			peatburn_non_CO2 = 91;
+			peatburn_non_CO2 = 88;
 
             if (plant_data == 1)  // Commodities/shifting ag/urbanization, tropics, oil palm
             {
@@ -124,7 +124,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -137,7 +137,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -149,7 +149,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn_CO2_only = 264;
-			peatburn_non_CO2 = 91;
+			peatburn_non_CO2 = 88;
 
 			if (plant_data == 1) // Forestry, tropics, oil palm
             {
@@ -189,7 +189,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -202,7 +202,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -214,7 +214,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn_CO2_only = 601;
-			peatburn_non_CO2 = 208;
+			peatburn_non_CO2 = 200;
 
 		    if (plant_data == 1) // Wildfire, tropics, oil palm
             {
@@ -254,7 +254,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -267,7 +267,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
-			peatburn_non_CO2 = 85;
+			peatburn_non_CO2 = 82;
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
@@ -279,7 +279,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn_CO2_only = 264;
-			peatburn_non_CO2 = 91;
+			peatburn_non_CO2 = 88;
 
 			if (plant_data == 1) // Forestry, tropics, oil palm
             {

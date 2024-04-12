@@ -9,6 +9,7 @@ import os
 import numpy as np
 from scipy import stats
 import os
+from subprocess import Popen, PIPE, STDOUT
 
 import constants_and_names as cn
 import universal_util as uu
