@@ -405,6 +405,7 @@ pattern_age_cat_IPCC = 'forest_age_category_IPCC__1_young_2_mid_3_old'
 age_cat_IPCC_dir = os.path.join(s3_base_dir, 'forest_age_category_IPCC/standard/20240308/')
 
 
+
 ### US-specific removal precursors
 
 name_FIA_regions_raw = 'Forest_Management_Regions_Final_Integrated_from_Thailynn_Munroe_via_Slack_20200723.tif'
@@ -470,6 +471,7 @@ annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_removal_fa
 pattern_annual_gain_BGB_IPCC_defaults = 'annual_removal_factor_BGB_Mg_ha_IPCC_defaults_all_ages'
 annual_gain_BGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'annual_removal_factor_BGB_IPCC_defaults_all_ages/standard/20240308/')
 
+
 ### Annual composite removal factor
 
 # Annual aboveground removals rate for all forest types
@@ -484,11 +486,13 @@ annual_gain_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor
 pattern_annual_gain_AGC_BGC_all_types = 'annual_removal_factor_AGC_BGC_Mg_ha_all_forest_types'
 annual_gain_AGC_BGC_all_types_dir = os.path.join(s3_base_dir, 'annual_removal_factor_AGC_BGC_all_forest_types/standard/20240308/')
 
+
 ### Removal forest types (sources)
 
 # Forest type used in removals model
 pattern_removal_forest_type = 'removal_forest_type'
 removal_forest_type_dir = os.path.join(s3_base_dir, 'removal_forest_type/standard/20240308/')
+
 
 # Removal model forest type codes
 mangrove_rank = 6
@@ -504,6 +508,7 @@ old_natural_rank = 1
 # Number of removals years for all forest types
 pattern_gain_year_count = 'gain_year_count_all_forest_types'
 gain_year_count_dir = os.path.join(s3_base_dir, 'gain_year_count_all_forest_types/standard/20240308/')
+
 
 
 ### Cumulative gross carbon dioxide removals
@@ -559,6 +564,7 @@ base_carbon_pool_dir = os.path.join(s3_base_dir, 'carbon_pools/')
 
 # Date to include in the output directory for all emissions year carbon emitted_pools
 emis_pool_run_date = '20240308'
+
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
 pattern_AGC_emis_year = "Mg_AGC_ha_emis_year"
@@ -680,6 +686,7 @@ gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree
 
 # Date to include in the output directory
 emis_run_date_soil_only = '20240402'
+
 
 pattern_gross_emis_commod_soil_only = f'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{loss_years}'
 gross_emis_commod_soil_only_dir = f'{s3_base_dir}gross_emissions/commodities/soil_only/standard/{emis_run_date_soil_only}/'
