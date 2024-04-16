@@ -82,7 +82,7 @@ def create_gain_year_count_gain_only_standard(tile_id):
     if not os.path.exists(gain):
         uu.print_log(f'  Gain tile not found for {tile_id}. Skipping gain-only pixel gain year count.')
 
-    # Need to check if loss tile exists because the calc string is depends on the presence/absence of the loss tile
+    # Need to check if loss tile exists because the calc string depends on the presence/absence of the loss tile
     elif os.path.exists(loss):
         uu.print_log(f'  Loss tile found for {tile_id}. Using it in gain-only pixel gain year count.')
         gain_calc = f'--calc=(A==0)*(B==1)*(C>0)*({cn.gain_years}/2)'
@@ -256,7 +256,7 @@ def create_gain_year_count_loss_and_gain_standard(tile_id):
 
     uu.check_memory()
 
-    if not os.path.exists(loss) and not os.path.exists(gain):
+    if not os.path.exists(loss) or not os.path.exists(gain):
         uu.print_log(f'  Loss and gain tiles not found for {tile_id}. Skipping loss-and-gain pixel gain year count.')
     else:
         uu.print_log(f'  Loss and gain tiles found for {tile_id}. Using them in loss-and-gain pixel gain year count.')
