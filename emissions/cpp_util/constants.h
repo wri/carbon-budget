@@ -27,6 +27,8 @@ namespace constants
 
     constexpr float urb_flu {0.80}; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
 
+    constexpr float hard_commod_flu {0.80}; // F_lu for hard commodities (fraction of soil C not emitted over 20 years)
+
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr
     // Inputs
@@ -42,17 +44,19 @@ namespace constants
     constexpr char burnyear[] = "_tree_cover_loss_fire_processed.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";
-    constexpr char tcl_drivers[] = "_tree_cover_loss_driver_processed.tif";
+    constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20241004.tif";
     constexpr char peat_mask[] = "_peat_mask_processed.tif";
     constexpr char ifl_primary[] = "_ifl_2000_primary_2001_merged.tif";
     constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other.tif";
 
     // Outputs
-    constexpr char commod_emis[] = "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char shifting_ag_emis[] = "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char forestry_emis[] = "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char permanent_ag_emis[] = "_gross_emis_permanent_ag_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char hard_commod_emis[] = "_gross_emis_hard_commodities_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char shifting_cultivation_emis[] = "_gross_emis_shifting_cultivation_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char forest_management_emis[] = "_gross_emis_forest_management_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char wildfire_emis[] = "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char urbanization_emis[] = "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char settlements_emis[] = "_gross_emis_settlements_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char other_disturbance_emis[] = "_gross_emis_other_disturbance_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char no_driver_emis[] = "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char all_gases_all_drivers_emis[] = "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char CO2_only_all_drivers_emis[] = "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";

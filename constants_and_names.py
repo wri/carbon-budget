@@ -332,10 +332,10 @@ pattern_plant_pre_2000 = 'plantation_2000_or_earlier_processed'
 plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20200724/')
 
 # Drivers of tree cover loss
-drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
-pattern_drivers_raw = 'Goode_FinalClassification_2023_wgs84_v20240402.tif'
-pattern_drivers = 'tree_cover_loss_driver_processed'
-drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2023/20240402/')
+drivers_raw_dir = 's3://gfw2-data/drivers_of_loss/1_km/raw/20241004/'
+pattern_drivers_raw = 'drivers_of_TCL_1_km_20241004.tif'
+pattern_drivers = 'drivers_of_TCL_1_km_20241004'
+drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20241004/'
 
 # Tree cover loss from fires
 TCLF_raw_dir = 's3://gfw2-data/forest_change/hansen_2023_fire/'

@@ -10,11 +10,11 @@ float flu_val(int climate_zone, int eco_zone)
 	{
 		if (eco_zone == 1) // Dry, tropics
 		{
-			flu_value = 0.58;
+			flu_value = 0.92;
 		}
 		else if ((eco_zone == 2) || (eco_zone == 3)) // Dry, boreal/temperate
 		{
-			flu_value = 0.8;
+			flu_value = 0.77;
 		}
 		else
 		{
@@ -25,18 +25,18 @@ float flu_val(int climate_zone, int eco_zone)
 	{
 		if (eco_zone == 1) // Wet, tropics
 		{
-			flu_value = 0.48;
+			flu_value = 0.83;
 		}
 		else if ((eco_zone == 2) || (eco_zone == 3)) // Wet, boreal/temperate
 		{
-			flu_value = 0.69;
+			flu_value = 0.70;
 		}
 		else
 		{
 			flu_value = 0;
 		}
 	}
-	else if (climate_zone == 9) // Montane
+	else if (climate_zone == 9) // Montane  #TODO: What do we do for montane climate domain?
 	{
 		if (eco_zone == 1) // Montane, tropics
 		{

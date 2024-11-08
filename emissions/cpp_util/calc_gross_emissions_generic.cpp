@@ -90,6 +90,9 @@ shiftag_flu = constants::shiftag_flu;
 float urb_flu; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
 urb_flu = constants::urb_flu;
 
+float urb_flu; // F_lu for hard_commodities (fraction of soil C not emitted over 20 years)
+hard_commod_flu = constants::hard_commod_flu;
+
 
 // Input files
 // Carbon pools
@@ -126,12 +129,15 @@ string plant_name = infolder + tile_id + constants::plantation_type;
 // Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
 // that determines emissions
 // Output files default to the standard model names
-string out_name1  = tile_id + constants::commod_emis + model_years_str + ".tif";
-string out_name2  = tile_id + constants::shifting_ag_emis + model_years_str + ".tif";
-string out_name3  = tile_id + constants::forestry_emis + model_years_str + ".tif";
+string out_name1  = tile_id + constants::permanent_ag_emis + model_years_str + ".tif";
+string out_name2  = tile_id + constants::shifting_cultivation_emis + model_years_str + ".tif";
+string out_name3  = tile_id + constants::forest_management_emis + model_years_str + ".tif";
 string out_name4  = tile_id + constants::wildfire_emis + model_years_str + ".tif";
-string out_name5  = tile_id + constants::urbanization_emis + model_years_str + ".tif";
+string out_name5  = tile_id + constants::settlements_emis + model_years_str + ".tif";
 string out_name6  = tile_id + constants::no_driver_emis + model_years_str + ".tif";
+string out_name7  = tile_id + constants::hard_commod_emis + model_years_str + ".tif";
+string out_name8  = tile_id + constants::other_disturbance_emis + model_years_str + ".tif";
+
 string out_name10 = tile_id + constants::all_gases_all_drivers_emis + model_years_str + ".tif";
 string out_name11 = tile_id + constants::CO2_only_all_drivers_emis + model_years_str + ".tif";
 string out_name12 = tile_id + constants::non_CO2_all_drivers_emis + model_years_str + ".tif";
@@ -144,6 +150,9 @@ if (sensit_type != "std") {
     out_name4  = tile_id + constants::wildfire_emis + model_years_str + "_" + sensit_type + ".tif";
     out_name5  = tile_id + constants::urbanization_emis + model_years_str + "_" + sensit_type + ".tif";
     out_name6  = tile_id + constants::no_driver_emis + model_years_str + "_" + sensit_type + ".tif";
+    out_name7  = tile_id + constants::hard_commod_emis + model_years_str + "_" + sensit_type + ".tif";
+    out_name8  = tile_id + constants::other_disturbance_emis + model_years_str + "_" + sensit_type + ".tif";
+
     out_name10 = tile_id + constants::all_gases_all_drivers_emis + model_years_str + "_" + sensit_type + ".tif";
     out_name11 = tile_id + constants::CO2_only_all_drivers_emis + model_years_str + "_" + sensit_type + ".tif";
     out_name12 = tile_id + constants::non_CO2_all_drivers_emis + model_years_str + "_" + sensit_type + ".tif";
@@ -258,12 +267,15 @@ cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
-GDALDataset *OUTGDAL1;   // Commodities, all gases
-GDALDataset *OUTGDAL2;   // Shifting ag, all gases
-GDALDataset *OUTGDAL3;   // Forestry, all gases
+GDALDataset *OUTGDAL1;   // Permanent agriculture, all gases
+GDALDataset *OUTGDAL2;   // Shifting cultivation, all gases
+GDALDataset *OUTGDAL3;   // Forest management, all gases
 GDALDataset *OUTGDAL4;   // Wildfire, all gases
-GDALDataset *OUTGDAL5;   // Urbanization, all gases
+GDALDataset *OUTGDAL5;   // Settlement and infrastructure, all gases
 GDALDataset *OUTGDAL6;   // No driver, all gases
+GDALDataset *OUTGDAL7;   // Hard commodities, all gases
+GDALDataset *OUTGDAL8;   // Other natural disturbances, all gases
+
 GDALDataset *OUTGDAL10;  // All drivers, all gases
 GDALDataset *OUTGDAL11;  // All drivers, CO2 only
 GDALDataset *OUTGDAL12;  // All drivers, non-CO2
@@ -275,6 +287,9 @@ GDALRasterBand *OUTBAND3;
 GDALRasterBand *OUTBAND4;
 GDALRasterBand *OUTBAND5;
 GDALRasterBand *OUTBAND6;
+GDALRasterBand *OUTBAND7;
+GDALRasterBand *OUTBAND8;
+
 GDALRasterBand *OUTBAND10;
 GDALRasterBand *OUTBAND11;
 GDALRasterBand *OUTBAND12;
@@ -290,19 +305,19 @@ oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
 
-// Commoditiy gross emissions
+// Permanent agriculture gross emissions
 OUTGDAL1 = OUTDRIVER->Create( out_name1.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL1->SetGeoTransform(adfGeoTransform); OUTGDAL1->SetProjection(OUTPRJ);
 OUTBAND1 = OUTGDAL1->GetRasterBand(1);
 OUTBAND1->SetNoDataValue(0);
 
-// Shifting ag gross emissions
+// Shifting cultivation gross emissions
 OUTGDAL2 = OUTDRIVER->Create( out_name2.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
 OUTBAND2 = OUTGDAL2->GetRasterBand(1);
 OUTBAND2->SetNoDataValue(0);
 
-// Forestry gross emissions
+// Forest management gross emissions
 OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
 OUTBAND3 = OUTGDAL3->GetRasterBand(1);
@@ -314,7 +329,7 @@ OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
 OUTBAND4 = OUTGDAL4->GetRasterBand(1);
 OUTBAND4->SetNoDataValue(0);
 
-// Urbanization gross emissions
+// Settlement and infrastructure gross emissions
 OUTGDAL5 = OUTDRIVER->Create( out_name5.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
 OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
 OUTBAND5 = OUTGDAL5->GetRasterBand(1);
@@ -325,6 +340,19 @@ OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, p
 OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
 OUTBAND6 = OUTGDAL6->GetRasterBand(1);
 OUTBAND6->SetNoDataValue(0);
+
+// Hard commodities gross emissions
+OUTGDAL7 = OUTDRIVER->Create( out_name7.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL7->SetGeoTransform(adfGeoTransform); OUTGDAL7->SetProjection(OUTPRJ);
+OUTBAND7 = OUTGDAL7->GetRasterBand(1);
+OUTBAND7->SetNoDataValue(0);
+
+// Other natural disturbances gross emissions
+OUTGDAL8 = OUTDRIVER->Create( out_name8.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+OUTGDAL8->SetGeoTransform(adfGeoTransform); OUTGDAL8->SetProjection(OUTPRJ);
+OUTBAND8 = OUTGDAL8->GetRasterBand(1);
+OUTBAND8->SetNoDataValue(0);
+
 
 // All gases, all drivers combined
 OUTGDAL10 = OUTDRIVER->Create( out_name10.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
@@ -374,6 +402,8 @@ float out_data3[xsize];
 float out_data4[xsize];
 float out_data5[xsize];
 float out_data6[xsize];
+float out_data7[xsize];
+float out_data8[xsize];
 float out_data10[xsize];
 float out_data11[xsize];
 float out_data12[xsize];
@@ -428,24 +458,31 @@ for(x=0; x<xsize; x++)
 	{
 
         // Initializes each output raster at 0 (nodata value)
-		float outdata1 = 0;   // commodities, all gases
-		float outdata1a = 0;  // commodities, CO2 only
-		float outdata1b = 0;  // commodities, non-CO2
-		float outdata2 = 0;   // shifting ag., all gases
-		float outdata2a = 0;  // shifting ag., CO2 only
-		float outdata2b = 0;  // shifting ag., non-CO2
-		float outdata3 = 0;   // forestry, all gases
-		float outdata3a = 0;  // forestry, CO2 only
-		float outdata3b = 0;  // forestry, non-CO2
+		float outdata1 = 0;   // permanent agriculture, all gases
+		float outdata1a = 0;  // permanent agriculture, CO2 only
+		float outdata1b = 0;  // permanent agriculture, non-CO2
+		float outdata2 = 0;   // shifting cultivation, all gases
+		float outdata2a = 0;  // shifting cultivation, CO2 only
+		float outdata2b = 0;  // shifting cultivation, non-CO2
+		float outdata3 = 0;   // forest management, all gases
+		float outdata3a = 0;  // forest management, CO2 only
+		float outdata3b = 0;  // forest management, non-CO2
 		float outdata4 = 0;   // wildfire, all gases
 		float outdata4a = 0;  // wildfire, CO2 only
 		float outdata4b = 0;  // wildfire, non-CO2
-		float outdata5 = 0;   // urbanization, all gases
-		float outdata5a = 0;  // urbanization, CO2 only
-		float outdata5b = 0;  // urbanization, non-CO2
+		float outdata5 = 0;   // settlement and infrastructure, all gases
+		float outdata5a = 0;  // settlement and infrastructure, CO2 only
+		float outdata5b = 0;  // settlement and infrastructure, non-CO2
 		float outdata6 = 0;   // no driver, all gases
 		float outdata6a = 0;  // no driver, CO2 only
 		float outdata6b = 0;  // no driver, non-CO2
+		float outdata7 = 0;   // hard commodities, all gases
+		float outdata7a = 0;  // hard commodities, CO2 only
+		float outdata7b = 0;  // hard commodities, non-CO2
+		float outdata8 = 0;   // other natural disturbances, all gases
+		float outdata8a = 0;  // other natural disturbances, CO2 only
+		float outdata8b = 0;  // other natural disturbances, non-CO2
+
 		float outdata10 = 0;  // all drivers, all gases
 		float outdata11 = 0;  // all drivers, CO2 only
 		float outdata12 = 0;  // all drivers, non-CO2
@@ -490,7 +527,8 @@ for(x=0; x<xsize; x++)
 		    // Each driver is an output raster and has its own emissions model. outdata20 is the code for each
             // combination of outputs. Defined in carbon-budget/emissions/node_codes.txt
 
-			// Emissions model for commodity-driven deforestation
+            //TODO: Update with new drivers
+			// Emissions model for permanent agriculture
 			if (drivermodel_data[x] == 1)
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
@@ -500,9 +538,9 @@ for(x=0; x<xsize; x++)
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				minsoil = ((soil_data[x]-(soil_data[x] * flu))/soil_emis_period) * (model_years-loss_data[x]);
 
-				if (peat_data[x] > 0) // Commodity, peat
+				if (peat_data[x] > 0) // permanent ag, peat
 				{
-					if (burn_data[x] > 0) // Commodity, peat, burned
+					if (burn_data[x] > 0) // permanent ag, peat, burned
 					{
 						outdata1a = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata1b = Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;

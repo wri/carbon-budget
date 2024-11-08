@@ -50,6 +50,8 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 	float peat_drain_total_CO2_only;
 	float peat_drain_total_non_CO2;
 
+
+    //TODO: Change driver coefficients starting here
 	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)) // Commodities, shifting ag., or urbanization
 	{
 		if (ecozone == boreal) // Commodities/shifting ag/urbanization, boreal
