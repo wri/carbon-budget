@@ -23,9 +23,9 @@ namespace constants
 
     constexpr int soil_emis_period {20};      // The number of years over which soil emissions are calculated (separate from model years)
 
-    constexpr float shiftag_flu {0.72}; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
+    constexpr float shift_cult_flu {0.72}; // F_lu for shifting cultivation (fraction of soil C not emitted over 20 years)
 
-    constexpr float urb_flu {0.80}; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
+    constexpr float settlements_flu {0.80}; // F_lu for settlements and infrastructure (fraction of soil C not emitted over 20 years)
 
     constexpr float hard_commod_flu {0.80}; // F_lu for hard commodities (fraction of soil C not emitted over 20 years)
 
@@ -44,23 +44,28 @@ namespace constants
     constexpr char burnyear[] = "_tree_cover_loss_fire_processed.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";
-    constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20241004.tif";
+    constexpr char tcl_drivers[] = "_tree_cover_loss_driver_processed.tif";
+    //constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20241004.tif";  //TODO: Change drivers from 10km to 1km after all code updates are made
     constexpr char peat_mask[] = "_peat_mask_processed.tif";
     constexpr char ifl_primary[] = "_ifl_2000_primary_2001_merged.tif";
     constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other.tif";
 
     // Outputs
-    constexpr char permanent_ag_emis[] = "_gross_emis_permanent_ag_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char hard_commod_emis[] = "_gross_emis_hard_commodities_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char shifting_cultivation_emis[] = "_gross_emis_shifting_cultivation_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char forest_management_emis[] = "_gross_emis_forest_management_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char wildfire_emis[] = "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char settlements_emis[] = "_gross_emis_settlements_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char other_disturbance_emis[] = "_gross_emis_other_disturbance_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char no_driver_emis[] = "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char permanent_ag_emis[] = "_gross_emis_permanent_ag_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char hard_commod_emis[] = "_gross_emis_hard_commodities_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char shifting_cultivation_emis[] = "_gross_emis_shifting_cultivation_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char forest_management_emis[] = "_gross_emis_forest_management_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char wildfire_emis[] = "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char settlements_emis[] = "_gross_emis_settlements_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char other_disturbance_emis[] = "_gross_emis_other_disturbance_Mg_CO2e_ha_biomass_soil_2001_";
+//    constexpr char no_driver_emis[] = "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_";
+//TODO: Delete after testing, commenting out for now
+
     constexpr char all_gases_all_drivers_emis[] = "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char CO2_only_all_drivers_emis[] = "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char non_CO2_all_drivers_emis[] = "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char CH4_only_all_drivers_emis[] = "_gross_emis_CH4_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char N2O_only_all_drivers_emis[] = "_gross_emis_N2O_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char decision_tree_all_drivers_emis[] = "_gross_emis_decision_tree_nodes_biomass_soil_2001_";
 
 }
