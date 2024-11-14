@@ -12,7 +12,7 @@
 // each pixel came from. That makes checking the results easier, too.
 // These codes are summarized in carbon-budget/emissions/node_codes.txt
 // Because emissions are separately output for CO2 and non-CO2 gases (CH4 and N2O), each model endpoint has a CO2-only and
-// a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel.
+// a non-CO2 value. These are summed to create a total emissions (all gases) for each pixel. #TODO: Update after splitting non-CO2 emissions
 // Compile with:
 // c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 
@@ -126,19 +126,8 @@ string peat_name = infolder + tile_id + constants::peat_mask;
 string ifl_primary_name = infolder + tile_id + constants::ifl_primary;
 string plant_name = infolder + tile_id + constants::plantation_type;
 
-// Output files: tonnes CO2/ha for each tree cover loss driver, their total, and the node for the decision tree
-// that determines emissions
+// Output files: tonnes CO2/ha for each output and the node for the decision tree that determines emissions
 // Output files default to the standard model names
-//string out_name1  = tile_id + constants::permanent_ag_emis + model_years_str + ".tif";
-//string out_name2  = tile_id + constants::shifting_cultivation_emis + model_years_str + ".tif";
-//string out_name3  = tile_id + constants::forest_management_emis + model_years_str + ".tif";
-//string out_name4  = tile_id + constants::wildfire_emis + model_years_str + ".tif";
-//string out_name5  = tile_id + constants::settlements_emis + model_years_str + ".tif";
-//string out_name6  = tile_id + constants::no_driver_emis + model_years_str + ".tif";
-//string out_name7  = tile_id + constants::hard_commod_emis + model_years_str + ".tif";
-//string out_name8  = tile_id + constants::other_disturbance_emis + model_years_str + ".tif";
-//TODO: Delete after testing, commenting out for now
-
 string out_name_all_gases_all_drivers = tile_id + constants::all_gases_all_drivers_emis + model_years_str + ".tif";
 string out_name_CO2_only_all_drivers = tile_id + constants::CO2_only_all_drivers_emis + model_years_str + ".tif";
 string out_name_non_CO2_all_drivers = tile_id + constants::non_CO2_all_drivers_emis + model_years_str + ".tif";
@@ -147,16 +136,6 @@ string out_name_N2O_only_all_drivers = tile_id + constants::N2O_only_all_drivers
 string out_name_node_code = tile_id + constants::decision_tree_all_drivers_emis + model_years_str + ".tif";
 
 if (sensit_type != "std") {
-//    out_name1  = tile_id + constants::commod_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name2  = tile_id + constants::shifting_ag_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name3  = tile_id + constants::forestry_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name4  = tile_id + constants::wildfire_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name5  = tile_id + constants::urbanization_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name6  = tile_id + constants::no_driver_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name7  = tile_id + constants::hard_commod_emis + model_years_str + "_" + sensit_type + ".tif";
-//    out_name8  = tile_id + constants::other_disturbance_emis + model_years_str + "_" + sensit_type + ".tif";
-//TODO: Delete after testing, commenting out for now
-
     out_name_all_gases_all_drivers = tile_id + constants::all_gases_all_drivers_emis + model_years_str + "_" + sensit_type + ".tif";
     out_name_CO2_only_all_drivers = tile_id + constants::CO2_only_all_drivers_emis + model_years_str + "_" + sensit_type + ".tif";
     out_name_non_CO2_all_drivers = tile_id + constants::non_CO2_all_drivers_emis + model_years_str + "_" + sensit_type + ".tif";
@@ -273,15 +252,6 @@ cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize
 
 // Initialize GDAL for writing
 GDALDriver *OUTDRIVER;
-//GDALDataset *OUTGDAL1;   // Permanent agriculture, all gases
-//GDALDataset *OUTGDAL2;   // Shifting cultivation, all gases
-//GDALDataset *OUTGDAL3;   // Forest management, all gases
-//GDALDataset *OUTGDAL4;   // Wildfire, all gases
-//GDALDataset *OUTGDAL5;   // Settlement and infrastructure, all gases
-//GDALDataset *OUTGDAL6;   // No driver, all gases
-//GDALDataset *OUTGDAL7;   // Hard commodities, all gases
-//GDALDataset *OUTGDAL8;   // Other natural disturbances, all gases
-//TODO: Delete after testing, commenting out for now
 GDALDataset *OUTGDAL_ALLDRIVERS_ALLGASSES;  // All drivers, all gases
 GDALDataset *OUTGDAL_ALLDRIVERS_CO2ONLY;  // All drivers, CO2 only
 GDALDataset *OUTGDAL_ALLDRIVERS_NONCO2;  // All drivers, non-CO2 (methane + nitrous oxide)
@@ -289,16 +259,6 @@ GDALDataset *OUTGDAL_ALLDRIVERS_NONCO2;  // All drivers, non-CO2 (methane + nitr
 //GDALDataset *OUTGDAL_ALLDRIVERS_N2OONLY;  // All drivers, nitrous oxide
 //TODO: Uncomment after splitting non-CO2 emissions
 GDALDataset *OUTGDAL_NODE_CODE;  // Decision tree node
-
-//GDALRasterBand *OUTBAND1;
-//GDALRasterBand *OUTBAND2;
-//GDALRasterBand *OUTBAND3;
-//GDALRasterBand *OUTBAND4;
-//GDALRasterBand *OUTBAND5;
-//GDALRasterBand *OUTBAND6;
-//GDALRasterBand *OUTBAND7;
-//GDALRasterBand *OUTBAND8;
-//TODO: Delete after testing, commenting out for now
 
 GDALRasterBand *OUTBAND_ALLDRIVERS_ALLGASSES;
 GDALRasterBand *OUTBAND_ALLDRIVERS_CO2ONLY;
@@ -317,55 +277,6 @@ if( OUTDRIVER == NULL ) {cout << "no driver" << endl; exit( 1 );};
 oSRS.SetWellKnownGeogCS( "WGS84" );
 oSRS.exportToWkt( &OUTPRJ );
 double adfGeoTransform[6] = { ulx, pixelsize, 0, uly, 0, -1*pixelsize };
-
-//// Permanent agriculture gross emissions
-//OUTGDAL1 = OUTDRIVER->Create( out_name1.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL1->SetGeoTransform(adfGeoTransform); OUTGDAL1->SetProjection(OUTPRJ);
-//OUTBAND1 = OUTGDAL1->GetRasterBand(1);
-//OUTBAND1->SetNoDataValue(0);
-//
-//// Shifting cultivation gross emissions
-//OUTGDAL2 = OUTDRIVER->Create( out_name2.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL2->SetGeoTransform(adfGeoTransform); OUTGDAL2->SetProjection(OUTPRJ);
-//OUTBAND2 = OUTGDAL2->GetRasterBand(1);
-//OUTBAND2->SetNoDataValue(0);
-//
-//// Forest management gross emissions
-//OUTGDAL3 = OUTDRIVER->Create( out_name3.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL3->SetGeoTransform(adfGeoTransform); OUTGDAL3->SetProjection(OUTPRJ);
-//OUTBAND3 = OUTGDAL3->GetRasterBand(1);
-//OUTBAND3->SetNoDataValue(0);
-//
-//// Wildfire gross emissions
-//OUTGDAL4 = OUTDRIVER->Create( out_name4.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL4->SetGeoTransform(adfGeoTransform); OUTGDAL4->SetProjection(OUTPRJ);
-//OUTBAND4 = OUTGDAL4->GetRasterBand(1);
-//OUTBAND4->SetNoDataValue(0);
-//
-//// Settlement and infrastructure gross emissions
-//OUTGDAL5 = OUTDRIVER->Create( out_name5.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL5->SetGeoTransform(adfGeoTransform); OUTGDAL5->SetProjection(OUTPRJ);
-//OUTBAND5 = OUTGDAL5->GetRasterBand(1);
-//OUTBAND5->SetNoDataValue(0);
-//
-//// No driver gross emissions
-//OUTGDAL6 = OUTDRIVER->Create( out_name6.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL6->SetGeoTransform(adfGeoTransform); OUTGDAL6->SetProjection(OUTPRJ);
-//OUTBAND6 = OUTGDAL6->GetRasterBand(1);
-//OUTBAND6->SetNoDataValue(0);
-//
-//// Hard commodities gross emissions
-//OUTGDAL7 = OUTDRIVER->Create( out_name7.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL7->SetGeoTransform(adfGeoTransform); OUTGDAL7->SetProjection(OUTPRJ);
-//OUTBAND7 = OUTGDAL7->GetRasterBand(1);
-//OUTBAND7->SetNoDataValue(0);
-//
-//// Other natural disturbances gross emissions
-//OUTGDAL8 = OUTDRIVER->Create( out_name8.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-//OUTGDAL8->SetGeoTransform(adfGeoTransform); OUTGDAL8->SetProjection(OUTPRJ);
-//OUTBAND8 = OUTGDAL8->GetRasterBand(1);
-//OUTBAND8->SetNoDataValue(0);
-//TODO: Delete after testing, commenting out for now
 
 // All gases, all drivers combined
 OUTGDAL_ALLDRIVERS_ALLGASSES = OUTDRIVER->Create( out_name_all_gases_all_drivers.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
@@ -422,20 +333,20 @@ float ifl_primary_data[xsize];
 float plant_data[xsize];
 
 // Outputs
-float out_data_permanent_agriculture[xsize];                 // 1 (this is commodity driven deforestation in 10km drivers)
+float out_data_permanent_agriculture[xsize];        // 1 (this is commodity driven deforestation in 10km drivers)
 float out_data_shifting_cultivation[xsize];         // 2 (this is shifting ag in 10km drivers)
 float out_data_forest_management[xsize];            // 3 (this is forestry in 10km drivers)
 float out_data_wildfire[xsize];                     // 4 (same class in 10km drivers)
 float out_data_settlements[xsize];                  // 5 (this is urbanization in 10km drivers)
 float out_data_no_driver[xsize];                    // Null
 //TODO: Use 1km codes after switching
-//float out_data_permanent_agriculture[xsize];                 // 1
+//float out_data_permanent_agriculture[xsize];        // 1
 //float out_data_hard_commodities[xsize];             // 2
 //float out_data_shifting_cultivation[xsize];         // 3
 //float out_data_forest_management[xsize];            // 4
 //float out_data_wildfire[xsize];                     // 5
 //float out_data_settlements[xsize];                  // 6
-//float out_data_other_disturbances[xsize];   // 7
+//float out_data_other_disturbances[xsize];           // 7
 //float out_data_no_driver[xsize];                    // Null
 
 float out_data_alldrivers_allgasses[xsize];
@@ -501,6 +412,13 @@ for(x=0; x<xsize; x++)
 		//float outdata_permanent_agriculture_CH4only = 0;  // permanent agriculture, CH4 only
 		//float outdata_permanent_agriculture_N2Oonly = 0;  // permanent agriculture, N2O only
 		//TODO: Uncomment after splitting non-CO2 emissions
+
+		float outdata_hard_commodities_allgases = 0;   // hard commodities, all gases
+		float outdata_hard_commodities_CO2only = 0;  // hard commodities, CO2 only
+		float outdata_hard_commodities_nonCO2 = 0;  // hard commodities, non-CO2
+		//float outdata_hard_commodities_CH4only = 0;  // hard commodities, CH4 only
+		//float outdata_hard_commodities_N2Oonly = 0;  // hard commodities, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_shifting_cultivation_allgases = 0;   // shifting cultivation, all gases
 		float outdata_shifting_cultivation_CO2only = 0;  // shifting cultivation, CO2 only
@@ -529,26 +447,19 @@ for(x=0; x<xsize; x++)
 		//float outdata_settlements_CH4only = 0;  // settlement and infrastructure, CH4 only
 		//float outdata_settlements_N2Oonly = 0;  // settlement and infrastructure, N2O only
 		//TODO: Uncomment after splitting non-CO2 emissions
-		
-		float outdata_no_driver_allgases = 0;   // no driver, all gases
-		float outdata_no_driver_CO2only = 0;  // no driver, CO2 only
-		float outdata_no_driver_nonCO2 = 0;  // no driver, non-CO2
-		//float outdata_no_driver_CH4only = 0;  // no driver, CH4 only
-		//float outdata_no_driver_N2Oonly = 0;  // no driver, N2O only
-		//TODO: Uncomment after splitting non-CO2 emissions
-		
-		float outdata_hard_commodities_allgases = 0;   // hard commodities, all gases
-		float outdata_hard_commodities_CO2only = 0;  // hard commodities, CO2 only
-		float outdata_hard_commodities_nonCO2 = 0;  // hard commodities, non-CO2
-		//float outdata_hard_commodities_CH4only = 0;  // hard commodities, CH4 only
-		//float outdata_hard_commodities_N2Oonly = 0;  // hard commodities, N2O only
-		//TODO: Uncomment after splitting non-CO2 emissions
-		
+
 		float outdata_other_disturbances_allgases = 0;   // other natural disturbances, all gases
 		float outdata_other_disturbances_CO2only = 0;  // other natural disturbances, CO2 only
 		float outdata_other_disturbances_nonCO2 = 0;  // other natural disturbances, non-CO2
 		//float outdata_other_disturbances_CH4only = 0;  // other natural disturbances, CH4 only
 		//float outdata_other_disturbances_N2Oonly = 0;  // other natural disturbances, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
+
+		float outdata_no_driver_allgases = 0;   // no driver, all gases
+		float outdata_no_driver_CO2only = 0;  // no driver, CO2 only
+		float outdata_no_driver_nonCO2 = 0;  // no driver, non-CO2
+		//float outdata_no_driver_CH4only = 0;  // no driver, CH4 only
+		//float outdata_no_driver_N2Oonly = 0;  // no driver, N2O only
 		//TODO: Uncomment after splitting non-CO2 emissions
 
 		float outdata_alldrivers_allgases = 0;  // all drivers, all gases
@@ -1336,17 +1247,20 @@ for(x=0; x<xsize; x++)
 				outdata_alldrivers_allgases = outdata_permanent_agriculture_allgases + outdata_shifting_cultivation_allgases + outdata_forest_management_allgases + outdata_wildfire_allgases + outdata_settlements_allgases + outdata_no_driver_allgases;
 				outdata_alldrivers_CO2only = outdata_permanent_agriculture_CO2only + outdata_shifting_cultivation_CO2only + outdata_forest_management_CO2only + outdata_wildfire_CO2only + outdata_settlements_CO2only + outdata_no_driver_CO2only;
 				outdata_alldrivers_nonCO2 = outdata_permanent_agriculture_nonCO2 + outdata_shifting_cultivation_nonCO2 + outdata_forest_management_nonCO2 + outdata_wildfire_nonCO2 + outdata_settlements_nonCO2 + outdata_no_driver_nonCO2;
+                //TODO: Update after splitting non-CO2 emissions
 
 				if (outdata_alldrivers_allgases == 0)
 				{
 					out_data_alldrivers_allgasses[x] = 0;
 					out_data_alldrivers_CO2only[x] = 0;
 					out_data_alldrivers_nonCO2[x] = 0;
+					//TODO: Update after splitting non-CO2 emissions
 				}
 				else{
 					out_data_alldrivers_allgasses[x] = outdata_alldrivers_allgases;
 					out_data_alldrivers_CO2only[x] = outdata_alldrivers_CO2only;
 					out_data_alldrivers_nonCO2[x] = outdata_alldrivers_nonCO2;
+					//TODO: Update after splitting non-CO2 emissions
 				}
 		}
 
@@ -1363,6 +1277,7 @@ for(x=0; x<xsize; x++)
 			out_data_alldrivers_allgasses[x] = 0;
 			out_data_alldrivers_CO2only[x] = 0;
 			out_data_alldrivers_nonCO2[x] = 0;
+			//TODO: Update after splitting non-CO2 emissions
 			out_data_node_code[x] = 0;
 		}
     }
@@ -1374,18 +1289,12 @@ for(x=0; x<xsize; x++)
 // For cerr instead of std::err: https://www.geeksforgeeks.org/cerr-standard-error-stream-object-in-cpp/
 
 // Error code returned by each line saved as their own argument
-//CPLErr errcodeOut1 = OUTBAND1->RasterIO( GF_Write, 0, y, xsize, 1, out_data_permanent_agriculture, xsize, 1, GDT_Float32, 0, 0 );
-//CPLErr errcodeOut2 = OUTBAND2->RasterIO( GF_Write, 0, y, xsize, 1, out_data_shifting_cultivation, xsize, 1, GDT_Float32, 0, 0 );
-//CPLErr errcodeOut3 = OUTBAND3->RasterIO( GF_Write, 0, y, xsize, 1, out_data_forest_management, xsize, 1, GDT_Float32, 0, 0 );
-//CPLErr errcodeOut4 = OUTBAND4->RasterIO( GF_Write, 0, y, xsize, 1, out_data_wildfire, xsize, 1, GDT_Float32, 0, 0 );
-//CPLErr errcodeOut5 = OUTBAND5->RasterIO( GF_Write, 0, y, xsize, 1, out_data_settlements, xsize, 1, GDT_Float32, 0, 0 );
-//CPLErr errcodeOut6 = OUTBAND6->RasterIO( GF_Write, 0, y, xsize, 1, out_data_no_driver, xsize, 1, GDT_Float32, 0, 0 );
-//TODO: Delete after testing, commenting out for now
 CPLErr errcodeOut_alldrivers_allgasses = OUTBAND_ALLDRIVERS_ALLGASSES->RasterIO( GF_Write, 0, y, xsize, 1, out_data_alldrivers_allgasses, xsize, 1, GDT_Float32, 0, 0 );
 CPLErr errcodeOut_alldrivers_CO2only = OUTBAND_ALLDRIVERS_CO2ONLY->RasterIO( GF_Write, 0, y, xsize, 1, out_data_alldrivers_CO2only, xsize, 1, GDT_Float32, 0, 0 );
 CPLErr errcodeOut_alldrivers_nonCO2 = OUTBAND_ALLDRIVERS_NONCO2->RasterIO( GF_Write, 0, y, xsize, 1, out_data_alldrivers_nonCO2, xsize, 1, GDT_Float32, 0, 0 );
 //CPLErr errcodeOut_alldrivers_CH4only = OUTBAND_ALLDRIVERS_CH4ONLY->RasterIO( GF_Write, 0, y, xsize, 1, out_data_alldrivers_CH4only, xsize, 1, GDT_Float32, 0, 0 );
 //CPLErr errcodeOut_alldrivers_N2Oonly = OUTBAND_ALLDRIVERS_N2OONLY->RasterIO( GF_Write, 0, y, xsize, 1, out_data_alldrivers_N2Oonly, xsize, 1, GDT_Float32, 0, 0 );
+//TODO: Uncomment after splitting non-co2 emissions
 CPLErr errcodeOut_node_code = OUTBAND_NODE_CODE->RasterIO( GF_Write, 0, y, xsize, 1, out_data_node_code, xsize, 1, GDT_UInt16, 0, 0 );
 
 // Number of output files
@@ -1409,16 +1318,10 @@ for (k=0; k<outSize; k++)
 }
 
 GDALClose(INGDAL_AGC);
-//GDALClose((GDALDatasetH)OUTGDAL1);
-//GDALClose((GDALDatasetH)OUTGDAL2);
-//GDALClose((GDALDatasetH)OUTGDAL3);
-//GDALClose((GDALDatasetH)OUTGDAL4);
-//GDALClose((GDALDatasetH)OUTGDAL5);
-//GDALClose((GDALDatasetH)OUTGDAL6);
-//TODO: Delete after testing, commenting out for now
 GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_ALLGASSES);
 GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_CO2ONLY);
 GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_NONCO2);
+//TODO: Update after splitting non-CO2 emissions
 GDALClose((GDALDatasetH)OUTGDAL_NODE_CODE);
 return 0;
 }
