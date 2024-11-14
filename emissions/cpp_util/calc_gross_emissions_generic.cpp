@@ -272,7 +272,7 @@ pixelsize=GeoTransform[1];
 cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize <<", "<< ulx <<", "<< uly << ", "<< pixelsize << endl;
 
 // Initialize GDAL for writing
-//GDALDriver *OUTDRIVER;
+GDALDriver *OUTDRIVER;
 //GDALDataset *OUTGDAL1;   // Permanent agriculture, all gases
 //GDALDataset *OUTGDAL2;   // Shifting cultivation, all gases
 //GDALDataset *OUTGDAL3;   // Forest management, all gases
@@ -285,8 +285,9 @@ cout << "Gross emissions generic model C++ parameters: " << xsize <<", "<< ysize
 GDALDataset *OUTGDAL_ALLDRIVERS_ALLGASSES;  // All drivers, all gases
 GDALDataset *OUTGDAL_ALLDRIVERS_CO2ONLY;  // All drivers, CO2 only
 GDALDataset *OUTGDAL_ALLDRIVERS_NONCO2;  // All drivers, non-CO2 (methane + nitrous oxide)
-GDALDataset *OUTGDAL_ALLDRIVERS_CH4ONLY;  // All drivers, methane
-GDALDataset *OUTGDAL_ALLDRIVERS_N2OONLY;  // All drivers, nitrous oxide
+//GDALDataset *OUTGDAL_ALLDRIVERS_CH4ONLY;  // All drivers, methane
+//GDALDataset *OUTGDAL_ALLDRIVERS_N2OONLY;  // All drivers, nitrous oxide
+//TODO: Uncomment after splitting non-CO2 emissions
 GDALDataset *OUTGDAL_NODE_CODE;  // Decision tree node
 
 //GDALRasterBand *OUTBAND1;
@@ -302,8 +303,9 @@ GDALDataset *OUTGDAL_NODE_CODE;  // Decision tree node
 GDALRasterBand *OUTBAND_ALLDRIVERS_ALLGASSES;
 GDALRasterBand *OUTBAND_ALLDRIVERS_CO2ONLY;
 GDALRasterBand *OUTBAND_ALLDRIVERS_NONCO2;
-GDALRasterBand *OUTBAND_ALLDRIVERS_CH4ONLY;
-GDALRasterBand *OUTBAND_ALLDRIVERS_N2OONLY;
+//GDALRasterBand *OUTBAND_ALLDRIVERS_CH4ONLY;
+//GDALRasterBand *OUTBAND_ALLDRIVERS_N2OONLY;
+//TODO: Uncomment after splitting non-CO2 emissions
 GDALRasterBand *OUTBAND_NODE_CODE;
 
 OGRSpatialReference oSRS;
@@ -383,17 +385,18 @@ OUTGDAL_ALLDRIVERS_NONCO2->SetGeoTransform(adfGeoTransform); OUTGDAL_ALLDRIVERS_
 OUTBAND_ALLDRIVERS_NONCO2 = OUTGDAL_ALLDRIVERS_NONCO2->GetRasterBand(1);
 OUTBAND_ALLDRIVERS_NONCO2->SetNoDataValue(0);
 
-// CH4 only, all drivers combined
-OUTGDAL_ALLDRIVERS_CH4ONLY = OUTDRIVER->Create( out_name_CH4_only_all_drivers.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL_ALLDRIVERS_CH4ONLY->SetGeoTransform(adfGeoTransform); OUTGDAL_ALLDRIVERS_CH4ONLY->SetProjection(OUTPRJ);
-OUTBAND_ALLDRIVERS_CH4ONLY = OUTGDAL_ALLDRIVERS_CH4ONLY->GetRasterBand(1);
-OUTBAND_ALLDRIVERS_CH4ONLY->SetNoDataValue(0);
-
-// N2O only, all drivers combined
-OUTGDAL_ALLDRIVERS_N2OONLY = OUTDRIVER->Create( out_name_N2O_only_all_drivers.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
-OUTGDAL_ALLDRIVERS_N2OONLY->SetGeoTransform(adfGeoTransform); OUTGDAL_ALLDRIVERS_N2OONLY->SetProjection(OUTPRJ);
-OUTBAND_ALLDRIVERS_N2OONLY = OUTGDAL_ALLDRIVERS_N2OONLY->GetRasterBand(1);
-OUTBAND_ALLDRIVERS_N2OONLY->SetNoDataValue(0);
+//// CH4 only, all drivers combined
+//OUTGDAL_ALLDRIVERS_CH4ONLY = OUTDRIVER->Create( out_name_CH4_only_all_drivers.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+//OUTGDAL_ALLDRIVERS_CH4ONLY->SetGeoTransform(adfGeoTransform); OUTGDAL_ALLDRIVERS_CH4ONLY->SetProjection(OUTPRJ);
+//OUTBAND_ALLDRIVERS_CH4ONLY = OUTGDAL_ALLDRIVERS_CH4ONLY->GetRasterBand(1);
+//OUTBAND_ALLDRIVERS_CH4ONLY->SetNoDataValue(0);
+//
+//// N2O only, all drivers combined
+//OUTGDAL_ALLDRIVERS_N2OONLY = OUTDRIVER->Create( out_name_N2O_only_all_drivers.c_str(), xsize, ysize, 1, GDT_Float32, papszOptions );
+//OUTGDAL_ALLDRIVERS_N2OONLY->SetGeoTransform(adfGeoTransform); OUTGDAL_ALLDRIVERS_N2OONLY->SetProjection(OUTPRJ);
+//OUTBAND_ALLDRIVERS_N2OONLY = OUTGDAL_ALLDRIVERS_N2OONLY->GetRasterBand(1);
+//OUTBAND_ALLDRIVERS_N2OONLY->SetNoDataValue(0);
+//TODO: Uncomment after splitting non-CO2 emissions
 
 // Decision tree node
 OUTGDAL_NODE_CODE = OUTDRIVER->Create( out_name_node_code.c_str(), xsize, ysize, 1, GDT_UInt16, papszOptions );
@@ -438,8 +441,9 @@ float out_data_no_driver[xsize];                    // Null
 float out_data_alldrivers_allgasses[xsize];
 float out_data_alldrivers_CO2only[xsize];
 float out_data_alldrivers_nonCO2[xsize];
-float out_data_alldrivers_CH4only[xsize];
-float out_data_alldrivers_N2Oonly[xsize];
+//float out_data_alldrivers_CH4only[xsize];
+//float out_data_alldrivers_N2Oonly[xsize];
+//TODO: Uncomment after splitting non-CO2 emissions
 short int out_data_node_code[xsize];
 
 // Loop over the y coordinates, then the x coordinates
@@ -494,56 +498,65 @@ for(x=0; x<xsize; x++)
 		float outdata_permanent_agriculture_allgases = 0;   // permanent agriculture, all gases
 		float outdata_permanent_agriculture_CO2only = 0;  // permanent agriculture, CO2 only
 		float outdata_permanent_agriculture_nonCO2 = 0;  // permanent agriculture, non-CO2
-		float outdata_permanent_agriculture_CH4only = 0;  // permanent agriculture, CH4 only
-		float outdata_permanent_agriculture_N2Oonly = 0;  // permanent agriculture, N2O only
+		//float outdata_permanent_agriculture_CH4only = 0;  // permanent agriculture, CH4 only
+		//float outdata_permanent_agriculture_N2Oonly = 0;  // permanent agriculture, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_shifting_cultivation_allgases = 0;   // shifting cultivation, all gases
 		float outdata_shifting_cultivation_CO2only = 0;  // shifting cultivation, CO2 only
 		float outdata_shifting_cultivation_nonCO2 = 0;  // shifting cultivation, non-CO2
-		float outdata_shifting_cultivation_CH4only = 0;  // shifting cultivation, CH4 only
-		float outdata_shifting_cultivation_N2Oonly = 0;  // shifting cultivation, N2O only
+		//float outdata_shifting_cultivation_CH4only = 0;  // shifting cultivation, CH4 only
+		//float outdata_shifting_cultivation_N2Oonly = 0;  // shifting cultivation, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_forest_management_allgases = 0;   // forest management, all gases
 		float outdata_forest_management_CO2only = 0;  // forest management, CO2 only
 		float outdata_forest_management_nonCO2 = 0;  // forest management, non-CO2
-		float outdata_forest_management_CH4only = 0;  // forest management, CH4 only
-		float outdata_forest_management_N2Oonly = 0;  // forest management, N2O only
+		//float outdata_forest_management_CH4only = 0;  // forest management, CH4 only
+		//float outdata_forest_management_N2Oonly = 0;  // forest management, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_wildfire_allgases = 0;   // wildfire, all gases
 		float outdata_wildfire_CO2only = 0;  // wildfire, CO2 only
 		float outdata_wildfire_nonCO2 = 0;  // wildfire, non-CO2
-		float outdata_wildfire_CH4only = 0;  // wildfire, CH4 only
-		float outdata_wildfire_N2Oonly = 0;  // wildfire, N2O only
+		//float outdata_wildfire_CH4only = 0;  // wildfire, CH4 only
+		//float outdata_wildfire_N2Oonly = 0;  // wildfire, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_settlements_allgases = 0;   // settlement and infrastructure, all gases
 		float outdata_settlements_CO2only = 0;  // settlement and infrastructure, CO2 only
 		float outdata_settlements_nonCO2 = 0;  // settlement and infrastructure, non-CO2
-		float outdata_settlements_CH4only = 0;  // settlement and infrastructure, CH4 only
-		float outdata_settlements_N2Oonly = 0;  // settlement and infrastructure, N2O only
+		//float outdata_settlements_CH4only = 0;  // settlement and infrastructure, CH4 only
+		//float outdata_settlements_N2Oonly = 0;  // settlement and infrastructure, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_no_driver_allgases = 0;   // no driver, all gases
 		float outdata_no_driver_CO2only = 0;  // no driver, CO2 only
 		float outdata_no_driver_nonCO2 = 0;  // no driver, non-CO2
-		float outdata_no_driver_CH4only = 0;  // no driver, CH4 only
-		float outdata_no_driver_N2Oonly = 0;  // no driver, N2O only
+		//float outdata_no_driver_CH4only = 0;  // no driver, CH4 only
+		//float outdata_no_driver_N2Oonly = 0;  // no driver, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_hard_commodities_allgases = 0;   // hard commodities, all gases
 		float outdata_hard_commodities_CO2only = 0;  // hard commodities, CO2 only
 		float outdata_hard_commodities_nonCO2 = 0;  // hard commodities, non-CO2
-		float outdata_hard_commodities_CH4only = 0;  // hard commodities, CH4 only
-		float outdata_hard_commodities_N2Oonly = 0;  // hard commodities, N2O only
+		//float outdata_hard_commodities_CH4only = 0;  // hard commodities, CH4 only
+		//float outdata_hard_commodities_N2Oonly = 0;  // hard commodities, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		float outdata_other_disturbances_allgases = 0;   // other natural disturbances, all gases
 		float outdata_other_disturbances_CO2only = 0;  // other natural disturbances, CO2 only
 		float outdata_other_disturbances_nonCO2 = 0;  // other natural disturbances, non-CO2
-		float outdata_other_disturbances_CH4only = 0;  // other natural disturbances, CH4 only
-		float outdata_other_disturbances_N2Oonly = 0;  // other natural disturbances, N2O only
+		//float outdata_other_disturbances_CH4only = 0;  // other natural disturbances, CH4 only
+		//float outdata_other_disturbances_N2Oonly = 0;  // other natural disturbances, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 
 		float outdata_alldrivers_allgases = 0;  // all drivers, all gases
 		float outdata_alldrivers_CO2only = 0;  // all drivers, CO2 only
 		float outdata_alldrivers_nonCO2 = 0;  // all drivers, non-CO2
-		float outdata_alldrivers_CH4only = 0;  // all drivers, CH4 only
-		float outdata_alldrivers_N2Oonly = 0;  // all drivers, N2O only
+		//float outdata_alldrivers_CH4only = 0;  // all drivers, CH4 only
+		//float outdata_alldrivers_N2Oonly = 0;  // all drivers, N2O only
+		//TODO: Uncomment after splitting non-CO2 emissions
 		
 		short int outdata_node_code = 0;  // flowchart node
 

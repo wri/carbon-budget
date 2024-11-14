@@ -15,7 +15,7 @@ float flu_val(int climate_zone, int eco_zone)
 		}
 		else if ((eco_zone == 2) || (eco_zone == 3)) // Dry, boreal/temperate
 		{
-			flu_value = 0.8
+			flu_value = 0.8;
 			//flu_value = 0.77; //TODO:Update with new Flu after testing
 		}
 		else
@@ -27,7 +27,7 @@ float flu_val(int climate_zone, int eco_zone)
 	{
 		if (eco_zone == 1) // Wet, tropics
 		{
-            flu_value = 0.48
+            flu_value = 0.48;
 			//flu_value = 0.83; //TODO:Update with new Flu after testing
 		}
 		else if ((eco_zone == 2) || (eco_zone == 3)) // Wet, boreal/temperate
