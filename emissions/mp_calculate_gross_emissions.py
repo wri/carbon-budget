@@ -43,9 +43,11 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     :param tile_id_list: list of tile ids to process
     :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
         Options are: soil_only or biomass_soil.
-    :return: 10 sets of tiles: 6 sets of tiles with emissions for each driver; CO2 emissions from all drivers; #TODO
-        non-CO2 emissions from all drivers; all gases (CO2 and non-CO2 from all drivers);
-        emissions decision tree nodes (used for QC).
+    :return: 4 sets of tiles:          #TODO: Update after splitting non-co2 emissions
+        1. all gases (CO2 and non-CO2 from all drivers);
+        2. CO2 emissions from all drivers;
+        3. non-CO2 emissions from all drivers;
+        4. emissions decision tree nodes (used for QC).
         Units: Mg CO2e/ha over entire model period.
     """
 
@@ -97,27 +99,13 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     if emitted_pools == 'biomass_soil':
 
         # Output file directories for biomass+soil. Must be in same order as output pattern directories.
-        output_dir_list = [#cn.gross_emis_commod_biomass_soil_dir,
-                           #cn.gross_emis_shifting_ag_biomass_soil_dir,
-                           #cn.gross_emis_forestry_biomass_soil_dir,
-                           #cn.gross_emis_wildfire_biomass_soil_dir,
-                           #cn.gross_emis_urban_biomass_soil_dir,
-                           #cn.gross_emis_no_driver_biomass_soil_dir,
-                           #TODO: Delete after testing, commenting out for now
-                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+        output_dir_list = [cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
                            cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
                            cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
                            cn.gross_emis_nodes_biomass_soil_dir]
         #
 
-        output_pattern_list = [#cn.pattern_gross_emis_commod_biomass_soil,
-                               #cn.pattern_gross_emis_shifting_ag_biomass_soil,
-                               #cn.pattern_gross_emis_forestry_biomass_soil,
-                               #cn.pattern_gross_emis_wildfire_biomass_soil,
-                               #cn.pattern_gross_emis_urban_biomass_soil,
-                               #cn.pattern_gross_emis_no_driver_biomass_soil,
-                               # TODO: Delete after testing, commenting out for now
-                               cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+        output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
@@ -131,26 +119,12 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
 
         # Output file directories for soil_only. Must be in same order as output pattern directories.
-        output_dir_list = [#cn.gross_emis_commod_soil_only_dir,
-                           #cn.gross_emis_shifting_ag_soil_only_dir,
-                           #cn.gross_emis_forestry_soil_only_dir,
-                           #cn.gross_emis_wildfire_soil_only_dir,
-                           #cn.gross_emis_urban_soil_only_dir,
-                           #cn.gross_emis_no_driver_soil_only_dir,
-                           # TODO: Delete after testing, commenting out for now
-                           cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+        output_dir_list = [cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                            cn.gross_emis_co2_only_all_drivers_soil_only_dir,
                            cn.gross_emis_non_co2_all_drivers_soil_only_dir,
                            cn.gross_emis_nodes_soil_only_dir]
 
-        output_pattern_list = [#cn.pattern_gross_emis_commod_soil_only,
-                               #cn.pattern_gross_emis_shifting_ag_soil_only,
-                               #cn.pattern_gross_emis_forestry_soil_only,
-                               #cn.pattern_gross_emis_wildfire_soil_only,
-                               #cn.pattern_gross_emis_urban_soil_only,
-                               #cn.pattern_gross_emis_no_driver_soil_only,
-                               # TODO: Delete after testing, commenting out for now
-                               cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+        output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
                                cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
                                cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
                                cn.pattern_gross_emis_nodes_soil_only]

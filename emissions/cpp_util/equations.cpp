@@ -36,9 +36,9 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 //    int boreal;         // The ecozone code for the boreal zone
 //    boreal = constants::boreal;
 
-	// instantiates Cf, CO2, CH4, N2O, peatburn, peat_drain_total.
-	// peatburn and peat_drain_annual both have CO2 and non-CO2 components. They are calculated separately and
-	// passed back to the main script as separate values.
+	// Initiates Cf, CO2, CH4, N2O, peatburn, peat_drain_total.
+	// peatburn and peat_drain_annual both have CO2 and non-CO2 components.
+	// They are calculated separately and passed back to the main script as separate values.
 	float Cf;
 	float CO2;
 	float CH4;
