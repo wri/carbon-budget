@@ -1175,9 +1175,9 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
-                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
-                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
-				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
+				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 				//TODO: Uncomment after splitting non-CO2 emissions
 
 				if (peat_data[x] > 0) // forest management, peat
@@ -1257,9 +1257,9 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
-				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
-                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
-				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+				Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
+				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 				//TODO: Uncomment after splitting non-CO2 emissions
 
 				if (peat_data[x] > 0) // wildfire, peat
@@ -1536,9 +1536,9 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
-                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
-                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
-				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
+				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 				//TODO: Uncomment after splitting non-CO2 emissions
 
 				if (peat_data[x] > 0) // other natural disturbances, peat
@@ -1619,9 +1619,9 @@ for(x=0; x<xsize; x++)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
 				Biomass_tCO2e_yesfire_CO2_only = ((agc_data[x] / biomass_to_c) * Cf * Gef_CO2 * pow(10, -3));
-                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
-                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
-				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c[x] / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                Biomass_tCO2e_yesfire_non_CO2 = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv) + ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
+                //Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
+				//Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 				//TODO: Uncomment after splitting non-CO2 emissions
 
 				if (peat_data[x] > 0) // No driver, peat
