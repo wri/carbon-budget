@@ -451,6 +451,8 @@ for(x=0; x<xsize; x++)
             // it was as if the returned values for the first pixel evaluated couldn't be overwritten.
             // The first answer here told me how to solve that: https://stackoverflow.com/questions/51609816/return-float-array-from-a-function-c
             float q[8];
+            //float q[9];
+            //TODO: Uncomment after splitting non-CO2 emissions
             def_variables(&q[0], ecozone_data[x], drivermodel_data[x], ifl_primary_data[x], climate_data[x], plant_data[x], loss_data[x]);
 
 			// The constants needed for calculating emissions
@@ -460,13 +462,13 @@ for(x=0; x<xsize; x++)
 			float Gef_N2O = q[3];       // Emissions factor for N2O
 			float peatburn_CO2_only = q[4];      // Emissions from burning peat, CO2 emissions only
 			float peatburn_non_CO2 = q[5];       // Emissions from burning peat, non-CO2 emissions only
-			//float peatburn_CH4_only = q[];       // Emissions from burning peat, CH4 emissions only
-			//float peatburn_N2O_only = q[];       // Emissions from burning peat, N2O emissions only
+			//float peatburn_CH4_only = q[5];       // Emissions from burning peat, CH4 emissions only
+    		//TODO: Uncomment after splitting non-CO2 emissions
     		float peat_drain_total_CO2_only = q[6];      // Emissions from draining peat, CO2 emissions only
     		float peat_drain_total_non_CO2 = q[7];      // Emissions from draining peat, non-CO2 emissions only
-    		//float peat_drain_total_CH4_only = q[];      // Emissions from draining peat, CH4 emissions only
-    		//float peat_drain_total_N2O_only = q[];      // Emissions from draining peat, N2O emissions only
-    		//TODO: Update in def_variables to return non_CO2 values separately
+    		//float peat_drain_total_CH4_only = q[7];      // Emissions from draining peat, CH4 emissions only
+    		//float peat_drain_total_N2O_only = q[8];      // Emissions from draining peat, N2O emissions only
+    		//TODO: Uncomment after splitting non-CO2 emissions
 
             // Define and calculate several values used later
 			float non_soil_c;
@@ -500,7 +502,7 @@ for(x=0; x<xsize; x++)
 						outdata_permanent_agriculture_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata_permanent_agriculture_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						//outdata_permanent_agriculture_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
-						//outdata_permanent_agriculture_N2Oonly = peat_drain_total_N2O_only + peatburn_N2O_only;
+						//outdata_permanent_agriculture_N2Oonly = peat_drain_total_N2O_only;
 						//TODO: Uncomment after splitting non-CO2 emissions
 						outdata_node_code = 10;
 					}
@@ -669,26 +671,6 @@ for(x=0; x<xsize; x++)
 							    //outdata_permanent_agriculture_N2Oonly = 0;
 							    //TODO: Uncomment after splitting non-CO2 emissions
 						        outdata_node_code = 191;
-
-						        ////QC code to get the values of the relevant variables at a particular pixel of interest (based on its values rather than its coordinates)
-                                //double total;
-                                //total = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only + Biomass_tCO2e_yesfire_non_CO2 + peat_drain_total_non_CO2 + peatburn_non_CO2;
-                                //if ((total < 715) && (total > 714) && (agc_data[x] = 26.25) && (soil_data[x] = 216) && (dead_data[x] = 1.44) && (litter_data[x] = 0.5328) && (burn_data[x] = 6))
-                                //{
-                                //    cout << "total: " << total << endl;
-                                //    cout << "Biomass_tCO2e_yesfire_CO2_only: " << Biomass_tCO2e_yesfire_CO2_only << endl;
-                                //    cout << "Biomass_tCO2e_yesfire_non_CO2: " << Biomass_tCO2e_yesfire_non_CO2 << endl;
-                                //    cout << "peat_drain_total_CO2_only: " << peat_drain_total_CO2_only << endl;
-                                //    cout << "peat_drain_total_non_CO2: " << peat_drain_total_non_CO2 << endl;
-                                //    cout << "peatburn_CO2_only: " << peatburn_CO2_only << endl;
-                                //    cout << "peatburn_non_CO2: " << peatburn_non_CO2 << endl;
-                                //    cout << "agc_data[x]: " << agc_data[x] << endl;
-                                //    cout << "Cf: " << Cf << endl;
-                                //    cout << "Gef_CO2: " << Gef_CO2 << endl;
-                                //    cout << "Gef_CH4: " << Gef_CH4 << endl;
-                                //    cout << "Gef_N2O: " << Gef_N2O << endl;
-                                //    cout << "" << endl;
-                                //}
 						    }
 						}
 					}
@@ -696,6 +678,198 @@ for(x=0; x<xsize; x++)
 				outdata_permanent_agriculture_allgases = outdata_permanent_agriculture_CO2only + outdata_permanent_agriculture_nonCO2;
 				//outdata_permanent_agriculture_allgases = outdata_permanent_agriculture_CO2only + outdata_permanent_agriculture_CH4only + outdata_permanent_agriculture_N2Oonly;
 				//outdata_permanent_agriculture_nonCO2 = outdata_permanent_agriculture_CH4only + outdata_permanent_agriculture_N2Oonly;
+				//TODO: Uncomment after splitting non-CO2 emissions
+			}
+
+			// Emissions model for hard commodities
+			else if (drivermodel_data[x] == 2)
+			{
+				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
+				minsoil = ((soil_data[x]-(soil_data[x] * hard_commod_flu))/soil_emis_period) * (model_years-loss_data[x]);
+
+				if (peat_data[x] > 0) // hard commodities, peat
+				{
+					if (burn_data[x] > 0) // hard commodities, peat, burned
+					{
+						outdata_hard_commodities_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata_hard_commodities_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
+						//outdata_hard_commodities_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
+						//outdata_hard_commodities_N2Oonly = peat_drain_total_N2O_only;
+						//TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 20;
+					}
+					if (burn_data[x] == 0) // hard commodities, peat, not burned
+					{
+						if (ecozone_data[x] == tropical) // hard commodities, peat, not burned, tropical
+						{
+						    if (plant_data[x] >= 1) // hard commodities, peat, not burned, tropical, plantation
+						    {
+						    	outdata_hard_commodities_CO2only = peat_drain_total_CO2_only;
+						        outdata_hard_commodities_nonCO2 = peat_drain_total_non_CO2;
+						        //outdata_hard_commodities_CH4only = peat_drain_total_CH4_only;
+						        //outdata_hard_commodities_N2Oonly = peat_drain_total_N2O_only;
+						        //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 21;
+						    }
+						    if (plant_data[x] == 0)     // hard commodities, peat, not burned, tropical, not plantation
+						    {
+						        outdata_hard_commodities_CO2only = 0;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+                                //outdata_hard_commodities_N2Oonly = 0;
+                                //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 211;
+						    }
+						}
+                        if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))      // hard commodities, peat, not burned, temperate/boreal
+						{
+						    outdata_hard_commodities_CO2only = peat_drain_total_CO2_only;
+						    outdata_hard_commodities_nonCO2 = peat_drain_total_non_CO2;
+						    //outdata_hard_commodities_CH4only = peat_drain_total_CH4_only;
+							//outdata_hard_commodities_N2Oonly = peat_drain_total_N2O_only;
+							//TODO: Uncomment after splitting non-CO2 emissions
+						    outdata_node_code = 22;
+						}
+					}
+				}
+				if (peat_data[x] == 0) // hard commodities, not peat
+				{
+					if (burn_data[x] > 0) // hard commodities, not peat, burned
+					{
+						if (ecozone_data[x] == tropical)   // hard commodities, not peat, burned, tropical
+						{
+                            if (ifl_primary_data[x] == 1)   // hard commodities, not peat, burned, tropical, IFL
+                            {
+                                if (plant_data[x] >= 1)     // hard commodities, not peat, burned, tropical, IFL, plantation
+						        {
+						            outdata_hard_commodities_CO2only = 0;
+						            outdata_hard_commodities_nonCO2 = 0;
+						            //outdata_hard_commodities_CH4only = 0;
+							        //outdata_hard_commodities_N2Oonly = 0;
+							        //TODO: Uncomment after splitting non-CO2 emissions
+						            outdata_node_code = 23;
+						        }
+						        if (plant_data[x] == 0)     // hard commodities, not peat, burned, tropical, IFL, not plantation
+						        {
+						            outdata_hard_commodities_CO2only = minsoil;
+						            outdata_hard_commodities_nonCO2 = 0;
+						            //outdata_hard_commodities_CH4only = 0;
+							        //outdata_hard_commodities_N2Oonly = 0;
+							        //TODO: Uncomment after splitting non-CO2 emissions
+						            outdata_node_code = 231;
+						        }
+						    }
+						    if (ifl_primary_data[x] == 0)   // hard commodities, not peat, burned, tropical, not IFL
+						    {
+                                if (plant_data[x] >= 1)     // hard commodities, not peat, burned, tropical, not IFL, plantation
+						        {
+						            outdata_hard_commodities_CO2only = 0;
+						            outdata_hard_commodities_nonCO2 = 0;
+						            //outdata_hard_commodities_CH4only = 0;
+							        //outdata_hard_commodities_N2Oonly = 0;
+							        //TODO: Uncomment after splitting non-CO2 emissions
+						            outdata_node_code = 24;
+ 						        }
+						        if (plant_data[x] == 0)     // hard commodities, not peat, burned, tropical, not IFL, not plantation
+						        {
+						            outdata_hard_commodities_CO2only = minsoil;
+						            outdata_hard_commodities_nonCO2 = 0;
+						            //outdata_hard_commodities_CH4only = 0;
+							        //outdata_hard_commodities_N2Oonly = 0;
+							        //TODO: Uncomment after splitting non-CO2 emissions
+						            outdata_node_code = 241;
+						        }
+                            }
+						}
+						if (ecozone_data[x] == boreal)   // hard commodities, not peat, burned, boreal
+						{
+                            outdata_hard_commodities_CO2only = minsoil;
+                            outdata_hard_commodities_nonCO2 = 0;
+                            //outdata_hard_commodities_CH4only = 0;
+							//outdata_hard_commodities_N2Oonly = 0;
+							//TODO: Uncomment after splitting non-CO2 emissions
+						    outdata_node_code = 25;
+						}
+						if (ecozone_data[x] == temperate)   // hard commodities, not peat, burned, temperate
+						{
+						    if (plant_data[x] >= 1)     // hard commodities, not peat, burned, temperate, plantation
+						    {
+						        outdata_hard_commodities_CO2only = 0;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+							    //outdata_hard_commodities_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 26;
+						    }
+						    if (plant_data[x] == 0)     // hard commodities, not peat, burned, temperate, not plantation
+						    {
+						        outdata_hard_commodities_CO2only = minsoil;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+							    //outdata_hard_commodities_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 261;
+						    }
+						}
+					}
+					if (burn_data[x] == 0) // hard commodities, not peat, not burned
+					{
+						if (ecozone_data[x] == tropical)   // hard commodities, not peat, not burned, tropical
+						{
+						    if (plant_data[x] >= 1)     // hard commodities, not peat, not burned, tropical, plantation
+						    {
+						        outdata_hard_commodities_CO2only = 0;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+							    //outdata_hard_commodities_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 27;
+						    }
+						    if (plant_data[x] == 0)     // hard commodities, not peat, not burned, tropical, not plantation
+						    {
+						        outdata_hard_commodities_CO2only = minsoil;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+							    //outdata_hard_commodities_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 271;
+						    }
+						}
+						if (ecozone_data[x] == boreal)   // hard commodities, not peat, not burned, boreal
+						{
+                            outdata_hard_commodities_CO2only = minsoil;
+                            outdata_hard_commodities_nonCO2 = 0;
+                            //outdata_hard_commodities_CH4only = 0;
+							//outdata_hard_commodities_N2Oonly = 0;
+							//TODO: Uncomment after splitting non-CO2 emissions
+                            outdata_node_code = 28;
+						}
+						if (ecozone_data[x] == temperate)   // hard commodities, not peat, not burned, temperate
+						{
+						    if (plant_data[x] >= 1)     // hard commodities, not peat, not burned, temperate, plantation
+						    {
+						        outdata_hard_commodities_CO2only = 0;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+							    //outdata_hard_commodities_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 29;
+						    }
+						    if (plant_data[x] == 0)     // hard commodities, not peat, not burned, temperate, not plantation
+						    {
+						        outdata_hard_commodities_CO2only = minsoil;
+						        outdata_hard_commodities_nonCO2 = 0;
+						        //outdata_hard_commodities_CH4only = 0;
+							    //outdata_hard_commodities_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+						        outdata_node_code = 291;
+						    }
+						}
+					}
+				}
+				outdata_hard_commodities_allgases = outdata_hard_commodities_CO2only + outdata_hard_commodities_nonCO2;
+				//outdata_hard_commodities_allgases = outdata_hard_commodities_CO2only + outdata_hard_commodities_CH4only + outdata_hard_commodities_N2Oonly;
+				//outdata_hard_commodities_nonCO2 = outdata_hard_commodities_CH4only + outdata_hard_commodities_N2Oonly;
 				//TODO: Uncomment after splitting non-CO2 emissions
 			}
 
@@ -713,7 +887,7 @@ for(x=0; x<xsize; x++)
 						    outdata_shifting_cultivation_CO2only = peatburn_CO2_only;
 						    outdata_shifting_cultivation_nonCO2 = peatburn_non_CO2;
 						    //outdata_shifting_cultivation_CH4only = peatburn_CH4_only;
-							//outdata_shifting_cultivation_N2Oonly = peatburn_N2O_only;
+							//outdata_shifting_cultivation_N2Oonly = 0;
 							//TODO: Uncomment after splitting non-CO2 emissions
 						    outdata_node_code = 30;
 						}
@@ -722,7 +896,7 @@ for(x=0; x<xsize; x++)
 						    outdata_shifting_cultivation_CO2only = peat_drain_total_CO2_only + peatburn_non_CO2;
 						    outdata_shifting_cultivation_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						    //outdata_shifting_cultivation_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
-							//outdata_shifting_cultivation_N2Oonly = peat_drain_total_N2O_only + peatburn_N2O_only;
+							//outdata_shifting_cultivation_N2Oonly = peat_drain_total_N2O_only;
 							//TODO: Uncomment after splitting non-CO2 emissions
 						    outdata_node_code = 31;
 						}
@@ -913,7 +1087,7 @@ for(x=0; x<xsize; x++)
 						outdata_forest_management_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata_forest_management_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						//outdata_forest_management_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
-						//outdata_forest_management_N2Oonly = peat_drain_total_N2O_only + peatburn_N2O_only;
+						//outdata_forest_management_N2Oonly = peat_drain_total_N2O_only;
 						//TODO: Uncomment after splitting non-CO2 emissions
 						outdata_node_code = 40;
 					}
@@ -988,7 +1162,7 @@ for(x=0; x<xsize; x++)
 						outdata_wildfire_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata_wildfire_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						//outdata_wildfire_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
-						//outdata_wildfire_N2Oonly = peat_drain_total_N2O_only + peatburn_N2O_only;
+						//outdata_wildfire_N2Oonly = peat_drain_total_N2O_only;
 						//TODO: Uncomment after splitting non-CO2 emissions
 						outdata_node_code = 50;
 					}
@@ -1065,7 +1239,7 @@ for(x=0; x<xsize; x++)
 						outdata_settlements_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata_settlements_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
 						//outdata_settlements_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
-						//outdata_settlements_N2Oonly = peat_drain_total_N2O_only + peatburn_N2O_only;
+						//outdata_settlements_N2Oonly = peat_drain_total_N2O_only;
 						//TODO: Uncomment after splitting non-CO2 emissions
 						outdata_node_code = 60;
 					}
@@ -1244,7 +1418,82 @@ for(x=0; x<xsize; x++)
 				//TODO: Uncomment after splitting non-CO2 emissions
 			}
 
-		    // Emissions for where there is no driver model. #TODO: PICKUP FROM HERE
+			// Emissions model for other natural disturbances
+			else if (drivermodel_data[x] == 7)
+			{
+				if (peat_data[x] > 0) // other natural disturbances, peat
+				{
+					if (burn_data[x] > 0 ) // other natural disturbances, peat, burned
+					{
+						outdata_other_disturbances_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
+						outdata_other_disturbances_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
+						//outdata_other_disturbances_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
+						//outdata_other_disturbances_N2Oonly = peat_drain_total_N2O_only;
+						//TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 70;
+					}
+					if (burn_data[x] == 0 )  // other natural disturbances, peat, not burned
+					{
+						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))  // other natural disturbances, peat, not burned, temperate/boreal
+						{
+							outdata_other_disturbances_CO2only = 0;
+							outdata_other_disturbances_nonCO2 = 0;
+							//outdata_other_disturbances_CH4only = 0;
+						    //outdata_other_disturbances_N2Oonly = 0;
+						    //TODO: Uncomment after splitting non-CO2 emissions
+							outdata_node_code = 71;
+						}
+						if (ecozone_data[x] == tropical)// other natural disturbances, peat, not burned, tropical
+						{
+							if (plant_data[x] > 0)  // other natural disturbances, peat, not burned, tropical, plantation
+							{
+								outdata_other_disturbances_CO2only = peat_drain_total_CO2_only;
+								outdata_other_disturbances_nonCO2 = peat_drain_total_non_CO2;
+								//outdata_other_disturbances_CH4only = peat_drain_total_CH4_only;
+								//outdata_other_disturbances_N2Oonly = peat_drain_total_N2O_only;
+								//TODO: Uncomment after splitting non-CO2 emissions
+								outdata_node_code = 72;
+							}
+							if (plant_data[x] == 0)  // other natural disturbances, peat, not burned, tropical, not plantation
+							{
+								outdata_other_disturbances_CO2only = 0;
+								outdata_other_disturbances_nonCO2 = 0;
+								//outdata_other_disturbances_CH4only = 0;
+								//outdata_other_disturbances_N2Oonly = 0;
+								//TODO: Uncomment after splitting non-CO2 emissions
+								outdata_node_code = 721;
+							}
+						}
+					}
+				}
+				else  // other natural disturbances, not peat
+				{
+					if (burn_data[x] > 0) // other natural disturbances, not peat, burned
+					{
+						outdata_other_disturbances_CO2only = 0;
+						outdata_other_disturbances_nonCO2 = 0;
+						//outdata_other_disturbances_CH4only = 0;
+						//outdata_other_disturbances_N2Oonly= 0;
+						//TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 73;
+					}
+					if (burn_data[x] == 0) // other natural disturbances, not peat, not burned
+					{
+						outdata_other_disturbances_CO2only = 0;
+						outdata_other_disturbances_nonCO2 = 0;
+						//outdata_other_disturbances_CH4only = 0;
+						//outdata_other_disturbances_N2Oonly = 0;
+						//TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 74;
+					}
+				}
+				outdata_other_disturbances_allgases = outdata_other_disturbances_CO2only + outdata_other_disturbances_nonCO2;
+				//outdata_other_disturbances_allgases = outdata_other_disturbances_CO2only + outdata_other_disturbances_CH4only + outdata_other_disturbances_N2Oonly;
+				//outdata_other_disturbances_nonCO2 = outdata_other_disturbances_CH4only + outdata_other_disturbances_N2Oonly;
+				//TODO: Uncomment after splitting non-CO2 emissions
+			}
+
+		    // Emissions for where there is no driver model.
 		    // Nancy said to make this the same as forestry.
 		    else
 			{
@@ -1254,7 +1503,10 @@ for(x=0; x<xsize; x++)
 					{
 						outdata_no_driver_CO2only = peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata_no_driver_nonCO2 = peat_drain_total_non_CO2 + peatburn_non_CO2;
-						outdata_node_code = 60;
+						//outdata_no_driver_CH4only = peat_drain_total_CH4_only + peatburn_CH4_only;
+						//outdata_no_driver_N2Oonly = peat_drain_total_N2O_only;
+						//TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 80;
 					}
 					if (burn_data[x] == 0 )  // No driver, peat, not burned
 					{
@@ -1262,7 +1514,10 @@ for(x=0; x<xsize; x++)
 						{
 							outdata_no_driver_CO2only = 0;
 							outdata_no_driver_nonCO2 = 0;
-							outdata_node_code = 61;
+							//outdata_no_driver_CH4only = 0;
+							//outdata_no_driver_N2Oonly = 0;
+							//TODO: Uncomment after splitting non-CO2 emissions
+							outdata_node_code = 81;
 						}
 						if (ecozone_data[x] == tropical)// No driver, peat, not burned, tropical
 						{
@@ -1270,13 +1525,19 @@ for(x=0; x<xsize; x++)
 							{
 								outdata_no_driver_CO2only = peat_drain_total_CO2_only;
 								outdata_no_driver_nonCO2 = peat_drain_total_non_CO2;
-								outdata_node_code = 62;
+								//outdata_no_driver_CH4only = peat_drain_total_CH4_only
+							    //outdata_no_driver_N2Oonly = peat_drain_total_N2O_only
+							    //TODO: Uncomment after splitting non-CO2 emissions
+								outdata_node_code = 82;
 							}
 							if (plant_data[x] == 0)  // No driver, peat, not burned, tropical, not plantation
 							{
 								outdata_no_driver_CO2only = 0;
 								outdata_no_driver_nonCO2 = 0;
-								outdata_node_code = 621;
+								//outdata_no_driver_CH4only = 0;
+							    //outdata_no_driver_N2Oonly = 0;
+							    //TODO: Uncomment after splitting non-CO2 emissions
+								outdata_node_code = 821;
 							}
 						}
 					}
@@ -1287,71 +1548,114 @@ for(x=0; x<xsize; x++)
 					{
 						outdata_no_driver_CO2only = 0;
 						outdata_no_driver_nonCO2 = 0;
-						outdata_node_code = 63;
+						//outdata_no_driver_CH4only = 0;
+					    //outdata_no_driver_N2Oonly = 0;
+					    //TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 83;
 					}
 					if (burn_data[x] == 0) // No driver, not peat, not burned
 					{
 						outdata_no_driver_CO2only = 0;
 						outdata_no_driver_nonCO2 = 0;
-						outdata_node_code = 64;
+						//outdata_no_driver_CH4only = 0;
+						//outdata_no_driver_N2Oonly = 0;
+					    //TODO: Uncomment after splitting non-CO2 emissions
+						outdata_node_code = 84;
 					}
 				}
 				outdata_no_driver_allgases = outdata_no_driver_CO2only + outdata_no_driver_nonCO2;
+				//outdata_ono_driver_allgases = outdata_no_driver_CO2only + outdata_no_driver_CH4only + outdata_no_driver_N2Oonly;
+				//outdata_no_driver_nonCO2 = outdata_no_driver_CH4only + outdata_no_driver_N2Oonly;
+				//TODO: Uncomment after splitting non-CO2 emissions
 			}
 
 			// Write the value to the correct raster
 			if (drivermodel_data[x] == 1)  // permanent ag
 			{
 				out_data_permanent_agriculture[x] = outdata_permanent_agriculture_allgases;
+				out_data_hard_commodities[x] = 0;
 				out_data_shifting_cultivation[x] = 0;
 				out_data_forest_management[x] = 0;
 				out_data_wildfire[x] = 0;
 				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = 0;
+				out_data_no_driver[x] = 0;
+			}
+			else if (drivermodel_data[x] == 2)  // hard commodities
+			{
+				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = outdata_hard_commodities_allgases;
+				out_data_shifting_cultivation[x] = 0;
+				out_data_forest_management[x] = 0;
+				out_data_wildfire[x] = 0;
+				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = 0;
 				out_data_no_driver[x] = 0;
 			}
 			else if (drivermodel_data[x] == 3)  // shifting cultivation
 			{
 				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = 0;
 				out_data_shifting_cultivation[x] = outdata_shifting_cultivation_allgases;
 				out_data_forest_management[x] = 0;
 				out_data_wildfire[x] = 0;
 				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = 0;
 				out_data_no_driver[x] = 0;
 			}
 			else if (drivermodel_data[x] == 4)  // forest management
 			{
 				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = 0;
 				out_data_shifting_cultivation[x] = 0;
 				out_data_forest_management[x] = outdata_forest_management_allgases;
 				out_data_wildfire[x] = 0;
 				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = 0;
 				out_data_no_driver[x] = 0;
 			}
 			else if (drivermodel_data[x] == 5)  // wildfire
 			{
 				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = 0;
 				out_data_shifting_cultivation[x] = 0;
 				out_data_forest_management[x] = 0;
 				out_data_wildfire[x] = outdata_wildfire_allgases;
 				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = 0;
 				out_data_no_driver[x] = 0;
 			}
 			else if (drivermodel_data[x] == 6)  // settlements & infrastructure
 			{
 				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = 0;
 				out_data_shifting_cultivation[x] = 0;
 				out_data_forest_management[x] = 0;
 				out_data_wildfire[x] = 0;
 				out_data_settlements[x] = outdata_settlements_allgases;
+				out_data_other_disturbances[x] = 0;
+				out_data_no_driver[x] = 0;
+			}
+			else if (drivermodel_data[x] == 7)  // other natural disturbances
+			{
+				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = 0;
+				out_data_shifting_cultivation[x] = 0;
+				out_data_forest_management[x] = 0;
+				out_data_wildfire[x] = 0;
+				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = outdata_other_disturbances_allgases;
 				out_data_no_driver[x] = 0;
 			}
 			else                                // No driver
 			{
 				out_data_permanent_agriculture[x] = 0;
+				out_data_hard_commodities[x] = 0;
 				out_data_shifting_cultivation[x] = 0;
 				out_data_forest_management[x] = 0;
 				out_data_wildfire[x] = 0;
 				out_data_settlements[x] = 0;
+				out_data_other_disturbances[x] = 0;
 				out_data_no_driver[x] = outdata_no_driver_allgases;
 			}
 				// Decision tree end node value stored in its raster
@@ -1359,40 +1663,49 @@ for(x=0; x<xsize; x++)
 
 
 				// Add up all drivers for a combined raster. Each pixel only has one driver
-				outdata_alldrivers_allgases = outdata_permanent_agriculture_allgases + outdata_shifting_cultivation_allgases + outdata_forest_management_allgases + outdata_wildfire_allgases + outdata_settlements_allgases + outdata_no_driver_allgases;
-				outdata_alldrivers_CO2only = outdata_permanent_agriculture_CO2only + outdata_shifting_cultivation_CO2only + outdata_forest_management_CO2only + outdata_wildfire_CO2only + outdata_settlements_CO2only + outdata_no_driver_CO2only;
-				outdata_alldrivers_nonCO2 = outdata_permanent_agriculture_nonCO2 + outdata_shifting_cultivation_nonCO2 + outdata_forest_management_nonCO2 + outdata_wildfire_nonCO2 + outdata_settlements_nonCO2 + outdata_no_driver_nonCO2;
-				//TODO: Update after splitting non-CO2 emissions
+				outdata_alldrivers_allgases = outdata_permanent_agriculture_allgases + outdata_hard_commodities_allgases + outdata_shifting_cultivation_allgases + outdata_forest_management_allgases + outdata_wildfire_allgases + outdata_settlements_allgases + outdata_other_disturbances_allgases + outdata_no_driver_allgases;
+				outdata_alldrivers_CO2only = outdata_permanent_agriculture_CO2only + outdata_hard_commodities_CO2only + outdata_shifting_cultivation_CO2only + outdata_forest_management_CO2only + outdata_wildfire_CO2only + outdata_settlements_CO2only + outdata_other_disturbances_CO2only + outdata_no_driver_CO2only;
+				outdata_alldrivers_nonCO2 = outdata_permanent_agriculture_nonCO2 + outdata_hard_commodities_nonCO2 +outdata_shifting_cultivation_nonCO2 + outdata_forest_management_nonCO2 + outdata_wildfire_nonCO2 + outdata_settlements_nonCO2 + outdata_other_disturbances_nonCO2 + outdata_no_driver_nonCO2;
+                //outdata_alldrivers_CH4only = outdata_permanent_agriculture_CH4only + outdata_hard_commodities_CH4only +outdata_shifting_cultivation_CH4only + outdata_forest_management_CH4only + outdata_wildfire_CH4only + outdata_settlements_CH4only + outdata_other_disturbances_CH4only + outdata_no_driver_CH4only;
+                //outdata_alldrivers_N2Oonly = outdata_permanent_agriculture_N2Oonly + outdata_hard_commodities_N2Oonly +outdata_shifting_cultivation_N2Oonly + outdata_forest_management_N2Oonly + outdata_wildfire_N2Oonly + outdata_settlements_N2Oonly + outdata_other_disturbances_N2Oonly + outdata_no_driver_N2Oonly;
+                //TODO: Uncomment after splitting non-CO2 emissions
 
 				if (outdata_alldrivers_allgases == 0)
 				{
 					out_data_alldrivers_allgasses[x] = 0;
 					out_data_alldrivers_CO2only[x] = 0;
 					out_data_alldrivers_nonCO2[x] = 0;
-					//TODO: Update after splitting non-CO2 emissions
+					//out_data_alldrivers_CH4only[x] = 0;
+					//out_data_alldrivers_N2Oonly[x] = 0;
+					//TODO: Uncomment after splitting non-CO2 emissions
 				}
 				else{
 					out_data_alldrivers_allgasses[x] = outdata_alldrivers_allgases;
 					out_data_alldrivers_CO2only[x] = outdata_alldrivers_CO2only;
 					out_data_alldrivers_nonCO2[x] = outdata_alldrivers_nonCO2;
-					//TODO: Update after splitting non-CO2 emissions
+					//out_data_alldrivers_CH4only[x] = outdata_alldrivers_CH4only;
+					//out_data_alldrivers_N2Oonly[x] = outdata_alldrivers_N2Oonly;
+					//TODO: Uncomment after splitting non-CO2 emissions
 				}
 		}
 
 		// If pixel is not on loss and carbon, all output rasters get 0
 		else
 		{
-
 			out_data_permanent_agriculture[x] = 0;
+			out_data_hard_commodities[x] = 0;
 			out_data_shifting_cultivation[x] = 0;
 			out_data_forest_management[x] = 0;
 			out_data_wildfire[x] = 0;
 			out_data_settlements[x] = 0;
+			out_data_other_disturbances[x] = 0;
 			out_data_no_driver[x] = 0;
 			out_data_alldrivers_allgasses[x] = 0;
 			out_data_alldrivers_CO2only[x] = 0;
 			out_data_alldrivers_nonCO2[x] = 0;
-			//TODO: Update after splitting non-CO2 emissions
+			//out_data_alldrivers_CH4only[x] = 0;
+			//out_data_alldrivers_N2Oonly[x] = 0;
+			//TODO: Uncomment after splitting non-CO2 emissions
 			out_data_node_code[x] = 0;
 		}
     }
@@ -1436,7 +1749,9 @@ GDALClose(INGDAL_AGC);
 GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_ALLGASSES);
 GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_CO2ONLY);
 GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_NONCO2);
-//TODO: Update after splitting non-CO2 emissions
+//GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_CH4ONLY);
+//GDALClose((GDALDatasetH)OUTGDAL_ALLDRIVERS_N2OONLY);
+//TODO: Uncomment after splitting non-co2 emissions
 GDALClose((GDALDatasetH)OUTGDAL_NODE_CODE);
 return 0;
 }

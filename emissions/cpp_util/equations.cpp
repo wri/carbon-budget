@@ -5,12 +5,6 @@
 #include <iostream>
 #include <stdlib.h>
 
-//// http://www.math.uaa.alaska.edu/~afkjm/csce211/handouts/SeparateCompilation.pdf
-//#ifndef CONSTANTS_H
-//#define CONSTANTS_H
-////#include "constants.h"
-//#endif
-
 using namespace std;
 
 void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int climate, int plant_data, int lossyr)
@@ -26,35 +20,33 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
     int boreal;         // The ecozone code for the boreal zone
     boreal = 2;
 
-//    int model_years;    // How many loss years are in the model
-//    model_years = constants::model_years;
-//
-//	int tropical;       // The ecozone code for the tropics
-//    tropical = constants::tropical;
-//    int temperate;      // The ecozone code for the temperate zone
-//    temperate = constants::temperate;
-//    int boreal;         // The ecozone code for the boreal zone
-//    boreal = constants::boreal;
-
 	// Initiates Cf, CO2, CH4, N2O, peatburn, peat_drain_total.
 	// peatburn and peat_drain_annual both have CO2 and non-CO2 components.
-	// They are calculated separately and passed back to the main script as separate values.
+	// They are calculated separately and passed back to the main script as separate values. #TODO: Update description after splitting non-co2 emissions
 	float Cf;
 	float CO2;
 	float CH4;
 	float N2O;
 	float peatburn_CO2_only;
 	float peatburn_non_CO2;
+	//float peatburn_CH4_only;
+	//TODO: Uncomment after splitting non-co2 emissions
 	float peat_drain_annual_CO2_only;
 	float peat_drain_annual_non_CO2;
+	//float peat_drain_annual_CH4_only;
+	//float peat_drain_annual_N2O_only;
+	//TODO: Uncomment after splitting non-co2 emissions
 	float peat_drain_total_CO2_only;
 	float peat_drain_total_non_CO2;
+	//float peat_drain_total_CH4_only;
+	//float peat_drain_total_N2O_only;
+	//TODO: Uncomment after splitting non-co2 emissions
 
 
     //TODO: Change driver coefficients starting here
-	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)) // Commodities, shifting ag., or urbanization
+	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 3) || (forestmodel_data == 6)) // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure
 	{
-		if (ecozone == boreal) // Commodities/shifting ag/urbanization, boreal
+		if (ecozone == boreal) // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure
 		{
 			Cf = 0.59;
 			CO2 = 1569;
@@ -62,12 +54,21 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
+			//peat_drain_annual_CH4_only = 0.33;
+			//peat_drain_annual_N2O_only = 0.19;
+			//TODO: Uncomment after splitting non-co2 emissions
+			//TODO: Question for David, should we include 2 decimal places?
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
-		else if (ecozone == temperate)// Commodities/shifting ag/urbanization, temperate
+		else if (ecozone == temperate)// permanent ag, hard commodities, shifting cultivation, settlements & infrastructure
 		{
 			Cf = 0.51;
 			CO2 = 1569;
@@ -75,51 +76,73 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
+			//peat_drain_annual_CH4_only = 0.21;
+			//peat_drain_annual_N2O_only = 2.4;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
-		else // Commodities/shifting ag/urbanization, tropics (or no boreal/temperate/tropical assignment)
+		else // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn_CO2_only = 264;
 			peatburn_non_CO2 = 88;
+			//peatburn_CH4_only = 88;
+			//TODO: Uncomment after splitting non-co2 emissions
 
-            if (plant_data == 1)  // Commodities/shifting ag/urbanization, tropics, oil palm
+            if (plant_data == 1)  // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure, tropics, oil palm
             {
                 peat_drain_annual_CO2_only = 43;
                 peat_drain_annual_non_CO2 = 2;
+                //peat_drain_annual_CH4_only = 1.2;
+			    //peat_drain_annual_N2O_only = 1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
-            else if (plant_data == 2) // Commodities/shifting ag/urbanization, tropics, wood fiber
+            else if (plant_data == 2) // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure, tropics, wood fiber
             {
                 peat_drain_annual_CO2_only = 76;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
-            else // Commodities/shifting ag/urbanization, tropics, other plantation or no plantation
+            else // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure, tropics, other plantation or no plantation
             {
                 peat_drain_annual_CO2_only = 58;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
             peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
             peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+            //peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 
-			if (ifl > 0)    // Commodities/shifting ag/urbanization, tropics, in IFL
+			if (ifl > 0)    // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure, tropics, in IFL
 			{
 				Cf = 0.36;
 			}
-			else            // Commodities/shifting ag/urbanization, tropics, outside IFL
+			else            // permanent ag, hard commodities, shifting cultivation, settlements & infrastructure, tropics, outside IFL
 			{
 				Cf = 0.55;
 			}
 		}
 	}
 
-	else if (forestmodel_data == 3) // Forestry
+	else if (forestmodel_data == 4) // Forest management
 	{
-		if (ecozone == boreal) // Forestry, boreal
+		if (ecozone == boreal) // Forest management, boreal
 		{
 			Cf = 0.33;
 			CO2 = 1569;
@@ -127,12 +150,20 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
+			//peat_drain_annual_CH4_only = 0.33;
+			//peat_drain_annual_N2O_only = 0.19;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
-		else if (ecozone == temperate)// Forestry, temperate
+		else if (ecozone == temperate)// Forest management, temperate
 		{
 			Cf = 0.62;
 			CO2 = 1569;
@@ -140,49 +171,71 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
+			//peat_drain_annual_CH4_only = 0.21;
+			//peat_drain_annual_N2O_only = 2.4;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
-		else  // Forestry, tropics (or no boreal/temperate/tropical assignment)
+		else  // Forest management, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
 			N2O = 0.2;
 			peatburn_CO2_only = 264;
 			peatburn_non_CO2 = 88;
+			//peatburn_CH4_only = 88;
+			//TODO: Uncomment after splitting non-co2 emissions
 
-			if (plant_data == 1) // Forestry, tropics, oil palm
+			if (plant_data == 1) // Forest management, tropics, oil palm
             {
                 peat_drain_annual_CO2_only = 43;
                 peat_drain_annual_non_CO2 = 2;
+                //peat_drain_annual_CH4_only = 1.2;
+			    //peat_drain_annual_N2O_only = 1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
-            else if (plant_data == 2) // Forestry, tropics, wood fiber
+            else if (plant_data == 2) // Forest management, tropics, wood fiber
             {
                 peat_drain_annual_CO2_only = 76;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
-            else // Forestry, tropics, other plantation or no plantation
+            else // Forest management, tropics, other plantation or no plantation
             {
                 peat_drain_annual_CO2_only = 58;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
             peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
             peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+            //peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 
 			if (ifl > 0)
 			{
-				Cf = 0.36;      // Forestry, tropics, in IFL
+				Cf = 0.36;      // Forest management, tropics, in IFL
 			}
 			else
 			{
-				Cf = 0.55;      // Forestry, tropics, outside IFL
+				Cf = 0.55;      // Forest management, tropics, outside IFL
 			}
 		}
 	}
 
-	else if (forestmodel_data == 4) // Wildfire
+	else if (forestmodel_data == 5) // Wildfire
 	{
 		if (ecozone == boreal) // Wildfire, boreal
 		{
@@ -192,10 +245,18 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
+			//peat_drain_annual_CH4_only = 0.33;
+			//peat_drain_annual_N2O_only = 0.19;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
 		else if (ecozone == temperate)// Wildfire, temperate
 		{
@@ -205,10 +266,18 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
+			//peat_drain_annual_CH4_only = 0.21;
+			//peat_drain_annual_N2O_only = 2.4;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
 		else // Wildfire, tropics (or no boreal/temperate/tropical assignment)
 		{
@@ -217,24 +286,38 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.2;
 			peatburn_CO2_only = 601;
 			peatburn_non_CO2 = 200;
+			//peatburn_CH4_only = 200;
+			//TODO: Uncomment after splitting non-co2 emissions
 
 		    if (plant_data == 1) // Wildfire, tropics, oil palm
             {
                 peat_drain_annual_CO2_only = 43;
                 peat_drain_annual_non_CO2 = 2;
+                //peat_drain_annual_CH4_only = 1.2;
+			    //peat_drain_annual_N2O_only = 1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
             else if (plant_data == 2) // Wildfire, tropics, wood fiber
             {
                 peat_drain_annual_CO2_only = 76;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
             else // Wildfire, tropics, other plantation or no plantation
             {
                 peat_drain_annual_CO2_only = 58;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
             peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
             peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+            //peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 
 			if (ifl > 0)        // Wildfire, tropics, in IFL
 			{
@@ -247,33 +330,144 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 		}
 	}
 
-	else  // No driver-- same as forestry
+	else if (forestmodel_data == 7) // Other natural disturbances
+	{
+		if (ecozone == boreal) // Other natural disturbances, boreal
+		{
+			Cf = 0.34;
+			CO2 = 1569;
+			CH4 = 4.7;
+			N2O = 0.26;
+			peatburn_CO2_only = 446;
+			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
+			peat_drain_annual_CO2_only = 2;
+			peat_drain_annual_non_CO2 = 1;
+			//peat_drain_annual_CH4_only = 0.33;
+			//peat_drain_annual_N2O_only = 0.19;
+			//TODO: Uncomment after splitting non-co2 emissions
+			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
+			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
+		}
+		else if (ecozone == temperate)// Other natural disturbances, temperate
+		{
+			Cf = 0.45;
+			CO2 = 1569;
+			CH4 = 4.7;
+			N2O = 0.26;
+			peatburn_CO2_only = 446;
+			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
+			peat_drain_annual_CO2_only = 11;
+			peat_drain_annual_non_CO2 = 3;
+			//peat_drain_annual_CH4_only = 0.21;
+			//peat_drain_annual_N2O_only = 2.4;
+			//TODO: Uncomment after splitting non-co2 emissions
+			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
+			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
+		}
+		else  // Other natural disturbances, tropics (or no boreal/temperate/tropical assignment)
+		{
+			CO2 = 1580;
+			CH4 = 6.8;
+			N2O = 0.2;
+			peatburn_CO2_only = 264;
+			peatburn_non_CO2 = 88;
+			//peatburn_CH4_only = 88;
+			//TODO: Uncomment after splitting non-co2 emissions
+
+			if (plant_data == 1) // Other natural disturbances, tropics, oil palm
+            {
+                peat_drain_annual_CO2_only = 43;
+                peat_drain_annual_non_CO2 = 2;
+                //peat_drain_annual_CH4_only = 1.2;
+			    //peat_drain_annual_N2O_only = 1;
+			    //TODO: Uncomment after splitting non-co2 emissions
+            }
+            else if (plant_data == 2) // Other natural disturbances, tropics, wood fiber
+            {
+                peat_drain_annual_CO2_only = 76;
+                peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
+            }
+            else // Other natural disturbances, tropics, other plantation or no plantation
+            {
+                peat_drain_annual_CO2_only = 58;
+                peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
+            }
+            peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
+            peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+            //peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
+
+			if (ifl > 0)
+			{
+				Cf = 0.36;      // Other natural disturbances, tropics, in IFL
+			}
+			else
+			{
+				Cf = 0.55;      // Other natural disturbances, tropics, outside IFL
+			}
+		}
+	}
+
+	else  // No driver-- same as other natural disturbances
 	{
 		if (ecozone == boreal) // No driver, boreal
 		{
-			Cf = 0.33;
+			Cf = 0.34;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 2;
 			peat_drain_annual_non_CO2 = 1;
+			//peat_drain_annual_CH4_only = 0.33;
+			//peat_drain_annual_N2O_only = 0.19;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
 		else if (ecozone == temperate)// No driver, temperate
 		{
-			Cf = 0.62;
+			Cf = 0.45;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
 			peatburn_CO2_only = 446;
 			peatburn_non_CO2 = 82;
+			//peatburn_CH4_only = 82;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_annual_CO2_only = 11;
 			peat_drain_annual_non_CO2 = 3;
+			//peat_drain_annual_CH4_only = 0.21;
+			//peat_drain_annual_N2O_only = 2.4;
+			//TODO: Uncomment after splitting non-co2 emissions
 			peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
 			peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+			//peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 		}
 		else // No driver, tropics (or no boreal/temperate/tropical assignment)
 		{
@@ -282,24 +476,38 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			N2O = 0.2;
 			peatburn_CO2_only = 264;
 			peatburn_non_CO2 = 88;
+			//peatburn_CH4_only = 88;
+			//TODO: Uncomment after splitting non-co2 emissions
 
-			if (plant_data == 1) // Forestry, tropics, oil palm
+			if (plant_data == 1) // No driver, tropics, oil palm
             {
                 peat_drain_annual_CO2_only = 43;
                 peat_drain_annual_non_CO2 = 2;
+                //peat_drain_annual_CH4_only = 1.2;
+			    //peat_drain_annual_N2O_only = 1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
-            else if (plant_data == 2) // Forestry, tropics, wood fiber
+            else if (plant_data == 2) // No driver, tropics, wood fiber
             {
                 peat_drain_annual_CO2_only = 76;
                 peat_drain_annual_non_CO2 = 3;
+                 //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
-            else // Forestry, tropics, other plantation or no plantation
+            else // No driver, tropics, other plantation or no plantation
             {
                 peat_drain_annual_CO2_only = 58;
                 peat_drain_annual_non_CO2 = 3;
+                //peat_drain_annual_CH4_only = 1.3;
+			    //peat_drain_annual_N2O_only = 2.1;
+			    //TODO: Uncomment after splitting non-co2 emissions
             }
             peat_drain_total_CO2_only = (model_years - lossyr) * peat_drain_annual_CO2_only;
             peat_drain_total_non_CO2 = (model_years - lossyr) * peat_drain_annual_non_CO2;
+            //peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
+			//peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
+			//TODO: Uncomment after splitting non-co2 emissions
 
 			if (ifl > 0)
 			{
@@ -319,4 +527,14 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
     q[5] = peatburn_non_CO2;
     q[6] = peat_drain_total_CO2_only;
     q[7] = peat_drain_total_non_CO2;
+//    q[0] = Cf;
+//    q[1] = CO2;
+//    q[2] = CH4;
+//    q[3] = N2O;
+//    q[4] = peatburn_CO2_only;
+//    q[5] = peatburn_CH4_only;
+//    q[6] = peat_drain_total_CO2_only;
+//    q[7] = peat_drain_total_CH4_only;
+//    q[8] = peat_drain_total_N2O_only;
+//TODO: Uncomment after splitting non-co2 emissions
 }

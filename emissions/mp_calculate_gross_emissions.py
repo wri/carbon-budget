@@ -18,8 +18,7 @@ Run the emissions model with:
 python -m emissions.mp_calculate_gross_emissions -t [MODEL_TYPE] -p [POOL_OPTION] -l [TILE_LIST] [optional_arguments]
 The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
 The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
-Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
-Emissions from all drivers is also output as emissions due to CO2 only and emissions due to non-CO2 GHGs (CH4 and N2O).
+Emissions from all drivers is also output as emissions due to CO2 only and emissions due to non-CO2 GHGs (CH4 and N2O).  #TODO: Update after splitting non-co2 emissions
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
 
@@ -103,12 +102,25 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
                            cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
                            cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
                            cn.gross_emis_nodes_biomass_soil_dir]
-        #
+        # output_dir_list = [cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+        #                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+        #                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+        #                    cn.gross_emis_ch4_only_all_drivers_biomass_soil_dir,
+        #                    cn.gross_emis_n2o_only_all_drivers_biomass_soil_dir,
+        #                    cn.gross_emis_nodes_biomass_soil_dir]
+        # TODO: Update after splitting non-co2 emissions
 
         output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
+        # output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+        #                        cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
+        #                        cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+        #                        cn.pattern_gross_emis_ch4_only_all_drivers_biomass_soil,
+        #                        cn.pattern_gross_emis_n2o_only_all_drivers_biomass_soil,
+        #                        cn.pattern_gross_emis_nodes_biomass_soil]
+        # TODO: Update after splitting non-co2 emissions
 
         # The standard model can all use the same, generic gross emissions script.
         uu.print_log(f'Compiling generic model C++...')
@@ -123,11 +135,26 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
                            cn.gross_emis_co2_only_all_drivers_soil_only_dir,
                            cn.gross_emis_non_co2_all_drivers_soil_only_dir,
                            cn.gross_emis_nodes_soil_only_dir]
+        # output_dir_list = [cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+        #                    cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+        #                    cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+        #                    cn.gross_emis_ch4_only_all_drivers_soil_only_dir,
+        #                    cn.gross_emis_n2o_only_all_drivers_soil_only_dir,
+        #                    cn.gross_emis_nodes_soil_only_dir]
+        # TODO: Update after splitting non-co2 emissions
 
         output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
                                cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
                                cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
                                cn.pattern_gross_emis_nodes_soil_only]
+
+        # output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+        #                        cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
+        #                        cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
+        #                        cn.pattern_gross_emis_ch4_only_all_drivers_soil_only,
+        #                        cn.pattern_gross_emis_n2o_only_all_drivers_soil_only,
+        #                        cn.pattern_gross_emis_nodes_soil_only]
+        # TODO: Update after splitting non-co2 emissions
 
         uu.print_log(f'Compiling soil_only model C++...')
         cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.cpp',

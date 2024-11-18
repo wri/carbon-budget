@@ -3,22 +3,39 @@ correct gross emissions equation.
 This can be used to do zonal stats on the gross or net emissions, e.g., gross emissions in permanent agriculture 
 in the tropics on plantations with fires.
 
-10- Permanent agriculture, peat, burned
-11- Permanent agriculture, peat, not burned, tropical, plantation
-111- Permanent agriculture, peat, not burned, tropical, not plantation
-12- Permanent agriculture, peat, not burned, temperate/boreal
-13- Permanent agriculture, not peat, burned, tropical, IFL, plantation
-131- Permanent agriculture, not peat, burned, tropical, IFL, not plantation
-14- Permanent agriculture, not peat, burned, tropical, not IFL, plantation
-141- Permanent agriculture, not peat, burned, tropical, not IFL, not plantation
-15- Permanent agriculture, not peat, burned, boreal
-16- Permanent agriculture, not peat, burned, temperate, plantation
-161- Permanent agriculture, not peat, burned, temperate, not plantation
-17- Permanent agriculture, not peat, not burned, tropical, plantation
-171- Permanent agriculture, not peat, not burned, tropical, not plantation
-18- Permanent agriculture, not peat, not burned, boreal
-19- Permanent agriculture, not peat, not burned, temperate, plantation
-191- Permanent agriculture, not peat, not burned, temperate, not plantation
+10 - Permanent agriculture, peat, burned
+11 - Permanent agriculture, peat, not burned, tropical, plantation
+111 - Permanent agriculture, peat, not burned, tropical, not plantation
+12 - Permanent agriculture, peat, not burned, temperate/boreal
+13 - Permanent agriculture, not peat, burned, tropical, IFL, plantation
+131 - Permanent agriculture, not peat, burned, tropical, IFL, not plantation
+14 - Permanent agriculture, not peat, burned, tropical, not IFL, plantation
+141 - Permanent agriculture, not peat, burned, tropical, not IFL, not plantation
+15 - Permanent agriculture, not peat, burned, boreal
+16 - Permanent agriculture, not peat, burned, temperate, plantation
+161 - Permanent agriculture, not peat, burned, temperate, not plantation
+17 - Permanent agriculture, not peat, not burned, tropical, plantation
+171 - Permanent agriculture, not peat, not burned, tropical, not plantation
+18 - Permanent agriculture, not peat, not burned, boreal
+19 - Permanent agriculture, not peat, not burned, temperate, plantation
+191 - Permanent agriculture, not peat, not burned, temperate, not plantation
+
+20- Hard commodities, peat, burned
+21- Hard commodities, peat, not burned, tropical, plantation
+211- Hard commodities, peat, not burned, tropical, not plantation
+22- Hard commodities, peat, not burned, temperate/boreal
+23- Hard commodities, not peat, burned, tropical, IFL, plantation
+231- Hard commodities, not peat, burned, tropical, IFL, not plantation
+24- Hard commodities, not peat, burned, tropical, not IFL, plantation
+241- Hard commodities, not peat, burned, tropical, not IFL, not plantation
+25- Hard commodities, not peat, burned, boreal
+26- Hard commodities, not peat, burned, temperate, plantation
+261- Hard commodities, not peat, burned, temperate, not plantation
+27- Hard commodities, not peat, not burned, tropical, plantation
+271- Hard commodities, not peat, not burned, tropical, not plantation
+28- Hard commodities, not peat, not burned, boreal
+29- Hard commodities, not peat, not burned, temperate, plantation
+291- Hard commodities, not peat, not burned, temperate, not plantation
 
 30 - Shifting cultivation, peat, burned, temperate/boreal
 31 - Shifting cultivation, peat, burned, tropical
@@ -69,13 +86,19 @@ in the tropics on plantations with fires.
 69 - Settlements & infrastructure, not peat, not burned, temperate, plantation
 691 - Settlements & infrastructure, not peat, not burned, temperate, not plantation
 
-#TODO: update from here and include hard commodities and other natural disturbances
-60- No driver, peat, burned
-61- No driver, peat, not burned, temperate/boreal
-62- No driver, peat, not burned, tropical, plantation
-621- No driver, peat, not burned, tropical, not plantation
-63- No driver, not peat, burned
-64- No driver, not peat, not burned
+70 - Other natural disturbances, peat, burned
+71 - Other natural disturbances, peat, not burned, temperate/boreal
+72 - Other natural disturbances, peat, not burned, tropical, plantation
+721 - Other natural disturbances, peat, not burned, tropical, not plantation
+73 - Other natural disturbances, not peat, burned
+74 - Other natural disturbances, not peat, not burned
+
+80 - No driver, peat, burned
+81 - No driver, peat, not burned, temperate/boreal
+82 - No driver, peat, not burned, tropical, plantation
+821 - No driver, peat, not burned, tropical, not plantation
+83 - No driver, not peat, burned
+84 - No driver, not peat, not burned
 
 
 

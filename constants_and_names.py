@@ -710,6 +710,12 @@ gross_emis_co2_only_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/a
 pattern_gross_emis_non_co2_all_drivers_soil_only = f'gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_soil_only_2001_{loss_years}'
 gross_emis_non_co2_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/non_CO2/soil_only/standard/{emis_run_date_soil_only}/'
 
+pattern_gross_emis_ch4_only_all_drivers_soil_only = f'gross_emis_ch4_only_all_drivers_Mg_CO2e_ha_soil_only_2001_{loss_years}'
+gross_emis_ch4_only_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/CH4_only/soil_only/standard/{emis_run_date_soil_only}/'
+
+pattern_gross_emis_n2o_only_all_drivers_soil_only = f'gross_emis_n2o_only_all_drivers_Mg_CO2e_ha_soil_only_2001_{loss_years}'
+gross_emis_n2o_only_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/N2O_only/soil_only/standard/{emis_run_date_soil_only}/'
+
 pattern_gross_emis_nodes_soil_only = f'gross_emis_decision_tree_nodes_soil_only_2001_{loss_years}'
 gross_emis_nodes_soil_only_dir = f'{s3_base_dir}gross_emissions/decision_tree_nodes/soil_only/standard/{emis_run_date_soil_only}/'
 
