@@ -333,12 +333,6 @@ plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs
 
 # Drivers of tree cover loss
 
-# drivers_raw_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/raw/')
-# pattern_drivers_raw = 'Goode_FinalClassification_2023_wgs84_v20240402.tif'
-# pattern_drivers = 'tree_cover_loss_driver_processed'
-# drivers_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_drivers/processed/drivers_2023/20240402/')
-#TODO: Delete after successfully running 1km, commenting out for now
-
 drivers_raw_dir = 's3://gfw2-data/drivers_of_loss/1_km/raw/20241004/'
 pattern_drivers_raw = 'drivers_of_TCL_1_km_20241004.tif'
 pattern_drivers = 'drivers_of_TCL_1_km_20241004'
@@ -655,6 +649,11 @@ total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000
 # Date to include in the output directory
 emis_run_date_biomass_soil = '20248888'
 #TODO: Change date when running 1km drivers
+pattern_gross_emis_all_gases_all_drivers_biomass_soil = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
+gross_emis_all_gases_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_hectare/{emis_run_date_biomass_soil}/'
+
+pattern_gross_emis_all_gases_all_drivers_biomass_soil_forest_extent = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_forest_extent_2001_{loss_years}'
+gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_soil/standard/forest_extent/per_hectare/{emis_run_date_biomass_soil}/'
 
 pattern_gross_emis_co2_only_all_drivers_biomass_soil = f'gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
 gross_emis_co2_only_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emissions/all_drivers/CO2_only/biomass_soil/standard/{emis_run_date_biomass_soil}/'
@@ -668,12 +667,6 @@ gross_emis_ch4_only_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emission
 pattern_gross_emis_n2o_only_all_drivers_biomass_soil = f'gross_emis_N2O_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
 gross_emis_n2o_only_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emissions/all_drivers/N2O_only/biomass_soil/standard/{emis_run_date_biomass_soil}/'
 
-pattern_gross_emis_all_gases_all_drivers_biomass_soil = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
-gross_emis_all_gases_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_hectare/{emis_run_date_biomass_soil}/'
-
-pattern_gross_emis_all_gases_all_drivers_biomass_soil_forest_extent = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_forest_extent_2001_{loss_years}'
-gross_emis_all_gases_all_drivers_biomass_soil_forest_extent_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_soil/standard/forest_extent/per_hectare/{emis_run_date_biomass_soil}/'
-
 pattern_gross_emis_nodes_biomass_soil = f'gross_emis_decision_tree_nodes_biomass_soil_2001_{loss_years}'
 gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree_nodes/biomass_soil/standard/{emis_run_date_biomass_soil}/'
 
@@ -682,25 +675,6 @@ gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree
 # Date to include in the output directory
 emis_run_date_soil_only = '20248888'
 #TODO: Change date when running 1km drivers
-
-pattern_gross_emis_commod_soil_only = f'gross_emis_commodity_Mg_CO2e_ha_soil_only_2001_{loss_years}'
-gross_emis_commod_soil_only_dir = f'{s3_base_dir}gross_emissions/commodities/soil_only/standard/{emis_run_date_soil_only}/'
-
-pattern_gross_emis_forestry_soil_only = f'gross_emis_forestry_Mg_CO2e_ha_soil_only_2001_{loss_years}'
-gross_emis_forestry_soil_only_dir = f'{s3_base_dir}gross_emissions/forestry/soil_only/standard/{emis_run_date_soil_only}/'
-
-pattern_gross_emis_shifting_ag_soil_only = f'gross_emis_shifting_ag_Mg_CO2e_ha_soil_only_2001_{loss_years}'
-gross_emis_shifting_ag_soil_only_dir = f'{s3_base_dir}gross_emissions/shifting_ag/soil_only/standard/{emis_run_date_soil_only}/'
-
-pattern_gross_emis_urban_soil_only = f'gross_emis_urbanization_Mg_CO2e_ha_soil_only_2001_{loss_years}'
-gross_emis_urban_soil_only_dir = f'{s3_base_dir}gross_emissions/urbanization/soil_only/standard/{emis_run_date_soil_only}/'
-
-pattern_gross_emis_wildfire_soil_only = f'gross_emis_wildfire_Mg_CO2e_ha_soil_only_2001_{loss_years}'
-gross_emis_wildfire_soil_only_dir = f'{s3_base_dir}gross_emissions/wildfire/soil_only/standard/{emis_run_date_soil_only}/'
-
-pattern_gross_emis_no_driver_soil_only = f'gross_emis_no_driver_Mg_CO2e_ha_soil_only_2001_{loss_years}'
-gross_emis_no_driver_soil_only_dir = f'{s3_base_dir}gross_emissions/no_driver/soil_only/standard/{emis_run_date_soil_only}/'
-
 pattern_gross_emis_all_gases_all_drivers_soil_only = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_soil_only_2001_{loss_years}'
 gross_emis_all_gases_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/soil_only/standard/{emis_run_date_soil_only}/'
 

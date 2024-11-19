@@ -1,5 +1,7 @@
 // Model constants and variable names used in all c++ scripts except equations.cpp.
 // model_years needs to be updated in equations.cpp separately at this time.
+// These values are found in the powerpoint with the emissions model decision trees:
+// https://onewri-my.sharepoint.com/:p:/r/personal/david_gibbs_wri_org/Documents/Documents/Projects/Carbon%20model%20phase%201/carbon_budget_flowchart_v8.pptx?d=w701e66825ac24e23a9ba6c7a408f84ad&csf=1&web=1&e=4ufGOx
 
 namespace constants
 {
@@ -28,6 +30,8 @@ namespace constants
     constexpr float settlements_flu {0.80}; // F_lu for settlements and infrastructure (fraction of soil C not emitted over 20 years)
 
     constexpr float hard_commod_flu {0.80}; // F_lu for hard commodities (fraction of soil C not emitted over 20 years)
+
+    //Note: flu_value for permanent agriculture comes from the function in flu_val.cpp and has several possible values based on eco zone and climate zone
 
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr

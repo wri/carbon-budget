@@ -482,7 +482,7 @@ for(x=0; x<xsize; x++)
 			float Gef_N2O = q[3];       // Emissions factor for N2O
 			float peatburn_CO2_only = q[4];      // Emissions from burning peat, CO2 emissions only
 			float peatburn_non_CO2 = q[5];       // Emissions from burning peat, non-CO2 emissions only
-			//float peatburn_CH4_only = q[5];       // Emissions from burning peat, CH4 emissions only
+			//float peatburn_CH4_only = q[5];       // Emissions from burning peat, CH4 emissions only (there are no N2O emissions from burning peat)
     		//TODO: Uncomment after splitting non-CO2 emissions
     		float peat_drain_total_CO2_only = q[6];      // Emissions from draining peat, CO2 emissions only
     		float peat_drain_total_non_CO2 = q[7];      // Emissions from draining peat, non-CO2 emissions only
@@ -1614,7 +1614,7 @@ for(x=0; x<xsize; x++)
 			}
 
 		    // Emissions for where there is no driver model.
-		    // Nancy said to make this the same as forestry.
+		    // Radost said to make it the same as other natural disturbances
 		    else
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
