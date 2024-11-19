@@ -214,27 +214,31 @@ def main ():
                                                  cn.soil_C_full_extent_2000_dir, cn.total_C_2000_dir]
 
     # Adds the biomass_soil output directories and the soil_only output directories
-    output_dir_list = output_dir_list + [cn.gross_emis_commod_biomass_soil_dir,
-                       cn.gross_emis_shifting_ag_biomass_soil_dir,
-                       cn.gross_emis_forestry_biomass_soil_dir,
-                       cn.gross_emis_wildfire_biomass_soil_dir,
-                       cn.gross_emis_urban_biomass_soil_dir,
-                       cn.gross_emis_no_driver_biomass_soil_dir,
+    output_dir_list = output_dir_list + [
                        cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
                        cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
                        cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
                        cn.gross_emis_nodes_biomass_soil_dir]
+    # output_dir_list = [cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+    #                    cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
+    #                    cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+    #                    cn.gross_emis_ch4_only_all_drivers_biomass_soil_dir,
+    #                    cn.gross_emis_n2o_only_all_drivers_biomass_soil_dir,
+    #                    cn.gross_emis_nodes_biomass_soil_dir]
+    # TODO: Update after splitting non-co2 emissions
 
-    output_dir_list = output_dir_list + [cn.gross_emis_commod_soil_only_dir,
-                       cn.gross_emis_shifting_ag_soil_only_dir,
-                       cn.gross_emis_forestry_soil_only_dir,
-                       cn.gross_emis_wildfire_soil_only_dir,
-                       cn.gross_emis_urban_soil_only_dir,
-                       cn.gross_emis_no_driver_soil_only_dir,
+    output_dir_list = output_dir_list + [
                        cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                        cn.gross_emis_co2_only_all_drivers_soil_only_dir,
                        cn.gross_emis_non_co2_all_drivers_soil_only_dir,
                        cn.gross_emis_nodes_soil_only_dir]
+    # output_dir_list = [cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+    #                    cn.gross_emis_co2_only_all_drivers_soil_only_dir,
+    #                    cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+    #                    cn.gross_emis_ch4_only_all_drivers_soil_only_dir,
+    #                    cn.gross_emis_n2o_only_all_drivers_soil_only_dir,
+    #                    cn.gross_emis_nodes_soil_only_dir]
+    # TODO: Update after splitting non-co2 emissions
 
     # Adds the net flux output directory
     output_dir_list = output_dir_list + [cn.net_flux_dir]
@@ -488,12 +492,6 @@ def main ():
             tiles_to_delete = []
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_commod_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_shifting_ag_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_forestry_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_wildfire_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_urban_biomass_soil}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_no_driver_biomass_soil}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_biomass_soil}*tif'))
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
@@ -526,12 +524,6 @@ def main ():
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_all_gases_all_drivers_soil_only}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_soil_only}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_commod_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_shifting_ag_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_forestry_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_wildfire_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_urban_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_no_driver_soil_only}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_soil_only}*tif'))
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
