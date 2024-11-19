@@ -493,6 +493,7 @@ def main ():
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_biomass_soil}*tif'))
+            # TODO: Update after splitting non-co2 emissions
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             uu.print_log(tiles_to_delete)
@@ -525,6 +526,7 @@ def main ():
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_soil_only}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_soil_only}*tif'))
             tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_soil_only}*tif'))
+            # TODO: Update after splitting non-co2 emissions
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:
