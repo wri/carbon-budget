@@ -647,8 +647,7 @@ total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000
 ### Emissions from biomass and soil (all carbon emitted_pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20248888'
-#TODO: Change date when running 1km drivers
+emis_run_date_biomass_soil = '20241119'
 pattern_gross_emis_all_gases_all_drivers_biomass_soil = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
 gross_emis_all_gases_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_hectare/{emis_run_date_biomass_soil}/'
 
@@ -673,8 +672,7 @@ gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree
 ### Emissions from soil only
 
 # Date to include in the output directory
-emis_run_date_soil_only = '20248888'
-#TODO: Change date when running 1km drivers
+emis_run_date_soil_only = '20241119'
 pattern_gross_emis_all_gases_all_drivers_soil_only = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_soil_only_2001_{loss_years}'
 gross_emis_all_gases_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/soil_only/standard/{emis_run_date_soil_only}/'
 
