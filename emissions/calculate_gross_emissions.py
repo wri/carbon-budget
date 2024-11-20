@@ -14,13 +14,14 @@ def calc_emissions(tile_id, emitted_pools, folder):
     :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
         Options are: soil_only or biomass_soil.
     :param folder:
-    :return: 4 tiles -
-        CO2 emissions from all drivers;
-        non-CO2 emissions from all drivers;
-        all gases (CO2 and non-CO2 from all drivers);
-        emissions decision tree nodes (used for QC).
+    :return: 6 tiles -
+        1. all gases (CO2, CH4 and N2O from all drivers);
+        2. CO2 emissions from all drivers;
+        3. non-CO2 emissions from all drivers (CH4 and N2O from all drivers);
+        4. CH4 emissions from all drivers;
+        5. N2O emissions from all drivers;
+        6. emissions decision tree nodes (used for QC).
         Units: Mg CO2e/ha over entire model period.
-        #TODO: Include methane and nitrous oxide here once non-CO2 emissions are split
     """
 
     uu.print_log(f'Calculating gross emissions for {tile_id} using {cn.SENSIT_TYPE} model type...')
