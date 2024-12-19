@@ -99,3 +99,6 @@ model_output/
 
 flux_model_log*txt
 
+/analyses/ESSD_figures/ipcc_flux_bar_chart.py
+
+docker-compose.yaml

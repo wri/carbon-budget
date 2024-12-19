@@ -14,9 +14,13 @@ def calc_emissions(tile_id, emitted_pools, folder):
     :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
         Options are: soil_only or biomass_soil.
     :param folder:
-    :return: 10 tiles: 6 tiles with emissions for each driver; CO2 emissions from all drivers;
-        non-CO2 emissions from all drivers; all gases (CO2 and non-CO2 from all drivers);
-        emissions decision tree nodes (used for QC).
+    :return: 6 tiles -
+        1. all gases (CO2, CH4 and N2O from all drivers);
+        2. CO2 emissions from all drivers;
+        3. non-CO2 emissions from all drivers (CH4 and N2O from all drivers);
+        4. CH4 emissions from all drivers;
+        5. N2O emissions from all drivers;
+        6. emissions decision tree nodes (used for QC).
         Units: Mg CO2e/ha over entire model period.
     """
 
@@ -27,13 +31,10 @@ def calc_emissions(tile_id, emitted_pools, folder):
     uu.check_memory()
 
     # Runs the correct c++ script given the emitted_pools (biomass+soil or soil_only) and model type selected.
-    # soil_only, no_shiftin_ag, and convert_to_grassland have special gross emissions C++ scripts.
+    # soil_only has special gross emissions C++ scripts.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
     if (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
         cmd = [f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe', tile_id, cn.SENSIT_TYPE, folder]
-
-    elif (emitted_pools == 'biomass_soil') & (cn.SENSIT_TYPE in ['convert_to_grassland', 'no_shifting_ag']):
-        cmd = [f'{cn.c_emis_compile_dst}/calc_gross_emissions_{cn.SENSIT_TYPE}.exe', tile_id, cn.SENSIT_TYPE, folder]
 
     # This C++ script has an extra argument that names the input carbon emitted_pools and output emissions correctly
     elif (emitted_pools == 'biomass_soil') & (cn.SENSIT_TYPE not in ['no_shifting_ag', 'convert_to_grassland']):
@@ -46,7 +47,7 @@ def calc_emissions(tile_id, emitted_pools, folder):
 
 
     # Identifies which pattern to use for counting tile completion
-    pattern = cn.pattern_gross_emis_commod_biomass_soil
+    pattern = cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil
     if (emitted_pools == 'biomass_soil') & (cn.SENSIT_TYPE == 'std'):
         pattern = pattern
 
