@@ -3,7 +3,7 @@
 ### Purpose and scope
 This framework maps gross greenhouse gas emissions from forests, 
 gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2023. 
-Gross emissions includes CO2, CH4, and N20 and all carbon pools (aboveground biomass, belowground biomass, 
+Gross emissions includes CO2, CH4, and N2O and all carbon pools (aboveground biomass, belowground biomass, 
 dead wood, litter, and soil), and gross removals includes removals into aboveground and belowground biomass carbon. 
 Although the framework is run for all tree canopy densities in 2000 (per Hansen et al. 2013), it is most relevant to
 pixels with canopy density >30% in 2000 or pixels which subsequently had tree cover gain (per Potapov et al. 2022).
