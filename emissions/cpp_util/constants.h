@@ -1,5 +1,7 @@
 // Model constants and variable names used in all c++ scripts except equations.cpp.
 // model_years needs to be updated in equations.cpp separately at this time.
+// These values are found in the powerpoint with the emissions model decision trees:
+// https://onewri-my.sharepoint.com/:p:/r/personal/david_gibbs_wri_org/Documents/Documents/Projects/Carbon%20model%20phase%201/carbon_budget_flowchart_v8.pptx?d=w701e66825ac24e23a9ba6c7a408f84ad&csf=1&web=1&e=4ufGOx
 
 namespace constants
 {
@@ -23,9 +25,13 @@ namespace constants
 
     constexpr int soil_emis_period {20};      // The number of years over which soil emissions are calculated (separate from model years)
 
-    constexpr float shiftag_flu {0.72}; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
+    constexpr float shift_cult_flu {0.72}; // F_lu for shifting cultivation (fraction of soil C not emitted over 20 years)
 
-    constexpr float urb_flu {0.80}; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
+    constexpr float settlements_flu {0.80}; // F_lu for settlements and infrastructure (fraction of soil C not emitted over 20 years)
+
+    constexpr float hard_commod_flu {0.80}; // F_lu for hard commodities (fraction of soil C not emitted over 20 years)
+
+    //Note: flu_value for permanent agriculture comes from the function in flu_val.cpp and has several possible values based on eco zone and climate zone
 
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr
@@ -42,21 +48,17 @@ namespace constants
     constexpr char burnyear[] = "_tree_cover_loss_fire_processed.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";
-    constexpr char tcl_drivers[] = "_tree_cover_loss_driver_processed.tif";
+    constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20241121.tif";
     constexpr char peat_mask[] = "_peat_mask_processed.tif";
     constexpr char ifl_primary[] = "_ifl_2000_primary_2001_merged.tif";
     constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other.tif";
 
     // Outputs
-    constexpr char commod_emis[] = "_gross_emis_commodity_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char shifting_ag_emis[] = "_gross_emis_shifting_ag_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char forestry_emis[] = "_gross_emis_forestry_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char wildfire_emis[] = "_gross_emis_wildfire_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char urbanization_emis[] = "_gross_emis_urbanization_Mg_CO2e_ha_biomass_soil_2001_";
-    constexpr char no_driver_emis[] = "_gross_emis_no_driver_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char all_gases_all_drivers_emis[] = "_gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char CO2_only_all_drivers_emis[] = "_gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char non_CO2_all_drivers_emis[] = "_gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char CH4_only_all_drivers_emis[] = "_gross_emis_CH4_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
+    constexpr char N2O_only_all_drivers_emis[] = "_gross_emis_N2O_only_all_drivers_Mg_CO2e_ha_biomass_soil_2001_";
     constexpr char decision_tree_all_drivers_emis[] = "_gross_emis_decision_tree_nodes_biomass_soil_2001_";
 
 }

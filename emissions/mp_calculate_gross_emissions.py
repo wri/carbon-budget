@@ -10,17 +10,15 @@ However, if you want to compile the standard emissions model C++ outside of a ru
 do the following inside the Docker container:
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 calc_gross_emissions_generic.exe should appear in the directory if it wasn't already there.
-For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only, no_shifting_ag,
-and convert_to_grassland), do:
-c++  /usr/local/app/carbon-budget/emissions/cpp_util/calc_gross_emissions_<sensit_type>.cpp -o  /usr/local/app/emissions/cpp_util/calc_gross_emissions_<sensit_type>.exe -lgdal
+For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only), do:
+c++  /usr/local/app/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o  /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled separately.
 
 Run the emissions model with:
 python -m emissions.mp_calculate_gross_emissions -t [MODEL_TYPE] -p [POOL_OPTION] -l [TILE_LIST] [optional_arguments]
 The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
 The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
-Emissions from each driver (including loss that had no driver assigned) gets its own tile, as does all emissions combined.
-Emissions from all drivers is also output as emissions due to CO2 only and emissions due to non-CO2 GHGs (CH4 and N2O).
+Emissions from all drivers is also output as emissions due to CO2, CH4, and N2O.
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
 These codes are summarized in carbon-budget/emissions/node_codes.txt
 
@@ -44,9 +42,13 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     :param tile_id_list: list of tile ids to process
     :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
         Options are: soil_only or biomass_soil.
-    :return: 10 sets of tiles: 6 sets of tiles with emissions for each driver; CO2 emissions from all drivers;
-        non-CO2 emissions from all drivers; all gases (CO2 and non-CO2 from all drivers);
-        emissions decision tree nodes (used for QC).
+    :return: 6 tiles -
+        1. all gases (CO2, CH4 and N2O from all drivers);
+        2. CO2 emissions from all drivers;
+        3. non-CO2 emissions from all drivers (CH4 and N2O from all drivers);
+        4. CH4 emissions from all drivers;
+        5. N2O emissions from all drivers;
+        6. emissions decision tree nodes (used for QC).
         Units: Mg CO2e/ha over entire model period.
     """
 
@@ -98,64 +100,41 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     if emitted_pools == 'biomass_soil':
 
         # Output file directories for biomass+soil. Must be in same order as output pattern directories.
-        output_dir_list = [cn.gross_emis_commod_biomass_soil_dir,
-                           cn.gross_emis_shifting_ag_biomass_soil_dir,
-                           cn.gross_emis_forestry_biomass_soil_dir,
-                           cn.gross_emis_wildfire_biomass_soil_dir,
-                           cn.gross_emis_urban_biomass_soil_dir,
-                           cn.gross_emis_no_driver_biomass_soil_dir,
-                           cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
+        output_dir_list = [cn.gross_emis_all_gases_all_drivers_biomass_soil_dir,
                            cn.gross_emis_co2_only_all_drivers_biomass_soil_dir,
                            cn.gross_emis_non_co2_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_ch4_only_all_drivers_biomass_soil_dir,
+                           cn.gross_emis_n2o_only_all_drivers_biomass_soil_dir,
                            cn.gross_emis_nodes_biomass_soil_dir]
 
-        output_pattern_list = [cn.pattern_gross_emis_commod_biomass_soil,
-                               cn.pattern_gross_emis_shifting_ag_biomass_soil,
-                               cn.pattern_gross_emis_forestry_biomass_soil,
-                               cn.pattern_gross_emis_wildfire_biomass_soil,
-                               cn.pattern_gross_emis_urban_biomass_soil,
-                               cn.pattern_gross_emis_no_driver_biomass_soil,
-                               cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
+        output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_co2_only_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_non_co2_all_drivers_biomass_soil,
+                               cn.pattern_gross_emis_ch4_only_all_drivers_biomass_soil,
+                               cn.pattern_gross_emis_n2o_only_all_drivers_biomass_soil,
                                cn.pattern_gross_emis_nodes_biomass_soil]
 
-        # Some sensitivity analyses have specific gross emissions scripts.
-        # The rest of the sensitivity analyses and the standard model can all use the same, generic gross emissions script.
-        if cn.SENSIT_TYPE in ['no_shifting_ag', 'convert_to_grassland']:
-            uu.print_log(f'Compiling {cn.SENSIT_TYPE} model C++...')
-            cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_{cn.SENSIT_TYPE}.cpp',
-                   '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_{cn.SENSIT_TYPE}.exe', '-lgdal']
-            uu.log_subprocess_output_full(cmd)
-        else:
-            uu.print_log(f'Compiling generic model C++...')
-            cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp',
-                   '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe', '-lgdal']
-            uu.log_subprocess_output_full(cmd)
+        # The standard model can all use the same, generic gross emissions script.
+        uu.print_log(f'Compiling generic model C++...')
+        cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp',
+                '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe', '-lgdal']
+        uu.log_subprocess_output_full(cmd)
 
     elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
 
         # Output file directories for soil_only. Must be in same order as output pattern directories.
-        output_dir_list = [cn.gross_emis_commod_soil_only_dir,
-                           cn.gross_emis_shifting_ag_soil_only_dir,
-                           cn.gross_emis_forestry_soil_only_dir,
-                           cn.gross_emis_wildfire_soil_only_dir,
-                           cn.gross_emis_urban_soil_only_dir,
-                           cn.gross_emis_no_driver_soil_only_dir,
-                           cn.gross_emis_all_gases_all_drivers_soil_only_dir,
+        output_dir_list = [cn.gross_emis_all_gases_all_drivers_soil_only_dir,
                            cn.gross_emis_co2_only_all_drivers_soil_only_dir,
                            cn.gross_emis_non_co2_all_drivers_soil_only_dir,
+                           cn.gross_emis_ch4_only_all_drivers_soil_only_dir,
+                           cn.gross_emis_n2o_only_all_drivers_soil_only_dir,
                            cn.gross_emis_nodes_soil_only_dir]
 
-        output_pattern_list = [cn.pattern_gross_emis_commod_soil_only,
-                               cn.pattern_gross_emis_shifting_ag_soil_only,
-                               cn.pattern_gross_emis_forestry_soil_only,
-                               cn.pattern_gross_emis_wildfire_soil_only,
-                               cn.pattern_gross_emis_urban_soil_only,
-                               cn.pattern_gross_emis_no_driver_soil_only,
-                               cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
+        output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_soil_only,
                                cn.pattern_gross_emis_co2_only_all_drivers_soil_only,
                                cn.pattern_gross_emis_non_co2_all_drivers_soil_only,
+                               cn.pattern_gross_emis_ch4_only_all_drivers_soil_only,
+                               cn.pattern_gross_emis_n2o_only_all_drivers_soil_only,
                                cn.pattern_gross_emis_nodes_soil_only]
 
         uu.print_log(f'Compiling soil_only model C++...')
@@ -228,6 +207,7 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     else:
         # count/4 uses about 390 GB on a r4.16xlarge spot machine.
         # processes=18 uses about 440 GB on an r4.16xlarge spot machine.
+        # (these values are for the old 10km drivers, might be different with 1km drivers now)
         if cn.count == 96:
             if cn.SENSIT_TYPE == 'biomass_swap':
                 processes = 15 # 15 processors = XXX GB peak

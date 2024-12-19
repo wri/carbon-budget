@@ -734,6 +734,18 @@ def s3_folder_download(source, dest, sensit_type, pattern = None):
             os.rmdir(os.path.join(dest, 'data-lake-downloads'))
             print_log(f'data-lake tiles with pattern {ec2_pattern} copied to main tile folder...')
 
+        # The --no-sign-request in the else statement below was causing the following error when trying to download the 1km drivers:
+        # "An error occurred (AccessDenied) when calling the GetObject operation: Access Denied"
+        #TODO update this when we move 1km drivers source to gfw-data-lake after API ingestion
+        elif 'drivers_of_loss' in source:
+            print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
+
+            cmd = ['aws', 's3', 'cp', source, dest, '--exclude', '*tiled/*',
+                   '--exclude', '*geojson', '--exclude', '*vrt', '--exclude', '*csv', '--no-progress', '--recursive']
+
+            log_subprocess_output_full(cmd)
+
+
         # Downloads non-data-lake inputs
         else:
             print_log(f'Tiles with pattern {pattern} are not on spot machine. Downloading...')
