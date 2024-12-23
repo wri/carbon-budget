@@ -5,7 +5,7 @@ python -m analyses.create_aggregated_display_maps
 import rasterio
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap, BoundaryNorm
+from matplotlib.colors import Normalize, ListedColormap
 from matplotlib.colorbar import ColorbarBase
 import geopandas as gpd
 import os
@@ -18,7 +18,20 @@ os.chdir(cn.docker_tile_dir)
 # Define file paths
 tif_file = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif"
 shapefile_path = "world-administrative-boundaries.shp"
-output_jpeg = "output_image_with_shapefile_fixed.jpeg"
+output_jpeg = "output_image_with_shapefile_low_vals.jpeg"
+
+# with rasterio.open(tif_file) as src:
+#     data = src.read(1)
+#     # data = np.ma.masked_invalid(data)  # Mask invalid (NaN) values
+#
+# fig, ax = plt.subplots()
+# ax.imshow(data)
+#
+# # Save the output map
+# plt.savefig(output_jpeg, dpi=300, bbox_inches='tight', pad_inches=0)
+# plt.close()
+
+
 
 print("Opening raster and shapefile")
 
@@ -33,44 +46,29 @@ if shapefile.crs != raster_crs:
     print(f"Reprojecting shapefile from {shapefile.crs} to {raster_crs}")
     shapefile = shapefile.to_crs(raster_crs)
 
-print("Calculating raster quintiles")
+print("Masking invalid data")
 
-# Recalculate bounds based on quintiles of the data
+# Read raster data and create a binary mask for values > 0
 with rasterio.open(tif_file) as src:
     data = src.read(1)
-    data = np.ma.masked_less_equal(data, 0)  # Mask non-positive values
-    quintiles = np.percentile(data.compressed(), [0, 20, 40, 60, 80, 100])  # Compute quintiles
-
-# Update bounds with quintiles
-quintile_bounds = list(quintiles)
-print(f"Quintile bounds: {quintile_bounds}")
+    binary_mask = np.where(data > 0, 1, 0)  # Values >0 are set to 1, others to 0
 
 print("Plotting map")
 
 # Plot the map with the entire figure as 11x7 inches
-fig, ax = plt.subplots(figsize=(12, 5))
-with rasterio.open(tif_file) as src:
-    data = src.read(1)
-    data = np.ma.masked_less_equal(data, 0)  # Mask non-positive values
+fig, ax = plt.subplots(figsize=(11, 7))
 
-# Update colormap and boundaries for quintiles
-cmap_quintile = ListedColormap(plt.cm.Blues(np.linspace(0.3, 1, len(quintile_bounds) - 1)))
-norm_quintile = BoundaryNorm(quintile_bounds, cmap_quintile.N)
+# Define a reversed black-and-white colormap
+cmap = plt.cm.gray_r  # Use the reversed gray colormap to make 1=black and 0=white
 
-# Plot the raster
+# Plot the binary mask
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-img = ax.imshow(data, cmap=cmap_quintile, norm=norm_quintile, extent=extent, origin='upper')
+img = ax.imshow(binary_mask, cmap=cmap, extent=extent, origin='upper')
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.5)
+shapefile.boundary.plot(ax=ax, edgecolor='white', linewidth=0.5)
 
-print("Adding legend")
-
-# Add the colorbar at the bottom, integrated into the figure space
-cbar_ax = fig.add_axes([0.1, 0.03, 0.8, 0.02])  # [left, bottom, width, height]
-cb = ColorbarBase(cbar_ax, cmap=cmap_quintile, norm=norm_quintile, boundaries=quintile_bounds,
-                  ticks=quintile_bounds, orientation='horizontal')
-cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)')
+print("Adding legend (no legend required for binary map)")
 
 # Set the background color to white and remove axis labels
 ax.set_facecolor('white')
@@ -78,7 +76,7 @@ ax.set_axis_off()
 
 print("Saving map")
 
-# Save the output map with no padding
+# Save the output map
 plt.savefig(output_jpeg, dpi=300, bbox_inches='tight', pad_inches=0)
 plt.close()
 
