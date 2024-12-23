@@ -20,19 +20,6 @@ tif_file = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd3
 shapefile_path = "world-administrative-boundaries.shp"
 output_jpeg = "output_image_with_shapefile_low_vals.jpeg"
 
-# with rasterio.open(tif_file) as src:
-#     data = src.read(1)
-#     # data = np.ma.masked_invalid(data)  # Mask invalid (NaN) values
-#
-# fig, ax = plt.subplots()
-# ax.imshow(data)
-#
-# # Save the output map
-# plt.savefig(output_jpeg, dpi=300, bbox_inches='tight', pad_inches=0)
-# plt.close()
-
-
-
 print("Opening raster and shapefile")
 
 # Read the raster and get its CRS
@@ -46,29 +33,33 @@ if shapefile.crs != raster_crs:
     print(f"Reprojecting shapefile from {shapefile.crs} to {raster_crs}")
     shapefile = shapefile.to_crs(raster_crs)
 
-print("Masking invalid data")
+print("Classifying data into custom breaks")
 
-# Read raster data and create a binary mask for values > 0
+# Read raster data and classify into custom breaks
 with rasterio.open(tif_file) as src:
     data = src.read(1)
-    binary_mask = np.where(data > 0, 1, 0)  # Values >0 are set to 1, others to 0
+    classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
+
+    # Classify the data
+    classified_data[(data > 0.00000001) & (data <= 0.0001)] = 1  # Red range
+    classified_data[data > 0.0001] = 2  # Black range
 
 print("Plotting map")
+
+# Create a custom colormap: 0=white, 1=red, 2=black
+cmap = ListedColormap(["white", "red", "black"])
 
 # Plot the map with the entire figure as 11x7 inches
 fig, ax = plt.subplots(figsize=(11, 7))
 
-# Define a reversed black-and-white colormap
-cmap = plt.cm.gray_r  # Use the reversed gray colormap to make 1=black and 0=white
-
-# Plot the binary mask
+# Plot the classified data
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-img = ax.imshow(binary_mask, cmap=cmap, extent=extent, origin='upper')
+img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
 
 # Overlay the shapefile boundaries
 shapefile.boundary.plot(ax=ax, edgecolor='white', linewidth=0.5)
 
-print("Adding legend (no legend required for binary map)")
+print("Adding legend (no legend required for classified map)")
 
 # Set the background color to white and remove axis labels
 ax.set_facecolor('white')
