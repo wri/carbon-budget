@@ -2,6 +2,8 @@ awscli==1.25.58
 boto3==1.24.57
 botocore==1.27.57
 cftime==1.6.1
+geopandas
+matplotlib==3.9.4
 memory_profiler==0.61.0
 netCDF4==1.6.0
 numpy>=1.18.5
