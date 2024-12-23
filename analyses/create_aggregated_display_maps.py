@@ -52,8 +52,10 @@ for i in range(len(class_breaks) - 1):
 
 print("Plotting map")
 
-# Create a custom colormap: 0=white, 1=red, 2=black, 3=blue
-cmap = ListedColormap(["white", "red", "black", "blue"])
+# Create a custom colormap with white background
+blues = plt.cm.Blues(np.linspace(0.3, 1, 3))  # Select shades of blue for three classes
+colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
+cmap = ListedColormap(colors)  # Create a ListedColormap
 
 # Plot the map with the entire figure as 11x7 inches
 fig, ax = plt.subplots(figsize=(11, 7))
@@ -63,9 +65,9 @@ extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_
 img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor='white', linewidth=0.5)
+shapefile.boundary.plot(ax=ax, edgecolor='black', linewidth=0.5)
 
-print("Adding legend (no legend required for classified map)")
+print("Adding legend (optional)")
 
 # Set the background color to white and remove axis labels
 ax.set_facecolor('white')
