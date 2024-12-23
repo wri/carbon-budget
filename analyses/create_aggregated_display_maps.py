@@ -57,8 +57,8 @@ print("Plotting map")
 blues = plt.cm.Blues(np.linspace(0.3, 1, 3))  # Select shades of blue for three classes
 cmap = ListedColormap(blues)  # Only three colors for the legend
 
-# Plot the map with the entire figure as 11x7 inches
-fig, ax = plt.subplots(figsize=(11, 7))
+# Plot the map with the entire figure as 12x6 inches
+fig, ax = plt.subplots(figsize=(12, 6))
 
 # Plot the classified data
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
@@ -73,7 +73,8 @@ print("Adding legend")
 # Add a legend for the colormap
 cbar_ax = fig.add_axes([0.3, 0.03, 0.4, 0.02])  # Adjusted [left, bottom, width, height]
 cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=[1, 2, 3])  # Ticks for three classes only
-cb.ax.set_xticklabels(class_labels)  # Set the class labels
+cb.ax.set_xticks([1, 2, 3])  # Ensure the ticks are centered
+cb.ax.set_xticklabels(class_labels, ha='center')  # Center-align labels under ticks
 cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)')
 
 # Set the background color to white and remove axis labels
