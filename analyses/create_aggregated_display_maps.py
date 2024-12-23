@@ -5,7 +5,7 @@ python -m analyses.create_aggregated_display_maps
 import rasterio
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize, ListedColormap
+from matplotlib.colors import Normalize, ListedColormap, BoundaryNorm
 from matplotlib.colorbar import ColorbarBase
 import geopandas as gpd
 import os
@@ -35,19 +35,25 @@ if shapefile.crs != raster_crs:
 
 print("Classifying data into custom breaks")
 
-# Read raster data and classify into custom breaks
+# Read raster data
 with rasterio.open(tif_file) as src:
     data = src.read(1)
-    classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
 
-    # Classify the data
-    classified_data[(data > 0.00000001) & (data <= 0.0001)] = 1  # Red range
-    classified_data[data > 0.0001] = 2  # Black range
+# Define the class breaks and corresponding values
+class_breaks = [0.00000001, 0.0001, 0.01, np.inf]  # Class boundaries
+class_values = [1, 2, 3]  # Values to assign to each class
+
+# Initialize classified data array
+classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
+
+# Classify the data using a loop
+for i in range(len(class_breaks) - 1):
+    classified_data[(data > class_breaks[i]) & (data <= class_breaks[i + 1])] = class_values[i]
 
 print("Plotting map")
 
-# Create a custom colormap: 0=white, 1=red, 2=black
-cmap = ListedColormap(["white", "red", "black"])
+# Create a custom colormap: 0=white, 1=red, 2=black, 3=blue
+cmap = ListedColormap(["white", "red", "black", "blue"])
 
 # Plot the map with the entire figure as 11x7 inches
 fig, ax = plt.subplots(figsize=(11, 7))
