@@ -40,9 +40,9 @@ with rasterio.open(tif_file) as src:
     data = src.read(1)
 
 # Define the class breaks and corresponding values
-class_breaks = [0.00000001, 0.0001, 0.01, np.inf]  # Class boundaries
-class_values = [1, 2, 3]  # Values to assign to each class
-class_labels = ['0.00000001 - 0.0001', '0.0001 - 0.01', '>0.01']  # Labels for the legend
+class_breaks = [0.00000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
+class_values = list(range(1, len(class_breaks)))  # Values to assign to each class
+class_labels = ['0.0001', '0.05', '0.01', '>0.01']  # Labels for the legend
 
 # Initialize classified data array
 classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
@@ -54,7 +54,7 @@ for i in range(len(class_breaks) - 1):
 print("Plotting map")
 
 # Create a custom colormap with white background
-blues = plt.cm.Blues(np.linspace(0.3, 1, 3))  # Select shades of blue for three classes
+blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for three classes
 colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
@@ -79,7 +79,7 @@ print("Adding legend")
 
 # Add a vertical legend on the map panel (adjusted position)
 cbar_ax = fig.add_axes([0.1, 0.15, 0.02, 0.4])  # [left, bottom, width, height]
-cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='vertical', ticks=[1, 2, 3])  # Vertical colorbar
+cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='vertical', ticks=class_values)  # Vertical colorbar
 cb.ax.set_yticklabels(class_labels, va='center')  # Center-align labels
 cb.ax.set_title('Gross emissions\n(Mt CO2e/yr)', fontsize=10, pad=10, loc='center')  # Add horizontal title
 
