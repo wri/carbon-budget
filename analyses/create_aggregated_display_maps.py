@@ -17,8 +17,9 @@ import constants_and_names as cn
 os.chdir(cn.docker_tile_dir)
 
 # Define file paths
-tif_file = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif"
-reprojected_tif = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403_reproj.tif"
+tif_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
+tif_unproj = f"{tif_base}.tif"
+reprojected_tif = f"{tif_base}_reproj.tif"
 shapefile_path = "world-administrative-boundaries.shp"
 output_jpeg = "output_image_with_shapefile_low_vals_with_legend.jpeg"
 
@@ -30,7 +31,7 @@ print("Checking for reprojected raster")
 # Check if the reprojected raster already exists
 if not os.path.exists(reprojected_tif):
     print("Reprojected raster does not exist. Reprojecting now...")
-    with rasterio.open(tif_file) as src:
+    with rasterio.open(tif_unproj) as src:
         transform, width, height = calculate_default_transform(
             src.crs, robinson_crs, src.width, src.height, *src.bounds
         )
@@ -112,16 +113,14 @@ img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
 # Overlay the shapefile boundaries
 shapefile.boundary.plot(ax=ax, edgecolor='black', linewidth=0.5)
 
-print("Adding legend")
+print("Adding legend dynamically within map bounds")
 
-# Add a vertical legend on the map panel (adjusted position)
-cbar_ax = fig.add_axes([0.1, 0.15, 0.02, 0.4])  # [left, bottom, width, height]
-cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='vertical', ticks=class_values)  # Vertical colorbar
-cb.ax.set_yticklabels(class_labels, va='center')  # Center-align labels
-cb.ax.set_title('Gross emissions\n(Mt CO2e/yr)', fontsize=10, pad=10, loc='center')  # Add horizontal title
-
-
-
+# Add a horizontal legend within the map bounds
+# Normalize position to fit dynamically within the map's southern section
+cbar_ax = fig.add_axes([0.4, 0.2, 0.36, 0.02])  # [left, bottom, width, height]
+cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=class_values)  # Horizontal colorbar
+cb.ax.set_xticklabels(class_labels, ha='center')  # Center-align labels
+cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=10, labelpad=10)  # Label for the colorbar
 
 # Set the background color to white and remove axis labels
 ax.set_facecolor('white')
