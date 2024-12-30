@@ -5,6 +5,7 @@ python -m analyses.create_aggregated_display_maps
 import rasterio
 import numpy as np
 import matplotlib.pyplot as plt
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 from matplotlib.colors import Normalize, ListedColormap, BoundaryNorm
 from matplotlib.colorbar import ColorbarBase
 import geopandas as gpd
@@ -17,30 +18,60 @@ os.chdir(cn.docker_tile_dir)
 
 # Define file paths
 tif_file = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif"
+reprojected_tif = "reprojected_raster_robinson.tif"
 shapefile_path = "world-administrative-boundaries.shp"
 output_jpeg = "output_image_with_shapefile_low_vals_with_legend.jpeg"
 
-print("Opening raster and shapefile")
+# Define the Robinson Equal Area projection (ESRI:54030)
+robinson_crs = "ESRI:54030"
 
-# Read the raster and get its CRS
+print("Opening and reprojecting raster")
+
+# Reproject the raster to Robinson projection
 with rasterio.open(tif_file) as src:
-    raster_crs = src.crs
-    raster_extent = src.bounds
+    transform, width, height = calculate_default_transform(
+        src.crs, robinson_crs, src.width, src.height, *src.bounds
+    )
+    kwargs = src.meta.copy()
+    kwargs.update({
+        'crs': robinson_crs,
+        'transform': transform,
+        'width': width,
+        'height': height
+    })
 
-# Read the shapefile and reproject if needed
+    with rasterio.open(reprojected_tif, 'w', **kwargs) as dst:
+        reproject(
+            source=rasterio.band(src, 1),
+            destination=rasterio.band(dst, 1),
+            src_transform=src.transform,
+            src_crs=src.crs,
+            dst_transform=transform,
+            dst_crs=robinson_crs,
+            resampling=Resampling.nearest
+        )
+
+# Read the reprojected raster
+with rasterio.open(reprojected_tif) as src:
+    raster_extent = src.bounds
+    data = src.read(1)
+
+print("Opening and reprojecting shapefile")
+
+# Read the shapefile and reproject it to Robinson projection
 shapefile = gpd.read_file(shapefile_path)
-if shapefile.crs != raster_crs:
-    print(f"Reprojecting shapefile from {shapefile.crs} to {raster_crs}")
-    shapefile = shapefile.to_crs(raster_crs)
+if shapefile.crs != robinson_crs:
+    print(f"Reprojecting shapefile from {shapefile.crs} to {robinson_crs}")
+    shapefile = shapefile.to_crs(robinson_crs)
 
 print("Classifying data into custom breaks")
 
 # Read raster data
-with rasterio.open(tif_file) as src:
+with rasterio.open(reprojected_tif) as src:
     data = src.read(1)
 
 # Define the class breaks and corresponding values
-class_breaks = [0.00000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
+class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
 class_values = list(range(1, len(class_breaks)))  # Values to assign to each class
 class_labels = ['0.0001', '0.05', '0.01', '>0.01']  # Labels for the legend
 
