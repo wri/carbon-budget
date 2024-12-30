@@ -1,5 +1,7 @@
 """
 python -m analyses.create_aggregated_display_maps
+
+With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 """
 
 import rasterio
@@ -118,11 +120,11 @@ print("Adding legend dynamically within map bounds")
 # Add a horizontal legend within the map bounds
 # Normalize position to fit dynamically within the map's southern section
 cbar_ax = fig.add_axes([0.4, 0.2, 0.36, 0.02])  # [left, bottom, width, height]
-cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=class_values)  # Horizontal colorbar
-cb.ax.set_xticklabels(class_labels, ha='center')  # Center-align labels
-cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=10, labelpad=10)  # Label for the colorbar
+cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='horizontal', ticks=np.arange(1, len(class_labels) + 1))
+cb.ax.set_xticklabels(class_labels, ha='center')  # Center-align the labels
+cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=10, labelpad=10)
 
-# Set the background color to white and remove axis labels
+# Set map aesthetics
 ax.set_facecolor('white')
 ax.set_axis_off()
 
