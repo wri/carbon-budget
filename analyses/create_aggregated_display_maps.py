@@ -56,7 +56,6 @@ print("Plotting map")
 # Create a custom colormap with white background
 blues = plt.cm.Blues(np.linspace(0.3, 1, 3))  # Select shades of blue for three classes
 colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
-# colors = np.vstack((blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
 # Plot the map with the entire figure as 11x7 inches
@@ -65,10 +64,12 @@ fig, ax = plt.subplots(figsize=(12, 6))
 # Plot the classified data
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
-colors_legend = np.vstack((blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
+# For the legend specifically
+colors_legend = np.vstack((blues))
 cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
 img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
 
+# Then prints the actual map
 img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
 
 # Overlay the shapefile boundaries
@@ -76,11 +77,13 @@ shapefile.boundary.plot(ax=ax, edgecolor='black', linewidth=0.5)
 
 print("Adding legend")
 
-# Add a legend for the colormap
-cbar_ax = fig.add_axes([0.3, 0.03, 0.4, 0.02])  # Adjusted [left, bottom, width, height]
-cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='horizontal', ticks=[1, 2, 3])  # Ticks for three classes only
-cb.ax.set_xticklabels(class_labels)  # Set the class labels
-cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)')
+# Add a vertical legend on the map panel (adjusted position)
+cbar_ax = fig.add_axes([0.1, 0.15, 0.02, 0.4])  # [left, bottom, width, height]
+cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='vertical', ticks=[1, 2, 3])  # Vertical colorbar
+cb.ax.set_yticklabels(class_labels, va='center')  # Center-align labels
+cb.ax.set_title('Gross emissions\n(Mt CO2e/yr)', fontsize=10, pad=10, loc='center')  # Add horizontal title
+
+
 
 
 # Set the background color to white and remove axis labels
