@@ -332,11 +332,12 @@ pattern_plant_pre_2000 = 'plantation_2000_or_earlier_processed'
 plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20200724/')
 
 # Drivers of tree cover loss
-
+#Note: New drivers is a multi-band image woth the classification in Band 1 and probabilities for each class in the other bands
+# Make sure to only use Band 1 when hansenizing the drivers tiles.
 drivers_raw_dir = 's3://gfw2-data/drivers_of_loss/1_km/raw/update2023_20241218/'
-pattern_drivers_raw = 'drivers_forest_loss_1km_2023.tif'
-pattern_drivers = 'drivers_of_TCL_1_km_20241220'
-drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20241220/'
+pattern_drivers_raw = 'drivers_forest_loss_1km_2023_band1.tif'
+pattern_drivers = 'drivers_of_TCL_1_km_20241224'
+drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20241224/'
 
 # Tree cover loss from fires
 TCLF_raw_dir = 's3://gfw2-data/forest_change/hansen_2023_fire/'
