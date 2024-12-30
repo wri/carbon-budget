@@ -82,7 +82,7 @@ with rasterio.open(reprojected_tif) as src:
 # Define the class breaks and corresponding values
 class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
 class_values = list(range(1, len(class_breaks)))  # Values to assign to each class
-class_labels = ['0.0001', '0.05', '0.01', '>0.01']  # Labels for the legend
+class_labels = [class_breaks[1], class_breaks[2], class_breaks[3], f'>{class_breaks[3]}']  # Labels for the legend
 
 # Initialize classified data array
 classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
@@ -121,8 +121,8 @@ print("Adding legend dynamically within map bounds")
 # Normalize position to fit dynamically within the map's southern section
 cbar_ax = fig.add_axes([0.4, 0.2, 0.36, 0.02])  # [left, bottom, width, height]
 cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='horizontal', ticks=np.arange(1, len(class_labels) + 1))
-cb.ax.set_xticklabels(class_labels, ha='center')  # Center-align the labels
-cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=10, labelpad=10)
+cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
+cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=8, labelpad=10)
 
 # Set map aesthetics
 ax.set_facecolor('white')
