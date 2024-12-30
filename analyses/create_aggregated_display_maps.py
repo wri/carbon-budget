@@ -18,38 +18,44 @@ os.chdir(cn.docker_tile_dir)
 
 # Define file paths
 tif_file = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif"
-reprojected_tif = "reprojected_raster_robinson.tif"
+reprojected_tif = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403_reproj.tif"
 shapefile_path = "world-administrative-boundaries.shp"
 output_jpeg = "output_image_with_shapefile_low_vals_with_legend.jpeg"
 
 # Define the Robinson Equal Area projection (ESRI:54030)
 robinson_crs = "ESRI:54030"
 
-print("Opening and reprojecting raster")
+print("Checking for reprojected raster")
 
-# Reproject the raster to Robinson projection
-with rasterio.open(tif_file) as src:
-    transform, width, height = calculate_default_transform(
-        src.crs, robinson_crs, src.width, src.height, *src.bounds
-    )
-    kwargs = src.meta.copy()
-    kwargs.update({
-        'crs': robinson_crs,
-        'transform': transform,
-        'width': width,
-        'height': height
-    })
-
-    with rasterio.open(reprojected_tif, 'w', **kwargs) as dst:
-        reproject(
-            source=rasterio.band(src, 1),
-            destination=rasterio.band(dst, 1),
-            src_transform=src.transform,
-            src_crs=src.crs,
-            dst_transform=transform,
-            dst_crs=robinson_crs,
-            resampling=Resampling.nearest
+# Check if the reprojected raster already exists
+if not os.path.exists(reprojected_tif):
+    print("Reprojected raster does not exist. Reprojecting now...")
+    with rasterio.open(tif_file) as src:
+        transform, width, height = calculate_default_transform(
+            src.crs, robinson_crs, src.width, src.height, *src.bounds
         )
+        kwargs = src.meta.copy()
+        compression = src.profile.get('compress', 'none')  # Get compression from the original raster
+        kwargs.update({
+            'crs': robinson_crs,
+            'transform': transform,
+            'width': width,
+            'height': height,
+            'compress': compression  # Match the compression of the original raster
+        })
+
+        with rasterio.open(reprojected_tif, 'w', **kwargs) as dst:
+            reproject(
+                source=rasterio.band(src, 1),
+                destination=rasterio.band(dst, 1),
+                src_transform=src.transform,
+                src_crs=src.crs,
+                dst_transform=transform,
+                dst_crs=robinson_crs,
+                resampling=Resampling.nearest
+            )
+else:
+    print("Reprojected raster already exists. Skipping reprojection.")
 
 # Read the reprojected raster
 with rasterio.open(reprojected_tif) as src:
