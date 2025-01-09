@@ -22,7 +22,7 @@ os.chdir(cn.docker_tile_dir)
 tif_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
 tif_unproj = f"{tif_base}.tif"
 reprojected_tif = f"{tif_base}_reproj.tif"
-shapefile_path = "world-administrative-boundaries.shp"
+shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
 output_jpeg = "output_image_with_shapefile_low_vals_with_legend.jpeg"
 
 # Define the Robinson Equal Area projection (ESRI:54030)
