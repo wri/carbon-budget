@@ -98,35 +98,48 @@ blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of
 colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
-# Plot the map with the entire figure as 11x7 inches
+# Plot the map with the entire figure as 12x6 inches
 fig, ax = plt.subplots(figsize=(12, 6))
 
-# Plot the classified data
-extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+# Set the background color of the map to black
+ax.set_facecolor('black')  # Black background
 
-# For the legend specifically
-colors_legend = np.vstack((blues))
-cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
-img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
-
-# Then prints the actual map
-img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
+# Plot the shapefile polygons with a light gray fill
+shapefile.plot(ax=ax, color='lightgray', edgecolor='none', linewidth=0)
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor='black', linewidth=0.5)
+shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
 
-print("Adding legend dynamically within map bounds")
 
-# Add a horizontal legend within the map bounds
-# Normalize position to fit dynamically within the map's southern section
-cbar_ax = fig.add_axes([0.4, 0.2, 0.36, 0.02])  # [left, bottom, width, height]
-cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='horizontal', ticks=np.arange(1, len(class_labels) + 1))
-cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
-cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=8, labelpad=10)
+# # # Plot the classified data
+# # extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+# #
+# # # For the legend specifically
+# # colors_legend = np.vstack((blues))
+# # cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
+# # img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
+# #
+# # # Then prints the actual map
+# # img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
+#
+# # Overlay the shapefile boundaries
+# shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
+
+# print("Adding legend dynamically within map bounds")
+#
+# # Add a horizontal legend within the map bounds
+# # Normalize position to fit dynamically within the map's southern section
+# cbar_ax = fig.add_axes([0.4, 0.2, 0.36, 0.02])  # [left, bottom, width, height]
+# cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='horizontal', ticks=np.arange(1, len(class_labels) + 1))
+# cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
+# cb.set_label('Gross emissions from forest loss (Mt CO2e/yr)', fontsize=8, labelpad=10)
 
 # Set map aesthetics
-ax.set_facecolor('white')
-ax.set_axis_off()
+# NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
+ax.set_xticks([])  # Remove x-axis ticks
+ax.set_yticks([])  # Remove y-axis ticks
+ax.set_xticklabels([])  # Remove x-axis labels
+ax.set_yticklabels([])  # Remove y-axis labels
 
 print("Saving map")
 
