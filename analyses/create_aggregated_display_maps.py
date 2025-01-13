@@ -90,14 +90,27 @@ def generate_class_labels(class_breaks):
     for i in range(len(class_breaks)):
         if i == 0:
             # First class: "< lowest class break"
-            class_labels.append(f"<{class_breaks[i+1]:.3f}")
+            class_labels.append(f"<{class_breaks[i+1]:.2f}")
         elif i == len(class_breaks) - 1:
             # Last class: "> highest class break"
-            class_labels.append(f">{class_breaks[i-1]:.3f}")
+            class_labels.append(f">{class_breaks[i-1]:.2f}")
         else:
             # Intermediate classes
-            class_labels.append(f"{class_breaks[i]:.3f}")
+            class_labels.append(f"{class_breaks[i]:.4f}")
     return class_labels
+
+
+def rgb_to_mpl_palette(rgb_palette):
+    """
+    Convert a list of RGB colors from 0-255 range to 0-1 range for Matplotlib.
+
+    Parameters:
+    - rgb_palette (list of tuples): List of RGB tuples (R, G, B) in 0-255 range.
+
+    Returns:
+    - list: List of RGB tuples (R, G, B) in 0-1 range.
+    """
+    return [tuple(val / 255 for val in rgb) for rgb in rgb_palette]
 
 os.chdir(cn.docker_tile_dir)
 
@@ -105,6 +118,30 @@ os.chdir(cn.docker_tile_dir)
 robinson_crs = "ESRI:54030"
 
 shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
+
+data_config = {
+    "emissions": {
+        "base_name": "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403",
+        "tif_unproj": "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif",
+        "reprojected_tif": "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403_reproj.tif",
+        "jpeg": "gross_emis_4x4km__v1.3.2.jpeg",
+        "class_breaks": [0.000000001, 0.0001, 0.005, 0.01, np.inf]
+    },
+    "removals": {
+        "base_name": "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402",
+        "tif_unproj": "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402.tif",
+        "reprojected_tif": "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402_reproj.tif",
+        "jpeg": "gross_removals_4x4km__v1.3.2.jpeg",
+        "class_breaks": [0.000000001, 0.0001, 0.005, 0.01, np.inf]
+    },
+    "net_flux": {
+        "base_name": "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403",
+        "tif_unproj": "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif",
+        "reprojected_tif": "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403_reproj.tif",
+        "jpeg": "net_flux_4x4km__v1.3.2.jpeg",
+        "class_breaks": [-np.inf, -0.1, -0.01, -0.001, 0.0, 0.0001, 0.005, 0.01, np.inf]
+    }
+}
 
 # Define file paths
 emis_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
@@ -126,9 +163,23 @@ boundary_color = rgb_to_mpl((150, 150, 150))
 panel_dims = (12, 6)
 boundary_width = 0.4
 
-emis_class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
-removals_class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
-net_flux_class_breaks =  [-np.inf, -0.1, -0.01, -0.001, 0.0, 0.0001, 0.005, 0.01, np.inf]
+# Your custom RGB palette
+rgb_palette = [
+    (84, 48, 5),
+    (140, 81, 10),
+    (191, 129, 45),
+    (223, 194, 125),
+    (246, 232, 195),
+    (199, 234, 229),
+    (128, 205, 193),
+    (53, 151, 143),
+    (1, 102, 94),
+    (0, 60, 48),
+]
+
+# class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Emissions class boundaries
+# class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Removals class boundaries
+class_breaks =  [-np.inf, -0.1, -0.01, -0.001, 0.0, 0.0001, 0.005, 0.01, np.inf]  # Net flux class boundaries
 
 ### Code starts here
 
@@ -154,7 +205,6 @@ with rasterio.open(reprojected_tif) as src:
     data = src.read(1)
 
 # Define the class breaks and corresponding values
-class_breaks = net_flux_class_breaks  # Class boundaries
 class_values = list(range(1, len(class_breaks)))  # Values to assign to each class
 class_labels = generate_class_labels(class_breaks)
 
@@ -186,9 +236,15 @@ for geom in shapefile.geometry:
             x, y = part.exterior.xy
             ax.fill(x, y, color=land_bkgrnd, zorder=1)
 
-# Create a custom colormap with white background
-colors = plt.cm.RdYlGn(np.linspace(0, 1, len(class_values)))  # Select shades of color for the classes
-cmap = ListedColormap(colors)  # Create a ListedColormap
+# Convert the palette to Matplotlib-compatible format
+mpl_palette = rgb_to_mpl_palette(rgb_palette)
+# Create a custom colormap
+cmap = ListedColormap(mpl_palette)
+
+# # Create a custom colormap with white background
+# # colors = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of color for the classes
+# colors = plt.cm.RdYlGn(np.linspace(0, 1, len(class_values)))  # Select shades of color for the classes
+# cmap = ListedColormap(colors)  # Create a ListedColormap
 
 boundaries = class_values + [len(class_values) + 1]
 norm = BoundaryNorm(boundaries, cmap.N, clip=True)  # Ensure colors align with class boundaries
@@ -198,10 +254,6 @@ masked_data = np.ma.masked_where(classified_data == 0, classified_data)
 
 # Plot the classified raster data on top
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-
-# Create a separate colormap for the legend (exclude the white background)
-legend_colors = colors  # Only include the class colors (exclude white for NoData)
-cmap_legend = ListedColormap(legend_colors)  # Colormap for the legend
 
 img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
 
