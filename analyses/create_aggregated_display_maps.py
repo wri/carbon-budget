@@ -13,6 +13,7 @@ from matplotlib.colorbar import ColorbarBase
 import geopandas as gpd
 import os
 from fiona import path
+from shapely.geometry import Polygon, MultiPolygon
 
 import constants_and_names as cn
 
@@ -44,6 +45,7 @@ if not os.path.exists(reprojected_tif):
             'transform': transform,
             'width': width,
             'height': height,
+            'nodata': 0,  # Set 0 as the NoData value
             'compress': compression  # Match the compression of the original raster
         })
 
@@ -91,39 +93,85 @@ classified_data = np.zeros_like(data)  # Start with all values set to 0 (backgro
 for i in range(len(class_breaks) - 1):
     classified_data[(data > class_breaks[i]) & (data <= class_breaks[i + 1])] = class_values[i]
 
+
 print("Plotting map")
 
 # Create a custom colormap with white background
-blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for three classes
+blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
 colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
 # Plot the map with the entire figure as 12x6 inches
 fig, ax = plt.subplots(figsize=(12, 6))
 
-# Set the background color of the map to black
-ax.set_facecolor('black')  # Black background
+# Set the background color of the map
+ax.set_facecolor('lightblue')  # Set the background color
 
-# Plot the shapefile polygons with a light gray fill
-shapefile.plot(ax=ax, color='lightgray', edgecolor='none', linewidth=0)
+# Plot the shapefile polygons with a light gray fill using Matplotlib directly
+for geom in shapefile.geometry:
+    if isinstance(geom, Polygon):
+        # Single Polygon
+        x, y = geom.exterior.xy
+        ax.fill(x, y, color='lightgray', zorder=1)
+    elif isinstance(geom, MultiPolygon):
+        # MultiPolygon: Iterate through each Polygon in the MultiPolygon
+        for part in geom.geoms:
+            x, y = part.exterior.xy
+            ax.fill(x, y, color='lightgray', zorder=1)
+
+# Mask the 0 values in the classified_data array
+masked_data = np.ma.masked_where(classified_data == 0, classified_data)
+
+# Plot the classified raster data on top
+extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+img = ax.imshow(masked_data, cmap=cmap, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
+shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
 
 
-# # # Plot the classified data
-# # extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-# #
-# # # For the legend specifically
-# # colors_legend = np.vstack((blues))
-# # cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
-# # img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
-# #
-# # # Then prints the actual map
-# # img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
+# print("Plotting map")
+#
+# # Create a custom colormap with white background
+# blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for three classes
+# colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
+# cmap = ListedColormap(colors)  # Create a ListedColormap
+#
+# # Plot the map with the entire figure as 12x6 inches
+# fig, ax = plt.subplots(figsize=(12, 6))
+#
+# # Set the background color of the map to black
+# ax.set_facecolor('lightblue')  # Set background color
+#
+# # Plot the shapefile polygons with a light gray fill
+# shapefile.plot(ax=ax, color='lightgray', edgecolor='none', linewidth=0)
+#
+# # Mask the 0 values in the classified_data array
+# masked_data = np.ma.masked_where(classified_data == 0, classified_data)
+#
+# # Plot the classified data
+# extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+# img = ax.imshow(masked_data, cmap=cmap, extent=extent, origin='upper')
 #
 # # Overlay the shapefile boundaries
 # shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
+#
+
+# # Plot the classified data
+# extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+#
+# # For the legend specifically
+# colors_legend = np.vstack((blues))
+# cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
+# img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
+#
+# # Then prints the actual map
+# img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
+#
+# # Overlay the shapefile boundaries
+# shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
+
+
 
 # print("Adding legend dynamically within map bounds")
 #
