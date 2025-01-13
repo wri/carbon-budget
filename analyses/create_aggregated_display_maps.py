@@ -19,15 +19,23 @@ import constants_and_names as cn
 
 os.chdir(cn.docker_tile_dir)
 
+# Define the Robinson Equal Area projection (ESRI:54030)
+robinson_crs = "ESRI:54030"
+
+shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
+
 # Define file paths
 tif_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
 tif_unproj = f"{tif_base}.tif"
 reprojected_tif = f"{tif_base}_reproj.tif"
-shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
 output_jpeg = "output_image_with_shapefile_low_vals_with_legend.jpeg"
 
-# Define the Robinson Equal Area projection (ESRI:54030)
-robinson_crs = "ESRI:54030"
+land_bkgrnd = (0.8, 0.8, 0.8)
+ocean_color = (0.9, 0.9, 0.9)
+boundary_color = (0.3, 0.3, 0.3)
+panel_dims = (12, 6)
+boundary_width = 0.4
+
 
 print("Checking for reprojected raster")
 
@@ -97,25 +105,25 @@ for i in range(len(class_breaks) - 1):
 print("Plotting map")
 
 # Plot the map with the entire figure as 12x6 inches
-fig, ax = plt.subplots(figsize=(12, 6))
+fig, ax = plt.subplots(figsize=panel_dims)
 
 # Set the background color of the map
-ax.set_facecolor('red')  # Set the background color
+ax.set_facecolor(ocean_color)  # Set the background color
 
 # Plot the shapefile polygons with a light gray fill using Matplotlib directly
 for geom in shapefile.geometry:
     if isinstance(geom, Polygon):
         # Single Polygon
         x, y = geom.exterior.xy
-        ax.fill(x, y, color='lightgray', zorder=1)
+        ax.fill(x, y, color=land_bkgrnd, zorder=1)
     elif isinstance(geom, MultiPolygon):
         # MultiPolygon: Iterate through each Polygon in the MultiPolygon
         for part in geom.geoms:
             x, y = part.exterior.xy
-            ax.fill(x, y, color='lightgray', zorder=1)
+            ax.fill(x, y, color=land_bkgrnd, zorder=1)
 
 # Create a custom colormap with white background
-colors = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
+colors = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of color for the classes
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
 boundaries = class_values + [len(class_values) + 1]
@@ -130,50 +138,11 @@ extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_
 # Create a separate colormap for the legend (exclude the white background)
 legend_colors = colors  # Only include the class colors (exclude white for NoData)
 cmap_legend = ListedColormap(legend_colors)  # Colormap for the legend
-# img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper', zorder=2)
 
 img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
-
-
-# print("Plotting map")
-#
-# # Create a custom colormap with white background
-# blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for three classes
-# colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
-# cmap = ListedColormap(colors)  # Create a ListedColormap
-#
-# # Plot the map with the entire figure as 12x6 inches
-# fig, ax = plt.subplots(figsize=(12, 6))
-#
-# # Set the background color of the map to black
-# ax.set_facecolor('lightblue')  # Set background color
-#
-# # Plot the shapefile polygons with a light gray fill
-# shapefile.plot(ax=ax, color='lightgray', edgecolor='none', linewidth=0)
-#
-# # Mask the 0 values in the classified_data array
-# masked_data = np.ma.masked_where(classified_data == 0, classified_data)
-#
-# # Plot the classified data
-# extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-# img = ax.imshow(masked_data, cmap=cmap, extent=extent, origin='upper')
-#
-# # Overlay the shapefile boundaries
-# shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
-#
-
-# # Plot the classified data
-# extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-#
-#
-# # Then prints the actual map
-# img = ax.imshow(classified_data, cmap=cmap, extent=extent, origin='upper')
-#
-# # Overlay the shapefile boundaries
-# shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4)
+shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)  # `zorder=3` ensures boundaries are on top
 
 
 print("Adding legend dynamically within map bounds")
