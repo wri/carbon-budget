@@ -13,21 +13,26 @@ from matplotlib.colorbar import ColorbarBase
 import geopandas as gpd
 import os
 from fiona import path
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import Polygon, MultiPolygon, box
 
 import constants_and_names as cn
 
 os.chdir(cn.docker_tile_dir)
 
+water_color = (0.678, 0.847, 0.902)
+land_color = (0.827, 0.827, 0.827)
+country_boundaries = (0.412, 0.412, 0.412)
+
+# Define the Robinson Equal Area projection (ESRI:54030)
+robinson_crs = "ESRI:54030"
+
+shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
+
 # Define file paths
 tif_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
 tif_unproj = f"{tif_base}.tif"
 reprojected_tif = f"{tif_base}_reproj.tif"
-shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
 output_jpeg = "output_image_with_shapefile_low_vals_with_legend.jpeg"
-
-# Define the Robinson Equal Area projection (ESRI:54030)
-robinson_crs = "ESRI:54030"
 
 print("Checking for reprojected raster")
 
@@ -96,6 +101,19 @@ for i in range(len(class_breaks) - 1):
 
 print("Plotting map")
 
+# Adjust the map extent (shift the western boundary eastward)
+adjusted_extent = [
+    raster_extent.left - 1000000,  # Adjust left boundary
+    raster_extent.right,
+    raster_extent.bottom,
+    raster_extent.top,
+]
+
+# Clip the shapefile geometries to the adjusted extent
+bounding_box = box(adjusted_extent[0], adjusted_extent[2], adjusted_extent[1], adjusted_extent[3])
+shapefile_clipped = shapefile[shapefile.intersects(bounding_box)]
+
+
 # Create a custom colormap with white background
 blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
 colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
@@ -105,45 +123,43 @@ cmap = ListedColormap(colors)  # Create a ListedColormap
 fig, ax = plt.subplots(figsize=(12, 6))
 
 # Set the background color of the map
-ax.set_facecolor((0.678, 0.847, 0.902))  # Set the background color
+ax.set_facecolor(water_color)  # Set the background color
 
-# Plot the shapefile polygons with a light gray fill using Matplotlib directly
-for geom in shapefile.geometry:
+# Plot the shapefile polygons with a light gray fill
+for geom in shapefile_clipped.geometry:
     if isinstance(geom, Polygon):
-        # Single Polygon
         x, y = geom.exterior.xy
-        ax.fill(x, y, color=(0.827, 0.827, 0.827), zorder=1)
+        ax.fill(x, y, color=land_color, zorder=1)
     elif isinstance(geom, MultiPolygon):
-        # MultiPolygon: Iterate through each Polygon in the MultiPolygon
         for part in geom.geoms:
             x, y = part.exterior.xy
-            ax.fill(x, y, color=(0.827, 0.827, 0.827), zorder=1)
+            ax.fill(x, y, color=land_color, zorder=1)
 
 # Mask the 0 values in the classified_data array
 masked_data = np.ma.masked_where(classified_data == 0, classified_data)
 
 # Plot the classified raster data on top
-extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-img = ax.imshow(masked_data, cmap=cmap, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
+# extent = [raster_extent.left-1000000, raster_extent.right, raster_extent.bottom, raster_extent.top]
+img = ax.imshow(masked_data, cmap=cmap, extent=adjusted_extent, origin='upper', zorder=2)  # `zorder=2` places it on top
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor=(0.412, 0.412, 0.412), linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
+shapefile_clipped.boundary.plot(ax=ax, edgecolor=country_boundaries, linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
 
 
 # For the legend specifically
 colors_legend = np.vstack((blues))
 cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
-img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
+img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=adjusted_extent, origin='upper')
 
 
 print("Adding legend dynamically within map bounds")
 
 # Add a horizontal legend within the map bounds
 # Normalize position to fit dynamically within the map's southern section
-cbar_ax = fig.add_axes([0.4, 0.23, 0.36, 0.02])  # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.4, 0.24, 0.36, 0.02])  # [left, bottom, width, height]
 cb = plt.colorbar(img_legend, cax=cbar_ax, orientation='horizontal', ticks=np.arange(1, len(class_labels) + 1))
 cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
-cb.set_label(r'Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=6)
+cb.set_label(r'Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
 # Set map aesthetics
 # NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
