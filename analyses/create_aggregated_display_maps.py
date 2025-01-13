@@ -115,8 +115,8 @@ for geom in shapefile.geometry:
             ax.fill(x, y, color='lightgray', zorder=1)
 
 # Create a custom colormap with white background
-blues = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
-cmap = ListedColormap(blues)  # Create a ListedColormap
+colors = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
+cmap = ListedColormap(colors)  # Create a ListedColormap
 
 boundaries = class_values + [len(class_values) + 1]
 norm = BoundaryNorm(boundaries, cmap.N, clip=True)  # Ensure colors align with class boundaries
@@ -128,14 +128,14 @@ masked_data = np.ma.masked_where(classified_data == 0, classified_data)
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
 # Create a separate colormap for the legend (exclude the white background)
-legend_colors = blues  # Only include the class colors (exclude white for NoData)
+legend_colors = colors  # Only include the class colors (exclude white for NoData)
 cmap_legend = ListedColormap(legend_colors)  # Colormap for the legend
 # img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper', zorder=2)
 
-img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=3)  # `zorder=2` places it on top
+img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
 
 # Overlay the shapefile boundaries
-shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4, zorder=4)  # `zorder=3` ensures boundaries are on top
+shapefile.boundary.plot(ax=ax, edgecolor='darkgray', linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
 
 
 # print("Plotting map")
