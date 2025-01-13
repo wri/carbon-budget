@@ -67,6 +67,15 @@ def remove_ticks(ax):
     ax.set_xticklabels([])  # Remove x-axis labels
     ax.set_yticklabels([])  # Remove y-axis labels
 
+def create_legend(fig, class_labels):
+    print("Adding legend dynamically within map bounds")
+    # Add a horizontal legend within the map bounds
+    # Normalize position to fit dynamically within the map's southern section
+    cbar_ax = fig.add_axes([0.4, 0.22, 0.36, 0.02])  # [left, bottom, width, height]
+    cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=range(1, len(class_labels) + 1))
+    cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
+    cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
+
 def generate_class_labels(class_breaks):
     """
     Generate class labels for a given list of class breaks.
@@ -78,26 +87,17 @@ def generate_class_labels(class_breaks):
     - list: Class labels as strings.
     """
     class_labels = []
-    for i in range(len(class_breaks) - 1):
+    for i in range(len(class_breaks)):
         if i == 0:
             # First class: "< lowest class break"
-            class_labels.append(f"<{class_breaks[i+1]:.1f}")
-        elif i == len(class_breaks) - 2:
+            class_labels.append(f"<{class_breaks[i+1]:.3f}")
+        elif i == len(class_breaks) - 1:
             # Last class: "> highest class break"
-            class_labels.append(f">{class_breaks[i]:.1f}")
+            class_labels.append(f">{class_breaks[i-1]:.3f}")
         else:
             # Intermediate classes
-            class_labels.append(f"{class_breaks[i]:.1f} - {class_breaks[i+1]:.1f}")
+            class_labels.append(f"{class_breaks[i]:.3f}")
     return class_labels
-
-def create_legend(fig):
-    print("Adding legend dynamically within map bounds")
-    # Add a horizontal legend within the map bounds
-    # Normalize position to fit dynamically within the map's southern section
-    cbar_ax = fig.add_axes([0.4, 0.22, 0.36, 0.02])  # [left, bottom, width, height]
-    cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=range(1, len(class_labels) + 1))
-    cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
-    cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
 os.chdir(cn.docker_tile_dir)
 
@@ -208,7 +208,8 @@ img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper'
 # Overlay the shapefile boundaries
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)  # `zorder=3` ensures boundaries are on top
 
-create_legend(fig)
+
+create_legend(fig, class_labels)
 
 remove_ticks(ax)
 
