@@ -59,6 +59,46 @@ def reproject_raster(reprojected_tif, tif_unproj):
     else:
         print("Reprojected raster already exists. Skipping reprojection.")
 
+def remove_ticks(ax):
+    # Set map aesthetics
+    # NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
+    ax.set_xticks([])  # Remove x-axis ticks
+    ax.set_yticks([])  # Remove y-axis ticks
+    ax.set_xticklabels([])  # Remove x-axis labels
+    ax.set_yticklabels([])  # Remove y-axis labels
+
+def generate_class_labels(class_breaks):
+    """
+    Generate class labels for a given list of class breaks.
+
+    Parameters:
+    - class_breaks (list): List of class breakpoints (e.g., [lower1, lower2, ..., upper]).
+
+    Returns:
+    - list: Class labels as strings.
+    """
+    class_labels = []
+    for i in range(len(class_breaks) - 1):
+        if i == 0:
+            # First class: "< lowest class break"
+            class_labels.append(f"<{class_breaks[i+1]:.1f}")
+        elif i == len(class_breaks) - 2:
+            # Last class: "> highest class break"
+            class_labels.append(f">{class_breaks[i]:.1f}")
+        else:
+            # Intermediate classes
+            class_labels.append(f"{class_breaks[i]:.1f} - {class_breaks[i+1]:.1f}")
+    return class_labels
+
+def create_legend(fig):
+    print("Adding legend dynamically within map bounds")
+    # Add a horizontal legend within the map bounds
+    # Normalize position to fit dynamically within the map's southern section
+    cbar_ax = fig.add_axes([0.4, 0.22, 0.36, 0.02])  # [left, bottom, width, height]
+    cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=range(1, len(class_labels) + 1))
+    cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
+    cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
+
 os.chdir(cn.docker_tile_dir)
 
 # Define the Robinson Equal Area projection (ESRI:54030)
@@ -86,6 +126,10 @@ boundary_color = rgb_to_mpl((150, 150, 150))
 panel_dims = (12, 6)
 boundary_width = 0.4
 
+emis_class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
+removals_class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
+net_flux_class_breaks =  [-np.inf, -0.1, -0.01, -0.001, 0.0, 0.0001, 0.005, 0.01, np.inf]
+
 ### Code starts here
 
 reproject_raster(reprojected_tif, tif_unproj)
@@ -110,9 +154,9 @@ with rasterio.open(reprojected_tif) as src:
     data = src.read(1)
 
 # Define the class breaks and corresponding values
-class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Class boundaries
+class_breaks = net_flux_class_breaks  # Class boundaries
 class_values = list(range(1, len(class_breaks)))  # Values to assign to each class
-class_labels = [0, class_breaks[1], class_breaks[2], class_breaks[3], f'>{class_breaks[3]}']  # Labels for the legend
+class_labels = generate_class_labels(class_breaks)
 
 # Initialize classified data array
 classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
@@ -143,7 +187,7 @@ for geom in shapefile.geometry:
             ax.fill(x, y, color=land_bkgrnd, zorder=1)
 
 # Create a custom colormap with white background
-colors = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of color for the classes
+colors = plt.cm.RdYlGn(np.linspace(0, 1, len(class_values)))  # Select shades of color for the classes
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
 boundaries = class_values + [len(class_values) + 1]
@@ -164,22 +208,9 @@ img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper'
 # Overlay the shapefile boundaries
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)  # `zorder=3` ensures boundaries are on top
 
+create_legend(fig)
 
-print("Adding legend dynamically within map bounds")
-
-# Add a horizontal legend within the map bounds
-# Normalize position to fit dynamically within the map's southern section
-cbar_ax = fig.add_axes([0.4, 0.22, 0.36, 0.02])  # [left, bottom, width, height]
-cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=range(1, len(class_labels) + 1))
-cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
-cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
-
-# Set map aesthetics
-# NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
-ax.set_xticks([])  # Remove x-axis ticks
-ax.set_yticks([])  # Remove y-axis ticks
-ax.set_xticklabels([])  # Remove x-axis labels
-ax.set_yticklabels([])  # Remove y-axis labels
+remove_ticks(ax)
 
 print("Saving map")
 
