@@ -19,7 +19,8 @@ import constants_and_names as cn
 
 os.chdir(cn.docker_tile_dir)
 
-water_color = (0.678, 0.847, 0.902)
+# water_color = (0.678, 0.847, 0.902)
+water_color = (.08, .72, .53)
 land_color = (0.827, 0.827, 0.827)
 country_boundaries = (0.412, 0.412, 0.412)
 
@@ -101,22 +102,10 @@ for i in range(len(class_breaks) - 1):
 
 print("Plotting map")
 
-# Adjust the map extent (shift the western boundary eastward)
-adjusted_extent = [
-    raster_extent.left - 1000000,  # Adjust left boundary
-    raster_extent.right,
-    raster_extent.bottom,
-    raster_extent.top,
-]
-
-# Clip the shapefile geometries to the adjusted extent
-bounding_box = box(adjusted_extent[0], adjusted_extent[2], adjusted_extent[1], adjusted_extent[3])
-shapefile_clipped = shapefile[shapefile.intersects(bounding_box)]
-
-
 # Create a custom colormap with white background
-blues = plt.cm.Blues(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
-colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
+blues = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of blue for the classes
+# colors = np.vstack(([1, 1, 1, 1], blues))  # Add white (RGBA = 1, 1, 1, 1) for the background
+colors = np.vstack(([blues]))  # Add white (RGBA = 1, 1, 1, 1) for the background
 cmap = ListedColormap(colors)  # Create a ListedColormap
 
 # Plot the map with the entire figure as 12x6 inches
@@ -125,12 +114,14 @@ fig, ax = plt.subplots(figsize=(12, 6))
 # Set the background color of the map
 ax.set_facecolor(water_color)  # Set the background color
 
-# Plot the shapefile polygons with a light gray fill
-for geom in shapefile_clipped.geometry:
+# Plot the shapefile polygons with a light gray fill using Matplotlib directly
+for geom in shapefile.geometry:
     if isinstance(geom, Polygon):
+        # Single Polygon
         x, y = geom.exterior.xy
         ax.fill(x, y, color=land_color, zorder=1)
     elif isinstance(geom, MultiPolygon):
+        # MultiPolygon: Iterate through each Polygon in the MultiPolygon
         for part in geom.geoms:
             x, y = part.exterior.xy
             ax.fill(x, y, color=land_color, zorder=1)
@@ -139,17 +130,17 @@ for geom in shapefile_clipped.geometry:
 masked_data = np.ma.masked_where(classified_data == 0, classified_data)
 
 # Plot the classified raster data on top
-# extent = [raster_extent.left-1000000, raster_extent.right, raster_extent.bottom, raster_extent.top]
-img = ax.imshow(masked_data, cmap=cmap, extent=adjusted_extent, origin='upper', zorder=2)  # `zorder=2` places it on top
+extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+img = ax.imshow(masked_data, cmap=cmap, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
 
 # Overlay the shapefile boundaries
-shapefile_clipped.boundary.plot(ax=ax, edgecolor=country_boundaries, linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
+shapefile.boundary.plot(ax=ax, edgecolor=country_boundaries, linewidth=0.4, zorder=3)  # `zorder=3` ensures boundaries are on top
 
 
 # For the legend specifically
 colors_legend = np.vstack((blues))
 cmap_legend = ListedColormap(colors_legend)  # Create a ListedColormap
-img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=adjusted_extent, origin='upper')
+img_legend = ax.imshow(classified_data, cmap=cmap_legend, extent=extent, origin='upper')
 
 
 print("Adding legend dynamically within map bounds")
