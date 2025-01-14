@@ -113,41 +113,38 @@ def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
     cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"], ha='center', fontsize=7)  # Format the labels
     cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
-# def generate_class_labels(class_breaks):
-#     """
-#     Generate class labels for a given list of class breaks.
-#
-#     Parameters:
-#     - class_breaks (list): List of class breakpoints (e.g., [lower1, lower2, ..., upper]).
-#
-#     Returns:
-#     - list: Class labels as strings.
-#     """
-#     class_labels = []
-#     for i in range(len(class_breaks)):
-#         if i == 0:
-#             # First class: "< lowest class break"
-#             class_labels.append(f"<{class_breaks[i+1]:.2f}")
-#         elif i == len(class_breaks) - 1:
-#             # Last class: "> highest class break"
-#             class_labels.append(f">{class_breaks[i-1]:.2f}")
-#         else:
-#             # Intermediate classes
-#             class_labels.append(f"{class_breaks[i]:.4f}")
-#     return class_labels
-#
-#
-# def rgb_to_mpl_palette(rgb_palette):
-#     """
-#     Convert a list of RGB colors from 0-255 range to 0-1 range for Matplotlib.
-#
-#     Parameters:
-#     - rgb_palette (list of tuples): List of RGB tuples (R, G, B) in 0-255 range.
-#
-#     Returns:
-#     - list: List of RGB tuples (R, G, B) in 0-1 range.
-#     """
-#     return [tuple(val / 255 for val in rgb) for rgb in rgb_palette]
+def rgb_to_mpl_palette(rgb_palette):
+    """
+    Convert a list of RGB colors from 0-255 range to 0-1 range for Matplotlib.
+
+    Parameters:
+    - rgb_palette (list of tuples): List of RGB tuples (R, G, B) in 0-255 range.
+
+    Returns:
+    - list: List of RGB tuples (R, G, B) in 0-1 range.
+    """
+    return [tuple(val / 255 for val in rgb) for rgb in rgb_palette]
+
+def generate_percentile_breaks(data, percentiles):
+    """
+    Generate breakpoints based on given percentiles for the data.
+
+    Parameters:
+    - data: 2D numpy array of data values.
+    - percentiles: List of percentiles (e.g., [5, 25, 50, 75, 95]).
+
+    Returns:
+    - List of breakpoint values corresponding to the specified percentiles.
+    """
+    # Flatten the data and filter out NoData values (e.g., 0)
+    flattened_data = data.flatten()
+    valid_data = flattened_data[flattened_data != 0]  # Remove 0 values
+
+    if len(valid_data) == 0:
+        raise ValueError("Data contains only NoData values (e.g., 0). Cannot calculate percentiles.")
+
+    # Calculate the percentiles on valid data
+    return np.percentile(valid_data, percentiles)
 
 
 # Define file paths
@@ -180,28 +177,6 @@ boundary_width = 0.2
 
 os.chdir(cn.docker_tile_dir)
 
-def generate_percentile_breaks(data, percentiles):
-    """
-    Generate breakpoints based on given percentiles for the data.
-
-    Parameters:
-    - data: 2D numpy array of data values.
-    - percentiles: List of percentiles (e.g., [5, 25, 50, 75, 95]).
-
-    Returns:
-    - List of breakpoint values corresponding to the specified percentiles.
-    """
-    # Flatten the data and filter out NoData values (e.g., 0)
-    flattened_data = data.flatten()
-    valid_data = flattened_data[flattened_data != 0]  # Remove 0 values
-
-    if len(valid_data) == 0:
-        raise ValueError("Data contains only NoData values (e.g., 0). Cannot calculate percentiles.")
-
-    # Calculate the percentiles on valid data
-    return np.percentile(valid_data, percentiles)
-
-
 reproject_raster(reprojected_tif, tif_unproj)
 
 # Check and reproject the shapefile
@@ -226,7 +201,14 @@ with rasterio.open(reprojected_tif) as src:
     raster_extent = src.bounds
 
 # Define desired percentiles for colors
-percentiles = [5, 25, 50, 75, 85, 95]  # Specify where colors transition in the data
+percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 95]  # Specify where colors transition in the data
+colors = [(84,48,5),(140,81,10),(191,129,45),(223,194,125),(246,232,195),(199,234,229),
+          (128,205,193),(53,151,143),(1,102,94),(0,60,48)]
+colors_matplotlib = rgb_to_mpl_palette(colors)
+print(colors_matplotlib)
+custom_cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
+
+
 
 print("Calculating percentile breaks")
 # Calculate the breakpoints based on percentiles
@@ -252,7 +234,6 @@ print("Normalizing")
 # Normalize the data for the colormap
 norm = TwoSlopeNorm(vmin=vmin, vcenter=vcenter, vmax=vmax)
 # norm = TwoSlopeNorm(vmin=data_min, vcenter=0, vmax=data_max)
-# Read and reproject the shapefile
 
 
 print("Plotting map")
@@ -277,7 +258,8 @@ for geom in shapefile.geometry:
 # Plot the classified raster data on top
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
-img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)
+# img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)
+img = ax.imshow(masked_data, cmap=custom_cmap, norm=norm, extent=extent, origin='upper', zorder=2)
 
 # Overlay shapefile boundaries (e.g., country borders)
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)
