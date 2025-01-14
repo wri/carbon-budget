@@ -161,7 +161,7 @@ land_bkgrnd = rgb_to_mpl((230, 230, 230))
 ocean_color = rgb_to_mpl((250, 250, 250))
 boundary_color = rgb_to_mpl((150, 150, 150))
 panel_dims = (12, 6)
-boundary_width = 0.4
+boundary_width = 0.2
 
 # Your custom RGB palette
 rgb_palette = [
@@ -179,7 +179,7 @@ rgb_palette = [
 
 # class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Emissions class boundaries
 # class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Removals class boundaries
-class_breaks =  [-np.inf, -0.1, -0.01, -0.001, 0.0, 0.0001, 0.005, 0.01, np.inf]  # Net flux class boundaries
+class_breaks =  [-np.inf, -0.05, -0.005, -0.0005, -0.00001, 0.0, 0.0001, 0.005, 0.01, np.inf]  # Net flux class boundaries
 
 ### Code starts here
 
@@ -250,7 +250,8 @@ boundaries = class_values + [len(class_values) + 1]
 norm = BoundaryNorm(boundaries, cmap.N, clip=True)  # Ensure colors align with class boundaries
 
 # Mask the 0 values in the classified_data array
-masked_data = np.ma.masked_where(classified_data == 0, classified_data)
+masked_data = np.ma.masked_where(classified_data == 5, classified_data)
+print(masked_data)
 
 # Plot the classified raster data on top
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
@@ -268,7 +269,7 @@ remove_ticks(ax)
 print("Saving map")
 
 # Save the output map
-plt.savefig(net_jpeg, dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig(net_jpeg, dpi=600, bbox_inches='tight', pad_inches=0)
 plt.close()
 
 print("Map saved successfully!")
