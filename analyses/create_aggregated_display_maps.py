@@ -100,29 +100,19 @@ def remove_ticks(ax):
     ax.set_xticklabels([])  # Remove x-axis labels
     ax.set_yticklabels([])  # Remove y-axis labels
 
+def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
 
-def create_legend(fig, img, masked_data, vmin, vcenter, vmax):
+    print("Creating legend")
+
     # Add a colorbar (legend)
     cbar_ax = fig.add_axes([0.44, 0.22, 0.25, 0.02])  # [left, bottom, width, height]
     cb = plt.colorbar(img, cax=cbar_ax, orientation="horizontal")
-    print("Creating legend")
-    # Calculate the minimum and maximum of the raster data (excluding NoData values)
-    data_min = masked_data.min()  # Minimum of the valid data
-    data_max = masked_data.max()  # Maximum of the valid data
+
     # Set custom ticks and labels for the colorbar
     cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
     cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"], ha='center', fontsize=7)  # Format the labels
     cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
-# def create_legend(fig, class_labels):
-#     print("Adding legend dynamically within map bounds")
-#     # Add a horizontal legend within the map bounds
-#     # Normalize position to fit dynamically within the map's southern section
-#     cbar_ax = fig.add_axes([0.4, 0.22, 0.36, 0.02])  # [left, bottom, width, height]
-#     cb = plt.colorbar(img, cax=cbar_ax, orientation='horizontal', ticks=range(1, len(class_labels) + 1))
-#     cb.ax.set_xticklabels(class_labels, ha='center', fontsize=7)  # Center-align the labels
-#     cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
-#
 # def generate_class_labels(class_breaks):
 #     """
 #     Generate class labels for a given list of class breaks.
@@ -158,8 +148,7 @@ def create_legend(fig, img, masked_data, vmin, vcenter, vmax):
 #     - list: List of RGB tuples (R, G, B) in 0-1 range.
 #     """
 #     return [tuple(val / 255 for val in rgb) for rgb in rgb_palette]
-#
-# os.chdir(cn.docker_tile_dir)
+
 
 # Define file paths
 original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
@@ -182,7 +171,7 @@ reprojected_tif = f"{net_base}_reproj.tif"
 # three_panel_jpeg = "three_panel_4x4km__v1.3.2.jpeg"
 #
 # land_bkgrnd = rgb_to_mpl((245, 245, 245))
-land_bkgrnd = rgb_to_mpl((50, 50, 50))
+land_bkgrnd = rgb_to_mpl((245, 245, 220))
 ocean_color = rgb_to_mpl((225, 225, 225))
 # ocean_color = rgb_to_mpl((50, 50, 50))
 boundary_color = rgb_to_mpl((150, 150, 150))
@@ -227,7 +216,9 @@ print("Shapefile is ready for use.")
 
 
 # Example color palette (Divergent: Red -> Yellow -> Green)
-cmap = plt.cm.PRGn
+# cmap = plt.cm.PRGn
+cmap = plt.cm.PRGn_r
+# cmap = plt.cm.coolwarm
 
 # Read raster data
 with rasterio.open(reprojected_tif) as src:
@@ -249,11 +240,22 @@ vmin, vcenter, vmax = breaks[0], breaks[len(breaks) // 2], breaks[-1]  # Use the
 if not (vmin < vcenter < vmax):
     raise ValueError(f"vmin, vcenter, and vmax must be in ascending order. Got vmin={vmin}, vcenter={vcenter}, vmax={vmax}")
 
+print("Masking raster")
+# Mask invalid values (e.g., NoData)
+# masked_data = np.ma.masked_invalid(data)
+masked_data = np.ma.masked_where(data == 0, data)
+
+data_min = masked_data.min()  # Minimum of the valid data
+data_max = masked_data.max()  # Maximum of the valid data
+
 print("Normalizing")
 # Normalize the data for the colormap
 norm = TwoSlopeNorm(vmin=vmin, vcenter=vcenter, vmax=vmax)
+# norm = TwoSlopeNorm(vmin=data_min, vcenter=0, vmax=data_max)
 # Read and reproject the shapefile
 
+
+print("Plotting map")
 # Plot the map
 fig, ax = plt.subplots(figsize=(12, 6))
 
@@ -272,11 +274,6 @@ for geom in shapefile.geometry:
             x, y = part.exterior.xy
             ax.fill(x, y, color=land_bkgrnd, zorder=1)
 
-print("Masking raster")
-# Mask invalid values (e.g., NoData)
-# masked_data = np.ma.masked_invalid(data)
-masked_data = np.ma.masked_where(data == 0, data)
-
 # Plot the classified raster data on top
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
@@ -285,15 +282,11 @@ img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper'
 # Overlay shapefile boundaries (e.g., country borders)
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)
 
-
-
-create_legend(fig, img, masked_data, vmin, vcenter, vmax)
+create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax)
 
 # Remove axis ticks and labels
 remove_ticks(ax)
 
 print("Saving map")
-
-# Save the output map
 plt.savefig("net_flux_4x4km.png", dpi=300, bbox_inches="tight", pad_inches=0)
 plt.close()
