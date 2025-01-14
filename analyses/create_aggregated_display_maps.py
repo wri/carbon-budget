@@ -108,15 +108,11 @@ def remove_ticks(ax):
     ax.set_xticklabels([])  # Remove x-axis labels
     ax.set_yticklabels([])  # Remove y-axis labels
 
-def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
+def create_legend(fig, img, vmin, vcenter, vmax, title_text, tick_labels):
     """
     Create a vertical colorbar legend with a left-aligned, multi-row title above it.
     """
     print("Creating legend")
-
-    # Round data_min up to the nearest 0.01 and data_max down to the nearest 0.01
-    rounded_min = math.ceil(data_min * 100) / 100  # Round up
-    rounded_max = math.floor(data_max * 100) / 100  # Round down
 
     # Add a vertical colorbar (legend) in the bottom-left of the map
     cbar_ax = fig.add_axes([0.14, 0.18, 0.02, 0.16])  # [left, bottom, width, height]
@@ -124,13 +120,9 @@ def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
 
     # Set custom ticks and labels for the colorbar
     cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
-    cb.set_ticklabels([f"> {rounded_min:.3f}  (sink)",
-                       "0              (neutral)",
-                       f"< {rounded_max:.2f}     (source)"],
-                      fontsize=9)  # Format the labels
+    cb.set_ticklabels(tick_labels, fontsize=9)  # Format the labels
 
     # Add a left-aligned, multi-row title above the colorbar
-    title_text = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
     cbar_ax.text(
         0, 1.1,  # Adjust the x (horizontal) and y (vertical) coordinates for the title position
         title_text,
@@ -287,7 +279,14 @@ def map_net_flux():
     plot_country_boundaries(ax, shapefile)
 
     # Creates the legend
-    create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax)
+    title_text = f"Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-20{cn.loss_years})"
+    # Round data_min up to the nearest 0.01 and data_max down to the nearest 0.01
+    rounded_min = math.ceil(data_min * 100) / 100  # Round up
+    rounded_max = math.floor(data_max * 100) / 100  # Round down
+    tick_labels = [f"< {rounded_min:.3f}  (sink)",
+                       "0              (neutral)",
+                       f"> {rounded_max:.2f}     (source)"]
+    create_legend(fig, img, vmin, vcenter, vmax, title_text, tick_labels)
 
     # Removes axis ticks and labels
     remove_ticks(ax)
