@@ -167,8 +167,9 @@ reprojected_tif = f"{net_base}_reproj.tif"
 #
 # three_panel_jpeg = "three_panel_4x4km__v1.3.2.jpeg"
 #
-land_bkgrnd = rgb_to_mpl((230, 230, 230))
-ocean_color = rgb_to_mpl((250, 250, 250))
+# land_bkgrnd = rgb_to_mpl((245, 245, 245))
+land_bkgrnd = rgb_to_mpl((50, 50, 50))
+ocean_color = rgb_to_mpl((225, 225, 225))
 # ocean_color = rgb_to_mpl((50, 50, 50))
 boundary_color = rgb_to_mpl((150, 150, 150))
 panel_dims = (12, 6)
@@ -220,7 +221,7 @@ with rasterio.open(reprojected_tif) as src:
     raster_extent = src.bounds
 
 # Define desired percentiles for colors
-percentiles = [5, 25, 50, 75, 95]  # Specify where colors transition in the data
+percentiles = [5, 25, 50, 75, 85, 95]  # Specify where colors transition in the data
 
 print("Calculating percentile breaks")
 # Calculate the breakpoints based on percentiles
@@ -271,8 +272,19 @@ img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper'
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)
 
 # Add a colorbar (legend)
-cbar_ax = fig.add_axes([0.4, 0.26, 0.36, 0.02])  # Adjust position as needed
+cbar_ax = fig.add_axes([0.44, 0.22, 0.25, 0.02])  # [left, bottom, width, height]
 cb = plt.colorbar(img, cax=cbar_ax, orientation="horizontal")
+
+print("Creating legend")
+
+# Calculate the minimum and maximum of the raster data (excluding NoData values)
+data_min = masked_data.min()  # Minimum of the valid data
+data_max = masked_data.max()  # Maximum of the valid data
+
+# Set custom ticks and labels for the colorbar
+cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
+cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"])  # Format the labels
+
 cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
 # Remove axis ticks and labels
@@ -281,5 +293,5 @@ remove_ticks(ax)
 print("Saving map")
 
 # Save the output map
-plt.savefig("output_map.png", dpi=300, bbox_inches="tight", pad_inches=0)
+plt.savefig("net_flux_4x4km.png", dpi=300, bbox_inches="tight", pad_inches=0)
 plt.close()
