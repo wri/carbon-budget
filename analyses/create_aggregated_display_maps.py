@@ -3,13 +3,15 @@
 #
 # With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 # """
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
+
+import os
 import rasterio
 import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+
 from shapely.geometry import Polygon, MultiPolygon
-import os
+from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
 from fiona import path
 from scipy.stats import percentileofscore
 
@@ -203,14 +205,11 @@ shapefile = check_and_reproject_shapefile(
 # Use the reprojected shapefile in your plotting code
 print("Shapefile is ready for use.")
 
-
-# Example color palette (Divergent: Red -> Yellow -> Green)
-
-
 # Read raster data
 with rasterio.open(reprojected_tif) as src:
     data = src.read(1)  # Read the first band
     raster_extent = src.bounds
+
 
 percentile_0 = percentile_for_0(data)
 
@@ -218,22 +217,20 @@ percentile_0 = percentile_for_0(data)
 # Define desired percentiles for colors
 # percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99.5]  # Specify where colors transition in the data
 percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
-# percentiles = [1, 3, 5, 7, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
 colors = [(84,48,5),(140,81,10),(191,129,45),(223,194,125),(246,232,195),(199,234,229),
           (128,205,193),(53,151,143),(1,102,94),(0,60,48)]
 colors_matplotlib = rgb_to_mpl_palette(colors)
 
-# cmap = plt.cm.PRGn
-# custom_cmap = plt.cm.PRGn_r
-# cmap = plt.cm.coolwarm
+# 
+# cmap = plt.cm.PRGn_r
 
-# custom_cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
-# custom_cmap = custom_cmap.reversed()
+# cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
+# cmap = cmap.reversed()
 
 # Normalize percentiles to a 0-1 scale
 percentiles_normalized = np.linspace(0, 1, len(percentiles))
-custom_cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
-custom_cmap = custom_cmap.reversed()
+cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
+cmap = cmap.reversed()
 
 
 
@@ -286,7 +283,7 @@ for geom in shapefile.geometry:
 extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
 # img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)
-img = ax.imshow(masked_data, cmap=custom_cmap, norm=norm, extent=extent, origin='upper', zorder=2)
+img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)
 
 # Overlay shapefile boundaries (e.g., country borders)
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)
