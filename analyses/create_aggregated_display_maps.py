@@ -3,20 +3,17 @@
 #
 # With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 # """
-#
-# import rasterio
-# import numpy as np
-# import matplotlib.pyplot as plt
-# from rasterio.warp import calculate_default_transform, reproject, Resampling
-# from matplotlib.colors import Normalize, ListedColormap, BoundaryNorm
-# from matplotlib.colorbar import ColorbarBase
-# import geopandas as gpd
-# import os
-# from fiona import path
-# from shapely.geometry import Polygon, MultiPolygon
-#
-# import constants_and_names as cn
-#
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
+import rasterio
+import geopandas as gpd
+from shapely.geometry import Polygon, MultiPolygon
+import os
+from fiona import path
+
+import constants_and_names as cn
+
 def rgb_to_mpl(rgb):
     """
     Convert RGB from 0-255 range to matplotlib-compatible 0-1 range.
@@ -59,14 +56,50 @@ def reproject_raster(reprojected_tif, tif_unproj):
     else:
         print("Reprojected raster already exists. Skipping reprojection.")
 
-# def remove_ticks(ax):
-#     # Set map aesthetics
-#     # NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
-#     ax.set_xticks([])  # Remove x-axis ticks
-#     ax.set_yticks([])  # Remove y-axis ticks
-#     ax.set_xticklabels([])  # Remove x-axis labels
-#     ax.set_yticklabels([])  # Remove y-axis labels
-#
+def check_and_reproject_shapefile(shapefile_path, target_crs, reprojected_shapefile_path):
+    """
+    Check if the shapefile is already projected to the target CRS.
+    If not, reproject the shapefile, save it, and return the reprojected shapefile.
+
+    Parameters:
+    - shapefile_path (str): Path to the input shapefile.
+    - target_crs (str): The target CRS in PROJ format (e.g., "EPSG:4326" or "ESRI:54030").
+    - reprojected_shapefile_path (str): Path to save the reprojected shapefile.
+
+    Returns:
+    - geopandas.GeoDataFrame: The original or reprojected shapefile.
+    """
+    # Check if the reprojected shapefile already exists
+    if os.path.exists(reprojected_shapefile_path):
+        print(f"Reprojected shapefile already exists at {reprojected_shapefile_path}.")
+        return gpd.read_file(reprojected_shapefile_path)
+
+    # Load the shapefile
+    shapefile = gpd.read_file(shapefile_path)
+
+    # Check if the shapefile is already in the target CRS
+    if shapefile.crs == target_crs:
+        print(f"Shapefile is already projected to {target_crs}.")
+        return shapefile
+
+    # Reproject the shapefile
+    print(f"Reprojecting shapefile from {shapefile.crs} to {target_crs}.")
+    shapefile = shapefile.to_crs(target_crs)
+
+    # Save the reprojected shapefile for future use
+    shapefile.to_file(reprojected_shapefile_path)
+    print(f"Reprojected shapefile saved to {reprojected_shapefile_path}.")
+
+    return shapefile
+
+def remove_ticks(ax):
+    # Set map aesthetics
+    # NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
+    ax.set_xticks([])  # Remove x-axis ticks
+    ax.set_yticks([])  # Remove y-axis ticks
+    ax.set_xticklabels([])  # Remove x-axis labels
+    ax.set_yticklabels([])  # Remove y-axis labels
+
 # def create_legend(fig, class_labels):
 #     print("Adding legend dynamically within map bounds")
 #     # Add a horizontal legend within the map bounds
@@ -113,37 +146,14 @@ def reproject_raster(reprojected_tif, tif_unproj):
 #     return [tuple(val / 255 for val in rgb) for rgb in rgb_palette]
 #
 # os.chdir(cn.docker_tile_dir)
-#
-# Define the Robinson Equal Area projection (ESRI:54030)
-robinson_crs = "ESRI:54030"
-#
-# shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
-#
-# data_config = {
-#     "emissions": {
-#         "base_name": "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403",
-#         "tif_unproj": "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif",
-#         "reprojected_tif": "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403_reproj.tif",
-#         "jpeg": "gross_emis_4x4km__v1.3.2.jpeg",
-#         "class_breaks": [0.000000001, 0.0001, 0.005, 0.01, np.inf]
-#     },
-#     "removals": {
-#         "base_name": "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402",
-#         "tif_unproj": "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402.tif",
-#         "reprojected_tif": "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402_reproj.tif",
-#         "jpeg": "gross_removals_4x4km__v1.3.2.jpeg",
-#         "class_breaks": [0.000000001, 0.0001, 0.005, 0.01, np.inf]
-#     },
-#     "net_flux": {
-#         "base_name": "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403",
-#         "tif_unproj": "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403.tif",
-#         "reprojected_tif": "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403_reproj.tif",
-#         "jpeg": "net_flux_4x4km__v1.3.2.jpeg",
-#         "class_breaks": [-np.inf, -0.1, -0.01, -0.001, 0.0, 0.0001, 0.005, 0.01, np.inf]
-#     }
-# }
 
 # Define file paths
+original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
+reprojected_shapefile_path = "world-administrative-boundaries_simple__20250102_reproj.shp"
+
+# Define the target CRS (Robinson projection in this example)
+target_crs = "ESRI:54030"
+
 emis_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
 removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402"
 net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
@@ -163,129 +173,6 @@ ocean_color = rgb_to_mpl((250, 250, 250))
 boundary_color = rgb_to_mpl((150, 150, 150))
 panel_dims = (12, 6)
 boundary_width = 0.2
-#
-# # Your custom RGB palette
-# rgb_palette = [
-#     (84, 48, 5),
-#     (140, 81, 10),
-#     (191, 129, 45),
-#     (223, 194, 125),
-#     (246, 232, 195),
-#     (199, 234, 229),
-#     (128, 205, 193),
-#     (53, 151, 143),
-#     (1, 102, 94),
-#     (0, 60, 48),
-# ]
-#
-# # class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Emissions class boundaries
-# # class_breaks = [0.000000001, 0.0001, 0.005, 0.01, np.inf]  # Removals class boundaries
-# class_breaks =  [-np.inf, -0.05, -0.005, -0.0005, -0.00001, 0.0, 0.0001, 0.005, 0.01, np.inf]  # Net flux class boundaries
-#
-# ### Code starts here
-#
-# reproject_raster(reprojected_tif, tif_unproj)
-#
-# # Read the reprojected raster
-# with rasterio.open(reprojected_tif) as src:
-#     raster_extent = src.bounds
-#     data = src.read(1)
-#
-# print("Opening and reprojecting shapefile")
-#
-# # Read the shapefile and reproject it to Robinson projection
-# shapefile = gpd.read_file(shapefile_path)
-# if shapefile.crs != robinson_crs:
-#     print(f"Reprojecting shapefile from {shapefile.crs} to {robinson_crs}")
-#     shapefile = shapefile.to_crs(robinson_crs)
-#
-# print("Classifying data into custom breaks")
-#
-# # Read raster data
-# with rasterio.open(reprojected_tif) as src:
-#     data = src.read(1)
-#
-# # Define the class breaks and corresponding values
-# class_values = list(range(1, len(class_breaks)))  # Values to assign to each class
-# class_labels = generate_class_labels(class_breaks)
-#
-# # Initialize classified data array
-# classified_data = np.zeros_like(data)  # Start with all values set to 0 (background)
-#
-# # Classify the data using a loop
-# for i in range(len(class_breaks) - 1):
-#     classified_data[(data > class_breaks[i]) & (data <= class_breaks[i + 1])] = class_values[i]
-#
-#
-# print("Plotting map")
-#
-# # Plot the map with the entire figure as 12x6 inches
-# fig, ax = plt.subplots(figsize=panel_dims)
-#
-# # Set the background color of the map
-# ax.set_facecolor(ocean_color)  # Set the background color
-#
-# # Plot the shapefile polygons with a light gray fill using Matplotlib directly
-# for geom in shapefile.geometry:
-#     if isinstance(geom, Polygon):
-#         # Single Polygon
-#         x, y = geom.exterior.xy
-#         ax.fill(x, y, color=land_bkgrnd, zorder=1)
-#     elif isinstance(geom, MultiPolygon):
-#         # MultiPolygon: Iterate through each Polygon in the MultiPolygon
-#         for part in geom.geoms:
-#             x, y = part.exterior.xy
-#             ax.fill(x, y, color=land_bkgrnd, zorder=1)
-#
-# # Convert the palette to Matplotlib-compatible format
-# mpl_palette = rgb_to_mpl_palette(rgb_palette)
-# # Create a custom colormap
-# cmap = ListedColormap(mpl_palette)
-#
-# # # Create a custom colormap with white background
-# # # colors = plt.cm.Greens(np.linspace(0.3, 1, len(class_values)))  # Select shades of color for the classes
-# # colors = plt.cm.RdYlGn(np.linspace(0, 1, len(class_values)))  # Select shades of color for the classes
-# # cmap = ListedColormap(colors)  # Create a ListedColormap
-#
-# boundaries = class_values + [len(class_values) + 1]
-# norm = BoundaryNorm(boundaries, cmap.N, clip=True)  # Ensure colors align with class boundaries
-#
-# # Mask the 0 values in the classified_data array
-# masked_data = np.ma.masked_where(classified_data == 5, classified_data)
-# print(masked_data)
-#
-# # Plot the classified raster data on top
-# extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
-#
-# img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)  # `zorder=2` places it on top
-#
-# # Overlay the shapefile boundaries
-# shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)  # `zorder=3` ensures boundaries are on top
-#
-#
-# create_legend(fig, class_labels)
-#
-# remove_ticks(ax)
-#
-# print("Saving map")
-#
-# # Save the output map
-# plt.savefig(net_jpeg, dpi=600, bbox_inches='tight', pad_inches=0)
-# plt.close()
-#
-# print("Map saved successfully!")
-#
-
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
-import rasterio
-import geopandas as gpd
-from shapely.geometry import Polygon, MultiPolygon
-import os
-from fiona import path
-
-import constants_and_names as cn
 
 os.chdir(cn.docker_tile_dir)
 
@@ -312,6 +199,16 @@ def generate_percentile_breaks(data, percentiles):
 
 
 reproject_raster(reprojected_tif, tif_unproj)
+
+# Check and reproject the shapefile
+shapefile = check_and_reproject_shapefile(
+    shapefile_path=original_shapefile_path,
+    target_crs=target_crs,
+    reprojected_shapefile_path=reprojected_shapefile_path
+)
+
+# Use the reprojected shapefile in your plotting code
+print("Shapefile is ready for use.")
 
 
 # Example color palette (Divergent: Red -> Yellow -> Green)
@@ -342,13 +239,6 @@ print("Normalizing")
 norm = TwoSlopeNorm(vmin=vmin, vcenter=vcenter, vmax=vmax)
 # Read and reproject the shapefile
 
-# Read the shapefile and reproject it to Robinson projection
-shapefile = gpd.read_file("world-administrative-boundaries_simple__20250102.shp")
-if shapefile.crs != robinson_crs:
-    print(f"Reprojecting shapefile from {shapefile.crs} to {robinson_crs}")
-    shapefile = shapefile.to_crs(robinson_crs)
-
-
 # Plot the map
 fig, ax = plt.subplots(figsize=(12, 6))
 
@@ -377,27 +267,18 @@ extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_
 
 img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)
 
-# # Plot raster data with the continuous colormap
-# img = ax.imshow(masked_data, cmap=cmap, norm=norm,
-#                 extent=[raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top], zorder=3)
-
-# # Overlay the shapefile boundaries
-# shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=4)  # `zorder=3` ensures boundaries are on top
-
 # Overlay shapefile boundaries (e.g., country borders)
-shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=0.2, zorder=3)
-
+shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)
 
 # Add a colorbar (legend)
 cbar_ax = fig.add_axes([0.4, 0.26, 0.36, 0.02])  # Adjust position as needed
 cb = plt.colorbar(img, cax=cbar_ax, orientation="horizontal")
-cb.set_label("Variable Name (units)", fontsize=8, labelpad=4)  # Customize label
+cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
 # Remove axis ticks and labels
-ax.set_xticks([])
-ax.set_yticks([])
-ax.set_xticklabels([])
-ax.set_yticklabels([])
+remove_ticks(ax)
+
+print("Saving map")
 
 # Save the output map
 plt.savefig("output_map.png", dpi=300, bbox_inches="tight", pad_inches=0)
