@@ -15,6 +15,7 @@ from shapely.geometry import Polygon, MultiPolygon
 from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
 from fiona import path
 from scipy.stats import percentileofscore
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 
 import constants_and_names as cn
 
@@ -34,12 +35,12 @@ def reproject_raster(reprojected_tif, tif_unproj):
         print("Reprojected raster does not exist. Reprojecting now...")
         with rasterio.open(tif_unproj) as src:
             transform, width, height = calculate_default_transform(
-                src.crs, robinson_crs, src.width, src.height, *src.bounds
+                src.crs, target_crs, src.width, src.height, *src.bounds
             )
             kwargs = src.meta.copy()
             compression = src.profile.get('compress', 'none')  # Get compression from the original raster
             kwargs.update({
-                'crs': robinson_crs,
+                'crs': target_crs,
                 'transform': transform,
                 'width': width,
                 'height': height,
@@ -54,7 +55,7 @@ def reproject_raster(reprojected_tif, tif_unproj):
                     src_transform=src.transform,
                     src_crs=src.crs,
                     dst_transform=transform,
-                    dst_crs=robinson_crs,
+                    dst_crs=target_crs,
                     resampling=Resampling.nearest
                 )
     else:
@@ -206,6 +207,7 @@ os.chdir(cn.docker_tile_dir)
 # Define desired percentiles for colors
 # net_flux_percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
 net_flux_percentiles = [5, 25, 50, 75, 89, 91, 92, 93, 94, 99]  # Specify where colors transition in the data
+gross_removals_percentiles = [5, 25, 50, 75, 99]
 # net_flux_percentiles = [5, 25, 50, 75, 87.6, 95, 96, 97, 98, 99]  # Specify where colors transition in the data
 # net_flux_percentiles = [1, 2, 3, 4, 5, 6, 7, 8, 98, 99]  # Specify where colors transition in the data
 net_flux_colors = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),
@@ -215,10 +217,10 @@ def map_net_flux():
 
     print("Mapping net flux")
 
-    net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
-    tif_unproj = f"{net_base}.tif"
-    reprojected_tif = f"{net_base}_reproj.tif"
-    net_flux_jpeg = "model_output_4km_aggregation_tcd30_model_v1.3.2_20250114__net_flux.jpeg"
+    base_tif = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
+    tif_unproj = f"{base_tif}.tif"
+    reprojected_tif = f"{base_tif}_reproj.tif"
+    out_jpeg = "model_output_4km_aggregation_tcd30_model_v1.3.2_20250114__net_flux.jpeg"
 
     # Reprojects raster, if needed
     reproject_raster(reprojected_tif, tif_unproj)
@@ -284,18 +286,104 @@ def map_net_flux():
     rounded_min = math.ceil(data_min * 100) / 100  # Round up
     rounded_max = math.floor(data_max * 100) / 100  # Round down
     tick_labels = [f"< {rounded_min:.3f}  (sink)",
-                       "0              (neutral)",
-                       f"> {rounded_max:.2f}     (source)"]
+                    "0              (neutral)",
+                   f"> {rounded_max:.2f}     (source)"]
     create_legend(fig, img, vmin, vcenter, vmax, title_text, tick_labels)
 
     # Removes axis ticks and labels
     remove_ticks(ax)
 
     print("Saving map")
-    plt.savefig(net_flux_jpeg, dpi=300, bbox_inches="tight", pad_inches=0)
+    plt.savefig(out_jpeg, dpi=300, bbox_inches="tight", pad_inches=0)
     plt.close()
 
+def map_gross_removals():
+
+    print("Mapping gross_removals")
+
+    base_tif = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402"
+    tif_unproj = f"{base_tif}.tif"
+    reprojected_tif = f"{base_tif}_reproj.tif"
+    out_jpeg = "model_output_4km_aggregation_tcd30_model_v1.3.2_20250114__gross_removals.jpeg"
+
+    # Reprojects raster, if needed
+    reproject_raster(reprojected_tif, tif_unproj)
+
+    # Reprojects shapefile, if needed
+    shapefile = check_and_reproject_shapefile(
+        shapefile_path=original_shapefile_path,
+        target_crs=target_crs,
+        reprojected_shapefile_path=reprojected_shapefile_path
+    )
+
+    # Reads raster data
+    with rasterio.open(reprojected_tif) as src:
+        data = src.read(1)  # Read the first band
+        raster_extent = src.bounds
+
+    percentile_0 = percentile_for_0(data)
+
+    # Matches percentile breaks with colors
+    # Normalizes percentiles to a 0-1 scale
+    print("Calculating percentiles and breaks")
+
+    gross_colors = net_flux_colors[0:5]
+    colors_matplotlib = rgb_to_mpl_palette(gross_colors)
+
+    percentiles_normalized = np.linspace(0, 1, len(gross_removals_percentiles))
+    cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
+
+
+
+    # Calculate breaks based on the gross_removals_percentiles
+    breaks = np.percentile(data[data != 0], gross_removals_percentiles)  # Ignore NoData values
+    print("Breaks:", breaks)
+
+    vmin, vmax = breaks[0], breaks[-1]  # Continuous range for the colormap
+    print(f"vmin: {vmin}, vmax: {vmax}")
+
+    print("Masking raster to non-0 values")
+    masked_data = np.ma.masked_where(data == 0, data)
+    data_min = masked_data.min()  # Minimum of the valid data
+    data_max = masked_data.max()  # Maximum of the valid data
+
+    print("Normalizing")
+    # Normalize the data for the colormap
+    norm = Normalize(vmin=vmin, vmax=vmax)
+
+    print("Plotting map")
+    ax, fig = create_plot()
+
+    # Sets the ocean color
+    set_ocean_color(ax)
+
+    # Plots the country polygons
+    plot_country_polygons(ax, shapefile)
+
+    extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
+
+    # Plots the raster next
+    img = plot_raster(ax, cmap, extent, masked_data, norm)
+
+    # Plots the country boundaries on top
+    plot_country_boundaries(ax, shapefile)
+
+    # Creates the legend
+    title_text = "Gross removals\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
+    # Round data_min down to the nearest 0.01 and data_max up to the nearest 0.01
+    rounded_min = math.floor(data_min * 100) / 100  # Round down
+    rounded_max = math.ceil(data_max * 100) / 100  # Round up
+    tick_labels = [f"{rounded_min:.2f} (low)", f"{rounded_max:.2f} (high)"]
+    # create_legend(fig, img, vmin, 0, vmax, title_text, tick_labels)
+
+    # Removes axis ticks and labels
+    remove_ticks(ax)
+
+    print("Saving map")
+    plt.savefig(out_jpeg, dpi=300, bbox_inches="tight", pad_inches=0)
+    plt.close()
 
 if __name__ == '__main__':
 
-    map_net_flux()
+    # map_net_flux()
+    map_gross_removals()
