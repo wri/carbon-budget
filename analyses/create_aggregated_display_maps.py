@@ -100,6 +100,20 @@ def remove_ticks(ax):
     ax.set_xticklabels([])  # Remove x-axis labels
     ax.set_yticklabels([])  # Remove y-axis labels
 
+
+def create_legend(fig, img, masked_data, vmin, vcenter, vmax):
+    # Add a colorbar (legend)
+    cbar_ax = fig.add_axes([0.44, 0.22, 0.25, 0.02])  # [left, bottom, width, height]
+    cb = plt.colorbar(img, cax=cbar_ax, orientation="horizontal")
+    print("Creating legend")
+    # Calculate the minimum and maximum of the raster data (excluding NoData values)
+    data_min = masked_data.min()  # Minimum of the valid data
+    data_max = masked_data.max()  # Maximum of the valid data
+    # Set custom ticks and labels for the colorbar
+    cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
+    cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"], ha='center', fontsize=7)  # Format the labels
+    cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
+
 # def create_legend(fig, class_labels):
 #     print("Adding legend dynamically within map bounds")
 #     # Add a horizontal legend within the map bounds
@@ -271,21 +285,9 @@ img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper'
 # Overlay shapefile boundaries (e.g., country borders)
 shapefile.boundary.plot(ax=ax, edgecolor=boundary_color, linewidth=boundary_width, zorder=3)
 
-# Add a colorbar (legend)
-cbar_ax = fig.add_axes([0.44, 0.22, 0.25, 0.02])  # [left, bottom, width, height]
-cb = plt.colorbar(img, cax=cbar_ax, orientation="horizontal")
 
-print("Creating legend")
 
-# Calculate the minimum and maximum of the raster data (excluding NoData values)
-data_min = masked_data.min()  # Minimum of the valid data
-data_max = masked_data.max()  # Maximum of the valid data
-
-# Set custom ticks and labels for the colorbar
-cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
-cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"])  # Format the labels
-
-cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
+create_legend(fig, img, masked_data, vmin, vcenter, vmax)
 
 # Remove axis ticks and labels
 remove_ticks(ax)
