@@ -120,8 +120,8 @@ def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
 
     # Set custom ticks and labels for the colorbar
     cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
-    cb.set_ticklabels([f"> {rounded_min:.3f}    (sink)",
-                       "0            (neutral)",
+    cb.set_ticklabels([f"> {rounded_min:.3f}  (sink)",
+                       "0              (neutral)",
                        f"< {rounded_max:.2f}     (source)"],
                       fontsize=9)  # Format the labels
 
@@ -169,7 +169,6 @@ def generate_percentile_breaks(data, percentiles):
     # Calculate the percentiles on valid data
     return np.percentile(valid_data, percentiles)
 
-
 def percentile_for_0(data):
     # Assuming `data` is your raster array
     # Mask invalid values (e.g., NoData or zero values)
@@ -202,7 +201,8 @@ reprojected_tif = f"{net_base}_reproj.tif"
 #
 # three_panel_jpeg = "three_panel_4x4km__v1.3.2.jpeg"
 #
-land_bkgrnd = rgb_to_mpl((245, 245, 245))
+land_bkgrnd = rgb_to_mpl((245, 245, 245)) # Light gray
+# land_bkgrnd = rgb_to_mpl((2, 2, 2)) # Black
 # land_bkgrnd = rgb_to_mpl((245, 245, 220)) # Light yellow
 ocean_color = rgb_to_mpl((225, 225, 225))
 # ocean_color = rgb_to_mpl((50, 50, 50))
@@ -237,10 +237,12 @@ percentile_0 = percentile_for_0(data)
 # cmap = plt.cm.PRGn_r
 
 # Define desired percentiles for colors
-# percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99.5]  # Specify where colors transition in the data
-percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
-colors = [(0,60,48), (1,102,94), (53,151,143), (128,205,193), (199,234,229), (246,232,195),
-          (223,194,125), (191,129,45), (140,81,10), (84,48,5)]
+# percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
+percentiles = [5, 25, 50, 75, 89, 91, 92, 93, 94, 99]  # Specify where colors transition in the data
+# percentiles = [5, 25, 50, 75, 87.6, 95, 96, 97, 98, 99]  # Specify where colors transition in the data
+# percentiles = [1, 2, 3, 4, 5, 6, 7, 8, 98, 99]  # Specify where colors transition in the data
+colors = [(0,60,48), (1,102,94), (53,151,143), (128,205,193), (199,234,229),
+          (246,232,195), (223,194,125), (191,129,45), (140,81,10), (84,48,5)]
 colors_matplotlib = rgb_to_mpl_palette(colors)
 
 # # Uses custom colormap but only the first and last breaks
