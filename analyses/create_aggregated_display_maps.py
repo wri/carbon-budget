@@ -205,14 +205,24 @@ percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99.5]  # Specify where colors 
 colors = [(84,48,5),(140,81,10),(191,129,45),(223,194,125),(246,232,195),(199,234,229),
           (128,205,193),(53,151,143),(1,102,94),(0,60,48)]
 colors_matplotlib = rgb_to_mpl_palette(colors)
-custom_cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
+
+
+# custom_cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
+# custom_cmap = custom_cmap.reversed()
+
+# Normalize percentiles to a 0-1 scale
+percentiles_normalized = np.linspace(0, 1, len(percentiles))
+custom_cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
 custom_cmap = custom_cmap.reversed()
 
 
 
 print("Calculating percentile breaks")
 # Calculate the breakpoints based on percentiles
-breaks = generate_percentile_breaks(data, percentiles)
+# breaks = generate_percentile_breaks(data, percentiles)
+# print(breaks)
+
+breaks = np.percentile(data[data != 0], percentiles)  # Ignore NoData values
 print(breaks)
 
 # Ensure that vmin, vcenter, and vmax are in ascending order
