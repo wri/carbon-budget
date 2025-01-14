@@ -4,6 +4,7 @@
 # With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 # """
 
+import math
 import os
 import rasterio
 import geopandas as gpd
@@ -109,18 +110,25 @@ def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
     """
     print("Creating legend")
 
+    # Round data_min up to the nearest 0.01 and data_max down to the nearest 0.01
+    rounded_min = math.ceil(data_min * 100) / 100  # Round up
+    rounded_max = math.floor(data_max * 100) / 100  # Round down
+
     # Add a vertical colorbar (legend) in the bottom-left of the map
-    cbar_ax = fig.add_axes([0.1, 0.18, 0.02, 0.25])  # [left, bottom, width, height]
+    cbar_ax = fig.add_axes([0.14, 0.18, 0.02, 0.16])  # [left, bottom, width, height]
     cb = plt.colorbar(img, cax=cbar_ax, orientation="vertical")
 
     # Set custom ticks and labels for the colorbar
     cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
-    cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"], fontsize=9)  # Format the labels
+    cb.set_ticklabels([f"> {rounded_min:.3f}    (sink)",
+                       "0            (neutral)",
+                       f"< {rounded_max:.2f}     (source)"],
+                      fontsize=9)  # Format the labels
 
     # Add a left-aligned, multi-row title above the colorbar
     title_text = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
     cbar_ax.text(
-        0, 1,  # Adjust the x (horizontal) and y (vertical) coordinates for the title position
+        0, 1.1,  # Adjust the x (horizontal) and y (vertical) coordinates for the title position
         title_text,
         fontsize=9,
         ha="left",  # Horizontally align the text to the left
