@@ -11,6 +11,7 @@ import geopandas as gpd
 from shapely.geometry import Polygon, MultiPolygon
 import os
 from fiona import path
+from scipy.stats import percentileofscore
 
 import constants_and_names as cn
 
@@ -111,7 +112,7 @@ def create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax):
     # Set custom ticks and labels for the colorbar
     cb.set_ticks([vmin, vcenter, vmax])  # Set the ticks at the minimum, zero, and maximum
     cb.set_ticklabels([f"{data_min:.3f}", "0", f"{data_max:.3f}"], ha='center', fontsize=7)  # Format the labels
-    cb.set_label('Gross emissions from forest loss (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
+    cb.set_label('Net flux (Mt CO$_2$e yr$^{-1}$)', fontsize=8, labelpad=4)
 
 def rgb_to_mpl_palette(rgb_palette):
     """
@@ -147,6 +148,18 @@ def generate_percentile_breaks(data, percentiles):
     return np.percentile(valid_data, percentiles)
 
 
+def percentile_for_0(data):
+    # Assuming `data` is your raster array
+    # Mask invalid values (e.g., NoData or zero values)
+    valid_data = data[data != 0]  # Exclude zeros (or use np.ma.masked_invalid for general NoData masking)
+    # Ensure valid_data is not empty
+    if len(valid_data) == 0:
+        raise ValueError("No valid data found in the raster.")
+    # Calculate the percentile of 0
+    percentile_0 = percentileofscore(valid_data, 0, kind="mean")
+    print(f"0 is at the {percentile_0:.2f}th percentile of the raster data.")
+    return percentile_0
+
 # Define file paths
 original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
 reprojected_shapefile_path = "world-administrative-boundaries_simple__20250102_reproj.shp"
@@ -177,6 +190,7 @@ boundary_width = 0.2
 
 os.chdir(cn.docker_tile_dir)
 
+
 reproject_raster(reprojected_tif, tif_unproj)
 
 # Check and reproject the shapefile
@@ -191,21 +205,27 @@ print("Shapefile is ready for use.")
 
 
 # Example color palette (Divergent: Red -> Yellow -> Green)
-# cmap = plt.cm.PRGn
-cmap = plt.cm.PRGn_r
-# cmap = plt.cm.coolwarm
+
 
 # Read raster data
 with rasterio.open(reprojected_tif) as src:
     data = src.read(1)  # Read the first band
     raster_extent = src.bounds
 
+percentile_0 = percentile_for_0(data)
+
+
 # Define desired percentiles for colors
-percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99.5]  # Specify where colors transition in the data
+# percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99.5]  # Specify where colors transition in the data
+percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
+# percentiles = [1, 3, 5, 7, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
 colors = [(84,48,5),(140,81,10),(191,129,45),(223,194,125),(246,232,195),(199,234,229),
           (128,205,193),(53,151,143),(1,102,94),(0,60,48)]
 colors_matplotlib = rgb_to_mpl_palette(colors)
 
+# cmap = plt.cm.PRGn
+# custom_cmap = plt.cm.PRGn_r
+# cmap = plt.cm.coolwarm
 
 # custom_cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
 # custom_cmap = custom_cmap.reversed()
@@ -239,8 +259,8 @@ data_max = masked_data.max()  # Maximum of the valid data
 
 print("Normalizing")
 # Normalize the data for the colormap
-norm = TwoSlopeNorm(vmin=vmin, vcenter=vcenter, vmax=vmax)
-# norm = TwoSlopeNorm(vmin=data_min, vcenter=0, vmax=data_max)
+# norm = TwoSlopeNorm(vmin=vmin, vcenter=vcenter, vmax=vmax)
+norm = TwoSlopeNorm(vmin=vmin, vcenter=0, vmax=vmax)
 
 
 print("Plotting map")
