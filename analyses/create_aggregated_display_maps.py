@@ -167,8 +167,8 @@ reprojected_tif = f"{net_base}_reproj.tif"
 #
 # three_panel_jpeg = "three_panel_4x4km__v1.3.2.jpeg"
 #
-# land_bkgrnd = rgb_to_mpl((245, 245, 245))
-land_bkgrnd = rgb_to_mpl((245, 245, 220))
+land_bkgrnd = rgb_to_mpl((245, 245, 245))
+# land_bkgrnd = rgb_to_mpl((245, 245, 220)) # Light yellow
 ocean_color = rgb_to_mpl((225, 225, 225))
 # ocean_color = rgb_to_mpl((50, 50, 50))
 boundary_color = rgb_to_mpl((150, 150, 150))
@@ -201,12 +201,12 @@ with rasterio.open(reprojected_tif) as src:
     raster_extent = src.bounds
 
 # Define desired percentiles for colors
-percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 95]  # Specify where colors transition in the data
+percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99.5]  # Specify where colors transition in the data
 colors = [(84,48,5),(140,81,10),(191,129,45),(223,194,125),(246,232,195),(199,234,229),
           (128,205,193),(53,151,143),(1,102,94),(0,60,48)]
 colors_matplotlib = rgb_to_mpl_palette(colors)
-print(colors_matplotlib)
 custom_cmap = LinearSegmentedColormap.from_list("custom", colors_matplotlib)
+custom_cmap = custom_cmap.reversed()
 
 
 
@@ -217,10 +217,7 @@ print(breaks)
 
 # Ensure that vmin, vcenter, and vmax are in ascending order
 vmin, vcenter, vmax = breaks[0], breaks[len(breaks) // 2], breaks[-1]  # Use the median as the center
-
-# Validate that vmin < vcenter < vmax
-if not (vmin < vcenter < vmax):
-    raise ValueError(f"vmin, vcenter, and vmax must be in ascending order. Got vmin={vmin}, vcenter={vcenter}, vmax={vmax}")
+print("vcenter: ", vcenter)
 
 print("Masking raster")
 # Mask invalid values (e.g., NoData)
@@ -270,5 +267,5 @@ create_legend(fig, img, data_min, data_max, vmin, vcenter, vmax)
 remove_ticks(ax)
 
 print("Saving map")
-plt.savefig("net_flux_4x4km.png", dpi=300, bbox_inches="tight", pad_inches=0)
+plt.savefig("net_flux_4x4km.jpeg", dpi=300, bbox_inches="tight", pad_inches=0)
 plt.close()
