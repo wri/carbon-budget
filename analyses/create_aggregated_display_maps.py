@@ -193,7 +193,7 @@ def create_unidirection_legend(fig, img, vmin, vmax, title_text, tick_labels):
 
 def rgb_to_mpl_palette(rgb_palette):
     """
-    Convert a list of RGB colors from 0-255 range to 0-1 range for Matplotlib.
+    Converts a list of RGB colors from 0-255 range to 0-1 range for Matplotlib.
 
     Parameters:
     - rgb_palette (list of tuples): List of RGB tuples (R, G, B) in 0-255 range.
@@ -204,15 +204,17 @@ def rgb_to_mpl_palette(rgb_palette):
     return [tuple(val / 255 for val in rgb) for rgb in rgb_palette]
 
 def percentile_for_0(data):
-    # Assuming `data` is your raster array
-    # Mask invalid values (e.g., NoData or zero values)
-    valid_data = data[data != 0]  # Exclude zeros (or use np.ma.masked_invalid for general NoData masking)
-    # Ensure valid_data is not empty
+
+    # Masks invalid values (e.g., NoData or zero values)
+    valid_data = data[data != 0]  # Excludes zeros (or use np.ma.masked_invalid for general NoData masking)
+
+    # Ensures valid_data is not empty
     if len(valid_data) == 0:
         raise ValueError("No valid data found in the raster.")
-    # Calculate the percentile of 0
+
+    # Calculates the percentile of 0
     percentile_0 = percentileofscore(valid_data, 0, kind="mean")
-    print(f"0 is at the {percentile_0:.2f}th percentile of the raster data.")
+
     return percentile_0
 
 def set_ocean_color(ax):
@@ -220,7 +222,13 @@ def set_ocean_color(ax):
     ax.set_facecolor(rgb_to_mpl(cn.ocean_color))  # Set the background color
 
 def plot_country_polygons(ax, shapefile):
-    # Plot the shapefile polygons with a light gray fill using Matplotlib directly
+    """
+    Plots the shapefile polygons or multipolygons with a specified color. zorder sets the order of drawing.
+    :param ax: figure
+    :param shapefile: shapefile to draw
+    :return: N/A
+    """
+
     for geom in shapefile.geometry:
         if isinstance(geom, Polygon):
             # Single Polygon
@@ -233,11 +241,23 @@ def plot_country_polygons(ax, shapefile):
                 ax.fill(x, y, color=rgb_to_mpl(cn.land_bkgrnd), zorder=1)
 
 def plot_raster(ax, cmap, extent, masked_data, norm):
+    """
+    Plots raster
+    :param ax: figure
+    :param cmap: colormap
+    :param extent: raster extent
+    :param masked_data: masked data (no NoData/0s) to plot
+    :param norm: data normalization
+    :return: image
+    """
+
     img = ax.imshow(masked_data, cmap=cmap, norm=norm, extent=extent, origin='upper', zorder=2)
     return img
 
 def plot_country_boundaries(ax, shapefile):
-    # Overlay shapefile boundaries (e.g., country borders)
+
+    # Overlaya shapefile boundaries (e.g., country borders)
+    # zorder determines the order of appearance in the figure
     shapefile.boundary.plot(ax=ax, edgecolor=rgb_to_mpl(cn.boundary_color), linewidth=cn.boundary_width, zorder=3)
 
 # Makes jpeg of net fluxes
@@ -266,6 +286,7 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
 
     # Calculates the percentile for 0 (no flux)
     percentile_0 = percentile_for_0(data)
+    print(f"0 is at the {percentile_0}th percentile of the raster.")
 
     # Matches percentile breaks with colors.
     # Normalizes percentiles to a 0-1 scale.
