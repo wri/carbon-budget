@@ -21,9 +21,6 @@ import constants_and_names as cn
 
 os.chdir(cn.docker_tile_dir)
 
-# Define the target CRS (Robinson projection in this example)
-Robinson_crs = "ESRI:54030"
-
 def rgb_to_mpl(rgb):
     """
     Convert RGB from 0-255 range to matplotlib-compatible 0-1 range.
@@ -39,12 +36,12 @@ def reproject_raster(reprojected_tif, tif_unproj):
         print("Reprojected raster does not exist. Reprojecting now...")
         with rasterio.open(tif_unproj) as src:
             transform, width, height = calculate_default_transform(
-                src.crs, Robinson_crs, src.width, src.height, *src.bounds
+                src.crs, cn.Robinson_crs, src.width, src.height, *src.bounds
             )
             kwargs = src.meta.copy()
             compression = src.profile.get('compress', 'none')  # Get compression from the original raster
             kwargs.update({
-                'crs': Robinson_crs,
+                'crs': cn.Robinson_crs,
                 'transform': transform,
                 'width': width,
                 'height': height,
@@ -59,7 +56,7 @@ def reproject_raster(reprojected_tif, tif_unproj):
                     src_transform=src.transform,
                     src_crs=src.crs,
                     dst_transform=transform,
-                    dst_crs=Robinson_crs,
+                    dst_crs=cn.Robinson_crs,
                     resampling=Resampling.nearest
                 )
     else:
@@ -223,7 +220,7 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     # Reprojects shapefile, if needed
     shapefile = check_and_reproject_shapefile(
         shapefile_path=cn.original_shapefile_path,
-        target_crs=Robinson_crs,
+        target_crs=cn.Robinson_crs,
         reprojected_shapefile_path=cn.reprojected_shapefile_path
     )
 
@@ -291,10 +288,12 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     plt.savefig(out_jpeg, dpi=300, bbox_inches="tight", pad_inches=0)
     plt.close()
 
+# Makes jpeg of gross fluxes
 def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
 
     print(f"---Mapping {base_tif}")
 
+    # Raster name before and after projection
     tif_unproj = f"{base_tif}.tif"
     reprojected_tif = f"{base_tif}_reproj.tif"
 
@@ -304,7 +303,7 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     # Reprojects shapefile, if needed
     shapefile = check_and_reproject_shapefile(
         shapefile_path=cn.original_shapefile_path,
-        target_crs=Robinson_crs,
+        target_crs=cn.Robinson_crs,
         reprojected_shapefile_path=cn.reprojected_shapefile_path
     )
 
@@ -313,12 +312,14 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
         data = src.read(1)  # Read the first band
         raster_extent = src.bounds
 
-    # Matches percentile breaks with colors
-    # Normalizes percentiles to a 0-1 scale
+    # Matches percentile breaks with colors.
+    # Normalizes percentiles to a 0-1 scale.
     print("Calculating percentiles and breaks")
 
+    # Converts RGB color palette to matplotlib color palette
     colors_matplotlib = rgb_to_mpl_palette(colors)
 
+    #
     percentiles_normalized = np.linspace(0, 1, len(percentiles))
     cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
 
@@ -381,31 +382,23 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
 
 if __name__ == '__main__':
 
-    emissions_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
-    removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402"
-    net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
-
-    removals_jpeg = "model_output__gross_removals__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
-    emissions_jpeg = "model_output__gross_emissions__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
-    net_jpeg = "model_output__net_flux__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
-
-    # Define desired percentiles for colors
-    # net_flux_percentiles = [5, 25, 50, 75, 85, 88, 90, 92, 93, 99]  # Specify where colors transition in the data
-    net_percentiles = [5, 25, 50, 75, 89, 91, 92, 93, 94, 99]  # Specify where colors transition in the data
+    # Defines desired percentiles for colors
+    net_percentiles = [5, 25, 50, 75, 89, 91, 92, 93, 94, 99]  # Specifies where colors transition in the data
     removals_percentiles = [5, 25, 50, 75, 99]
     emissions_percentiles = [5, 25, 50, 75, 99]
 
-    # net_flux_percentiles = [5, 25, 50, 75, 87.6, 95, 96, 97, 98, 99]  # Specify where colors transition in the data
-    # net_flux_percentiles = [1, 2, 3, 4, 5, 6, 7, 8, 98, 99]  # Specify where colors transition in the data
+    # Colors in RGB. Gross emissions and removals are subset of net flux palette.
     net_colors = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),
                        (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)]
     removals_colors = net_colors[0:5]
     emissions_colors = net_colors[5:]
 
-    emissions_title = "Gross emissions\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
-    removals_title = "Gross removals\nMt CO$_2$ yr$^{-1}$ (2001-2023)"
+    # Legend titles
+    emissions_title = "Gross forest greenhouse gas emissions\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
+    removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2023)"
     net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
 
-    map_gross(emissions_base, emissions_colors, emissions_percentiles, emissions_title, emissions_jpeg)
-    # map_gross(removals_base, removals_colors, removals_percentiles, removals_title, removals_jpeg)
-    # map_net_flux(net_base, net_colors, net_percentiles, net_title, net_jpeg)
+    # Makes jpegs for gross emissions, removals and net flux.
+    map_gross(cn.emissions_base, emissions_colors, emissions_percentiles, emissions_title, cn.emissions_jpeg)
+    map_gross(cn.removals_base, removals_colors, removals_percentiles, removals_title, cn.removals_jpeg)
+    map_net_flux(cn.net_base, net_colors, net_percentiles, net_title, cn.net_jpeg)
