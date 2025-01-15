@@ -449,7 +449,7 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     save_jpeg(out_jpeg)
 
 
-def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, output_jpeg):
+def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, out_jpeg):
     """
     Creates a three-panel map showing emissions, removals, and net flux.
     """
@@ -464,8 +464,10 @@ def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, output_jpeg)
     panel_labels = ["a", "b", "c"]
     images = [emissions_img, removals_img, net_img]
 
+    three_panel_dims = (cn.panel_dims[0], cn.panel_dims[1] * len(images))
+
     # Sets up the figure
-    fig, axes = plt.subplots(nrows=len(images), ncols=1, figsize=(12, 18))
+    fig, axes = plt.subplots(nrows=len(images), ncols=1, figsize=three_panel_dims)
 
     # Removes spaces between panels
     fig.subplots_adjust(hspace=0, wspace=0)
@@ -490,21 +492,21 @@ if __name__ == '__main__':
     emissions_percentiles = [5, 25, 50, 75, 99]
 
     # Colors in RGB. Gross emissions and removals are subset of net flux palette.
-    net_colors = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),  # Used for removals
-                  (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)  # Used for emissions
-                  ]
-    removals_colors = net_colors[0:5]
-    emissions_colors = net_colors[5:]
+    net_color_palette = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),  # Used for removals
+                         (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)  # Used for emissions
+                         ]
+    removals_colors = net_color_palette[0:5]
+    emissions_colors = net_color_palette[5:]
 
     # Legend titles
     emissions_title = "Gross forest greenhouse gas emissions\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
     removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2023)"
     net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
 
-    # Generates jpegs for gross emissions, removals and net flux
-    map_gross(cn.emissions_base, emissions_colors, emissions_percentiles, emissions_title, cn.emissions_jpeg)
-    map_gross(cn.removals_base, removals_colors, removals_percentiles, removals_title, cn.removals_jpeg)
-    map_net_flux(cn.net_base, net_colors, net_percentiles, net_title, cn.net_jpeg)
+    # # Generates jpegs for gross emissions, removals and net flux
+    # map_gross(cn.emissions_base, emissions_colors, emissions_percentiles, emissions_title, cn.emissions_jpeg)
+    # map_gross(cn.removals_base, removals_colors, removals_percentiles, removals_title, cn.removals_jpeg)
+    # map_net_flux(cn.net_base, net_color_palette, net_percentiles, net_title, cn.net_jpeg)
 
     # Generates three-panel map
     create_three_panel_map(
