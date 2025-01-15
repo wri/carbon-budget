@@ -798,34 +798,40 @@ pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
 stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20231108/')
 
 
-### Aggregated jpegs
+### Aggregated flux jpegs
 ######
 
+# Rasters that are to be used in jpegs
 emissions_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
 removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402"
 net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
 
+# Output jpeg names
 removals_jpeg = "model_output__gross_removals__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 emissions_jpeg = "model_output__gross_emissions__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 net_jpeg = "model_output__net_flux__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 three_panel_jpeg = "model_output__three_panels__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 
-# Define file paths
+# Country shapefile, with small islands removed for visual simplicity
 original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
 reprojected_shapefile_path = "world-administrative-boundaries_simple__20250102_reproj.shp"
 
-land_bkgrnd = (245, 245, 245) # Light gray
-# land_bkgrnd = rgb_to_mpl((2, 2, 2)) # Black
-# land_bkgrnd = rgb_to_mpl((245, 245, 220)) # Light yellow
-ocean_color = (225, 225, 225)
-# ocean_color = rgb_to_mpl((50, 50, 50))
-boundary_color = (150, 150, 150)
-panel_dims = (12, 6)
-boundary_width = 0.2
-dpi_jpeg = 300
-
-# Define the target CRS (Robinson projection in this example)
+# CRS for jpegs (Robinson equal area)
 Robinson_crs = "ESRI:54030"
+
+# Graphical elements
+land_bkgrnd = (245, 245, 245) # Color for land where no raster data (light gray)
+# land_bkgrnd = (2, 2, 2) # Color for land where no raster data (black: for testing)
+# land_bkgrnd = (245, 245, 220) # Color for land where no raster data (light yellow: for testing)
+ocean_color = (235, 235, 235) # Color for land where no raster data (very light gray)
+# ocean_color = (255, 255, 255) # Color for land where no raster data (white)
+# ocean_color = (50, 50, 50) # Color for land where no raster data (dark gray: for testing)
+boundary_color = (150, 150, 150) # Color for country boundaries (medium gray)
+boundary_width = 0.2 # Width of country boundaries
+panel_dims = (12, 6) # Map panel dimensions (width, height)
+dpi_jpeg = 300 # dpi for output jpegs
+legend_fontsize = 9 # Font size for legend titles and labels
+colorbar_dimensions = [0.14, 0.17, 0.02, 0.13] # [left, bottom, width, height]
 
 
 ### Testing materials
