@@ -336,9 +336,9 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
 
     # Creates the legend
     # Rounds data_min down to the nearest 0.01 and data_max up to the nearest 0.01 for legend
-    rounded_min = math.ceil(data_min * 100) / 100  # Round up
-    rounded_max = math.floor(data_max * 100) / 100  # Round down
-    tick_labels = [f"< {rounded_min:.3f}  (sink)",
+    rounded_min = math.ceil(data_min * 100) / 100  # Rounds up
+    rounded_max = math.floor(data_max * 100) / 100  # Rounds down
+    tick_labels = [f"< {rounded_min:.3f}  (sink)",   # Spaces are to horizontally align the text explanations
                     "0              (neutral)",
                    f"> {rounded_max:.2f}     (source)"]
     create_divergent_legend(fig, img, vmin, vcenter, vmax, title_text, tick_labels)
@@ -453,8 +453,8 @@ if __name__ == '__main__':
     emissions_percentiles = [5, 25, 50, 75, 99]
 
     # Colors in RGB. Gross emissions and removals are subset of net flux palette.
-    net_colors = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),
-                       (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)]
+    net_colors = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),  # Used for removals
+                       (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)]  # Used for emissions
     removals_colors = net_colors[0:5]
     emissions_colors = net_colors[5:]
 
