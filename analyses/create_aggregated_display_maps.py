@@ -11,11 +11,11 @@ import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from shapely.geometry import Polygon, MultiPolygon
-from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
 from fiona import path
-from scipy.stats import percentileofscore
+from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
 from rasterio.warp import calculate_default_transform, reproject, Resampling
+from scipy.stats import percentileofscore
+from shapely.geometry import Polygon, MultiPolygon
 
 import constants_and_names as cn
 
@@ -23,15 +23,21 @@ os.chdir(cn.docker_tile_dir)
 
 def rgb_to_mpl(rgb):
     """
-    Convert RGB from 0-255 range to matplotlib-compatible 0-1 range.
+    Converts RGB from 0-255 range to matplotlib-compatible 0-1 range.
     :param rgb: Tuple of (R, G, B) in 0-255 range.
     :return: Tuple of (R, G, B) in 0-1 range.
     """
     return tuple(val / 255 for val in rgb)
 
 def reproject_raster(reprojected_tif, tif_unproj):
+    """
+    Reprojects raster to specified projection if it doesn't already exist
+    :param reprojected_tif: Name of projected (output) tif
+    :param tif_unproj: Name of unprojected (input) tif
+    :return: Nothing
+    """
 
-    # Check if the reprojected raster already exists
+    # Checks if the reprojected raster already exists
     if not os.path.exists(reprojected_tif):
         print("Reprojected raster does not exist. Reprojecting now...")
         with rasterio.open(tif_unproj) as src:
@@ -39,14 +45,14 @@ def reproject_raster(reprojected_tif, tif_unproj):
                 src.crs, cn.Robinson_crs, src.width, src.height, *src.bounds
             )
             kwargs = src.meta.copy()
-            compression = src.profile.get('compress', 'none')  # Get compression from the original raster
+            compression = src.profile.get('compress', 'none')  # Gets compression from the original raster
             kwargs.update({
                 'crs': cn.Robinson_crs,
                 'transform': transform,
                 'width': width,
                 'height': height,
-                'nodata': 0,  # Set 0 as the NoData value
-                'compress': compression  # Match the compression of the original raster
+                'nodata': 0,
+                'compress': compression
             })
 
             with rasterio.open(reprojected_tif, 'w', **kwargs) as dst:
@@ -64,8 +70,8 @@ def reproject_raster(reprojected_tif, tif_unproj):
 
 def check_and_reproject_shapefile(shapefile_path, target_crs, reprojected_shapefile_path):
     """
-    Check if the shapefile is already projected to the target CRS.
-    If not, reproject the shapefile, save it, and return the reprojected shapefile.
+    Checks if the shapefile is already projected to the target CRS.
+    If not, reprojects the shapefile, saves it, and returns the reprojected shapefile.
 
     Parameters:
     - shapefile_path (str): Path to the input shapefile.
@@ -75,34 +81,44 @@ def check_and_reproject_shapefile(shapefile_path, target_crs, reprojected_shapef
     Returns:
     - geopandas.GeoDataFrame: The original or reprojected shapefile.
     """
-    # Check if the reprojected shapefile already exists
+
+    # Checks if the reprojected shapefile already exists
     if os.path.exists(reprojected_shapefile_path):
         print(f"Reprojected shapefile already exists at {reprojected_shapefile_path}.")
         return gpd.read_file(reprojected_shapefile_path)
 
-    # Load the shapefile
+    # Loads the shapefile
     shapefile = gpd.read_file(shapefile_path)
 
-    # Check if the shapefile is already in the target CRS
+    # Checks if the shapefile is already in the target CRS
     if shapefile.crs == target_crs:
         print(f"Shapefile is already projected to {target_crs}.")
         return shapefile
 
-    # Reproject the shapefile
+    # Reprojects the shapefile
     print(f"Reprojecting shapefile from {shapefile.crs} to {target_crs}.")
     shapefile = shapefile.to_crs(target_crs)
 
-    # Save the reprojected shapefile for future use
+    # Saves the reprojected shapefile for future use
     shapefile.to_file(reprojected_shapefile_path)
     print(f"Reprojected shapefile saved to {reprojected_shapefile_path}.")
 
     return shapefile
 
 def create_plot():
+    """
+    Creates matplotlib plot
+    :return: ax and fig
+    """
     fig, ax = plt.subplots(figsize=cn.panel_dims)
     return ax, fig
 
 def remove_ticks(ax):
+    """
+    Removes ticks from matplotlib plot
+    :param ax: graph
+    :return: N/A
+    """
     # Set map aesthetics
     # NOTE: can't use ax.set_axis_off() to remove axis ticks and labels because it also changes the background color back to white
     ax.set_xticks([])  # Remove x-axis ticks
@@ -112,8 +128,17 @@ def remove_ticks(ax):
 
 def create_divergent_legend(fig, img, vmin, vcenter, vmax, title_text, tick_labels):
     """
-    Create a vertical colorbar legend with a left-aligned, multi-row title above it.
+    Creates a vertical colorbar legend with a left-aligned title above it.
+    :param fig: The figure
+    :param img: The image
+    :param vmin: minimum value to use in scaling legend colors
+    :param vcenter: middle value to use in scaling legend colors
+    :param vmax: maximum value to use in scaling legend colors
+    :param title_text: Title for legend
+    :param tick_labels: Tick labels for legend
+    :return: N/A
     """
+
     print("Creating legend")
 
     # Add a vertical colorbar (legend) in the bottom-left of the map
@@ -136,8 +161,16 @@ def create_divergent_legend(fig, img, vmin, vcenter, vmax, title_text, tick_labe
 
 def create_unidirection_legend(fig, img, vmin, vmax, title_text, tick_labels):
     """
-    Create a vertical colorbar legend with a left-aligned, multi-row title above it.
+    Creates a vertical colorbar legend with a left-aligned title above it.
+    :param fig: The figure
+    :param img: The image
+    :param vmin: minimum value to use in scaling legend colors
+    :param vmax: maximum value to use in scaling legend colors
+    :param title_text: Title for legend
+    :param tick_labels: Tick labels for legend
+    :return: N/A
     """
+
     print("Creating legend")
 
     # Add a vertical colorbar (legend) in the bottom-left of the map
@@ -207,10 +240,12 @@ def plot_country_boundaries(ax, shapefile):
     # Overlay shapefile boundaries (e.g., country borders)
     shapefile.boundary.plot(ax=ax, edgecolor=rgb_to_mpl(cn.boundary_color), linewidth=cn.boundary_width, zorder=3)
 
+# Makes jpeg of net fluxes
 def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
 
     print(f"---Mapping {base_tif}")
 
+    # Raster name before and after projection
     tif_unproj = f"{base_tif}.tif"
     reprojected_tif = f"{base_tif}_reproj.tif"
 
@@ -229,21 +264,26 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
         data = src.read(1)  # Read the first band
         raster_extent = src.bounds
 
+    # Calculates the percentile for 0 (no flux)
     percentile_0 = percentile_for_0(data)
 
-    # Matches percentile breaks with colors
-    # Normalizes percentiles to a 0-1 scale
+    # Matches percentile breaks with colors.
+    # Normalizes percentiles to a 0-1 scale.
     print("Calculating percentiles and breaks")
 
+    # Converts RGB color palette to matplotlib color palette
     colors_matplotlib = rgb_to_mpl_palette(colors)
 
+    # Makes percentiles for the breakpoints and prepares colormap
     percentiles_normalized = np.linspace(0, 1, len(percentiles))
     cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
 
-    breaks = np.percentile(data[data != 0], percentiles)  # Ignore NoData values
+    # Calculates breaks in the data based on the percentiles
+    breaks = np.percentile(data[data != 0], percentiles)  # Ignores NoData values
     print("Breaks:", breaks)
 
-    vmin, vcenter, vmax = breaks[0], breaks[len(breaks) // 2], breaks[-1]  # Use the median as the center
+    # Min, center and max values for the colormap (not the min and max values for the raster)
+    vmin, vcenter, vmax = breaks[0], breaks[len(breaks) // 2], breaks[-1]  # Uses the median as the center
     print("vcenter: ", vcenter)
 
     print("Masking raster to non-0 values")
@@ -261,9 +301,10 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     # Sets the ocean color
     set_ocean_color(ax)
 
-    # Plots the country polygons
+    # Plots the country polygons first
     plot_country_polygons(ax, shapefile)
 
+    # Raster extent
     extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
     # Plots the raster next
@@ -273,7 +314,7 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     plot_country_boundaries(ax, shapefile)
 
     # Creates the legend
-    # Round data_min up to the nearest 0.01 and data_max down to the nearest 0.01
+    # Rounds data_min down to the nearest 0.01 and data_max up to the nearest 0.01 for legend
     rounded_min = math.ceil(data_min * 100) / 100  # Round up
     rounded_max = math.floor(data_max * 100) / 100  # Round down
     tick_labels = [f"< {rounded_min:.3f}  (sink)",
@@ -319,15 +360,16 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     # Converts RGB color palette to matplotlib color palette
     colors_matplotlib = rgb_to_mpl_palette(colors)
 
-    #
+    # Makes percentiles for the breakpoints and prepares colormap
     percentiles_normalized = np.linspace(0, 1, len(percentiles))
     cmap = LinearSegmentedColormap.from_list("custom_colormap", list(zip(percentiles_normalized, colors_matplotlib)))
 
-    # Calculate breaks based on the gross_removals_percentiles
-    breaks = np.percentile(data[data != 0], percentiles)  # Ignore NoData values
+    # Calculates breaks in the data based on the percentiles
+    breaks = np.percentile(data[data != 0], percentiles)  # Ignores NoData values
     print("Breaks:", breaks)
 
-    vmin, vmax = breaks[0], breaks[-1]  # Continuous range for the colormap
+    # Min and max values for the colormap (not the min and max values for the raster)
+    vmin, vmax = breaks[0], breaks[-1]
     print(f"vmin: {vmin}, vmax: {vmax}")
 
     print("Masking raster to non-0 values")
@@ -336,7 +378,7 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     data_max = masked_data.max()  # Maximum of the valid data
 
     print("Normalizing")
-    # Normalize the data for the colormap
+    # Normalizes the data for the colormap
     norm = Normalize(vmin=vmin, vmax=vmax)
 
     print("Plotting map")
@@ -345,9 +387,10 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     # Sets the ocean color
     set_ocean_color(ax)
 
-    # Plots the country polygons
+    # Plots the country polygons first
     plot_country_polygons(ax, shapefile)
 
+    # Raster extent
     extent = [raster_extent.left, raster_extent.right, raster_extent.bottom, raster_extent.top]
 
     # Plots the raster next
@@ -357,12 +400,13 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     plot_country_boundaries(ax, shapefile)
 
     # Creates the legend
-    # Round data_min down to the nearest 0.01 and data_max up to the nearest 0.01
+    # Rounds data_min down to the nearest 0.01 and data_max up to the nearest 0.01 for legend
     rounded_min = math.floor(data_min * 100) / 100  # Round down
     rounded_max = math.ceil(data_max * 100) / 100  # Round up
     # print(data_min, rounded_min)
     # print(data_max, rounded_max)
 
+    # Legend labels depend on whether emissions or removals are displayed
     if "removals" in base_tif:
         tick_labels = [f"< {rounded_min:.2f}", 0]
     elif "emis" in base_tif:
