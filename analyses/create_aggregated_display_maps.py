@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from fiona import path
 from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
 from rasterio.warp import calculate_default_transform, reproject, Resampling
-from scipy.stats import percentileofscore
 from shapely.geometry import Polygon, MultiPolygon
+from scipy.stats import percentileofscore
 
 import constants_and_names as cn
 
@@ -260,6 +260,12 @@ def plot_country_boundaries(ax, shapefile):
     # zorder determines the order of appearance in the figure
     shapefile.boundary.plot(ax=ax, edgecolor=rgb_to_mpl(cn.boundary_color), linewidth=cn.boundary_width, zorder=3)
 
+def save_jpeg(out_jpeg):
+
+    print("Saving map")
+    plt.savefig(out_jpeg, dpi=cn.dpi_jpeg, bbox_inches="tight", pad_inches=0)
+    plt.close()
+
 # Makes jpeg of net fluxes
 def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
 
@@ -346,9 +352,8 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     # Removes axis ticks and labels
     remove_ticks(ax)
 
-    print("Saving map")
-    plt.savefig(out_jpeg, dpi=300, bbox_inches="tight", pad_inches=0)
-    plt.close()
+    # Saves jpeg
+    save_jpeg(out_jpeg)
 
 # Makes jpeg of gross fluxes
 def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
@@ -440,9 +445,41 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     # Removes axis ticks and labels
     remove_ticks(ax)
 
-    print("Saving map")
-    plt.savefig(out_jpeg, dpi=300, bbox_inches="tight", pad_inches=0)
-    plt.close()
+    # Saves jpeg
+    save_jpeg(out_jpeg)
+
+
+def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, output_jpeg):
+    """
+    Creates a three-panel map showing emissions, removals, and net flux.
+    """
+    print("Creating three-panel map")
+
+    # Loads individual panel images
+    emissions_img = plt.imread(emissions_jpeg)
+    removals_img = plt.imread(removals_jpeg)
+    net_img = plt.imread(net_jpeg)
+
+    # Panel titles and images
+    panel_labels = ["a", "b", "c"]
+    images = [emissions_img, removals_img, net_img]
+
+    # Sets up the figure
+    fig, axes = plt.subplots(nrows=len(images), ncols=1, figsize=(12, 18))
+
+    # Removes spaces between panels
+    fig.subplots_adjust(hspace=0, wspace=0)
+
+    # Adds each panel to the figure
+    for ax, img, label in zip(axes, images, panel_labels):
+        ax.imshow(img, aspect='auto')
+        ax.axis("off")  # Removes axis ticks
+        # Adds panel label in the top-left corner
+        ax.text(0.02, 0.98, label, transform=ax.transAxes, fontsize=10, fontweight="bold",
+                ha="left", va="top", color="black")
+
+    # Saves jpeg
+    save_jpeg(out_jpeg)
 
 
 if __name__ == '__main__':
@@ -454,7 +491,8 @@ if __name__ == '__main__':
 
     # Colors in RGB. Gross emissions and removals are subset of net flux palette.
     net_colors = [(0, 60, 48), (1, 102, 94), (53, 151, 143), (128, 205, 193), (199, 234, 229),  # Used for removals
-                       (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)]  # Used for emissions
+                  (246, 232, 195), (223, 194, 125), (191, 129, 45), (140, 81, 10), (84, 48, 5)  # Used for emissions
+                  ]
     removals_colors = net_colors[0:5]
     emissions_colors = net_colors[5:]
 
@@ -463,7 +501,15 @@ if __name__ == '__main__':
     removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2023)"
     net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
 
-    # Makes jpegs for gross emissions, removals and net flux.
+    # Generates jpegs for gross emissions, removals and net flux
     map_gross(cn.emissions_base, emissions_colors, emissions_percentiles, emissions_title, cn.emissions_jpeg)
     map_gross(cn.removals_base, removals_colors, removals_percentiles, removals_title, cn.removals_jpeg)
     map_net_flux(cn.net_base, net_colors, net_percentiles, net_title, cn.net_jpeg)
+
+    # Generates three-panel map
+    create_three_panel_map(
+        cn.emissions_jpeg,
+        cn.removals_jpeg,
+        cn.net_jpeg,
+        cn.three_panel_jpeg
+    )

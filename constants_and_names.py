@@ -808,6 +808,7 @@ net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_st
 removals_jpeg = "model_output__gross_removals__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 emissions_jpeg = "model_output__gross_emissions__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 net_jpeg = "model_output__net_flux__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
+three_panel_jpeg = "model_output__three_panels__4km_aggregation_tcd30_model_v1.3.2_20250115.jpeg"
 
 # Define file paths
 original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
@@ -821,6 +822,7 @@ ocean_color = (225, 225, 225)
 boundary_color = (150, 150, 150)
 panel_dims = (12, 6)
 boundary_width = 0.2
+dpi_jpeg = 300
 
 # Define the target CRS (Robinson projection in this example)
 Robinson_crs = "ESRI:54030"
