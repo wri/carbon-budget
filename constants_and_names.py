@@ -798,6 +798,23 @@ pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
 stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20231108/')
 
 
+### Aggregated jpegs
+######
+
+# Define file paths
+original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
+reprojected_shapefile_path = "world-administrative-boundaries_simple__20250102_reproj.shp"
+
+land_bkgrnd = (245, 245, 245) # Light gray
+# land_bkgrnd = rgb_to_mpl((2, 2, 2)) # Black
+# land_bkgrnd = rgb_to_mpl((245, 245, 220)) # Light yellow
+ocean_color = (225, 225, 225)
+# ocean_color = rgb_to_mpl((50, 50, 50))
+boundary_color = (150, 150, 150)
+panel_dims = (12, 6)
+boundary_width = 0.2
+
+
 ### Testing materials
 ######
 
