@@ -402,7 +402,17 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     print(f"vmin: {vmin}, vmax: {vmax}")
 
     print("Masking raster to non-0 values")
-    masked_data = np.ma.masked_where(data == 0, data)
+    if "removals" in base_tif:
+        masked_data = np.ma.masked_where(data >= 0, data)
+
+        # This colors all 0-value pixels, leaving non-0s white.
+        # It clearly shows that more of Australia is non-0, but I just can't get it to be symbolized in any masking.
+        # masked_data = np.ma.masked_where(data < 0, data)
+    elif "emis" in base_tif:
+        masked_data = np.ma.masked_where(data <= 0, data)
+    else:
+        masked_data = np.ma.masked_where(data == 0, data)
+        print("Not using either emissions or removals")
     data_min = masked_data.min()  # Minimum of the valid data
     data_max = masked_data.max()  # Maximum of the valid data
 
