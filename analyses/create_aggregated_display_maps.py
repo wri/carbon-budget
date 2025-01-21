@@ -1,8 +1,8 @@
 """
 python -m analyses.create_aggregated_display_maps
 
-Takes about 5 minutes to reproject inputs and make all four output maps.
-Takes about 4.5 minutes to make all four outputs if inputs are already reprojected.
+Takes about 5.5 minutes to reproject inputs and make all four output maps.
+Takes about 5 minutes to make all four outputs if inputs are already reprojected.
 
 With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 """
@@ -265,8 +265,21 @@ def plot_country_boundaries(ax, shapefile):
 
 def save_jpeg(out_jpeg):
 
-    print("Saving map")
+    print(f"Saving {out_jpeg}")
     plt.savefig(out_jpeg, dpi=cn.dpi_jpeg, bbox_inches="tight", pad_inches=0)
+
+def save_pres_non_pres_jpegs(ax, out_jpeg):
+
+    # Saves jpeg without journal name and update notes in bottom right
+    save_jpeg(out_jpeg)
+
+    # Note in bottom right of panel
+    ax.text(0.98, 0.06, cn.pres_text, transform=ax.transAxes, fontsize=7,
+            ha="right", va="top", color="black")
+    out_jpeg = out_jpeg.replace(".jpeg", "__for_pres.jpeg")
+
+    # Saves jpeg with journal name and update notes in bottom right
+    save_jpeg(out_jpeg)
     plt.close()
 
 # Makes jpeg of net fluxes
@@ -355,8 +368,9 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     # Removes axis ticks and labels
     remove_ticks(ax)
 
-    # Saves jpeg
-    save_jpeg(out_jpeg)
+    # Saves two versions of the map: without and with a source note in the bottom right
+    save_pres_non_pres_jpegs(ax, out_jpeg)
+
 
 # Makes jpeg of gross fluxes
 def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
@@ -458,8 +472,9 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     # Removes axis ticks and labels
     remove_ticks(ax)
 
-    # Saves jpeg
-    save_jpeg(out_jpeg)
+    # Saves two versions of the map: without and with a source note in the bottom right
+    save_pres_non_pres_jpegs(ax, out_jpeg)
+
 
 def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, out_jpeg):
     """
@@ -494,6 +509,7 @@ def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, out_jpeg):
 
     # Saves jpeg
     save_jpeg(out_jpeg)
+    plt.close()
 
 
 if __name__ == '__main__':
