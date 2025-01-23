@@ -8,7 +8,7 @@ import datetime
 ########     ########
 
 # Model version
-version = '1.4.0'
+version = '1.4.1'
 version_filename = version.replace('.', '_')
 
 
@@ -332,11 +332,12 @@ pattern_plant_pre_2000 = 'plantation_2000_or_earlier_processed'
 plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/IDN_MYS_plantation_pre_2000/processed/20200724/')
 
 # Drivers of tree cover loss
-
-drivers_raw_dir = 's3://gfw2-data/drivers_of_loss/1_km/raw/20241121/'
-pattern_drivers_raw = 'drivers_of_TCL_1_km_20241121.tif'
-pattern_drivers = 'drivers_of_TCL_1_km_20241121'
-drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20241121/'
+#Note: New drivers is a multi-band image woth the classification in Band 1 and probabilities for each class in the other bands
+# Make sure to only use Band 1 when hansenizing the drivers tiles.
+drivers_raw_dir = 's3://gfw2-data/drivers_of_loss/1_km/raw/update2023_20241218/'
+pattern_drivers_raw = 'drivers_forest_loss_1km_2023_band1.tif'
+pattern_drivers = 'drivers_of_TCL_1_km_20241224'
+drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20241224/'
 
 # Tree cover loss from fires
 TCLF_raw_dir = 's3://gfw2-data/forest_change/hansen_2023_fire/'
@@ -647,7 +648,8 @@ total_C_2000_dir = os.path.join(base_carbon_pool_dir, f'total_carbon/extent_2000
 ### Emissions from biomass and soil (all carbon emitted_pools)
 
 # Date to include in the output directory
-emis_run_date_biomass_soil = '20241122'
+emis_run_date_biomass_soil = '20241230'
+
 pattern_gross_emis_all_gases_all_drivers_biomass_soil = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
 gross_emis_all_gases_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_hectare/{emis_run_date_biomass_soil}/'
 
@@ -672,7 +674,8 @@ gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree
 ### Emissions from soil only
 
 # Date to include in the output directory
-emis_run_date_soil_only = '20241122'
+emis_run_date_soil_only = '20241230'
+
 pattern_gross_emis_all_gases_all_drivers_soil_only = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_soil_only_2001_{loss_years}'
 gross_emis_all_gases_all_drivers_soil_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/soil_only/standard/{emis_run_date_soil_only}/'
 
@@ -697,11 +700,11 @@ gross_emis_nodes_soil_only_dir = f'{s3_base_dir}gross_emissions/decision_tree_no
 
 # Net emissions for all forest types and all carbon emitted_pools in all pixels
 pattern_net_flux = f'net_flux_Mg_CO2e_ha_biomass_soil_2001_{loss_years}'
-net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20241122/')
+net_flux_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_hectare/20241230/')
 
 # Net emissions for all forest types and all carbon emitted_pools in forest extent
 pattern_net_flux_forest_extent = f'net_flux_Mg_CO2e_ha_biomass_soil_forest_extent_2001_{loss_years}'
-net_flux_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_hectare/20241122/')
+net_flux_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_hectare/20241230/')
 
 
 ### Per pixel model outputs
@@ -709,27 +712,27 @@ net_flux_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_type
 
 # Gross removals per pixel in all pixels
 pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent = f'gross_removals_AGCO2_BGCO2_Mg_pixel_all_forest_types_full_extent_2001_{loss_years}'
-cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/full_extent/per_pixel/20241122/')
+cumul_gain_AGCO2_BGCO2_all_types_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/full_extent/per_pixel/20241230/')
 
 # Gross removals per pixel in forest extent
 pattern_cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent = f'gross_removals_AGCO2_BGCO2_Mg_pixel_all_forest_types_forest_extent_2001_{loss_years}'
-cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/forest_extent/per_pixel/20241122/')
+cumul_gain_AGCO2_BGCO2_all_types_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'gross_removals_AGCO2_BGCO2_all_forest_types/standard/forest_extent/per_pixel/20241230/')
 
 # Gross emissions per pixel in all pixels
 pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent = f'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil_full_extent_2001_{loss_years}'
-gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_pixel/20241122/')
+gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/full_extent/per_pixel/20241230/')
 
 # Gross emissions per pixel in forest extent
 pattern_gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent = f'gross_emis_all_gases_all_drivers_Mg_CO2e_pixel_biomass_soil_forest_extent_2001_{loss_years}'
-gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/forest_extent/per_pixel/20241122/')
+gross_emis_all_gases_all_drivers_biomass_soil_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'gross_emissions/all_drivers/all_gases/biomass_soil/standard/forest_extent/per_pixel/20241230/')
 
 # Net flux per pixel in all pixels
 pattern_net_flux_per_pixel_full_extent = f'net_flux_Mg_CO2e_pixel_biomass_soil_full_extent_2001_{loss_years}'
-net_flux_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_pixel/20241122/')
+net_flux_per_pixel_full_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/full_extent/per_pixel/20241230/')
 
 # Net flux per pixel in forest extent
 pattern_net_flux_per_pixel_forest_extent = f'net_flux_Mg_CO2e_pixel_biomass_soil_forest_extent_2001_{loss_years}'
-net_flux_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_pixel/20241122/')
+net_flux_per_pixel_forest_extent_dir = os.path.join(s3_base_dir, 'net_flux_all_forest_types_all_drivers/biomass_soil/standard/forest_extent/per_pixel/20241230/')
 
 
 ### 4x4 km aggregation tiles for mapping
@@ -739,7 +742,7 @@ pattern_aggreg = f'0_04deg_modelv{version_filename}'
 pattern_aggreg_sensit_perc_diff = f'net_flux_0_04deg_modelv{version_filename}_perc_diff_std'
 pattern_aggreg_sensit_sign_change = f'net_flux_0_04deg_modelv{version_filename}_sign_change_std'
 
-output_aggreg_dir = os.path.join(s3_base_dir, '0_04deg_output_aggregation/biomass_soil/standard/20241122/')
+output_aggreg_dir = os.path.join(s3_base_dir, '0_04deg_output_aggregation/biomass_soil/standard/20241230/')
 
 
 
@@ -796,6 +799,44 @@ CI95_mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs
 # Standard deviation in soil C stocks (0-30 cm)
 pattern_stdev_soil_C_full_extent = 'Mg_soil_C_ha_stdev_full_extent_2000'
 stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon_full_extent/standard/20231108/')
+
+
+### Aggregated flux jpegs
+######
+
+# Rasters that are to be used in jpegs
+emissions_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
+removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_3_2_std_20240402"
+net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_3_2_std_20240403"
+
+# Output jpeg names
+removals_jpeg = "model_output__gross_removals__4km_aggregation_tcd30_model_v1.3.2_20250121.jpeg"
+emissions_jpeg = "model_output__gross_emissions__4km_aggregation_tcd30_model_v1.3.2_20250121.jpeg"
+net_jpeg = "model_output__net_flux__4km_aggregation_tcd30_model_v1.3.2_20250121.jpeg"
+three_panel_jpeg = "model_output__three_panels__4km_aggregation_tcd30_model_v1.3.2_20250121.png"
+
+# Country shapefile, with small islands removed for visual simplicity
+original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
+reprojected_shapefile_path = "world-administrative-boundaries_simple__20250102_reproj.shp"
+
+# CRS for jpegs (Robinson equal area)
+Robinson_crs = "ESRI:54030"
+
+# Graphical elements
+land_bkgrnd = (245, 245, 245) # Color for land where no raster data (light gray)
+# land_bkgrnd = (2, 2, 2) # Color for land where no raster data (black: for testing)
+# land_bkgrnd = (245, 245, 220) # Color for land where no raster data (light yellow: for testing)
+ocean_color = (235, 235, 235) # Color for land where no raster data (very light gray)
+# ocean_color = (255, 255, 255) # Color for land where no raster data (white)
+# ocean_color = (50, 50, 50) # Color for land where no raster data (dark gray: for testing)
+boundary_color = (150, 150, 150) # Color for country boundaries (medium gray)
+boundary_width = 0.2 # Width of country boundaries
+panel_dims = (12, 6) # Map panel dimensions (width, height)
+dpi_jpeg = 300 # dpi for output jpegs
+legend_fontsize = 9 # Font size for legend titles and labels
+colorbar_dimensions = [0.14, 0.17, 0.02, 0.13] # [left, bottom, width, height]
+
+pres_text = "Gibbs et al. 2025 ESSD\nUpdated with 2023 tree cover loss"
 
 
 ### Testing materials
