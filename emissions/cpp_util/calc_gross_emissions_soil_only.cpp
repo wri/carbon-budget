@@ -465,7 +465,20 @@ for(x=0; x<xsize; x++)
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				flu = flu_val(climate_data[x], ecozone_data[x]);
-				minsoil = ((soil_data[x]-(soil_data[x] * flu))/soil_emis_period) * (model_years-loss_data[x]);
+
+				//ANNUAL CARBON STOCK LOSS IN MINERAL SOILS (equation 2.25)
+				average_annual_minsoil_c_loss = (soil_data[x]-(soil_data[x] * flu))/soil_emis_period
+
+                //CO2 EMISSIONS w/ TIME DEPENDENCY OVER MODEL TIME PERIOD APPLIED
+				minsoil_CO2_only = average_annual_minsoil_c_loss * (model_years-loss_data[x]);
+				//TODO: Why is C not converted to CO2??
+
+				//N2O EMISSIONS FROM N MINERALIZED AS A RESULT OF CARBON STOCK LOSS IN MINERAL SOILS w/ TIME DEPENDENCY OVER MODEL TIME PERIOD APPLIED
+                C_N_ratio = 15
+                EF1 = 0.010 //converts N to N2O-N emissions
+                N2O-N_to_N2O == 44/28 //converts N2O-N emissions to N2O for reporting purposes
+                minsoil_N2O_only = average_annual_minsoil_c_loss * EF1 * (1/C_N_ratio) * N2O-N_to_N2O * N2O_equiv
+                //Note don't multiply by 1000 to keep in t instead of kg
 
 				if (peat_data[x] > 0) // permanent ag, peat
 				{
