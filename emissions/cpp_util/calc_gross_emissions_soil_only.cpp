@@ -94,6 +94,14 @@ settlements_flu = constants::settlements_flu;
 float hard_commod_flu; // F_lu for hard_commodities (fraction of soil C not emitted over 20 years)
 hard_commod_flu = constants::hard_commod_flu;
 
+int C_N_ratio;       // Carbon nitrogen ratio of soil organic matter
+C_N_ratio = constants::C_N_ratio;
+
+float N_mineralization_EF;          // Emissions factor for soil nitrogen mineralization (converts N to N2O-N emissions)
+N_mineralization_EF = constants::N_mineralization_EF;
+
+float N2O-N_to_N2O;     // Converts N2O-N emissions to N2O emissions
+N2O-N_to_N2O = constants::N2O-N_to_N2O;
 
 // Input files
 // Carbon pools use the standard names for this sensitivity analysis
@@ -454,7 +462,8 @@ for(x=0; x<xsize; x++)
 			float above_below_c;
 			above_below_c = agc_data[x] + bgc_data[x];
 
-			float minsoil;                           // Emissions from mineral soil- all CO2
+			float minsoil_CO2_only;                 // CO2 emissions from SOC losses in mineral soil
+			float minsoil_N2O_only;                 // N2O emissions from soil nitrogen mineralization
 			float flu;                               // Emissions fraction from mineral soil
 
 		    // Each driver is an output raster and has its own emissions model.
@@ -466,19 +475,11 @@ for(x=0; x<xsize; x++)
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 
-				//ANNUAL CARBON STOCK LOSS IN MINERAL SOILS (equation 2.25)
-				average_annual_minsoil_c_loss = (soil_data[x]-(soil_data[x] * flu))/soil_emis_period
-
-                //CO2 EMISSIONS w/ TIME DEPENDENCY OVER MODEL TIME PERIOD APPLIED
-				minsoil_CO2_only = average_annual_minsoil_c_loss * (model_years-loss_data[x]);
-				//TODO: Why is C not converted to CO2??
-
-				//N2O EMISSIONS FROM N MINERALIZED AS A RESULT OF CARBON STOCK LOSS IN MINERAL SOILS w/ TIME DEPENDENCY OVER MODEL TIME PERIOD APPLIED
-                C_N_ratio = 15
-                EF1 = 0.010 //converts N to N2O-N emissions
-                N2O-N_to_N2O == 44/28 //converts N2O-N emissions to N2O for reporting purposes
-                minsoil_N2O_only = average_annual_minsoil_c_loss * EF1 * (1/C_N_ratio) * N2O-N_to_N2O * N2O_equiv
-                //Note don't multiply by 1000 to keep in t instead of kg
+				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * flu))/soil_emis_period;
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				minsoil_CO2_only = total_minsoil_soc_loss * C_to_CO2;
+                minsoil_N2O_only = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
+                //todo: split minsoil into co2 and n2o only from here on
 
 				if (peat_data[x] > 0) // permanent ag, peat
 				{

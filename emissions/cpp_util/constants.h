@@ -33,6 +33,12 @@ namespace constants
 
     //Note: flu_value for permanent agriculture comes from the function in flu_val.cpp and has several possible values based on eco zone and climate zone
 
+    constexpr int C_N_ratio {15};       // Carbon nitrogen ratio of soil organic matter (used for soil nitrogen mineralization) [IPCC 2019, V4, Ch. 11, p. 11.20 equation 11.8]
+
+    constexpr float N_mineralization_EF {0.010};         // Emission factor for N mineralised from mineral soil as a result of loss of soil carbon  [IPCC 2019, V4, Ch. 11, p. 11.11 (Section 11.2.1.2) table 11.1, EF1]
+
+    constexpr float N2O-N_to_N2O {44.0/28.0};   // Conversion N2O-N emissions to N2O emissions for reporting purposes [IPCC 2019, V4, Ch. 11, p. 11.7 (Section 11.2.1.1)]
+
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr
     // Inputs

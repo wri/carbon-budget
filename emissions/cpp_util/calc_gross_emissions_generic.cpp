@@ -93,6 +93,14 @@ settlements_flu = constants::settlements_flu;
 float hard_commod_flu; // F_lu for hard_commodities (fraction of soil C not emitted over 20 years)
 hard_commod_flu = constants::hard_commod_flu;
 
+int C_N_ratio;       // Carbon nitrogen ratio of soil organic matter
+C_N_ratio = constants::C_N_ratio;
+
+float N_mineralization_EF;          // Emissions factor for soil nitrogen mineralization (converts N to N2O-N emissions)
+N_mineralization_EF = constants::N_mineralization_EF;
+
+float N2O-N_to_N2O;     // Converts N2O-N emissions to N2O emissions
+N2O-N_to_N2O = constants::N2O-N_to_N2O;
 
 // Input files
 // Carbon pools
@@ -478,7 +486,8 @@ for(x=0; x<xsize; x++)
 			float Biomass_tCO2e_yesfire_CO2_only;    // Emissions from biomass on pixels with fire- only the CO2
 			float Biomass_tCO2e_yesfire_CH4_only;   // Emissions from biomass on pixels with fire- only CH4 emissions
 			float Biomass_tCO2e_yesfire_N2O_only;   // Emissions from biomass on pixels with fire- only N2O emissions
-			float minsoil;                           // Emissions from mineral soil- all CO2
+			float minsoil_CO2_only;                 // CO2 emissions from SOC losses in mineral soil
+			float minsoil_N2O_only;                 // N2O emissions from soil nitrogen mineralization
 			float flu;                               // Emissions fraction from mineral soil
 
 		    // Each driver is an output raster and has its own emissions model. 
