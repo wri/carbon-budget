@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Gibbs"
+  given-names: "David"
+  orcid: "https://orcid.org/0000-0001-7389-8569"
+- family-names: "Rose"
+  given-names: "Melissa"
+  orcid: "https://orcid.org/0000-0003-0012-0734"
+- family-names: "Harris"
+  given-names: "Nancy"
+  orcid: "https://orcid.org/0000-0001-6661-4249"
+title: "GFW Forest Carbon Flux Model"
+version: 1.4.1
+date-released: 2025-01-23
+url: "https://github.com/wri/carbon-budget"
