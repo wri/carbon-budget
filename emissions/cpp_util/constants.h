@@ -37,7 +37,7 @@ namespace constants
 
     constexpr float N_mineralization_EF {0.010};         // Emission factor for N mineralised from mineral soil as a result of loss of soil carbon  [IPCC 2019, V4, Ch. 11, p. 11.11 (Section 11.2.1.2) table 11.1, EF1]
 
-    constexpr float N2O-N_to_N2O {44.0/28.0};   // Conversion N2O-N emissions to N2O emissions for reporting purposes [IPCC 2019, V4, Ch. 11, p. 11.7 (Section 11.2.1.1)]
+    constexpr float N2O_N_to_N2O {44.0/28.0};   // Conversion N2O-N emissions to N2O emissions for reporting purposes [IPCC 2019, V4, Ch. 11, p. 11.7 (Section 11.2.1.1)]
 
     // Input and output variable patterns
     // per https://stackoverflow.com/questions/27123306/is-it-possible-to-use-stdstring-in-a-constexpr

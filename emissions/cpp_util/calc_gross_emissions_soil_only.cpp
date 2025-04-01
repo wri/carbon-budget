@@ -100,8 +100,8 @@ C_N_ratio = constants::C_N_ratio;
 float N_mineralization_EF;          // Emissions factor for soil nitrogen mineralization (converts N to N2O-N emissions)
 N_mineralization_EF = constants::N_mineralization_EF;
 
-float N2O-N_to_N2O;     // Converts N2O-N emissions to N2O emissions
-N2O-N_to_N2O = constants::N2O-N_to_N2O;
+float N2O_N_to_N2O;     // Converts N2O-N emissions to N2O emissions
+N2O_N_to_N2O = constants::N2O_N_to_N2O;
 
 // Input files
 // Carbon pools use the standard names for this sensitivity analysis
@@ -462,9 +462,11 @@ for(x=0; x<xsize; x++)
 			float above_below_c;
 			above_below_c = agc_data[x] + bgc_data[x];
 
+			float annual_minsoil_soc_loss;          // Annual soil organic carbon loss
+			float total_minsoil_soc_loss;           // Total soil organic carbon loss over model period
 			float minsoil_CO2only;                 // CO2 emissions from SOC losses in mineral soil
 			float minsoil_N2Oonly;                 // N2O emissions from soil nitrogen mineralization
-			float flu;                               // Emissions fraction from mineral soil
+			float flu;                             // Emissions fraction from mineral soil
 
 		    // Each driver is an output raster and has its own emissions model.
 		    // outdata_node_code is the code for each combination of outputs (defined in carbon-budget/emissions/node_codes.txt)
@@ -475,9 +477,9 @@ for(x=0; x<xsize; x++)
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
 
 				if (peat_data[x] > 0) // permanent ag, peat
 				{
@@ -636,9 +638,9 @@ for(x=0; x<xsize; x++)
 			{
 				// For each driver, these values (or a subset of them) are necessary for calculating emissions.
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * hard_commod_flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;
 
 				if (peat_data[x] > 0) // hard commodities, peat
 				{
@@ -796,9 +798,9 @@ for(x=0; x<xsize; x++)
 			else if (drivermodel_data[x] == 3)
 			{
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * shift_cult_flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;
 
 				if (peat_data[x] > 0) // shifting cultivation, peat
 				{
@@ -1089,9 +1091,9 @@ for(x=0; x<xsize; x++)
 		    else if (drivermodel_data[x] == 6)
 			{
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * settlements_flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;
 
                 if (peat_data[x] > 0) // settlements & infrastructure, peat
 				{

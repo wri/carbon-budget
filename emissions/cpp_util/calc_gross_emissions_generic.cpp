@@ -99,8 +99,8 @@ C_N_ratio = constants::C_N_ratio;
 float N_mineralization_EF;          // Emissions factor for soil nitrogen mineralization (converts N to N2O-N emissions)
 N_mineralization_EF = constants::N_mineralization_EF;
 
-float N2O-N_to_N2O;     // Converts N2O-N emissions to N2O emissions
-N2O-N_to_N2O = constants::N2O-N_to_N2O;
+float N2O_N_to_N2O;     // Converts N2O-N emissions to N2O emissions
+N2O_N_to_N2O = constants::N2O_N_to_N2O;
 
 // Input files
 // Carbon pools
@@ -486,6 +486,8 @@ for(x=0; x<xsize; x++)
 			float Biomass_tCO2e_yesfire_CO2_only;    // Emissions from biomass on pixels with fire- only the CO2
 			float Biomass_tCO2e_yesfire_CH4_only;   // Emissions from biomass on pixels with fire- only CH4 emissions
 			float Biomass_tCO2e_yesfire_N2O_only;   // Emissions from biomass on pixels with fire- only N2O emissions
+			float annual_minsoil_soc_loss;          // Annual soil organic carbon loss
+			float total_minsoil_soc_loss;           // Total soil organic carbon loss over model period
 			float minsoil_CO2only;                 // CO2 emissions from SOC losses in mineral soil
 			float minsoil_N2Oonly;                 // N2O emissions from soil nitrogen mineralization
 			float flu;                               // Emissions fraction from mineral soil
@@ -503,9 +505,9 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire_N2O_only = ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				flu = flu_val(climate_data[x], ecozone_data[x]);
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
 
 				if (peat_data[x] > 0) // permanent ag, peat
 				{
@@ -690,9 +692,9 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire_CH4_only = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv);
 				Biomass_tCO2e_yesfire_N2O_only = ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * hard_commod_flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;
 
 				if (peat_data[x] > 0) // hard commodities, peat
 				{
@@ -854,9 +856,9 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire_CH4_only = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv);
 				Biomass_tCO2e_yesfire_N2O_only = ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * shift_cult_flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;
 
 				if (peat_data[x] > 0) // shifting cultivation, peat
 				{
@@ -1190,9 +1192,9 @@ for(x=0; x<xsize; x++)
 				Biomass_tCO2e_yesfire_CH4_only = ((non_soil_c / biomass_to_c) * Cf * Gef_CH4 * pow(10,-3) * CH4_equiv);
 				Biomass_tCO2e_yesfire_N2O_only = ((non_soil_c / biomass_to_c) * Cf * Gef_N2O * pow(10,-3) * N2O_equiv);
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * settlements_flu))/soil_emis_period;
-				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x])
+				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O-N_to_N2O * N2O_equiv;
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;
 
                 if (peat_data[x] > 0) // settlements & infrastructure, peat
 				{
