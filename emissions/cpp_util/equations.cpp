@@ -12,7 +12,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 {
 
 	int model_years;    // How many loss years are in the model
-    model_years = 23;
+    model_years = 24;
 
 	int tropical;       // The ecozone code for the tropics
     tropical = 1;
