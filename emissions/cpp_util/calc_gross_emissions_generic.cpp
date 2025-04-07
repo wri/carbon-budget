@@ -410,11 +410,11 @@ for(x=0; x<xsize; x++)
 		float outdata_shifting_cultivation_CH4only = 0;  // shifting cultivation, CH4 only
 		float outdata_shifting_cultivation_N2Oonly = 0;  // shifting cultivation, N2O only
 		
-		float outdata_forest_management_allgases = 0;   // forest management, all gases
-		float outdata_forest_management_CO2only = 0;  // forest management, CO2 only
-		float outdata_forest_management_nonCO2 = 0;  // forest management, non-CO2
-		float outdata_forest_management_CH4only = 0;  // forest management, CH4 only
-		float outdata_forest_management_N2Oonly = 0;  // forest management, N2O only
+		float outdata_forest_management_allgases = 0;   // logging, all gases
+		float outdata_forest_management_CO2only = 0;  // logging, CO2 only
+		float outdata_forest_management_nonCO2 = 0;  // logging, non-CO2
+		float outdata_forest_management_CH4only = 0;  // logging, CH4 only
+		float outdata_forest_management_N2Oonly = 0;  // logging, N2O only
 		
 		float outdata_wildfire_allgases = 0;   // wildfire, all gases
 		float outdata_wildfire_CO2only = 0;  // wildfire, CO2 only
@@ -1052,7 +1052,7 @@ for(x=0; x<xsize; x++)
 			    outdata_shifting_cultivation_nonCO2 = outdata_shifting_cultivation_CH4only + outdata_shifting_cultivation_N2Oonly;
 			}
 
-			// Emissions model for forest management
+			// Emissions model for logging
 			else if (drivermodel_data[x] == 4)
 			{
 				Biomass_tCO2e_nofire_CO2_only = above_below_c * C_to_CO2;
@@ -1060,34 +1060,34 @@ for(x=0; x<xsize; x++)
                 Biomass_tCO2e_yesfire_CH4_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_CH4 * pow(10, -3) * CH4_equiv);
 				Biomass_tCO2e_yesfire_N2O_only = ((non_soil_bgc_c / biomass_to_c) * Cf * Gef_N2O * pow(10, -3) * N2O_equiv);
 
-				if (peat_data[x] > 0) // forest management, peat
+				if (peat_data[x] > 0) // logging, peat
 				{
-					if (burn_data[x] > 0 ) // forest management, peat, burned
+					if (burn_data[x] > 0 ) // logging, peat, burned
 					{
 						outdata_forest_management_CO2only = Biomass_tCO2e_yesfire_CO2_only + peat_drain_total_CO2_only + peatburn_CO2_only;
 						outdata_forest_management_CH4only = Biomass_tCO2e_yesfire_CH4_only + peat_drain_total_CH4_only + peatburn_CH4_only;
 						outdata_forest_management_N2Oonly = Biomass_tCO2e_yesfire_N2O_only + peat_drain_total_N2O_only;
 						outdata_node_code = 40;
 					}
-					if (burn_data[x] == 0 )  // forest management, peat, not burned
+					if (burn_data[x] == 0 )  // logging, peat, not burned
 					{
-						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))  // forest management, peat, not burned, temperate/boreal
+						if ((ecozone_data[x] == boreal) || (ecozone_data[x] == temperate))  // logging, peat, not burned, temperate/boreal
 						{
 							outdata_forest_management_CO2only = Biomass_tCO2e_nofire_CO2_only;
 							outdata_forest_management_CH4only = 0;
 						    outdata_forest_management_N2Oonly = 0;
 							outdata_node_code = 41;
 						}
-						if (ecozone_data[x] == tropical)// forest management, peat, not burned, tropical
+						if (ecozone_data[x] == tropical)// logging, peat, not burned, tropical
 						{
-							if (plant_data[x] > 0)  // forest management, peat, not burned, tropical, plantation
+							if (plant_data[x] > 0)  // logging, peat, not burned, tropical, plantation
 							{
 								outdata_forest_management_CO2only = Biomass_tCO2e_nofire_CO2_only + peat_drain_total_CO2_only;
 								outdata_forest_management_CH4only = 0 + peat_drain_total_CH4_only;
 								outdata_forest_management_N2Oonly = 0 + peat_drain_total_N2O_only;
 								outdata_node_code = 42;
 							}
-							if (plant_data[x] == 0)  // forest management, peat, not burned, tropical, not plantation
+							if (plant_data[x] == 0)  // logging, peat, not burned, tropical, not plantation
 							{
 								outdata_forest_management_CO2only = Biomass_tCO2e_nofire_CO2_only;
 								outdata_forest_management_CH4only = 0;
@@ -1097,16 +1097,16 @@ for(x=0; x<xsize; x++)
 						}
 					}
 				}
-				else  // forest management, not peat
+				else  // logging, not peat
 				{
-					if (burn_data[x] > 0) // forest management, not peat, burned
+					if (burn_data[x] > 0) // logging, not peat, burned
 					{
 						outdata_forest_management_CO2only = Biomass_tCO2e_yesfire_CO2_only;
 						outdata_forest_management_CH4only = Biomass_tCO2e_yesfire_CH4_only;
 						outdata_forest_management_N2Oonly= Biomass_tCO2e_yesfire_N2O_only;
 						outdata_node_code = 43;
 					}
-					if (burn_data[x] == 0) // forest management, not peat, not burned
+					if (burn_data[x] == 0) // logging, not peat, not burned
 					{
 						outdata_forest_management_CO2only = Biomass_tCO2e_nofire_CO2_only;
 						outdata_forest_management_CH4only = 0;
@@ -1515,7 +1515,7 @@ for(x=0; x<xsize; x++)
 				out_data_other_disturbances[x] = 0;
 				out_data_no_driver[x] = 0;
 			}
-			else if (drivermodel_data[x] == 4)  // forest management
+			else if (drivermodel_data[x] == 4)  // logging
 			{
 				out_data_permanent_agriculture[x] = 0;
 				out_data_hard_commodities[x] = 0;

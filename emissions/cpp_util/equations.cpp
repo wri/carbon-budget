@@ -112,9 +112,9 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 		}
 	}
 
-	else if (forestmodel_data == 4) // Forest management
+	else if (forestmodel_data == 4) // Logging
 	{
-		if (ecozone == boreal) // Forest management, boreal
+		if (ecozone == boreal) // Logging, boreal
 		{
 			Cf = 0.33;
 			CO2 = 1569;
@@ -129,7 +129,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
 			peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
 		}
-		else if (ecozone == temperate)// Forest management, temperate
+		else if (ecozone == temperate)// Logging, temperate
 		{
 			Cf = 0.62;
 			CO2 = 1569;
@@ -144,7 +144,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peat_drain_total_CH4_only = (model_years - lossyr) * peat_drain_annual_CH4_only;
 			peat_drain_total_N2O_only = (model_years - lossyr) * peat_drain_annual_N2O_only;
 		}
-		else  // Forest management, tropics (or no boreal/temperate/tropical assignment)
+		else  // Logging, tropics (or no boreal/temperate/tropical assignment)
 		{
 			CO2 = 1580;
 			CH4 = 6.8;
@@ -152,19 +152,19 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 			peatburn_CO2_only = 264;
 			peatburn_CH4_only = 88;
 
-			if (plant_data == 1) // Forest management, tropics, oil palm
+			if (plant_data == 1) // Logging, tropics, oil palm
             {
                 peat_drain_annual_CO2_only = 43;
                 peat_drain_annual_CH4_only = 1.2;
 			    peat_drain_annual_N2O_only = 1.0;
             }
-            else if (plant_data == 2) // Forest management, tropics, wood fiber
+            else if (plant_data == 2) // Logging, tropics, wood fiber
             {
                 peat_drain_annual_CO2_only = 76;
                 peat_drain_annual_CH4_only = 1.3;
 			    peat_drain_annual_N2O_only = 2.1;
             }
-            else // Forest management, tropics, other plantation or no plantation
+            else // Logging, tropics, other plantation or no plantation
             {
                 peat_drain_annual_CO2_only = 58;
                 peat_drain_annual_CH4_only = 1.3;
@@ -176,11 +176,11 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 
 			if (ifl > 0)
 			{
-				Cf = 0.36;      // Forest management, tropics, in IFL
+				Cf = 0.36;      // Logging, tropics, in IFL
 			}
 			else
 			{
-				Cf = 0.55;      // Forest management, tropics, outside IFL
+				Cf = 0.55;      // Logging, tropics, outside IFL
 			}
 		}
 	}
