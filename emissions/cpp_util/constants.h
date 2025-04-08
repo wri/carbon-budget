@@ -25,11 +25,9 @@ namespace constants
 
     constexpr int soil_emis_period {20};      // The number of years over which soil emissions are calculated (separate from model years)
 
-    constexpr float shift_cult_flu {0.72}; // F_lu for shifting cultivation (fraction of soil C not emitted over 20 years)
+    constexpr float shiftag_flu {0.72}; // F_lu for shifting agriculture (fraction of soil C not emitted over 20 years)
 
-    constexpr float settlements_flu {0.80}; // F_lu for settlements and infrastructure (fraction of soil C not emitted over 20 years)
-
-    constexpr float hard_commod_flu {0.80}; // F_lu for hard commodities (fraction of soil C not emitted over 20 years)
+    constexpr float urb_flu {0.80}; // F_lu for urbanization (fraction of soil C not emitted over 20 years)
 
     //Note: flu_value for permanent agriculture comes from the function in flu_val.cpp and has several possible values based on eco zone and climate zone
 
@@ -54,7 +52,7 @@ namespace constants
     constexpr char burnyear[] = "_tree_cover_loss_fire_processed.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";
-    constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20241224.tif";
+    constexpr char tcl_drivers[] = "_tree_cover_loss_driver_processed.tif";
     constexpr char peat_mask[] = "_peat_mask_processed.tif";
     constexpr char ifl_primary[] = "_ifl_2000_primary_2001_merged.tif";
     constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other.tif";

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 using namespace std;
 
-//This function is specifically for the permanent agriculture driver class which has several possible flu_values based on eco zone and climate zone
+//This function is specifically for the commodity-driven deforestation driver class which has several possible flu_values based on eco zone and climate zone
 float flu_val(int climate_zone, int eco_zone)
 {
 	float flu_value;
