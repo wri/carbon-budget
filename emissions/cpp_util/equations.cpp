@@ -39,7 +39,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 	float peat_drain_total_N2O_only;
 
 
-	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5)       // commodities, shifting ag., or urbanization
+	if ((forestmodel_data == 1) || (forestmodel_data == 2) || (forestmodel_data == 5))       // commodities, shifting ag., or urbanization
 	{
 		if (ecozone == boreal)      // commodities/shifting ag/urbanization, boreal
 		{
