@@ -275,7 +275,7 @@ void def_variables(float *q, int ecozone, int forestmodel_data, int ifl, int cli
 		}
 		else if (ecozone == temperate)// no driver, temperate
 		{
-			Cf = 0.45;   //TODO: This was 0.62 (post-logging slash and burn) but we updated to 0.45 (land clearing fire) b/c salvage logging is classified as forest management
+			Cf = 0.62;
 			CO2 = 1569;
 			CH4 = 4.7;
 			N2O = 0.26;
