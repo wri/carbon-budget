@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE, STDOUT, check_call
+from subprocess import Popen, PIPE, STDOUT, check_call, run
 import glob
 import boto3
 import botocore
@@ -17,6 +17,7 @@ import re
 import pandas as pd
 from osgeo import gdal
 import time
+import tempfile
 from random import seed
 from random import random
 
@@ -1073,6 +1074,13 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
 
     out_tile = f'{tile_id}_{out_pattern}.tif'
 
+    # If it's the drivers raster, extract band 1 first
+    if source_raster == cn.pattern_drivers_raw:
+        tmpfile = tempfile.NamedTemporaryFile(suffix='.tif', delete=False).name
+        translate_cmd = ['gdal_translate', '-b', '1', '-co', 'COMPRESS=LZW', '-co', 'TILED=YES', source_raster, tmpfile]
+        run(translate_cmd, check=True)
+        source_raster = tmpfile
+
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', source_raster, out_tile]
 
@@ -1080,17 +1088,32 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     with process.stdout:
         log_subprocess_output(process.stdout)
 
+    if source_raster == tmpfile:
+        os.remove(tmpfile)
+
     end_of_fx_summary(start, tile_id, out_pattern)
 
 
 def warp_to_Hansen(in_file, out_file, xmin, ymin, xmax, ymax, dt):
 
+    # If it's the drivers raster, extract band 1
+    if in_file == cn.pattern_drivers_raw:
+        tmpfile = tempfile.NamedTemporaryFile(suffix='.tif', delete=False).name
+        translate_cmd = ['gdal_translate', '-b', '1', '-co', 'COMPRESS=LZW', '-co', 'TILED=YES', in_file, tmpfile]
+        run(translate_cmd, check=True)
+        in_file = tmpfile
+    else:
+        tmpfile = None
+
     cmd = ['gdalwarp', '-t_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', '-tr', str(cn.Hansen_res), str(cn.Hansen_res), '-tap', '-te',
             str(xmin), str(ymin), str(xmax), str(ymax), '-dstnodata', '0', '-ot', dt, '-overwrite', in_file, out_file]
+
     process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
     with process.stdout:
         log_subprocess_output(process.stdout)
 
+    if tmpfile:
+        os.remove(tmpfile)
 
 # Rasterizes the shapefile within the bounding coordinates of a tile
 def rasterize(in_shape, out_tif, xmin, ymin, xmax, ymax, blocksizex, blocksizey, tr=None, ot=None, name_field=None, anodata=None):
