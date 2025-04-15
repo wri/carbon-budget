@@ -335,7 +335,7 @@ plant_pre_2000_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs
 #Note: New drivers is a multi-band image woth the classification in Band 1 and probabilities for each class in the other bands
 # Make sure to only use Band 1 when hansenizing the drivers tiles.
 drivers_raw_dir = 's3://gfw2-data/drivers_of_loss/1_km/raw/update2024_20250414/'
-pattern_drivers_raw = 'drivers_forest_loss_1km_2024.tif'
+pattern_drivers_raw = 'drivers_forest_loss_1km_2024_band1.tif'
 pattern_drivers = 'drivers_of_TCL_1_km_20250414'
 drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20250414/'
 
