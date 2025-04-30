@@ -507,7 +507,7 @@ for(x=0; x<xsize; x++)
 				annual_minsoil_soc_loss = (soil_data[x]-(soil_data[x] * flu))/soil_emis_period;
 				total_minsoil_soc_loss = annual_minsoil_soc_loss * (model_years-loss_data[x]);
 				minsoil_CO2only = total_minsoil_soc_loss * C_to_CO2;
-                minsoil_N2Oonly = total_minsoil_soc_loss * (1 / C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
+                minsoil_N2Oonly = total_minsoil_soc_loss * (1/C_N_ratio) * N_mineralization_EF * N2O_N_to_N2O * N2O_equiv;  // Note didn't multiply by 1000 to keep in t instead of kg [IPCC 2019, V4, Ch. 11, Equations 11.8 (F_som) and 11.1 (total emissions)]
 
 				if (peat_data[x] > 0) // permanent ag, peat
 				{
