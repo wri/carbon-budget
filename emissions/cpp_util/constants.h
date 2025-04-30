@@ -33,7 +33,7 @@ namespace constants
 
     //Note: flu_value for permanent agriculture comes from the function in flu_val.cpp and has several possible values based on eco zone and climate zone
 
-    constexpr int C_N_ratio {15};       // Carbon nitrogen ratio of soil organic matter (used for soil nitrogen mineralization) [IPCC 2019, V4, Ch. 11, p. 11.20 equation 11.8]
+    constexpr float C_N_ratio {15.0};       // Carbon nitrogen ratio of soil organic matter (used for soil nitrogen mineralization) [IPCC 2019, V4, Ch. 11, p. 11.20 equation 11.8]
 
     constexpr float N_mineralization_EF {0.010};         // Emission factor for N mineralised from mineral soil as a result of loss of soil carbon  [IPCC 2019, V4, Ch. 11, p. 11.11 (Section 11.2.1.2) table 11.1, EF1]
 
