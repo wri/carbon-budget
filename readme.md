@@ -2,7 +2,7 @@
 
 ### Purpose and scope
 This framework maps gross greenhouse gas emissions from forests, 
-gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2023. 
+gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2024. 
 Gross emissions includes CO2, CH4, and N2O and all carbon pools (aboveground biomass, belowground biomass, 
 dead wood, litter, and soil), and gross removals includes removals into aboveground and belowground biomass carbon. 
 Although the framework is run for all tree canopy densities in 2000 (per Hansen et al. 2013), it is most relevant to
@@ -12,9 +12,9 @@ The framework essentially spatially applies IPCC national greenhouse gas invento
 It covers only forests converted to non-forests, non-forests converted to forests and forests remaining forests (no other land 
 use transitions). The framework is described and published in [Harris et al. (2021) Nature Climate Change
 "Global maps of twenty-first century forest carbon fluxes"](https://www.nature.com/articles/s41558-020-00976-6).
-Although the original manuscript covered 2001-2019, the same methods were used to update the framework to include 2023, 
+Although the original manuscript covered 2001-2019, the same methods were used to update the framework through 2024, 
 with a few changes to some input layers and constants. You can read about the changes since publication 
-[here](https://www.globalforestwatch.org/blog/data-and-research/whats-new-carbon-flux-monitoring).
+[here](https://www.globalforestwatch.org/blog/data-and-tools/whats-new-carbon-flux-monitoring/).
 
 ### Inputs
 Well over twenty inputs are needed for this framework. Most are spatial, but some are tabular.
@@ -39,7 +39,7 @@ A complete list of inputs, including changes made to the framework since the ori
 [here](http://gfw2-data.s3.amazonaws.com/climate/carbon_model/Table_S3_data_sources__updated_20230406.pdf).
 
 ### Outputs
-There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2023. 
+There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2024. 
 These are produced at two resolutions: 0.00025x0.00025 degrees 
 (approximately 30x30 m at the equator) in 10x10 degree rasters (to make outputs a 
 manageable size), and 0.04x0.04 degrees (approximately 4x4km at the equator) as global rasters for static maps.
@@ -60,7 +60,7 @@ The 30-m outputs are used for zonal statistics (i.e. emissions, removals, or net
 and mapping on the Global Forest Watch web platform or at small scales (where 30-m pixels can be distinguished). 
 Individual emissions pixels can be assigned specific years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire framework run and cannot be assigned specific years. 
-This 30-m output is in megagrams (Mg) CO2e/ha 2001-2023 (i.e. densities) and includes all tree cover densities ("full extent"):
+This 30-m output is in megagrams (Mg) CO2e/ha 2001-2024 (i.e. densities) and includes all tree cover densities ("full extent"):
 `((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)`.
 However, the framework is designed to be used specifically for forests, so the framework creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard version, not for sensitivity analyses).
@@ -206,7 +206,7 @@ For example:
 
 Extent stage: `/usr/local/app# python -m data_prep.mp_model_extent -l 00N_000E -t std -nu`
 
-Carbon pool creation stage: `/usr/local/app# python -m carbon_pools.mp_create_carbon_pools -l 00N_000E,10S_050W -t std -ce loss -d 20239999`
+Carbon pool creation stage: `/usr/local/app# python -m carbon_pools.mp_create_carbon_pools -l 00N_000E,10S_050W -t std -ce loss -d 20259999`
 
 ##### Running the emissions stage
 The gross emissions script is the only part of the framework that uses C++. Thus, the appropriate version of the C++ 
@@ -226,7 +226,7 @@ For the standard framework and the sensitivity analyses that don't specifically 
 `mp_calculate_gross_emissions.py` can also be used to calculate emissions from soil only. 
 This is set by the `-p` argument: `biomass_soil` or `soil_only`.  
 
-Emissions stage: `/usr/local/app# python -m emissions.mp_calculate_gross_emissions -l 30N_090W,10S_010E -t std -p biomass_soil -d 20239999`
+Emissions stage: `/usr/local/app# python -m emissions.mp_calculate_gross_emissions -l 30N_090W,10S_010E -t std -p biomass_soil -d 20259999`
 
 #### Master script 
 The master script runs through all of the non-preparatory scripts in the framework: some removal factor creation, gross removals, carbon
@@ -260,10 +260,10 @@ they simply illustrate different configurations for the command line arguments.
 Like the individual framework stages, the full framework run script is also run from the project folder with the `-m` flag.
 
 Run: standard version; save intermediate outputs; run framework from annual_removals_IPCC;
-upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload to folder with date 20259999; run 00N_000E; get carbon pools at time of loss; add a log note;
 use multiprocessing (implicit because no `-sp` flag); only run listed stage (implicit because no -r flag)
 
-`python -m run_full_model -t std -si -s annual_removals_IPCC -d 20239999 -l 00N_000E -ce loss -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s annual_removals_IPCC -d 20259999 -l 00N_000E -ce loss -ln "00N_000E test"`
 
 Run: standard version; save intermediate outputs; run framework from annual_removals_IPCC; run all subsequent framework stages;
 do not upload outputs to s3; run 00N_000E; get carbon pools at time of loss; add a log note; 
@@ -272,22 +272,22 @@ use multiprocessing (implicit because no -sp flag)
 `python -m run_full_model -t std -si -s annual_removals_IPCC -r -nu -l 00N_000E -ce loss -ln "00N_000E test"`
 
 Run: standard version; save intermediate outputs; run framework from the beginning; run all framework stages;
-upload to folder with date 20239999; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload to folder with date 20259999; run 00N_000E; get carbon pools at time of loss; add a log note;
 use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -t std -si -s all -r -d 20239999 -l 00N_000E -ce loss -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s all -r -d 20259999 -l 00N_000E -ce loss -ln "00N_000E test"`
 
 Run: standard version; save intermediate outputs; run framework from the beginning; run all framework stages;
-upload to folder with date 20239999; run 00N_000E, 10N_110E, and 50N_080W; get carbon pools at time of loss; 
+upload to folder with date 20259999; run 00N_000E, 10N_110E, and 50N_080W; get carbon pools at time of loss; 
 add a log note; use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -t std -si -s all -r -d 20239999 -l 00N_000E,10N_110E,50N_080W -ce loss -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s all -r -d 20259999 -l 00N_000E,10N_110E,50N_080W -ce loss -ln "00N_000E test"`
 
 Run: standard version; run framework from the beginning; run all framework stages;
-upload to folder with date 20239999; run 00N_000E and 00N_010E; get carbon pools at time of loss; 
+upload to folder with date 20259999; run 00N_000E and 00N_010E; get carbon pools at time of loss; 
 use singleprocessing; add a log note; do not save intermediate outputs (implicit because no -si flag)
 
-`python -m run_full_model -t std -s all -r -nu -d 20239999 -l 00N_000E,00N_010E -ce loss -sp -ln "Two tile test"`
+`python -m run_full_model -t std -s all -r -nu -d 20259999 -l 00N_000E,00N_010E -ce loss -sp -ln "Two tile test"`
 
 FULL STANDARD FRAMEWORK RUN: standard framework; save intermediate outputs; run framework from the beginning; run all framework stages;
 run all tiles; get carbon pools at time of loss; add a log note;
@@ -305,17 +305,17 @@ Each sensitivity analysis variant starts at a different stage in the framework a
 except that sensitivity analyses do not include the creation of the supplementary outputs (per pixel tiles, forest extent tiles).
 Some use all tiles and some use a smaller extent.
 
-| Sensitivity analysis | Description | Extent | Starting stage | 
-| -------- | ----------- | ------ | ------ |
-| `std` | Standard framework | Global | `mp_model_extent.py` |
-| `maxgain` | Maximum number of years of gain (removals) for gain-only and loss-and-gain pixels | Global | `gain_year_count_all_forest_types.py` |
-| `no_shifting_ag` | Shifting agriculture driver is replaced with commodity-driven deforestation driver | Global | `mp_calculate_gross_emissions.py` |
-| `convert_to_grassland` | Forest is assumed to be converted to grassland instead of cropland in the emissions framework| Global | `mp_calculate_gross_emissions.py` |
-| `biomass_swap` | Uses Saatchi 1-km AGB map instead of Baccini 30-m map for starting carbon densities | Extent of Saatchi map, which is generally the tropics| `mp_model_extent.py` |
-| `US_removals` | Uses IPCC default removal factors for the US instead of US-specific removal factors from USFS FIA | Continental US | `mp_annual_gain_rate_AGC_BGC_all_forest_types.py` |
-| `no_primary_gain` | Primary forests and IFLs are assumed to not have any removals| Global | `mp_forest_age_category_IPCC.py` |
-| `legal_Amazon_loss` | Uses Brazil's PRODES annual deforestation system instead of Hansen loss | Legal Amazon| `mp_model_extent.py` |
-| `Mekong_loss` | Uses Hansen loss v2.0 (multiple loss in same pixel). NOTE: Not used for flux framework v1.2.0, so this is not currently supported. | Mekong region | N/A |
+| Sensitivity analysis | Description                                                                                                                           | Extent | Starting stage | 
+| -------- |---------------------------------------------------------------------------------------------------------------------------------------| ------ | ------ |
+| `std` | Standard framework                                                                                                                    | Global | `mp_model_extent.py` |
+| `maxgain` | Maximum number of years of gain (removals) for gain-only and loss-and-gain pixels                                                     | Global | `gain_year_count_all_forest_types.py` |
+| `no_shifting_ag` | Shifting agriculture driver is replaced with commodity-driven deforestation driver. NOTE: this is not currently supported.            | Global | `mp_calculate_gross_emissions.py` |
+| `convert_to_grassland` | Forest is assumed to be converted to grassland instead of cropland in the emissions framework. NOTE: this is not currently supported. | Global | `mp_calculate_gross_emissions.py` |
+| `biomass_swap` | Uses Saatchi 1-km AGB map instead of Baccini 30-m map for starting carbon densities                                                   | Extent of Saatchi map, which is generally the tropics| `mp_model_extent.py` |
+| `US_removals` | Uses IPCC default removal factors for the US instead of US-specific removal factors from USFS FIA                                     | Continental US | `mp_annual_gain_rate_AGC_BGC_all_forest_types.py` |
+| `no_primary_gain` | Primary forests and IFLs are assumed to not have any removals                                                                         | Global | `mp_forest_age_category_IPCC.py` |
+| `legal_Amazon_loss` | Uses Brazil's PRODES annual deforestation system instead of Hansen loss                                                               | Legal Amazon| `mp_model_extent.py` |
+| `Mekong_loss` | Uses Hansen loss v2.0 (multiple loss in same pixel). NOTE: Not used for flux framework v1.2.0, so this is not currently supported.    | Mekong region | N/A |
 
 
 ### Updating the framework with new tree cover loss
@@ -356,7 +356,7 @@ EC2 instance with 3.7 TB of storage and 96 processors.
 
 ### Other modifications to the framework
 It is recommended that any changes to the framework be tested in a local Docker instance before running on an ec2 instance.
-I like to output files to test folders on s3 with dates 20239999 because that is clearly not a real run date. 
+I like to output files to test folders on s3 with dates 20259999 because that is clearly not a real run date. 
 A standard development route is: 
 
 1) Make changes to a single framework script and run using the single processor option on a single tile (easiest for debugging) in local Docker.
