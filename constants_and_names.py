@@ -213,7 +213,7 @@ loss_dir = 's3://gfw2-data/forest_change/hansen_2024/'
 # From https://www.frontiersin.org/articles/10.3389/frsen.2022.856903/full
 pattern_data_lake = ''
 pattern_gain_ec2 = 'tree_cover_gain_2000_2020'
-gain_dir = 's3://gfw-data-lake/umd_tree_cover_gain_from_height/v20240126/raster/epsg-4326/10/40000/is/geotiff/'
+gain_dir = 's3://gfw-data-lake/umd_tree_cover_gain_from_height/v20240126/raster/epsg-4326/10/40000/is/geotiff/'   # updated to align with the gain data being used in Geotrellis
 
 # Tree cover density 2000 tiles
 pattern_tcd = 'Hansen_GFC2014_treecover2000'
