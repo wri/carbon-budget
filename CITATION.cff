@@ -11,6 +11,6 @@ authors:
   given-names: "Nancy"
   orcid: "https://orcid.org/0000-0001-6661-4249"
 title: "GFW Forest Carbon Flux Model"
-version: 1.4.1
+version: 1.4.2
 date-released: 2025-01-23
 url: "https://github.com/wri/carbon-budget"
