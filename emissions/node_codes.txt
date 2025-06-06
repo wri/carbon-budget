@@ -55,12 +55,12 @@ in the tropics on plantations with fires.
 391 - Shifting cultivation, not peat, not burned, temperate, plantation
 392 - Shifting cultivation, not peat, not burned, temperate, not plantation
 
-40 - Forest management, peat, burned
-41 - Forest management, peat, not burned, temperate/boreal
-42 - Forest management, peat, not burned, tropical, plantation
-421 - Forest management, peat, not burned, tropical, not plantation
-43 - Forest management, not peat, burned
-44 - Forest management, not peat, not burned
+40 - Logging, peat, burned
+41 - Logging, peat, not burned, temperate/boreal
+42 - Logging, peat, not burned, tropical, plantation
+421 - Logging, peat, not burned, tropical, not plantation
+43 - Logging, not peat, burned
+44 - Logging, not peat, not burned
 
 50 - Wildfire, peat, burned
 51 - Wildfire, peat, not burned, temperate/boreal
