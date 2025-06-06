@@ -11,10 +11,10 @@ In addition to natural terrestrial forests, it also covers planted forests in mo
 The framework essentially spatially applies IPCC national greenhouse gas inventory rules (2016 guidelines) for forests.
 It covers only forests converted to non-forests, non-forests converted to forests and forests remaining forests (no other land 
 use transitions). The framework is described and published in [Harris et al. (2021) Nature Climate Change
-"Global maps of twenty-first century forest carbon fluxes"](https://www.nature.com/articles/s41558-020-00976-6).
-Although the original manuscript covered 2001-2019, the same methods were used to update the framework through 2024, 
-with a few changes to some input layers and constants. You can read about the changes since publication 
-[here](https://www.globalforestwatch.org/blog/data-and-tools/whats-new-carbon-flux-monitoring/).
+"Global maps of twenty-first century forest carbon fluxes"](https://www.nature.com/articles/s41558-020-00976-6) and was updated in 
+[Gibbs et al. (2025) Earth System Science Data "Revised and updated geospatial monitoring of 21st century forest carbon fluxes"](https://essd.copernicus.org/articles/17/1217/2025/)
+Updates have been made to the framework since the original publication, which covered 2001-2019. The most up-to-date description of model 
+changes is available [here](https://www.globalforestwatch.org/blog/data-and-tools/whats-new-carbon-flux-monitoring/).
 
 ### Inputs
 Well over twenty inputs are needed for this framework. Most are spatial, but some are tabular.
@@ -34,9 +34,6 @@ in which the framework runs (see below for more on the Docker container).
 The framework looks for files locally before downloading them in order to reduce run time. 
 The framework can still be run without AWS credentials; inputs will be downloaded from s3 but outputs will not be uploaded to s3.
 In that case, outputs will only be stored locally.
-
-A complete list of inputs, including changes made to the framework since the original publication, can be found 
-[here](http://gfw2-data.s3.amazonaws.com/climate/carbon_model/Table_S3_data_sources__updated_20230406.pdf).
 
 ### Outputs
 There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2024. 
