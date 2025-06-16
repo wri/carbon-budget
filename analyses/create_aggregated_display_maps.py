@@ -1,8 +1,12 @@
 """
 python -m analyses.create_aggregated_display_maps
 
+For model v.1.3.2:
 Takes about 5.5 minutes to reproject inputs and make all four output maps.
 Takes about 5 minutes to make all four outputs if inputs are already reprojected.
+
+For model v1.4.2:
+Takes about 2 minutes to reproject the rasters and make all maps! Dunno why it was so much faster than the v1.3.2 run.
 
 With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 """
@@ -528,9 +532,9 @@ if __name__ == '__main__':
     emissions_colors = net_color_palette[5:]
 
     # Legend titles
-    emissions_title = "Gross forest greenhouse gas emissions\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
-    removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2023)"
-    net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2023)"
+    emissions_title = "Gross forest greenhouse gas emissions\nMt CO$_2$e yr$^{-1}$ (2001-2024)"
+    removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2024)"
+    net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2024)"
 
     # Generates jpegs for gross emissions, removals and net flux
     map_gross(cn.emissions_base, emissions_colors, emissions_percentiles, emissions_title, cn.emissions_jpeg)
