@@ -27,24 +27,27 @@ def main(excel_path):
     #Standardize column names by stripping whitespaces, setting to lowearcase, and replacing any spaces with "_".
     managed_land_proxy_codes_df = pd.read_excel(excel_path, sheet_name=cn.managed_land_proxy_sheet)
     managed_land_proxy_codes_df.columns = managed_land_proxy_codes_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
+    managed_land_proxy_codes_df
 
     gfw_removals_df = pd.read_excel(excel_path, sheet_name=cn.gfw_removals_sheet)
     gfw_removals_df.columns = gfw_removals_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
+    gfw_removals_df
 
     gfw_emissions_df = pd.read_excel(excel_path, sheet_name=cn.gfw_emissions_sheet)
     gfw_emissions_df.columns = gfw_emissions_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
-
+    gfw_emissions_df
 
     #Step 1: Reclassify JRC managed land proxy codes to GFW codes which determine which translation method to apply
     if cn.gfw_code_col not in managed_land_proxy_codes_df.columns:
         managed_land_proxy_codes_df = ut.update_managed_land_proxy_df(managed_land_proxy_codes_df, cn.jrc_code_col, cn.gfw_code_col)
     else:
-        print("GFW managed land proxy code exists. Skipping reclassification step.")
+        print("GFW managed land proxy code exists. Skipping JRC -> GFW reclassification step.")
+    managed_land_proxy_codes_df
 
 
     #Step 2: Translate country removals according to GFW managed land proxy code
     # Check that the managed land proxy df has iso, country, and gfw managed land code info and copy to new df
-    keep_cols = ['iso', 'country', cn.gfw_code_col]
+    keep_cols = [cn.iso_col, cn.country_col, cn.gfw_code_col]
     missing_cols = [c for c in keep_cols if c not in managed_land_proxy_codes_df.columns]
     if missing_cols:
         raise KeyError(
@@ -55,14 +58,14 @@ def main(excel_path):
 
     #Use the GFW managed land code to assign translated removals per country
     translated_removals_df = ut.translate_removals(keep_col_df, gfw_removals_df)
-
-
+    translated_removals_df
 
     # Write out translated results to new spreadsheet
-    managed_land_proxy_codes_df.to_excel(cn.out_sheet, sheet_name=cn.managed_land_proxy_sheet, index=False)
-    gfw_removals_df.to_excel(cn.out_sheet, sheet_name=cn.gfw_removals_sheet, index=False)
-    gfw_emissions_df.to_excel(cn.out_sheet, sheet_name=cn.gfw_emissions_sheet, index=False)
-
+    with pd.ExcelWriter(cn.out_sheet, engine="openpyxl", mode="w") as writer:
+        managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
+        translated_removals_df.to_excel(writer, sheet_name=cn.nghgi_removals_sheet, index=False)
+        gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
+    #TODO: Keep raw data in output spreadsheet?
 
 if __name__ == "__main__":
     main(cn.in_sheet)

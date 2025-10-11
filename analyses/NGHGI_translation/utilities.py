@@ -60,10 +60,10 @@ def translate_removals(translated_removals_df, gfw_removals_df):
     out = translated_removals_df.copy()
     gfw = gfw_removals_df.copy()
 
-    #Make sure the value column is numeric
+    #Make sure the removals column is numeric
     gfw[cn.gfw_annual_removals_col] = pd.to_numeric(gfw[cn.gfw_annual_removals_col], errors="coerce")
 
-    #Coerce into boolean for translation rules
+    #Coerce is is__intact_primary_forest and is__umd_tree_cover_loss into boolean for translation rules
     gfw[cn.is_ifl_col] = standardize_bool(gfw[cn.is_ifl_col])
     gfw[cn.is_tcl_col] = standardize_bool(gfw[cn.is_tcl_col])
 
@@ -72,8 +72,10 @@ def translate_removals(translated_removals_df, gfw_removals_df):
         # "is__intact_primary_forest" == FALSE OR
         # "is__intact_primary_forest" == TRUE AND is__umd_tree_cover_loss == TRUE AND driver_of_tree_cover_loss IN ('Shifting cultivation', 'Logging')
     # Note: Removals associated with TCL in intact or primary forests due to shifting cultivation or logging
-    # are considered "anthropogenic", since regrowth occurs after unmanaged forest is converted to managed land.
-    anthro_mask = (~gfw[cn.is_ifl_col]) | (gfw[cn.is_ifl_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin(["Shifting cultivation", "Logging"]))
+    # are considered "anthropogenic", since regrowth can occur after unmanaged forest is converted to managed forest.
+    nifl_mask = ((~gfw[cn.is_ifl_col]) |
+                 (gfw[cn.is_ifl_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin([
+                     "Shifting cultivation", "Logging"])))
 
     #Translate removals into those considered to be "non-anthropogenic" using the IFL/ primary forest managed land proxy.
     # This includes removals where:
@@ -82,29 +84,61 @@ def translate_removals(translated_removals_df, gfw_removals_df):
         # ('Permanent agriculture', 'Hard commodities', 'Wildfire', 'Settlements & infrastructure', 'Other natural disturbances', 'No driver'))
     # Note: Removals associated with TCL in intact or primary forests due to deforestation (permanent ag, commodites, and settlements)
     # are assumed to occur before deforestation and thus occured before unmanged forest was converted to managed land.
-    # TCL in intact or primary forests due to non-anthropogenic causes (wildfire, natural disturbances, NA) do not result in
-    # the conversion of unmanaged forest to managed land and thus these removals are considered to be non-anthropogenic
-    nonanthro_mask = (gfw[cn.is_ifl_col] & ~gfw[cn.is_tcl_col]) | (gfw[cn.is_ifl_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin([
-        "Permanent agriculture", "Hard commodities", "Wildfire", "Settlements & infrastructure", "Other natural disturbances", "No driver"]))
+    # Note: TCL in intact or primary forests due to non-anthropogenic causes (wildfire, natural disturbances, no driver) do not result
+    # in the conversion of unmanaged forest to managed forest and thus these removals are considered to be non-anthropogenic.
+    ifl_mask = ((gfw[cn.is_ifl_col] & ~gfw[cn.is_tcl_col]) |
+                (gfw[cn.is_ifl_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin([
+                    "Permanent agriculture", "Hard commodities", "Settlements & Infrastructure",
+                    "Wildfire", "Other natural disturbances", "Unknown"])))
 
     #Sum by iso
     gross_annual_removals = gfw.groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
-    anthro_removals = gfw.loc[anthro_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
-    nonanthro_removals = gfw.loc[nonanthro_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
+    nifl_removals = gfw.loc[nifl_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
+    ifl_removals = gfw.loc[ifl_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
 
     #Write sums into translated_removals_df
-    out["gross_annual_removal__Mg_CO2_yr-1"] = out[cn.iso_col].map(gross_annual_removals)
-    out["anthro_annual_removal__Mg_CO2_yr-1"] = out[cn.iso_col].map(anthro_removals)
-    out["non_anthro_annual_removal__Mg_CO2_yr-1"] = out[cn.iso_col].map(nonanthro_removals)
+    out[cn.gross_removals_col] = out[cn.iso_col].map(gross_annual_removals)
+    out['nifl_proxy_removals'] = out[cn.iso_col].map(nifl_removals)
+    out['ifl_proxy_removals'] = out[cn.iso_col].map(ifl_removals)
 
-    # Check that anthro + nonanthro equals gross annual removals in output df
-    check = out["anthro_annual_removal__Mg_CO2_yr-1"].fillna(0) + out["non_anthro_annual_removal__Mg_CO2_yr-1"].fillna(0)
-    gross = out["gross_annual_removal__Mg_CO2_yr-1"].fillna(0)
-
+    # Check that nifl_proxy + ifl_proxy removals equals gross annual removals in out df
+    check = out['nifl_proxy_removals'].fillna(0) + out['ifl_proxy_removals'].fillna(0)
+    gross = out[cn.gross_removals_col].fillna(0)
     if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
-        raise ValueError("Anthropogenic + non-anthropogenic removals does not equal gross removals for at least one country.")
+        raise ValueError("Non-ifl/primary proxy + ifl/primary proxy removals do not equal gross removals for at least one country.")
 
-    #TODO: MANAGED LAND PROXY CODE IMPLEMENTATION
+    #Use the GFW managed land proxy decision tree code to decide which removals are "anthropogenic" and which are "non-anthropogenic"
+    # Initialize target columns
+    out[cn.anthro_removals_col] = np.nan
+    out[cn.nonanthro_removals_col] = np.nan
 
+    mlp_1 = out[cn.gfw_code_col].astype(str).str.lower().eq("1")
+    mlp_2a = out[cn.gfw_code_col].astype(str).str.lower().eq("2a")
+    mlp_2b = out[cn.gfw_code_col].astype(str).str.lower().eq("2b")
+
+    # Case 1: All removals are anthropogenic, no removals are non-anthropogenic
+    out.loc[mlp_1, cn.anthro_removals_col] = out.loc[mlp_1, cn.gross_removals_col]
+    out.loc[mlp_1, cn.nonanthro_removals_col] = 0.0
+
+    # Case 2a: Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) removals
+    # (leave NaN placeholders; fill later when polygon-derived removals are available)
+    # out.loc[mlp_2a, cn.anthro_removals_col] = fill from geotrellis spreadsheet
+    # out.loc[mlp_2a, cn.nonanthro_removals_col] = fill from geotrellis spreadsheet
+    # TODO: Update with managed land polygons
+
+    # Case 2b: IFL/primary forest proxy determines anthropogenic (non-ifl/primary proxy) vs non-anthropogenic (ifl/primary proxy) removals
+    out.loc[mlp_2b, cn.anthro_removals_col] = out.loc[mlp_2b, "nifl_proxy_removals"]
+    out.loc[mlp_2b, cn.nonanthro_removals_col] = out.loc[mlp_2b, "ifl_proxy_removals"]
+
+    # Check that anthro + non-anthro removals equals gross annual removals in out df
+    # check = out[cn.anthro_removals_col].fillna(0) + out[cn.nonanthro_removals_col].fillna(0)
+    # gross = out[cn.gross_removals_col].fillna(0)
+    # if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
+    #     raise ValueError("Anthropogenic + non-anthropoegnic removals do not equal gross removals for at least one country.")
+    #TODO: Make sure managed land polygon total == country totals
+
+    # Delete intermediate columns if keep_inter_cols is not True in constants.py
+    if not cn.keep_inter_cols:
+        out = out.drop(columns=['nifl_proxy_removals', 'ifl_proxy_removals'], errors='ignore')
 
     return out
