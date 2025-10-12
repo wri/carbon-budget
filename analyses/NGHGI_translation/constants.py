@@ -1,5 +1,5 @@
 # Used for final output spreadsheet
-run_date = '20259999'
+run_date = '20258888'
 
 # Whether to keep intermediate columns in the final output spreadsheet. Useful for QCing.
 keep_inter_cols = True
@@ -41,11 +41,14 @@ gfw_emissions_col = "emissions_co2_only_biomass_soil__mg_co2"
 ########################################################################################################################
 #Removals
 gross_removals_col = "gross_annual_removal__Mg_CO2_yr-1"
-anthro_removals_col = "anthro_forest_annual_removal__Mg_CO2_yr-1"
-nonanthro_removals_col = "non_anthro_forest_annual_removal__Mg_CO2_yr-1"
+anthro_removals_col = "anthro_forest_annual_removals__Mg_CO2_yr-1"
+nonanthro_removals_col = "non_anthro_forest_annual_removals__Mg_CO2_yr-1"
 
 #Emissions
 gross_emissions_col = "gross_annual_emissions__Mg_CO2"
+anthro_deforest_emissions_col = "anthro_deforestation_emissions__Mg_CO2"
+anthro_forest_emissions_col = "anthro_forest_emissions__Mg_CO2"
+nonanthro_forest_emissions_col = "non_anthro_forest_emissions__Mg_CO2"
 
 #Final results
 out_sheet = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\JRC_datahub_2024_update_{run_date}.xlsx"

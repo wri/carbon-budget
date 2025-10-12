@@ -26,15 +26,12 @@ def main(excel_path):
     #Standardize column names by stripping whitespaces, setting to lowearcase, and replacing any spaces with "_".
     managed_land_proxy_codes_df = pd.read_excel(excel_path, sheet_name=cn.managed_land_proxy_sheet)
     managed_land_proxy_codes_df.columns = managed_land_proxy_codes_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
-    managed_land_proxy_codes_df
 
     gfw_removals_df = pd.read_excel(excel_path, sheet_name=cn.gfw_removals_sheet)
     gfw_removals_df.columns = gfw_removals_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
-    gfw_removals_df
 
     gfw_emissions_df = pd.read_excel(excel_path, sheet_name=cn.gfw_emissions_sheet)
     gfw_emissions_df.columns = gfw_emissions_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
-    gfw_emissions_df
 
    #####################################################################################################################
    # Step 1: Reclassify JRC managed land proxy codes to GFW codes which determine which translation method to apply
@@ -43,7 +40,6 @@ def main(excel_path):
         managed_land_proxy_codes_df = ut.update_managed_land_proxy_df(managed_land_proxy_codes_df, cn.jrc_code_col, cn.gfw_code_col)
     else:
         print("GFW managed land proxy code exists. Skipping JRC -> GFW reclassification step.")
-    print(managed_land_proxy_codes_df.head())
 
    #####################################################################################################################
    # Step 2: Translate country removals according to the GFW managed land proxy code
@@ -60,14 +56,12 @@ def main(excel_path):
 
     #Use the GFW managed land code to assign translated removals per country
     translated_removals_df = ut.translate_removals(keep_col_df, gfw_removals_df)
-    print(translated_removals_df.head())
 
    #####################################################################################################################
    # Step 3: Translate country emissions according to the GFW managed land proxy code
    #####################################################################################################################
    # Use the GFW managed land code to assign translated emissions per country
     translated_emissions_df = ut.translate_emissions(keep_col_df, gfw_emissions_df)
-    print(translated_emissions_df.head())
 
    #####################################################################################################################
    # Step X: Write out translated results

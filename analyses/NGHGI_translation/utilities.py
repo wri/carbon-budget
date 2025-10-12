@@ -142,7 +142,7 @@ def translate_removals(keep_col_df, gfw_removals_df):
 ########################################################################################################################
 # Core function to translate GFW forest emissions into "anthropogenic deforestation", "anthropogenic forest", and "non-anthropogenic forest" emissions.
 def translate_emissions(keep_col_df, gfw_emissions_df):
-    out = keep_col_df.copy()
+    out_base = keep_col_df.copy()
     gfw = gfw_emissions_df.copy()
 
     # Make sure the emissions column is numeric and primary/intact column is boolean for translation rules
@@ -195,20 +195,63 @@ def translate_emissions(keep_col_df, gfw_emissions_df):
 
     # Create the iso x year index
     uniq_pairs = gfw[group_keys].drop_duplicates()
-    keep_cols = out[[cn.iso_col, cn.country_col, cn.gfw_code_col]].drop_duplicates()
-    out_df = uniq_pairs.merge(keep_cols, on=cn.iso_col, how="left")
+    keep_cols = out_base[[cn.iso_col, cn.country_col, cn.gfw_code_col]].drop_duplicates()
+    out = uniq_pairs.merge(keep_cols, on=cn.iso_col, how="left")
 
     # Write sums into translated_emissions_df
-    out_df[cn.gross_emissions_col] = list(map(lambda r: gross_emissions.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out_df.to_dict("records")))
-    out_df['anthro_deforest_emissions_proxy'] = list(map(lambda r: anthro_def_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out_df.to_dict("records")))
-    out_df['anthro_forest_emissions_proxy'] = list(map(lambda r: anthro_for_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out_df.to_dict("records")))
-    out_df['nonanthro_forest_emissions_proxy'] = list(map(lambda r: nonanthro_for_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out_df.to_dict("records")))
+    out[cn.gross_emissions_col] = list(map(lambda r: gross_emissions.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
+    out['anthro_deforest_emissions_proxy'] = list(map(lambda r: anthro_def_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
+    out['anthro_forest_emissions_proxy'] = list(map(lambda r: anthro_for_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
+    out['nonanthro_forest_emissions_proxy'] = list(map(lambda r: nonanthro_for_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
 
     # Check that estimates for "anthropogenic deforestation" + "anthropogenic forest" + "non-anthropogenic forest" using
     # the managed land proxy equals gross emissions for each year of tree cover loss.
-    check = out_df['anthro_deforest_emissions_proxy'].fillna(0) + out_df['anthro_forest_emissions_proxy'].fillna(0) + out_df['nonanthro_forest_emissions_proxy'].fillna(0)
-    gross = out_df[cn.gross_emissions_col].fillna(0)
+    check = (out['anthro_deforest_emissions_proxy'].fillna(0) + 
+             out['anthro_forest_emissions_proxy'].fillna(0) + 
+             out['nonanthro_forest_emissions_proxy'].fillna(0))
+    gross = out[cn.gross_emissions_col].fillna(0)
     if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
         raise ValueError("Managed land proxies for anthropogenic + non-anthropogenic emissions do not equal gross emissions for at least one country.")
 
-    return out_df
+    # Use the GFW managed land proxy code to determine which emissions to assign as
+    # "anthropogenic deforestation", "anthropogenic forest" and "non-anthropogenic forest"
+    out[cn.anthro_deforest_emissions_col] = np.nan
+    out[cn.anthro_forest_emissions_col] = np.nan
+    out[cn.nonanthro_forest_emissions_col] = np.nan
+
+    mlp_1 = out[cn.gfw_code_col].astype(str).str.lower().eq("1")
+    mlp_2a = out[cn.gfw_code_col].astype(str).str.lower().eq("2a")
+    mlp_2b = out[cn.gfw_code_col].astype(str).str.lower().eq("2b")
+
+    # Case 1: All forest emissions are anthropogenic, no emissions are non-anthropogenic.
+    out.loc[mlp_1, cn.anthro_deforest_emissions_col] = out.loc[mlp_1, 'anthro_deforest_emissions_proxy']
+    out.loc[mlp_1, cn.anthro_forest_emissions_col] = (out.loc[mlp_1, ['anthro_forest_emissions_proxy',
+                                                                      'nonanthro_forest_emissions_proxy']].sum(axis=1, min_count=1))
+    out.loc[mlp_1, cn.nonanthro_forest_emissions_col] = 0.0
+    
+    # Case 2a: Managed land polygons determine anthropgogenic vs non-anthropogenic emissions. 
+    # (leave NaN placeholders; fill later when polygon-derived emissions are available)
+    # out.loc[mlp_2a, cn.anthro_deforest_emissions_col] = fill from geotrellis spreadsheet
+    # out.loc[mlp_2a, cn.anthro_forest_emissions_col] = fill from geotrellis spreadsheet
+    # out.loc[mlp_2a, cn.nonanthro_forest_emissions_col] = fill from geotrellis spreadsheet
+    # TODO: Update with managed land polygons
+
+    # Case 2b: Primary/IFL forest proxy determines anthropogenic vs non-anthropogenic removals (rules outlined above)
+    out.loc[mlp_2b, cn.anthro_deforest_emissions_col] = out.loc[mlp_2b, 'anthro_deforest_emissions_proxy']
+    out.loc[mlp_2b, cn.anthro_forest_emissions_col] = out.loc[mlp_2b, 'anthro_forest_emissions_proxy'] 
+    out.loc[mlp_2b, cn.nonanthro_forest_emissions_col] = out.loc[mlp_2b, 'nonanthro_forest_emissions_proxy']
+
+    # Check that anthro + non-anthro emissions equals gross emissions in out
+    # check = (out[cn.anthro_deforest_emissions_col].fillna(0) + 
+    #          out[cn.anthro_forest_emissions_col].fillna(0) +
+    #          out[cn.nonanthro_forest_emissions_col].fillna(0))
+    # gross = out[cn.gross_emissions_col].fillna(0)
+    # if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
+    #     raise ValueError("Anthropogenic + non-anthropoegnic emissions do not equal gross emissions for at least one country.")
+    # TODO: Make sure managed land polygon total == country totals
+
+    # Delete intermediate columns if keep_inter_cols is not True in constants.py
+    if not cn.keep_inter_cols:
+        out = out.drop(columns=['anthro_deforest_emissions_proxy', 'anthro_forest_emissions_proxy', 'nonanthro_forest_emissions_proxy'], errors='ignore')
+
+    return out
