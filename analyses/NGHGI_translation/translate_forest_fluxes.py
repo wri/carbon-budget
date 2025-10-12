@@ -75,13 +75,14 @@ def main(excel_path):
     # Write out translated results to new spreadsheet
     with pd.ExcelWriter(cn.out_sheet, engine="openpyxl", mode="w") as writer:
         translated_removals_df.to_excel(writer, sheet_name=cn.nghgi_removals_sheet, index=False)
+        translated_emissions_df.to_excel(writer, sheet_name=cn.nghgi_emissions_sheet, index=False)
 
         if cn.keep_raw_data:
             managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
             gfw_removals_df.to_excel(writer, sheet_name=cn.gfw_removals_sheet, index=False)
             gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
 
-    #TODO: Replace mg_co2 --> Mg_CO2 in column names, column order, format numbers, fill NANs with 0s. 
+    #TODO: Replace mg_co2 --> Mg_CO2 in column names, column order, format numbers, fill NANs with 0s.
 
 if __name__ == "__main__":
     main(cn.in_sheet)
