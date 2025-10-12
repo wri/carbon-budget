@@ -8,7 +8,6 @@ Case 2b: Includes the remaining 143 countries in which NGHGIs do not report enou
         For these countries we consider "managed forests" in tropical regions to be forests outside humid tropical primary forests from 2001
         (Turubanova et al. 2018) and in extratropical regions as forests outside intact forest landscapes from 2000 (Potapov et al. 2017).
 
-
 '''
 import pandas as pd
 from pathlib import Path
@@ -37,15 +36,18 @@ def main(excel_path):
     gfw_emissions_df.columns = gfw_emissions_df.columns.astype(str).str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
     gfw_emissions_df
 
-    #Step 1: Reclassify JRC managed land proxy codes to GFW codes which determine which translation method to apply
+   #####################################################################################################################
+   # Step 1: Reclassify JRC managed land proxy codes to GFW codes which determine which translation method to apply
+   #####################################################################################################################
     if cn.gfw_code_col not in managed_land_proxy_codes_df.columns:
         managed_land_proxy_codes_df = ut.update_managed_land_proxy_df(managed_land_proxy_codes_df, cn.jrc_code_col, cn.gfw_code_col)
     else:
         print("GFW managed land proxy code exists. Skipping JRC -> GFW reclassification step.")
-    managed_land_proxy_codes_df
+    print(managed_land_proxy_codes_df.head())
 
-
-    #Step 2: Translate country removals according to GFW managed land proxy code
+   #####################################################################################################################
+   # Step 2: Translate country removals according to the GFW managed land proxy code
+   #####################################################################################################################
     # Check that the managed land proxy df has iso, country, and gfw managed land code info and copy to new df
     keep_cols = [cn.iso_col, cn.country_col, cn.gfw_code_col]
     missing_cols = [c for c in keep_cols if c not in managed_land_proxy_codes_df.columns]
@@ -58,14 +60,28 @@ def main(excel_path):
 
     #Use the GFW managed land code to assign translated removals per country
     translated_removals_df = ut.translate_removals(keep_col_df, gfw_removals_df)
-    translated_removals_df
+    print(translated_removals_df.head())
 
+   #####################################################################################################################
+   # Step 3: Translate country emissions according to the GFW managed land proxy code
+   #####################################################################################################################
+   # Use the GFW managed land code to assign translated emissions per country
+    translated_emissions_df = ut.translate_emissions(keep_col_df, gfw_emissions_df)
+    print(translated_emissions_df.head())
+
+   #####################################################################################################################
+   # Step X: Write out translated results
+   #####################################################################################################################
     # Write out translated results to new spreadsheet
     with pd.ExcelWriter(cn.out_sheet, engine="openpyxl", mode="w") as writer:
-        managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
         translated_removals_df.to_excel(writer, sheet_name=cn.nghgi_removals_sheet, index=False)
-        gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
-    #TODO: Keep raw data in output spreadsheet?
+
+        if cn.keep_raw_data:
+            managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
+            gfw_removals_df.to_excel(writer, sheet_name=cn.gfw_removals_sheet, index=False)
+            gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
+
+    #TODO: Replace mg_co2 --> Mg_CO2 in column names, column order, format numbers, fill NANs with 0s. 
 
 if __name__ == "__main__":
     main(cn.in_sheet)

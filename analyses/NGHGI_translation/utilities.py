@@ -4,13 +4,13 @@ from pathlib import Path
 import constants as cn
 
 ########################################################################################################################
-#STEP 1: MANAGED LAND PROXY RECLASSIFICATION
+# STEP 1: MANAGED LAND PROXY RECLASSIFICATION
 ########################################################################################################################
 def check_pandas_df(df):
     if not isinstance(df, pd.DataFrame):
         raise TypeError(f"must be a pandas DataFrame")
 
-#Makes sure that the JRC managed land proxy codes are standardized (i.e numbers are ints and letters are lowercased)
+# Makes sure that the JRC managed land proxy codes are standardized (i.e numbers are ints and letters are lowercased)
 def standardize_jrc_code(val):
     if pd.isna(val):
         return None
@@ -51,52 +51,53 @@ def update_managed_land_proxy_df(df, jrc_col, wri_col):
     return out
 
 ########################################################################################################################
-#STEP 2: REMOVALS TRANSLATION
+# STEP 2: REMOVALS TRANSLATION
 ########################################################################################################################
 def standardize_bool(s):
     return s.astype(str).str.strip().str.lower().map({"true": True, "false": False, "1": True, "0": False, "nan": np.nan}).astype("boolean")
 
-def translate_removals(translated_removals_df, gfw_removals_df):
-    out = translated_removals_df.copy()
+# Core function to translate GFW forest removals into anthropogenic forest and non-anthropogenic forest removals.
+def translate_removals(keep_col_df, gfw_removals_df):
+    out = keep_col_df.copy()
     gfw = gfw_removals_df.copy()
 
-    #Make sure the removals column is numeric
+    # Make sure the removals column is numeric
     gfw[cn.gfw_annual_removals_col] = pd.to_numeric(gfw[cn.gfw_annual_removals_col], errors="coerce")
 
-    #Coerce is is__intact_primary_forest and is__umd_tree_cover_loss into boolean for translation rules
+    # Coerce is is__intact_primary_forest and is__umd_tree_cover_loss into boolean for translation rules
     gfw[cn.is_ifl_col] = standardize_bool(gfw[cn.is_ifl_col])
     gfw[cn.is_tcl_col] = standardize_bool(gfw[cn.is_tcl_col])
 
-    #Translate removals into those considered to be "anthropogenic" using the IFL/ primary forest managed land proxy.
+    # Translate GFW removals into "anthropogenic forest" removals using the IFL/ primary forest managed land proxy.
     # This includes removals where:
-        # "is__intact_primary_forest" == FALSE OR
-        # "is__intact_primary_forest" == TRUE AND is__umd_tree_cover_loss == TRUE AND driver_of_tree_cover_loss IN ('Shifting cultivation', 'Logging')
-    # Note: Removals associated with TCL in intact or primary forests due to shifting cultivation or logging
-    # are considered "anthropogenic", since regrowth can occur after unmanaged forest is converted to managed forest.
+        # is__intact_primary_forest == FALSE OR
+        # is__intact_primary_forest == TRUE AND is__umd_tree_cover_loss == TRUE AND driver_of_tree_cover_loss IN ('Shifting cultivation', 'Logging')
+    # Removals associated with TCL in intact or primary forests due to shifting cultivation or logging
+    # are considered "anthropogenic forest", since regrowth can occur after unmanaged forest is converted to managed forest.
     nifl_mask = ((~gfw[cn.is_ifl_col]) |
                  (gfw[cn.is_ifl_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin([
                      "Shifting cultivation", "Logging"])))
 
-    #Translate removals into those considered to be "non-anthropogenic" using the IFL/ primary forest managed land proxy.
+    # Translate removals into "non-anthropogenic forest" removals using the IFL/ primary forest managed land proxy.
     # This includes removals where:
-        # ("is__intact_primary_forest" == TRUE AND is__umd_tree_cover_loss == FALSE) OR
-        # ("is__intact_primary_forest" == TRUE AND is__umd_tree_cover_loss == TRUE AND driver_of_tree_cover_loss IN
+        # (is__intact_primary_forest == TRUE AND is__umd_tree_cover_loss == FALSE) OR
+        # (is__intact_primary_forest == TRUE AND is__umd_tree_cover_loss == TRUE AND driver_of_tree_cover_loss IN
         # ('Permanent agriculture', 'Hard commodities', 'Wildfire', 'Settlements & infrastructure', 'Other natural disturbances', 'No driver'))
-    # Note: Removals associated with TCL in intact or primary forests due to deforestation (permanent ag, commodites, and settlements)
-    # are assumed to occur before deforestation and thus occured before unmanged forest was converted to managed land.
-    # Note: TCL in intact or primary forests due to non-anthropogenic causes (wildfire, natural disturbances, no driver) do not result
+    # Removals associated with TCL in intact or primary forests due to deforestation (permanent ag, commodites, and settlements)
+    # are assumed to occur before deforestation occured and thus before unmanged forest was converted to managed land.
+    # TCL in intact or primary forests due to non-anthropogenic causes (wildfire, natural disturbances, no driver) do not result
     # in the conversion of unmanaged forest to managed forest and thus these removals are considered to be non-anthropogenic.
     ifl_mask = ((gfw[cn.is_ifl_col] & ~gfw[cn.is_tcl_col]) |
                 (gfw[cn.is_ifl_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin([
                     "Permanent agriculture", "Hard commodities", "Settlements & Infrastructure",
                     "Wildfire", "Other natural disturbances", "Unknown"])))
 
-    #Sum by iso
+    # Sum by iso
     gross_annual_removals = gfw.groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
     nifl_removals = gfw.loc[nifl_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
     ifl_removals = gfw.loc[ifl_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
 
-    #Write sums into translated_removals_df
+    # Write sums into translated_removals_df
     out[cn.gross_removals_col] = out[cn.iso_col].map(gross_annual_removals)
     out['nifl_proxy_removals'] = out[cn.iso_col].map(nifl_removals)
     out['ifl_proxy_removals'] = out[cn.iso_col].map(ifl_removals)
@@ -107,8 +108,7 @@ def translate_removals(translated_removals_df, gfw_removals_df):
     if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
         raise ValueError("Non-ifl/primary proxy + ifl/primary proxy removals do not equal gross removals for at least one country.")
 
-    #Use the GFW managed land proxy decision tree code to decide which removals are "anthropogenic" and which are "non-anthropogenic"
-    # Initialize target columns
+    # Use the GFW managed land proxy code to determine which removals are "anthropogenic forest" and which are "non-anthropogenic forest"
     out[cn.anthro_removals_col] = np.nan
     out[cn.nonanthro_removals_col] = np.nan
 
@@ -142,3 +142,48 @@ def translate_removals(translated_removals_df, gfw_removals_df):
         out = out.drop(columns=['nifl_proxy_removals', 'ifl_proxy_removals'], errors='ignore')
 
     return out
+
+########################################################################################################################
+# STEP 3: EMISSIONS TRANSLATION
+########################################################################################################################
+# Core function to translate GFW forest emissions into "anthropogenic deforestation", "anthropogenic forest", and "non-anthropogenic forest" emissions.
+def translate_emissions(keep_col_df, gfw_emissions_df):
+    out = keep_col_df.copy()
+    gfw = gfw_emissions_df.copy()
+
+    # Make sure the emissions column is numeric and primary/intact column is boolean for translation rules
+    gfw[cn.gfw_emissions_col] = pd.to_numeric(gfw[cn.gfw_emissions_col], errors="coerce")
+    gfw[cn.is_ifl_col] = standardize_bool(gfw[cn.is_ifl_col])
+
+    # Since it is often not clear which NGHGI category emissions from tree cover loss in secondary forests associated
+    # with shifting cultivation cycles are reported in, we generated two scenarios for our emissions reclassification:
+        # 'forest': one where these emissions are reported as "anthropogenic forest" and
+        # 'deforest': one where they are reported as "anthropogenic deforestation" emissions.
+
+    # Translate emissions into "anthropogenic deforestation" using the primary/IFL forest managed land proxy.
+    # This includes the following emissions:
+        # All emissions from permanent agriculture, hard commodites, and settlements/infrastructure in both primary/intact forests and secondary forests.
+        # Always emissions from shifting cultivation in primary/intact forests because it is a permanent change from forest to a non-forest land use.
+        # Optional: Emissions from shifting cultivation in secondary forest can also be included.
+    if cn.secondary_shift_cult_cat == 'forest':
+        mask_anthro_def = ((gfw[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])) |
+                           (gfw[cn.is_ifl_col] & gfw[cn.driver_col].isin('Shifting cultivation')))
+    if cn.secondary_shift_cult_cat == 'deforestation':
+        mask_anthro_def = ((gfw[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])) |
+                           (gfw[cn.is_ifl_col] & gfw[cn.driver_col].isin('Shifting cultivation')) |
+                           ((~gfw[cn.is_ifl_col]) & gfw[cn.driver_col].isin(['Shifting cultivation'])))
+
+    # Translate emissions into "anthropogenic forest" using the primary/IFL forest managed land proxy.
+    # This includes the following emissions:
+        # All emissions from logging in both primary/intact forests and secondary forests.
+        # Emissions from "natural causes" (fire, natural disturbances, unknown) in secondary forests only.
+        # Optional: Emissions from shifting cultivation in secondary forest only can also be included.
+    if cn.secondary_shift_cult_cat == 'forest':
+        mask_anthro_for = ((gfw[cn.driver_col].isin('Logging')) |
+                          ((~gfw[cn.is_ifl_col]) & gfw[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])) |
+                          ((~gfw[cn.is_ifl_col]) & gfw[cn.driver_col].isin(['Shifting cultivation'])))
+
+    if cn.secondary_shift_cult_cat == 'deforestation':
+        mask_anthro_for = ((gfw[cn.driver_col].isin('Logging')) |
+                          ((~gfw[cn.is_ifl_col]) & gfw[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])))
+

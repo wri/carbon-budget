@@ -1,0 +1,66 @@
+Before running this translation python code, raw data needs to be prepared in an xlsx spreadheet.
+The steps to prepare the input data are as follows.
+
+1. Mangaed land proxy codes from JRC
+Confirm the country list and the managed land proxy codes with JRC. They split their managed land proxy codes into the
+following 7 categories:
+    1. not all forest is managed, country map available
+    2. not all forest is managed, but country map not available
+    3a. all forest is explicitly managed
+    3b. all forest is implicitly managed
+    4. unsure if all forest included in NGHGI or not
+    5. C fluxes from FL-FL are only partially included
+    6. Removals in FL-FL not included
+These get reclassified (in this script) according to which translation method we use to distinguish between
+anthropogenic vs non-anthropogenic fluxes:
+    3a, 3b --> 1. All forests are considered managed and thus all fluxes are anthropogenic, none are non-anthropogenic.
+    1 --> 2a. Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) fluxes.
+    2, 4, 5, 6 --> 2b. Countries do not report enough details regarding the managed land proxy and its extent.
+                   IFL/primary forest proxy determines anthropogenic vs non-anthropogenic fluxes.
+Note: If there are any changes in the country list, update the iso codes in the queries below.
+#TODO: Confirm removals decision for case 6
+
+2. Average annual removals (Mg CO2 per year)
+Use the carbonflux iso summary table in the GFW Data API to get average annual removals seperated by
+intact/primary forest, whether or not there has been tree cover loss, and driver of tree cover loss.
+For the 2024 update, this is the query I used:
+    https://data-api.globalforestwatch.org/dataset/carbonflux_iso_summary/v20250515/query/csv?sql=
+    SELECT "iso", "is__umd_tree_cover_loss", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver" AS "driver_of_tree_cover_loss",
+    SUM("gfw_full_extent_gross_removals__Mg_CO2")/24*-1 AS "average_annual_removal__Mg_CO2_yr-1"
+    FROM data
+    WHERE umd_tree_cover_density_2000__threshold = 30
+    AND "iso" IN ('AFG','ALB','DZA','AND','AGO','ATG','ARG','ARM','AUS','AUT','AZE','BHS','BHR','BGD','BRB','BLR','BEL','BLZ','BEN','BTN','BOL','BIH','BWA','BRA','BRN','BGR','BFA','BDI','KHM','CMR','CAN','CPV','CAF','TCD','CHL','CHN','COL','COM','COG','COK','CRI','CIV','HRV','CUB','CYP','CZE','PRK','COD','DNK','DJI','DMA','DOM','ECU','EGY','SLV','GNQ','ERI','EST','ETH','FJI','FIN','FRA','GAB','GMB','GEO','DEU','GHA','GRC','GRD','GTM','GIN','GNB','GUY','HTI','HND','HUN','ISL','IND','IDN','IRN','IRQ','IRL','ISR','ITA','JAM','JPN','JOR','KAZ','KEN','KIR','KWT','KGZ','LAO','LVA','LBN','LSO','LBR','LBY','LIE','LTU','LUX','MDG','MWI','MYS','MDV','MLI','MLT','MHL','MRT','MUS','MEX','FSM','MCO','MNG','MNE','MAR','MOZ','MMR','NAM','NRU','NPL','NLD','NZL','NIC','NER','NGA','NIU','NOR','OMN','PAK','PLW','PAN','PNG','PRY','PER','PHL','POL','PRT','QAT','KOR','MDA','ROU','RUS','RWA','KNA','LCA','VCT','WSM','SMR','STP','SAU','SEN','SRB','SYC','SLE','SGP','SVK','SVN','SLB','SOM','ZAF','SSD','ESP','LKA','SDN','SUR','SWZ','SWE','CHE','SYR','TJK','THA','MKD','TLS','TGO','TON','TTO','TUN','TUR','TKM','TUV','UGA','UKR','ARE','GBR','TZA','USA','URY','UZB','VUT','VEN','VNM','YEM','ZMB','ZWE')
+    GROUP BY "iso", "is__umd_tree_cover_loss", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver"
+Note: This year, I decided to limit the queries to only countries that will be translated.
+Last year I did not do this and I just got results for all countries in the GFW DATA API.
+This made it difficult to QC translated totals with the raw data totals.
+If JRC changes the countries list, we will need to update the iso codes in these API queries.
+
+3. Timeseries of emissions (Mg CO2 per year)
+Use the carbonflux iso change table in the GFW Data API to get annual emissions seperated by
+year of tree cover loss, intact/primary forest, and driver of tree cover loss.
+For the 2024 update, this is the query I used:
+    https://data-api.globalforestwatch.org/dataset/carbonflux_iso_change/v20250515/query/csv?sql=
+    SELECT "iso", "umd_tree_cover_loss__year", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver" AS "driver_of_tree_cover_loss",
+    SUM("gfw_full_extent_gross_emissions_CO2_only_biomass_soil__Mg_CO2") AS "emissions_co2_only_biomass+soil__Mg_CO2"
+    FROM data
+    WHERE umd_tree_cover_density_2000__threshold = 30
+    and "iso" IN ('AFG','ALB','DZA','AND','AGO','ATG','ARG','ARM','AUS','AUT','AZE','BHS','BHR','BGD','BRB','BLR','BEL','BLZ','BEN','BTN','BOL','BIH','BWA','BRA','BRN','BGR','BFA','BDI','KHM','CMR','CAN','CPV','CAF','TCD','CHL','CHN','COL','COM','COG','COK','CRI','CIV','HRV','CUB','CYP','CZE','PRK','COD','DNK','DJI')
+    GROUP BY "iso", "umd_tree_cover_loss__year", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver"
+Repeat x3 with the following country lists:
+    ('DMA','DOM','ECU','EGY','SLV','GNQ','ERI','EST','ETH','FJI','FIN','FRA','GAB','GMB','GEO','DEU','GHA','GRC','GRD','GTM','GIN','GNB','GUY','HTI','HND','HUN','ISL','IND','IDN','IRN','IRQ','IRL','ISR','ITA','JAM','JPN','JOR','KAZ','KEN','KIR','KWT','KGZ','LAO','LVA','LBN','LSO','LBR','LBY','LIE','LTU','LUX')
+    ('MDG','MWI','MYS','MDV','MLI','MLT','MHL','MRT','MUS','MEX','FSM','MCO','MNG','MNE','MAR','MOZ','MMR','NAM','NRU','NPL','NLD','NZL','NIC','NER','NGA','NIU','NOR','OMN','PAK','PLW','PAN','PNG','PRY','PER','PHL','POL','PRT','QAT','KOR','MDA','ROU','RUS','RWA','KNA','LCA','VCT','WSM','SMR','STP','SAU','SEN')
+    ('SRB','SYC','SLE','SGP','SVK','SVN','SLB','SOM','ZAF','SSD','ESP','LKA','SDN','SUR','SWZ','SWE','CHE','SYR','TJK','THA','MKD','TLS','TGO','TON','TTO','TUN','TUR','TKM','TUV','UGA','UKR','ARE','GBR','TZA','USA','URY','UZB','VUT','VEN','VNM','YEM','ZMB','ZWE')
+Note: The API request times out if you try to do all countries at once so they have to be split up into multiple requests.
+
+4. Managed land polygons
+Use the ArcPy geotrellis client to get zonal stats for Canada, the United States, and Brazil's managed land polygons.
+Managed land polygons for Canada and the United States are simple enough to submit as one job each.
+For Brazil, the polygons are too complicated/large and have to be split into smaller areas to run in EMR.
+S3 paths to managed land polygons:
+    Canada:
+    USA:
+    Brazil:
+
+
+
