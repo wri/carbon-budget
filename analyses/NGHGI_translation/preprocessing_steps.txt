@@ -84,3 +84,4 @@ arcpy..TreeCoverLossAnalysis(
 )
 Note: Some areas in Brazil need more workers, particularly mata atlantica, so adjust workers as needed.
 
+

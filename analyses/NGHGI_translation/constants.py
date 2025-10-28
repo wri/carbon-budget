@@ -2,6 +2,8 @@
 run_date = '20258888'
 
 #Number of years
+start_year = 2001
+end_year = 2024
 n_years = float(24)
 
 # Whether to keep the untranslated GFW forest flux data in the final output spreadsheet
@@ -43,8 +45,8 @@ brazil_sheet = "BRA"
 class_col = "class"
 is_prim_col = "is__umd_regional_primary_forest_2001"
 is_ifl_col = "is__intact_forest_landscapes_2000"
-geotrellis_gross_removals_col = "gfw_forest_carbon_gross_removals_2001_2024__mg_co2"
-geotrellis_annual_emission_cols = [f"gfw_forest_carbon_gross_emissions_co2_{year}__mg_co2e"for year in range(2001, 2025)]
+geotrellis_gross_removals_col = f"gfw_forest_carbon_gross_removals_{start_year}_{end_year}__mg_co2"
+geotrellis_annual_emission_cols = [f"gfw_forest_carbon_gross_emissions_co2_{year}__mg_co2e"for year in range(start_year, end_year+1)]
 
 
 #-----------------------------------------------------------------------------------------------------------------------

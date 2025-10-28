@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import constants as cn
+import re
 
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ def standardize_jrc_code(val):
         pass
     return s.lower()
 
-# Reclassifies the JRC managed land proxy codes into new codes that determine which methods to use for NGHGI translation
+# Reclassifies the JRC managed land proxy codes into new codes that determine which methods to use for the NGHGI translation
 def jrc_to_wri(normalized):
     if normalized in ("3a", "3b"):
         return "1"
@@ -54,11 +55,11 @@ def update_managed_land_proxy_df(df, jrc_col, wri_col):
 # STEP 2: REMOVALS TRANSLATION
 #-----------------------------------------------------------------------------------------------------------------------
 
-# Makes the true, false, and nan values in the dataframe to boolean types
+# Makes the true, false, and nan values in the dataframe boolean types
 def standardize_bool(s):
     return s.astype(str).str.strip().str.lower().map({"true": True, "false": False, "nan": np.nan}).astype("boolean")
 
-# Translates GFW forest removals into anthropogenic forest and non-anthropogenic forest removals.
+# Translate GFW forest removals into "anthropogenic forest" and "non-anthropogenic forest" removals.
 def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     out = keep_col_df.copy()
     gfw = gfw_removals_df.copy()
@@ -69,7 +70,7 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     gfw[cn.is_ifl_prim_col] = standardize_bool(gfw[cn.is_ifl_prim_col])
     gfw[cn.is_tcl_col] = standardize_bool(gfw[cn.is_tcl_col])
 
-    # Divide gross geotrellis removals by number of years and multiply by -1 to get average annual removals
+    # Divide managed polygon removals by number of years and multiply by -1 to get average annual removals
     managed[cn.gfw_annual_removals_col] = pd.to_numeric(managed[cn.geotrellis_gross_removals_col], errors="coerce").div(cn.n_years) * -1
     managed[cn.is_tcl_col] = standardize_bool(managed[cn.is_tcl_col])
 
@@ -78,14 +79,15 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     mlp_2a = out[cn.gfw_code_col].astype(str).str.lower().eq("2a")
     mlp_2b = out[cn.gfw_code_col].astype(str).str.lower().eq("2b")
 
-    # Add gross average annual removals (Mg CO2 per year) column to out df
-    gross_annual_removals = gfw.groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
-    gross_removals_avg = managed.groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
+    # Add gross average annual removals (Mg CO2 per year) column to out df for QC, fill nan with 0
+    gross_annual_removals = gfw.groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
+    gross_removals_avg = managed.groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
     out[cn.gross_removals_col] = np.where(mlp_2a, out[cn.iso_col].map(gross_removals_avg), out[cn.iso_col].map(gross_annual_removals))
+    out[cn.gross_removals_col] = np.nan_to_num(out[cn.gross_removals_col], nan=0.0)
 
     # Use the managed land proxy code to assign "anthropogenic forest" and "non-anthropogenic forest" removals below
-    out[cn.anthro_removals_col] = np.nan
-    out[cn.nonanthro_removals_col] = np.nan
+    out[cn.anthro_removals_col] = 0.0
+    out[cn.nonanthro_removals_col] = 0.0
 
     #-------------------------------------------------------------------------------------------------------------------
     # Case 1: All removals are anthropogenic, no removals are non-anthropogenic
@@ -96,7 +98,7 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     #-------------------------------------------------------------------------------------------------------------------
     # Case 2a: Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) removals
     #-------------------------------------------------------------------------------------------------------------------
-    # GFW removals are translated into "anthropogenic forest" removals using managed polygon delineation.
+    # GFW removals are translated into "anthropogenic forest" removals using managed polygons.
     # This includes the following removals:
     #   1) All removals in managed polygons
     #   2) Removals in unmanaged land polygons associated with tree cover loss due to shifting cultivation or logging
@@ -104,10 +106,10 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     managed_forest_mask = (managed[cn.class_col].eq("managed")|
                           (managed[cn.class_col].eq("unmanaged") & managed[cn.is_tcl_col] & managed[cn.driver_col].isin(["Shifting cultivation", "Logging"])))
 
-    # GFW removals are translated into "non-anthropogenic forest" removals unmanaged polygon delineation.
+    # GFW removals are translated into "non-anthropogenic forest" removals using unmanaged polygons.
     # This includes the following removals:
     #     1) Removals in unmanaged polygons without any tree cover loss.
-    #     2) Removals in unmanaged polygons with tree cover loss due to "non-anthropogenic" causes (wildfire, natural disturbances, unknown)
+    #     2) Removals in unmanaged polygons with tree cover loss due to "non-anthropogenic" causes (wildfire, natural disturbances, unknown).
     #     3) Removals in unmanaged polygons with tree cover loss resulting in "deforestation" (permanent ag, commodities, and settlements).
     #        They are assumed to have occured before deforestation and thus before unmanaged forest was converted to managed land.
     unmanaged_forest_mask = ((managed[cn.class_col].eq("unmanaged") & ~managed[cn.is_tcl_col]) |
@@ -115,8 +117,8 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
                              (managed[cn.class_col].eq("unmanaged") & managed[cn.is_tcl_col] & managed[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])))
 
     # Sum translated removals by iso code
-    managed_forest_removals = managed.loc[managed_forest_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
-    unmanaged_forest_removals = managed.loc[unmanaged_forest_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
+    managed_forest_removals = managed.loc[managed_forest_mask].groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
+    unmanaged_forest_removals = managed.loc[unmanaged_forest_mask].groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
 
     # Write translated removals from managed polygons for '2a' countries only
     out.loc[mlp_2a, cn.anthro_removals_col] = out.loc[mlp_2a, cn.iso_col].map(managed_forest_removals)
@@ -125,7 +127,7 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     #-------------------------------------------------------------------------------------------------------------------
     # Case 2b: Primary/IFL forest proxy determines anthropogenic vs non-anthropogenic removals
     #-------------------------------------------------------------------------------------------------------------------
-    # GFW removals are translated into "anthropogenic forest" removals using a non-primary/non-IFL forest proxy for managed forest.
+    # GFW removals are translated into "anthropogenic forest" removals using a non-primary/non-IFL approximation for managed forest.
     # This includes the following removals:
     #     1) All removals in secondary forests
     #     2) Removals associated with loss of primary/intact forests due to shifting cultivation or logging because
@@ -133,7 +135,7 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     anthro_forest_mask = ((~gfw[cn.is_ifl_prim_col]) |
                           (gfw[cn.is_ifl_prim_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin(['Shifting cultivation', 'Logging'])))
 
-    # GFW removals are translated into "non-anthropogenic forest" removals using a primary/IFL forest proxy for unmanaged forests.
+    # GFW removals are translated into "non-anthropogenic forest" removals using a primary/IFL forest approximation for unmanaged forests.
     # This includes the following removals:
     #     1) Removals from primary/intact forests without any tree cover loss.
     #     2) Removals from primary/intact forests with tree cover loss due to "non-anthropogenic" causes (wildfire, natural disturbances, unknown)
@@ -144,8 +146,8 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
                              (gfw[cn.is_ifl_prim_col] & gfw[cn.is_tcl_col] & gfw[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])))
 
     # Sum translated removals by iso code
-    anthro_forest_removals = gfw.loc[anthro_forest_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
-    nonanthro_forest_removals = gfw.loc[nonanthro_forest_mask].groupby(cn.iso_col, dropna=False)[cn.gfw_annual_removals_col].sum(min_count=1)
+    anthro_forest_removals = gfw.loc[anthro_forest_mask].groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
+    nonanthro_forest_removals = gfw.loc[nonanthro_forest_mask].groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
 
     # Write translated removals from primary/IFL forest proxy for '2b' countries only
     out.loc[mlp_2b, cn.anthro_removals_col] = out.loc[mlp_2b, cn.iso_col].map(anthro_forest_removals)
@@ -163,26 +165,126 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
 #-----------------------------------------------------------------------------------------------------------------------
 # STEP 3: EMISSIONS TRANSLATION
 #-----------------------------------------------------------------------------------------------------------------------
+# Reformat managed polygon emissions timeseries from columns (geotrellis) into rows (API) for translated results
+def col_to_row_emis(df_rows, name):
+    year_axis = pd.Index(cn.geotrellis_annual_emission_cols).str.extract(r'(\d{4})')[0].astype("string")
+    series = (df_rows.groupby(cn.iso_col)[cn.geotrellis_annual_emission_cols].sum()
+              .set_axis(year_axis, axis=1).stack().rename(name))
+    series.index = series.index.set_names([cn.iso_col, cn.tcl_year_col])
+    return series
 
-# Core function to translate GFW forest emissions into "anthropogenic deforestation", "anthropogenic forest", and "non-anthropogenic forest" emissions.
-def translate_emissions(keep_col_df, gfw_emissions_df, usa_df, canada_df, brazil_df):
-    out_base = keep_col_df.copy()
+# Translate GFW forest emissions into "anthropogenic deforestation", "anthropogenic forest", and "non-anthropogenic forest" emissions.
+def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
     gfw = gfw_emissions_df.copy()
+    managed = managed_polygons_df.copy()
 
-    # Make sure the emissions column is numeric and primary/intact column is boolean for translation rules
+    # Dataframe for translated results that has a TCL year column with all years between 2001 and the final year of timeseries
+    years = pd.DataFrame({cn.tcl_year_col: pd.Series(range(cn.start_year, int(cn.end_year)+1), dtype="string")})
+    out = keep_col_df.copy().merge(years, how="cross").sort_values([cn.iso_col, cn.tcl_year_col], ignore_index=True)
+
+    # Standardize columns for translation rules
     gfw[cn.gfw_emissions_col] = pd.to_numeric(gfw[cn.gfw_emissions_col], errors="coerce")
     gfw[cn.is_ifl_prim_col] = standardize_bool(gfw[cn.is_ifl_prim_col])
+    gfw[cn.tcl_year_col] = gfw[cn.tcl_year_col].astype("string")
 
-    # Since it is often not clear which NGHGI category emissions from tree cover loss in secondary forests associated
-    # with shifting cultivation cycles are reported in, we generated two scenarios for our emissions reclassification:
+    for col in cn.geotrellis_annual_emission_cols:
+        managed[col] = pd.to_numeric(managed[col], errors="coerce")
+    managed[cn.is_prim_col] = standardize_bool(managed[cn.is_prim_col])
+    managed[cn.is_ifl_col] = standardize_bool(managed[cn.is_ifl_col])
+    managed[cn.is_ifl_prim_col] = (managed[cn.is_ifl_col] | managed[cn.is_prim_col])  #combine ifl and primary bools for managed polygons
+
+    # Group countries by GFW managed land proxy code
+    mlp_1 = out[cn.gfw_code_col].astype(str).str.lower().eq("1")
+    mlp_2a = out[cn.gfw_code_col].astype(str).str.lower().eq("2a")
+    mlp_2b = out[cn.gfw_code_col].astype(str).str.lower().eq("2b")
+
+    # Reformat managed polygon emissions timeseries from columns (geotrellis) into rows (API) for translated results
+    # year_axis = pd.Index(cn.geotrellis_annual_emission_cols).str.extract(r'(\d{4})')[0].astype("string")
+    # managed_emis_cols = (managed.groupby(cn.iso_col)[cn.geotrellis_annual_emission_cols]
+    #     .set_axis(year_axis, axis=1).stack().rename("managed"))
+    #gfw_emis_rows = gfw.groupby([cn.iso_col, cn.tcl_year_col])[cn.gfw_emissions_col].rename("gfw")
+
+    # out_idx = pd.MultiIndex.from_frame(out[[cn.iso_col, cn.tcl_year_col]])
+    # managed_annual_emissions = managed_emis_cols.reindex(out_idx)
+    #gfw_annual_emissions = gfw_emis_rows.reindex(out_idx)
+
+    # Add gross annual CO2 emissions (Mg CO2 per year) column to out df for QC, fill nan with 0
+    # out[cn.gross_emissions_col] = np.where(mlp_2a, managed_annual_emissions, gfw_annual_emissions)
+    # out[cn.gross_emissions_col] = np.nan_to_num(out[cn.gross_emissions_col], nan=0.0)
+
+    # Use the managed land proxy code to assign "anthropogenic deforestation", "anthropogenic forest" and "non-anthropogenic forest" emissions
+    out[cn.gross_emissions_col] = 0.0
+    out[cn.anthro_deforest_emissions_col] = 0.0
+    out[cn.anthro_forest_emissions_col] = 0.0
+    out[cn.nonanthro_forest_emissions_col] = 0.0
+
+    # -------------------------------------------------------------------------------------------------------------------
+    # Managed land polygons: Brazil, Canada, and the United States
+    # -------------------------------------------------------------------------------------------------------------------
+    # GFW emissions are translated into "anthropogenic deforestation" using managed polygons + driver of tree cover loss
+    # This includes the following emissions:
+    #   1) All emissions from permanent agriculture, hard commodities, and settlements & infrastructure.
+    #   2) Emissions from shifting cultivation in primary/ifl forests because it is considered a permanent change from forest to non-forest land use.
+    #   3) Optional: Emissions from shifting cultivation in secondary forests can also be considered "deforestation" (see below).
+        # Since it is often not clear which NGHGI category emissions from tree cover loss in secondary forests associated with
+        # shifting cultivation are reported in, we make it possible to generate two emissions reclassification scenarios:
         # 'forest': one where these emissions are reported as "anthropogenic forest" and
         # 'deforest': one where they are reported as "anthropogenic deforestation" emissions.
+    if cn.secondary_shift_cult_cat == 'forest':
+        mask_anthro_def = ((managed[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])) |
+                           (managed[cn.is_ifl_prim_col] & managed[cn.driver_col].isin(['Shifting cultivation'])))
+    elif cn.secondary_shift_cult_cat == 'deforestation':
+        mask_anthro_def = ((managed[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])) |
+                           (managed[cn.is_ifl_prim_col] & managed[cn.driver_col].isin(['Shifting cultivation'])) |
+                           ((~managed[cn.is_ifl_prim_col]) & managed[cn.driver_col].isin(['Shifting cultivation'])))
+    else:
+        raise ValueError("Emissions associated with shifting cultivation in secondary forests must be assigned as forest or deforestation")
 
-    # Translate GFW emissions into "anthropogenic deforestation" using the primary/IFL forest managed land proxy.
+    # GFW emissions are translated into "anthropogenic forest" using managed polygons + driver of tree cover loss
     # This includes the following emissions:
-        # All emissions from permanent ag, commodites, and settlements in both primary/intact forests and secondary forests.
-        # Always emissions from shifting cultivation in primary/intact forests because it is a permanent change from forest to a non-forest land use.
-        # Optional: Emissions from shifting cultivation in secondary forest can also be included.
+    #   1) All emissions from logging
+    #   2) Emissions from "non-anthropogenic" causes (wildfire, natural disturbances, unknown) in managed polygons
+    #   3) Optional: Emissions from shifting cultivation in secondary forests only can also be considered.
+    if cn.secondary_shift_cult_cat == 'forest':
+        mask_anthro_for = ((managed[cn.driver_col].isin(['Logging'])) |
+                           (managed[cn.class_col].eq("managed") & managed[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])) |
+                           ((~managed[cn.is_ifl_prim_col]) & managed[cn.driver_col].isin(['Shifting cultivation'])))
+    elif cn.secondary_shift_cult_cat == 'deforestation':
+        mask_anthro_for = ((managed[cn.driver_col].isin(['Logging'])) |
+                           (managed[cn.class_col].eq("managed") & managed[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])))
+    else:
+        raise ValueError("Emissions associated with shifting cultivation in secondary forests must be assigned as forest or deforestation")
+
+    # GFW emissions are translated into "non-anthropogenic forest" using unmanaged polygons + driver of tree cover loss
+    # This includes the following emissions:
+    #   1) Emissions from "non-anthropogenic" causes (wildfire, natural disturbances, unknown) in unmanaged polygons only.
+    mask_nonanthro_for = (managed[cn.class_col].eq("unmanaged") & managed[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown']))
+
+    # Sum translated emissions by iso x tree cover loss year
+    gross_emis = col_to_row_emis(managed, "gross_emiss")
+    anthro_def_emis = col_to_row_emis(managed.loc[mask_anthro_def], "anthro_def")
+    anthro_for_emis = col_to_row_emis(managed.loc[mask_anthro_for], "anthro_for")
+    nonanthro_for_emis = col_to_row_emis(managed.loc[mask_nonanthro_for], "nonanthro_for")
+
+    # -------------------------------------------------------------------------------------------------------------------
+    # Case 2a: Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) emissions
+    # -------------------------------------------------------------------------------------------------------------------
+    # Write sums into translated_emissions_df for Case 2a countries
+    out_idx_2a = pd.MultiIndex.from_frame(out.loc[mlp_2a, [cn.iso_col, cn.tcl_year_col]])
+    out.loc[mlp_2a, cn.gross_emissions_col] = gross_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.anthro_deforest_emissions_col] = anthro_def_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.anthro_forest_emissions_col] = anthro_for_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.nonanthro_forest_emissions_col] = nonanthro_for_emis.reindex(out_idx_2a).to_numpy()
+
+
+    # -------------------------------------------------------------------------------------------------------------------
+    # Managed land proxy using primary/ifl forest extent
+    # -------------------------------------------------------------------------------------------------------------------
+    # GFW emissions are translated into "anthropogenic deforestation" using a secondary forest approximation for managed forests.
+    # This includes the following emissions:
+    #   1) All emissions from permanent ag, commodites, and settlements in both primary/intact forests and secondary forests.
+    #   2) Emissions from shifting cultivation in primary/ifl because it is a permanent change from forest to non-forest land use.
+    #   3) Optional: Emissions from shifting cultivation in secondary forest can also be included.
     if cn.secondary_shift_cult_cat == 'forest':
         mask_anthro_def = ((gfw[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])) |
                            (gfw[cn.is_ifl_prim_col] & gfw[cn.driver_col].isin(['Shifting cultivation'])))
@@ -190,92 +292,69 @@ def translate_emissions(keep_col_df, gfw_emissions_df, usa_df, canada_df, brazil
         mask_anthro_def = ((gfw[cn.driver_col].isin(['Permanent agriculture', 'Hard commodities', 'Settlements & Infrastructure'])) |
                            (gfw[cn.is_ifl_prim_col] & gfw[cn.driver_col].isin(['Shifting cultivation'])) |
                            ((~gfw[cn.is_ifl_prim_col]) & gfw[cn.driver_col].isin(['Shifting cultivation'])))
+    else:
+        raise ValueError("Emissions associated with shifting cultivation in secondary forests must be assigned as forest or deforestation")
 
-    # Translate GFW emissions into "anthropogenic forest" using the primary/IFL forest managed land proxy.
+    # GFW emissions are translated into "anthropogenic forest" using a secondary forest approximation for managed forests.
     # This includes the following emissions:
-        # All emissions from logging in both primary/intact forests and secondary forests.
-        # Emissions from "non-anthropogenic" causes (wildfire, natural disturbances, unknown) in secondary forests only.
-        # Optional: Emissions from shifting cultivation in secondary forest only can also be included.
+        #   1) All emissions from logging in both primary/intact forests and secondary forests.
+        #   2) Emissions from "non-anthropogenic" causes (wildfire, natural disturbances, unknown) in secondary forests only.
+        #   3) Optional: Emissions from shifting cultivation in secondary forest only can also be included.
     if cn.secondary_shift_cult_cat == 'forest':
         mask_anthro_for = ((gfw[cn.driver_col].isin(['Logging'])) |
                            ((~gfw[cn.is_ifl_prim_col]) & gfw[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])) |
                            ((~gfw[cn.is_ifl_prim_col]) & gfw[cn.driver_col].isin(['Shifting cultivation'])))
-
     elif cn.secondary_shift_cult_cat == 'deforestation':
         mask_anthro_for = ((gfw[cn.driver_col].isin(['Logging'])) |
                            ((~gfw[cn.is_ifl_prim_col]) & gfw[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])))
+    else:
+        raise ValueError(
+            "Emissions associated with shifting cultivation in secondary forests must be assigned as forest or deforestation")
 
-    # Translate GFW emissions into "non-anthropogenic forest" using the primary/IFL forest managed land proxy.
+    # GFW emissions are translated into "non-anthropogenic forest" using a primary/IFL approximation for unmanaged forests.
     # This includes the following emissions:
-        # Emissions from "non-anthropogenic" causes (wildfire, natural disturbances, unknown) in primary/intact forests only.
+        #   1) Emissions from "non-anthropogenic" causes (wildfire, natural disturbances, unknown) in primary/intact forests only.
     mask_nonanthro_for = (gfw[cn.is_ifl_prim_col]) & gfw[cn.driver_col].isin(['Wildfire', 'Other natural disturbances', 'Unknown'])
 
-    # Sum by iso x tree cover loss year
+    # Sum translated emissions by iso x tree cover loss year
     group_keys = [cn.iso_col, cn.tcl_year_col]
-    gross_emissions = gfw.groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum(min_count=1)
-    anthro_def_emis = gfw.loc[mask_anthro_def].groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum(min_count=1)
-    anthro_for_emis = gfw.loc[mask_anthro_for].groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum(min_count=1)
-    nonanthro_for_emis = gfw.loc[mask_nonanthro_for].groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum(min_count=1)
+    gross_emis = gfw.groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum().rename("gross_emiss")
+    anthro_def_emis = gfw.loc[mask_anthro_def].groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum().rename("anthro_def")
+    anthro_for_emis = gfw.loc[mask_anthro_for].groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum().rename("anthro_for")
+    nonanthro_for_emis = gfw.loc[mask_nonanthro_for].groupby(group_keys, dropna=False)[cn.gfw_emissions_col].sum().rename("nonanthro_for")
 
-    # Create the iso x year index
-    uniq_pairs = gfw[group_keys].drop_duplicates()
-    keep_cols = out_base[[cn.iso_col, cn.country_col, cn.gfw_code_col]].drop_duplicates()
-    out = uniq_pairs.merge(keep_cols, on=cn.iso_col, how="left")
-
-    # Write sums into translated_emissions_df
-    out[cn.gross_emissions_col] = list(map(lambda r: gross_emissions.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
-    out['anthro_deforest_emissions_proxy'] = list(map(lambda r: anthro_def_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
-    out['anthro_forest_emissions_proxy'] = list(map(lambda r: anthro_for_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
-    out['nonanthro_forest_emissions_proxy'] = list(map(lambda r: nonanthro_for_emis.get((r[cn.iso_col], r[cn.tcl_year_col]), np.nan), out.to_dict("records")))
-
-    # Check that estimates for "anthropogenic deforestation" + "anthropogenic forest" + "non-anthropogenic forest" using
-    # the managed land proxy equals gross emissions for each year of tree cover loss.
-    check = (out['anthro_deforest_emissions_proxy'].fillna(0) + 
-             out['anthro_forest_emissions_proxy'].fillna(0) + 
-             out['nonanthro_forest_emissions_proxy'].fillna(0))
-    gross = out[cn.gross_emissions_col].fillna(0)
-    if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
-        raise ValueError("Managed land proxies for anthropogenic + non-anthropogenic emissions do not equal gross emissions for at least one country.")
-
-    # Use the GFW managed land proxy code to determine which emissions to assign as
-    # "anthropogenic deforestation", "anthropogenic forest" and "non-anthropogenic forest"
-    out[cn.anthro_deforest_emissions_col] = np.nan
-    out[cn.anthro_forest_emissions_col] = np.nan
-    out[cn.nonanthro_forest_emissions_col] = np.nan
-
-    mlp_1 = out[cn.gfw_code_col].astype(str).str.lower().eq("1")
-    mlp_2a = out[cn.gfw_code_col].astype(str).str.lower().eq("2a")
-    mlp_2b = out[cn.gfw_code_col].astype(str).str.lower().eq("2b")
-
-    # Case 1: All forest emissions are anthropogenic, no emissions are non-anthropogenic.
-    out.loc[mlp_1, cn.anthro_deforest_emissions_col] = out.loc[mlp_1, 'anthro_deforest_emissions_proxy']
-    out.loc[mlp_1, cn.anthro_forest_emissions_col] = (out.loc[mlp_1, ['anthro_forest_emissions_proxy',
-                                                                      'nonanthro_forest_emissions_proxy']].sum(axis=1, min_count=1))
+    # -------------------------------------------------------------------------------------------------------------------
+    # Case 1: All emissions are anthropogenic, no emissions are non-anthropogenic
+    # -------------------------------------------------------------------------------------------------------------------
+    # Write sums into translated_emissions_df for Case 1 countries
+    out_idx_1 = pd.MultiIndex.from_frame(out.loc[mlp_1, [cn.iso_col, cn.tcl_year_col]])
+    out.loc[mlp_1, cn.gross_emissions_col] = gross_emis.reindex(out_idx_1).to_numpy()
+    out.loc[mlp_1, cn.anthro_deforest_emissions_col] = anthro_def_emis.reindex(out_idx_1).to_numpy()
+    anthro_forest_sum = anthro_for_emis.add(nonanthro_for_emis, fill_value=0)
+    out.loc[mlp_1, cn.anthro_forest_emissions_col] = anthro_forest_sum.reindex(out_idx_1).to_numpy()
     out.loc[mlp_1, cn.nonanthro_forest_emissions_col] = 0.0
-    
-    # Case 2a: Managed land polygons determine anthropgogenic vs non-anthropogenic emissions. 
-    # (leave NaN placeholders; fill later when polygon-derived emissions are available)
-    # out.loc[mlp_2a, cn.anthro_deforest_emissions_col] = fill from geotrellis spreadsheet
-    # out.loc[mlp_2a, cn.anthro_forest_emissions_col] = fill from geotrellis spreadsheet
-    # out.loc[mlp_2a, cn.nonanthro_forest_emissions_col] = fill from geotrellis spreadsheet
-    # TODO: Update with managed land polygons
 
-    # Case 2b: Primary/IFL forest proxy determines anthropogenic vs non-anthropogenic removals (rules outlined above)
-    out.loc[mlp_2b, cn.anthro_deforest_emissions_col] = out.loc[mlp_2b, 'anthro_deforest_emissions_proxy']
-    out.loc[mlp_2b, cn.anthro_forest_emissions_col] = out.loc[mlp_2b, 'anthro_forest_emissions_proxy'] 
-    out.loc[mlp_2b, cn.nonanthro_forest_emissions_col] = out.loc[mlp_2b, 'nonanthro_forest_emissions_proxy']
+    # -------------------------------------------------------------------------------------------------------------------
+    # Case 2b: Primary/IFL forest proxy determines anthropogenic vs non-anthropogenic emissions
+    # -------------------------------------------------------------------------------------------------------------------
+    # Write sums into translated_emissions_df for Case 2b countries
+    out_idx_2b = pd.MultiIndex.from_frame(out.loc[mlp_2b, [cn.iso_col, cn.tcl_year_col]])
+    out.loc[mlp_2b, cn.gross_emissions_col] = gross_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.anthro_deforest_emissions_col] = anthro_def_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.anthro_forest_emissions_col] = anthro_for_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.nonanthro_forest_emissions_col] = nonanthro_for_emis.reindex(out_idx_2b).to_numpy()
+
+    out[cn.gross_emissions_col] = (out[cn.gross_emissions_col].fillna(0.0))
+    out[cn.anthro_deforest_emissions_col] = (out[cn.anthro_deforest_emissions_col].fillna(0.0))
+    out[cn.anthro_forest_emissions_col] = (out[cn.anthro_forest_emissions_col].fillna(0.0))
+    out[cn.nonanthro_forest_emissions_col] = (out[cn.nonanthro_forest_emissions_col].fillna(0.0))
 
     # Check that anthro + non-anthro emissions equals gross emissions in out
-    # check = (out[cn.anthro_deforest_emissions_col].fillna(0) + 
-    #          out[cn.anthro_forest_emissions_col].fillna(0) +
-    #          out[cn.nonanthro_forest_emissions_col].fillna(0))
-    # gross = out[cn.gross_emissions_col].fillna(0)
-    # if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
-    #     raise ValueError("Anthropogenic + non-anthropoegnic emissions do not equal gross emissions for at least one country.")
-    # TODO: Make sure managed land polygon total == country totals
-
-    # Delete intermediate columns if keep_inter_cols is not True in constants.py
-    # if not cn.keep_inter_cols:
-    #     out = out.drop(columns=['anthro_deforest_emissions_proxy', 'anthro_forest_emissions_proxy', 'nonanthro_forest_emissions_proxy'], errors='ignore')
+    check = (out[cn.anthro_deforest_emissions_col].fillna(0) +
+             out[cn.anthro_forest_emissions_col].fillna(0) +
+             out[cn.nonanthro_forest_emissions_col].fillna(0))
+    gross = out[cn.gross_emissions_col].fillna(0)
+    if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
+        raise ValueError("Anthropogenic + non-anthropoegnic emissions do not equal gross emissions for at least one country.")
 
     return out

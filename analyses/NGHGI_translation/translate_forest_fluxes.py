@@ -66,7 +66,7 @@ def main(excel_path):
     # Step 4: Translate country emissions according to the GFW managed land proxy code
     #--------------------------------------------------------------------------------------------------------------------
     # Use the GFW managed land code to assign translated emissions per country
-    translated_emissions_df = ut.translate_emissions(keep_col_df, gfw_emissions_df, usa_df, canada_df, brazil_df)
+    translated_emissions_df = ut.translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df)
     print("Translated GFW emissions into anthropogenic deforestation, anthropogenic forest, and non-anthropogenic forest emissions")
 
     # --------------------------------------------------------------------------------------------------------------------
