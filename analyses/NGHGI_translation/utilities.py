@@ -82,18 +82,18 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     # Add gross average annual removals (Mg CO2 per year) column to out df for QC, fill nan with 0
     gross_annual_removals = gfw.groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
     gross_removals_avg = managed.groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
-    out[cn.gross_removals_col] = np.where(mlp_2a, out[cn.iso_col].map(gross_removals_avg), out[cn.iso_col].map(gross_annual_removals))
-    out[cn.gross_removals_col] = np.nan_to_num(out[cn.gross_removals_col], nan=0.0)
+    out[cn.gross_removal_col] = np.where(mlp_2a, out[cn.iso_col].map(gross_removals_avg), out[cn.iso_col].map(gross_annual_removals))
+    out[cn.gross_removal_col] = np.nan_to_num(out[cn.gross_removal_col], nan=0.0)
 
     # Use the managed land proxy code to assign "anthropogenic forest" and "non-anthropogenic forest" removals below
-    out[cn.anthro_removals_col] = 0.0
-    out[cn.nonanthro_removals_col] = 0.0
+    out[cn.anthro_removal_col] = 0.0
+    out[cn.nonanthro_removal_col] = 0.0
 
     #-------------------------------------------------------------------------------------------------------------------
     # Case 1: All removals are anthropogenic, no removals are non-anthropogenic
     #-------------------------------------------------------------------------------------------------------------------
-    out.loc[mlp_1, cn.anthro_removals_col] = out.loc[mlp_1, cn.gross_removals_col]
-    out.loc[mlp_1, cn.nonanthro_removals_col] = 0.0
+    out.loc[mlp_1, cn.anthro_removal_col] = out.loc[mlp_1, cn.gross_removal_col]
+    out.loc[mlp_1, cn.nonanthro_removal_col] = 0.0
 
     #-------------------------------------------------------------------------------------------------------------------
     # Case 2a: Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) removals
@@ -121,8 +121,8 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     unmanaged_forest_removals = managed.loc[unmanaged_forest_mask].groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
 
     # Write translated removals from managed polygons for '2a' countries only
-    out.loc[mlp_2a, cn.anthro_removals_col] = out.loc[mlp_2a, cn.iso_col].map(managed_forest_removals)
-    out.loc[mlp_2a, cn.nonanthro_removals_col] = out.loc[mlp_2a, cn.iso_col].map(unmanaged_forest_removals)
+    out.loc[mlp_2a, cn.anthro_removal_col] = out.loc[mlp_2a, cn.iso_col].map(managed_forest_removals)
+    out.loc[mlp_2a, cn.nonanthro_removal_col] = out.loc[mlp_2a, cn.iso_col].map(unmanaged_forest_removals)
 
     #-------------------------------------------------------------------------------------------------------------------
     # Case 2b: Primary/IFL forest proxy determines anthropogenic vs non-anthropogenic removals
@@ -150,12 +150,16 @@ def translate_removals(keep_col_df, gfw_removals_df, managed_polygons_df):
     nonanthro_forest_removals = gfw.loc[nonanthro_forest_mask].groupby(cn.iso_col)[cn.gfw_annual_removals_col].sum()
 
     # Write translated removals from primary/IFL forest proxy for '2b' countries only
-    out.loc[mlp_2b, cn.anthro_removals_col] = out.loc[mlp_2b, cn.iso_col].map(anthro_forest_removals)
-    out.loc[mlp_2b, cn.nonanthro_removals_col] = out.loc[mlp_2b, cn.iso_col].map(nonanthro_forest_removals)
+    out.loc[mlp_2b, cn.anthro_removal_col] = out.loc[mlp_2b, cn.iso_col].map(anthro_forest_removals)
+    out.loc[mlp_2b, cn.nonanthro_removal_col] = out.loc[mlp_2b, cn.iso_col].map(nonanthro_forest_removals)
+
+    out[cn.gross_removal_col] = (out[cn.gross_removal_col].fillna(0.0))
+    out[cn.anthro_removal_col] = (out[cn.anthro_removal_col].fillna(0.0))
+    out[cn.nonanthro_removal_col] = (out[cn.nonanthro_removal_col].fillna(0.0))
 
     # Check that anthro + non-anthro removals equals gross annual removals in out df
-    check = out[cn.anthro_removals_col].fillna(0) + out[cn.nonanthro_removals_col].fillna(0)
-    gross = out[cn.gross_removals_col].fillna(0)
+    check = out[cn.anthro_removal_col] + out[cn.nonanthro_removal_col]
+    gross = out[cn.gross_removal_col]
     if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
         raise ValueError("Anthropogenic + non-anthropogenic removals do not equal gross removals for at least one country.")
 
@@ -213,10 +217,10 @@ def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
     # out[cn.gross_emissions_col] = np.nan_to_num(out[cn.gross_emissions_col], nan=0.0)
 
     # Use the managed land proxy code to assign "anthropogenic deforestation", "anthropogenic forest" and "non-anthropogenic forest" emissions
-    out[cn.gross_emissions_col] = 0.0
-    out[cn.anthro_deforest_emissions_col] = 0.0
-    out[cn.anthro_forest_emissions_col] = 0.0
-    out[cn.nonanthro_forest_emissions_col] = 0.0
+    out[cn.gross_emis_col] = 0.0
+    out[cn.anthro_deforest_emis_col] = 0.0
+    out[cn.anthro_forest_emis_col] = 0.0
+    out[cn.nonanthro_forest_emis_col] = 0.0
 
     # -------------------------------------------------------------------------------------------------------------------
     # Managed land polygons: Brazil, Canada, and the United States
@@ -271,10 +275,10 @@ def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
     # -------------------------------------------------------------------------------------------------------------------
     # Write sums into translated_emissions_df for Case 2a countries
     out_idx_2a = pd.MultiIndex.from_frame(out.loc[mlp_2a, [cn.iso_col, cn.tcl_year_col]])
-    out.loc[mlp_2a, cn.gross_emissions_col] = gross_emis.reindex(out_idx_2a).to_numpy()
-    out.loc[mlp_2a, cn.anthro_deforest_emissions_col] = anthro_def_emis.reindex(out_idx_2a).to_numpy()
-    out.loc[mlp_2a, cn.anthro_forest_emissions_col] = anthro_for_emis.reindex(out_idx_2a).to_numpy()
-    out.loc[mlp_2a, cn.nonanthro_forest_emissions_col] = nonanthro_for_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.gross_emis_col] = gross_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.anthro_deforest_emis_col] = anthro_def_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.anthro_forest_emis_col] = anthro_for_emis.reindex(out_idx_2a).to_numpy()
+    out.loc[mlp_2a, cn.nonanthro_forest_emis_col] = nonanthro_for_emis.reindex(out_idx_2a).to_numpy()
 
 
     # -------------------------------------------------------------------------------------------------------------------
@@ -328,33 +332,92 @@ def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
     # -------------------------------------------------------------------------------------------------------------------
     # Write sums into translated_emissions_df for Case 1 countries
     out_idx_1 = pd.MultiIndex.from_frame(out.loc[mlp_1, [cn.iso_col, cn.tcl_year_col]])
-    out.loc[mlp_1, cn.gross_emissions_col] = gross_emis.reindex(out_idx_1).to_numpy()
-    out.loc[mlp_1, cn.anthro_deforest_emissions_col] = anthro_def_emis.reindex(out_idx_1).to_numpy()
+    out.loc[mlp_1, cn.gross_emis_col] = gross_emis.reindex(out_idx_1).to_numpy()
+    out.loc[mlp_1, cn.anthro_deforest_emis_col] = anthro_def_emis.reindex(out_idx_1).to_numpy()
     anthro_forest_sum = anthro_for_emis.add(nonanthro_for_emis, fill_value=0)
-    out.loc[mlp_1, cn.anthro_forest_emissions_col] = anthro_forest_sum.reindex(out_idx_1).to_numpy()
-    out.loc[mlp_1, cn.nonanthro_forest_emissions_col] = 0.0
+    out.loc[mlp_1, cn.anthro_forest_emis_col] = anthro_forest_sum.reindex(out_idx_1).to_numpy()
+    out.loc[mlp_1, cn.nonanthro_forest_emis_col] = 0.0
 
     # -------------------------------------------------------------------------------------------------------------------
     # Case 2b: Primary/IFL forest proxy determines anthropogenic vs non-anthropogenic emissions
     # -------------------------------------------------------------------------------------------------------------------
     # Write sums into translated_emissions_df for Case 2b countries
     out_idx_2b = pd.MultiIndex.from_frame(out.loc[mlp_2b, [cn.iso_col, cn.tcl_year_col]])
-    out.loc[mlp_2b, cn.gross_emissions_col] = gross_emis.reindex(out_idx_2b).to_numpy()
-    out.loc[mlp_2b, cn.anthro_deforest_emissions_col] = anthro_def_emis.reindex(out_idx_2b).to_numpy()
-    out.loc[mlp_2b, cn.anthro_forest_emissions_col] = anthro_for_emis.reindex(out_idx_2b).to_numpy()
-    out.loc[mlp_2b, cn.nonanthro_forest_emissions_col] = nonanthro_for_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.gross_emis_col] = gross_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.anthro_deforest_emis_col] = anthro_def_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.anthro_forest_emis_col] = anthro_for_emis.reindex(out_idx_2b).to_numpy()
+    out.loc[mlp_2b, cn.nonanthro_forest_emis_col] = nonanthro_for_emis.reindex(out_idx_2b).to_numpy()
 
-    out[cn.gross_emissions_col] = (out[cn.gross_emissions_col].fillna(0.0))
-    out[cn.anthro_deforest_emissions_col] = (out[cn.anthro_deforest_emissions_col].fillna(0.0))
-    out[cn.anthro_forest_emissions_col] = (out[cn.anthro_forest_emissions_col].fillna(0.0))
-    out[cn.nonanthro_forest_emissions_col] = (out[cn.nonanthro_forest_emissions_col].fillna(0.0))
+    out[cn.gross_emis_col] = (out[cn.gross_emis_col].fillna(0.0))
+    out[cn.anthro_deforest_emis_col] = (out[cn.anthro_deforest_emis_col].fillna(0.0))
+    out[cn.anthro_forest_emis_col] = (out[cn.anthro_forest_emis_col].fillna(0.0))
+    out[cn.nonanthro_forest_emis_col] = (out[cn.nonanthro_forest_emis_col].fillna(0.0))
 
     # Check that anthro + non-anthro emissions equals gross emissions in out
-    check = (out[cn.anthro_deforest_emissions_col].fillna(0) +
-             out[cn.anthro_forest_emissions_col].fillna(0) +
-             out[cn.nonanthro_forest_emissions_col].fillna(0))
-    gross = out[cn.gross_emissions_col].fillna(0)
+    check = (out[cn.anthro_deforest_emis_col] + out[cn.anthro_forest_emis_col] + out[cn.nonanthro_forest_emis_col])
+    gross = out[cn.gross_emis_col]
     if not np.allclose(check.values, gross.values, atol=1e-6, rtol=0.0):
         raise ValueError("Anthropogenic + non-anthropoegnic emissions do not equal gross emissions for at least one country.")
 
     return out
+
+#-----------------------------------------------------------------------------------------------------------------------
+# STEP 4: TRANSLATED FLUX RESULTS
+#-----------------------------------------------------------------------------------------------------------------------
+
+# Flip annual emission results from rows to columns
+def pivot_emis(df, value_col):
+    year_col = cn.tcl_year_col
+    prefix = value_col.split("__", 1)[0]
+    
+    ds = (df[[cn.iso_col, year_col, value_col]].copy())
+    ds[year_col] = ds[year_col].astype(int)
+    ds = ds.pivot_table(index=cn.iso_col, columns=year_col, values=value_col, aggfunc="sum")
+    ds = ds.reindex(columns=cn.years)
+    ds.columns = [f"{prefix}_{y}__Mg_CO2" for y in ds.columns]
+
+    return ds.reset_index()
+
+# Combine translated emissions and removals data into the three categories:
+# anthropogenic deforestation emissions, anthropogenic forest flux, and non-anthropogenic forest flux
+def make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df):
+
+    # -------------------------------------------------------------------------------------------------------------------
+    # 1) Anthropogenic deforestation (emissions-only)
+    # -------------------------------------------------------------------------------------------------------------------
+    anthro_deforest_pivot = pivot_emis(translated_emissions_df, cn.anthro_deforest_emis_col)
+    anthro_deforestation_emissions_df = managed_land_proxy_codes_df.merge(anthro_deforest_pivot, on=cn.iso_col, how="left")
+
+    # -------------------------------------------------------------------------------------------------------------------
+    # 2) Anthropogenic forest flux
+    # -------------------------------------------------------------------------------------------------------------------
+    anthro_forest_pivot = pivot_emis(translated_emissions_df, cn.anthro_forest_emis_col)
+    anthro_forest_flux_df = (managed_land_proxy_codes_df
+                             .merge(translated_removals_df[[cn.iso_col, cn.anthro_removal_col]], on=cn.iso_col, how="left")
+                             .merge(anthro_forest_pivot, on=cn.iso_col, how="left"))
+
+    # Calculate annual anthro forest flux timeseries
+    for y in cn.years:
+        emis_pattern = cn.anthro_forest_emis_col.split("__", 1)[0]
+        emis_col = f"{emis_pattern}_{y}__Mg_CO2"
+        flux_col = f"{cn.anthro_forest_flux_pattern}_{y}__Mg_CO2"
+        anthro_forest_flux_df[flux_col] = (anthro_forest_flux_df[emis_col].fillna(0)
+                                           + anthro_forest_flux_df[cn.anthro_removal_col].fillna(0))
+
+    # -------------------------------------------------------------------------------------------------------------------
+    #  3) Non-anthropogenic forest flux
+    # -------------------------------------------------------------------------------------------------------------------
+    nonanthro_pivot = pivot_emis(translated_emissions_df, cn.nonanthro_forest_emis_col)
+    nonanthro_forest_flux_df = (managed_land_proxy_codes_df
+                            .merge(translated_removals_df[[cn.iso_col, cn.nonanthro_removal_col]], on=cn.iso_col, how="left")
+                            .merge(nonanthro_pivot, on=cn.iso_col, how="left"))
+
+    # Calculate annual non-anthro forest flux timeseries
+    for y in cn.years:
+        emis_pattern = cn.nonanthro_forest_emis_col.split("__", 1)[0]
+        emis_col = f"{emis_pattern}_{y}__Mg_CO2"
+        flux_col = f"{cn.nonanthro_forest_flux_pattern}_{y}__Mg_CO2"
+        nonanthro_forest_flux_df[flux_col] = (nonanthro_forest_flux_df[emis_col].fillna(0)
+                                              + nonanthro_forest_flux_df[cn.nonanthro_removal_col].fillna(0))
+
+    return anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df

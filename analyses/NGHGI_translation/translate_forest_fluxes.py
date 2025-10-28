@@ -73,7 +73,9 @@ def main(excel_path):
     # Step 5: Combine translated country emissions and removals to calculate anthropogenic deforestation emissions,
     #         anthropogenic forest flux, and non-anthropogenic forest flux timeseries.
     # --------------------------------------------------------------------------------------------------------------------
-
+    # Create separate sheets for each category
+    anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df = (
+        ut.make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df))
 
    # --------------------------------------------------------------------------------------------------------------------
    # Step 6: Write out the translated results to a new spreadsheet
@@ -82,12 +84,16 @@ def main(excel_path):
         translated_removals_df.to_excel(writer, sheet_name=cn.nghgi_removals_sheet, index=False)
         translated_emissions_df.to_excel(writer, sheet_name=cn.nghgi_emissions_sheet, index=False)
 
+        anthro_deforestation_emissions_df.to_excel(writer, sheet_name=cn.anthro_deforest_emis_sheet, index=False)
+        anthro_forest_flux_df.to_excel(writer, sheet_name=cn.anthro_forest_flux_sheet, index=False)
+        nonanthro_forest_flux_df.to_excel(writer, sheet_name=cn.nonanthro_forest_flux_sheet, index=False)
+
         if cn.keep_raw_data:
             managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
             gfw_removals_df.to_excel(writer, sheet_name=cn.gfw_removals_sheet, index=False)
             gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
 
-    #TODO: Replace mg_co2 --> Mg_CO2 in column names, column order, format numbers, fill NANs with 0s.
+    #TODO: format numbers, fill NANs with 0s.
 
 if __name__ == "__main__":
     main(cn.in_sheet)
