@@ -76,6 +76,7 @@ def main(excel_path):
     # Create separate sheets for each category
     anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df = (
         ut.make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df))
+    print("Combined translated fluxes into anthropogenic deforestation, anthropogenic forest, and non-anthropogenic flux sheets")
 
    # --------------------------------------------------------------------------------------------------------------------
    # Step 6: Write out the translated results to a new spreadsheet
@@ -92,8 +93,6 @@ def main(excel_path):
             managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
             gfw_removals_df.to_excel(writer, sheet_name=cn.gfw_removals_sheet, index=False)
             gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
-
-    #TODO: format numbers, fill NANs with 0s.
 
 if __name__ == "__main__":
     main(cn.in_sheet)

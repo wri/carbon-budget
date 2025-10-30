@@ -366,9 +366,8 @@ def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
 #-----------------------------------------------------------------------------------------------------------------------
 
 # Flip annual emission results from rows to columns
-def pivot_emis(df, value_col):
+def pivot_emis(df, value_col, prefix):
     year_col = cn.tcl_year_col
-    prefix = value_col.split("__", 1)[0]
     
     ds = (df[[cn.iso_col, year_col, value_col]].copy())
     ds[year_col] = ds[year_col].astype(int)
@@ -385,39 +384,67 @@ def make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, transl
     # -------------------------------------------------------------------------------------------------------------------
     # 1) Anthropogenic deforestation (emissions-only)
     # -------------------------------------------------------------------------------------------------------------------
-    anthro_deforest_pivot = pivot_emis(translated_emissions_df, cn.anthro_deforest_emis_col)
+    emis_pattern = cn.anthro_deforest_emis_col.split("__", 1)[0]
+    anthro_deforest_pivot = pivot_emis(translated_emissions_df, cn.anthro_deforest_emis_col, emis_pattern)
     anthro_deforestation_emissions_df = managed_land_proxy_codes_df.merge(anthro_deforest_pivot, on=cn.iso_col, how="left")
+
+    # Add gross deforestation emissions columns
+    deforest_emis_cols = [f"{emis_pattern}_{y}__Mg_CO2" for y in cn.years]
+    anthro_deforestation_emissions_df[f"gross_deforestation_emissions_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+        anthro_deforestation_emissions_df[deforest_emis_cols].sum(axis=1, skipna=True))
 
     # -------------------------------------------------------------------------------------------------------------------
     # 2) Anthropogenic forest flux
     # -------------------------------------------------------------------------------------------------------------------
-    anthro_forest_pivot = pivot_emis(translated_emissions_df, cn.anthro_forest_emis_col)
+    emis_pattern = cn.anthro_forest_emis_col.split("__", 1)[0]
+    anthro_forest_pivot = pivot_emis(translated_emissions_df, cn.anthro_forest_emis_col, emis_pattern)
     anthro_forest_flux_df = (managed_land_proxy_codes_df
                              .merge(translated_removals_df[[cn.iso_col, cn.anthro_removal_col]], on=cn.iso_col, how="left")
                              .merge(anthro_forest_pivot, on=cn.iso_col, how="left"))
 
-    # Calculate annual anthro forest flux timeseries
+    # Calculate annual anthropogenic forest flux timeseries
     for y in cn.years:
-        emis_pattern = cn.anthro_forest_emis_col.split("__", 1)[0]
         emis_col = f"{emis_pattern}_{y}__Mg_CO2"
         flux_col = f"{cn.anthro_forest_flux_pattern}_{y}__Mg_CO2"
         anthro_forest_flux_df[flux_col] = (anthro_forest_flux_df[emis_col].fillna(0)
                                            + anthro_forest_flux_df[cn.anthro_removal_col].fillna(0))
 
+    # Add gross anthropogenic forest removals, emissions, and net flux
+    anthro_emis_cols = [f"{emis_pattern}_{y}__Mg_CO2" for y in cn.years]
+
+    anthro_forest_flux_df[f"gross_anthro_forest_removals_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+            anthro_forest_flux_df[cn.anthro_removal_col] * cn.n_years)
+    anthro_forest_flux_df[f"gross_anthro_forest_emissions_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+        anthro_forest_flux_df[anthro_emis_cols].sum(axis=1, skipna=True))
+    anthro_forest_flux_df[f"gross_anthro_forest_flux_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+            anthro_forest_flux_df[f"gross_anthro_forest_removals_{cn.start_year}_{cn.end_year}__Mg_CO2"]
+            + anthro_forest_flux_df[f"gross_anthro_forest_emissions_{cn.start_year}_{cn.end_year}__Mg_CO2"])
+
     # -------------------------------------------------------------------------------------------------------------------
     #  3) Non-anthropogenic forest flux
     # -------------------------------------------------------------------------------------------------------------------
-    nonanthro_pivot = pivot_emis(translated_emissions_df, cn.nonanthro_forest_emis_col)
+    emis_pattern = cn.nonanthro_forest_emis_col.split("__", 1)[0]
+    nonanthro_pivot = pivot_emis(translated_emissions_df, cn.nonanthro_forest_emis_col, emis_pattern)
     nonanthro_forest_flux_df = (managed_land_proxy_codes_df
                             .merge(translated_removals_df[[cn.iso_col, cn.nonanthro_removal_col]], on=cn.iso_col, how="left")
                             .merge(nonanthro_pivot, on=cn.iso_col, how="left"))
 
     # Calculate annual non-anthro forest flux timeseries
     for y in cn.years:
-        emis_pattern = cn.nonanthro_forest_emis_col.split("__", 1)[0]
         emis_col = f"{emis_pattern}_{y}__Mg_CO2"
         flux_col = f"{cn.nonanthro_forest_flux_pattern}_{y}__Mg_CO2"
         nonanthro_forest_flux_df[flux_col] = (nonanthro_forest_flux_df[emis_col].fillna(0)
                                               + nonanthro_forest_flux_df[cn.nonanthro_removal_col].fillna(0))
+    # Add gross non-anthropogenic forest removals, emissions, and net flux
+    nonanthro_emis_cols = [f"{emis_pattern}_{y}__Mg_CO2" for y in cn.years]
+
+    nonanthro_forest_flux_df[f"gross_non_anthro_forest_removals_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+            nonanthro_forest_flux_df[cn.nonanthro_removal_col] * cn.n_years)
+    nonanthro_forest_flux_df[f"gross_non_anthro_forest_emissions_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+        nonanthro_forest_flux_df[nonanthro_emis_cols].sum(axis=1, skipna=True))
+    nonanthro_forest_flux_df[f"gross_non_anthro_forest_flux_{cn.start_year}_{cn.end_year}__Mg_CO2"] = (
+            nonanthro_forest_flux_df[f"gross_non_anthro_forest_removals_{cn.start_year}_{cn.end_year}__Mg_CO2"]
+            + nonanthro_forest_flux_df[f"gross_non_anthro_forest_emissions_{cn.start_year}_{cn.end_year}__Mg_CO2"])
 
     return anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df
+

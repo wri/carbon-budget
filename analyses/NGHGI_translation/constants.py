@@ -54,13 +54,13 @@ geotrellis_annual_emission_cols = [f"gfw_forest_carbon_gross_emissions_co2_{year
 # NGHGI translated data spreadsheet
 #-----------------------------------------------------------------------------------------------------------------------
 #Removals
-gross_removal_col = "annual_removal__Mg_CO2_yr-1"
+gross_removal_col = "annual_removals__Mg_CO2_yr-1"
 anthro_removal_col = "anthro_forest_removals__Mg_CO2_yr-1"
 nonanthro_removal_col = "non_anthro_forest_removals__Mg_CO2_yr-1"
 
 #Emissions
 gross_emis_col = "gross_emissions__Mg_CO2"
-anthro_deforest_emis_col = "anthro_deforestation_emissions__Mg_CO2"
+anthro_deforest_emis_col = "deforestation_emissions__Mg_CO2"
 anthro_forest_emis_col = "anthro_forest_emissions__Mg_CO2"
 nonanthro_forest_emis_col = "non_anthro_forest_emissions__Mg_CO2"
 
