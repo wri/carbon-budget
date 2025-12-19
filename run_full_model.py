@@ -76,7 +76,7 @@ def main ():
     model_stages = ['all', 'model_extent', 'forest_age_category_IPCC', 'annual_removals_IPCC',
                     'annual_removals_all_forest_types', 'gain_year_count', 'gross_removals_all_forest_types',
                     'carbon_pools', 'gross_emissions_biomass_soil', 'gross_emissions_soil_only',
-                    'net_flux', 'create_derivative_outputs']
+                    'gross_emissions_biomass_only', 'net_flux', 'create_derivative_outputs']
 
 
     # The argument for what kind of model run is being done: standard conditions or a sensitivity analysis run
@@ -227,6 +227,13 @@ def main ():
                        cn.gross_emis_ch4_only_all_drivers_soil_only_dir,
                        cn.gross_emis_n2o_only_all_drivers_soil_only_dir,
                        cn.gross_emis_nodes_soil_only_dir]
+
+    output_dir_list = [cn.gross_emis_all_gases_all_drivers_biomass_only_dir,
+                       cn.gross_emis_co2_only_all_drivers_biomass_only_dir,
+                       cn.gross_emis_non_co2_all_drivers_biomass_only_dir,
+                       cn.gross_emis_ch4_only_all_drivers_biomass_only_dir,
+                       cn.gross_emis_n2o_only_all_drivers_biomass_only_dir,
+                       cn.gross_emis_nodes_biomass_only_dir]
 
     # Adds the net flux output directory
     output_dir_list = output_dir_list + [cn.net_flux_dir]
@@ -503,6 +510,38 @@ def main ():
         uu.check_storage()
         uu.print_log(f':::::Processing time for soil_only gross_emissions: {elapsed_time}', "\n", "\n")
 
+        # Creates gross emissions tiles for biomass only by driver, gas, and all emissions combined
+        if 'gross_emissions_biomass_only' in actual_stages:
+
+            if not cn.SAVE_INTERMEDIATES:
+
+                uu.print_log(':::::Freeing up memory for biomass_only gross emissions creation by deleting unneeded tiles')
+                tiles_to_delete = []
+                tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_all_gases_all_drivers_soil_only}*tif'))
+                tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_soil_only}*tif'))
+                tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_soil_only}*tif'))
+                tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_ch4_only_all_drivers_soil_only}*tif'))
+                tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_n2o_only_all_drivers_soil_only}*tif'))
+                tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_soil_only}*tif'))
+                uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
+
+                uu.print_log(tiles_to_delete)
+
+                for tile_to_delete in tiles_to_delete:
+                    os.remove(tile_to_delete)
+                uu.print_log(':::::Deleted unneeded tiles')
+
+            uu.check_storage()
+
+            uu.print_log(':::::Creating biomass_only gross emissions tiles')
+            start = datetime.datetime.now()
+
+            mp_calculate_gross_emissions(tile_id_list, 'biomass_only')
+
+            end = datetime.datetime.now()
+            elapsed_time = end - start
+            uu.check_storage()
+            uu.print_log(f':::::Processing time for biomass_only gross_emissions: {elapsed_time}', "\n", "\n")
 
     # Creates net flux tiles (gross emissions - gross removals)
     if 'net_flux' in actual_stages:
@@ -511,12 +550,12 @@ def main ():
 
             uu.print_log(':::::Freeing up memory for net flux creation by deleting unneeded tiles')
             tiles_to_delete = []
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_all_gases_all_drivers_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_ch4_only_all_drivers_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_n2o_only_all_drivers_soil_only}*tif'))
-            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_soil_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_all_gases_all_drivers_biomass_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_co2_only_all_drivers_biomass_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_non_co2_all_drivers_biomass_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_ch4_only_all_drivers_biomass_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_n2o_only_all_drivers_biomass_only}*tif'))
+            tiles_to_delete.extend(glob.glob(f'*{cn.pattern_gross_emis_nodes_biomass_only}*tif'))
             uu.print_log(f'  Deleting {len(tiles_to_delete)} tiles...')
 
             for tile_to_delete in tiles_to_delete:

@@ -672,6 +672,29 @@ gross_emis_n2o_only_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emission
 pattern_gross_emis_nodes_biomass_soil = f'gross_emis_decision_tree_nodes_biomass_soil_2001_{loss_years}'
 gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree_nodes/biomass_soil/standard/{emis_run_date_biomass_soil}/'
 
+### Emissions from biomass only
+
+# Date to include in the output directory
+emis_run_date_biomass_only = '20250430'
+
+pattern_gross_emis_all_gases_all_drivers_biomass_only = f'gross_emis_all_gases_all_drivers_Mg_CO2e_ha_biomass_only_2001_{loss_years}'
+gross_emis_all_gases_all_drivers_biomass_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/all_gases/biomass_only/standard/{emis_run_date_biomass_only}/'
+
+pattern_gross_emis_co2_only_all_drivers_biomass_only = f'gross_emis_CO2_only_all_drivers_Mg_CO2e_ha_biomass_only_2001_{loss_years}'
+gross_emis_co2_only_all_drivers_biomass_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/CO2_only/biomass_only/standard/{emis_run_date_biomass_only}/'
+
+pattern_gross_emis_non_co2_all_drivers_biomass_only = f'gross_emis_non_CO2_all_drivers_Mg_CO2e_ha_biomass_only_2001_{loss_years}'
+gross_emis_non_co2_all_drivers_biomass_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/non_CO2/biomass_only/standard/{emis_run_date_biomass_only}/'
+
+pattern_gross_emis_ch4_only_all_drivers_biomass_only = f'gross_emis_CH4_only_all_drivers_Mg_CO2e_ha_biomass_only_2001_{loss_years}'
+gross_emis_ch4_only_all_drivers_biomass_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/CH4_only/biomass_only/standard/{emis_run_date_biomass_only}/'
+
+pattern_gross_emis_n2o_only_all_drivers_biomass_only = f'gross_emis_N2O_only_all_drivers_Mg_CO2e_ha_biomass_only_2001_{loss_years}'
+gross_emis_n2o_only_all_drivers_biomass_only_dir = f'{s3_base_dir}gross_emissions/all_drivers/N2O_only/biomass_only/standard/{emis_run_date_biomass_only}/'
+
+pattern_gross_emis_nodes_biomass_only = f'gross_emis_decision_tree_nodes_biomass_only_2001_{loss_years}'
+gross_emis_nodes_biomass_only_dir = f'{s3_base_dir}gross_emissions/decision_tree_nodes/biomass_only/standard/{emis_run_date_biomass_only}/'
+
 ### Emissions from soil only
 
 # Date to include in the output directory
