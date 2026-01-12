@@ -205,7 +205,7 @@ pixel_area_dir = 's3://gfw2-data/analyses/area_28m/'
 gain_spreadsheet = 'gain_rate_continent_ecozone_age_20230821.xlsx'
 gain_spreadsheet_dir = os.path.join(s3_base_dir, 'removal_rate_tables/')
 
-# Annual Hansen loss tiles (2001-2023)
+# Annual Hansen loss tiles (2001-2024)
 pattern_loss = 'GFW2024'
 loss_dir = 's3://gfw2-data/forest_change/hansen_2024/'
 
@@ -622,7 +622,7 @@ pattern_mangrove_soil_C_raw = 'dSOCS_0_100cm'
 pattern_mineral_soil_C_raw = 'tileSG'
 mineral_soil_C_url = 'https://files.isric.org/soilgrids/latest/data/ocs/ocs_0-30cm_mean/'
 
-# Soil C for mangroves only, maskes to mangrove AGB extent
+# Soil C for mangroves only, masks to mangrove AGB extent
 pattern_soil_C_mangrove = 'mangrove_soil_C_masked_to_mangrove_AGB_Mg_C_ha'
 soil_C_mangrove_processed_dir = os.path.join(base_carbon_pool_dir, 'soil_carbon/intermediate_full_extent/mangrove_only/20231108/')
 
