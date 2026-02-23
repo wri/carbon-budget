@@ -8,7 +8,7 @@ import datetime
 ########     ########
 
 # Model version
-version = '1.4.2'
+version = '1.4.3'
 version_filename = version.replace('.', '_')
 
 
@@ -834,10 +834,10 @@ removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_
 net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_4_2_std_20250430"
 
 # Output jpeg names
-removals_jpeg = "model_output__gross_removals__4km_aggregation_tcd30_model_v1.4.2_20250611.jpeg"
-emissions_jpeg = "model_output__gross_emissions__4km_aggregation_tcd30_model_v1.4.2_20250611.jpeg"
-net_jpeg = "model_output__net_flux__4km_aggregation_tcd30_model_v1.4.2_20250611.jpeg"
-three_panel_jpeg = "model_output__three_panels__4km_aggregation_tcd30_model_v1.4.2_20250611.png"
+removals_jpeg = f"model_output__gross_removals__4km_aggregation_tcd30_model_v{version}_20250611.jpeg"
+emissions_jpeg = f"model_output__gross_emissions__4km_aggregation_tcd30_model_v{version}_20250611.jpeg"
+net_jpeg = f"model_output__net_flux__4km_aggregation_tcd30_model_v{version}_20250611.jpeg"
+three_panel_jpeg = f"model_output__three_panels__4km_aggregation_tcd30_model_v{version}_20250611.png"
 
 # Country shapefile, with small islands removed for visual simplicity
 original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
