@@ -1064,6 +1064,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
 
     # Start time
     start = datetime.datetime.now()
+    tmpfile = None
 
     print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = coords(tile_id)
@@ -1088,7 +1089,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     with process.stdout:
         log_subprocess_output(process.stdout)
 
-    if source_raster == tmpfile:
+    if tmpfile:
         os.remove(tmpfile)
 
     end_of_fx_summary(start, tile_id, out_pattern)
