@@ -341,10 +341,9 @@ drivers_processed_dir = 's3://gfw2-data/drivers_of_loss/1_km/processed/20250414/
 
 
 # Tree cover loss from fires
-TCLF_raw_dir = 's3://wri-users/mrose/tclf2025/raw/GEE/tiles/'
-TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20260316/processed/')
+TCLF_raw_dir = 's3://gfw2-data/forest_change/hansen_2025_fire/'
+TCLF_processed_dir = os.path.join(s3_base_dir, 'other_emissions_inputs/tree_cover_loss_fires/20260317/processed/')
 pattern_TCLF_processed = 'tree_cover_loss_fire_processed'
-#TODO: Update raw data source with rasters from UMD?
 
 
 ######
