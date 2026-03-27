@@ -566,7 +566,7 @@ base_carbon_pool_dir = os.path.join(s3_base_dir, 'carbon_pools/')
 ## Carbon emitted_pools in loss year
 
 # Date to include in the output directory for all emissions year carbon emitted_pools
-emis_pool_run_date = '20260327'
+emis_pool_run_date = '20260302'
 
 
 # Aboveground carbon in the year of emission for all forest types in loss pixels
@@ -807,11 +807,11 @@ stdev_annual_gain_AGC_natrl_forest_young_dir = os.path.join(s3_base_dir, 'stdev_
 
 # Standard deviation for annual aboveground biomass removal factors using IPCC default removal rates
 pattern_stdev_annual_gain_AGB_IPCC_defaults = 'annual_removal_factor_stdev_AGB_Mg_ha_IPCC_defaults_all_ages'
-stdev_annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGB_IPCC_defaults_all_ages/standard/20260327/')
+stdev_annual_gain_AGB_IPCC_defaults_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGB_IPCC_defaults_all_ages/standard/20260302/')
 
 # Standard deviation for aboveground and belowground removal factors for all forest types
 pattern_stdev_annual_gain_AGC_all_types = 'annual_removal_factor_stdev_AGC_Mg_ha_all_forest_types'
-stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_all_forest_types/standard/20260327/')
+stdev_annual_gain_AGC_all_types_dir = os.path.join(s3_base_dir, 'stdev_annual_removal_factor_AGC_all_forest_types/standard/20260302/')
 
 
 # Raw mineral soil C file site
