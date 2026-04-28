@@ -1,10 +1,10 @@
 # Date used for the final output spreadsheet
-run_date = '20258888'
+run_date = '20260427'
 
 #Number of years
 start_year = 2001
-end_year = 2024
-n_years = float(24)
+end_year = 2025
+n_years = float(25)
 years = list(range(start_year, end_year + 1))
 
 # Whether to keep the untranslated GFW forest flux data in the final output spreadsheet
@@ -69,7 +69,7 @@ anthro_forest_flux_pattern = "anthro_forest_flux"
 nonanthro_forest_flux_pattern = "non_anthro_forest_flux"
 
 #Final results
-out_sheet = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\JRC_datahub_2024_update_{run_date}.xlsx"
+out_sheet = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\JRC_datahub_2025_update_{run_date}.xlsx"
 nghgi_removals_sheet = "translated_removals"
 nghgi_emissions_sheet = "translated_emissions"
 anthro_deforest_emis_sheet = "deforestation_emissions"

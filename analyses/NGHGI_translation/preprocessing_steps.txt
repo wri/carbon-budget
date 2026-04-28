@@ -22,10 +22,10 @@ Note: If any countries are added to or removed from the country list from JRC, u
 2. Average annual removals (Mg CO2 per year)
 Use the carbonflux iso summary table in the GFW Data API to get average annual removals seperated by
 intact/primary forest, whether or not there has been tree cover loss, and driver of tree cover loss.
-For the 2024 update, this is the query I used:
-    https://data-api.globalforestwatch.org/dataset/carbonflux_iso_summary/v20250515/query/csv?sql=
+For the 2025 update, this is the query I used:
+    https://data-api.globalforestwatch.org/dataset/carbonflux_iso_summary/v20260327/query/csv?sql=
     SELECT "iso", "is__umd_tree_cover_loss", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver" AS "tcl_driver__class",
-    SUM("gfw_full_extent_gross_removals__Mg_CO2")/24*-1 AS "average_annual_removal__Mg_CO2_yr-1"
+    SUM("gfw_full_extent_gross_removals__Mg_CO2")/25*-1 AS "average_annual_removal__Mg_CO2_yr-1"
     FROM data
     WHERE umd_tree_cover_density_2000__threshold = 30
     AND "iso" IN ('AFG','ALB','DZA','AND','AGO','ATG','ARG','ARM','AUS','AUT','AZE','BHS','BHR','BGD','BRB','BLR','BEL','BLZ','BEN','BTN','BOL','BIH','BWA','BRA','BRN','BGR','BFA','BDI','KHM','CMR','CAN','CPV','CAF','TCD','CHL','CHN','COL','COM','COG','COK','CRI','CIV','HRV','CUB','CYP','CZE','PRK','COD','DNK','DJI','DMA','DOM','ECU','EGY','SLV','GNQ','ERI','EST','ETH','FJI','FIN','FRA','GAB','GMB','GEO','DEU','GHA','GRC','GRD','GTM','GIN','GNB','GUY','HTI','HND','HUN','ISL','IND','IDN','IRN','IRQ','IRL','ISR','ITA','JAM','JPN','JOR','KAZ','KEN','KIR','KWT','KGZ','LAO','LVA','LBN','LSO','LBR','LBY','LIE','LTU','LUX','MDG','MWI','MYS','MDV','MLI','MLT','MHL','MRT','MUS','MEX','FSM','MCO','MNG','MNE','MAR','MOZ','MMR','NAM','NRU','NPL','NLD','NZL','NIC','NER','NGA','NIU','NOR','OMN','PAK','PLW','PAN','PNG','PRY','PER','PHL','POL','PRT','QAT','KOR','MDA','ROU','RUS','RWA','KNA','LCA','VCT','WSM','SMR','STP','SAU','SEN','SRB','SYC','SLE','SGP','SVK','SVN','SLB','SOM','ZAF','SSD','ESP','LKA','SDN','SUR','SWZ','SWE','CHE','SYR','TJK','THA','MKD','TLS','TGO','TON','TTO','TUN','TUR','TKM','TUV','UGA','UKR','ARE','GBR','TZA','USA','URY','UZB','VUT','VEN','VNM','YEM','ZMB','ZWE')
@@ -38,8 +38,8 @@ If JRC changes the countries in the list, we will need to update the iso codes i
 3. Timeseries of emissions (Mg CO2 per year)
 Use the carbonflux iso change table in the GFW Data API to get annual emissions seperated by
 year of tree cover loss, intact/primary forest, and driver of tree cover loss.
-For the 2024 update, this is the query I used:
-    https://data-api.globalforestwatch.org/dataset/carbonflux_iso_change/v20250515/query/csv?sql=
+For the 2025 update, this is the query I used:
+    https://data-api.globalforestwatch.org/dataset/carbonflux_iso_change/v20260327/query/csv?sql=
     SELECT "iso", "umd_tree_cover_loss__year", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver" AS "tcl_driver__class",
     SUM("gfw_full_extent_gross_emissions_CO2_only_biomass_soil__Mg_CO2") AS "emissions_co2_only_biomass+soil__Mg_CO2"
     FROM data
@@ -57,9 +57,9 @@ Use the ArcPy geotrellis client to get zonal stats for Canada, the United States
 Managed land polygons for Canada and the United States are simple enough to submit as one job each.
 For Brazil, the polygons are too complicated/large and have to be split into smaller areas to run in EMR.
 S3 paths to managed land polygons:
-    Canada: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2024/final/Canada/
-    USA: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2024/final/USA/
-    Brazil: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2024/final/Brazil/
+    Canada: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2025/final/Canada/
+    USA: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2025/final/USA/
+    Brazil: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2025/final/Brazil/
 Use these options when running the managed polygons in the ArcPy geotrellis client.
 arcpy..TreeCoverLossAnalysis(
     in_features=managed_polgons,
@@ -78,7 +78,7 @@ arcpy..TreeCoverLossAnalysis(
     master_instance_type="r5.2xlarge",
     worker_instance_type="r5.2xlarge",
     instance_count=16,
-    jar_version="2.4.16_ArcPy_flux_model_v1_4_2",
+    jar_version="2.6.18_ArcPy_2025_TCL_update_flux_model_v1_4_3",
     out_features=r"in_memory\treecoverloss_xxxxxxxxxxxxxx",
     add_features_to_map=False
 )
