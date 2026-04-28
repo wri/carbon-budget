@@ -829,17 +829,18 @@ stdev_soil_C_full_extent_2000_dir = os.path.join(s3_base_dir, 'stdev_soil_carbon
 ######
 
 # Rasters that are to be used in jpegs
-emissions_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_4_2_std_20260327"
-removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_4_2_std_20260302"
-net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_4_2_std_20260327"
+emissions_base = "gross_emis_all_gases_all_drivers_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_4_3_std_20260327"
+removals_base = "gross_removals_AGCO2_BGCO2_Mt_per_year_all_forest_types__tcd30_0_04deg_modelv1_4_3_std_20260327"
+net_base = "net_flux_Mt_per_year_CO2e_biomass_soil__tcd30_0_04deg_modelv1_4_3_std_20260327"
 
 # Output jpeg names
-removals_jpeg = f"model_output__gross_removals__4km_aggregation_tcd30_model_v{version}_20250611.jpeg"
-emissions_jpeg = f"model_output__gross_emissions__4km_aggregation_tcd30_model_v{version}_20250611.jpeg"
-net_jpeg = f"model_output__net_flux__4km_aggregation_tcd30_model_v{version}_20250611.jpeg"
-three_panel_jpeg = f"model_output__three_panels__4km_aggregation_tcd30_model_v{version}_20250611.png"
+removals_jpeg = f"model_output__gross_removals__4km_aggregation_tcd30_model_v{version}_20260327.jpeg"
+emissions_jpeg = f"model_output__gross_emissions__4km_aggregation_tcd30_model_v{version}_20260327.jpeg"
+net_jpeg = f"model_output__net_flux__4km_aggregation_tcd30_model_v{version}_20260327.jpeg"
+three_panel_jpeg = f"model_output__three_panels__4km_aggregation_tcd30_model_v{version}_20260327.png"
 
 # Country shapefile, with small islands removed for visual simplicity
+world_admin_shapefile_dir = "s3://gfw2-data/climate/AFOLU_flux_model/world_admin_boundaries_simple/"
 original_shapefile_path = "world-administrative-boundaries_simple__20250102.shp"
 reprojected_shapefile_path = "world-administrative-boundaries_simple__20250102_reproj.shp"
 
@@ -860,7 +861,7 @@ dpi_jpeg = 300 # dpi for output jpegs
 legend_fontsize = 9 # Font size for legend titles and labels
 colorbar_dimensions = [0.14, 0.17, 0.02, 0.13] # [left, bottom, width, height]
 
-pres_text = "Gibbs et al. 2025 ESSD\nUpdated with 2024 tree cover loss"
+pres_text = "Gibbs et al. 2025 ESSD\nUpdated with 2025 tree cover loss"
 
 
 ### Testing materials

@@ -2,7 +2,7 @@
 
 ### Purpose and scope
 This framework maps gross greenhouse gas emissions from forests, 
-gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2024. 
+gross carbon removals (sequestration) by forests, and the difference between them (net flux), all between 2001 and 2025. 
 Gross emissions includes CO2, CH4, and N2O and all carbon pools (aboveground biomass, belowground biomass, 
 dead wood, litter, and soil), and gross removals includes removals into aboveground and belowground biomass carbon. 
 Although the framework is run for all tree canopy densities in 2000 (per Hansen et al. 2013), it is most relevant to
@@ -36,7 +36,7 @@ The framework can still be run without AWS credentials; inputs will be downloade
 In that case, outputs will only be stored locally.
 
 ### Outputs
-There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2024. 
+There are three key outputs produced: gross GHG emissions, gross removals, and net flux, all summed per pixel for 2001-2025. 
 These are produced at two resolutions: 0.00025x0.00025 degrees 
 (approximately 30x30 m at the equator) in 10x10 degree rasters (to make outputs a 
 manageable size), and 0.04x0.04 degrees (approximately 4x4km at the equator) as global rasters for static maps.
@@ -57,7 +57,7 @@ The 30-m outputs are used for zonal statistics (i.e. emissions, removals, or net
 and mapping on the Global Forest Watch web platform or at small scales (where 30-m pixels can be distinguished). 
 Individual emissions pixels can be assigned specific years based on Hansen loss during further analyses 
 but removals and net flux are cumulative over the entire framework run and cannot be assigned specific years. 
-This 30-m output is in megagrams (Mg) CO2e/ha 2001-2024 (i.e. densities) and includes all tree cover densities ("full extent"):
+This 30-m output is in megagrams (Mg) CO2e/ha 2001-2025 (i.e. densities) and includes all tree cover densities ("full extent"):
 `((TCD2000>0 AND WHRC AGB2000>0) OR Hansen gain=1 OR mangrove AGB2000>0)`.
 However, the framework is designed to be used specifically for forests, so the framework creates three derivative 30-m
 outputs for each key output (gross emissions, gross removals, net flux) as well (only for the standard version, not for sensitivity analyses).
@@ -203,14 +203,14 @@ For example:
 
 Extent stage: `/usr/local/app# python -m data_prep.mp_model_extent -l 00N_000E -t std -nu`
 
-Carbon pool creation stage: `/usr/local/app# python -m carbon_pools.mp_create_carbon_pools -l 00N_000E,10S_050W -t std -ce loss -d 20259999`
+Carbon pool creation stage: `/usr/local/app# python -m carbon_pools.mp_create_carbon_pools -l 00N_000E,10S_050W -t std -ce loss -d 20269999`
 
 ##### Running the emissions stage
 The gross emissions script is the only part of the framework that uses C++. Thus, the appropriate version of the C++ 
 emissions file must be compiled for emissions to run. 
 There are a few different versions of the emissions C++ script: one for the standard version and a few other for
 sensitivity analyses. 
-`mp_calculate_gross_emissions.py` will compile the correct C++ files (for all carbon pools and for soil only) 
+`mp_calculate_gross_emissions.py` will compile the correct C++ files (for all carbon pools and for biomass only) 
 each time it is run, so the C++ files do not need to be compiled manually. 
 However, for completeness, the command for compiling the C++ script is (subbing in the actual file name): 
 
@@ -220,14 +220,14 @@ For the standard framework and the sensitivity analyses that don't specifically 
 
 `c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal`
 
-`mp_calculate_gross_emissions.py` can also be used to calculate emissions from soil only. 
-This is set by the `-p` argument: `biomass_soil` or `soil_only`.  
+`mp_calculate_gross_emissions.py` can also be used to calculate emissions from biomass only. 
+This is set by the `-p` argument: `biomass_soil` or `biomass_only`.  
 
-Emissions stage: `/usr/local/app# python -m emissions.mp_calculate_gross_emissions -l 30N_090W,10S_010E -t std -p biomass_soil -d 20259999`
+Emissions stage: `/usr/local/app# python -m emissions.mp_calculate_gross_emissions -l 30N_090W,10S_010E -t std -p biomass_soil -d 20269999`
 
 #### Master script 
 The master script runs through all of the non-preparatory scripts in the framework: some removal factor creation, gross removals, carbon
-pool generation, gross emissions for biomass+soil, gross emissions for soil only, 
+pool generation, gross emissions for biomass+soil, gross emissions for biomass only, 
 net flux, aggregation, and derivative output creation. 
 It includes all the arguments needed to run every script. 
 Thus, the table below also explains the potential arguments for the individual framework stages. 
@@ -236,31 +236,31 @@ the output directories. The order in which the arguments are used does not matte
 Preparatory scripts like creating soil carbon tiles or mangrove tiles are not included in the master script because
 they are run very infrequently. 
 
-| Argument | Short argument | Required/Optional | Relevant stage | Description | 
-| -------- | ----- | ----------- | ------- | ------ |
-| `model-type` | `-t` | Required | All | Standard version (`std`) or a sensitivity analysis. Refer to `constants_and_names.py` for valid list of sensitivity analyses. |
-| `stages` | `-s` | Required | All | The framework stage at which the run should start. `all` will run the following stages in this order: model_extent, forest_age_category_IPCC, annual_removals_IPCC, annual_removals_all_forest_types, gain_year_count, gross_removals_all_forest_types, carbon_pools, gross_emissions_biomass_soil, gross_emissions_soil_only, net_flux, create_derivative_outputs |
-| `tile-id-list` | `-l` | Required | All | List of tile ids to use in the framework. Should be of form `00N_110E` or `00N_110E,00N_120E` or `all` |
-| `run-through` | `-r` | Optional | All | If activated, run stage provided in `stages` argument and all following stages. Otherwise, run only stage in `stages` argument. Activated with flag. |
-| `run-date` | `-d` | Optional | All | Date of run. Must be format YYYYMMDD. This sets the output folder in s3. |
-| `no-upload` | `-nu` | Optional | All | No files are uploaded to s3 during or after framework run (including logs and framework outputs). Use for testing to save time. When AWS credentials are not available, upload is automatically disabled and this flag does not have to be manually activated. |
-| `single-processor` | `-sp` | Optional | All | Tile processing will be done without `multiprocessing` module whenever possible, i.e. no parallel processing. Use for testing. |
-| `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log |
-| `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss |
-| `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard framework net flux aggregated tif, for comparison with the sensitivity analysis map. |
-| `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local framework runs. If uploading to s3 is not enabled, intermediate files are automatically saved. |
-| `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag. |
-| `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag. |
+| Argument | Short argument | Required/Optional | Relevant stage | Description                                                                                                                                                                                                                                                                                                                                                           | 
+| -------- | ----- | ----------- | ------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `model-type` | `-t` | Required | All | Standard version (`std`) or a sensitivity analysis. Refer to `constants_and_names.py` for valid list of sensitivity analyses.                                                                                                                                                                                                                                         |
+| `stages` | `-s` | Required | All | The framework stage at which the run should start. `all` will run the following stages in this order: model_extent, forest_age_category_IPCC, annual_removals_IPCC, annual_removals_all_forest_types, gain_year_count, gross_removals_all_forest_types, carbon_pools, gross_emissions_biomass_soil, gross_emissions_biomass_only, net_flux, create_derivative_outputs |
+| `tile-id-list` | `-l` | Required | All | List of tile ids to use in the framework. Should be of form `00N_110E` or `00N_110E,00N_120E` or `all`                                                                                                                                                                                                                                                                |
+| `run-through` | `-r` | Optional | All | If activated, run stage provided in `stages` argument and all following stages. Otherwise, run only stage in `stages` argument. Activated with flag.                                                                                                                                                                                                                  |
+| `run-date` | `-d` | Optional | All | Date of run. Must be format YYYYMMDD. This sets the output folder in s3.                                                                                                                                                                                                                                                                                              |
+| `no-upload` | `-nu` | Optional | All | No files are uploaded to s3 during or after framework run (including logs and framework outputs). Use for testing to save time. When AWS credentials are not available, upload is automatically disabled and this flag does not have to be manually activated.                                                                                                        |
+| `single-processor` | `-sp` | Optional | All | Tile processing will be done without `multiprocessing` module whenever possible, i.e. no parallel processing. Use for testing.                                                                                                                                                                                                                                        |
+| `log-note` | `-ln`| Optional | All | Adds text to the beginning of the log                                                                                                                                                                                                                                                                                                                                 |
+| `carbon-pool-extent` | `-ce` | Optional | Carbon pool creation | Extent over which carbon pools should be calculated: loss or 2000 or loss,2000 or 2000,loss                                                                                                                                                                                                                                                                           |
+| `std-net-flux-aggreg` | `-std` | Optional | Aggregation | The s3 standard framework net flux aggregated tif, for comparison with the sensitivity analysis map.                                                                                                                                                                                                                                                                  |
+| `save-intermdiates` | `-si`| Optional | `run_full_model.py` | Intermediate outputs are not deleted within `run_full_model.py`. Use for local framework runs. If uploading to s3 is not enabled, intermediate files are automatically saved.                                                                                                                                                                                         |
+| `mangroves` | `-ma` | Optional | `run_full_model.py` | Create mangrove removal factor tiles as the first stage. Activate with flag.                                                                                                                                                                                                                                                                                          |
+| `us-rates` | `-us` | Optional | `run_full_model.py` | Create US-specific removal factor tiles as the first stage (or second stage, if mangroves are enabled). Activate with flag.                                                                                                                                                                                                                                           |
 
 These are some sample commands for running the flux framework in various configurations. You wouldn't necessarily want to use all of these;
 they simply illustrate different configurations for the command line arguments. 
 Like the individual framework stages, the full framework run script is also run from the project folder with the `-m` flag.
 
 Run: standard version; save intermediate outputs; run framework from annual_removals_IPCC;
-upload to folder with date 20259999; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload to folder with date 20269999; run 00N_000E; get carbon pools at time of loss; add a log note;
 use multiprocessing (implicit because no `-sp` flag); only run listed stage (implicit because no -r flag)
 
-`python -m run_full_model -t std -si -s annual_removals_IPCC -d 20259999 -l 00N_000E -ce loss -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s annual_removals_IPCC -d 20269999 -l 00N_000E -ce loss -ln "00N_000E test"`
 
 Run: standard version; save intermediate outputs; run framework from annual_removals_IPCC; run all subsequent framework stages;
 do not upload outputs to s3; run 00N_000E; get carbon pools at time of loss; add a log note; 
@@ -269,22 +269,22 @@ use multiprocessing (implicit because no -sp flag)
 `python -m run_full_model -t std -si -s annual_removals_IPCC -r -nu -l 00N_000E -ce loss -ln "00N_000E test"`
 
 Run: standard version; save intermediate outputs; run framework from the beginning; run all framework stages;
-upload to folder with date 20259999; run 00N_000E; get carbon pools at time of loss; add a log note;
+upload to folder with date 20269999; run 00N_000E; get carbon pools at time of loss; add a log note;
 use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -t std -si -s all -r -d 20259999 -l 00N_000E -ce loss -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s all -r -d 20269999 -l 00N_000E -ce loss -ln "00N_000E test"`
 
 Run: standard version; save intermediate outputs; run framework from the beginning; run all framework stages;
-upload to folder with date 20259999; run 00N_000E, 10N_110E, and 50N_080W; get carbon pools at time of loss; 
+upload to folder with date 20269999; run 00N_000E, 10N_110E, and 50N_080W; get carbon pools at time of loss; 
 add a log note; use multiprocessing (implicit because no -sp flag)
 
-`python -m run_full_model -t std -si -s all -r -d 20259999 -l 00N_000E,10N_110E,50N_080W -ce loss -ln "00N_000E test"`
+`python -m run_full_model -t std -si -s all -r -d 20269999 -l 00N_000E,10N_110E,50N_080W -ce loss -ln "00N_000E test"`
 
 Run: standard version; run framework from the beginning; run all framework stages;
-upload to folder with date 20259999; run 00N_000E and 00N_010E; get carbon pools at time of loss; 
+upload to folder with date 20269999; run 00N_000E and 00N_010E; get carbon pools at time of loss; 
 use singleprocessing; add a log note; do not save intermediate outputs (implicit because no -si flag)
 
-`python -m run_full_model -t std -s all -r -nu -d 20259999 -l 00N_000E,00N_010E -ce loss -sp -ln "Two tile test"`
+`python -m run_full_model -t std -s all -r -nu -d 20269999 -l 00N_000E,00N_010E -ce loss -sp -ln "Two tile test"`
 
 FULL STANDARD FRAMEWORK RUN: standard framework; save intermediate outputs; run framework from the beginning; run all framework stages;
 run all tiles; get carbon pools at time of loss; add a log note;
@@ -353,7 +353,7 @@ EC2 instance with 3.7 TB of storage and 96 processors.
 
 ### Other modifications to the framework
 It is recommended that any changes to the framework be tested in a local Docker instance before running on an ec2 instance.
-I like to output files to test folders on s3 with dates 20259999 because that is clearly not a real run date. 
+I like to output files to test folders on s3 with dates 20269999 because that is clearly not a real run date. 
 A standard development route is: 
 
 1) Make changes to a single framework script and run using the single processor option on a single tile (easiest for debugging) in local Docker.
