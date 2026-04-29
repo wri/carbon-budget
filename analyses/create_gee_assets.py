@@ -2,17 +2,20 @@
 Script to create GEE assets:
 1) uploads data from s3 storage to GCS bucket directly (with option to filter which tiles to upload, passed in as a .txt file)
 2) ingest data into GEE as ee asset (each dataset is its own ee.Image asset)
+Note: This script uses the AFOLU model infrastructure, not the forest flux model infrastructure. It can be run locally or using dask/ coiled.
 
+Run these locally to update GCS and Earth Engine credentials before running this script: 
 gcloud auth application-default login
 earthengine authenticate
 
 Run locally to create assets:
 python -m src.analyses.create_gee_assets -d emissions removals net_flux -b lulucf -f v1-4-3-2001-2025 -r projects/wri-datalab/gfw-data-lake/
 
-Run locally after QC to delete tiles from GCS + make assets public:
+Run locally after QC to delete tiles from GCS (to avoid long-term storage costs) + make assets public:
 python -m src.analyses.create_gee_assets -d emissions removals net_flux -b lulucf -f v1-4-3-2001-2025 -r projects/wri-datalab/gfw-data-lake/ --skip_existing --clean_gcs --make_public
 
 Notes:
+v1.4.3
     - Took 20 minutes to create GEE assets for all three forest flux layers.
     - Took 2 minutes to delete tiles in GCS and set assets to public.
 """
