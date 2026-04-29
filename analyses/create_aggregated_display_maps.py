@@ -9,7 +9,7 @@ For model v1.4.2:
 Takes about 2 minutes to reproject the rasters and make all maps! Dunno why it was so much faster than the v1.3.2 run.
 
 For model v1.4.3:
-
+Took about 2 minutes
 
 With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 """
