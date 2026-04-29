@@ -1,4 +1,5 @@
 // Implements the calculation of gross emissions from biomass only and stores the outputs as rasters.
+// Biomass only includes not only AGB and BGB but also litter and deadwood (i.e. all non-soil carbon pools)
 // This is essentially one large decision tree that iterates pixel by pixel across each Hansen tile.
 // The first split is whether the pixel has carbon and loss.
 // NOTE: The way I've set up the model, all carbon pixels have loss (i.e. only carbon pixels with loss are input to the model).
