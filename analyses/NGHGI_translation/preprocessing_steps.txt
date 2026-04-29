@@ -57,9 +57,9 @@ Use the ArcPy geotrellis client to get zonal stats for Canada, the United States
 Managed land polygons for Canada and the United States are simple enough to submit as one job each.
 For Brazil, the polygons are too complicated/large and have to be split into smaller areas to run in EMR.
 S3 paths to managed land polygons:
-    Canada: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2025/final/Canada/
-    USA: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2025/final/USA/
-    Brazil: s3://wri-users/mrose/gis/shapefiles/JRC_NGHGI_translation_2025/final/Brazil/
+    Canada: s3://gfw2-data/climate/JRC_NGHGI_translation_2025/final/CAN/
+    USA: s3://gfw2-data/climate/JRC_NGHGI_translation_2025/final/USA/
+    Brazil: s3://gfw2-data/climate/JRC_NGHGI_translation_2025/final/BRA/
 Use these options when running the managed polygons in the ArcPy geotrellis client.
 arcpy..TreeCoverLossAnalysis(
     in_features=managed_polgons,
