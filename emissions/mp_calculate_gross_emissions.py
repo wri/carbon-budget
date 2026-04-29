@@ -17,7 +17,7 @@ The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled
 
 Run the emissions model with:
 python -m emissions.mp_calculate_gross_emissions -t [MODEL_TYPE] -p [POOL_OPTION] -l [TILE_LIST] [optional_arguments]
-The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil, just from biomass, or just from soil.
+The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil, biomass only (i.e. all non-soil carbon pools including AGB, BGB, deadwood and litter), or soil only.
 The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
 Emissions from all drivers is also output as emissions due to CO2, CH4, and N2O.
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
