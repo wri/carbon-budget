@@ -672,7 +672,7 @@ gross_emis_n2o_only_all_drivers_biomass_soil_dir = f'{s3_base_dir}gross_emission
 pattern_gross_emis_nodes_biomass_soil = f'gross_emis_decision_tree_nodes_biomass_soil_2001_{loss_years}'
 gross_emis_nodes_biomass_soil_dir = f'{s3_base_dir}gross_emissions/decision_tree_nodes/biomass_soil/standard/{emis_run_date_biomass_soil}/'
 
-### Emissions from biomass only
+### Emissions from biomass only: includes all non-soil carbon pools (AGB, BGB, deadwood, and litter)
 
 # Date to include in the output directory
 emis_run_date_biomass_only = '20260327'
