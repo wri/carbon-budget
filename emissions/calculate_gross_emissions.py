@@ -12,7 +12,8 @@ def calc_emissions(tile_id, emitted_pools, folder):
     Calls the c++ script to calculate gross emissions
     :param tile_id: tile to be processed, identified by its tile id
     :param emitted_pools: Whether emissions from biomass only, emissions from soil only, or emissions from biomass and soil is calculated.
-        Options are: biomass_only, soil_only, or biomass_soil.
+        Options are: biomass_only, soil_only, or biomass_soil. 
+                     biomass_only includes not only AGC and BGC but also deadwood C and litter C (i.e. all non-soil pools)
     :param folder:
     :return: 6 tiles -
         1. all gases (CO2, CH4 and N2O from all drivers);
