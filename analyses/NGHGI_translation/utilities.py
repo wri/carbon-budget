@@ -215,6 +215,7 @@ def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
     # Add gross annual CO2 emissions (Mg CO2 per year) column to out df for QC, fill nan with 0
     # out[cn.gross_emissions_col] = np.where(mlp_2a, managed_annual_emissions, gfw_annual_emissions)
     # out[cn.gross_emissions_col] = np.nan_to_num(out[cn.gross_emissions_col], nan=0.0)
+    # TODO: Decide whether to keep this commented out code
 
     # Use the managed land proxy code to assign "anthropogenic deforestation", "anthropogenic forest" and "non-anthropogenic forest" emissions
     out[cn.gross_emis_col] = 0.0
