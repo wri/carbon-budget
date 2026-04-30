@@ -10,13 +10,14 @@ However, if you want to compile the standard emissions model C++ outside of a ru
 do the following inside the Docker container:
 c++ /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp -o /usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe -lgdal
 calc_gross_emissions_generic.exe should appear in the directory if it wasn't already there.
-For the sensitivity analyses that use a different gross emissions C++ script (currently, soil_only), do:
+For the sensitivity analyses that use a different gross emissions C++ script do:
+c++  /usr/local/app/carbon-budget/emissions/cpp_util/calc_gross_emissions_biomass_only.cpp -o  /usr/local/app/emissions/cpp_util/calc_gross_emissions_biomass_only.exe -lgdal
 c++  /usr/local/app/carbon-budget/emissions/cpp_util/calc_gross_emissions_soil_only.cpp -o  /usr/local/app/emissions/cpp_util/calc_gross_emissions_soil_only.exe -lgdal
 The other C++ scripts (equations.cpp and flu_val.cpp) do not need to be compiled separately.
 
 Run the emissions model with:
 python -m emissions.mp_calculate_gross_emissions -t [MODEL_TYPE] -p [POOL_OPTION] -l [TILE_LIST] [optional_arguments]
-The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil or just from soil.
+The --pools-to-use argument specifies whether to calculate gross emissions from biomass+soil, biomass only (i.e. all non-soil carbon pools including AGB, BGB, deadwood and litter), or soil only.
 The --model-type argument specifies whether the model run is a sensitivity analysis or standard run.
 Emissions from all drivers is also output as emissions due to CO2, CH4, and N2O.
 The other output shows which branch of the decision tree that determines the emissions equation applies to each pixel.
@@ -40,8 +41,8 @@ from . import calculate_gross_emissions
 def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
     """
     :param tile_id_list: list of tile ids to process
-    :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
-        Options are: soil_only or biomass_soil.
+    :param emitted_pools: Whether emissions from biomass only, emissions from soil only, or emissions from biomass and soil is calculated.
+        Options are: biomass_only, soil_only, or biomass_soil.
     :return: 6 tiles -
         1. all gases (CO2, CH4 and N2O from all drivers);
         2. CO2 emissions from all drivers;
@@ -92,8 +93,8 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
 
 
     # Checks the validity of the emitted_pools argument
-    if (emitted_pools not in ['soil_only', 'biomass_soil']):
-        uu.exception_log('Invalid pool input. Please choose soil_only or biomass_soil.')
+    if (emitted_pools not in ['biomass_only', 'soil_only', 'biomass_soil']):
+        uu.exception_log('Invalid pool input. Please choose biomass_only, soil_only or biomass_soil.')
 
 
     # Checks if the correct c++ script has been compiled for the pool option selected
@@ -118,6 +119,28 @@ def mp_calculate_gross_emissions(tile_id_list, emitted_pools):
         uu.print_log(f'Compiling generic model C++...')
         cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.cpp',
                 '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_generic.exe', '-lgdal']
+        uu.log_subprocess_output_full(cmd)
+
+    elif (emitted_pools == 'biomass_only') & (cn.SENSIT_TYPE == 'std'):
+
+        # Output file directories for biomass_only. Must be in same order as output pattern directories.
+        output_dir_list = [cn.gross_emis_all_gases_all_drivers_biomass_only_dir,
+                           cn.gross_emis_co2_only_all_drivers_biomass_only_dir,
+                           cn.gross_emis_non_co2_all_drivers_biomass_only_dir,
+                           cn.gross_emis_ch4_only_all_drivers_biomass_only_dir,
+                           cn.gross_emis_n2o_only_all_drivers_biomass_only_dir,
+                           cn.gross_emis_nodes_biomass_only_dir]
+
+        output_pattern_list = [cn.pattern_gross_emis_all_gases_all_drivers_biomass_only,
+                               cn.pattern_gross_emis_co2_only_all_drivers_biomass_only,
+                               cn.pattern_gross_emis_non_co2_all_drivers_biomass_only,
+                               cn.pattern_gross_emis_ch4_only_all_drivers_biomass_only,
+                               cn.pattern_gross_emis_n2o_only_all_drivers_biomass_only,
+                               cn.pattern_gross_emis_nodes_biomass_only]
+
+        uu.print_log(f'Compiling biomass_only model C++...')
+        cmd = ['c++', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_biomass_only.cpp',
+               '-o', f'/usr/local/app/emissions/cpp_util/calc_gross_emissions_biomass_only.exe', '-lgdal']
         uu.log_subprocess_output_full(cmd)
 
     elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
@@ -272,7 +295,7 @@ if __name__ == '__main__':
     parser.add_argument('--single-processor', '-sp', action='store_true',
                        help='Uses single processing rather than multiprocessing')
     parser.add_argument('--emitted-pools-to-use', '-p', required=True,
-                        help='Options are soil_only or biomass_soil. Former only considers emissions from soil. Latter considers emissions from biomass and soil.')
+                        help='Options are biomass_only, soil_only or biomass_soil. biomass_only only considers emissions from biomass. soil_only only considers emissions from soil. biomass_soil considers emissions from biomass and soil.')
     args = parser.parse_args()
 
     # Sets global variables to the command line arguments

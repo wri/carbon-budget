@@ -918,7 +918,7 @@ def upload_final_set(upload_dir, pattern):
     print_log(f'Uploading tiles with pattern {pattern} to {upload_dir}')
 
     cmd = ['aws', 's3', 'cp', cn.docker_tile_dir, upload_dir, '--exclude', '*', '--include', '*{}*tif'.format(pattern),
-           '--recursive', '--no-progress']
+           '--recursive', '--no-progress', '--storage-class', 'INTELLIGENT_TIERING']    #intelligent tiering option added by Logan Byers
     try:
         log_subprocess_output_full(cmd)
         print_log(f'  Upload of tiles with {pattern} pattern complete!')
@@ -935,8 +935,8 @@ def upload_final(upload_dir, tile_id, pattern):
     file = '{}_{}.tif'.format(tile_id, pattern)
 
     print_log("Uploading {}".format(file))
-    # cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-sign-request', '--no-progress']
-    cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress']
+    # cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-sign-request', '--no-progress', '--storage-class', 'INTELLIGENT_TIERING']
+    cmd = ['aws', 's3', 'cp', file, upload_dir, '--no-progress', '--storage-class', 'INTELLIGENT_TIERING']
 
     try:
         log_subprocess_output_full(cmd)
@@ -1064,6 +1064,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
 
     # Start time
     start = datetime.datetime.now()
+    tmpfile = None
 
     print_log("Getting extent of", tile_id)
     xmin, ymin, xmax, ymax = coords(tile_id)
@@ -1088,7 +1089,7 @@ def mp_warp_to_Hansen(tile_id, source_raster, out_pattern, dt):
     with process.stdout:
         log_subprocess_output(process.stdout)
 
-    if source_raster == tmpfile:
+    if tmpfile:
         os.remove(tmpfile)
 
     end_of_fx_summary(start, tile_id, out_pattern)

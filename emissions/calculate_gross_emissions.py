@@ -11,8 +11,9 @@ def calc_emissions(tile_id, emitted_pools, folder):
     """
     Calls the c++ script to calculate gross emissions
     :param tile_id: tile to be processed, identified by its tile id
-    :param emitted_pools: Whether emissions from soil only is calculated, or emissions from biomass and soil.
-        Options are: soil_only or biomass_soil.
+    :param emitted_pools: Whether emissions from biomass only, emissions from soil only, or emissions from biomass and soil is calculated.
+        Options are: biomass_only, soil_only, or biomass_soil. 
+                     biomass_only includes not only AGC and BGC but also deadwood C and litter C (i.e. all non-soil pools)
     :param folder:
     :return: 6 tiles -
         1. all gases (CO2, CH4 and N2O from all drivers);
@@ -30,10 +31,12 @@ def calc_emissions(tile_id, emitted_pools, folder):
 
     uu.check_memory()
 
-    # Runs the correct c++ script given the emitted_pools (biomass+soil or soil_only) and model type selected.
-    # soil_only has special gross emissions C++ scripts.
+    # Runs the correct c++ script given the emitted_pools (biomass_only, soil_only, or biomass+soil) and model type selected.
     # The other sensitivity analyses and the standard model all use the same gross emissions C++ script.
-    if (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
+    if (emitted_pools == 'biomass_only') & (cn.SENSIT_TYPE == 'std'):
+        cmd = [f'{cn.c_emis_compile_dst}/calc_gross_emissions_biomass_only.exe', tile_id, cn.SENSIT_TYPE, folder]
+
+    elif (emitted_pools == 'soil_only') & (cn.SENSIT_TYPE == 'std'):
         cmd = [f'{cn.c_emis_compile_dst}/calc_gross_emissions_soil_only.exe', tile_id, cn.SENSIT_TYPE, folder]
 
     # This C++ script has an extra argument that names the input carbon emitted_pools and output emissions correctly
@@ -53,6 +56,9 @@ def calc_emissions(tile_id, emitted_pools, folder):
 
     elif (emitted_pools == 'biomass_soil') & (cn.SENSIT_TYPE != 'std'):
         pattern = pattern + "_" + cn.SENSIT_TYPE
+
+    elif emitted_pools == 'biomass_only':
+        pattern = pattern.replace('biomass_soil', 'biomass_only')
 
     elif emitted_pools == 'soil_only':
         pattern = pattern.replace('biomass_soil', 'soil_only')

@@ -7,7 +7,7 @@ namespace constants
 {
     // Emissions constants
     // per https://www.learncpp.com/cpp-tutorial/global-constants-and-inline-variables/
-    constexpr int model_years {24};    // How many loss years are in the model. Must also be updated in equations.cpp!
+    constexpr int model_years {25};    // How many loss years are in the model. Must also be updated in equations.cpp!
 
     constexpr int CH4_equiv {27};      // The CO2 equivalency (global warming potential) of CH4, AR6 WG1 Table 7.15
 
@@ -50,11 +50,11 @@ namespace constants
 
     constexpr char legal_Amazon_loss[] = "_legal_Amazon_annual_loss_2001_2019.tif";
 
-    constexpr char lossyear[] = "GFW2024_";
+    constexpr char lossyear[] = "GFW2025_";
     constexpr char burnyear[] = "_tree_cover_loss_fire_processed.tif";
     constexpr char fao_ecozones[] = "_fao_ecozones_bor_tem_tro_processed.tif";
     constexpr char climate_zones[] = "_climate_zone_processed.tif";
-    constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20250414.tif";
+    constexpr char tcl_drivers[] = "_drivers_of_TCL_1_km_20260326.tif";
     constexpr char peat_mask[] = "_peat_mask_processed.tif";
     constexpr char ifl_primary[] = "_ifl_2000_primary_2001_merged.tif";
     constexpr char plantation_type[] = "_plantation_type_oilpalm_woodfiber_other.tif";

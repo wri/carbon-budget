@@ -8,6 +8,9 @@ Takes about 5 minutes to make all four outputs if inputs are already reprojected
 For model v1.4.2:
 Takes about 2 minutes to reproject the rasters and make all maps! Dunno why it was so much faster than the v1.3.2 run.
 
+For model v1.4.3:
+Took about 2 minutes
+
 With https://chatgpt.com/g/g-vK4oPfjfp-coding-assistant/c/67634e63-bbcc-800a-8267-004e88ced2e4
 """
 
@@ -17,6 +20,7 @@ import rasterio
 import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
+import subprocess
 
 from fiona import path
 from matplotlib.colors import Normalize, TwoSlopeNorm, LinearSegmentedColormap
@@ -27,6 +31,64 @@ from scipy.stats import percentileofscore
 import constants_and_names as cn
 
 os.chdir(cn.docker_tile_dir)
+
+# Ensures the required raster exists locally in docker_tile_dir. If not, downloads it from S3.
+def ensure_local_raster(base_tif):
+    tif_name = f"{base_tif}.tif"
+    local_path = os.path.join(cn.docker_tile_dir, tif_name)
+
+    if os.path.exists(local_path):
+        print(f"{tif_name} already exists locally.")
+        return local_path
+
+    print(f"{tif_name} not found locally. Downloading from S3...")
+
+    # Determine correct S3 directory
+    if "gross_emis" in base_tif:
+        s3_dir = cn.output_aggreg_dir
+    elif "gross_removals" in base_tif:
+        s3_dir = cn.output_aggreg_dir
+    elif "net_flux" in base_tif:
+        s3_dir = cn.output_aggreg_dir
+    else:
+        raise ValueError(f"Unknown raster type for {base_tif}")
+
+    s3_path = f"{s3_dir}{tif_name}"
+
+    cmd = ["aws", "s3", "cp", s3_path, local_path]
+
+    print("Running:", " ".join(cmd))
+    subprocess.run(cmd, check=True)
+
+    if not os.path.exists(local_path):
+        raise FileNotFoundError(f"Download failed: {local_path}")
+
+    return local_path
+
+def ensure_local_shapefile():
+    required_exts = [".shp", ".shx", ".dbf", ".prj"]
+    base_name = cn.reprojected_shapefile_path.replace(".shp", "")
+
+    missing = [
+        f"{base_name}{ext}"
+        for ext in required_exts
+        if not os.path.exists(os.path.join(cn.docker_tile_dir, f"{base_name}{ext}"))
+    ]
+
+    if not missing:
+        print("Shapefile already exists locally.")
+        return
+
+    print("Shapefile missing. Downloading shapefile files...")
+
+    for ext in required_exts:
+        filename = f"{base_name}{ext}"
+        s3_path = f"{cn.world_admin_shapefile_dir}{filename}"
+        local_path = os.path.join(cn.docker_tile_dir, filename)
+
+        cmd = ["aws", "s3", "cp", s3_path, local_path]
+        print("Running:", " ".join(cmd))
+        subprocess.run(cmd, check=True)
 
 def rgb_to_mpl(rgb):
     """
@@ -292,11 +354,14 @@ def map_net_flux(base_tif, colors, percentiles, title_text, out_jpeg):
     print(f"---Mapping {base_tif}")
 
     # Raster name before and after projection
-    tif_unproj = f"{base_tif}.tif"
+    tif_unproj = os.path.basename(ensure_local_raster(base_tif))
     reprojected_tif = f"{base_tif}_reproj.tif"
 
     # Reprojects raster, if needed
     reproject_raster(reprojected_tif, tif_unproj)
+
+    # Ensures shapefile is available locally
+    ensure_local_shapefile()
 
     # Reprojects shapefile, if needed
     shapefile = check_and_reproject_shapefile(
@@ -382,11 +447,14 @@ def map_gross(base_tif, colors, percentiles, title_text, out_jpeg):
     print(f"---Mapping {base_tif}")
 
     # Raster name before and after projection
-    tif_unproj = f"{base_tif}.tif"
+    tif_unproj = os.path.basename(ensure_local_raster(base_tif))
     reprojected_tif = f"{base_tif}_reproj.tif"
 
     # Reprojects raster, if needed
     reproject_raster(reprojected_tif, tif_unproj)
+
+    # Ensures shapefile is available locally
+    ensure_local_shapefile()
 
     # Reprojects shapefile, if needed
     shapefile = check_and_reproject_shapefile(
@@ -518,6 +586,8 @@ def create_three_panel_map(emissions_jpeg, removals_jpeg, net_jpeg, out_jpeg):
 
 if __name__ == '__main__':
 
+    ensure_local_shapefile()
+
     # Defines desired percentiles for colors
     net_percentiles = [5, 25, 50, 75, 89, 91, 92, 93, 94, 99]  # Specifies where colors transition in the data
     removals_percentiles = [5, 25, 50, 75, 99]
@@ -532,9 +602,9 @@ if __name__ == '__main__':
     emissions_colors = net_color_palette[5:]
 
     # Legend titles
-    emissions_title = "Gross forest greenhouse gas emissions\nMt CO$_2$e yr$^{-1}$ (2001-2024)"
-    removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2024)"
-    net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2024)"
+    emissions_title = "Gross forest greenhouse gas emissions\nMt CO$_2$e yr$^{-1}$ (2001-2025)"
+    removals_title = "Gross forest CO$_2$ removals\nMt CO$_2$ yr$^{-1}$ (2001-2025)"
+    net_title = "Net forest greenhouse gas flux\nMt CO$_2$e yr$^{-1}$ (2001-2025)"
 
     # Generates jpegs for gross emissions, removals and net flux
     map_gross(cn.emissions_base, emissions_colors, emissions_percentiles, emissions_title, cn.emissions_jpeg)
