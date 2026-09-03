@@ -1,7 +1,7 @@
 Before running this translation python code, raw data needs to be prepared in an xlsx spreadheet.
 The steps to prepare the input data are as follows.
 
-1. Mangaed land proxy codes from JRC
+1. Managed land proxy codes from JRC
 Confirm the country list and the managed land proxy codes with JRC. They split their managed land proxy codes into the
 following 7 categories:
     1. not all forest is managed, country map available
@@ -16,7 +16,7 @@ anthropogenic vs non-anthropogenic fluxes:
     3a, 3b --> 1. All forests are considered managed and thus all fluxes are anthropogenic, none are non-anthropogenic.
     1 --> 2a. Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) fluxes.
     2, 4, 5, 6 --> 2b. Countries do not report enough details regarding the managed land proxy and its extent.
-                   IFL/primary forest proxy determines anthropogenic vs non-anthropogenic fluxes.
+                   Use IFL/primary forest extent to approximate anthropogenic vs non-anthropogenic fluxes.
 Note: If any countries are added to or removed from the country list from JRC, update the iso codes in the queries below.
 
 2. Average annual removals (Mg CO2 per year)
