@@ -77,11 +77,31 @@ arcpy..TreeCoverLossAnalysis(
     emissions_by_gas_annually=True,
     master_instance_type="r5.2xlarge",
     worker_instance_type="r5.2xlarge",
-    instance_count=16,
-    jar_version="2.6.18_ArcPy_2025_TCL_update_flux_model_v1_4_3",
+    instance_count=8,
+    jar_version="2.6.23_ArcPy_2025_TCL_flux_model_v1_4_3_LEA_update",
     out_features=r"in_memory\treecoverloss_xxxxxxxxxxxxxx",
     add_features_to_map=False
 )
-Note: Some areas in Brazil need more workers, particularly mata atlantica, so adjust workers as needed.
+Some areas in Brazil need more workers. For the 2025 TCL update, here are the number and type of workers used per region:
+- Amazonia: master_instance_type="r5.2xlarge", worker_instance_type="r5.2xlarge", instance_count=8. Jobs averaged 36 minutes per subregion.
+    - p1_p10:   5 minutes prep time + 43 minutes run time = 48 minutes
+    - p11_p20:  7 minutes prep time + 32 minutes run time = 39 minutes
+    - p21_p28:  6 mintues prep time + 27 minutes run time = 33 minutes
+    - p29_p37:  6 minutes prep time + 28 minutes run time = 34 minutes
+    - p38_p41:  3 minutes prep time + 22 minutes run time = 25 minutes
+- Caatinga: master_instance_type="r5.2xlarge", worker_instance_type="r5.2xlarge", instance_count=12. Job took 30 minutes.
+  Note: This one failed a few times.
+- Cerrado: master_instance_type="r5.2xlarge", worker_instance_type="r5.2xlarge", instance_count=8. Jobs averaged 1.7 hours per subregion.
+  Note: The long processing time for p1_p10 was because polygons were ZM type. Fixed this for p11_p21 and in both of the up-to-date shapefiles.
+    - p1_p10:   1.5 hours prep time + 45 minutes run time = 2.25 hours
+    - p11_p21:  14 minutes prep time + 58 minutes run time = 1.2 hours
+- Mata Atlantica: master_instance_type="r5.2xlarge", worker_instance_type="r5.2xlarge", instance_count=8. Jobs averaged 69 minutes per subregion.
+    - p1_p3:    16 minutes prep time + 32 minutes run time = 48 minutes
+    - p4_p6:    16 minutes prep time + 110 minutes run time = 126 minutes  (I think this was just a slow cluster)
+    - p7_p9:    16 minutes prep time + 22 minutes run time = 38 minutes
+    - p10_p11:  11 minutes prep time + 54 minutes run time = 65 minutes
+- Pantanal: master_instance_type="r5.2xlarge", worker_instance_type="r5.2xlarge", instance_count=4. Job took 22 minutes.
+- Pampa: master_instance_type="r5.2xlarge", worker_instance_type="r5.2xlarge", instance_count=4. Job took 23 minutes.
 
-
+Note: Because of limited spot instance availability, many jobs failed because of lost nodes during the EMR run. It may be best to run one job at a time.
+This was not an issue with the 2024 TCL NGHGI translation.
