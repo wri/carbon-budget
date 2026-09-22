@@ -24,11 +24,11 @@ def standardize_jrc_code(val):
 
 # Reclassifies the JRC managed land proxy codes into new codes that determine which methods to use for the NGHGI translation
 def jrc_to_wri(normalized):
-    if normalized in ("3a", "3b"):
-        return "1"
     if normalized == 1:
+        return "1"
+    if normalized == 2:
         return "2a"
-    if normalized in {2, 4, 5, 6}:
+    if normalized in {3, 4}:
         return "2b"
     return None
 
@@ -201,21 +201,6 @@ def translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df):
     mlp_1 = out[cn.gfw_code_col].astype(str).str.lower().eq("1")
     mlp_2a = out[cn.gfw_code_col].astype(str).str.lower().eq("2a")
     mlp_2b = out[cn.gfw_code_col].astype(str).str.lower().eq("2b")
-
-    # Reformat managed polygon emissions timeseries from columns (geotrellis) into rows (API) for translated results
-    # year_axis = pd.Index(cn.geotrellis_annual_emission_cols).str.extract(r'(\d{4})')[0].astype("string")
-    # managed_emis_cols = (managed.groupby(cn.iso_col)[cn.geotrellis_annual_emission_cols]
-    #     .set_axis(year_axis, axis=1).stack().rename("managed"))
-    #gfw_emis_rows = gfw.groupby([cn.iso_col, cn.tcl_year_col])[cn.gfw_emissions_col].rename("gfw")
-
-    # out_idx = pd.MultiIndex.from_frame(out[[cn.iso_col, cn.tcl_year_col]])
-    # managed_annual_emissions = managed_emis_cols.reindex(out_idx)
-    #gfw_annual_emissions = gfw_emis_rows.reindex(out_idx)
-
-    # Add gross annual CO2 emissions (Mg CO2 per year) column to out df for QC, fill nan with 0
-    # out[cn.gross_emissions_col] = np.where(mlp_2a, managed_annual_emissions, gfw_annual_emissions)
-    # out[cn.gross_emissions_col] = np.nan_to_num(out[cn.gross_emissions_col], nan=0.0)
-    # TODO: Decide whether to keep this commented out code
 
     # Use the managed land proxy code to assign "anthropogenic deforestation", "anthropogenic forest" and "non-anthropogenic forest" emissions
     out[cn.gross_emis_col] = 0.0
