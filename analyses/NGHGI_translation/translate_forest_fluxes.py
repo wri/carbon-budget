@@ -1,10 +1,10 @@
 '''
 GFW Managed Land Proxy cases:
-Case 1: Includes 49 countries that explicitly or implicitly consider all forest land to be managed.
+Case 1: Includes 80 countries that explicitly or implicitly consider all forest land to be managed.
         For these countries, we consider the entire GFW forest flux model extent to be managed.
 Case 2a: Includes three countries (Brazil, the United States, and Canada) for which there are georeferenced boundaries of managed lands.
         For these countries, managed forest is the entire GFW forest flux model extent in the managed land boundaries.
-Case 2b: Includes the remaining 143 countries in which NGHGIs do not report enough details regarding the managed land proxy and its extent.
+Case 2b: Includes the remaining 114 countries in which NGHGIs do not report enough details regarding the managed land proxy and its extent.
         For these countries we consider "managed forests" in tropical regions to be forests outside humid tropical primary forests from 2001
         (Turubanova et al. 2018) and in extratropical regions as forests outside intact forest landscapes from 2000 (Potapov et al. 2017).
 

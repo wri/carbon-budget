@@ -1,5 +1,5 @@
 # Date used for the final output spreadsheet
-run_date = '20260427'
+run_date = '20260918'
 
 #Number of years
 start_year = 2001
@@ -17,7 +17,7 @@ secondary_shift_cult_cat = 'forest'
 # Input GFW data spreadsheets
 #-----------------------------------------------------------------------------------------------------------------------
 #Input file
-in_sheet = r"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\JRC_datahub_2024_update_20251010_copy.xlsx"
+in_sheet = r"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\JRC_datahub_2025_update_20260902.xlsx"
 
 #Note: All column names are lowercased, and spaces are replaced with "_" so make sure that is reflected here
 #1. Managed land proxy sheet and column names
@@ -69,7 +69,7 @@ anthro_forest_flux_pattern = "anthro_forest_flux"
 nonanthro_forest_flux_pattern = "non_anthro_forest_flux"
 
 #Final results
-out_sheet = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\JRC_datahub_2025_update_{run_date}.xlsx"
+out_sheet = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\JRC_datahub_2025_update_results__CO2only__{run_date}.xlsx"
 nghgi_removals_sheet = "translated_removals"
 nghgi_emissions_sheet = "translated_emissions"
 anthro_deforest_emis_sheet = "deforestation_emissions"

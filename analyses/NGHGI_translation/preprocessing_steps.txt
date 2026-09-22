@@ -4,23 +4,20 @@ The steps to prepare the input data are as follows.
 1. Managed land proxy codes from JRC
 Confirm the country list and the managed land proxy codes with JRC. They split their managed land proxy codes into the
 following 7 categories:
-    1. not all forest is managed, country map available
-    2. not all forest is managed, but country map not available
-    3a. all forest is explicitly managed
-    3b. all forest is implicitly managed
-    4. unsure if all forest included in NGHGI or not
-    5. C fluxes from FL-FL are only partially included
-    6. Removals in FL-FL not included
+    1 - all forest is managed
+    2 - not all forest is managed, country map available
+    3 - not all forest is managed, country map is not available
+    4 - managed forest not mentioned
 These get reclassified (in this script) according to which translation method we use to distinguish between
 anthropogenic vs non-anthropogenic fluxes:
-    3a, 3b --> 1. All forests are considered managed and thus all fluxes are anthropogenic, none are non-anthropogenic.
-    1 --> 2a. Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) fluxes.
-    2, 4, 5, 6 --> 2b. Countries do not report enough details regarding the managed land proxy and its extent.
+    1 --> 1.     All forests are considered managed and thus all fluxes are anthropogenic, none are non-anthropogenic.
+    2 --> 2a.    Managed land polygons determine anthropogenic (managed) vs non-anthropogenic (unmanaged) fluxes.
+    3, 4 --> 2b. Countries do not report enough details regarding the managed land proxy and its extent.
                    Use IFL/primary forest extent to approximate anthropogenic vs non-anthropogenic fluxes.
 Note: If any countries are added to or removed from the country list from JRC, update the iso codes in the queries below.
 
 2. Average annual removals (Mg CO2 per year)
-Use the carbonflux iso summary table in the GFW Data API to get average annual removals seperated by
+Use the carbonflux iso summary table in the GFW Data API to get average annual removals separated by
 intact/primary forest, whether or not there has been tree cover loss, and driver of tree cover loss.
 For the 2025 update, this is the query I used:
     https://data-api.globalforestwatch.org/dataset/carbonflux_iso_summary/v20260327/query/csv?sql=
@@ -35,13 +32,15 @@ Last year I did not do this and instead got results for all countries in the GFW
 This made it difficult to QC translated totals with the raw data totals because the raw data included additional countries.
 If JRC changes the countries in the list, we will need to update the iso codes in these API queries.
 
-3. Timeseries of emissions (Mg CO2 per year)
-Use the carbonflux iso change table in the GFW Data API to get annual emissions seperated by
+3. Timeseries of emissions (Mg CO2 per year, Mg N2O per year, Mg CH4 per year)
+Use the carbonflux iso change table in the GFW Data API to get annual emissions separated by
 year of tree cover loss, intact/primary forest, and driver of tree cover loss.
 For the 2025 update, this is the query I used:
     https://data-api.globalforestwatch.org/dataset/carbonflux_iso_change/v20260327/query/csv?sql=
     SELECT "iso", "umd_tree_cover_loss__year", "is__intact_primary_forest", "wri_google_tree_cover_loss_drivers__driver" AS "tcl_driver__class",
-    SUM("gfw_full_extent_gross_emissions_CO2_only_biomass_soil__Mg_CO2") AS "emissions_co2_only_biomass+soil__Mg_CO2"
+    SUM("gfw_full_extent_gross_emissions_CO2_only_biomass_soil__Mg_CO2") AS "emissions_co2_only_biomass_soil__mg_co2",
+    SUM("gfw_full_extent_gross_emissions_N2O_biomass_soil__Mg_CO2e") AS "emissions_n2o_only_biomass_soil__mg_co2e",
+    SUM("gfw_full_extent_gross_emissions_CH4_biomass_soil__Mg_CO2e") AS "emissions_ch4_only_biomass_soil__mg_co2e"
     FROM data
     WHERE umd_tree_cover_density_2000__threshold = 30
     and "iso" IN ('AFG','ALB','DZA','AND','AGO','ATG','ARG','ARM','AUS','AUT','AZE','BHS','BHR','BGD','BRB','BLR','BEL','BLZ','BEN','BTN','BOL','BIH','BWA','BRA','BRN','BGR','BFA','BDI','KHM','CMR','CAN','CPV','CAF','TCD','CHL','CHN','COL','COM','COG','COK','CRI','CIV','HRV','CUB','CYP','CZE','PRK','COD','DNK','DJI')
@@ -51,6 +50,7 @@ Repeat x3 with the following country lists:
    2. ('MDG','MWI','MYS','MDV','MLI','MLT','MHL','MRT','MUS','MEX','FSM','MCO','MNG','MNE','MAR','MOZ','MMR','NAM','NRU','NPL','NLD','NZL','NIC','NER','NGA','NIU','NOR','OMN','PAK','PLW','PAN','PNG','PRY','PER','PHL','POL','PRT','QAT','KOR','MDA','ROU','RUS','RWA','KNA','LCA','VCT','WSM','SMR','STP','SAU','SEN')
    3. ('SRB','SYC','SLE','SGP','SVK','SVN','SLB','SOM','ZAF','SSD','ESP','LKA','SDN','SUR','SWZ','SWE','CHE','SYR','TJK','THA','MKD','TLS','TGO','TON','TTO','TUN','TUR','TKM','TUV','UGA','UKR','ARE','GBR','TZA','USA','URY','UZB','VUT','VEN','VNM','YEM','ZMB','ZWE')
 Note: The API request times out if you try to do all countries at once so they have to be split into multiple requests.
+      Alternatively, run in local postgres table to get all countries at once.
 
 4. Managed land polygons
 Use the ArcPy geotrellis client to get zonal stats for Canada, the United States, and Brazil's managed land polygons.
