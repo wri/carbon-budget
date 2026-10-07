@@ -98,8 +98,7 @@ def main(excel_path):
     print(f"Wrote translated results to {cn.out_sheet}")
 
     # --------------------------------------------------------------------------------------------------------------------
-    # Step 7: Write out the Data Hub timeseries (same layout as timeseries_GFW_translated_4.0.0.csv), one tab per
-    #         category x gas group (FOREST_CO2, FOREST_non_CO2, FOREST_CO2e, DEFORESTATION_CO2, ..., HWP_CO2)
+    # Step 7: Write out the Data Hub timeseries, one tab per category x gas group (FOREST_CO2, FOREST_non_CO2, etc)
     # --------------------------------------------------------------------------------------------------------------------
     datahub_tables = ut.make_datahub_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df, cn.hwp_in_sheet)
     with pd.ExcelWriter(cn.datahub_out_xlsx, engine="openpyxl", mode="w") as writer:
