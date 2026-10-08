@@ -1,10 +1,10 @@
 '''
 GFW Managed Land Proxy cases:
-Case 1: Includes 49 countries that explicitly or implicitly consider all forest land to be managed.
+Case 1: Includes 80 countries that explicitly or implicitly consider all forest land to be managed.
         For these countries, we consider the entire GFW forest flux model extent to be managed.
 Case 2a: Includes three countries (Brazil, the United States, and Canada) for which there are georeferenced boundaries of managed lands.
         For these countries, managed forest is the entire GFW forest flux model extent in the managed land boundaries.
-Case 2b: Includes the remaining 143 countries in which NGHGIs do not report enough details regarding the managed land proxy and its extent.
+Case 2b: Includes the remaining 114 countries in which NGHGIs do not report enough details regarding the managed land proxy and its extent.
         For these countries we consider "managed forests" in tropical regions to be forests outside humid tropical primary forests from 2001
         (Turubanova et al. 2018) and in extratropical regions as forests outside intact forest landscapes from 2000 (Potapov et al. 2017).
 
@@ -63,36 +63,48 @@ def main(excel_path):
     print("Translated GFW removals into anthropogenic forest and non-anthropogenic forest removals")
 
     #--------------------------------------------------------------------------------------------------------------------
-    # Step 4: Translate country emissions according to the GFW managed land proxy code
+    # Step 4: Translate country emissions (CO2, CH4, N2O) according to the GFW managed land proxy code
     #--------------------------------------------------------------------------------------------------------------------
-    # Use the GFW managed land code to assign translated emissions per country
+    # Use the GFW managed land code to assign translated emissions per country. The same translation rules are applied
+    # to each gas, and non_CO2 (CH4 + N2O) and CO2e (all gases) totals are added.
     translated_emissions_df = ut.translate_emissions(keep_col_df, gfw_emissions_df, managed_polygons_df)
-    print("Translated GFW emissions into anthropogenic deforestation, anthropogenic forest, and non-anthropogenic forest emissions")
+    print(f"Translated GFW {', '.join(cn.gases)} emissions into anthropogenic deforestation, anthropogenic forest, and non-anthropogenic forest emissions")
 
     # --------------------------------------------------------------------------------------------------------------------
     # Step 5: Combine translated country emissions and removals to calculate anthropogenic deforestation emissions,
-    #         anthropogenic forest flux, and non-anthropogenic forest flux timeseries.
+    #         anthropogenic forest flux, and non-anthropogenic forest flux timeseries for each gas group.
     # --------------------------------------------------------------------------------------------------------------------
-    # Create separate sheets for each category
-    anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df = (
-        ut.make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df))
-    print("Combined translated fluxes into anthropogenic deforestation, anthropogenic forest, and non-anthropogenic flux sheets")
+    flux_tables = {}
+    for group in cn.gas_groups:
+        flux_tables[group] = ut.make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df, group)
+    print(f"Combined translated fluxes into anthropogenic deforestation, anthropogenic forest, and non-anthropogenic flux sheets for {', '.join(cn.gas_groups)}")
 
-   # --------------------------------------------------------------------------------------------------------------------
-   # Step 6: Write out the translated results to a new spreadsheet
-   # --------------------------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------------------------
+    # Step 6: Write out the translated results to a new spreadsheet
+    # --------------------------------------------------------------------------------------------------------------------
     with pd.ExcelWriter(cn.out_sheet, engine="openpyxl", mode="w") as writer:
         translated_removals_df.to_excel(writer, sheet_name=cn.nghgi_removals_sheet, index=False)
         translated_emissions_df.to_excel(writer, sheet_name=cn.nghgi_emissions_sheet, index=False)
 
-        anthro_deforestation_emissions_df.to_excel(writer, sheet_name=cn.anthro_deforest_emis_sheet, index=False)
-        anthro_forest_flux_df.to_excel(writer, sheet_name=cn.anthro_forest_flux_sheet, index=False)
-        nonanthro_forest_flux_df.to_excel(writer, sheet_name=cn.nonanthro_forest_flux_sheet, index=False)
+        for group, (anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df) in flux_tables.items():
+            anthro_deforestation_emissions_df.to_excel(writer, sheet_name=f"{cn.anthro_deforest_emis_sheet}_{group}", index=False)
+            anthro_forest_flux_df.to_excel(writer, sheet_name=f"{cn.anthro_forest_flux_sheet}_{group}", index=False)
+            nonanthro_forest_flux_df.to_excel(writer, sheet_name=f"{cn.nonanthro_forest_flux_sheet}_{group}", index=False)
 
         if cn.keep_raw_data:
             managed_land_proxy_codes_df.to_excel(writer, sheet_name=cn.managed_land_proxy_sheet, index=False)
             gfw_removals_df.to_excel(writer, sheet_name=cn.gfw_removals_sheet, index=False)
             gfw_emissions_df.to_excel(writer, sheet_name=cn.gfw_emissions_sheet, index=False)
+    print(f"Wrote translated results to {cn.out_sheet}")
+
+    # --------------------------------------------------------------------------------------------------------------------
+    # Step 7: Write out the Data Hub timeseries, one tab per category x gas group (FOREST_CO2, FOREST_non_CO2, etc)
+    # --------------------------------------------------------------------------------------------------------------------
+    datahub_tables = ut.make_datahub_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df, cn.hwp_in_sheet)
+    with pd.ExcelWriter(cn.datahub_out_xlsx, engine="openpyxl", mode="w") as writer:
+        for sheet, df in datahub_tables.items():
+            df.to_excel(writer, sheet_name=sheet, index=False)
+    print(f"Wrote Data Hub timeseries to {cn.datahub_out_xlsx}")
 
 if __name__ == "__main__":
     main(cn.in_sheet)
