@@ -1,3 +1,9 @@
+"""
+TODO: 
+- Replace local file paths with files in s3
+- Save output locally and in s3
+"""
+
 # Date used for the final output spreadsheet
 run_date = '20261006'
 
