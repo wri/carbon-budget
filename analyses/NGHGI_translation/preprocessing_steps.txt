@@ -3,7 +3,7 @@ The steps to prepare the input data are as follows.
 
 1. Managed land proxy codes from JRC
 Confirm the country list and the managed land proxy codes with JRC. They split their managed land proxy codes into the
-following 7 categories:
+following 4 categories:
     1 - all forest is managed
     2 - not all forest is managed, country map available
     3 - not all forest is managed, country map is not available
