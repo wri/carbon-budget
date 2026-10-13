@@ -5,7 +5,7 @@ TODO:
 """
 
 # Date used for the final output spreadsheet
-run_date = '20261006'
+run_date = '20261013'
 
 # Number of years
 start_year = 2001
@@ -36,8 +36,8 @@ gas_groups = {
 # Input GFW data spreadsheets
 # -----------------------------------------------------------------------------------------------------------------------
 # Input files
-in_sheet = r"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\inputs\JRC_datahub_2025_update_input_20260902.xlsx"
-hwp_in_sheet = r"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\inputs\HWP_1990-2024_20260624.xlsx"
+in_sheet = r"C:\Users\MelRose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\inputs\JRC_datahub_2025_update_input_20260902.xlsx"
+hwp_in_sheet = r"C:\Users\MelRose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\inputs\HWP_1990-2024_20260624.xlsx"
 
 # Note: All column names are lowercased, and spaces are replaced with "_" so make sure that is reflected here
 # 1. Managed land proxy sheet and column names
@@ -116,7 +116,7 @@ anthro_forest_flux_pattern = "anthro_forest_flux"
 nonanthro_forest_flux_pattern = "non_anthro_forest_flux"
 
 # Final results for WRI (includes non-anthro totals for QC)
-out_sheet = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\outputs\JRC_datahub_2025_update__all_GHGs__for_WRI__{run_date}.xlsx"
+out_sheet = rf"C:\Users\MelRose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\outputs\JRC_datahub_2025_update__all_GHGs__for_WRI__{run_date}.xlsx"
 nghgi_removals_sheet = "translated_removals"
 nghgi_emissions_sheet = "translated_emissions"
 anthro_deforest_emis_sheet = "deforestation_emissions"
@@ -124,10 +124,15 @@ anthro_forest_flux_sheet = "anthro_forest_flux"
 nonanthro_forest_flux_sheet = "non-anthro_forest_flux"
 
 # Final results for JRC (includes HWP and formatted for webmasters)
-# One tab per category x gas group (FOREST_CO2, FOREST_non_CO2, FOREST_CO2e, DEFORESTATION_CO2, etc)
+# One tab per category x gas group (untranslated_FOREST_CO2, translated_FOREST_CO2, DEFORESTATION_CO2, etc). HWP is CO2 only.
+#   untranslated_FOREST: anthropogenic + non-anthropogenic forest flux (all forest flux except deforestation)
+#   translated_FOREST:   anthropogenic forest flux only
 datahub_version = "V4.0.0 (NGHGI 2026)"
 datahub_source = "GNW 2025 v1.4.3"
+hwp_source = "FAO"
 datahub_unit_divisor = 1e6  # Mg -> Mt
-datahub_categories = ["FOREST", "DEFORESTATION", "HWP"]
+datahub_categories = ["untranslated_FOREST", "translated_FOREST", "DEFORESTATION", "HWP"]
 datahub_regions = {"WRD": world_col, "EU27": eu_col}
-datahub_out_xlsx = rf"C:\Users\Melissa.Rose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\outputs\JRC_datahub_2025_update__all_GHGs__for_JRC__{run_date}.xlsx"
+datahub_value_cols = {"emissions": "Emissions_MtCO2e", "removals": "Removals_MtCO2", "netflux": "Netflux_MtCO2e"}
+datahub_out_cols = ["ISO3", "Version", "Source", "Gas", "Year", "Category"] + list(datahub_value_cols.values())
+datahub_out_xlsx = rf"C:\Users\MelRose\OneDrive - World Resources Institute\Documents\Projects\NGHGI_translation\2025_TCL_translation\outputs\JRC_datahub_2025_update__all_GHGs__for_JRC__{run_date}.xlsx"

@@ -471,9 +471,12 @@ def add_datahub_regions(df, managed_land_proxy_codes_df):
     return pd.concat([df] + regions, ignore_index=True)
 
 # Builds one long table per category in cn.datahub_categories x gas group (CO2, non_CO2, CO2e), in Mt.
-#   FOREST:        emissions = anthropogenic forest emissions, removals = anthropogenic forest removals, netflux = sum
-#   DEFORESTATION: emissions = deforestation emissions, removals = 0, netflux = emissions
-#   HWP:           CO2 only (HWP_CO2), netflux from the sum_deltaCO2 tab of the HWP spreadsheet (see make_hwp_table)
+#   untranslated_FOREST: emissions = anthropogenic + non-anthropogenic forest emissions,
+#                        removals = anthropogenic + non-anthropogenic forest removals, netflux = sum
+#                        (= anthro_forest_flux + non-anthro_forest_flux in the WRI spreadsheet)
+#   translated_FOREST:   emissions = anthropogenic forest emissions, removals = anthropogenic forest removals, netflux = sum
+#   DEFORESTATION:       emissions = deforestation emissions, removals = 0, netflux = emissions
+#   HWP:                 CO2 only (HWP_CO2), netflux from the sum_deltaCO2 tab of the HWP spreadsheet (see make_hwp_table)
 # Countries are listed in managed land proxy order, followed by the regional totals in cn.datahub_regions (no Source).
 def make_datahub_tables(managed_land_proxy_codes_df, translated_removals_df, translated_emissions_df, hwp_path):
     countries = managed_land_proxy_codes_df[cn.iso_col].tolist()
@@ -483,6 +486,15 @@ def make_datahub_tables(managed_land_proxy_codes_df, translated_removals_df, tra
     removals = translated_removals_df.set_index(cn.iso_col)
     idx = pd.MultiIndex.from_product([countries, cn.years], names=[cn.iso_col, "Year"])
 
+    # Helpers: emissions for a category/gas group, and annual removals (CO2 only) repeated for each year
+    def get_emis(base, group):
+        return emis[cn.emis_col(base, group)].reindex(idx).fillna(0.0)
+
+    def get_removals(col, group_gases):
+        if "CO2" not in group_gases:
+            return pd.Series(0.0, index=idx)
+        return pd.Series(idx.get_level_values(0).map(removals[col]), index=idx).fillna(0.0)
+
     tables = {}
     for category in cn.datahub_categories:
         # Harvested wood products are CO2 only
@@ -491,14 +503,14 @@ def make_datahub_tables(managed_land_proxy_codes_df, translated_removals_df, tra
             continue
 
         for group, group_gases in cn.gas_groups.items():
-            if category == "FOREST":
-                e = emis[cn.emis_col(cn.anthro_forest_emis_base, group)].reindex(idx).fillna(0.0)
-                if "CO2" in group_gases:
-                    r = pd.Series(idx.get_level_values(0).map(removals[cn.anthro_removal_col]), index=idx).fillna(0.0)
-                else:
-                    r = pd.Series(0.0, index=idx)
+            if category == "untranslated_FOREST":
+                e = get_emis(cn.anthro_forest_emis_base, group) + get_emis(cn.nonanthro_forest_emis_base, group)
+                r = get_removals(cn.anthro_removal_col, group_gases) + get_removals(cn.nonanthro_removal_col, group_gases)
+            elif category == "translated_FOREST":
+                e = get_emis(cn.anthro_forest_emis_base, group)
+                r = get_removals(cn.anthro_removal_col, group_gases)
             elif category == "DEFORESTATION":
-                e = emis[cn.emis_col(cn.anthro_deforest_emis_base, group)].reindex(idx).fillna(0.0)
+                e = get_emis(cn.anthro_deforest_emis_base, group)
                 r = pd.Series(0.0, index=idx)
             else:
                 raise ValueError(f"Unknown Data Hub category: {category}")
@@ -514,7 +526,7 @@ def make_datahub_tables(managed_land_proxy_codes_df, translated_removals_df, tra
             df["Version"] = cn.datahub_version
             df["Gas"] = group
             df["Category"] = category
-            tables[f"{category}_{group}"] = df[["ISO3", "Version", "Source", "Gas", "Year", "Category", "emissions", "removals", "netflux"]]
+            tables[f"{category}_{group}"] = df.rename(columns=cn.datahub_value_cols)[cn.datahub_out_cols]
 
     return tables
 
@@ -545,7 +557,7 @@ def make_hwp_table(hwp_path, managed_land_proxy_codes_df):
 
     df = pd.DataFrame({"emissions": np.nan, "removals": np.nan,
                        "netflux": netflux.to_numpy() / cn.datahub_unit_divisor}, index=idx).reset_index()
-    df["Source"] = cn.datahub_source
+    df["Source"] = cn.hwp_source
     df = add_datahub_regions(df, managed_land_proxy_codes_df)
 
     missing = sorted(set(countries) - set(hwp["ISO3"]))
@@ -555,4 +567,4 @@ def make_hwp_table(hwp_path, managed_land_proxy_codes_df):
     df["Version"] = cn.datahub_version
     df["Gas"] = "CO2"
     df["Category"] = "HWP"
-    return df[["ISO3", "Version", "Source", "Gas", "Year", "Category", "Emissions_MtCO2e", "Removals_MtCO2", "Netflux_MtCO2e"]]
+    return df.rename(columns=cn.datahub_value_cols)[cn.datahub_out_cols]
