@@ -456,7 +456,7 @@ def make_flux_tables(managed_land_proxy_codes_df, translated_removals_df, transl
     return anthro_deforestation_emissions_df, anthro_forest_flux_df, nonanthro_forest_flux_df
 
 #-----------------------------------------------------------------------------------------------------------------------
-# STEP 5: DATA HUB TIMESERIES (layout of timeseries_GFW_translated_4.0.0.csv)
+# STEP 5: DATA HUB TIMESERIES
 #-----------------------------------------------------------------------------------------------------------------------
 # Adds WRD / EU27 totals (cn.datahub_regions) to a long Data Hub table. Regional rows have no Source.
 def add_datahub_regions(df, managed_land_proxy_codes_df):

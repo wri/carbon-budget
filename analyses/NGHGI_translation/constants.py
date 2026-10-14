@@ -2,6 +2,7 @@
 TODO:
 - Replace local file paths with files in s3
 - Save output locally and in s3
+- Update output format to match JRCs
 """
 
 # Date used for the final output spreadsheet
@@ -127,8 +128,8 @@ nonanthro_forest_flux_sheet = "non-anthro_forest_flux"
 # One tab per category x gas group (untranslated_FOREST_CO2, translated_FOREST_CO2, DEFORESTATION_CO2, etc). HWP is CO2 only.
 #   untranslated_FOREST: anthropogenic + non-anthropogenic forest flux (all forest flux except deforestation)
 #   translated_FOREST:   anthropogenic forest flux only
-datahub_version = "V4.0.0 (NGHGI 2026)"
-datahub_source = "GNW 2025 v1.4.3"
+datahub_version = "v4.1.0"
+datahub_source = "GNW v1.4.3"
 hwp_source = "FAO"
 datahub_unit_divisor = 1e6  # Mg -> Mt
 datahub_categories = ["untranslated_FOREST", "translated_FOREST", "DEFORESTATION", "HWP"]
