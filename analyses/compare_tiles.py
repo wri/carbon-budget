@@ -1,6 +1,6 @@
 """
 Compares two raster tiles pixel by pixel, e.g. a tile you just made with the published one. Use it to check that a new
-run environment gives the same results; see "Checking that a new run environment gives the same results" in readme.md.
+run environment gives the same results; see docs/checking-a-new-run-environment.md.
 
 python -m analyses.compare_tiles <new tile> <reference tile>
 

@@ -1,38 +1,52 @@
-# Launch and connect to an EC2 instance for the carbon flux model over SSM (no OpenVPN). See "Checking that a new run environment gives the same results" in readme.md.
-# Needs the AWS CLI, the Session Manager plugin, and `aws sso login --profile ForestResearcher`.
+# Launch and connect to an EC2 instance for the carbon flux model over SSM (no OpenVPN). See "Running on AWS with just" in readme.md.
+# Runs in the land-research AWS account. Needs the AWS CLI, the Session Manager plugin, and
+# `aws sso login --profile land-admin` (or another land-research profile in AWS_PROFILE).
 
-export AWS_PROFILE := env_var_or_default("AWS_PROFILE", "ForestResearcher")
+export AWS_PROFILE := env_var_or_default("AWS_PROFILE", "land-admin")
 export AWS_REGION := "us-east-1"
 
 template := "carbon_flux_model_python3_v2"
-subnet_name := "GFW subnet zone us-east-1c"
-# Added at launch so SSM can manage the instance. Only grants SSM permissions; the template itself is unchanged.
-ssm_instance_profile := "AmazonSSMRoleForInstancesQuickSetup"
+# Template versions 3 and 4 are copies of the main account's 29 and 30, with land-research's security group and no key pair.
+spot_version := "3"
+on_demand_version := "4"
+# From the ec2-job-runner network stack.
+subnet_name := "ec2-job-runner-us-east-1c"
+# Can read and write the model's buckets (their bucket policies allow it), so the container uses it for s3.
+instance_profile := "data-science-desktop-role"
 name_tag := "carbon-flux-model-" + env_var("USER")
 project_tag := "carbon-budget"
 # The screen session on the instance that `just container` runs in.
 session := "carbon-budget"
+# Run on the instance before screen: if it doesn't know your terminal (e.g. Ghostty's xterm-ghostty), use xterm-256color.
+term_fallback := 'infocmp \$TERM >/dev/null 2>&1 || export TERM=xterm-256color;'
 
 # List the commands
 default:
     @just --list
 
-# Launch from the template. Version 29 = spot (test runs), 30 = on demand (full runs). Types: r5d.xlarge for a few tiles, r5d.24xlarge for all.
-launch version="29" type="r5d.xlarge":
+# Launch from the template. Version: spot (test runs; AWS can take the instance back) or on-demand (full runs), or a template version number. Types: r5d.xlarge for a few tiles, r5d.24xlarge for all.
+launch version="spot" type="r5d.xlarge":
     #!/usr/bin/env bash
     set -euo pipefail
+    case '{{version}}' in
+      spot) version={{spot_version}} ;;
+      on-demand) version={{on_demand_version}} ;;
+      *) version='{{version}}' ;;
+    esac
     subnet=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values={{subnet_name}}" \
       --query 'Subnets[0].SubnetId' --output text)
+    [ "$subnet" != "None" ] || { echo "No subnet named {{subnet_name}}. Is AWS_PROFILE ($AWS_PROFILE) a land-research profile?"; exit 1; }
     # wri:owner is your SSO user name (your email), from the end of your role session ARN.
     user=$(aws sts get-caller-identity --query Arn --output text | awk -F/ '{print tolower($NF)}')
     tags="{Key=Name,Value={{name_tag}}},{Key=wri:project,Value={{project_tag}}},{Key=wri:owner,Value=$user}"
-    echo "Launching {{type}} from {{template}} v{{version}} in {{subnet_name}} ($subnet)"
+    echo "Launching {{type}} from {{template}} v$version ({{version}}), in {{subnet_name}} ($subnet)"
+    echo "Instance profile: {{instance_profile}}"
     echo "Tags: Name={{name_tag}}, wri:project={{project_tag}}, wri:owner=$user"
     id=$(aws ec2 run-instances \
-      --launch-template 'LaunchTemplateName={{template}},Version={{version}}' \
+      --launch-template "LaunchTemplateName={{template}},Version=$version" \
       --instance-type '{{type}}' \
       --subnet-id "$subnet" \
-      --iam-instance-profile 'Name={{ssm_instance_profile}}' \
+      --iam-instance-profile 'Name={{instance_profile}}' \
       --tag-specifications "ResourceType=instance,Tags=[$tags]" "ResourceType=volume,Tags=[$tags]" \
       --query 'Instances[0].InstanceId' --output text)
     echo "Instance $id launched. Waiting for it to run..."
@@ -50,8 +64,8 @@ launch version="29" type="r5d.xlarge":
     echo "/var/lib/cloud/instance/boot-finished exists when it's done."
     echo "When finished: just terminate $id"
 
-# Launch, set up `ssh cfm`, send your credentials, then build a carbon-budget branch and open the container. Version and type as for launch.
-up branch version="29" type="r5d.xlarge":
+# Launch, set up `ssh cfm`, then build a carbon-budget branch and open the container. Version and type as for launch.
+up branch version="spot" type="r5d.xlarge":
     #!/usr/bin/env bash
     set -euo pipefail
     # Check the branch exists before paying for an instance.
@@ -59,7 +73,6 @@ up branch version="29" type="r5d.xlarge":
       || { echo "No branch '{{branch}}' on github.com/wri/carbon-budget."; exit 1; }
     {{just_executable()}} launch '{{version}}' '{{type}}'
     {{just_executable()}} ssh-config
-    {{just_executable()}} creds
     {{just_executable()}} container {{quote(branch)}}
 
 # Set up `ssh cfm` (also scp, rsync, VS Code) over SSM for an instance. Rerun for each new instance.
@@ -121,30 +134,13 @@ ssh-config id="":
     fi
     echo "Connect with: ssh cfm"
 
-# Send your SSO credentials to the instance (over `ssh cfm`) so Docker can use S3. They expire with your SSO session: rerun, then restart the container.
-creds host="cfm":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    file=.carbon-budget.env
-    # Temporary credentials (key, secret, session token), as KEY=VALUE lines that `docker run --env-file` reads.
-    env=$(aws configure export-credentials --format env-no-export) \
-      || { echo "No credentials. Run: aws sso login --profile $AWS_PROFILE"; exit 1; }
-    expires=$(echo "$env" | sed -n 's/^AWS_CREDENTIAL_EXPIRATION=//p')
-    # Only you (ec2-user) can read the file; `just terminate` deletes it with the instance.
-    echo "$env" | ssh '{{host}}' "umask 077; cat > ~/$file"
-    echo "Wrote ~/$file on {{host}} ($AWS_PROFILE credentials, expire ${expires:-at the end of your SSO session})."
-
-# Check out a branch, build the Docker image, and open the container, in screen on the instance (`just attach` to get back). Needs `just creds` first.
+# Check out a branch, build the Docker image, and open the container, in screen on the instance (`just attach` to get back).
 container branch:
     #!/usr/bin/env bash
     set -euo pipefail
-    # On the instance: check the credentials (the container reads them once, at start), check there isn't a session
-    # already, install screen if needed, and write the script the session runs.
+    # On the instance: check there isn't a session already, install screen if needed, and write the script the
+    # session runs.
     ssh cfm 'set -e
-      exp=$(sed -n "s/^AWS_CREDENTIAL_EXPIRATION=//p" ~/.carbon-budget.env 2>/dev/null || true)
-      if [ -z "$exp" ] || [ "$(date -d "$exp" +%s)" -le "$(date +%s)" ]; then
-        echo "No credentials on the instance, or they have expired. Run: just creds" >&2; exit 1
-      fi
       if screen -ls 2>/dev/null | grep -q "[.]{{session}}[[:space:]]"; then
         echo "The {{session}} screen session is already running. Reattach with: just attach" >&2; exit 1
       fi
@@ -164,71 +160,20 @@ container branch:
       git checkout "$branch" &&
       git pull --ff-only &&
       sudo docker build . -t gfw/carbon-budget &&
-      sudo docker run --rm -it --env-file ~/.carbon-budget.env gfw/carbon-budget
+      # The container uses the instance profile for s3. The model only checks that these two variables exist, and
+      # turns uploads off if they don't; the AWS CLI skips them when they're empty and gets the instance profile's
+      # credentials (IMDS hop limit 2 in the template lets the container reach them).
+      sudo docker run --rm -it -e AWS_ACCESS_KEY_ID= -e AWS_SECRET_ACCESS_KEY= gfw/carbon-budget
     echo "Exited with code $?. This shell is still in screen: exit to close the session, or Ctrl-a d to detach."
     exec bash -l
     EOF
     echo "Starting screen session {{session}}. Detach with Ctrl-a d; if the connection drops, reattach with: just attach"
-    ssh -t cfm "screen -S {{session}} bash ~/{{session}}.sh {{quote(branch)}}" \
+    ssh -t cfm "{{term_fallback}} screen -S {{session}} bash ~/{{session}}.sh {{quote(branch)}}" \
       || { echo "Disconnected. The session keeps running; reattach with: just attach"; exit 1; }
 
 # Reattach to the screen session from `just container` (e.g. after the connection drops).
 attach:
-    ssh -t cfm screen -d -r {{session}} || echo "No {{session}} session to reattach to. Start one with: just container <branch>"
-
-# Copy the launch template, unchanged, to the account of another AWS profile (e.g. `just copy-template land`). Versions are renumbered from 1.
-copy-template to_profile versions="29 30":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    from_account=$(aws sts get-caller-identity --query Account --output text)
-    to_account=$(aws sts get-caller-identity --profile '{{to_profile}}' --query Account --output text)
-    echo "Copying {{template}} versions {{versions}} from $from_account ($AWS_PROFILE) to $to_account ({{to_profile}})"
-    [ "$from_account" != "$to_account" ] || { echo "Both profiles are in account $from_account."; exit 1; }
-    if aws ec2 describe-launch-templates --profile '{{to_profile}}' --launch-template-names '{{template}}' >/dev/null 2>&1; then
-      echo "{{template}} already exists in $to_account. Not overwriting it."; exit 1
-    fi
-
-    tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
-    new=1
-    for v in {{versions}}; do
-      # The template's settings, as one JSON document (user data stays base64-encoded, as the API expects).
-      aws ec2 describe-launch-template-versions --launch-template-name '{{template}}' --versions "$v" \
-        --query 'LaunchTemplateVersions[0].LaunchTemplateData' --output json > "$tmp/data.json"
-      old_desc=$(aws ec2 describe-launch-template-versions --launch-template-name '{{template}}' --versions "$v" \
-        --query 'LaunchTemplateVersions[0].VersionDescription' --output text)
-      desc="Copy of $from_account v$v: $old_desc"
-      if [ "$new" = 1 ]; then
-        aws ec2 create-launch-template --profile '{{to_profile}}' --launch-template-name '{{template}}' \
-          --version-description "$desc" --launch-template-data "file://$tmp/data.json" --output text \
-          --query 'LaunchTemplate.LaunchTemplateId' > "$tmp/id"
-      else
-        aws ec2 create-launch-template-version --profile '{{to_profile}}' --launch-template-name '{{template}}' \
-          --version-description "$desc" --launch-template-data "file://$tmp/data.json" >/dev/null
-      fi
-      echo "  v$v -> v$new ($old_desc)"
-      new=$((new + 1))
-    done
-    echo "Created $(cat "$tmp/id") in $to_account. Its default version is v1 (a copy of v$(echo {{versions}} | cut -d' ' -f1))."
-
-    # The copy is exact, so anything that only exists in the source account won't resolve in the new one.
-    echo "Checking what the copy refers to in $to_account:"
-    for v in {{versions}}; do
-      aws ec2 describe-launch-template-versions --launch-template-name '{{template}}' --versions "$v" \
-        --query 'LaunchTemplateVersions[0].LaunchTemplateData.[ImageId, KeyName, join(`,`, SecurityGroupIds || `[]`)]' \
-        --output text
-    done | sort -u | while read -r ami key sgs; do
-      aws ec2 describe-images --profile '{{to_profile}}' --image-ids "$ami" >/dev/null 2>&1 \
-        && echo "  ok      AMI $ami" || echo "  MISSING AMI $ami"
-      if [ "$key" != "None" ]; then
-        aws ec2 describe-key-pairs --profile '{{to_profile}}' --key-names "$key" >/dev/null 2>&1 \
-          && echo "  ok      key pair $key" || echo "  MISSING key pair $key"
-      fi
-      for sg in ${sgs//,/ }; do
-        aws ec2 describe-security-groups --profile '{{to_profile}}' --group-ids "$sg" >/dev/null 2>&1 \
-          && echo "  ok      security group $sg" || echo "  MISSING security group $sg"
-      done
-    done
-    echo "Launches fail until anything MISSING is fixed (a new template version with the right IDs)."
+    ssh -t cfm "{{term_fallback}} screen -d -r {{session}}" || echo "No {{session}} session to reattach to. Start one with: just container <branch>"
 
 # Open a shell on the instance. Without an ID, uses your newest instance from `just launch`.
 connect id="":
