@@ -182,16 +182,18 @@ Users can track memory usage in real time using the `htop` command line utility 
 #### Running on AWS with just
 On WRI's AWS, the `justfile` in this repo launches an instance in the land-research account from the team's launch
 template and opens the container over AWS Systems Manager, without OpenVPN. It needs the AWS CLI, the Session Manager
-plugin and [`just`](https://just.systems); `just` lists the commands.
+plugin and [`just`](https://just.systems); `just` lists the commands. It uses your usual AWS CLI credentials, which
+must be for the land-research account (058755926933), e.g. an SSO profile with the LandResearchUser role:
 ```
-aws sso login --profile land-admin
-just up <branch> on-demand   # launch an on-demand r5d.xlarge, build the branch, open the container
+export AWS_PROFILE=<your land-research profile>   # whatever you named it in ~/.aws/config
+aws sso login
+just up <branch>             # launch a spot r5d.xlarge, build the branch, open the container
 just terminate               # when you're done
 ```
 The container runs in a screen session on the instance: if the connection drops, `just attach`. Everything in its
-`/usr/local/tiles` is deleted when it exits. Use `spot` instead of `on-demand` for cheaper test runs (AWS can take a
-spot instance back at any time). The container uses the instance's role (`data-science-desktop-role`) for s3, not
-your credentials. `just` uses the `land-admin` profile unless `AWS_PROFILE` is set to another land-research profile.
+`/usr/local/tiles` is deleted when it exits. Spot instances are cheaper, but AWS can take them back at any time and
+everything on them is lost, so for full runs use `just up <branch> on-demand`. The container uses the instance's role
+(`data-science-desktop-role`) for s3, not your credentials.
 
 
 #### Individual scripts

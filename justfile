@@ -1,8 +1,7 @@
 # Launch and connect to an EC2 instance for the carbon flux model over SSM (no OpenVPN). See "Running on AWS with just" in readme.md.
-# Runs in the land-research AWS account. Needs the AWS CLI, the Session Manager plugin, and
-# `aws sso login --profile land-admin` (or another land-research profile in AWS_PROFILE).
+# Runs in the land-research AWS account. Needs the AWS CLI, the Session Manager plugin, and credentials for
+# land-research: e.g. `export AWS_PROFILE=<your land-research profile>`, then `aws sso login`.
 
-export AWS_PROFILE := env_var_or_default("AWS_PROFILE", "land-admin")
 export AWS_REGION := "us-east-1"
 
 template := "carbon_flux_model_python3_v2"
@@ -35,7 +34,7 @@ launch version="spot" type="r5d.xlarge":
     esac
     subnet=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values={{subnet_name}}" \
       --query 'Subnets[0].SubnetId' --output text)
-    [ "$subnet" != "None" ] || { echo "No subnet named {{subnet_name}}. Is AWS_PROFILE ($AWS_PROFILE) a land-research profile?"; exit 1; }
+    [ "$subnet" != "None" ] || { echo "No subnet named {{subnet_name}}. Are your AWS credentials for land-research? (AWS_PROFILE=${AWS_PROFILE:-not set})"; exit 1; }
     # wri:owner is your SSO user name (your email), from the end of your role session ARN.
     user=$(aws sts get-caller-identity --query Arn --output text | awk -F/ '{print tolower($NF)}')
     tags="{Key=Name,Value={{name_tag}}},{Key=wri:project,Value={{project_tag}}},{Key=wri:owner,Value=$user}"
@@ -112,7 +111,7 @@ ssh-config id="":
       # Kept apart from ~/.ssh/known_hosts so old instances don't pile up there.
       StrictHostKeyChecking accept-new
       UserKnownHostsFile ~/.ssh/carbon-flux-model.known_hosts
-      ProxyCommand $(command -v aws) ssm start-session --profile $AWS_PROFILE --region $AWS_REGION --target %h --document-name AWS-StartSSHSession --parameters portNumber=%p
+      ProxyCommand $(command -v aws) ssm start-session ${AWS_PROFILE:+--profile $AWS_PROFILE }--region $AWS_REGION --target %h --document-name AWS-StartSSHSession --parameters portNumber=%p
     EOF
     echo "Wrote $conf (Host cfm -> $id)"
 
